@@ -1,0 +1,45 @@
+# Hive e planejamento interno
+/system/
+/tasks/
+/specs/
+/_index.md
+/PRIMER.md
+/ROADMAP.md
+/Memory/
+
+# Agentes e ferramentas locais
+/.claude/
+/.agents/
+/.codex/
+/.opencode/
+/.vscode/
+/.idea/
+
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Dependências, testes e build
+node_modules/
+coverage/
+dist/
+build/
+*.log
+module.zip
+
+# Dados locais do Foundry
+/Data/
+/worlds/
+*.db
+*.sqlite
+*.sqlite3
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

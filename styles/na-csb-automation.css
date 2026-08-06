@@ -1,0 +1,162 @@
+.na-csb-automation {
+  font-family: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #FFFFFF;
+  background: #0D0B0A;
+  padding: 6px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.na-csb-automation .na-label {
+  font-weight: 700;
+  font-size: 11px;
+  color: #D4CBBC;
+  display: block;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.na-csb-automation .na-hint {
+  font-weight: 400;
+  font-size: 10px;
+  color: #9C9284;
+  text-transform: none;
+}
+
+.na-csb-automation input[type=text],
+.na-csb-automation input[type=number],
+.na-csb-automation select {
+  width: 100%;
+  height: 28px;
+  padding: 3px 6px;
+  box-sizing: border-box;
+  font-size: 12px;
+  border: 1px solid #4A3A2A;
+  border-radius: 4px;
+  background: #2A2520;
+  color: #FFFFFF;
+  transition: border-color .15s ease;
+}
+
+.na-csb-automation input[type=text]:focus,
+.na-csb-automation input[type=number]:focus,
+.na-csb-automation select:focus {
+  border-color: #D8B45D;
+  outline: none;
+}
+
+.na-csb-automation input.na-dado-inp {
+  font-family: "JetBrains Mono", Consolas, monospace;
+}
+
+#na-entradas-container {
+  max-height: 48vh;
+  overflow-y: auto;
+  margin-bottom: 8px;
+  padding-right: 4px;
+}
+
+#na-entradas-container::-webkit-scrollbar { width: 5px; }
+#na-entradas-container::-webkit-scrollbar-track { background: #0D0B0A; border-radius: 3px; }
+#na-entradas-container::-webkit-scrollbar-thumb { background: #4A3A2A; border-radius: 3px; }
+
+.na-entrada {
+  border-left: 3px solid #A4FE23;
+  border-top: 1px solid #4A3A2A;
+  border-right: 1px solid #4A3A2A;
+  border-bottom: 1px solid #4A3A2A;
+  border-radius: 0 4px 4px 0;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: #1C1915;
+}
+
+.na-entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #2A2520;
+}
+
+.na-entry-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: #D8B45D;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.na-remove-btn {
+  font-size: 11px;
+  line-height: 1;
+  height: 20px;
+  width: 22px;
+  padding: 0;
+  cursor: pointer;
+  color: #D64545;
+  border: 1px solid #5A2020;
+  background: #2A1515;
+  border-radius: 3px;
+  transition: background .15s;
+}
+
+.na-remove-btn:hover { background: #421C1C; color: #FF6B6B; }
+
+.na-row-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.na-attrs { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 0; }
+.na-attr-label {
+  display: flex; align-items: center; gap: 3px;
+  cursor: pointer; white-space: nowrap; user-select: none;
+  background: #2A2520; border: 1px solid #4A3A2A; border-radius: 3px;
+  padding: 2px 5px;
+}
+.na-attr-label:hover { border-color: #D8B45D; }
+
+.na-dano-grid { display: flex; flex-wrap: wrap; gap: 4px; padding: 2px 0 4px; }
+.na-dano-label {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: #2A2520; border: 1px solid #4A3A2A; border-radius: 3px;
+  padding: 2px 6px; cursor: pointer; user-select: none;
+  color: #D4CBBC; transition: all .15s ease;
+  font-size: 11px;
+}
+.na-dano-label:hover { border-color: #A4FE23; color: #FFFFFF; }
+.na-dano-chk { margin: 0; cursor: pointer; }
+
+.na-dano-tip {
+  display: none; margin: 4px 0;
+  font-size: 11px; color: #D8B45D;
+  background: #2A2520; border-left: 3px solid #D8B45D;
+  border-radius: 0 4px 4px 0; padding: 4px 6px; line-height: 1.3;
+}
+
+.na-linha-preview {
+  margin-top: 4px; font-family: "JetBrains Mono", monospace; font-size: 11px;
+  color: #A4FE23; background: #0D0B0A; border: 1px solid #2A2520;
+  padding: 3px 6px; border-radius: 3px; min-height: 18px;
+}
+
+#na-add-btn {
+  width: 100%; height: 28px; margin-bottom: 8px;
+  cursor: pointer; border: 1px solid #4A3A2A; border-radius: 4px;
+  background: #2A2520; color: #A4FE23; font-size: 11px; font-weight: 700;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+#na-add-btn:hover { background: #3A322B; border-color: #A4FE23; }
+
+#na-total-preview {
+  font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700;
+  padding: 6px 10px; background: #0D0B0A; color: #A4FE23;
+  border: 1px solid #4A3A2A; border-radius: 4px;
+  word-break: break-all; letter-spacing: .5px;
+}

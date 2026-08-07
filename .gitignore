@@ -6,9 +6,12 @@
 /PRIMER.md
 /ROADMAP.md
 /Memory/
+AGENTS.md
+
 
 # Agentes e ferramentas locais
 /.claude/
+/CLAUDE.md
 /.agents/
 /.codex/
 /.opencode/

@@ -26,7 +26,7 @@ Também é possível consultar as cópias originais em `Compêndios` → `Macros
 
 O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.3.0 ele inclui **Gerenciar Resistências**, **Gerenciar Status**, Exaustão acumulativa e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
 
-Na v0.5.1, o motor processa os status persistentes e controla a economia de ações do Slayer. Movimento, Ataque e Especial restauram por turno; Única e Reação por rodada. O modal de Acerto pode fazer múltiplas rolagens dentro da mesma ação.
+Na v0.5.2, o módulo também publica a especificação da migração dos status para Active Effects nativos do Foundry v14. O motor atual continua processando os status persistentes enquanto essa migração não é implementada. Movimento, Ataque e Especial restauram por turno; Única e Reação por rodada. O modal de Acerto pode fazer múltiplas rolagens dentro da mesma ação.
 
 Na v0.4.0, **Gerenciar Status** também configura fórmula, quantidade de turnos, pilhas, salvaguarda e fonte. O GM ativo processa automaticamente dano contínuo, expiração, Confuso, salvaguardas e Exaustão pelo Combat nativo. O módulo continua compatível com Combat Tracker Dock porque não depende da interface do tracker.
 

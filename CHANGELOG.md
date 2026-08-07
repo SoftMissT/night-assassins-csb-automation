@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.2] - 2026-08-07
+
+### Arquitetura documentada
+
+- Adicionada a especificação completa das 35 condições do Slayer, exigindo aplicação, fonte, pilhas, duração, efeito, salvaguarda, remoção e teste automatizado.
+- Definido que os status serão `ActiveEffect` nativos embutidos no Actor e registrados em `CONFIG.statusEffects` no Foundry v14.
+- Os campos `status_slayer_*` do CSB passam a ser tratados como espelho de compatibilidade durante a futura migração, não como a autoridade final do estado.
+- Documentadas as integrações obrigatórias com Token, Combat, Combatant, alvos, socket do GM e `DialogV2`/`ApplicationV2`.
+
+### Importante
+
+- Esta versão publica a especificação de migração. O motor existente ainda não foi convertido para Active Effects nativos e não deve ser apresentado como concluído.
+
 ## [0.5.1] - 2026-08-07
 
 ### Corrigido

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1] - 2026-08-07
+
+### Corrigido
+
+- Vantagem e demais status agora são reconhecidos quando o Custom System Builder devolve `status_slayer_dados` envolvido em HTML ou com entidades `&quot;`.
+- Teste de integração confirma que Vantagem persistida percorre o serviço de rolagem e produz a fórmula final `2d20kh1`.
+
 ## [0.4.0] - 2026-08-07
 
 ### Adicionado

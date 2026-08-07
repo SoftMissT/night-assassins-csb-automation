@@ -33,7 +33,21 @@ export function clampExhaustion(value) {
 export function parseStatusState(value) {
   if (!value) return { version: 2, active: [], exhaustion: 0, effects: {}, exhaustionMilestones: [] };
   try {
-    const parsed = typeof value === "string" ? JSON.parse(value) : value;
+    let candidate = value;
+    if (typeof candidate === "string") {
+      candidate = candidate
+        .replace(/<[^>]*>/g, "")
+        .replaceAll("&quot;", '"')
+        .replaceAll("&#34;", '"')
+        .replaceAll("&amp;", "&")
+        .replaceAll("&nbsp;", " ")
+        .trim();
+      const firstBrace = candidate.indexOf("{");
+      const lastBrace = candidate.lastIndexOf("}");
+      if (firstBrace >= 0 && lastBrace > firstBrace) candidate = candidate.slice(firstBrace, lastBrace + 1);
+    }
+    let parsed = typeof candidate === "string" ? JSON.parse(candidate) : candidate;
+    if (typeof parsed === "string") parsed = JSON.parse(parsed);
     return {
       version: 2,
       active: normalizeStatusKeys(parsed?.active),

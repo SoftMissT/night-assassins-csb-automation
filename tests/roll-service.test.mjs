@@ -51,6 +51,16 @@ describe("roll-service", () => {
     assert.match(_formula, /^2d20kl1 \+ 4$/);
   });
 
+  it("aplica Vantagem persistida pelo CSB até a fórmula final", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    const actor = makeActor({ props: {
+      for_display: "4",
+      status_slayer_dados: '<span>{&quot;version&quot;:2,&quot;active&quot;:[&quot;vantagem&quot;],&quot;exhaustion&quot;:0}</span>',
+    } });
+    await rollTest({ actor, test: "Atletismo", attr: "FOR" });
+    assert.match(_formula, /^2d20kh1 \+ 4$/);
+  });
+
   it("avisa quando actor não é encontrado", async () => {
     let warned = false;
     ui.notifications.warn = () => { warned = true; };

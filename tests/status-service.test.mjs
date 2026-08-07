@@ -25,6 +25,7 @@ test("normaliza status, estado persistido e Exaustão", () => {
   assert.deepEqual(parseStatusState('{"active":["confuso"],"exhaustion":3}'), {
     version: 2, active: ["confuso"], exhaustion: 3, effects: {}, exhaustionMilestones: [],
   });
+  assert.deepEqual(parseStatusState('<span>{&quot;active&quot;:[&quot;vantagem&quot;],&quot;exhaustion&quot;:0}</span>').active, ["vantagem"]);
   assert.equal(formatStatusSummary(["confuso"], 3), "Exaustão 3 · Confuso");
 });
 

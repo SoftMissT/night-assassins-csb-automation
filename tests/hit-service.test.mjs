@@ -60,4 +60,25 @@ describe("hit-service", () => {
     await rollHit({ actor });
     assert.match(_formula, /^2d20kl1 \+ 5 - 5$/);
   });
+
+  it("faz várias rolagens de Acerto sem consumir ações adicionais", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 6 };
+    let messages = 0;
+    _rollResult = { total: 14, toMessage: async ({ flavor }) => {
+      messages += 1;
+      assert.match(flavor, new RegExp(`Acerto ${messages}/6`));
+    } };
+    const actor = makeActor({ props: {
+      nome_slayer: "Slayer",
+      pdv_slayer_total_valor: 20,
+      acerto_label: "acerto_label_dex",
+      dex_display: "5",
+      acoes_slayer_dados: JSON.stringify({ version: 1, turn: { movimento: 0, ataque: 1, especial: 0 }, round: { unica: 0, reacao: 0 } }),
+    } });
+    let actorUpdates = 0;
+    actor.update = async () => { actorUpdates += 1; };
+    await rollHit({ actor });
+    assert.equal(messages, 6);
+    assert.equal(actorUpdates, 0);
+  });
 });

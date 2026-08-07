@@ -7,7 +7,7 @@ import { registerSettings, SETTINGS } from "../scripts/settings.mjs";
 describe("module distribution", () => {
   it("declara o Compendium de macros no manifesto", async () => {
     const manifest = JSON.parse(await readFile(new URL("../module.json", import.meta.url), "utf8"));
-    assert.equal(manifest.version, "0.5.0");
+    assert.equal(manifest.version, "0.5.1");
     assert.equal(manifest.socket, true);
     assert.deepEqual(manifest.packs.map(({ name, label, type }) => ({ name, label, type })), [
       { name: "night-assassins-macros", label: "Macros Night Assassins", type: "Macro" },
@@ -47,6 +47,9 @@ describe("module distribution", () => {
       const command = await readFile(new URL(`../macros/${file}`, import.meta.url), "utf8");
       assert.ok(command.length > 100, `${file} deve conter o código da macro`);
     }
+    const hitMacro = await readFile(new URL("../macros/na-acerto-roll.js", import.meta.url), "utf8");
+    assert.match(hitMacro, /moduleApi\.rollHit/);
+    assert.doesNotMatch(hitMacro, /new Dialog\(|ApplicationV1/);
   });
 });
 

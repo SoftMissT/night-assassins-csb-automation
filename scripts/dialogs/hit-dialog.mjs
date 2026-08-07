@@ -15,7 +15,7 @@ function parseBonus(raw) {
  * @param {string} options.attrName
  * @param {number} options.attrVal
  * @param {string} options.color
- * @returns {Promise<{mode:string,rollMode:string,bonusRaw:string,cdVal:number}|null>}
+ * @returns {Promise<{mode:string,rollMode:string,bonusRaw:string,cdVal:number,rollCount:number}|null>}
  */
 export async function openHitDialog({ attrName, attrVal, color }) {
   const content = `
@@ -31,6 +31,11 @@ export async function openHitDialog({ attrName, attrVal, color }) {
       <div style="margin-bottom:12px;">
         <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">CD do Teste (opcional)</label>
         <input type="number" id="na-ac-cd" min="0" placeholder="ex: 15" style="width:100%;padding:4px;box-sizing:border-box;" />
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Quantidade de rolagens de Acerto</label>
+        <input type="number" id="na-ac-count" min="1" max="20" step="1" value="1" style="width:100%;padding:4px;box-sizing:border-box;" />
+        <small>Todos os Acertos pertencem à mesma ação ou técnica.</small>
       </div>
       <div style="margin-bottom:6px;">
         <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Modo de Rolagem</label>
@@ -60,6 +65,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             rollMode: form.elements["na-ac-rollmode"].value ?? "publicroll",
             bonusRaw: form.elements["na-ac-bonus"].value ?? "",
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
+            rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
           };
         },
       },
@@ -73,6 +79,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             rollMode: form.elements["na-ac-rollmode"].value ?? "publicroll",
             bonusRaw: form.elements["na-ac-bonus"].value ?? "",
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
+            rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
           };
         },
       },
@@ -86,6 +93,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             rollMode: form.elements["na-ac-rollmode"].value ?? "publicroll",
             bonusRaw: form.elements["na-ac-bonus"].value ?? "",
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
+            rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
           };
         },
       },

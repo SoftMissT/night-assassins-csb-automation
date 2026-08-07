@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.1] - 2026-08-07
+
+### Corrigido
+
+- O modal de Acerto agora aceita entre 1 e 20 rolagens independentes para técnicas com múltiplos ataques dentro da mesma ação.
+- Cada resultado é publicado separadamente como `Acerto 1/N`, sem consumir ações adicionais.
+- A macro canônica de Acerto deixou de carregar a implementação antiga em `Dialog` V1 e agora chama o serviço `rollHit` em DialogV2 do módulo.
+
+### Regra preservada
+
+- Quantidade de Acertos não é quantidade de Ações. Uma técnica pode realizar múltiplos Acertos consumindo uma única Ação de Ataque, Especial, Única ou Completa.
+
 ## [0.5.0] - 2026-08-07
 
 ### Adicionado

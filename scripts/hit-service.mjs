@@ -32,14 +32,14 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
   return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
 
-async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, statusEffects }) {
+async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, statusEffects }) {
   mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
   const formula = buildFormula(mode, attrVal, extra, statusEffects.modifier);
 
-  let roll;
+  let rolls;
   try {
-    roll = await Roll.create(formula).evaluate();
+    rolls = await Promise.all(Array.from({ length: Math.min(20, Math.max(1, Math.trunc(rollCount || 1))) }, () => Roll.create(formula).evaluate()));
   } catch (err) {
     ui.notifications?.error?.(`Erro na fórmula: ${formula}`);
     return;
@@ -49,17 +49,20 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   const bonusLine = display ? ` | Bônus: ${display}` : "";
   const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
 
-  let cdLine = "";
-  if (cdVal > 0) {
-    const passou = roll.total >= cdVal;
-    cdLine = ` | CD ${cdVal} → ${passou ? "✅ Sucesso!" : "❌ Falha!"}`;
-  }
-
-  await roll.toMessage({
-    flavor: `<strong>Acerto</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${statusLine}${cdLine}`,
-    speaker: ChatMessage.getSpeaker({ actor }),
-    rollMode: rollMode,
-  });
+  await Promise.all(rolls.map((roll, index) => {
+    let cdLine = "";
+    if (cdVal > 0) {
+      const passou = roll.total >= cdVal;
+      cdLine = ` | CD ${cdVal} → ${passou ? "✅ Sucesso!" : "❌ Falha!"}`;
+    }
+    const countLine = rolls.length > 1 ? ` ${index + 1}/${rolls.length}` : "";
+    return roll.toMessage({
+      flavor: `<strong>Acerto${countLine}</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${statusLine}${cdLine}`,
+      speaker: ChatMessage.getSpeaker({ actor }),
+      rollMode,
+    });
+  }));
+  return rolls;
 }
 
 async function resolveActor(options) {
@@ -124,6 +127,7 @@ export async function rollHit(options) {
     rollMode: dialogResult.rollMode,
     bonusRaw: dialogResult.bonusRaw,
     cdVal: dialogResult.cdVal,
+    rollCount: dialogResult.rollCount,
     statusEffects,
   });
 }

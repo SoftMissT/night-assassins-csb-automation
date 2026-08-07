@@ -19,33 +19,36 @@ function parseBonus(raw) {
  */
 export async function openHitDialog({ attrName, attrVal, color }) {
   const content = `
-    <div class="na-csb-automation">
-      <div style="margin-bottom:12px;">
-        <div style="font-size:13px;color:${color};margin-bottom:4px;font-weight:600;">${attrName} = ${attrVal}</div>
-        <div id="na-ac-formula" style="font-family:monospace;font-size:14px;background:#f5f5f5;padding:6px 8px;border-radius:3px;border:1px solid #ddd;">1d20 + ${attrVal}</div>
+    <div class="na-csb-automation na-hit-setup">
+      <header class="na-hit-hero" style="--na-hit-color:${color}">
+        <span class="na-hit-kicker">SEQUÊNCIA DE ATAQUE</span>
+        <strong>${attrName} <b>${attrVal}</b></strong>
+        <code>1d20 + ${attrVal}</code>
+      </header>
+      <div class="na-hit-grid">
+        <label class="na-hit-field">
+          <span>Bônus situacional</span>
+          <input type="text" id="na-ac-bonus" placeholder="1d4, +2 ou 5" />
+        </label>
+        <label class="na-hit-field">
+          <span>CD opcional</span>
+          <input type="number" id="na-ac-cd" min="0" placeholder="15" />
+        </label>
       </div>
-      <div style="margin-bottom:12px;">
-        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Bônus Situacional?</label>
-        <input type="text" id="na-ac-bonus" placeholder="ex: 1d4, +2, 5" style="width:100%;padding:4px;box-sizing:border-box;" />
-      </div>
-      <div style="margin-bottom:12px;">
-        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">CD do Teste (opcional)</label>
-        <input type="number" id="na-ac-cd" min="0" placeholder="ex: 15" style="width:100%;padding:4px;box-sizing:border-box;" />
-      </div>
-      <div style="margin-bottom:12px;">
-        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Quantidade de rolagens de Acerto</label>
-        <input type="number" id="na-ac-count" min="1" max="20" step="1" value="1" style="width:100%;padding:4px;box-sizing:border-box;" />
-        <small>Todos os Acertos pertencem à mesma ação ou técnica.</small>
-      </div>
-      <div style="margin-bottom:6px;">
-        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Modo de Rolagem</label>
-        <select id="na-ac-rollmode" style="width:100%;padding:4px;box-sizing:border-box;">
+      <label class="na-hit-field na-hit-count">
+        <span>Máximo de tentativas</span>
+        <input type="number" id="na-ac-count" min="1" max="20" step="1" value="1" />
+        <small>Uma rolagem por vez. Depois de cada resultado você confirma o acerto ou encerra a sequência.</small>
+      </label>
+      <label class="na-hit-field">
+        <span>Visibilidade da rolagem</span>
+        <select id="na-ac-rollmode">
           <option value="publicroll">Rolar Público</option>
           <option value="gmroll">Rolar Privado (GM)</option>
           <option value="blindroll">Rolar Cego (GM)</option>
           <option value="selfroll">Rolar Para Si</option>
         </select>
-      </div>
+      </label>
     </div>
   `;
 
@@ -102,4 +105,32 @@ export async function openHitDialog({ attrName, attrVal, color }) {
   });
 
   return result ?? null;
+}
+
+/**
+ * Confirma o resultado de uma tentativa antes de liberar a próxima.
+ * @returns {Promise<{hit:boolean,continue:boolean}|null>}
+ */
+export async function openHitConfirmationDialog({ current, maximum, total, cdVal = 0 }) {
+  const isLast = current >= maximum;
+  const cdResult = cdVal > 0 ? `<span class="na-hit-cd ${total >= cdVal ? "is-success" : "is-failure"}">CD ${cdVal}: ${total >= cdVal ? "superada" : "não superada"}</span>` : "";
+  const content = `<div class="na-csb-automation na-hit-confirm">
+    <span class="na-hit-kicker">TENTATIVA ${current} DE ${maximum}</span>
+    <div class="na-hit-total"><small>RESULTADO</small><strong>${total}</strong></div>
+    ${cdResult}
+    <p>${isLast ? "Última tentativa. Confirme o resultado." : "Este ataque acertou? Você pode continuar ou encerrar a técnica agora."}</p>
+    ${isLast ? "" : `<label class="na-hit-stop"><input type="checkbox" name="na-hit-stop"><span>Encerrar a sequência depois deste resultado</span></label>`}
+  </div>`;
+  const decision = await foundry.applications.api.DialogV2.wait({
+    window: { title: `Confirmar Acerto ${current}/${maximum}` },
+    content,
+    position: { width: 430 },
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      { action: "hit", label: "Acertou", default: true, callback: (event, button) => ({ hit: true, continue: !isLast && !button.form.elements["na-hit-stop"]?.checked }) },
+      { action: "miss", label: "Errou", callback: (event, button) => ({ hit: false, continue: !isLast && !button.form.elements["na-hit-stop"]?.checked }) },
+    ],
+  });
+  return decision ?? null;
 }

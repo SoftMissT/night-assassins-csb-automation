@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.4] - 2026-08-07
+
+### Acerto sequencial
+
+- A quantidade informada agora representa o máximo de tentativas da técnica, não um lote de dados simultâneo.
+- Cada Acerto é rolado e publicado individualmente; a tentativa seguinte só ocorre depois de o jogador confirmar `Acertou` ou `Errou`.
+- O jogador pode marcar `Encerrar a sequência depois deste resultado` para parar antes do limite sem perder a classificação da tentativa atual.
+- Ao final, o chat informa tentativas realizadas, acertos, erros e interrupção antecipada.
+- O fluxo aguarda a animação do Dice So Nice quando a API correspondente está disponível.
+
+### Interface
+
+- O diálogo de Acerto foi reorganizado com leitura mais clara do atributo, fórmula, limite de tentativas, CD, bônus e visibilidade.
+- A confirmação de cada tentativa usa um modal compacto com resultado destacado e somente duas decisões principais.
+
 ## [0.5.3] - 2026-08-07
 
 ### Corrigido

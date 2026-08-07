@@ -3,7 +3,7 @@
  */
 
 import { parseAttributeValue } from "./parsing.mjs";
-import { openHitDialog } from "./dialogs/hit-dialog.mjs";
+import { openHitConfirmationDialog, openHitDialog } from "./dialogs/hit-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 
 function getDice(mode) {
@@ -37,32 +37,52 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   const { extra, display } = parseBonus(bonusRaw);
   const formula = buildFormula(mode, attrVal, extra, statusEffects.modifier);
 
-  let rolls;
-  try {
-    rolls = await Promise.all(Array.from({ length: Math.min(20, Math.max(1, Math.trunc(rollCount || 1))) }, () => Roll.create(formula).evaluate()));
-  } catch (err) {
-    ui.notifications?.error?.(`Erro na fórmula: ${formula}`);
-    return;
-  }
-
+  const maximum = Math.min(20, Math.max(1, Math.trunc(rollCount || 1)));
   const modeLabel = getModeLabel(mode);
   const bonusLine = display ? ` | Bônus: ${display}` : "";
   const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
+  const attempts = [];
+  let interrupted = false;
 
-  await Promise.all(rolls.map((roll, index) => {
+  for (let index = 0; index < maximum; index += 1) {
+    let roll;
+    try {
+      roll = await Roll.create(formula).evaluate();
+    } catch (err) {
+      ui.notifications?.error?.(`Erro na fórmula: ${formula}`);
+      return;
+    }
     let cdLine = "";
     if (cdVal > 0) {
       const passou = roll.total >= cdVal;
       cdLine = ` | CD ${cdVal} → ${passou ? "✅ Sucesso!" : "❌ Falha!"}`;
     }
-    const countLine = rolls.length > 1 ? ` ${index + 1}/${rolls.length}` : "";
-    return roll.toMessage({
+    const countLine = maximum > 1 ? ` ${index + 1}/${maximum}` : "";
+    const message = await roll.toMessage({
       flavor: `<strong>Acerto${countLine}</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker({ actor }),
       rollMode,
     });
-  }));
-  return rolls;
+    await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+    const decision = await openHitConfirmationDialog({ current: index + 1, maximum, total: roll.total, cdVal });
+    if (!decision) {
+      interrupted = true;
+      break;
+    }
+    attempts.push({ roll, hit: decision.hit });
+    if (!decision.continue && index + 1 < maximum) {
+      interrupted = true;
+      break;
+    }
+  }
+
+  const hits = attempts.filter(({ hit }) => hit).length;
+  const misses = attempts.length - hits;
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content: `<div class="na-hit-summary"><strong>Sequência de Acerto</strong><span>${attempts.length}/${maximum} tentativas</span><span>✅ ${hits} acerto(s)</span><span>❌ ${misses} erro(s)</span>${interrupted ? "<em>Sequência encerrada antes do limite.</em>" : ""}</div>`,
+  });
+  return { attempts, hits, misses, interrupted, maximum };
 }
 
 async function resolveActor(options) {

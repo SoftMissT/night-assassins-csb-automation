@@ -6,7 +6,8 @@ import assert from "node:assert";
 import { makeActor } from "./fixtures/actor.mjs";
 
 let _dialogReturn = null;
-foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+foundry.applications.api.DialogV2.wait = async () => Array.isArray(_dialogReturn) ? _dialogReturn.shift() : _dialogReturn;
+ChatMessage.create = async (data) => data;
 
 let _rollResult = { total: 12, toMessage: async () => {}, dice: [{ results: [{ result: 1, active: true }] }] };
 let _formula = "";
@@ -61,12 +62,17 @@ describe("hit-service", () => {
     assert.match(_formula, /^2d20kl1 \+ 5 - 5$/);
   });
 
-  it("faz várias rolagens de Acerto sem consumir ações adicionais", async () => {
-    _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 6 };
+  it("rola um Acerto por vez e confirma antes do próximo", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 3 },
+      { hit: true, continue: true },
+      { hit: false, continue: true },
+      { hit: true, continue: false },
+    ];
     let messages = 0;
     _rollResult = { total: 14, toMessage: async ({ flavor }) => {
       messages += 1;
-      assert.match(flavor, new RegExp(`Acerto ${messages}/6`));
+      assert.match(flavor, new RegExp(`Acerto ${messages}/3`));
     } };
     const actor = makeActor({ props: {
       nome_slayer: "Slayer",
@@ -78,7 +84,20 @@ describe("hit-service", () => {
     let actorUpdates = 0;
     actor.update = async () => { actorUpdates += 1; };
     await rollHit({ actor });
-    assert.equal(messages, 6);
+    assert.equal(messages, 3);
     assert.equal(actorUpdates, 0);
+  });
+
+  it("permite encerrar a sequência antes do limite", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 5 },
+      { hit: true, continue: true },
+      { hit: false, continue: false },
+    ];
+    let messages = 0;
+    _rollResult = { total: 11, toMessage: async () => { messages += 1; } };
+    const actor = makeActor({ props: { acerto_label: "acerto_label_for", for_display: "4" } });
+    await rollHit({ actor });
+    assert.equal(messages, 2);
   });
 });

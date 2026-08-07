@@ -942,3 +942,51 @@
   .na-gm-mini-row > img { width: 30px; height: 30px; }
   .na-gm-mini-resources { grid-column: 1 / -1; }
 }
+.na-hit-setup,
+.na-hit-confirm {
+  --na-ink: #f3ead8;
+  --na-muted: #a99e8b;
+  display: grid;
+  gap: 14px;
+  color: var(--na-ink);
+  font-family: "Orbitron", "Trebuchet MS", sans-serif;
+}
+
+.na-hit-hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 5px 16px;
+  padding: 15px 17px;
+  border: 1px solid color-mix(in srgb, var(--na-hit-color) 60%, #3d3329);
+  border-left: 4px solid var(--na-hit-color);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--na-hit-color) 12%, #100e0c), #100e0c 62%);
+}
+
+.na-hit-kicker { color: #c7b991; font-size: 10px; letter-spacing: .18em; }
+.na-hit-hero strong { color: var(--na-hit-color); font-size: 18px; letter-spacing: .08em; }
+.na-hit-hero strong b { color: #fff; font-size: 24px; }
+.na-hit-hero code { grid-row: 1 / 3; grid-column: 2; color: #fff; font-size: 15px; }
+.na-hit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.na-hit-field { display: grid; gap: 5px; }
+.na-hit-field > span { color: #d7cab2; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.na-hit-field input,
+.na-hit-field select { width: 100%; min-height: 36px; box-sizing: border-box; }
+.na-hit-count { padding: 11px; border: 1px solid #514536; background: #17130f; }
+.na-hit-count small { color: var(--na-muted); font-family: "Trebuchet MS", sans-serif; line-height: 1.35; }
+.na-hit-total { display: flex; align-items: baseline; justify-content: space-between; padding: 16px; border-left: 4px solid #f4c542; background: #17130f; }
+.na-hit-total small { color: var(--na-muted); letter-spacing: .16em; }
+.na-hit-total strong { color: #f4c542; font-size: 34px; }
+.na-hit-cd { padding: 7px 10px; text-align: center; border: 1px solid #5e554a; }
+.na-hit-cd.is-success { color: #8cff4d; border-color: #5d8f36; }
+.na-hit-cd.is-failure { color: #ff5a5a; border-color: #8f3636; }
+.na-hit-confirm p { margin: 0; color: #cbbfaa; font-family: "Trebuchet MS", sans-serif; }
+.na-hit-stop { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border: 1px solid #514536; background: #17130f; color: #d7cab2; font: 12px "Trebuchet MS", sans-serif; }
+.na-hit-stop input { margin: 0; }
+.na-hit-summary { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px 14px; align-items: center; }
+.na-hit-summary em { grid-column: 1 / -1; color: #d7ad5b; font-size: 11px; }
+
+@media (max-width: 520px) {
+  .na-hit-grid { grid-template-columns: 1fr; }
+  .na-hit-summary { grid-template-columns: 1fr 1fr; }
+}

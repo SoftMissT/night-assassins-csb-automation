@@ -9,6 +9,8 @@
 
 Depois de ativar o módulo, abra `Compêndios` → `Macros Night Assassins` e arraste as macros desejadas para a hotbar ou importe-as para o mundo.
 
+Ao entrar no mundo como GM, o módulo também cria automaticamente no Diretório de Macros a pasta **Night Assassins** com as seis macros. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
+
 As configurações ficam em `Configurações do Jogo` → `Night Assassins — CSB Automation`.
 
 Módulo Foundry VTT v14 para Custom System Builder 5.2.1 que automatiza atributos, progressão e Habilidades Especiais do sistema Night Assassins.

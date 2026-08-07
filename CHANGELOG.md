@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1] - 2026-08-06
+
+- Corrigida a expectativa de instalação: o GM agora importa automaticamente as seis macros canônicas do Compendium para uma pasta mundial **Night Assassins**.
+- A macro **Controle GM** é criada com acesso exclusivo do GM.
+- As cinco macros de jogador são criadas como observáveis e executáveis pelos jogadores.
+- A sincronização cria somente macros ausentes e não duplica documentos existentes.
+
 ## [0.2.0] - 2026-08-06
 
 - Adicionada confirmação manual de crítico à macro de dano; o total final é dobrado antes da resistência.

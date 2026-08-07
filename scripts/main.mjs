@@ -13,6 +13,7 @@ import { applyOniDamage, registerDamageRelay } from "./damage-relay.mjs";
 import { parseNumber, currentConfigValues, latestValues, changedProp, isDestinyMark, normalizeAbilityKey } from "./parsing.mjs";
 import { registerSettings, SETTINGS } from "./settings.mjs";
 import { openGmDashboard } from "./gm-dashboard.mjs";
+import { syncCanonicalMacros } from "./macro-sync.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -32,6 +33,14 @@ Hooks.once("ready", () => {
     registerDamageRelay();
   }
 
+  if (game.user.isGM) {
+    void syncCanonicalMacros()
+      .then(({ created }) => {
+        if (created > 0) ui.notifications.info(`${created} macros Night Assassins adicionadas ao mundo.`);
+      })
+      .catch((error) => ui.notifications.error(`Falha ao carregar macros Night Assassins: ${error.message}`));
+  }
+
   const module = game.modules.get(MODULE_ID);
   if (module) {
     module.api = {
@@ -40,6 +49,7 @@ Hooks.once("ready", () => {
       rollDamage,
       applyOniDamage,
       openGmDashboard,
+      syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,
       processAbility: applyInitialMark,

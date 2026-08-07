@@ -1,0 +1,204 @@
+/**
+ * @fileoverview Economia de ações do Slayer, persistência e gerenciador DialogV2.
+ */
+
+import { MODULE_ID, TIPOS_ACAO } from "./constants.mjs";
+import { parseNumber } from "./parsing.mjs";
+import { getDamageStatusEffects, getStatusCapabilities } from "./status-effects.mjs";
+
+const TURN_KEYS = Object.freeze(["movimento", "ataque", "especial"]);
+const ROUND_KEYS = Object.freeze(["unica", "reacao"]);
+const ACTION_FLAG = "lastActionReset";
+
+function isSlayerActor(actor) {
+  const props = actor?.system?.props ?? {};
+  return props.nome_slayer !== undefined || props.pdv_slayer_total_valor !== undefined;
+}
+
+function emptyUses(keys) {
+  return Object.fromEntries(keys.map((key) => [key, 0]));
+}
+
+export function defaultActionState() {
+  return { version: 1, turn: emptyUses(TURN_KEYS), round: emptyUses(ROUND_KEYS) };
+}
+
+export function parseActionState(value) {
+  if (!value) return defaultActionState();
+  let raw = value;
+  if (typeof raw === "string") {
+    const decoded = raw.replace(/<[^>]*>/g, "").replaceAll("&quot;", '"').replaceAll("&#34;", '"').replaceAll("&amp;", "&").trim();
+    try { raw = JSON.parse(decoded.slice(decoded.indexOf("{"), decoded.lastIndexOf("}") + 1)); }
+    catch (_) { return defaultActionState(); }
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return defaultActionState();
+  const state = defaultActionState();
+  for (const key of TURN_KEYS) state.turn[key] = Math.max(0, Math.trunc(Number(raw.turn?.[key]) || 0));
+  for (const key of ROUND_KEYS) state.round[key] = Math.max(0, Math.trunc(Number(raw.round?.[key]) || 0));
+  return state;
+}
+
+export function actionMaximums(props = {}) {
+  const withBonus = (key) => Math.max(0, 1 + Math.trunc(parseNumber(props[`acoes_slayer_${key}_bonus`])));
+  return {
+    movimento: withBonus("movimento"),
+    ataque: withBonus("ataque"),
+    especial: withBonus("especial"),
+    unica: 1,
+    reacao: withBonus("reacao"),
+  };
+}
+
+export function slayerMovementMeters(props = {}) {
+  const capabilities = getStatusCapabilities(props);
+  if (!capabilities.movementAllowed) return 0;
+  const dex = parseNumber(props.dex_display);
+  return Math.max(0, (7 + dex) * capabilities.movementMultiplier - capabilities.movementPenaltyMeters);
+}
+
+export function actionSummary(state, props = {}) {
+  const maximums = actionMaximums(props);
+  return [...TURN_KEYS, ...ROUND_KEYS]
+    .map((key) => `${key.toUpperCase()} ${Math.max(0, maximums[key] - state[key === "unica" || key === "reacao" ? "round" : "turn"][key])}/${maximums[key]}`)
+    .join(" · ");
+}
+
+function actionPatch(state, props = {}) {
+  return {
+    "system.props.acoes_slayer_dados": JSON.stringify(state),
+    "system.props.acoes_slayer_resumo": actionSummary(state, props),
+  };
+}
+
+function requiredCounters(types) {
+  const required = { turn: emptyUses(TURN_KEYS), round: emptyUses(ROUND_KEYS) };
+  for (const key of new Set(types.filter(Boolean))) {
+    if (key === "completa") {
+      required.turn.movimento += 1;
+      required.turn.ataque += 1;
+    } else if (TURN_KEYS.includes(key)) required.turn[key] += 1;
+    else if (ROUND_KEYS.includes(key)) required.round[key] += 1;
+  }
+  return required;
+}
+
+function blockedReason(props, types) {
+  const unique = new Set(types);
+  const capabilities = getStatusCapabilities(props);
+  if (unique.has("movimento") || unique.has("completa")) {
+    if (!capabilities.movementAllowed) return "Os status atuais impedem Ação de Movimento.";
+  }
+  if (unique.has("reacao") && !capabilities.reactionsAllowed) return "Os status atuais impedem Reações.";
+  const mechanical = [...unique].some((key) => ["ataque", "especial", "unica", "completa"].includes(key));
+  if (mechanical && getDamageStatusEffects(props).blocked) return "Este personagem está incapacitado e não pode usar esta ação.";
+  return null;
+}
+
+export async function consumeSlayerActions(actor, types, { update = true } = {}) {
+  if (!actor?.update) throw new Error("Slayer inválido para consumir ações.");
+  if (!isSlayerActor(actor)) return { ok: true, state: defaultActionState(), patch: {}, skipped: "not-slayer" };
+  const normalized = [...new Set((Array.isArray(types) ? types : [types]).filter(Boolean))];
+  if (normalized.length === 0) return { ok: true, state: parseActionState(actor.system?.props?.acoes_slayer_dados), patch: {} };
+  if (normalized.includes("epica")) return { ok: false, reason: "A Ação Épica exige o fluxo próprio do Mestre." };
+  const props = actor.system?.props ?? {};
+  const blocked = blockedReason(props, normalized);
+  if (blocked) return { ok: false, reason: blocked };
+  const state = parseActionState(props.acoes_slayer_dados);
+  const maximums = actionMaximums(props);
+  const required = requiredCounters(normalized);
+  for (const key of TURN_KEYS) {
+    if (state.turn[key] + required.turn[key] > maximums[key]) return { ok: false, reason: `${TIPOS_ACAO.find((entry) => entry.key === key)?.label ?? key} indisponível.` };
+  }
+  for (const key of ROUND_KEYS) {
+    if (state.round[key] + required.round[key] > maximums[key]) return { ok: false, reason: `${TIPOS_ACAO.find((entry) => entry.key === key)?.label ?? key} indisponível.` };
+  }
+  for (const key of TURN_KEYS) state.turn[key] += required.turn[key];
+  for (const key of ROUND_KEYS) state.round[key] += required.round[key];
+  const patch = actionPatch(state, props);
+  if (update) await actor.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+  return { ok: true, state, patch, summary: actionSummary(state, props) };
+}
+
+export async function resetSlayerActions(actor, scope = "all") {
+  if (!actor?.update) return null;
+  const props = actor.system?.props ?? {};
+  const state = parseActionState(props.acoes_slayer_dados);
+  if (scope === "turn" || scope === "all") state.turn = emptyUses(TURN_KEYS);
+  if (scope === "round" || scope === "all") state.round = emptyUses(ROUND_KEYS);
+  await actor.update(actionPatch(state, props), { naCsbAutomation: true, naActionEconomy: true });
+  return state;
+}
+
+function primaryActiveGm() {
+  return game.users?.filter((user) => user.active && user.isGM).sort((a, b) => String(a.id).localeCompare(String(b.id)))[0] ?? null;
+}
+
+function isPrimaryGm() {
+  return game.user?.isGM && primaryActiveGm()?.id === game.user.id;
+}
+
+export function registerActionEngine() {
+  Hooks.on("combatStart", (combat) => void resetCombatActions(combat, true));
+  Hooks.on("updateCombat", (combat, changes) => {
+    if (!isPrimaryGm()) return;
+    if (Object.hasOwn(changes, "round")) void resetCombatActions(combat, true);
+    else if (Object.hasOwn(changes, "turn")) void resetCombatActions(combat, false);
+  });
+}
+
+async function resetCombatActions(combat, resetRound) {
+  if (!isPrimaryGm() || !combat?.started) return;
+  const actor = combat.combatant?.actor;
+  const key = `${combat.id}:${combat.round}:${combat.turn}:${actor?.id ?? "none"}:${resetRound}`;
+  if (combat.getFlag?.(MODULE_ID, ACTION_FLAG) === key) return;
+  await combat.setFlag?.(MODULE_ID, ACTION_FLAG, key);
+  const jobs = [];
+  if (resetRound) {
+    for (const combatant of combat.combatants ?? []) if (isSlayerActor(combatant.actor)) jobs.push(resetSlayerActions(combatant.actor, "round"));
+  }
+  if (isSlayerActor(actor)) jobs.push(resetSlayerActions(actor, "turn"));
+  await Promise.allSettled(jobs);
+}
+
+async function resolveActor(options = {}) {
+  if (options.actor?.system?.props) return options.actor;
+  if (options.actorUuid) {
+    const document = await fromUuid(options.actorUuid);
+    if (document?.actor?.system?.props) return document.actor;
+    if (document?.system?.props) return document;
+  }
+  return canvas.tokens.controlled[0]?.actor ?? game.user?.character ?? null;
+}
+
+export async function openActionManager(options = {}) {
+  const actor = await resolveActor(options);
+  if (!actor) return ui.notifications.warn("Não há personagem ativo.");
+  if (!actor.isOwner) return ui.notifications.error("Você não pode alterar este personagem.");
+  const props = actor.system?.props ?? {};
+  if (!isSlayerActor(actor)) return ui.notifications.warn("Este gerenciador pertence à ficha Slayer.");
+  const state = parseActionState(props.acoes_slayer_dados);
+  const maximums = actionMaximums(props);
+  const keys = [...TURN_KEYS, ...ROUND_KEYS];
+  const rows = keys.map((key) => {
+    const used = state[ROUND_KEYS.includes(key) ? "round" : "turn"][key];
+    const remaining = Math.max(0, maximums[key] - used);
+    const meta = TIPOS_ACAO.find((entry) => entry.key === key);
+    return `<div class="na-action-row"><strong>${meta?.label ?? key}</strong><span>${remaining} / ${maximums[key]}</span></div>`;
+  }).join("");
+  const optionsHtml = keys.map((key) => `<option value="${key}">${TIPOS_ACAO.find((entry) => entry.key === key)?.label ?? key}</option>`).join("");
+  const result = await foundry.applications.api.DialogV2.wait({
+    window: { title: `Ações — ${actor.name}` },
+    content: `<div class="na-action-manager"><p><strong>Deslocamento disponível:</strong> ${slayerMovementMeters(props)}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque. Defesa e Ação Livre não gastam contador.</p></div>`,
+    buttons: [
+      { action: "use", label: "Usar ação", callback: (_event, _button, dialog) => `use:${dialog.element.querySelector('[name="na-action-use"]')?.value ?? ""}` },
+      { action: "reset-turn", label: "Restaurar turno", callback: () => "turn" },
+      { action: "reset-round", label: "Restaurar rodada", callback: () => "round" },
+      { action: "close", label: "Fechar", default: true, callback: () => null },
+    ],
+  });
+  if (result?.startsWith?.("use:")) {
+    const consumed = await consumeSlayerActions(actor, result.slice(4));
+    if (!consumed.ok) ui.notifications.warn(consumed.reason);
+  } else if (result) await resetSlayerActions(actor, result);
+  return result;
+}

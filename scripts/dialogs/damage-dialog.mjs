@@ -28,7 +28,7 @@ function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
 
 function makeAcaoOpts(sel) {
   return `<option value="">— Nenhuma —</option>
-    ${TIPOS_ACAO.map((t) => `<option value="${t.key}" ${sel === t.key ? "selected" : ""}>${t.label}</option>`).join("")}`;
+    ${TIPOS_ACAO.filter((t) => t.damage && t.key !== "epica").map((t) => `<option value="${t.key}" ${sel === t.key ? "selected" : ""}>${t.label}</option>`).join("")}`;
 }
 
 function makeDanoCheckboxes(selTipos, idx) {

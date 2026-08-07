@@ -50,12 +50,15 @@ export const ABILITY_OPTIONS = Object.freeze([
 ]);
 
 export const TIPOS_ACAO = Object.freeze([
-  { key: "ataque", label: "Ação de Ataque", desc: "1 por turno. Ataque Padrão ou técnicas de ataque." },
-  { key: "especial", label: "Ação Especial", desc: "1 por turno. Técnicas de Ação Especial." },
-  { key: "unica", label: "Ação Única", desc: "1 por RODADA. Nenhum efeito pode dar mais de uma." },
-  { key: "completa", label: "Ação Completa", desc: "Consome Movimento + Ataque." },
-  { key: "reacao", label: "Reação", desc: "1 por rodada. Reage a ataques como alvo." },
-  { key: "livre", label: "Ação Livre", desc: "Limitada pelo Mestre. Sem efeito mecânico." },
+  { key: "movimento", label: "Ação de Movimento", scope: "turn", damage: false, desc: "1 por turno. Movimento máximo: 7m + DEX." },
+  { key: "ataque", label: "Ação de Ataque", scope: "turn", damage: true, desc: "1 por turno. Ataque Padrão ou técnicas de ataque." },
+  { key: "especial", label: "Ação Especial", scope: "turn", damage: true, desc: "1 por turno. Técnicas de Ação Especial." },
+  { key: "unica", label: "Ação Única", scope: "round", damage: true, desc: "1 por rodada. Nenhum efeito pode dar mais de uma." },
+  { key: "completa", label: "Ação Completa", scope: "composite", damage: true, desc: "Consome Movimento + Ataque." },
+  { key: "reacao", label: "Reação", scope: "round", damage: true, desc: "1 por rodada. Reage a ataques como alvo." },
+  { key: "defesa", label: "Defesa", scope: "free", damage: false, desc: "Ilimitada quando o personagem é alvo." },
+  { key: "livre", label: "Ação Livre", scope: "free", damage: false, desc: "Limitada pelo Mestre. Sem efeito mecânico." },
+  { key: "epica", label: "Ação Épica", scope: "special", damage: true, desc: "Tudo ou Nada. Exige autorização e resolução própria do Mestre." },
 ]);
 
 export const TIPOS_DANO = Object.freeze([

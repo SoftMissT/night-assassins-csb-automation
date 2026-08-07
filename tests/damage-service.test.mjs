@@ -75,4 +75,21 @@ describe("damage-service", () => {
     assert.strictEqual(updated, true);
     assert.strictEqual(rolled, true);
   });
+
+  it("consome a Ação de Ataque do Slayer junto com o gasto de PDR", async () => {
+    _dialogReturn = { nome: "Golpe", pdrGasto: 2, entradas: [{ dado: "1d6", fixo: 0, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }] };
+    const attacker = makeActor({ id: "slayer", uuid: "Actor.slayer", props: { nome_slayer: "Slayer", pdv_slayer_total_valor: 20 } });
+    const target = makeActor({ id: "oni", uuid: "Actor.oni", props: { nome_oni: "Oni", pdv_oni_dano_tomado: 0 } });
+    attacker.update = async (patch) => {
+      assert.equal(patch["system.props.pdr_slayer_gasto_valor"], 2);
+      const state = JSON.parse(patch["system.props.acoes_slayer_dados"]);
+      assert.equal(state.turn.ataque, 1);
+      attacker.system.props.acoes_slayer_dados = patch["system.props.acoes_slayer_dados"];
+    };
+    target.update = async () => {};
+    game.user.targets = new Set([{ actor: target }]);
+    _rollResult = { total: 5, toMessage: async () => {} };
+    await rollDamage({ actor: attacker });
+    assert.equal(JSON.parse(attacker.system.props.acoes_slayer_dados).turn.ataque, 1);
+  });
 });

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.0] - 2026-08-07
+
+### Adicionado
+
+- Economia de ações do Slayer com Movimento, Ataque e Especial por turno; Única e Reação por rodada; e bônus temporários configuráveis.
+- Ação Completa consome Movimento e Ataque na mesma atualização; Ação Única mantém teto absoluto de uma por rodada.
+- Hooks autoritativos do GM restauram ações no Combat nativo sem depender da interface do Combat Tracker Dock.
+- Macro **Gerenciar Ações** no Compendium, com saldo, deslocamento derivado de `7 + DEX`, consumo manual e restauração.
+- O modal de dano agora consome uma vez cada tipo de ação usado e agrupa o estado da ação com o gasto de PDR na atualização do atacante.
+- Template Slayer e pacote global do CSB incluem botão, resumo e armazenamento oculto da economia de ações.
+
+### Limites conhecidos
+
+- Ação Épica terá um fluxo próprio com autorização do GM, custo de Fôlego, Forma Final, Marca e Colapso; não foi reduzida a um contador comum.
+- Ações Lendária, de Covil e de Vilão pertencem ao futuro motor Oni/chefes.
+- Escalada e outros movimentos que descontam metros conforme decisão do Mestre ainda exigem a futura camada de posicionamento.
+
 ## [0.4.1] - 2026-08-07
 
 ### Corrigido

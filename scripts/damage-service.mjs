@@ -8,6 +8,7 @@ import { openDamageDialog } from "./dialogs/damage-dialog.mjs";
 import { applyOniDamage } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { applySlayerDamage } from "./status-engine.mjs";
+import { consumeSlayerActions } from "./action-service.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
   const parts = [];
@@ -103,6 +104,9 @@ export async function rollDamage(options) {
   if (entradas.some((entry) => entry.tipoAcao === "reacao") && isReactionBlocked(props)) {
     return ui.notifications?.warn?.("Os status atuais impedem o uso de Reações.");
   }
+  const actionTypes = [...new Set(entradas.map((entry) => entry.tipoAcao).filter(Boolean))];
+  const actionResult = await consumeSlayerActions(actor, actionTypes, { update: false });
+  if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
 
   const formulaParts = entradas.map((e) => buildEntryFormula(e.dado, e.fixo, e.selAttrs, attrValues));
   const validParts = formulaParts.filter((p) => p !== "0");
@@ -120,12 +124,15 @@ export async function rollDamage(options) {
   // Agrupar atualizações por Actor
   const updatesByActor = new Map();
 
+  if (Object.keys(actionResult.patch ?? {}).length > 0) {
+    updatesByActor.set(actor.uuid, { actor, changes: { ...actionResult.patch } });
+  }
+
   if (pdrGasto > 0) {
     const pdrAtual = parseNumber(props.pdr_slayer_gasto_valor);
-    updatesByActor.set(actor.uuid, {
-      actor,
-      changes: { "system.props.pdr_slayer_gasto_valor": pdrAtual + pdrGasto },
-    });
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    existing.changes["system.props.pdr_slayer_gasto_valor"] = pdrAtual + pdrGasto;
+    updatesByActor.set(actor.uuid, existing);
   }
 
   const damageRequests = [];

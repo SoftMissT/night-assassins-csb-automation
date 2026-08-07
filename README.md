@@ -13,12 +13,12 @@
 
 ## Conteúdo do módulo
 
-- Compendium `Macros Night Assassins` com oito macros canônicas, incluindo Controle GM, Gerenciar Resistências e Gerenciar Status.
+- Compendium `Macros Night Assassins` com nove macros canônicas, incluindo Controle GM, Gerenciar Resistências, Gerenciar Status e Gerenciar Ações.
 - Automação de atributos e progressão da ficha do Custom System Builder.
 - Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
 - Configurações de mundo para ativar ou desativar a automação e o relay.
 
-Ao entrar no mundo como GM, o módulo cria ou atualiza automaticamente no Diretório de Macros a pasta **Night Assassins** com as oito macros canônicas. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
+Ao entrar no mundo como GM, o módulo cria ou atualiza automaticamente no Diretório de Macros a pasta **Night Assassins** com as nove macros canônicas. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
 
 Também é possível consultar as cópias originais em `Compêndios` → `Macros Night Assassins`.
 
@@ -26,7 +26,7 @@ Também é possível consultar as cópias originais em `Compêndios` → `Macros
 
 O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.3.0 ele inclui **Gerenciar Resistências**, **Gerenciar Status**, Exaustão acumulativa e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
 
-Na v0.3.1, as macros de teste, Acerto e Dano já leem os status salvos e aplicam Fadigas, Cegueira, penalidades de Defesa, impedimento de crítico/Reação e os primeiros níveis mecânicos de Exaustão. Efeitos de início de turno continuam pendentes do motor de combate.
+Na v0.5.0, o motor processa os status persistentes por turno e também controla a economia de ações do Slayer. Movimento, Ataque e Especial restauram por turno; Única e Reação por rodada; a rolagem de dano consome a ação selecionada.
 
 Na v0.4.0, **Gerenciar Status** também configura fórmula, quantidade de turnos, pilhas, salvaguarda e fonte. O GM ativo processa automaticamente dano contínuo, expiração, Confuso, salvaguardas e Exaustão pelo Combat nativo. O módulo continua compatível com Combat Tracker Dock porque não depende da interface do tracker.
 
@@ -108,6 +108,8 @@ Exemplos das outras entradas públicas:
 
 // Gerenciar Status
 %{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAStatusManage01'))?.execute({actorUuid:entity.uuid}); return '';}%
+
+%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAActionManage01'))?.execute({actorUuid:entity.uuid}); return '';}%
 ```
 
 `actorUuid:entity.uuid` é o UUID do Actor que clicou; o UUID em `fromUuid(...)` é o UUID permanente da macro fornecida pelo módulo.

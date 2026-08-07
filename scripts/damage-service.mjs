@@ -7,6 +7,7 @@ import { parseAttributeValue, parseNumber } from "./parsing.mjs";
 import { openDamageDialog } from "./dialogs/damage-dialog.mjs";
 import { applyOniDamage } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
+import { applySlayerDamage } from "./status-engine.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
   const parts = [];
@@ -149,7 +150,13 @@ export async function rollDamage(options) {
     ...pending.map(async (up) => {
       await up.actor.update(up.changes, { naCsbAutomation: true });
     }),
-    ...damageRequests.map(({ actor: targetActor, amount }) => applyOniDamage(targetActor, amount)),
+    ...damageRequests.map(({ actor: targetActor, amount }) => {
+      const targetProps = targetActor.system?.props ?? {};
+      const isSlayerTarget = targetProps.pdv_slayer_total_valor !== undefined || targetProps.nome_slayer !== undefined;
+      return isSlayerTarget
+        ? applySlayerDamage(targetActor, amount, { isAttack: true })
+        : applyOniDamage(targetActor, amount);
+    }),
   ]);
 
   for (const [index, result] of results.entries()) {

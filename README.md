@@ -28,6 +28,8 @@ O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado
 
 Na v0.3.1, as macros de teste, Acerto e Dano já leem os status salvos e aplicam Fadigas, Cegueira, penalidades de Defesa, impedimento de crítico/Reação e os primeiros níveis mecânicos de Exaustão. Efeitos de início de turno continuam pendentes do motor de combate.
 
+Na v0.4.0, **Gerenciar Status** também configura fórmula, quantidade de turnos, pilhas, salvaguarda e fonte. O GM ativo processa automaticamente dano contínuo, expiração, Confuso, salvaguardas e Exaustão pelo Combat nativo. O módulo continua compatível com Combat Tracker Dock porque não depende da interface do tracker.
+
 As configurações ficam em `Configurações do Jogo` → `Night Assassins CSB Automation`.
 
 Módulo Foundry VTT v14 para Custom System Builder que automatiza atributos, progressão e Habilidades Especiais do sistema Night Assassins depois que o template CSB estiver configurado com as keys e chamadas exigidas.

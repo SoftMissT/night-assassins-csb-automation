@@ -16,7 +16,8 @@ import { openGmDashboard } from "./gm-dashboard.mjs";
 import { syncCanonicalMacros } from "./macro-sync.mjs";
 import { openResistanceManager } from "./resistance-service.mjs";
 import { openStatusManager } from "./status-service.mjs";
-import { getRollStatusEffects, getDamageStatusEffects, mergeRollMode, isReactionBlocked } from "./status-effects.mjs";
+import { getRollStatusEffects, getDamageStatusEffects, getStatusCapabilities, mergeRollMode, isReactionBlocked } from "./status-effects.mjs";
+import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcileSlayerExhaustion, registerStatusEngine, resolveSlayerHealing } from "./status-engine.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -27,6 +28,7 @@ Hooks.once("ready", () => {
     console.warn?.(`[${MODULE_ID}] Sistema incompatível: ${game.system.id}. Módulo desativado.`);
     return;
   }
+  registerStatusEngine();
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);
@@ -58,6 +60,12 @@ Hooks.once("ready", () => {
       getDamageStatusEffects,
       mergeRollMode,
       isReactionBlocked,
+      getStatusCapabilities,
+      applySlayerDamage,
+      movementBlocked,
+      processActorStatusTiming,
+      reconcileSlayerExhaustion,
+      resolveSlayerHealing,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

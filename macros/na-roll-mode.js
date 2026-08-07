@@ -36,6 +36,7 @@
     kind: ['Bloqueio', 'Esquiva'].includes(test) ? 'defense' : 'test',
   }) ?? { blocked:false, mode:'normal', modifier:0, reasons:[] };
   if (statusEffects.blocked) return ui.notifications?.warn('Este personagem está incapacitado e não pode realizar a rolagem.');
+  if (statusEffects.autoFail) return ui.notifications?.warn('Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.');
 
   const ATTR_KEYS = ['vit','for','dex','fdv','car','int','sab'];
   const ATTR_NAMES = { vit:'VIT', for:'FOR', dex:'DEX', fdv:'FDV', car:'CAR', int:'INT', sab:'SAB' };

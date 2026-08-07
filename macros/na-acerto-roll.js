@@ -56,6 +56,7 @@
   statusEffects = automationApi?.getRollStatusEffects?.(props, { test:'Acerto', attr:attrName, kind:'attack' })
     ?? { blocked:false, mode:'normal', modifier:0, reasons:[] };
   if (statusEffects.blocked) return ui.notifications?.warn('Este personagem está incapacitado e não pode atacar.');
+  if (statusEffects.autoFail) return ui.notifications?.warn('Paralisia: falha automática neste Acerto.');
 
   // ── Helpers ────────────────────────────────────────────────────────────
   function getDice(mode) {

@@ -25,6 +25,7 @@ function forcedMode(active, disadvantage) {
 
 export function getRollStatusEffects(props = {}, { test = "", attr = "", kind = "test" } = {}) {
   const { active, exhaustion } = statusContext(props);
+  const state = parseStatusState(props.status_slayer_dados);
   const attribute = String(attr).trim().toUpperCase();
   const testName = String(test).trim().toLowerCase();
   const attack = kind === "attack";
@@ -36,9 +37,16 @@ export function getRollStatusEffects(props = {}, { test = "", attr = "", kind = 
   let disadvantage = false;
 
   const blocked = !defense && (active.has("atordoamento") || active.has("suprimido") || active.has("sonhando") || exhaustion >= 7);
+  const autoFail = !defense && active.has("paralisia") && (attribute === "FOR" || attribute === "DEX");
   if (blocked) reasons.push("incapacitado");
+  if (autoFail) reasons.push("Paralisia: falha automática");
 
   if (active.has("fratura") && attribute === "FOR") { modifier -= 2; reasons.push("Fratura −2 FOR"); }
+  if (active.has("corrupcao") && attribute === "FDV") {
+    const stacks = Math.max(1, state.effects?.corrupcao?.stacks || 1);
+    modifier -= stacks;
+    reasons.push(`Corrupção −${stacks} FDV`);
+  }
   if (exhaustion >= 2 && attribute === "DEX") { modifier -= 2; reasons.push("Exaustão 2 −2 DEX"); }
   if (active.has("fadiga_espiritual") && attribute === "FDV" && resistance) { modifier -= 2; reasons.push("Fadiga Espiritual −2 resistência FDV"); }
   if (active.has("fadiga_mental") && (attribute === "SAB" || initiative)) { disadvantage = true; reasons.push("Fadiga Mental: Desvantagem"); }
@@ -70,8 +78,12 @@ export function getRollStatusEffects(props = {}, { test = "", attr = "", kind = 
     modifier += 2;
     reasons.push("Encorajado +2 FDV");
   }
+  if (initiative && active.has("encorajado")) {
+    modifier += 1;
+    reasons.push("Encorajado +1 Iniciativa");
+  }
 
-  return { blocked, mode: forcedMode(active, disadvantage), modifier, reasons, exhaustion };
+  return { blocked, autoFail, mode: forcedMode(active, disadvantage), modifier, reasons, exhaustion };
 }
 
 export function getDamageStatusEffects(props = {}) {
@@ -91,4 +103,25 @@ export function isReactionBlocked(props = {}) {
   const { active, exhaustion } = statusContext(props);
   return exhaustion >= 7 || ["atordoamento", "suprimido", "sonhando", "frenesi", "desorientado", "distraido"]
     .some((key) => active.has(key));
+}
+
+export function getStatusCapabilities(props = {}) {
+  const state = parseStatusState(props.status_slayer_dados);
+  const active = new Set(state.active);
+  const exhaustion = Math.max(state.exhaustion, Number.parseInt(props.status_slayer_exaustao, 10) || 0);
+  const hypothermiaStacks = active.has("hipotermia") ? Math.max(1, state.effects?.hipotermia?.stacks || 1) : 0;
+  return {
+    targetable: !active.has("invisivel_inalvejavel"),
+    movementAllowed: !(exhaustion >= 3 || active.has("restricao_movimentos") || active.has("colapso")),
+    movementMultiplier: active.has("fratura") ? 0.5 : 1,
+    movementPenaltyMeters: hypothermiaStacks > 0 ? 3 + Math.max(0, hypothermiaStacks - 1) * 1.5 : 0,
+    spiritualActionsAllowed: !active.has("silenciado"),
+    sprintAllowed: !active.has("fadiga_corporal"),
+    healingMultiplier: active.has("corrupcao") || active.has("regeneracao_suprimida") ? 0.5 : 1,
+    incomingDemonicDamageBonus: active.has("corrupcao") ? 2 : 0,
+    reactionsAllowed: !isReactionBlocked(props),
+    ignoresFear: active.has("encorajado") || active.has("frenesi"),
+    ignoresConfusion: active.has("encorajado"),
+    deadFromExhaustion: exhaustion >= 8,
+  };
 }

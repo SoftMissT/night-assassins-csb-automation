@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   getDamageStatusEffects,
   getRollStatusEffects,
+  getStatusCapabilities,
   isReactionBlocked,
   mergeRollMode,
 } from "../scripts/status-effects.mjs";
@@ -51,4 +52,41 @@ test("Atordoamento bloqueia ações e Frenesi bloqueia Reações", () => {
   assert.equal(getRollStatusEffects(props(["atordoamento"]), { test: "Acerto", kind: "attack" }).blocked, true);
   assert.equal(getRollStatusEffects(props(["atordoamento"]), { test: "Bloqueio", kind: "defense" }).blocked, false);
   assert.equal(isReactionBlocked(props(["frenesi"])), true);
+});
+
+test("Paralisia falha FOR/DEX fora da Defesa", () => {
+  assert.equal(getRollStatusEffects(props(["paralisia"]), { test: "Atletismo", attr: "FOR" }).autoFail, true);
+  assert.equal(getRollStatusEffects(props(["paralisia"]), { test: "Esquiva", attr: "DEX", kind: "defense" }).autoFail, false);
+});
+
+test("Corrupção drena FDV por pilha", () => {
+  const current = {
+    status_slayer_dados: JSON.stringify({ version: 2, active: ["corrupcao"], exhaustion: 0, effects: { corrupcao: { stacks: 3 } } }),
+  };
+  assert.equal(getRollStatusEffects(current, { test: "Resistência", attr: "FDV" }).modifier, -3);
+});
+
+test("capacidades refletem movimento, silêncio, cura e hipotermia", () => {
+  const current = {
+    status_slayer_dados: JSON.stringify({
+      version: 2,
+      active: ["fratura", "hipotermia", "silenciado", "regeneracao_suprimida"],
+      exhaustion: 3,
+      effects: { hipotermia: { stacks: 2 } },
+    }),
+  };
+  assert.deepEqual(getStatusCapabilities(current), {
+    targetable: true,
+    movementAllowed: false,
+    movementMultiplier: 0.5,
+    movementPenaltyMeters: 4.5,
+    spiritualActionsAllowed: false,
+    sprintAllowed: true,
+    healingMultiplier: 0.5,
+    incomingDemonicDamageBonus: 0,
+    reactionsAllowed: true,
+    ignoresFear: false,
+    ignoresConfusion: false,
+    deadFromExhaustion: false,
+  });
 });

@@ -111,6 +111,7 @@ export async function rollHit(options) {
 
   const statusEffects = getRollStatusEffects(props, { test: "Acerto", attr: attrName, kind: "attack" });
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode atacar.");
+  if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática neste Acerto.");
 
   const dialogResult = await openHitDialog({ attrName, attrVal, color });
   if (!dialogResult) return;

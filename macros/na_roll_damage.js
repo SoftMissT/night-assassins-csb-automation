@@ -534,7 +534,17 @@
             ...oniDamageRequests.map(async ({ actor: targetActor, amount }) => {
               let result;
               const automationModule = game.modules.get('night-assassins-csb-automation');
-              if (automationModule?.active && typeof automationModule.api?.applyOniDamage === 'function') {
+              const targetProps = targetActor.system?.props ?? {};
+              const isSlayerTarget = targetProps.pdv_slayer_total_valor !== undefined || targetProps.nome_slayer !== undefined;
+              if (automationModule?.active && isSlayerTarget && typeof automationModule.api?.applySlayerDamage === 'function') {
+                result = await automationModule.api.applySlayerDamage(targetActor, amount, {
+                  isAttack: true,
+                  attackName: nome,
+                  critical,
+                  damageTypes,
+                  components,
+                });
+              } else if (automationModule?.active && typeof automationModule.api?.applyOniDamage === 'function') {
                 result = await automationModule.api.applyOniDamage(targetActor, amount, {
                   attackName: nome,
                   critical,
@@ -558,7 +568,8 @@
                   throw new Error('Ative o módulo Night Assassins — CSB Automation e recarregue o mundo.');
               }
               const woundInfo = result.woundDamage > 0 ? `; Ferida máxima: +${result.woundDamage} (total ${result.woundTotal})` : '';
-              ui.notifications.info(`Dano comum: +${result.normalDamage ?? result.appliedDamage ?? amount} em ${result.actorName} (total ${result.total})${woundInfo}`);
+              const vulnerableInfo = result.vulnerable ? '; Vulnerável: dano dobrado' : '';
+              ui.notifications.info(`Dano comum: +${result.normalDamage ?? result.appliedDamage ?? amount} em ${result.actorName} (total ${result.total ?? result.totalDamage})${woundInfo}${vulnerableInfo}`);
             }),
           ]);
           const updateElapsed = performance.now() - updateStartedAt;

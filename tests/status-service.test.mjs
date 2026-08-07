@@ -22,7 +22,9 @@ test("normaliza status, estado persistido e Exaustão", () => {
   assert.deepEqual(normalizeStatusKeys(["VANTAGEM", "invalido", "vantagem", "atordoamento"]), ["vantagem", "atordoamento"]);
   assert.equal(clampExhaustion(12), 8);
   assert.equal(clampExhaustion(-2), 0);
-  assert.deepEqual(parseStatusState('{"active":["confuso"],"exhaustion":3}'), { active: ["confuso"], exhaustion: 3 });
+  assert.deepEqual(parseStatusState('{"active":["confuso"],"exhaustion":3}'), {
+    version: 2, active: ["confuso"], exhaustion: 3, effects: {}, exhaustionMilestones: [],
+  });
   assert.equal(formatStatusSummary(["confuso"], 3), "Exaustão 3 · Confuso");
 });
 
@@ -35,7 +37,7 @@ test("salva status e Exaustão em uma atualização atômica", async () => {
   assert.equal(result.exhaustion, 6);
   assert.equal(result.summary, "Exaustão 6 · Vulnerável · Flanqueado");
   assert.deepEqual(update[0], {
-    "system.props.status_slayer_dados": '{"version":1,"active":["vulneravel","flanqueado"],"exhaustion":6}',
+    "system.props.status_slayer_dados": '{"version":2,"active":["vulneravel","flanqueado"],"exhaustion":6,"effects":{},"exhaustionMilestones":[]}',
     "system.props.status_slayer_resumo": "Exaustão 6 · Vulnerável · Flanqueado",
     "system.props.status_slayer_exaustao": 6,
   });

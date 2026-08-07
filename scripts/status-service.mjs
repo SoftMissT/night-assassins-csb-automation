@@ -31,16 +31,42 @@ export function clampExhaustion(value) {
 }
 
 export function parseStatusState(value) {
-  if (!value) return { active: [], exhaustion: 0 };
+  if (!value) return { version: 2, active: [], exhaustion: 0, effects: {}, exhaustionMilestones: [] };
   try {
     const parsed = typeof value === "string" ? JSON.parse(value) : value;
     return {
+      version: 2,
       active: normalizeStatusKeys(parsed?.active),
       exhaustion: clampExhaustion(parsed?.exhaustion),
+      effects: normalizeStatusEffects(parsed?.effects),
+      exhaustionMilestones: [...new Set((Array.isArray(parsed?.exhaustionMilestones) ? parsed.exhaustionMilestones : [])
+        .map((entry) => Number.parseInt(entry, 10)).filter((entry) => entry === 5 || entry === 8))],
     };
   } catch {
-    return { active: normalizeStatusKeys(value), exhaustion: 0 };
+    return { version: 2, active: normalizeStatusKeys(value), exhaustion: 0, effects: {}, exhaustionMilestones: [] };
   }
+}
+
+export function normalizeStatusEffects(value = {}) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const normalized = {};
+  for (const [key, raw] of Object.entries(value)) {
+    if (!STATUS_BY_KEY.has(key) || !raw || typeof raw !== "object") continue;
+    const remaining = raw.remainingTurns === null || raw.remainingTurns === ""
+      ? null
+      : Math.max(0, Number.parseInt(raw.remainingTurns, 10) || 0);
+    normalized[key] = {
+      damageFormula: String(raw.damageFormula ?? "").trim().slice(0, 80),
+      remainingTurns: remaining,
+      sourceName: String(raw.sourceName ?? "").trim().slice(0, 120),
+      saveAttr: ["VIT", "DEX", "FOR", "CAR", "FDV", "INT", "SAB"].includes(String(raw.saveAttr).toUpperCase())
+        ? String(raw.saveAttr).toUpperCase() : "",
+      saveDc: Math.max(0, Math.min(99, Number.parseInt(raw.saveDc, 10) || 0)),
+      stacks: Math.max(1, Math.min(99, Number.parseInt(raw.stacks, 10) || 1)),
+      tick: raw.tick === "end" ? "end" : "start",
+    };
+  }
+  return normalized;
 }
 
 export function formatStatusSummary(active, exhaustion = 0) {
@@ -50,9 +76,17 @@ export function formatStatusSummary(active, exhaustion = 0) {
   return labels.length > 0 ? labels.join(" · ") : "Nenhum status";
 }
 
-export async function saveSlayerStatuses(actor, active, exhaustion = 0) {
+export async function saveSlayerStatuses(actor, active, exhaustion = 0, effects = {}, exhaustionMilestones = []) {
   if (!actor?.update) throw new Error("Actor inválido para salvar status.");
-  const state = { version: 1, active: normalizeStatusKeys(active), exhaustion: clampExhaustion(exhaustion) };
+  const activeKeys = normalizeStatusKeys(active);
+  const normalizedEffects = normalizeStatusEffects(effects);
+  const state = {
+    version: 2,
+    active: activeKeys,
+    exhaustion: clampExhaustion(exhaustion),
+    effects: Object.fromEntries(Object.entries(normalizedEffects).filter(([key]) => activeKeys.includes(key))),
+    exhaustionMilestones: [...new Set(exhaustionMilestones)].filter((entry) => entry === 5 || entry === 8),
+  };
   const summary = formatStatusSummary(state.active, state.exhaustion);
   await actor.update({
     [`system.props.${CONTRACT.data}`]: JSON.stringify(state),
@@ -96,6 +130,31 @@ export async function openStatusManager({ actorUuid } = {}) {
         </label>`).join("")}
       </div>
     </fieldset>`).join("");
+  const configurable = [
+    ["sangramento", "Sangramento", "1d4", 3], ["hemorragia", "Hemorragia", "1d6", 3],
+    ["envenenamento", "Envenenamento", "1d4", 3], ["corroido", "Corroído", "1d4", ""],
+    ["em_chamas", "Em Chamas", "1d4", ""], ["invisivel_inalvejavel", "Invisível / Inalvejável", "", ""],
+    ["vulneravel", "Vulnerável", "", 1], ["restricao_movimentos", "Restrição de Movimentos", "", ""],
+    ["atordoamento", "Atordoamento", "", 1], ["paralisia", "Paralisia", "", ""],
+    ["colapso", "Colapso", "", ""], ["confuso", "Confuso", "", ""],
+    ["amedrontado", "Amedrontado", "", ""], ["desequilibrado", "Desequilibrado", "", 1],
+    ["desorientado", "Desorientado", "", 1], ["hipotermia", "Hipotermia", "", ""],
+    ["corrupcao", "Corrupção", "", ""],
+    ["regeneracao_suprimida", "Regeneração Suprimida", "", 2],
+    ["silenciado", "Silenciado", "", ""], ["suprimido", "Suprimido", "", ""],
+  ];
+  const configRows = configurable.map(([key, label, defaultFormula, defaultTurns]) => {
+    const effect = state.effects[key] ?? {};
+    return `<div style="display:grid;grid-template-columns:1.4fr 1fr .65fr .55fr .7fr .65fr 1fr;gap:5px;align-items:center;padding:5px;background:#171411;">
+      <strong>${escapeHtml(label)}</strong>
+      <input name="effect.${key}.formula" value="${escapeHtml(effect.damageFormula ?? defaultFormula)}" placeholder="Dano">
+      <input type="number" min="0" name="effect.${key}.turns" value="${effect.remainingTurns === null ? "" : effect.remainingTurns ?? defaultTurns}" placeholder="Turnos">
+      <input type="number" min="1" max="99" name="effect.${key}.stacks" value="${effect.stacks ?? 1}" title="Pilhas">
+      <select name="effect.${key}.attr"><option value="">Sem teste</option>${["VIT","DEX","FOR","CAR","FDV","INT","SAB"].map((attr) => `<option value="${attr}" ${effect.saveAttr === attr ? "selected" : ""}>${attr}</option>`).join("")}</select>
+      <input type="number" min="0" max="99" name="effect.${key}.dc" value="${effect.saveDc ?? 0}" placeholder="CD">
+      <input name="effect.${key}.source" value="${escapeHtml(effect.sourceName ?? "")}" placeholder="Fonte">
+    </div>`;
+  }).join("");
 
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: `Status — ${actor.name}` },
@@ -105,6 +164,11 @@ export async function openStatusManager({ actorUuid } = {}) {
         <input type="number" name="na-exhaustion" min="0" max="8" step="1" value="${state.exhaustion}" style="width:70px;">
       </label>
       ${sections}
+      <fieldset style="border:1px solid #433b34;padding:8px;margin:0;">
+        <legend>Configuração mecânica</legend>
+        <p class="hint">Dano e turnos vêm da técnica que aplicou o status. Turnos vazios significam duração manual.</p>
+        <div style="display:grid;gap:4px;">${configRows}</div>
+      </fieldset>
     </div>`,
     position: { width: 720 },
     modal: true,
@@ -116,7 +180,22 @@ export async function openStatusManager({ actorUuid } = {}) {
         default: true,
         callback: (event, button) => {
           const form = new FormData(button.form);
-          return { active: form.getAll("na-status"), exhaustion: form.get("na-exhaustion") };
+          const effects = {};
+          for (const [key] of configurable) {
+            effects[key] = {
+              damageFormula: form.get(`effect.${key}.formula`),
+              remainingTurns: form.get(`effect.${key}.turns`) || null,
+              saveAttr: form.get(`effect.${key}.attr`) || (["silenciado", "suprimido"].includes(key) ? "FDV" : ["hipotermia", "paralisia"].includes(key) ? "VIT" : ""),
+              saveDc: form.get(`effect.${key}.dc`),
+              sourceName: form.get(`effect.${key}.source`),
+              stacks: form.get(`effect.${key}.stacks`) ?? 1,
+              tick: state.effects[key]?.tick ?? ([
+                "invisivel_inalvejavel", "vulneravel", "restricao_movimentos", "atordoamento", "paralisia",
+                "colapso", "confuso", "amedrontado", "desorientado", "hipotermia", "suprimido",
+              ].includes(key) ? "end" : "start"),
+            };
+          }
+          return { active: form.getAll("na-status"), exhaustion: form.get("na-exhaustion"), effects };
         },
       },
       { action: "clear-statuses", label: "Limpar", callback: () => ({ active: [], exhaustion: 0 }) },
@@ -124,7 +203,8 @@ export async function openStatusManager({ actorUuid } = {}) {
     ],
   });
   if (result === null || result === undefined) return null;
-  const saved = await saveSlayerStatuses(actor, result.active, result.exhaustion);
+  const retainedMilestones = state.exhaustionMilestones.filter((level) => clampExhaustion(result.exhaustion) >= level);
+  const saved = await saveSlayerStatuses(actor, result.active, result.exhaustion, result.effects, retainedMilestones);
   ui.notifications.info(`Status de ${actor.name}: ${saved.summary}.`);
   return saved;
 }

@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.4.0] - 2026-08-07
+
+### Adicionado
+
+- Contrato v2 de status com fórmula de dano, duração, pilhas, fonte e salvaguarda por condição.
+- Motor autoritativo do GM ligado ao Combat nativo: início e fim de turno são processados uma única vez e continuam compatíveis com Combat Tracker Dock.
+- Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas agora causam dano real no início do turno; duração é decrementada e o estado expira.
+- Confuso rola `1d4` no início do turno; Distraído é removido no início do turno; Silenciado, Suprimido e Hipotermia executam salvaguarda quando configurada.
+- Vulnerável e Exaustão 6 dobram dano recebido de ataques. Dano de Ferida do Slayer atualiza `pdv_slayer_dano_ferida` separadamente.
+- Exaustão 3 bloqueia movimento, nível 5 retira metade do PDV atual uma única vez, nível 7 retira o turno sem bloquear Defesa e nível 8 mata o Slayer e impede cura.
+- Corrupção e Regeneração Suprimida reduzem cura pela metade; Corrupção drena FDV por pilha. A API de dano aceita o contexto demoníaco para aplicar o bônus recebido.
+- Paralisia causa falha automática em FOR/DEX fora da Defesa. Dados antigos de status são migrados de forma compatível ao salvar.
+
+### Limites conhecidos
+
+- Regras dependentes de geometria ou contexto do ataque — adjacência, corpo a corpo, fonte exata do medo e deslocamento em metros — exigem metadados da futura camada de ataque/posicionamento; o motor não inventa essas informações.
+- Ações de tratamento, água, calor, meditação, ajuda de aliado e Sono Completo permanecem remoções explícitas pelo gerenciador até o sistema de descanso ser implementado.
+
 ## [0.3.1] - 2026-08-07
 
 ### Adicionado

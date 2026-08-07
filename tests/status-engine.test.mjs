@@ -1,0 +1,120 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { setupFoundryMocks } from "./fixtures/foundry-mock.mjs";
+setupFoundryMocks();
+
+globalThis.ChatMessage.create = async () => {};
+let rollTotal = 4;
+let lastFormula = "";
+Roll.create = (formula) => {
+  lastFormula = formula;
+  return { evaluate: async () => ({ total: rollTotal, toMessage: async () => {} }) };
+};
+
+import {
+  applySlayerDamage,
+  movementBlocked,
+  processActorStatusTiming,
+  reconcileSlayerExhaustion,
+  resolveIncomingDamage,
+  resolveSlayerHealing,
+} from "../scripts/status-engine.mjs";
+
+function actorWith(props) {
+  const actor = {
+    id: "slayer-1",
+    name: "Slayer",
+    system: { props: { ...props } },
+    async update(patch) {
+      for (const [path, value] of Object.entries(patch)) {
+        const key = path.replace("system.props.", "");
+        actor.system.props[key] = value;
+      }
+    },
+  };
+  return actor;
+}
+
+test("Vulnerável e Exaustão 6 dobram somente dano de ataque", () => {
+  const state = { active: ["vulneravel"], exhaustion: 0 };
+  assert.deepEqual(resolveIncomingDamage(state, 7, { isAttack: true }), { damage: 14, vulnerable: true });
+  assert.deepEqual(resolveIncomingDamage(state, 7, { isAttack: false }), { damage: 7, vulnerable: false });
+  assert.equal(resolveIncomingDamage({ active: [], exhaustion: 6 }, 7, { isAttack: true }).damage, 14);
+});
+
+test("dano recebido remove Confuso, Distraído e Sonhando", async () => {
+  const actor = actorWith({
+    pdv_slayer_dano_tomado: 2,
+    status_slayer_dados: JSON.stringify({ version: 2, active: ["confuso", "distraido", "sonhando"], exhaustion: 0, effects: {}, exhaustionMilestones: [] }),
+  });
+  const result = await applySlayerDamage(actor, 5, { isAttack: true });
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 7);
+  assert.deepEqual(result.removed, ["confuso", "distraido", "sonhando"]);
+  assert.deepEqual(JSON.parse(actor.system.props.status_slayer_dados).active, []);
+});
+
+test("Sangramento causa dano no início do turno e expira", async () => {
+  rollTotal = 3;
+  const actor = actorWith({
+    pdv_slayer_dano_tomado: 0,
+    status_slayer_dados: JSON.stringify({
+      version: 2,
+      active: ["sangramento"],
+      exhaustion: 0,
+      effects: { sangramento: { damageFormula: "1d6", remainingTurns: 1, stacks: 1, tick: "start" } },
+      exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "start");
+  assert.equal(lastFormula, "1d6");
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 3);
+  assert.deepEqual(JSON.parse(actor.system.props.status_slayer_dados).active, []);
+});
+
+test("Corroído soma um dado por pilha", async () => {
+  rollTotal = 8;
+  const actor = actorWith({
+    pdv_slayer_dano_tomado: 0,
+    status_slayer_dados: JSON.stringify({
+      version: 2, active: ["corroido"], exhaustion: 0,
+      effects: { corroido: { damageFormula: "1d4", remainingTurns: null, stacks: 2, tick: "start" } }, exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "start");
+  assert.equal(lastFormula, "(1d4) + (1d4)");
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 8);
+});
+
+test("Exaustão 3 bloqueia movimento", () => {
+  assert.equal(movementBlocked({ status_slayer_exaustao: 3 }), true);
+  assert.equal(movementBlocked({ status_slayer_exaustao: 2 }), false);
+});
+
+test("Exaustão 5 perde metade do PDV uma única vez", async () => {
+  globalThis.game.combats = [];
+  const actor = actorWith({
+    pdv_slayer_atual_valor_display: 21,
+    pdv_slayer_dano_tomado: 4,
+    status_slayer_exaustao: 5,
+    status_slayer_dados: JSON.stringify({ version: 2, active: [], exhaustion: 5, effects: {}, exhaustionMilestones: [] }),
+  });
+  const first = await reconcileSlayerExhaustion(actor);
+  const second = await reconcileSlayerExhaustion(actor);
+  assert.equal(first.extraDamage, 10);
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 14);
+  assert.deepEqual(second.reached, []);
+});
+
+test("Corrupção e Regeneração Suprimida reduzem cura pela metade", () => {
+  const props = {
+    pdv_slayer_curado: 2,
+    status_slayer_dados: JSON.stringify({ version: 2, active: ["corrupcao"], exhaustion: 0, effects: {}, exhaustionMilestones: [] }),
+  };
+  assert.deepEqual(resolveSlayerHealing(props, 9), { value: 5, multiplier: 0.5, requestedDelta: 7 });
+});
+
+test("Exaustão 8 impede qualquer cura", () => {
+  const props = { pdv_slayer_curado: 2, status_slayer_exaustao: 8 };
+  assert.deepEqual(resolveSlayerHealing(props, 12), { value: 2, multiplier: 0, requestedDelta: 10 });
+});

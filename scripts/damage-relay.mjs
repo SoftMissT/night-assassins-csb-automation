@@ -5,7 +5,7 @@ const SOCKET_NAME = `module.${MODULE_ID}`;
 const DAMAGE_KEY = "pdv_oni_dano_tomado";
 const REQUEST_TYPE = "applyOniDamage";
 const RESPONSE_TYPE = "applyOniDamageResult";
-const REQUEST_TIMEOUT_MS = 8000;
+const REQUEST_TIMEOUT_MS = 60000;
 
 const pendingRequests = new Map();
 
@@ -31,6 +31,52 @@ function emitResult(recipientId, requestId, result) {
   });
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+export async function requestDamageApproval(actor, requester, amount, currentDamage) {
+  const DialogV2 = foundry.applications.api.DialogV2;
+  const projectedTotal = currentDamage + amount;
+
+  return DialogV2.wait({
+    window: { title: "Autorizar dano no inimigo" },
+    position: { width: 520, height: "auto" },
+    modal: true,
+    rejectClose: false,
+    content: `
+      <fieldset>
+        <legend>Pedido de dano</legend>
+        <div class="form-group"><label>Jogador</label><div class="form-fields"><strong>${escapeHtml(requester.name)}</strong></div></div>
+        <div class="form-group"><label>Alvo</label><div class="form-fields"><strong>${escapeHtml(actor.name)}</strong></div></div>
+        <div class="form-group"><label>Dano atual</label><div class="form-fields"><span>${currentDamage}</span></div></div>
+        <div class="form-group"><label>Dano solicitado</label><div class="form-fields"><strong>${amount}</strong></div></div>
+        <div class="form-group"><label>Total após aplicar</label><div class="form-fields"><strong>${projectedTotal}</strong></div></div>
+      </fieldset>
+      <p class="hint">Autorize somente se o resultado da rolagem estiver correto.</p>`,
+    buttons: [
+      {
+        action: "deny",
+        label: "Recusar",
+        icon: "<i class='fa-solid fa-xmark'></i>",
+        callback: () => false,
+      },
+      {
+        action: "approve",
+        label: "Autorizar e aplicar",
+        icon: "<i class='fa-solid fa-check'></i>",
+        default: true,
+        callback: () => true,
+      },
+    ],
+  });
+}
+
 async function handleDamageRequest(message) {
   if (!game.user.isGM || message.gmId !== game.user.id) return;
 
@@ -49,6 +95,16 @@ async function handleDamageRequest(message) {
   }
 
   try {
+    const currentDamage = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
+    const approved = await requestDamageApproval(actor, requester, amount, currentDamage);
+    if (!approved) {
+      emitResult(message.requesterId, message.requestId, {
+        ok: false,
+        error: `O GM recusou o pedido de ${amount} de dano em ${actor.name}.`,
+      });
+      return;
+    }
+
     const total = await updateOniDamage(actor, amount);
     emitResult(message.requesterId, message.requestId, { ok: true, total, actorName: actor.name });
   } catch (error) {

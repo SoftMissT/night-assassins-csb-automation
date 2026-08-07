@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2] - 2026-08-06
+
+- Declarado o canal socket do módulo no manifesto.
+- Adicionado modal `DialogV2` para o GM autorizar ou recusar dano solicitado por jogadores.
+- Ampliado o tempo de resposta para 60 segundos enquanto o GM analisa o pedido.
+- O dano só é aplicado depois da autorização explícita do GM.
+
 ## [0.1.1] - 2026-08-06
 
 - Adicionado Compendium com cinco macros canônicas de Night Assassins.

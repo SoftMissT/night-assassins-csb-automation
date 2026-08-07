@@ -34,7 +34,7 @@ describe("damage-service", () => {
     let attackerUpdated = false;
     let targetUpdated = false;
     attacker.update = async (patch, options) => {
-      assert.strictEqual(patch["system.props.pdr_gasto_valor"], 3);
+      assert.strictEqual(patch["system.props.pdr_slayer_gasto_valor"], 3);
       assert.strictEqual(options?.naCsbAutomation, true);
       attackerUpdated = true;
     };
@@ -56,12 +56,12 @@ describe("damage-service", () => {
 
   it("combina PDR e dano quando atacante é alvo", async () => {
     _dialogReturn = { nome: "Golpe", pdrGasto: 2, entradas: [{ dado: "1d6", fixo: 0, selAttrs: [], selTiposDano: [], tipoAcao: "" }] };
-    const actor = makeActor({ id: "self", uuid: "Actor.self", props: { pdr_gasto_valor: 1, pdv_oni_dano_tomado: 0 } });
-    actor.system.props.pdr_gasto_valor = 1;
+    const actor = makeActor({ id: "self", uuid: "Actor.self", props: { pdr_slayer_gasto_valor: 1, pdv_oni_dano_tomado: 0 } });
+    actor.system.props.pdr_slayer_gasto_valor = 1;
 
     let updated = false;
     actor.update = async (patch, options) => {
-      assert.strictEqual(patch["system.props.pdr_gasto_valor"], 3);
+      assert.strictEqual(patch["system.props.pdr_slayer_gasto_valor"], 3);
       assert.strictEqual(patch["system.props.pdv_oni_dano_tomado"], 5);
       assert.strictEqual(options?.naCsbAutomation, true);
       updated = true;

@@ -1,6 +1,6 @@
 // ============================================================================
 // Night Assassin's Rolagem de Dano v12 (macro standalone + relay do GM)
-// Suporte a CSB, alvos selecionados (game.user.targets) e atualização de pdr_gasto_valor.
+// Suporte a CSB, alvos selecionados (game.user.targets) e atualização de pdr_slayer_gasto_valor.
 //
 // INTEGRAÇÃO CSB:
 // %{return await game.macros.get('MACRO_ID_AQUI').execute({
@@ -487,10 +487,10 @@
           const updatesByActor = new Map();
 
           if (pdrGasto > 0) {
-            const pdrAtual = parseNum(actor.system?.props?.pdr_gasto_valor);
+            const pdrAtual = parseNum(actor.system?.props?.pdr_slayer_gasto_valor);
             updatesByActor.set(actor.uuid, {
               actor,
-              changes: { 'system.props.pdr_gasto_valor': pdrAtual + pdrGasto },
+              changes: { 'system.props.pdr_slayer_gasto_valor': pdrAtual + pdrGasto },
               damageTotal: null,
             });
           }

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&display=swap");
+
 .na-csb-automation {
   font-family: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #FFFFFF;
@@ -700,4 +702,243 @@
 @media (max-width: 1050px) {
   .na-gm-dashboard-window { min-width: 720px; }
   .na-gm-hero p { display: none; }
+}
+
+/* Controle GM compacto — Caçadores e Onis. */
+.na-gm-dashboard-window {
+  min-width: 480px;
+  max-width: calc(100vw - 24px);
+}
+
+.na-gm-dashboard-window .window-content {
+  background: #08090c;
+}
+
+.na-gm-mini-board {
+  --na-gm-font: "Orbitron", "Trebuchet MS", sans-serif;
+  --na-gm-gold: #f2b632;
+  --na-gm-red: #ff3342;
+  --na-gm-cyan: #18e3eb;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  color: #f4eee5;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(242,182,50,.08), transparent 30%),
+    linear-gradient(145deg, #111014, #07080a 70%);
+}
+
+.na-gm-mini-hero {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 13px 9px;
+  border-bottom: 1px solid #463b2c;
+}
+
+.na-gm-mini-hero small,
+.na-gm-mini-name small {
+  display: block;
+  color: var(--na-gm-gold);
+  font: 700 7px/1 var(--na-gm-font);
+  letter-spacing: .16em;
+}
+
+.na-gm-mini-hero h2 {
+  margin: 3px 0 0;
+  color: #fff9ed;
+  font: 800 16px/1.1 var(--na-gm-font);
+  letter-spacing: .035em;
+}
+
+.na-gm-mini-actions { display: flex; gap: 5px; }
+.na-gm-mini-actions button {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #554837;
+  border-radius: 3px;
+  background: #171419;
+  color: #d9ccbb;
+  font-size: 11px;
+}
+.na-gm-mini-actions button:hover { border-color: var(--na-gm-gold); color: var(--na-gm-gold); }
+.na-gm-mini-actions .na-gm-close:hover { border-color: var(--na-gm-red); color: var(--na-gm-red); }
+
+.na-gm-mini-search {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 7px 10px;
+  padding: 0 9px;
+  border: 1px solid #3a343d;
+  border-radius: 3px;
+  background: #111015;
+  color: #766e7a;
+}
+
+.na-gm-mini-search input {
+  width: 100%;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  box-shadow: none;
+  font: 600 9px/1 var(--na-gm-font);
+}
+
+.na-gm-mini-sections {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 10px 10px;
+}
+
+.na-gm-mini-section {
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid #39343c;
+  border-radius: 5px;
+  background: rgba(13,13,17,.94);
+}
+
+.na-gm-mini-section > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 29px;
+  padding: 0 10px;
+  border-bottom: 1px solid #39343c;
+  background: #111116;
+}
+
+.na-gm-mini-section > header h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font: 800 9px/1 var(--na-gm-font);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.na-gm-mini-section > header span {
+  min-width: 20px;
+  padding: 2px 5px;
+  border-radius: 99px;
+  background: #252129;
+  color: #bdb3c2;
+  font: 700 8px/1 var(--na-gm-font);
+  text-align: center;
+}
+
+.na-gm-mini-section--hunter > header h3 { color: var(--na-gm-gold); }
+.na-gm-mini-section--oni { border-color: #50272d; }
+.na-gm-mini-section--oni > header { border-bottom-color: #50272d; background: #180e11; }
+.na-gm-mini-section--oni > header h3 { color: var(--na-gm-red); }
+
+.na-gm-mini-list { display: grid; }
+.na-gm-mini-row {
+  display: grid;
+  grid-template-columns: 34px minmax(100px, .8fr) minmax(250px, 1.6fr) 25px;
+  gap: 8px;
+  align-items: center;
+  min-height: 49px;
+  padding: 5px 8px;
+  border-bottom: 1px solid #29252d;
+  box-sizing: border-box;
+}
+.na-gm-mini-row:last-child { border-bottom: 0; }
+.na-gm-mini-row:nth-child(even) { background: rgba(255,255,255,.018); }
+.na-gm-mini-row:hover { background: rgba(242,182,50,.055); }
+.na-gm-mini-row--oni:hover { background: rgba(255,51,66,.055); }
+.na-gm-mini-row[hidden] { display: none; }
+
+.na-gm-mini-row > img {
+  width: 34px;
+  height: 34px;
+  border: 1px solid #584936;
+  border-radius: 3px;
+  background: #050506;
+  object-fit: cover;
+}
+.na-gm-mini-row--oni > img { border-color: #68323a; }
+
+.na-gm-mini-name { min-width: 0; }
+.na-gm-mini-name strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 4px;
+  color: #fff9ef;
+  font: 700 9px/1.15 var(--na-gm-font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.na-gm-mini-row--oni .na-gm-mini-name small { color: var(--na-gm-red); }
+
+.na-gm-mini-resources {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+}
+
+.na-gm-mini-resource {
+  min-width: 0;
+  padding: 4px 6px;
+  border: 1px solid #302d34;
+  border-radius: 3px;
+  background: #09090c;
+}
+
+.na-gm-mini-resource-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 5px;
+}
+.na-gm-mini-resource-line span { font: 800 7px/1 var(--na-gm-font); }
+.na-gm-mini-resource-line strong { color: #fff; font: 800 10px/1 var(--na-gm-font); }
+.na-gm-mini-resource-line small { margin-left: 3px; color: #827b86; font-size: 7px; }
+.na-gm-mini-resource--pdv span, .na-gm-mini-resource--pdv strong { color: var(--na-gm-red); }
+.na-gm-mini-resource--pdr span, .na-gm-mini-resource--pdr strong { color: var(--na-gm-cyan); }
+
+.na-gm-mini-track {
+  height: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #020203;
+}
+.na-gm-mini-track i { display: block; height: 100%; border-radius: inherit; }
+.na-gm-mini-resource--pdv .na-gm-mini-track i { background: linear-gradient(90deg, #9e0e18, #ff3543); }
+.na-gm-mini-resource--pdr .na-gm-mini-track i { background: linear-gradient(90deg, #087b84, #18dfe8); }
+.na-gm-mini-resource.is-empty { border-color: rgba(255,51,66,.45); }
+
+.na-gm-mini-row .na-gm-open-sheet {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.na-gm-mini-empty {
+  padding: 16px 10px;
+  color: #77717c;
+  font: 600 8px/1.4 var(--na-gm-font);
+  text-align: center;
+}
+
+@media (max-width: 620px) {
+  .na-gm-dashboard-window { min-width: 360px; }
+  .na-gm-mini-row { grid-template-columns: 30px minmax(90px, 1fr) 24px; }
+  .na-gm-mini-row > img { width: 30px; height: 30px; }
+  .na-gm-mini-resources { grid-column: 1 / -1; }
 }

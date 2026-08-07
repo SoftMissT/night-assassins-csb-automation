@@ -34,6 +34,20 @@
       "path": "packs/night-assassins-macros",
       "type": "Macro",
       "system": "custom-system-builder"
+    },
+    {
+      "name": "night-assassins-slayer",
+      "label": "Night Assassin's Slayer",
+      "path": "packs/night-assassins-slayer",
+      "type": "Actor",
+      "system": "custom-system-builder"
+    },
+    {
+      "name": "night-assassins-onis",
+      "label": "Night Assassin's Onis",
+      "path": "packs/night-assassins-onis",
+      "type": "Actor",
+      "system": "custom-system-builder"
     }
   ],
   "relationships": {

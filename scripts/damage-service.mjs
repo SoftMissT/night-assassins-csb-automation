@@ -111,10 +111,10 @@ export async function rollDamage(options) {
   const updatesByActor = new Map();
 
   if (pdrGasto > 0) {
-    const pdrAtual = parseNumber(props.pdr_gasto_valor);
+    const pdrAtual = parseNumber(props.pdr_slayer_gasto_valor);
     updatesByActor.set(actor.uuid, {
       actor,
-      changes: { "system.props.pdr_gasto_valor": pdrAtual + pdrGasto },
+      changes: { "system.props.pdr_slayer_gasto_valor": pdrAtual + pdrGasto },
     });
   }
 

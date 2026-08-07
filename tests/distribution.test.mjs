@@ -9,13 +9,25 @@ describe("module distribution", () => {
     const manifest = JSON.parse(await readFile(new URL("../module.json", import.meta.url), "utf8"));
     assert.equal(manifest.version, "0.2.4");
     assert.equal(manifest.socket, true);
-    assert.deepEqual(manifest.packs, [{
-      name: "night-assassins-macros",
-      label: "Macros Night Assassins",
-      path: "packs/night-assassins-macros",
-      type: "Macro",
-      system: "custom-system-builder",
-    }]);
+    assert.deepEqual(manifest.packs.map(({ name, label, type }) => ({ name, label, type })), [
+      { name: "night-assassins-macros", label: "Macros Night Assassins", type: "Macro" },
+      { name: "night-assassins-slayer", label: "Night Assassin's Slayer", type: "Actor" },
+      { name: "night-assassins-onis", label: "Night Assassin's Onis", type: "Actor" },
+    ]);
+  });
+
+  it("prepara um template válido para cada Compêndio de Actor", async () => {
+    const files = [
+      ["../fvtt-Actor-slayer_template_atual-xif9qdBXTkeL1BXW.json", "_template"],
+      ["../fvtt-Actor-oni_template-PQR15WSdSqBcN15w.json", "_template"],
+    ];
+    for (const [file, type] of files) {
+      const actor = JSON.parse(await readFile(new URL(file, import.meta.url), "utf8"));
+      assert.equal(actor.type, type);
+      assert.ok(actor.name);
+      assert.ok(actor.prototypeToken);
+      assert.ok(actor.system?.body);
+    }
   });
 
   it("inclui as seis macros canônicas", async () => {

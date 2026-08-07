@@ -1,9 +1,25 @@
 # Changelog
 
+## Em desenvolvimento
+
+- Os botões do template Slayer agora executam as macros pelos UUIDs estáveis do Compêndio do módulo e enviam o UUID do Actor separadamente.
+- Adicionados os Compêndios de Actor `Night Assassin's Slayer` e `Night Assassin's Onis` ao manifesto e ao build de release.
+- Corrigidos todos os botões de atributo e perícia do Slayer, incluindo Acerto, Bloqueio, Esquiva e Investigação.
+
+## Unreleased — namespace Slayer
+
+- Corrigido o pacote de importação do template para o formato oficial do CSB (`isCustomSystemExport`, `actors[]`, `items[]`); o export anterior era um Actor bruto e podia abrir a ficha sem montar `header` e `body`.
+- O template de Caçador foi promovido para `Slayer_template_atual` e passou a usar `nome_slayer`, `pdv_slayer_*` e `pdr_slayer_*`.
+- Corrigidos o Label numérico de PDV atual, barras de PDV/PDR, espaços em keys de dropdown, `vit_display`, `atr_fdv_valor`, `dex_nvl7`, `car_nvl7` e a duplicidade de `metal_esquiva_bonus`.
+- Snapshots automáticos padronizados nos níveis 1, 3 e 7.
+- Painel do GM, serviço de dano, macro standalone e Compendium atualizados para o contrato Slayer.
+- A migração do Oni para `pdv_oni_*` e `pdk_oni_*` permanece para a próxima fase.
+
 ## Não publicado
 
-- Redesenhado o Controle GM como mesa tática persistente em formato de tabela, com atualização automática enquanto permanece aberto.
-- Adicionadas colunas de identidade, classe, origem, progressão, respiração, sete atributos, PDV, PDR, PDR usado, esquiva e bloqueio.
+- Redesenhado o Controle GM como monitor compacto persistente, com atualização automática enquanto permanece aberto.
+- O painel agora mostra somente nome, PDV e PDR, em divisórias separadas para Caçadores e Inimigos/Onis.
+- Adicionado fechamento explícito pelo botão interno e pelo botão do DialogV2; tipografia migrada para Orbitron.
 - Corrigida a documentação: o módulo sincroniza macros, mas não edita nem reconecta automaticamente botões, Labels ou componentes do template CSB.
 - Adicionados exemplos manuais usando nomes canônicos das macros e `actorUuid: entity.uuid`.
 - Documentadas a instalação pelo manifesto e a instalação manual pelo `module.zip`.

@@ -67,7 +67,7 @@ Ao carregar o mundo, `scripts/main.mjs` registra automaticamente o relay de dano
 
 ### Controle GM
 
-Importe do Compendium a macro **Night Assassins — Controle GM**. Ela lista todos os Actors Night Assassins do mundo e mostra `nome_cacador`, Habilidade Especial, Metal/Cor e barras de PDV/PDR. O painel é somente leitura e exclusivo do GM.
+Importe do Compendium a macro **Night Assassins — Controle GM**. Ela lista os Actors Night Assassins usando `nome_slayer` para Caçadores e `nome_oni` para Onis, com barras de PDV/PDR do Slayer. O painel é somente leitura e exclusivo do GM.
 
 Após instalar ou atualizar os arquivos do módulo, GM e jogadores devem recarregar o mundo.
 
@@ -75,10 +75,12 @@ Após instalar ou atualizar os arquivos do módulo, GM e jogadores devem recarre
 
 Ativar ou atualizar o módulo **não modifica o template da ficha**. Abra o template no Custom System Builder e configure manualmente cada componente que deve executar uma macro.
 
-Para um teste de atributo, use a macro mundial sincronizada pelo módulo. Exemplo para Arremesso com FOR:
+Os templates prontos ficam nos Compêndios **Night Assassin's Slayer** e **Night Assassin's Onis**. Importe o template desejado do Compêndio para o diretório de Actors e use-o como template no CSB.
+
+Os botões dos templates chamam diretamente o UUID estável da macro no Compêndio do módulo. Exemplo para Arremesso com FOR:
 
 ```js
-%{return await game.macros.getName('Night Assassins — Teste de Atributo')?.execute({actorUuid:entity.uuid,test:'Arremesso',attr:'FOR',color:'#C0392B'});}%
+%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Arremesso',attr:'FOR',color:'#C0392B'});}%
 ```
 
 O parâmetro `actorUuid:entity.uuid` é obrigatório para que a macro saiba qual ficha chamou o teste. Não é necessário passar `val`: a macro lê `for_display` diretamente do Actor.
@@ -87,19 +89,19 @@ Exemplos das outras entradas públicas:
 
 ```js
 // Acerto
-%{return await game.macros.getName('Night Assassins — Rolagem de Acerto')?.execute({actorUuid:entity.uuid});}%
+%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAHitRoll0000001'))?.execute({actorUuid:entity.uuid});}%
 
 // Dano
-%{return await game.macros.getName('Night Assassins — Rolagem de Dano')?.execute({actorUuid:entity.uuid});}%
+%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NADamageRoll0001'))?.execute({actorUuid:entity.uuid});}%
 
 // Atributos por nível
-%{return await game.macros.getName('Night Assassins — Atributos por Nível')?.execute({actorUuid:entity.uuid,level:entity.system.props.nvl_pj});}%
+%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAAttrLevel00001'))?.execute({actorUuid:entity.uuid,level:entity.system.props.nvl_pj});}%
 
 // Marca do Caçador
-%{return await game.macros.getName('Night Assassins — Marca do Caçador')?.execute({actorUuid:entity.uuid});}%
+%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAHunterMark0001'))?.execute({actorUuid:entity.uuid});}%
 ```
 
-Se um botão antigo usa `game.macros.get('ID')`, ele não é reescrito pelo módulo. Troque manualmente a chamada pelo nome canônico acima ou atualize o ID no próprio componente CSB.
+`actorUuid:entity.uuid` é o UUID do Actor que clicou; o UUID em `fromUuid(...)` é o UUID permanente da macro fornecida pelo módulo.
 
 ## Template CSB
 

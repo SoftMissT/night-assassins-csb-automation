@@ -42,6 +42,24 @@ jobs:
             --inputDirectory build/compendium/macros \
             --outputDirectory packs
 
+      - name: Build Template Compendiums
+        shell: bash
+        run: |
+          node tools/build-template-sources.mjs
+          rm -rf packs/night-assassins-slayer packs/night-assassins-onis
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-slayer \
+            --inputDirectory build/compendium/slayer \
+            --outputDirectory packs
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-onis \
+            --inputDirectory build/compendium/onis \
+            --outputDirectory packs
+
       - name: Build module.zip
         shell: bash
         run: |

@@ -33,7 +33,7 @@ for (const [index, macro] of macros.entries()) {
     command,
     folder: null,
     sort: (index + 1) * 100000,
-    ownership: { default: 0 },
+    ownership: { default: macro.name === "Night Assassins — Controle GM" ? 0 : 2 },
     flags: {},
     _stats: {
       systemId: "custom-system-builder",

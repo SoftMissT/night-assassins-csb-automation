@@ -38,7 +38,7 @@ export function makeActor(overrides = {}) {
     int_nvl1: 1,
     sab_nvl1: 1,
     acerto_label: "acerto_label_dex",
-    pdr_gasto_valor: 0,
+    pdr_slayer_gasto_valor: 0,
     pdv_oni_dano_tomado: 0,
     pdv_oni_dano_ferida: 0,
     ...overrides.props,

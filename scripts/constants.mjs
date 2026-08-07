@@ -20,7 +20,7 @@ export const ATTR_COLORS = Object.freeze(
   Object.fromEntries(ATTRIBUTES.map((a) => [a.key, a.color]))
 );
 
-export const SNAPSHOT_LEVELS = Object.freeze([1, 3, 6, 7]);
+export const SNAPSHOT_LEVELS = Object.freeze([1, 3, 7]);
 export const ATTRIBUTE_GAIN_LEVELS = Object.freeze([3, 7]);
 export const STANDARD_POOL = Object.freeze([4, 3, 2, 2, 1, 1, 1]);
 
@@ -31,8 +31,8 @@ export const PROP_KEYS = Object.freeze({
   markBonus: "hab_marca_destino_bonus",
   schemaVersion: "na_automacao_versao_dados",
   acertoLabel: "acerto_label",
-  pdrGasto: "pdr_gasto_valor",
-  pdvDano: "pdv_dano",
+  pdrGasto: "pdr_slayer_gasto_valor",
+  pdvDano: "pdv_slayer_dano",
 });
 
 export const ABILITY_OPTIONS = Object.freeze([

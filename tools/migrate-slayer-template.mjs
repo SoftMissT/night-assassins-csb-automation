@@ -11,7 +11,8 @@ const directRenames = new Map([
   ["nome_cacador", "nome_slayer"],
   ["pdv_total_valor", "pdv_slayer_total_valor"],
   ["pdv_atual_valor_display", "pdv_slayer_atual_valor_display"],
-  ["pdv_dano", "pdv_slayer_dano"],
+  ["pdv_dano", "pdv_slayer_dano_tomado"],
+  ["pdv_slayer_dano", "pdv_slayer_dano_tomado"],
   ["pdv_curado", "pdv_slayer_curado"],
   ["pdv_extra", "pdv_slayer_extra"],
   ["pdv_total_conta", "pdv_slayer_total_conta"],
@@ -198,6 +199,104 @@ function removeDuplicateAttributeButton(template) {
   prune(template.system?.body);
 }
 
+function textField(key, label, defaultValue = "") {
+  return {
+    key,
+    colSpan: 1,
+    rowSpan: 1,
+    cssClass: "",
+    role: 4,
+    editRole: 4,
+    permission: 0,
+    tooltip: "Gerenciado automaticamente pelo módulo Night Assassins.",
+    visibilityFormula: "",
+    editableFormula: "",
+    escapeHTML: false,
+    type: "textField",
+    size: "full-size",
+    label,
+    defaultValue,
+    charList: "",
+    maxLength: null,
+    autocomplete: "",
+  };
+}
+
+function fixResistanceAndWoundContract(template) {
+  let resistanceButton = null;
+  let resistanceDisplay = null;
+  let combatTable = null;
+  let configTab = null;
+  let woundField = null;
+  let totalLabel = null;
+
+  walk(template.system, (node) => {
+    const text = labelText(node.value);
+    if (node.type === "label" && text === "GERENCIAR RESISTÊNCIAS") resistanceButton = node;
+    if (node.key === "status_slayer_resistencias_display") resistanceDisplay = node;
+    if (node.key === "tes" && node.type === "table") combatTable = node;
+    if (node.key === "configs_tab" && node.type === "tab") configTab = node;
+    if (node.key === "pdv_slayer_dano_ferida") woundField = node;
+    if (node.key === "pdv_slayer_total_valor") totalLabel = node;
+  });
+
+  if (!resistanceButton || !resistanceDisplay || !combatTable || !configTab || !woundField || !totalLabel) {
+    throw new Error("Componentes novos de Resistências/Ferida não encontrados no export Slayer.");
+  }
+
+  combatTable.key = "combat_slayer_table";
+  resistanceButton.style = "button";
+  resistanceButton.rollMessageToChat = false;
+  resistanceButton.altRollMessageToChat = false;
+  resistanceButton.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'});}%";
+  resistanceDisplay.value = "${status_slayer_resistencias_resumo}$";
+  woundField.defaultValue = "0";
+  woundField.minVal = "0";
+
+  totalLabel.value = String(totalLabel.value).replace(
+    "${pdv_slayer_total_conta}$",
+    "${pdv_slayer_total_conta-pdv_slayer_dano_ferida}$",
+  );
+
+  const current = template.system.hidden?.find((entry) => entry.name === "pdv_slayer_conta_atual");
+  if (!current) throw new Error("Hidden Attribute pdv_slayer_conta_atual não encontrado.");
+  current.value = "${pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado}$";
+
+  const storageKeys = new Set();
+  walk(configTab, (node) => { if (node.key) storageKeys.add(node.key); });
+  const storage = [];
+  if (!storageKeys.has("status_slayer_resistencias_dados")) {
+    storage.push(textField("status_slayer_resistencias_dados", "Resistências (dados)", ""));
+  }
+  if (!storageKeys.has("status_slayer_resistencias_resumo")) {
+    storage.push(textField("status_slayer_resistencias_resumo", "Resistências (resumo)", "Nenhuma resistência"));
+  }
+  if (storage.length > 0) {
+    configTab.contents.push({
+      key: "status_slayer_storage_panel",
+      colSpan: 1,
+      rowSpan: 1,
+      cssClass: "",
+      role: 4,
+      editRole: 4,
+      permission: 0,
+      tooltip: "",
+      visibilityFormula: "",
+      editableFormula: "",
+      escapeHTML: false,
+      type: "panel",
+      contents: storage,
+      flow: "grid-2",
+      align: "center",
+      verticalAlign: "top",
+      collapsible: true,
+      defaultCollapsed: true,
+      title: "Dados de Resistências",
+      titleStyle: "default",
+    });
+  }
+}
+
 export function migrateSlayerTemplate(template) {
   const migrated = visit(structuredClone(template));
   fixCurrentPdvLabel(migrated);
@@ -205,6 +304,7 @@ export function migrateSlayerTemplate(template) {
   fixBars(migrated);
   fixRollButtons(migrated);
   removeDuplicateAttributeButton(migrated);
+  fixResistanceAndWoundContract(migrated);
   return migrated;
 }
 
@@ -277,6 +377,7 @@ export function validateSlayerTemplate(template) {
     "pdv_total_valor",
     "pdv_atual_valor_display",
     "pdv_dano",
+    "pdv_slayer_dano",
     "pdv_curado",
     "pdv_extra",
     "pdr_total_valor",
@@ -291,8 +392,9 @@ export function validateSlayerTemplate(template) {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const target = path.resolve(process.argv[2] ?? defaultTemplate);
-  const source = JSON.parse(fs.readFileSync(target, "utf8"));
+  const sourcePath = path.resolve(process.argv[2] ?? defaultTemplate);
+  const target = path.resolve(process.argv[3] ?? sourcePath);
+  const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
   const template = unwrapSlayerTemplate(source);
   const migrated = migrateSlayerTemplate(template);
   const validation = validateSlayerTemplate(migrated);

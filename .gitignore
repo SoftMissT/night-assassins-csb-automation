@@ -35,6 +35,7 @@ build/
 /packs/
 *.log
 module.zip
+slayer_template_atual_agora.json
 
 # Dados locais do Foundry
 /Data/

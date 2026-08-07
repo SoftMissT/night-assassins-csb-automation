@@ -13,6 +13,7 @@ const macros = [
   { id: "NAAttrLevel00001", file: "na-attribute-level-snapshot.js", name: "Night Assassins — Atributos por Nível" },
   { id: "NAHunterMark0001", file: "na-marca-cacador.js", name: "Night Assassins — Marca do Caçador" },
   { id: "NAGMControl00001", file: "na-gm-control.js", name: "Night Assassins — Controle GM" },
+  { id: "NAResistance0001", file: "na-gerenciar-resistencias.js", name: "Night Assassins — Gerenciar Resistências" },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

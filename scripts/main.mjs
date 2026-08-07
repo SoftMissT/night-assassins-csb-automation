@@ -14,6 +14,7 @@ import { parseNumber, currentConfigValues, latestValues, changedProp, isDestinyM
 import { registerSettings, SETTINGS } from "./settings.mjs";
 import { openGmDashboard } from "./gm-dashboard.mjs";
 import { syncCanonicalMacros } from "./macro-sync.mjs";
+import { openResistanceManager } from "./resistance-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -49,6 +50,7 @@ Hooks.once("ready", () => {
       rollDamage,
       applyOniDamage,
       openGmDashboard,
+      openResistanceManager,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

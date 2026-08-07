@@ -33,7 +33,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
     Object.values(node).forEach(walk);
   }
   walk(template.system);
-  assert.equal(buttons.length, 30);
+  assert.equal(buttons.length, 31);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
@@ -44,6 +44,20 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.match(source, /test:'Esquiva',attr:'DEX'/);
   assert.match(source, /Macro\.NAHitRoll0000001/);
   assert.match(source, /test:'Investigação',attr:'INT'/);
+  assert.match(source, /Macro\.NAResistance0001/);
+  assert.match(source, /kind:'slayer'/);
+});
+
+test("template Slayer separa dano comum, Ferida e armazenamento de Resistências", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const source = JSON.stringify(template);
+  assert.match(source, /"pdv_slayer_dano_tomado"/);
+  assert.match(source, /"pdv_slayer_dano_ferida"/);
+  assert.match(source, /"status_slayer_resistencias_dados"/);
+  assert.match(source, /"status_slayer_resistencias_resumo"/);
+  assert.match(source, /\$\{pdv_slayer_total_conta-pdv_slayer_dano_ferida\}\$/);
+  assert.match(source, /pdv_slayer_total_conta-pdv_slayer_dano_ferida\+pdv_slayer_curado\+pdv_slayer_extra-pdv_slayer_dano_tomado/);
+  assert.doesNotMatch(source, /\bpdv_slayer_dano\b/);
 });
 
 test("pacote global segue o contrato de importação do CSB", () => {

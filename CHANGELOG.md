@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.6] - 2026-08-07
+
+### Adicionado
+
+- Macro **Gerenciar Resistências** no Compendium, com seleção múltipla dos 18 tipos oficiais de dano.
+- Serviço persistente que salva as keys canônicas e um resumo legível das Resistências no Actor Slayer.
+- Campos `status_slayer_resistencias_dados`, `status_slayer_resistencias_resumo` e `pdv_slayer_dano_ferida` no template canônico.
+
+### Corrigido
+
+- Dano comum do Slayer padronizado como `pdv_slayer_dano_tomado` em ficha, serviço e testes.
+- PDV máximo e atual agora descontam corretamente `pdv_slayer_dano_ferida`.
+- Botão de Resistências conectado à macro do Compendium por UUID estável.
+- Tabela provisória `tes` renomeada para `combat_slayer_table`.
+
 ## [0.2.5] - 2026-08-07
 
 - Os botões do template Slayer agora executam as macros pelos UUIDs estáveis do Compêndio do módulo e enviam o UUID do Actor separadamente.

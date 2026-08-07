@@ -32,7 +32,7 @@ export const PROP_KEYS = Object.freeze({
   schemaVersion: "na_automacao_versao_dados",
   acertoLabel: "acerto_label",
   pdrGasto: "pdr_slayer_gasto_valor",
-  pdvDano: "pdv_slayer_dano",
+  pdvDano: "pdv_slayer_dano_tomado",
 });
 
 export const ABILITY_OPTIONS = Object.freeze([
@@ -68,6 +68,15 @@ export const TIPOS_DANO = Object.freeze([
   { key: "sangramento", label: "Sangramento", cat: "especial", desc: "Dano por turno no início do turno do alvo." },
   { key: "envenenamento", label: "Envenenamento", cat: "especial", desc: "Dano por turno no início do turno do alvo." },
   { key: "necrotico", label: "Necrótico", cat: "especial", desc: "Incurável em combate. Só trata com descanso longo (mín. 24h)." },
+  { key: "acido", label: "Ácido", cat: "elemental", desc: "Ignora Bloqueio e pode aplicar Corroído." },
+  { key: "colapso", label: "Colapso", cat: "elemental", desc: "Pode desconectar o controle motor do alvo." },
+  { key: "congelante", label: "Congelante", cat: "elemental", desc: "Pode aplicar Hipotermia." },
+  { key: "eletrico", label: "Elétrico", cat: "elemental", desc: "Pode impedir Reações até o próximo turno." },
+  { key: "fogo", label: "Fogo", cat: "elemental", desc: "Pode aplicar Em Chamas." },
+  { key: "impacto", label: "Impacto", cat: "elemental", desc: "Ignora RD de escudo/barreira e pode atordoar ou derrubar." },
+  { key: "mental", label: "Mental", cat: "elemental", desc: "Pode aplicar Atordoamento ou Confuso." },
+  { key: "solar", label: "Solar", cat: "elemental", desc: "Suprime a regeneração de Onis." },
+  { key: "venenoso", label: "Venenoso", cat: "elemental", desc: "Pode aplicar Envenenamento." },
 ]);
 
 export const MODULE_ID = "night-assassins-csb-automation";

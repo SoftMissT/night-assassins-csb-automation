@@ -120,4 +120,13 @@ export const STATUS_SLAYER = Object.freeze([
   { key: "encorajado", label: "Encorajado", category: "Benéfico" },
 ]);
 
+/** Status que realmente causam dano automático no início do turno. */
+export const STATUS_SLAYER_DANO_CONTINUO = Object.freeze([
+  "sangramento",
+  "hemorragia",
+  "envenenamento",
+  "corroido",
+  "em_chamas",
+]);
+
 export const MODULE_ID = "night-assassins-csb-automation";

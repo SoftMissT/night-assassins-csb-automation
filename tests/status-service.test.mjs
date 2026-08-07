@@ -9,6 +9,16 @@ import {
   parseStatusState,
   saveSlayerStatuses,
 } from "../scripts/status-service.mjs";
+import { STATUS_SLAYER_DANO_CONTINUO } from "../scripts/constants.mjs";
+
+test("somente os cinco status oficiais causam dano contínuo", () => {
+  assert.deepEqual(STATUS_SLAYER_DANO_CONTINUO, [
+    "sangramento", "hemorragia", "envenenamento", "corroido", "em_chamas",
+  ]);
+  assert.ok(!STATUS_SLAYER_DANO_CONTINUO.includes("vulneravel"));
+  assert.ok(!STATUS_SLAYER_DANO_CONTINUO.includes("fratura"));
+  assert.ok(!STATUS_SLAYER_DANO_CONTINUO.includes("corrupcao"));
+});
 
 test("catálogo Slayer contém todos os status sem duplicar Resistência ou Ferida", () => {
   assert.equal(STATUS_SLAYER.length, 35);

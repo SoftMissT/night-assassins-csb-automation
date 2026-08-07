@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.3] - 2026-08-07
+
+### Corrigido
+
+- O gerenciador deixou de apresentar campos de dano para condições que não causam dano periódico.
+- Somente Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas são processados como dano no início do turno.
+- Sangramento, Hemorragia e Envenenamento não inventam mais fórmula ou três turnos: ambos vêm da técnica que aplicou o status.
+- Corroído mantém fórmula da fonte e empilhamento de dados; Em Chamas permanece fixo em `1d4` e não empilha.
+- Ferida continua sendo tipo de dano que reduz o PDV máximo, sem checkbox de status duplicado.
+
 ## [0.5.2] - 2026-08-07
 
 ### Arquitetura documentada

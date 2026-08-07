@@ -2,7 +2,7 @@
  * @fileoverview Catálogo e persistência da base de status do Slayer.
  */
 
-import { STATUS_SLAYER } from "./constants.mjs";
+import { STATUS_SLAYER, STATUS_SLAYER_DANO_CONTINUO } from "./constants.mjs";
 
 const STATUS_BY_KEY = new Map(STATUS_SLAYER.map((status) => [status.key, status]));
 const CONTRACT = Object.freeze({
@@ -145,27 +145,48 @@ export async function openStatusManager({ actorUuid } = {}) {
       </div>
     </fieldset>`).join("");
   const configurable = [
-    ["sangramento", "Sangramento", "1d4", 3], ["hemorragia", "Hemorragia", "1d6", 3],
-    ["envenenamento", "Envenenamento", "1d4", 3], ["corroido", "Corroído", "1d4", ""],
-    ["em_chamas", "Em Chamas", "1d4", ""], ["invisivel_inalvejavel", "Invisível / Inalvejável", "", ""],
-    ["vulneravel", "Vulnerável", "", 1], ["restricao_movimentos", "Restrição de Movimentos", "", ""],
-    ["atordoamento", "Atordoamento", "", 1], ["paralisia", "Paralisia", "", ""],
-    ["colapso", "Colapso", "", ""], ["confuso", "Confuso", "", ""],
-    ["amedrontado", "Amedrontado", "", ""], ["desequilibrado", "Desequilibrado", "", 1],
-    ["desorientado", "Desorientado", "", 1], ["hipotermia", "Hipotermia", "", ""],
-    ["corrupcao", "Corrupção", "", ""],
-    ["regeneracao_suprimida", "Regeneração Suprimida", "", 2],
-    ["silenciado", "Silenciado", "", ""], ["suprimido", "Suprimido", "", ""],
+    { key: "sangramento", label: "Sangramento", damage: "source", duration: "source" },
+    { key: "hemorragia", label: "Hemorragia", damage: "source", duration: "source" },
+    { key: "envenenamento", label: "Envenenamento", damage: "source", duration: "source" },
+    { key: "corroido", label: "Corroído", damage: "source", stacks: true },
+    { key: "em_chamas", label: "Em Chamas", damage: "1d4" },
+    { key: "invisivel_inalvejavel", label: "Invisível / Inalvejável", duration: "source" },
+    { key: "vulneravel", label: "Vulnerável", duration: "source" },
+    { key: "restricao_movimentos", label: "Restrição de Movimentos", duration: "source" },
+    { key: "atordoamento", label: "Atordoamento", duration: "source" },
+    { key: "paralisia", label: "Paralisia", duration: "source", save: "VIT" },
+    { key: "colapso", label: "Colapso", duration: "source", save: "VIT", defaultDc: 15 },
+    { key: "confuso", label: "Confuso", duration: "source" },
+    { key: "amedrontado", label: "Amedrontado", duration: "source" },
+    { key: "desequilibrado", label: "Desequilibrado" },
+    { key: "desorientado", label: "Desorientado", defaultTurns: 1 },
+    { key: "hipotermia", label: "Hipotermia", save: "VIT", stacks: true },
+    { key: "corrupcao", label: "Corrupção", stacks: true },
+    { key: "regeneracao_suprimida", label: "Regeneração Suprimida", duration: "source" },
+    { key: "silenciado", label: "Silenciado", save: "FDV" },
+    { key: "suprimido", label: "Suprimido", duration: "source", save: "FDV" },
   ];
-  const configRows = configurable.map(([key, label, defaultFormula, defaultTurns]) => {
+  const configRows = configurable.map((config) => {
+    const { key, label } = config;
     const effect = state.effects[key] ?? {};
+    const damageInput = config.damage === "source"
+      ? `<input name="effect.${key}.formula" value="${escapeHtml(effect.damageFormula ?? "")}" placeholder="Dano da fonte">`
+      : config.damage === "1d4" ? `<span title="Dano fixo">1d4 fixo</span>` : `<span>—</span>`;
+    const turnsInput = config.duration === "source" || config.defaultTurns
+      ? `<input type="number" min="1" name="effect.${key}.turns" value="${effect.remainingTurns ?? config.defaultTurns ?? ""}" placeholder="Fonte">`
+      : `<span>Manual</span>`;
+    const stacksInput = config.stacks
+      ? `<input type="number" min="1" max="99" name="effect.${key}.stacks" value="${effect.stacks ?? 1}" title="Pilhas">`
+      : `<span>—</span>`;
+    const saveInput = config.save
+      ? `<select name="effect.${key}.attr">${["VIT","DEX","FOR","CAR","FDV","INT","SAB"].map((attr) => `<option value="${attr}" ${(effect.saveAttr || config.save) === attr ? "selected" : ""}>${attr}</option>`).join("")}</select>`
+      : `<span>—</span>`;
+    const dcInput = config.save
+      ? `<input type="number" min="0" max="99" name="effect.${key}.dc" value="${effect.saveDc || config.defaultDc || 0}" placeholder="CD">`
+      : `<span>—</span>`;
     return `<div style="display:grid;grid-template-columns:1.4fr 1fr .65fr .55fr .7fr .65fr 1fr;gap:5px;align-items:center;padding:5px;background:#171411;">
       <strong>${escapeHtml(label)}</strong>
-      <input name="effect.${key}.formula" value="${escapeHtml(effect.damageFormula ?? defaultFormula)}" placeholder="Dano">
-      <input type="number" min="0" name="effect.${key}.turns" value="${effect.remainingTurns === null ? "" : effect.remainingTurns ?? defaultTurns}" placeholder="Turnos">
-      <input type="number" min="1" max="99" name="effect.${key}.stacks" value="${effect.stacks ?? 1}" title="Pilhas">
-      <select name="effect.${key}.attr"><option value="">Sem teste</option>${["VIT","DEX","FOR","CAR","FDV","INT","SAB"].map((attr) => `<option value="${attr}" ${effect.saveAttr === attr ? "selected" : ""}>${attr}</option>`).join("")}</select>
-      <input type="number" min="0" max="99" name="effect.${key}.dc" value="${effect.saveDc ?? 0}" placeholder="CD">
+      ${damageInput}${turnsInput}${stacksInput}${saveInput}${dcInput}
       <input name="effect.${key}.source" value="${escapeHtml(effect.sourceName ?? "")}" placeholder="Fonte">
     </div>`;
   }).join("");
@@ -180,7 +201,7 @@ export async function openStatusManager({ actorUuid } = {}) {
       ${sections}
       <fieldset style="border:1px solid #433b34;padding:8px;margin:0;">
         <legend>Configuração mecânica</legend>
-        <p class="hint">Dano e turnos vêm da técnica que aplicou o status. Turnos vazios significam duração manual.</p>
+        <p class="hint">Somente Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas causam dano no início do turno. “Fonte” significa que fórmula ou duração vêm da técnica.</p>
         <div style="display:grid;gap:4px;">${configRows}</div>
       </fieldset>
     </div>`,
@@ -195,14 +216,15 @@ export async function openStatusManager({ actorUuid } = {}) {
         callback: (event, button) => {
           const form = new FormData(button.form);
           const effects = {};
-          for (const [key] of configurable) {
+          for (const config of configurable) {
+            const { key } = config;
             effects[key] = {
-              damageFormula: form.get(`effect.${key}.formula`),
+              damageFormula: config.damage === "1d4" ? "1d4" : config.damage === "source" ? form.get(`effect.${key}.formula`) : "",
               remainingTurns: form.get(`effect.${key}.turns`) || null,
-              saveAttr: form.get(`effect.${key}.attr`) || (["silenciado", "suprimido"].includes(key) ? "FDV" : ["hipotermia", "paralisia"].includes(key) ? "VIT" : ""),
+              saveAttr: config.save ? (form.get(`effect.${key}.attr`) || config.save) : "",
               saveDc: form.get(`effect.${key}.dc`),
               sourceName: form.get(`effect.${key}.source`),
-              stacks: form.get(`effect.${key}.stacks`) ?? 1,
+              stacks: config.stacks ? (form.get(`effect.${key}.stacks`) ?? 1) : 1,
               tick: state.effects[key]?.tick ?? ([
                 "invisivel_inalvejavel", "vulneravel", "restricao_movimentos", "atordoamento", "paralisia",
                 "colapso", "confuso", "amedrontado", "desorientado", "hipotermia", "suprimido",
@@ -224,3 +246,4 @@ export async function openStatusManager({ actorUuid } = {}) {
 }
 
 export const STATUS_SLAYER_CONTRACT = CONTRACT;
+export const STATUS_SLAYER_DANO_KEYS = STATUS_SLAYER_DANO_CONTINUO;

@@ -2,7 +2,7 @@
  * @fileoverview Motor autoritativo de turnos, dano e Exaustão do Slayer.
  */
 
-import { MODULE_ID } from "./constants.mjs";
+import { MODULE_ID, STATUS_SLAYER_DANO_CONTINUO } from "./constants.mjs";
 import { parseNumber } from "./parsing.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
 
@@ -141,7 +141,7 @@ export async function processActorStatusTiming(actor, timing = "start") {
     }
   }
 
-  const damageKeys = new Set(["sangramento", "hemorragia", "envenenamento", "corroido", "em_chamas"]);
+  const damageKeys = new Set(STATUS_SLAYER_DANO_CONTINUO);
   for (const key of [...state.active]) {
     const effect = state.effects[key];
     const defaultTiming = [

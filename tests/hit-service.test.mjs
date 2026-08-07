@@ -48,4 +48,16 @@ describe("hit-service", () => {
     assert.strictEqual(called, true);
     assert.match(_formula, /\+ 6$/);
   });
+
+  it("aplica Cegueira e Exaustão no Acerto", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0 };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex",
+      dex_display: "5",
+      status_slayer_dados: JSON.stringify({ active: ["cegueira_parcial"], exhaustion: 4 }),
+      status_slayer_exaustao: 4,
+    } });
+    await rollHit({ actor });
+    assert.match(_formula, /^2d20kl1 \+ 5 - 5$/);
+  });
 });

@@ -29,6 +29,13 @@
     : canvas.tokens.controlled[0]?.actor ?? game.user?.character;
   if (!actor) return ui.notifications?.error('Sem personagem ativo.');
   const props = actor?.system?.props ?? {};
+  const automationApi = game.modules.get('night-assassins-csb-automation')?.api;
+  const statusEffects = automationApi?.getRollStatusEffects?.(props, {
+    test,
+    attr,
+    kind: ['Bloqueio', 'Esquiva'].includes(test) ? 'defense' : 'test',
+  }) ?? { blocked:false, mode:'normal', modifier:0, reasons:[] };
+  if (statusEffects.blocked) return ui.notifications?.warn('Este personagem está incapacitado e não pode realizar a rolagem.');
 
   const ATTR_KEYS = ['vit','for','dex','fdv','car','int','sab'];
   const ATTR_NAMES = { vit:'VIT', for:'FOR', dex:'DEX', fdv:'FDV', car:'CAR', int:'INT', sab:'SAB' };
@@ -84,10 +91,12 @@
     const dice = getDice(mode);
     let base = `${dice} + ${val}`;
     if (secVal) base += ` + ${secVal}`;
+    if (statusEffects.modifier) base += statusEffects.modifier > 0 ? ` + ${statusEffects.modifier}` : ` - ${Math.abs(statusEffects.modifier)}`;
     return bonusExtra ? `${base} ${bonusExtra}` : base;
   }
 
   async function doRoll(mode, rollMode, secVal, bonusRaw, cdVal) {
+    mode = automationApi?.mergeRollMode?.(mode, statusEffects.mode) ?? mode;
     const { extra, display } = parseBonus(bonusRaw);
     const formula = buildFormula(mode, secVal, extra);
 
@@ -103,6 +112,7 @@
     const attrLine = attr ? `${attr} = ${val}` : '';
     const secLine = secVal ? ` + ${ATTR_NAMES[secondaryOptions.find(o => o.val === secVal)?.key] || '?'} = ${secVal}` : '';
     const bonusLine = display ? ` | Bônus: ${display}` : '';
+    const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(', ')}` : '';
 
     let cdLine = '';
     if (cdVal > 0) {
@@ -112,7 +122,7 @@
     }
 
     await roll.toMessage({
-      flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' — ' + attrLine : ''}${secLine}${bonusLine}${cdLine}`,
+      flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' — ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker(),
       rollMode: rollMode,
     });

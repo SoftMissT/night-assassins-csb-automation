@@ -41,6 +41,16 @@ describe("roll-service", () => {
     assert.match(_formula, /\+ 7$/);
   });
 
+  it("aplica Desvantagem de Fadiga Mental e Cegueira Parcial em Percepção", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    const actor = makeActor({ props: {
+      sab_display: "4",
+      status_slayer_dados: JSON.stringify({ active: ["fadiga_mental", "cegueira_parcial"], exhaustion: 0 }),
+    } });
+    await rollTest({ actor, test: "Percepção", attr: "SAB" });
+    assert.match(_formula, /^2d20kl1 \+ 4$/);
+  });
+
   it("avisa quando actor não é encontrado", async () => {
     let warned = false;
     ui.notifications.warn = () => { warned = true; };

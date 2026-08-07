@@ -195,6 +195,10 @@
 
   const actor = entity;
   const props = actor.system?.props ?? {};
+  const automationApi = game.modules.get('night-assassins-csb-automation')?.api;
+  const damageStatusEffects = automationApi?.getDamageStatusEffects?.(props)
+    ?? { blocked:false, criticalAllowed:true, modifier:0, pdrSurcharge:0, reasons:[] };
+  if (damageStatusEffects.blocked) return ui.notifications.warn('Este personagem está incapacitado e não pode causar dano.');
 
   function parseNum(raw) {
     if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
@@ -428,8 +432,13 @@
           const html = $(currentDialog.element);
           const actionStartedAt = performance.now();
           const nome = html.find('#na-dmg-nome').val()?.trim() || 'Dano';
-          const pdrGasto = Math.max(0, Number(html.find('#na-dmg-pdr').val()) || 0);
-          const critical = html.find('#na-dmg-critical').is(':checked');
+          let pdrGasto = Math.max(0, Number(html.find('#na-dmg-pdr').val()) || 0);
+          if (pdrGasto > 0) pdrGasto += damageStatusEffects.pdrSurcharge;
+          let critical = html.find('#na-dmg-critical').is(':checked');
+          if (critical && !damageStatusEffects.criticalAllowed) {
+            critical = false;
+            ui.notifications.warn('Fadiga Corporal impede Acertos Críticos. O dano será rolado normalmente.');
+          }
 
           const entradas = [];
           html.find('.na-entrada').each((_, el) => {
@@ -453,6 +462,9 @@
           });
 
           if (entradas.length === 0) return ui.notifications.warn('Adicione ao menos uma entrada de dano.');
+          if (entradas.some(entry => entry.tipoAcao === 'reacao') && automationApi?.isReactionBlocked?.(props)) {
+            return ui.notifications.warn('Os status atuais impedem o uso de Reações.');
+          }
 
           const formulaParts = entradas.map(e => buildEntryFormula(e.dado, e.fixo, e.selAttrs));
           const marcaFormula = getMarcaDamageFormula(entradas);
@@ -480,6 +492,13 @@
             types: spec.types,
             subtotal: Math.max(0, Math.trunc(Number(rolls[index].total) || 0)),
           }));
+          let statusPenalty = Math.max(0, -Math.trunc(damageStatusEffects.modifier || 0));
+          for (const component of components) {
+            if (statusPenalty <= 0) break;
+            const reduction = Math.min(component.subtotal, statusPenalty);
+            component.subtotal -= reduction;
+            statusPenalty -= reduction;
+          }
           const finalDamage = components.reduce((total, component) => total + component.subtotal, 0);
           const damageTypes = [...new Set(components.flatMap(component => component.types).filter(type => type !== 'sem_tipo'))];
 
@@ -561,7 +580,8 @@
           const targetLine = oniDamageRequests.length > 0
             ? `<div>Alvo(s): ${oniDamageRequests.map(request => request.actor.name).join(', ')}</div>`
             : '<div><strong>Nenhum alvo — ficha não atualizada</strong></div>';
-          const flavor = `<div><strong>${nome}</strong>${critical ? ' · CRÍTICO (dobrado)' : ''}${pdrGasto > 0 ? ` · −${pdrGasto} PDR` : ''}</div>${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
+          const statusLine = damageStatusEffects.reasons.length ? `<div style="font-size:11px;color:#e8bd55;">Status: ${damageStatusEffects.reasons.join(' · ')}</div>` : '';
+          const flavor = `<div><strong>${nome}</strong>${critical ? ' · CRÍTICO (dobrado)' : ''}${pdrGasto > 0 ? ` · −${pdrGasto} PDR` : ''}</div>${statusLine}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
 
           const modeMap = { publicroll: 'public', gmroll: 'gm', blindroll: 'blind', selfroll: 'self' };
           const chatData = ChatMessage.applyMode({ flavor, rolls, speaker: ChatMessage.getSpeaker({ actor }) }, modeMap[game.settings.get('core', 'rollMode')] ?? 'public');

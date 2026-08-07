@@ -16,6 +16,7 @@ import { openGmDashboard } from "./gm-dashboard.mjs";
 import { syncCanonicalMacros } from "./macro-sync.mjs";
 import { openResistanceManager } from "./resistance-service.mjs";
 import { openStatusManager } from "./status-service.mjs";
+import { getRollStatusEffects, getDamageStatusEffects, mergeRollMode, isReactionBlocked } from "./status-effects.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -53,6 +54,10 @@ Hooks.once("ready", () => {
       openGmDashboard,
       openResistanceManager,
       openStatusManager,
+      getRollStatusEffects,
+      getDamageStatusEffects,
+      mergeRollMode,
+      isReactionBlocked,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

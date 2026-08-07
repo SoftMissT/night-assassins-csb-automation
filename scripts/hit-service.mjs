@@ -4,6 +4,7 @@
 
 import { parseAttributeValue } from "./parsing.mjs";
 import { openHitDialog } from "./dialogs/hit-dialog.mjs";
+import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 
 function getDice(mode) {
   if (mode === "advantage") return "2d20kh1";
@@ -24,15 +25,17 @@ function parseBonus(raw) {
   return { extra: clean ? `+ ${clean}` : "", display: s };
 }
 
-function buildFormula(mode, attrVal, bonusExtra) {
+function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
   const dice = getDice(mode);
-  const base = `${dice} + ${attrVal}`;
+  let base = `${dice} + ${attrVal}`;
+  if (statusModifier) base += statusModifier > 0 ? ` + ${statusModifier}` : ` - ${Math.abs(statusModifier)}`;
   return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
 
-async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal }) {
+async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, statusEffects }) {
+  mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
-  const formula = buildFormula(mode, attrVal, extra);
+  const formula = buildFormula(mode, attrVal, extra, statusEffects.modifier);
 
   let roll;
   try {
@@ -44,6 +47,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
 
   const modeLabel = getModeLabel(mode);
   const bonusLine = display ? ` | Bônus: ${display}` : "";
+  const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
 
   let cdLine = "";
   if (cdVal > 0) {
@@ -52,7 +56,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   }
 
   await roll.toMessage({
-    flavor: `<strong>Acerto</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${cdLine}`,
+    flavor: `<strong>Acerto</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${statusLine}${cdLine}`,
     speaker: ChatMessage.getSpeaker({ actor }),
     rollMode: rollMode,
   });
@@ -105,6 +109,9 @@ export async function rollHit(options) {
     return;
   }
 
+  const statusEffects = getRollStatusEffects(props, { test: "Acerto", attr: attrName, kind: "attack" });
+  if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode atacar.");
+
   const dialogResult = await openHitDialog({ attrName, attrVal, color });
   if (!dialogResult) return;
 
@@ -116,5 +123,6 @@ export async function rollHit(options) {
     rollMode: dialogResult.rollMode,
     bonusRaw: dialogResult.bonusRaw,
     cdVal: dialogResult.cdVal,
+    statusEffects,
   });
 }

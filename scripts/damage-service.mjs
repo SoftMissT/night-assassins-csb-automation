@@ -6,6 +6,7 @@ import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from "./constants.mjs";
 import { parseAttributeValue, parseNumber } from "./parsing.mjs";
 import { openDamageDialog } from "./dialogs/damage-dialog.mjs";
 import { applyOniDamage } from "./damage-relay.mjs";
+import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
   const parts = [];
@@ -64,6 +65,8 @@ export async function rollDamage(options) {
   }
 
   const props = actor.system?.props ?? {};
+  const statusEffects = getDamageStatusEffects(props);
+  if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode causar dano.");
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
     attrValues[key] = parseAttributeValue(props[`${key}_display`]);
@@ -89,15 +92,21 @@ export async function rollDamage(options) {
   });
   if (!dialogResult) return;
 
-  const { nome, pdrGasto, entradas } = dialogResult;
+  const { nome, entradas } = dialogResult;
+  const pdrGastoBase = dialogResult.pdrGasto;
+  const pdrGasto = pdrGastoBase > 0 ? pdrGastoBase + statusEffects.pdrSurcharge : 0;
   if (entradas.length === 0) {
     ui.notifications?.warn?.("Adicione ao menos uma entrada de dano.");
     return;
   }
+  if (entradas.some((entry) => entry.tipoAcao === "reacao") && isReactionBlocked(props)) {
+    return ui.notifications?.warn?.("Os status atuais impedem o uso de Reações.");
+  }
 
   const formulaParts = entradas.map((e) => buildEntryFormula(e.dado, e.fixo, e.selAttrs, attrValues));
   const validParts = formulaParts.filter((p) => p !== "0");
-  const formula = validParts.length > 0 ? validParts.join(" + ") : "0";
+  let formula = validParts.length > 0 ? validParts.join(" + ") : "0";
+  if (statusEffects.modifier) formula = `max(0, (${formula}) ${statusEffects.modifier > 0 ? "+" : "-"} ${Math.abs(statusEffects.modifier)})`;
 
   let roll;
   try {
@@ -187,8 +196,11 @@ export async function rollDamage(options) {
   const pdrLine = pdrGasto > 0
     ? ` <span style="color:#BB97F9;">| PDR/PDK gasto: <strong>${pdrGasto}</strong></span>`
     : "";
+  const statusLine = statusEffects.reasons.length
+    ? `<div style="font-size:11px;color:#D8B45D;">Status: ${statusEffects.reasons.join(" · ")}</div>`
+    : "";
 
-  const flavor = `<div style="font-family:'Lexend',sans-serif;"><strong style="font-size:13px;color:#D8B45D;">${nome}</strong>${pdrLine}${entradasHtml}</div>`;
+  const flavor = `<div style="font-family:'Lexend',sans-serif;"><strong style="font-size:13px;color:#D8B45D;">${nome}</strong>${pdrLine}${statusLine}${entradasHtml}</div>`;
 
   await roll.toMessage({ flavor, speaker: ChatMessage.getSpeaker({ actor }) });
 }

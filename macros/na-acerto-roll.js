@@ -9,6 +9,8 @@
 
   const props = actor.system?.props ?? {};
   const acertoLabel = props.acerto_label ?? '';
+  const automationApi = game.modules.get('night-assassins-csb-automation')?.api;
+  let statusEffects;
 
   // Labels calculadas do CSB podem entregar o valor final dentro de HTML.
   function parseAttributeValue(raw) {
@@ -51,6 +53,10 @@
     return ui.notifications?.error(error.message);
   }
 
+  statusEffects = automationApi?.getRollStatusEffects?.(props, { test:'Acerto', attr:attrName, kind:'attack' })
+    ?? { blocked:false, mode:'normal', modifier:0, reasons:[] };
+  if (statusEffects.blocked) return ui.notifications?.warn('Este personagem está incapacitado e não pode atacar.');
+
   // ── Helpers ────────────────────────────────────────────────────────────
   function getDice(mode) {
     if (mode === 'advantage') return '2d20kh1';
@@ -73,11 +79,13 @@
 
   function buildFormula(mode, bonusExtra) {
     const dice = getDice(mode);
-    const base = `${dice} + ${attrVal}`;
+    let base = `${dice} + ${attrVal}`;
+    if (statusEffects.modifier) base += statusEffects.modifier > 0 ? ` + ${statusEffects.modifier}` : ` - ${Math.abs(statusEffects.modifier)}`;
     return bonusExtra ? `${base} ${bonusExtra}` : base;
   }
 
   async function doRoll(mode, rollMode, bonusRaw, cdVal) {
+    mode = automationApi?.mergeRollMode?.(mode, statusEffects.mode) ?? mode;
     const { extra, display } = parseBonus(bonusRaw);
     const formula = buildFormula(mode, extra);
 
@@ -91,6 +99,7 @@
 
     const modeLabel = getModeLabel(mode);
     const bonusLine = display ? ` | Bônus: ${display}` : '';
+    const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(', ')}` : '';
 
     let cdLine = '';
     if (cdVal > 0) {
@@ -99,7 +108,7 @@
     }
 
     await roll.toMessage({
-      flavor: `<strong>Acerto</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${cdLine}`,
+      flavor: `<strong>Acerto</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker(),
       rollMode: rollMode,
     });

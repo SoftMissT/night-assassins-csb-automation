@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.1] - 2026-08-07
+
+### Adicionado
+
+- Efeitos reais de Vantagem, Desvantagem, Cegueira Parcial, Surdez Parcial, Fratura, Desequilibrado, Desorientado, Flanqueado e Encorajado nas rolagens aplicáveis.
+- Fadiga Mental aplica Desvantagem em Iniciativa e SAB; Fadiga Espiritual aplica `-2` em resistências de FDV e `+1 PDR` nas técnicas com custo.
+- Fadiga Corporal impede crítico; Frenesi, Desorientado e Distraído impedem Reações.
+- Exaustão aplica progressivamente `-1 Ataque/Dano`, `-2 DEX`, Desvantagem no Acerto e incapacidade nos níveis severos já alcançados.
+- Atordoamento, Suprimido e Sonhando impedem testes, ataques e dano enquanto ativos.
+
+### Pendente
+
+- Dano contínuo, duração e remoção por turno, Vulnerável no dano recebido, Confuso e salvaguardas serão ligados ao motor de combate na próxima etapa.
+
 ## [0.3.0] - 2026-08-07
 
 ### Adicionado

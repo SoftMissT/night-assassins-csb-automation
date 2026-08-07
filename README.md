@@ -26,6 +26,8 @@ Também é possível consultar as cópias originais em `Compêndios` → `Macros
 
 O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.3.0 ele inclui **Gerenciar Resistências**, **Gerenciar Status**, Exaustão acumulativa e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
 
+Na v0.3.1, as macros de teste, Acerto e Dano já leem os status salvos e aplicam Fadigas, Cegueira, penalidades de Defesa, impedimento de crítico/Reação e os primeiros níveis mecânicos de Exaustão. Efeitos de início de turno continuam pendentes do motor de combate.
+
 As configurações ficam em `Configurações do Jogo` → `Night Assassins CSB Automation`.
 
 Módulo Foundry VTT v14 para Custom System Builder que automatiza atributos, progressão e Habilidades Especiais do sistema Night Assassins depois que o template CSB estiver configurado com as keys e chamadas exigidas.

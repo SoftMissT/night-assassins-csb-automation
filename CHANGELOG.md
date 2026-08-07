@@ -1,5 +1,14 @@
 # Changelog
 
+## Não publicado
+
+- Redesenhado o Controle GM como mesa tática persistente em formato de tabela, com atualização automática enquanto permanece aberto.
+- Adicionadas colunas de identidade, classe, origem, progressão, respiração, sete atributos, PDV, PDR, PDR usado, esquiva e bloqueio.
+- Corrigida a documentação: o módulo sincroniza macros, mas não edita nem reconecta automaticamente botões, Labels ou componentes do template CSB.
+- Adicionados exemplos manuais usando nomes canônicos das macros e `actorUuid: entity.uuid`.
+- Documentadas a instalação pelo manifesto e a instalação manual pelo `module.zip`.
+- Registrado o estado das fichas: Caçador 2.0 e Oni Alpha 0.01.
+
 ## [0.2.4] - 2026-08-06
 
 - Unificada a leitura de atributos das rolagens em `vit_display`, `dex_display`, `for_display`, `car_display`, `fdv_display`, `int_display` e `sab_display`.

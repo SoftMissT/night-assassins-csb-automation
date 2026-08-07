@@ -27,16 +27,28 @@
   let attrVal = 0;
   let color = '';
 
-  if (acertoLabel === 'acerto_label_dex') {
-    attrName = 'DEX';
-    attrVal = parseAttributeValue(props.dex_display);
-    color = '#28D7FF';
-  } else if (acertoLabel === 'acerto_label_for') {
-    attrName = 'FOR';
-    attrVal = parseAttributeValue(props.for_display);
-    color = '#C1000C';
-  } else {
-    return ui.notifications?.warn("Escolha DEX ou FOR no campo 'Como Acerta'.");
+  function readDisplayAttribute(key) {
+    const propKey = `${key}_display`;
+    if (!Object.prototype.hasOwnProperty.call(props, propKey)) {
+      throw new Error(`A ficha não possui a key ${propKey}.`);
+    }
+    return parseAttributeValue(props[propKey]);
+  }
+
+  try {
+    if (acertoLabel === 'acerto_label_dex') {
+      attrName = 'DEX';
+      attrVal = readDisplayAttribute('dex');
+      color = '#28D7FF';
+    } else if (acertoLabel === 'acerto_label_for') {
+      attrName = 'FOR';
+      attrVal = readDisplayAttribute('for');
+      color = '#C1000C';
+    } else {
+      return ui.notifications?.warn("Escolha DEX ou FOR no campo 'Como Acerta'.");
+    }
+  } catch (error) {
+    return ui.notifications?.error(error.message);
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────

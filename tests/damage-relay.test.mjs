@@ -3,7 +3,7 @@ setupFoundryMocks();
 
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { applyOniDamage, calculateApprovedDamage, DAMAGE_RELAY_KEY, DAMAGE_TYPES, requestDamageApproval } from "../scripts/damage-relay.mjs";
+import { applyOniDamage, calculateApprovedDamage, DAMAGE_RELAY_KEY, DAMAGE_TYPES, requestDamageApproval, WOUND_DAMAGE_KEY } from "../scripts/damage-relay.mjs";
 
 describe("damage-relay", () => {
   it("acumula somente pdv_oni_dano_tomado quando o usuário pode atualizar", async () => {
@@ -26,6 +26,33 @@ describe("damage-relay", () => {
 
   it("rejeita dano zero ou negativo", async () => {
     await assert.rejects(() => applyOniDamage({ isOwner: true }, 0), /dano inválido/i);
+  });
+
+  it("separa Ferida do dano comum e acumula a perda de PDV máximo", async () => {
+    game.user.isGM = false;
+    const actor = {
+      name: "Oni",
+      uuid: "Actor.oni",
+      isOwner: true,
+      system: { props: { pdv_oni_dano_tomado: 7, pdv_oni_dano_ferida: 2 } },
+      update: async (patch) => assert.deepStrictEqual(patch, {
+        "system.props.pdv_oni_dano_tomado": 12,
+        "system.props.pdv_oni_dano_ferida": 6,
+      }),
+    };
+
+    const result = await applyOniDamage(actor, 9, {
+      damageTypes: ["cortante", "ferida"],
+      components: [
+        { label: "Corte", types: ["cortante"], subtotal: 5 },
+        { label: "Marca", types: ["ferida"], subtotal: 4 },
+      ],
+    });
+    assert.strictEqual(WOUND_DAMAGE_KEY, "pdv_oni_dano_ferida");
+    assert.strictEqual(result.normalDamage, 5);
+    assert.strictEqual(result.woundDamage, 4);
+    assert.strictEqual(result.total, 12);
+    assert.strictEqual(result.woundTotal, 6);
   });
 
   it("mostra ao GM crítico, resistência e todos os tipos de dano", async () => {

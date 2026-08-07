@@ -91,12 +91,14 @@ export async function rollHit(options) {
   let color = "";
 
   if (acertoLabel === "acerto_label_dex") {
+    if (!Object.prototype.hasOwnProperty.call(props, "dex_display")) return ui.notifications?.error?.("A ficha não possui a key dex_display.");
     attrName = "DEX";
-    attrVal = parseAttributeValue(props.atr_dex_valor);
+    attrVal = parseAttributeValue(props.dex_display);
     color = "#28D7FF";
   } else if (acertoLabel === "acerto_label_for") {
+    if (!Object.prototype.hasOwnProperty.call(props, "for_display")) return ui.notifications?.error?.("A ficha não possui a key for_display.");
     attrName = "FOR";
-    attrVal = parseAttributeValue(props.atr_for_valor);
+    attrVal = parseAttributeValue(props.for_display);
     color = "#C1000C";
   } else {
     ui.notifications?.warn?.("Escolha DEX ou FOR no campo 'Como Acerta'.");

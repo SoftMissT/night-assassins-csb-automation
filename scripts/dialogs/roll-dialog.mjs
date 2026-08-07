@@ -25,7 +25,6 @@ function parseBonus(raw) {
  * @param {Actor} options.actor
  * @param {string} options.test
  * @param {string} options.attr
- * @param {number} options.value
  * @param {string} options.color
  * @returns {Promise<{mode:string,rollMode:string,secVal:number,bonusRaw:string,cdVal:number}|null>}
  */
@@ -33,7 +32,7 @@ export async function openRollDialog({ actor, test, attr, value, color }) {
   const props = actor?.system?.props ?? {};
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
-    attrValues[key] = parseAttributeValue(props[`atr_${key}_valor`]);
+    attrValues[key] = parseAttributeValue(props[`${key}_display`]);
   }
 
   const primaryKey = attr ? attr.toLowerCase() : "";

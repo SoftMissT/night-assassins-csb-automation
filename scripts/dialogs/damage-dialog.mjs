@@ -99,7 +99,7 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto }) {
   const props = actor?.system?.props ?? {};
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
-    attrValues[key] = parseAttributeValue(props[`atr_${key}_valor`]);
+    attrValues[key] = parseAttributeValue(props[`${key}_display`]);
   }
 
   const preEntradas = Array.isArray(entradas) && entradas.length > 0

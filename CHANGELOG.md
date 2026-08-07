@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4] - 2026-08-06
+
+- Unificada a leitura de atributos das rolagens em `vit_display`, `dex_display`, `for_display`, `car_display`, `fdv_display`, `int_display` e `sab_display`.
+- Corrigidos os serviços internos de teste, acerto e dano, que ainda consultavam `atr_*_valor`.
+- Dano de Ferida agora é separado do dano comum e acumulado em `pdv_oni_dano_ferida`, destinado à redução permanente do PDV máximo.
+- Dano comum continua acumulado exclusivamente em `pdv_oni_dano_tomado`.
+
 ## [0.2.3] - 2026-08-06
 
 - Restaurado o cartão nativo de rolagem do Foundry, agora com uma rolagem separada por componente de dano.

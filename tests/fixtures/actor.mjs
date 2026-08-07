@@ -16,6 +16,13 @@ export function makeActor(overrides = {}) {
     atr_fdv_valor: "<span>1</span>",
     atr_int_valor: "<span>1</span>",
     atr_sab_valor: "<span>1</span>",
+    vit_display: "<span>4</span>",
+    dex_display: "<span>3</span>",
+    for_display: "<span>2</span>",
+    car_display: "<span>2</span>",
+    fdv_display: "<span>1</span>",
+    int_display: "<span>1</span>",
+    sab_display: "<span>1</span>",
     atr_vit_valor_config: 4,
     atr_dex_valor_config: 3,
     atr_for_valor_config: 2,
@@ -33,6 +40,7 @@ export function makeActor(overrides = {}) {
     acerto_label: "acerto_label_dex",
     pdr_gasto_valor: 0,
     pdv_oni_dano_tomado: 0,
+    pdv_oni_dano_ferida: 0,
     ...overrides.props,
   };
 

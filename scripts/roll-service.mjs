@@ -85,7 +85,6 @@ async function resolveActor(options) {
  * @param {string} [options.actorUuid]
  * @param {string} options.test
  * @param {string} options.attr
- * @param {number} options.value
  * @param {string} [options.color]
  * @returns {Promise<void>}
  */
@@ -98,7 +97,12 @@ export async function rollTest(options) {
 
   const test = options.test ?? "Teste";
   const attr = options.attr ?? "";
-  const val = parseAttributeValue(options.value);
+  const displayKey = `${String(attr).toLowerCase()}_display`;
+  if (!Object.prototype.hasOwnProperty.call(actor.system?.props ?? {}, displayKey)) {
+    ui.notifications?.error?.(`A ficha não possui a key ${displayKey}.`);
+    return;
+  }
+  const val = parseAttributeValue(actor.system?.props?.[displayKey]);
   const color = options.color ?? "";
 
   const dialogResult = await openRollDialog({ actor, test, attr, value: val, color });

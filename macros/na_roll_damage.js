@@ -526,13 +526,20 @@
                 });
               } else if (game.user.isGM || targetActor.isOwner) {
                 const atual = parseNum(targetActor.system?.props?.pdv_oni_dano_tomado);
-                const total = atual + amount;
-                await targetActor.update({ 'system.props.pdv_oni_dano_tomado': total });
-                result = { total, actorName: targetActor.name };
+                const ferida = components.filter(component => component.types.includes('ferida')).reduce((total, component) => total + component.subtotal, 0);
+                const danoNormal = amount - ferida;
+                const feridaAtual = parseNum(targetActor.system?.props?.pdv_oni_dano_ferida);
+                const total = atual + danoNormal;
+                const woundTotal = feridaAtual + ferida;
+                const patch = { 'system.props.pdv_oni_dano_tomado': total };
+                if (ferida > 0) patch['system.props.pdv_oni_dano_ferida'] = woundTotal;
+                await targetActor.update(patch);
+                result = { total, woundTotal, normalDamage: danoNormal, woundDamage: ferida, actorName: targetActor.name };
               } else {
                   throw new Error('Ative o módulo Night Assassins — CSB Automation e recarregue o mundo.');
               }
-              ui.notifications.info(`Dano de ${result.appliedDamage ?? amount} adicionado a ${result.actorName} (total sofrido: ${result.total})`);
+              const woundInfo = result.woundDamage > 0 ? `; Ferida máxima: +${result.woundDamage} (total ${result.woundTotal})` : '';
+              ui.notifications.info(`Dano comum: +${result.normalDamage ?? result.appliedDamage ?? amount} em ${result.actorName} (total ${result.total})${woundInfo}`);
             }),
           ]);
           const updateElapsed = performance.now() - updateStartedAt;

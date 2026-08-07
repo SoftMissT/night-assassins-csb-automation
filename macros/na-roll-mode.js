@@ -34,11 +34,20 @@
   const ATTR_NAMES = { vit:'VIT', for:'FOR', dex:'DEX', fdv:'FDV', car:'CAR', int:'INT', sab:'SAB' };
   const ATTR_COLORS = { vit:'#36D67A', for:'#C1000C', dex:'#28D7FF', fdv:'#BB97F9', car:'#FF9100', int:'#F8EB4D', sab:'#D45CA4' };
 
-  // Monta mapa de atributos com valores reais do ator
+  function readDisplayAttribute(key) {
+    const propKey = `${key}_display`;
+    if (!Object.prototype.hasOwnProperty.call(props, propKey)) {
+      throw new Error(`A ficha não possui a key ${propKey}.`);
+    }
+    return parseAttributeValue(props[propKey]);
+  }
+
+  // Monta mapa exclusivamente com os valores finais *_display da ficha.
   const attrValues = {};
-  for (const k of ATTR_KEYS) {
-    const v = props[`${k}_display`];
-    attrValues[k] = parseAttributeValue(v);
+  try {
+    for (const k of ATTR_KEYS) attrValues[k] = readDisplayAttribute(k);
+  } catch (error) {
+    return ui.notifications?.error(error.message);
   }
 
   // Atributos disponíveis como secundários (exclui o primário se houver)

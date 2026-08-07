@@ -66,7 +66,7 @@ export async function rollDamage(options) {
   const props = actor.system?.props ?? {};
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
-    attrValues[key] = parseAttributeValue(props[`atr_${key}_valor`]);
+    attrValues[key] = parseAttributeValue(props[`${key}_display`]);
   }
 
   // Compatibilidade de entradas

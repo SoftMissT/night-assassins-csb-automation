@@ -31,7 +31,7 @@ Ao carregar o mundo, `scripts/main.mjs` registra automaticamente o relay de dano
 - A macro chama `game.modules.get("night-assassins-csb-automation").api.applyOniDamage(...)`.
 - Se o jogador não possuir o Actor, o módulo encaminha o pedido ao primeiro GM ativo.
 - O GM escolhe resistência e tipos de dano antes de autorizar a atualização.
-- O GM acumula o valor autorizado exclusivamente em `system.props.pdv_oni_dano_tomado`.
+- O GM separa o valor autorizado: dano comum em `system.props.pdv_oni_dano_tomado` e Ferida em `system.props.pdv_oni_dano_ferida`.
 
 ### Controle GM
 
@@ -57,6 +57,9 @@ O template precisa conter as seguintes keys:
 - `hab_marca_destino_bonus` (number field oculto)
 - `na_automacao_versao_dados` (number field oculto)
 - `pdv_oni_dano_tomado` (number field do inimigo)
+- `pdv_oni_dano_ferida` (number field do inimigo; perda permanente acumulada do PDV máximo)
+
+No template do Oni, subtraia `pdv_oni_dano_ferida` na fórmula que produz `pdv_total_valor`. A fórmula de PDV atual deve continuar usando o PDV total já reduzido menos `pdv_oni_dano_tomado`; assim Ferida reduz o máximo e dano comum reduz apenas a vida atual.
 
 ## Desenvolvimento
 

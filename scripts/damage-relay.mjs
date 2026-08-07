@@ -3,6 +3,7 @@ import { parseNumber } from "./parsing.mjs";
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const DAMAGE_KEY = "pdv_oni_dano_tomado";
+const WOUND_KEY = "pdv_oni_dano_ferida";
 const REQUEST_TYPE = "applyOniDamage";
 const RESPONSE_TYPE = "applyOniDamageResult";
 const REQUEST_TIMEOUT_MS = 60000;
@@ -46,11 +47,28 @@ function activePrimaryGM() {
     .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0] ?? null;
 }
 
-async function updateOniDamage(actor, amount) {
+function splitDamage(amount, context, selectedTypes, resisted) {
+  const hasComponents = context.components.length > 0;
+  const woundRequested = hasComponents
+    ? context.components.filter((component) => component.types.includes("ferida")).reduce((total, component) => total + component.subtotal, 0)
+    : selectedTypes.includes("ferida") ? amount : 0;
+  const boundedWound = selectedTypes.includes("ferida") ? Math.min(amount, woundRequested || (!hasComponents ? amount : 0)) : 0;
+  const normalRequested = amount - boundedWound;
+  return {
+    normalDamage: calculateApprovedDamage(normalRequested, resisted),
+    woundDamage: calculateApprovedDamage(boundedWound, resisted),
+  };
+}
+
+async function updateOniDamage(actor, normalDamage, woundDamage = 0) {
   const current = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
-  const total = current + amount;
-  await actor.update({ [`system.props.${DAMAGE_KEY}`]: total }, { naCsbAutomation: true });
-  return total;
+  const currentWounds = parseNumber(actor.system?.props?.[WOUND_KEY]);
+  const total = current + normalDamage;
+  const woundTotal = currentWounds + woundDamage;
+  const patch = { [`system.props.${DAMAGE_KEY}`]: total };
+  if (woundDamage > 0) patch[`system.props.${WOUND_KEY}`] = woundTotal;
+  await actor.update(patch, { naCsbAutomation: true });
+  return { total, woundTotal };
 }
 
 function emitResult(recipientId, requestId, result) {
@@ -119,12 +137,14 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
           const root = dialog.element;
           const resisted = root.querySelector('[name="damageResistance"]')?.value === "resisted";
           const damageTypes = [...root.querySelectorAll('[name="damageType"]:checked')].map((input) => input.value);
-          const appliedDamage = calculateApprovedDamage(amount, resisted);
+          const breakdown = splitDamage(amount, context, damageTypes, resisted);
+          const appliedDamage = breakdown.normalDamage + breakdown.woundDamage;
           return {
             approved: true,
             resisted,
             damageTypes,
             appliedDamage,
+            ...breakdown,
             projectedTotal: currentDamage + appliedDamage,
           };
         },
@@ -162,12 +182,15 @@ async function handleDamageRequest(message) {
       return;
     }
 
-    const total = await updateOniDamage(actor, approval.appliedDamage);
+    const { total, woundTotal } = await updateOniDamage(actor, approval.normalDamage, approval.woundDamage);
     emitResult(message.requesterId, message.requestId, {
       ok: true,
       total,
       actorName: actor.name,
       appliedDamage: approval.appliedDamage,
+      normalDamage: approval.normalDamage,
+      woundDamage: approval.woundDamage,
+      woundTotal,
       resisted: approval.resisted,
       damageTypes: approval.damageTypes,
     });
@@ -200,20 +223,25 @@ export async function applyOniDamage(actor, amount, rawContext = {}) {
   }
 
   if ((game.user.isGM || actor.isOwner) && !(context.requireApproval && !game.user.isGM)) {
-    let appliedDamage = damage;
+    let breakdown = splitDamage(damage, context, context.damageTypes, false);
+    let appliedDamage = breakdown.normalDamage + breakdown.woundDamage;
     let resolution = { resisted: false, damageTypes: context.damageTypes };
     if (context.requireApproval && game.user.isGM) {
       const currentDamage = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
       const approval = await requestDamageApproval(actor, game.user, damage, currentDamage, context);
       if (!approval?.approved) throw new Error(`O dano em ${actor.name} foi cancelado.`);
       appliedDamage = approval.appliedDamage;
+      breakdown = { normalDamage: approval.normalDamage, woundDamage: approval.woundDamage };
       resolution = approval;
     }
+    const { total, woundTotal } = await updateOniDamage(actor, breakdown.normalDamage, breakdown.woundDamage);
     return {
       ok: true,
-      total: await updateOniDamage(actor, appliedDamage),
+      total,
+      woundTotal,
       actorName: actor.name,
       appliedDamage,
+      ...breakdown,
       resisted: resolution.resisted,
       damageTypes: resolution.damageTypes,
     };
@@ -242,3 +270,4 @@ export async function applyOniDamage(actor, amount, rawContext = {}) {
 }
 
 export const DAMAGE_RELAY_KEY = DAMAGE_KEY;
+export const WOUND_DAMAGE_KEY = WOUND_KEY;

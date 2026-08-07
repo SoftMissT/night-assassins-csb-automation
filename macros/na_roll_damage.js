@@ -159,6 +159,11 @@
       }
       #na-add-btn:hover { background: rgba(164,254,35,.12); border-color: var(--na-lime); }
       .na-dmg-footer { display:grid; grid-template-columns:140px minmax(0,1fr); gap:10px; align-items:end; padding-top:9px; border-top:1px solid var(--na-line); }
+      .na-critical-toggle { display:flex; align-items:center; gap:10px; margin-top:10px; padding:9px 11px; border:1px solid #765b1c; border-radius:6px; background:linear-gradient(90deg,rgba(255,183,0,.14),rgba(255,183,0,.04)); cursor:pointer; }
+      .na-critical-toggle input { width:18px; height:18px; margin:0; accent-color:#ffbf2f; }
+      .na-critical-toggle span { display:flex; flex-direction:column; gap:2px; }
+      .na-critical-toggle strong { color:#ffd166; font-size:12px; letter-spacing:.04em; text-transform:uppercase; }
+      .na-critical-toggle small { color:#b9aa91; font-size:10px; }
 
       #na-total-preview {
         font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700;
@@ -240,6 +245,15 @@
     { key: 'sangramento', label: 'Sangramento', cat: 'especial', desc: 'Dano por turno no início do turno do alvo.' },
     { key: 'envenenamento', label: 'Envenenamento', cat: 'especial', desc: 'Dano por turno no início do turno do alvo.' },
     { key: 'necrotico', label: 'Necrótico', cat: 'especial', desc: 'Incurável em combate. Só trata com descanso longo (mín. 24h).' },
+    { key: 'acido', label: 'Ácido', cat: 'elemental', desc: 'Dano químico e corrosivo.' },
+    { key: 'colapso', label: 'Colapso', cat: 'elemental', desc: 'Dano de desintegração e ruptura estrutural.' },
+    { key: 'congelante', label: 'Congelante', cat: 'elemental', desc: 'Dano por frio extremo e congelamento.' },
+    { key: 'eletrico', label: 'Elétrico', cat: 'elemental', desc: 'Dano por descarga elétrica.' },
+    { key: 'fogo', label: 'Fogo', cat: 'elemental', desc: 'Dano por chamas e calor.' },
+    { key: 'impacto', label: 'Impacto', cat: 'elemental', desc: 'Dano de choque e impacto concentrado.' },
+    { key: 'mental', label: 'Mental', cat: 'elemental', desc: 'Dano direto à mente.' },
+    { key: 'solar', label: 'Solar', cat: 'elemental', desc: 'Dano produzido por energia solar.' },
+    { key: 'venenoso', label: 'Venenoso', cat: 'elemental', desc: 'Dano direto causado por veneno.' },
   ];
 
   const TIPOS_ACAO = [
@@ -392,6 +406,10 @@
         <div id="na-total-preview">—</div>
       </div>
     </div>
+    <label class="na-critical-toggle">
+      <input type="checkbox" id="na-dmg-critical" ${args.critical === true ? 'checked' : ''} />
+      <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>
+    </label>
   </div>`;
 
   // ── 5. Instanciação do Dialog ─────────────────────────────────────────────
@@ -411,6 +429,7 @@
           const actionStartedAt = performance.now();
           const nome = html.find('#na-dmg-nome').val()?.trim() || 'Dano';
           const pdrGasto = Math.max(0, Number(html.find('#na-dmg-pdr').val()) || 0);
+          const critical = html.find('#na-dmg-critical').is(':checked');
 
           const entradas = [];
           html.find('.na-entrada').each((_, el) => {
@@ -450,6 +469,9 @@
             catch (_) { /* Dice So Nice é opcional. */ }
           }
 
+          const finalDamage = Math.max(0, Math.trunc(Number(roll.total) || 0)) * (critical ? 2 : 1);
+          const damageTypes = [...new Set(entradas.flatMap(entry => entry.selTiposDano))];
+
           // ── Atualizações imediatas e paralelas por Ator ─────────────────
           const updatesByActor = new Map();
 
@@ -463,11 +485,11 @@
           }
 
           const oniDamageRequests = [];
-          if (game.user.targets && game.user.targets.size > 0 && roll.total > 0) {
+          if (game.user.targets && game.user.targets.size > 0 && finalDamage > 0) {
             for (const targetToken of game.user.targets) {
               const targetActor = targetToken.actor;
               if (!targetActor) continue;
-              oniDamageRequests.push({ actor: targetActor, amount: roll.total });
+              oniDamageRequests.push({ actor: targetActor, amount: finalDamage });
             }
           }
 
@@ -479,19 +501,24 @@
             }),
             ...oniDamageRequests.map(async ({ actor: targetActor, amount }) => {
               let result;
-              if (game.user.isGM || targetActor.isOwner) {
+              const automationModule = game.modules.get('night-assassins-csb-automation');
+              if (automationModule?.active && typeof automationModule.api?.applyOniDamage === 'function') {
+                result = await automationModule.api.applyOniDamage(targetActor, amount, {
+                  attackName: nome,
+                  critical,
+                  rolledTotal: Math.trunc(Number(roll.total) || 0),
+                  damageTypes,
+                  requireApproval: true,
+                });
+              } else if (game.user.isGM || targetActor.isOwner) {
                 const atual = parseNum(targetActor.system?.props?.pdv_oni_dano_tomado);
                 const total = atual + amount;
                 await targetActor.update({ 'system.props.pdv_oni_dano_tomado': total });
                 result = { total, actorName: targetActor.name };
               } else {
-                const automationModule = game.modules.get('night-assassins-csb-automation');
-                if (!automationModule?.active || typeof automationModule.api?.applyOniDamage !== 'function') {
                   throw new Error('Ative o módulo Night Assassins — CSB Automation e recarregue o mundo.');
-                }
-                result = await automationModule.api.applyOniDamage(targetActor, amount);
               }
-              ui.notifications.info(`Dano de ${amount} adicionado a ${result.actorName} (total sofrido: ${result.total})`);
+              ui.notifications.info(`Dano de ${result.appliedDamage ?? amount} adicionado a ${result.actorName} (total sofrido: ${result.total})`);
             }),
           ]);
           const updateElapsed = performance.now() - updateStartedAt;
@@ -530,15 +557,19 @@
             ? `<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 8px;margin-top:4px;border:1px solid rgba(255,89,100,.35);border-radius:5px;background:rgba(193,0,12,.13);"><strong style="color:#ff7b84;font-size:10px;">Marca · Dano de Ferida</strong><code style="color:#ff9ca3;font-weight:800;">${marcaFormula}</code></div>`
             : '';
 
+          const criticalLine = critical
+            ? `<div style="display:flex;justify-content:space-between;gap:8px;padding:7px 8px;margin-top:4px;border:1px solid rgba(255,183,0,.45);border-radius:5px;background:rgba(255,183,0,.12);"><strong style="color:#ffd166;font-size:10px;">ACERTO CRÍTICO · dano dobrado</strong><code style="color:#ffe4a3;font-weight:800;">${roll.total} → ${finalDamage}</code></div>`
+            : '';
+
           const content = `<div style="font-family:'Lexend',sans-serif;background:#14110e;color:#f3eee6;border:1px solid #504536;border-radius:7px;overflow:hidden;box-shadow:inset 0 1px rgba(255,255,255,.04);">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;background:linear-gradient(90deg,#231d16,#17130f);border-bottom:1px solid #504536;">
               <div><small style="display:block;color:#e8bd55;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;">Dano causado</small><strong style="font-size:14px;">${nome}</strong></div>${pdrLine}
             </div>
             <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;">
               <code style="color:#b8ada0;font-size:10px;word-break:break-all;">${formula}</code>
-              <strong style="min-width:48px;text-align:center;color:#0c0b09;background:#a4fe23;border-radius:5px;padding:6px 9px;font-size:20px;line-height:1;">${roll.total}</strong>
+              <strong style="min-width:48px;text-align:center;color:#0c0b09;background:${critical ? '#ffd166' : '#a4fe23'};border-radius:5px;padding:6px 9px;font-size:20px;line-height:1;">${finalDamage}</strong>
             </div>
-            <div style="padding:0 10px 9px;">${entradasHtml}${marcaLine}</div>
+            <div style="padding:0 10px 9px;">${entradasHtml}${marcaLine}${criticalLine}</div>
           </div>`;
 
           const modeMap = { publicroll: 'public', gmroll: 'gm', blindroll: 'blind', selfroll: 'self' };

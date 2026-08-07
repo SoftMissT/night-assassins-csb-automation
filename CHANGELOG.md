@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0] - 2026-08-06
+
+- Adicionada confirmação manual de crítico à macro de dano; o total final é dobrado antes da resistência.
+- Ampliado o relay GM com autorização, resistência e os 18 tipos de dano oficiais.
+- Adicionada a macro **Night Assassins — Controle GM** ao Compendium, com barras de PDV/PDR e resumo dos Caçadores.
+- Mantido o Dice So Nice sobre a rolagem original; o chat destaca o total pós-crítico.
+
 ## [0.1.2] - 2026-08-06
 
 - Declarado o canal socket do módulo no manifesto.

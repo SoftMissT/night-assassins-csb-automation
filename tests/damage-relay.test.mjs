@@ -3,7 +3,7 @@ setupFoundryMocks();
 
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { applyOniDamage, DAMAGE_RELAY_KEY, requestDamageApproval } from "../scripts/damage-relay.mjs";
+import { applyOniDamage, calculateApprovedDamage, DAMAGE_RELAY_KEY, DAMAGE_TYPES, requestDamageApproval } from "../scripts/damage-relay.mjs";
 
 describe("damage-relay", () => {
   it("acumula somente pdv_oni_dano_tomado quando o usuário pode atualizar", async () => {
@@ -28,7 +28,7 @@ describe("damage-relay", () => {
     await assert.rejects(() => applyOniDamage({ isOwner: true }, 0), /dano inválido/i);
   });
 
-  it("mostra ao GM o modal de autorização com o total previsto", async () => {
+  it("mostra ao GM crítico, resistência e todos os tipos de dano", async () => {
     let dialogConfig;
     foundry.applications = {
       api: {
@@ -41,12 +41,26 @@ describe("damage-relay", () => {
       },
     };
 
-    const approved = await requestDamageApproval({ name: "Oni Lua" }, { name: "Tanjiro" }, 12, 8);
+    const approved = await requestDamageApproval(
+      { name: "Oni Lua" },
+      { name: "Tanjiro" },
+      24,
+      8,
+      { attackName: "Hinokami", critical: true, rolledTotal: 12, damageTypes: ["fogo", "cortante"] },
+    );
     assert.strictEqual(approved, true);
     assert.match(dialogConfig.content, /Tanjiro/);
     assert.match(dialogConfig.content, /Oni Lua/);
-    assert.match(dialogConfig.content, /Total após aplicar/);
-    assert.match(dialogConfig.content, />20</);
+    assert.match(dialogConfig.content, /Hinokami/);
+    assert.match(dialogConfig.content, /Crítico · base 12/);
+    assert.match(dialogConfig.content, /Resistente · metade/);
+    assert.strictEqual((dialogConfig.content.match(/name="damageType"/g) ?? []).length, DAMAGE_TYPES.length);
     assert.deepStrictEqual(dialogConfig.buttons.map(({ action }) => action), ["deny", "approve"]);
+  });
+
+  it("aplica resistência depois do dano crítico já calculado", () => {
+    assert.strictEqual(calculateApprovedDamage(42, false), 42);
+    assert.strictEqual(calculateApprovedDamage(42, true), 21);
+    assert.strictEqual(calculateApprovedDamage(41, true), 20);
   });
 });

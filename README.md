@@ -2,7 +2,7 @@
 
 ## Conteúdo do módulo
 
-- Compendium `Macros Night Assassins` com as cinco macros canônicas.
+- Compendium `Macros Night Assassins` com seis macros canônicas, incluindo o Controle GM.
 - Automação de atributos e progressão da ficha do Custom System Builder.
 - Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
 - Configurações de mundo para ativar ou desativar a automação e o relay.
@@ -28,8 +28,12 @@ Ao carregar o mundo, `scripts/main.mjs` registra automaticamente o relay de dano
 - O jogador marca o token inimigo como alvo e usa `na_roll_damage.js`.
 - A macro chama `game.modules.get("night-assassins-csb-automation").api.applyOniDamage(...)`.
 - Se o jogador não possuir o Actor, o módulo encaminha o pedido ao primeiro GM ativo.
-- O GM acumula o valor exclusivamente em `system.props.pdv_oni_dano_tomado`.
-- Se o próprio GM rolar o dano, a atualização é direta.
+- O GM escolhe resistência e tipos de dano antes de autorizar a atualização.
+- O GM acumula o valor autorizado exclusivamente em `system.props.pdv_oni_dano_tomado`.
+
+### Controle GM
+
+Importe do Compendium a macro **Night Assassins — Controle GM**. Ela lista todos os Actors Night Assassins do mundo e mostra `nome_cacador`, Habilidade Especial, Metal/Cor e barras de PDV/PDR. O painel é somente leitura e exclusivo do GM.
 
 Após instalar ou atualizar os arquivos do módulo, GM e jogadores devem recarregar o mundo.
 

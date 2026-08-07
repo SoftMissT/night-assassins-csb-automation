@@ -9,6 +9,31 @@ const REQUEST_TIMEOUT_MS = 60000;
 
 const pendingRequests = new Map();
 
+export const DAMAGE_TYPES = Object.freeze([
+  ["cortante", "Cortante"], ["perfurante", "Perfurante"], ["concussao", "Concussão"],
+  ["trovejante", "Trovejante"], ["sonoro", "Sonoro"], ["ferida", "Ferida"],
+  ["sangramento", "Sangramento"], ["envenenamento", "Envenenamento"], ["necrotico", "Necrótico"],
+  ["acido", "Ácido"], ["colapso", "Colapso"], ["congelante", "Congelante"],
+  ["eletrico", "Elétrico"], ["fogo", "Fogo"], ["impacto", "Impacto"],
+  ["mental", "Mental"], ["solar", "Solar"], ["venenoso", "Venenoso"],
+]);
+
+function normalizeDamageContext(context = {}) {
+  const allowed = new Set(DAMAGE_TYPES.map(([key]) => key));
+  return {
+    attackName: String(context.attackName ?? "Dano").slice(0, 120),
+    critical: context.critical === true,
+    rolledTotal: Math.max(0, Math.trunc(Number(context.rolledTotal) || 0)),
+    damageTypes: [...new Set(Array.isArray(context.damageTypes) ? context.damageTypes.filter((key) => allowed.has(key)) : [])],
+    requireApproval: context.requireApproval === true,
+  };
+}
+
+export function calculateApprovedDamage(amount, resisted = false) {
+  const damage = Math.max(0, Math.trunc(Number(amount) || 0));
+  return resisted ? Math.floor(damage / 2) : damage;
+}
+
 function activePrimaryGM() {
   return game.users
     ?.filter((user) => user.active && user.isGM)
@@ -40,13 +65,17 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-export async function requestDamageApproval(actor, requester, amount, currentDamage) {
+export async function requestDamageApproval(actor, requester, amount, currentDamage, rawContext = {}) {
   const DialogV2 = foundry.applications.api.DialogV2;
-  const projectedTotal = currentDamage + amount;
+  const context = normalizeDamageContext(rawContext);
+  const typeOptions = DAMAGE_TYPES.map(([key, label]) => {
+    const checked = context.damageTypes.includes(key) ? "checked" : "";
+    return `<label class="na-relay-type"><input type="checkbox" name="damageType" value="${key}" ${checked}><span>${label}</span></label>`;
+  }).join("");
 
   return DialogV2.wait({
     window: { title: "Autorizar dano no inimigo" },
-    position: { width: 520, height: "auto" },
+    position: { width: 680, height: "auto" },
     modal: true,
     rejectClose: false,
     content: `
@@ -54,24 +83,40 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
         <legend>Pedido de dano</legend>
         <div class="form-group"><label>Jogador</label><div class="form-fields"><strong>${escapeHtml(requester.name)}</strong></div></div>
         <div class="form-group"><label>Alvo</label><div class="form-fields"><strong>${escapeHtml(actor.name)}</strong></div></div>
+        <div class="form-group"><label>Ataque</label><div class="form-fields"><strong>${escapeHtml(context.attackName)}</strong></div></div>
         <div class="form-group"><label>Dano atual</label><div class="form-fields"><span>${currentDamage}</span></div></div>
-        <div class="form-group"><label>Dano solicitado</label><div class="form-fields"><strong>${amount}</strong></div></div>
-        <div class="form-group"><label>Total após aplicar</label><div class="form-fields"><strong>${projectedTotal}</strong></div></div>
+        <div class="form-group"><label>Dano solicitado</label><div class="form-fields"><strong>${amount}</strong>${context.critical ? `<span class="tag">Crítico · base ${context.rolledTotal}</span>` : ""}</div></div>
       </fieldset>
-      <p class="hint">Autorize somente se o resultado da rolagem estiver correto.</p>`,
+      <fieldset>
+        <legend>Resolução</legend>
+        <div class="form-group"><label>Resistência</label><div class="form-fields"><select name="damageResistance"><option value="normal">Sem resistência</option><option value="resisted">Resistente · metade</option></select></div></div>
+        <label>Tipo(s) de dano</label>
+        <div class="na-relay-types" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:6px;">${typeOptions}</div>
+      </fieldset>
+      <p class="hint">O crítico já está incluído no dano solicitado. A resistência é aplicada depois dele.</p>`,
     buttons: [
       {
         action: "deny",
         label: "Recusar",
-        icon: "<i class='fa-solid fa-xmark'></i>",
-        callback: () => false,
+        callback: () => ({ approved: false }),
       },
       {
         action: "approve",
         label: "Autorizar e aplicar",
-        icon: "<i class='fa-solid fa-check'></i>",
         default: true,
-        callback: () => true,
+        callback: (_event, _button, dialog) => {
+          const root = dialog.element;
+          const resisted = root.querySelector('[name="damageResistance"]')?.value === "resisted";
+          const damageTypes = [...root.querySelectorAll('[name="damageType"]:checked')].map((input) => input.value);
+          const appliedDamage = calculateApprovedDamage(amount, resisted);
+          return {
+            approved: true,
+            resisted,
+            damageTypes,
+            appliedDamage,
+            projectedTotal: currentDamage + appliedDamage,
+          };
+        },
       },
     ],
   });
@@ -96,8 +141,9 @@ async function handleDamageRequest(message) {
 
   try {
     const currentDamage = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
-    const approved = await requestDamageApproval(actor, requester, amount, currentDamage);
-    if (!approved) {
+    const context = normalizeDamageContext(message.context);
+    const approval = await requestDamageApproval(actor, requester, amount, currentDamage, context);
+    if (!approval?.approved) {
       emitResult(message.requesterId, message.requestId, {
         ok: false,
         error: `O GM recusou o pedido de ${amount} de dano em ${actor.name}.`,
@@ -105,8 +151,15 @@ async function handleDamageRequest(message) {
       return;
     }
 
-    const total = await updateOniDamage(actor, amount);
-    emitResult(message.requesterId, message.requestId, { ok: true, total, actorName: actor.name });
+    const total = await updateOniDamage(actor, approval.appliedDamage);
+    emitResult(message.requesterId, message.requestId, {
+      ok: true,
+      total,
+      actorName: actor.name,
+      appliedDamage: approval.appliedDamage,
+      resisted: approval.resisted,
+      damageTypes: approval.damageTypes,
+    });
   } catch (error) {
     emitResult(message.requesterId, message.requestId, { ok: false, error: error?.message || "Falha ao atualizar o Oni." });
   }
@@ -128,14 +181,31 @@ export function registerDamageRelay() {
   });
 }
 
-export async function applyOniDamage(actor, amount) {
+export async function applyOniDamage(actor, amount, rawContext = {}) {
   const damage = Math.trunc(Number(amount));
+  const context = normalizeDamageContext(rawContext);
   if (!actor || !Number.isSafeInteger(damage) || damage <= 0) {
     throw new Error("Actor alvo ou dano inválido.");
   }
 
-  if (game.user.isGM || actor.isOwner) {
-    return { ok: true, total: await updateOniDamage(actor, damage), actorName: actor.name };
+  if ((game.user.isGM || actor.isOwner) && !(context.requireApproval && !game.user.isGM)) {
+    let appliedDamage = damage;
+    let resolution = { resisted: false, damageTypes: context.damageTypes };
+    if (context.requireApproval && game.user.isGM) {
+      const currentDamage = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
+      const approval = await requestDamageApproval(actor, game.user, damage, currentDamage, context);
+      if (!approval?.approved) throw new Error(`O dano em ${actor.name} foi cancelado.`);
+      appliedDamage = approval.appliedDamage;
+      resolution = approval;
+    }
+    return {
+      ok: true,
+      total: await updateOniDamage(actor, appliedDamage),
+      actorName: actor.name,
+      appliedDamage,
+      resisted: resolution.resisted,
+      damageTypes: resolution.damageTypes,
+    };
   }
 
   const gm = activePrimaryGM();
@@ -155,6 +225,7 @@ export async function applyOniDamage(actor, amount) {
       gmId: gm.id,
       actorUuid: actor.uuid,
       amount: damage,
+      context,
     });
   });
 }

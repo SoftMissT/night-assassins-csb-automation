@@ -12,6 +12,7 @@ import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
 import { applyOniDamage, registerDamageRelay } from "./damage-relay.mjs";
 import { parseNumber, currentConfigValues, latestValues, changedProp, isDestinyMark, normalizeAbilityKey } from "./parsing.mjs";
 import { registerSettings, SETTINGS } from "./settings.mjs";
+import { openGmDashboard } from "./gm-dashboard.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -38,6 +39,7 @@ Hooks.once("ready", () => {
       rollHit,
       rollDamage,
       applyOniDamage,
+      openGmDashboard,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,
       processAbility: applyInitialMark,

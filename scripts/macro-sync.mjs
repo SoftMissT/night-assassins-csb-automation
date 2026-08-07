@@ -28,7 +28,7 @@ function worldMacroData(document, folderId) {
 }
 
 export async function syncCanonicalMacros() {
-  if (!game.user?.isGM) return { created: 0, skipped: 0 };
+  if (!game.user?.isGM) return { created: 0, updated: 0, skipped: 0 };
 
   const pack = game.packs.get(PACK_ID);
   if (!pack) throw new Error(`Compendium ${PACK_ID} não encontrado.`);
@@ -37,15 +37,30 @@ export async function syncCanonicalMacros() {
   if (!folder) folder = await Folder.create({ name: FOLDER_NAME, type: "Macro", sorting: "a" });
 
   const documents = await pack.getDocuments();
-  const existingNames = new Set(game.macros.contents.map((macro) => macro.name));
-  const missing = documents.filter((document) => !existingNames.has(document.name));
+  const existingBySource = new Map();
+  for (const macro of game.macros.contents) {
+    const sourceId = macro.getFlag?.(MODULE_ID, "sourceId") ?? macro.flags?.[MODULE_ID]?.sourceId ?? macro.flags?.core?.sourceId;
+    if (sourceId) existingBySource.set(sourceId, macro);
+  }
+  const updates = [];
+  const missing = [];
+  for (const document of documents) {
+    const existing = existingBySource.get(document.uuid);
+    if (!existing) {
+      missing.push(document);
+      continue;
+    }
+    const source = worldMacroData(document, existing.folder?.id ?? existing.folder ?? folder.id);
+    updates.push({ _id: existing.id, name: source.name, type: source.type, scope: source.scope, command: source.command, img: source.img, flags: source.flags });
+  }
+
+  if (updates.length > 0) await Macro.updateDocuments(updates);
 
   if (missing.length > 0) {
     await Macro.createDocuments(missing.map((document) => worldMacroData(document, folder.id)));
   }
 
-  return { created: missing.length, skipped: documents.length - missing.length, folderId: folder.id };
+  return { created: missing.length, updated: updates.length, skipped: documents.length - missing.length - updates.length, folderId: folder.id };
 }
 
 export const CANONICAL_MACRO_PACK_ID = PACK_ID;
-

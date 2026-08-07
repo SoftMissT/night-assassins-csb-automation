@@ -46,13 +46,15 @@ describe("damage-relay", () => {
       { name: "Tanjiro" },
       24,
       8,
-      { attackName: "Hinokami", critical: true, rolledTotal: 12, damageTypes: ["fogo", "cortante"] },
+      { attackName: "Hinokami", critical: true, rolledTotal: 24, damageTypes: ["fogo", "cortante"], components: [{ label: "Lâmina", types: ["cortante"], subtotal: 14 }, { label: "Chama", types: ["fogo"], subtotal: 10 }] },
     );
     assert.strictEqual(approved, true);
     assert.match(dialogConfig.content, /Tanjiro/);
     assert.match(dialogConfig.content, /Oni Lua/);
     assert.match(dialogConfig.content, /Hinokami/);
-    assert.match(dialogConfig.content, /Crítico · base 12/);
+    assert.match(dialogConfig.content, /Crítico · base 24/);
+    assert.match(dialogConfig.content, /Lâmina/);
+    assert.match(dialogConfig.content, /Chama/);
     assert.match(dialogConfig.content, /Resistente · metade/);
     assert.strictEqual((dialogConfig.content.match(/name="damageType"/g) ?? []).length, DAMAGE_TYPES.length);
     assert.deepStrictEqual(dialogConfig.buttons.map(({ action }) => action), ["deny", "approve"]);

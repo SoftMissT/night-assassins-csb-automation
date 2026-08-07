@@ -20,11 +20,17 @@ export const DAMAGE_TYPES = Object.freeze([
 
 function normalizeDamageContext(context = {}) {
   const allowed = new Set(DAMAGE_TYPES.map(([key]) => key));
+  const components = Array.isArray(context.components) ? context.components.slice(0, 12).map((component, index) => ({
+    label: String(component?.label ?? `Dano ${index + 1}`).slice(0, 80),
+    types: [...new Set(Array.isArray(component?.types) ? component.types.filter((key) => allowed.has(key)) : [])],
+    subtotal: Math.max(0, Math.trunc(Number(component?.subtotal) || 0)),
+  })) : [];
   return {
     attackName: String(context.attackName ?? "Dano").slice(0, 120),
     critical: context.critical === true,
     rolledTotal: Math.max(0, Math.trunc(Number(context.rolledTotal) || 0)),
     damageTypes: [...new Set(Array.isArray(context.damageTypes) ? context.damageTypes.filter((key) => allowed.has(key)) : [])],
+    components,
     requireApproval: context.requireApproval === true,
   };
 }
@@ -72,6 +78,10 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
     const checked = context.damageTypes.includes(key) ? "checked" : "";
     return `<label class="na-relay-type"><input type="checkbox" name="damageType" value="${key}" ${checked}><span>${label}</span></label>`;
   }).join("");
+  const typeLabels = new Map(DAMAGE_TYPES);
+  const componentRows = context.components.length > 0
+    ? context.components.map((component) => `<tr><td>${escapeHtml(component.label)}</td><td>${escapeHtml(component.types.map((key) => typeLabels.get(key) ?? key).join(" · ") || "Sem tipo")}</td><td style="text-align:right"><strong>${component.subtotal}</strong></td></tr>`).join("")
+    : `<tr><td>Dano</td><td>${escapeHtml(context.damageTypes.map((key) => typeLabels.get(key) ?? key).join(" · ") || "Sem tipo")}</td><td style="text-align:right"><strong>${amount}</strong></td></tr>`;
 
   return DialogV2.wait({
     window: { title: "Autorizar dano no inimigo" },
@@ -86,6 +96,7 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
         <div class="form-group"><label>Ataque</label><div class="form-fields"><strong>${escapeHtml(context.attackName)}</strong></div></div>
         <div class="form-group"><label>Dano atual</label><div class="form-fields"><span>${currentDamage}</span></div></div>
         <div class="form-group"><label>Dano solicitado</label><div class="form-fields"><strong>${amount}</strong>${context.critical ? `<span class="tag">Crítico · base ${context.rolledTotal}</span>` : ""}</div></div>
+        <table style="width:100%;margin-top:8px"><thead><tr><th style="text-align:left">Parte</th><th style="text-align:left">Tipo</th><th style="text-align:right">Subtotal</th></tr></thead><tbody>${componentRows}</tbody></table>
       </fieldset>
       <fieldset>
         <legend>Resolução</legend>

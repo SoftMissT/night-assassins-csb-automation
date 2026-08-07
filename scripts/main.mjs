@@ -35,8 +35,8 @@ Hooks.once("ready", () => {
 
   if (game.user.isGM) {
     void syncCanonicalMacros()
-      .then(({ created }) => {
-        if (created > 0) ui.notifications.info(`${created} macros Night Assassins adicionadas ao mundo.`);
+      .then(({ created, updated }) => {
+        if (created > 0 || updated > 0) ui.notifications.info(`Macros Night Assassins sincronizadas: ${created} adicionadas, ${updated} atualizadas.`);
       })
       .catch((error) => ui.notifications.error(`Falha ao carregar macros Night Assassins: ${error.message}`));
   }

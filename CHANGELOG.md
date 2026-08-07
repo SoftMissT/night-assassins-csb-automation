@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3] - 2026-08-06
+
+- Restaurado o cartão nativo de rolagem do Foundry, agora com uma rolagem separada por componente de dano.
+- Exibidos tipo e subtotal de cada componente, incluindo a Marca do Caçador como Dano de Ferida.
+- Corrigido o total enviado ao relay e acumulado em `pdv_oni_dano_tomado` quando existe alvo marcado.
+- Adicionado aviso explícito quando a rolagem é feita sem alvo marcado com `T`.
+- O modal de autorização do GM agora mostra a divisão do dano por componente.
+- A sincronização automática passa a atualizar macros gerenciadas já existentes no mundo.
+
 ## [0.2.2] - 2026-08-06
 
 - Reconstruído o Controle GM com CSS externo compatível com a sanitização do `DialogV2`.

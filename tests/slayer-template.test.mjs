@@ -46,6 +46,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.match(source, /test:'Investigação',attr:'INT'/);
   assert.match(source, /Macro\.NAResistance0001/);
   assert.match(source, /kind:'slayer'/);
+  assert.match(source, /Macro\.NAResistance0001[^\n]+return '';/);
 });
 
 test("template Slayer separa dano comum, Ferida e armazenamento de Resistências", () => {

@@ -248,7 +248,7 @@ function fixResistanceAndWoundContract(template) {
   resistanceButton.style = "button";
   resistanceButton.rollMessageToChat = false;
   resistanceButton.altRollMessageToChat = false;
-  resistanceButton.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'});}%";
+  resistanceButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'}); return '';}%";
   resistanceDisplay.value = "${status_slayer_resistencias_resumo}$";
   woundField.defaultValue = "0";
   woundField.minVal = "0";

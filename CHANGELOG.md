@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7] - 2026-08-07
+
+### Corrigido
+
+- A macro **Gerenciar Resistências** agora lê o `scope` enviado por `Macro.execute`, resolvendo corretamente o Actor da própria ficha.
+- O botão retorna texto vazio ao CSB depois de abrir o modal, impedindo `Uncomputable token "object"` no processamento da Label.
+
 ## [0.2.6] - 2026-08-07
 
 ### Adicionado

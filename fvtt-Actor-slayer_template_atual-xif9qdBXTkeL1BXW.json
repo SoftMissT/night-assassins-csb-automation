@@ -1357,7 +1357,7 @@
                         "value": "GERENCIAR RESISTÊNCIAS",
                         "prefix": "",
                         "suffix": "",
-                        "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'});}%",
+                        "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'}); return '';}%",
                         "altRollMessage": "",
                         "rollMessageToChat": false,
                         "altRollMessageToChat": false,

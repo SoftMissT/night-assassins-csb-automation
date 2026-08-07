@@ -106,6 +106,20 @@ test("Exaustão 5 perde metade do PDV uma única vez", async () => {
   assert.deepEqual(second.reached, []);
 });
 
+test("Exaustão 5 usa o PDV atual numérico e ignora números do CSS do Label", async () => {
+  globalThis.game.combats = [];
+  const actor = actorWith({
+    pdv_slayer_conta_atual: 14,
+    pdv_slayer_atual_valor_display: `<div><style>@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700');</style><span style="font-size:18px">14</span></div>`,
+    pdv_slayer_dano_tomado: 0,
+    status_slayer_exaustao: 5,
+    status_slayer_dados: JSON.stringify({ version: 2, active: [], exhaustion: 5, effects: {}, exhaustionMilestones: [] }),
+  });
+  const result = await reconcileSlayerExhaustion(actor);
+  assert.equal(result.extraDamage, 7);
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 7);
+});
+
 test("Corrupção e Regeneração Suprimida reduzem cura pela metade", () => {
   const props = {
     pdv_slayer_curado: 2,

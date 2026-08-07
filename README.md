@@ -26,7 +26,7 @@ Também é possível consultar as cópias originais em `Compêndios` → `Macros
 
 O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.3.0 ele inclui **Gerenciar Resistências**, **Gerenciar Status**, Exaustão acumulativa e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
 
-Na v0.5.4, técnicas com múltiplos Acertos são resolvidas sequencialmente: rola uma tentativa, confirma Acerto ou Erro e só então avança, com opção de encerramento antecipado. O gerenciador também distingue condições comuns dos cinco danos contínuos oficiais: Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas. Fórmula e duração que dependem da técnica não recebem valores inventados. O módulo publica a especificação da migração dos status para Active Effects nativos do Foundry v14; o motor atual continua processando os status persistentes enquanto essa migração não é implementada.
+Na v0.5.5, Exaustão 5 usa o PDV atual numérico da ficha e retira corretamente sua metade, sem interpretar números presentes no CSS dos Labels. Técnicas com múltiplos Acertos são resolvidas sequencialmente: rola uma tentativa, confirma Acerto ou Erro e só então avança, com opção de encerramento antecipado. O gerenciador também distingue condições comuns dos cinco danos contínuos oficiais: Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas.
 
 Na v0.4.0, **Gerenciar Status** também configura fórmula, quantidade de turnos, pilhas, salvaguarda e fonte. O GM ativo processa automaticamente dano contínuo, expiração, Confuso, salvaguardas e Exaustão pelo Combat nativo. O módulo continua compatível com Combat Tracker Dock porque não depende da interface do tracker.
 

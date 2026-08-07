@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.5] - 2026-08-07
+
+### Corrigido
+
+- Exaustão 5 agora calcula metade do Hidden Attribute numérico `pdv_slayer_conta_atual`.
+- O motor não usa mais diretamente o Label HTML `pdv_slayer_atual_valor_display`, cujo CSS podia fazer `css2` ser interpretado como PDV 2 e causar apenas 1 de dano.
+- O fallback remove blocos `<style>` antes de interpretar Labels antigos.
+- Adicionado teste com o HTML real da ficha: PDV atual 14 resulta em 7 de dano de Exaustão.
+
 ## [0.5.4] - 2026-08-07
 
 ### Acerto sequencial

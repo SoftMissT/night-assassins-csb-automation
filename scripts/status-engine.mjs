@@ -27,9 +27,25 @@ function statePatch(state) {
 }
 
 function currentPdv(props = {}) {
+  const computedCurrent = props.pdv_slayer_conta_atual;
+  if (computedCurrent !== undefined && computedCurrent !== null && computedCurrent !== "") {
+    return Math.max(0, parseNumber(computedCurrent));
+  }
+  const computedTotal = props.pdv_slayer_total_conta;
+  if (computedTotal !== undefined && computedTotal !== null && computedTotal !== "") {
+    const wound = parseNumber(props.pdv_slayer_dano_ferida);
+    const healed = parseNumber(props.pdv_slayer_curado);
+    const extra = parseNumber(props.pdv_slayer_extra);
+    const damage = parseNumber(props.pdv_slayer_dano_tomado);
+    return Math.max(0, parseNumber(computedTotal) - wound + healed + extra - damage);
+  }
   const display = props.pdv_slayer_atual_valor_display;
-  if (display !== undefined && display !== null && display !== "") return Math.max(0, parseNumber(display));
-  const total = parseNumber(props.pdv_slayer_total_valor);
+  if (display !== undefined && display !== null && display !== "") {
+    const withoutCss = String(display).replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ");
+    return Math.max(0, parseNumber(withoutCss));
+  }
+  const totalLabel = String(props.pdv_slayer_total_valor ?? "").replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ");
+  const total = parseNumber(totalLabel);
   const wound = parseNumber(props.pdv_slayer_dano_ferida);
   const healed = parseNumber(props.pdv_slayer_curado);
   const extra = parseNumber(props.pdv_slayer_extra);

@@ -1,5 +1,16 @@
 # Night Assassins — CSB Automation
 
+## Conteúdo do módulo
+
+- Compendium `Macros Night Assassins` com as cinco macros canônicas.
+- Automação de atributos e progressão da ficha do Custom System Builder.
+- Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
+- Configurações de mundo para ativar ou desativar a automação e o relay.
+
+Depois de ativar o módulo, abra `Compêndios` → `Macros Night Assassins` e arraste as macros desejadas para a hotbar ou importe-as para o mundo.
+
+As configurações ficam em `Configurações do Jogo` → `Night Assassins — CSB Automation`.
+
 Módulo Foundry VTT v14 para Custom System Builder 5.2.1 que automatiza atributos, progressão e Habilidades Especiais do sistema Night Assassins.
 
 ## Instalação

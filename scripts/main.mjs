@@ -11,9 +11,10 @@ import { createLevelOneValues, processLevelGain } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
 import { applyOniDamage, registerDamageRelay } from "./damage-relay.mjs";
 import { parseNumber, currentConfigValues, latestValues, changedProp, isDestinyMark, normalizeAbilityKey } from "./parsing.mjs";
+import { registerSettings, SETTINGS } from "./settings.mjs";
 
 Hooks.once("init", () => {
-  // Configurações futuras podem ser registradas aqui
+  registerSettings();
 });
 
 Hooks.once("ready", () => {
@@ -22,8 +23,13 @@ Hooks.once("ready", () => {
     return;
   }
 
-  Hooks.on("updateActor", handleActorUpdate);
-  registerDamageRelay();
+  if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
+    Hooks.on("updateActor", handleActorUpdate);
+  }
+
+  if (game.settings.get(MODULE_ID, SETTINGS.enableDamageRelay)) {
+    registerDamageRelay();
+  }
 
   const module = game.modules.get(MODULE_ID);
   if (module) {

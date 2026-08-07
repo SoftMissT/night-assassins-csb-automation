@@ -30,6 +30,18 @@ jobs:
       - name: Run tests
         run: node --test
 
+      - name: Build Macro Compendium
+        shell: bash
+        run: |
+          node tools/build-macro-sources.mjs
+          rm -rf packs/night-assassins-macros
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-macros \
+            --inputDirectory build/compendium/macros \
+            --outputDirectory packs
+
       - name: Build module.zip
         shell: bash
         run: |
@@ -38,6 +50,7 @@ jobs:
             scripts \
             styles \
             lang \
+            packs \
             README.md \
             CHANGELOG.md
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1] - 2026-08-06
+
+- Adicionado Compendium com cinco macros canônicas de Night Assassins.
+- Adicionadas configurações de mundo para automação da ficha e relay de dano.
+- Adicionado pipeline reproduzível para gerar o pack ClassicLevel na Release.
+- Corrigida a distribuição que anteriormente publicava apenas o motor do módulo.
+
 ## 0.1.0 — 2026-08-04
 
 - Migração das macros `na-roll-mode.js`, `na-acerto-roll.js`, `na_roll_damage.js` e `na-attribute-level-snapshot.js` para módulo ESM.

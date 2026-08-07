@@ -1,11 +1,11 @@
-# Night Assassins — CSB Automation
+# Night Assassins CSB Automation
 
-![Night Assassins — CSB Automation](assets/nigh%20assassin%27s.png)
+![Night Assassins CSB Automation](assets/nigh%20assassin%27s.png)
 
 ## Estado das fichas
 
 | Ficha | Versão | Estado |
-|---|---:|---|
+| --- | ---: | --- |
 | **Caçador humano** | **2.0** | Versão principal em uso |
 | **Oni** | **Alpha 0.01** | Desenvolvimento inicial; mecânicas, keys e automações ainda podem mudar |
 
@@ -24,13 +24,13 @@ Também é possível consultar as cópias originais em `Compêndios` → `Macros
 
 > **Importante:** o módulo não cria, altera nem reconecta componentes, Labels ou botões dentro do template do Custom System Builder. A sincronização automática alcança apenas as macros gerenciadas no Diretório de Macros. Cada botão ou Label da ficha precisa ser configurado manualmente no editor do template CSB.
 
-As configurações ficam em `Configurações do Jogo` → `Night Assassins — CSB Automation`.
+As configurações ficam em `Configurações do Jogo` → `Night Assassins CSB Automation`.
 
 Módulo Foundry VTT v14 para Custom System Builder que automatiza atributos, progressão e Habilidades Especiais do sistema Night Assassins depois que o template CSB estiver configurado com as keys e chamadas exigidas.
 
 ## Instalação
 
-### Instalação pelo Foundry — recomendada
+### Instalação pelo Foundry recomendada
 
 1. Na tela inicial do Foundry VTT, abra **Módulos de Jogo**.
 2. Clique em **Instalar Módulo**.
@@ -42,7 +42,7 @@ Módulo Foundry VTT v14 para Custom System Builder que automatiza atributos, pro
 
 4. Clique em **Instalar** e aguarde o download.
 5. Entre no mundo e abra **Gerenciar Módulos**.
-6. Ative **Night Assassins — CSB Automation**, salve e recarregue o mundo.
+6. Ative **Night Assassins CSB Automation**, salve e recarregue o mundo.
 
 ### Instalação manual
 
@@ -67,7 +67,7 @@ Ao carregar o mundo, `scripts/main.mjs` registra automaticamente o relay de dano
 
 ### Controle GM
 
-Importe do Compendium a macro **Night Assassins — Controle GM**. Ela lista os Actors Night Assassins usando `nome_slayer` para Caçadores e `nome_oni` para Onis, com barras de PDV/PDR do Slayer. O painel é somente leitura e exclusivo do GM.
+Importe do Compendium a macro **Night Assassins Controle GM**. Ela lista os Actors Night Assassins usando `nome_slayer` para Caçadores e `nome_oni` para Onis, com barras de PDV/PDR do Slayer. O painel é somente leitura e exclusivo do GM.
 
 Após instalar ou atualizar os arquivos do módulo, GM e jogadores devem recarregar o mundo.
 

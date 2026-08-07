@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0] - 2026-08-07
+
+### Adicionado
+
+- Catálogo canônico dos 35 status aplicáveis ao Slayer, separado de Resistências e Dano de Ferida.
+- Macro **Gerenciar Status** no Compendium, com seleção múltipla e Exaustão acumulativa de 0 a 8.
+- Persistência atômica em `status_slayer_dados`, `status_slayer_resumo` e `status_slayer_exaustao`.
+- Botão e resumo de status no template Slayer canônico e no pacote global do CSB.
+
+### Observação
+
+- Esta versão entrega o contrato e o gerenciamento manual. Gatilhos distintos de início/fim de turno serão implementados no motor de combate por regra específica de cada status.
+
 ## [0.2.7] - 2026-08-07
 
 ### Corrigido

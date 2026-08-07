@@ -222,6 +222,32 @@ function textField(key, label, defaultValue = "") {
   };
 }
 
+function numberField(key, label, defaultValue = 0, minVal = 0, maxVal = null) {
+  return {
+    key,
+    colSpan: 1,
+    rowSpan: 1,
+    cssClass: "",
+    role: 4,
+    editRole: 4,
+    permission: 0,
+    tooltip: "Gerenciado automaticamente pelo módulo Night Assassins.",
+    visibilityFormula: "",
+    editableFormula: "",
+    escapeHTML: false,
+    type: "numberField",
+    size: "full-size",
+    label,
+    defaultValue: String(defaultValue),
+    allowDecimal: false,
+    minVal: String(minVal),
+    maxVal: maxVal === null ? "" : String(maxVal),
+    allowRelative: false,
+    showControls: false,
+    controlsStyle: "hover",
+  };
+}
+
 function fixResistanceAndWoundContract(template) {
   let resistanceButton = null;
   let resistanceDisplay = null;
@@ -262,6 +288,16 @@ function fixResistanceAndWoundContract(template) {
   if (!current) throw new Error("Hidden Attribute pdv_slayer_conta_atual não encontrado.");
   current.value = "${pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado}$";
 
+  const statusButton = structuredClone(resistanceButton);
+  statusButton.key = "status_slayer_gerenciar";
+  statusButton.value = "GERENCIAR STATUS";
+  statusButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAStatusManage01'))?.execute({actorUuid:entity.uuid}); return '';}%";
+  const statusDisplay = structuredClone(resistanceDisplay);
+  statusDisplay.key = "status_slayer_display";
+  statusDisplay.value = "${status_slayer_resumo}$";
+  combatTable.contents.push([statusButton, statusDisplay, null, null]);
+  combatTable.rows = Math.max(Number(combatTable.rows) || 0, combatTable.contents.length);
+
   const storageKeys = new Set();
   walk(configTab, (node) => { if (node.key) storageKeys.add(node.key); });
   const storage = [];
@@ -270,6 +306,15 @@ function fixResistanceAndWoundContract(template) {
   }
   if (!storageKeys.has("status_slayer_resistencias_resumo")) {
     storage.push(textField("status_slayer_resistencias_resumo", "Resistências (resumo)", "Nenhuma resistência"));
+  }
+  if (!storageKeys.has("status_slayer_dados")) {
+    storage.push(textField("status_slayer_dados", "Status (dados)", '{"version":1,"active":[],"exhaustion":0}'));
+  }
+  if (!storageKeys.has("status_slayer_resumo")) {
+    storage.push(textField("status_slayer_resumo", "Status (resumo)", "Nenhum status"));
+  }
+  if (!storageKeys.has("status_slayer_exaustao")) {
+    storage.push(numberField("status_slayer_exaustao", "Exaustão", 0, 0, 8));
   }
   if (storage.length > 0) {
     configTab.contents.push({
@@ -291,7 +336,7 @@ function fixResistanceAndWoundContract(template) {
       verticalAlign: "top",
       collapsible: true,
       defaultCollapsed: true,
-      title: "Dados de Resistências",
+      title: "Dados de Combate",
       titleStyle: "default",
     });
   }

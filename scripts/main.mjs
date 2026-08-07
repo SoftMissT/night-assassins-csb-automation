@@ -15,6 +15,7 @@ import { registerSettings, SETTINGS } from "./settings.mjs";
 import { openGmDashboard } from "./gm-dashboard.mjs";
 import { syncCanonicalMacros } from "./macro-sync.mjs";
 import { openResistanceManager } from "./resistance-service.mjs";
+import { openStatusManager } from "./status-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -51,6 +52,7 @@ Hooks.once("ready", () => {
       applyOniDamage,
       openGmDashboard,
       openResistanceManager,
+      openStatusManager,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

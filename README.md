@@ -13,18 +13,18 @@
 
 ## Conteúdo do módulo
 
-- Compendium `Macros Night Assassins` com sete macros canônicas, incluindo Controle GM e Gerenciar Resistências.
+- Compendium `Macros Night Assassins` com oito macros canônicas, incluindo Controle GM, Gerenciar Resistências e Gerenciar Status.
 - Automação de atributos e progressão da ficha do Custom System Builder.
 - Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
 - Configurações de mundo para ativar ou desativar a automação e o relay.
 
-Ao entrar no mundo como GM, o módulo cria ou atualiza automaticamente no Diretório de Macros a pasta **Night Assassins** com as sete macros canônicas. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
+Ao entrar no mundo como GM, o módulo cria ou atualiza automaticamente no Diretório de Macros a pasta **Night Assassins** com as oito macros canônicas. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
 
 Também é possível consultar as cópias originais em `Compêndios` → `Macros Night Assassins`.
 
 > **Importante:** o módulo não cria, altera nem reconecta componentes, Labels ou botões dentro do template do Custom System Builder. A sincronização automática alcança apenas as macros gerenciadas no Diretório de Macros. Cada botão ou Label da ficha precisa ser configurado manualmente no editor do template CSB.
 
-O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.2.6 ele inclui o botão **Gerenciar Resistências**, armazenamento tipado de Resistências e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
+O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.3.0 ele inclui **Gerenciar Resistências**, **Gerenciar Status**, Exaustão acumulativa e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
 
 As configurações ficam em `Configurações do Jogo` → `Night Assassins CSB Automation`.
 
@@ -101,6 +101,9 @@ Exemplos das outras entradas públicas:
 
 // Marca do Caçador
 %{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAHunterMark0001'))?.execute({actorUuid:entity.uuid});}%
+
+// Gerenciar Status
+%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAStatusManage01'))?.execute({actorUuid:entity.uuid}); return '';}%
 ```
 
 `actorUuid:entity.uuid` é o UUID do Actor que clicou; o UUID em `fromUuid(...)` é o UUID permanente da macro fornecida pelo módulo.

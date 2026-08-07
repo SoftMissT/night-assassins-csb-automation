@@ -27,6 +27,10 @@ describe("gm-dashboard", () => {
     assert.equal(data.metal, "Preto");
   });
 
+  it("ignora NPC com recursos mas sem nome_cacador", () => {
+    assert.equal(hunterData({ name: "O Cirurgião", system: { props: { pdv_total_valor: 800, pdr_total_valor: 80 } } }), null);
+  });
+
   it("abre painel somente para GM com barras de PDV e PDR", async () => {
     let config;
     game.user.isGM = true;
@@ -42,16 +46,24 @@ describe("gm-dashboard", () => {
         metal_escolhido: "metal_amarelo",
       } },
     }] };
-    foundry.applications = { api: { DialogV2: { wait: async (value) => { config = value; return "close"; } } } };
+    globalThis.window = { innerWidth: 1280, innerHeight: 900, __NAGmDashboard: null };
+    globalThis.Hooks = { once: () => undefined };
+    class MockDialogV2 {
+      constructor(value) { config = value; }
+      render() { this.rendered = true; }
+      async close() { return undefined; }
+    }
+    foundry.applications = { api: { DialogV2: MockDialogV2 } };
 
-    await openGmDashboard();
+    const dialog = await openGmDashboard();
 
     assert.match(config.content, /Zenitsu/);
     assert.match(config.content, /PDV/);
-    assert.match(config.content, /11 \/ 22/);
+    assert.match(config.content, /<strong>11<small>\/ 22<\/small>/);
     assert.match(config.content, /PDR/);
-    assert.match(config.content, /6 \/ 12/);
+    assert.match(config.content, /<strong>6<small>\/ 12<\/small>/);
+    assert.match(config.content, /Audição Sobrenatural/);
+    assert.ok(dialog.rendered);
     assert.deepEqual(config.buttons.map(({ action }) => action), ["close", "refresh"]);
   });
 });
-

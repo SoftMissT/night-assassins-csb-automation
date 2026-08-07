@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2] - 2026-08-06
+
+- Reconstruído o Controle GM com CSS externo compatível com a sanitização do `DialogV2`.
+- Adicionados cards responsivos, retratos, barras reais de PDV/PDR, porcentagens, busca e abertura direta da ficha.
+- Corrigidos os nomes legíveis das Habilidades Especiais.
+- Removidos do painel NPCs que possuem recursos, mas não possuem `nome_cacador`.
+
 ## [0.2.1] - 2026-08-06
 
 - Corrigida a expectativa de instalação: o GM agora importa automaticamente as seis macros canônicas do Compendium para uma pasta mundial **Night Assassins**.

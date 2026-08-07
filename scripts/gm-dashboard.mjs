@@ -1,5 +1,19 @@
 import { parseNumber } from "./parsing.mjs";
 
+const ABILITY_LABELS = Object.freeze({
+  hab_escolhida_sem: "Sem Habilidade",
+  hab_escolhida_tato: "Tato Sensitivo",
+  hab_escolhida_audicao: "Audição Sobrenatural",
+  hab_escolhida_visao: "Visão Aguçada",
+  hab_escolhida_olfato: "Olfato Sobrenatural",
+  hab_escolhida_metamorfose: "Metamorfose Carnívora",
+  hab_escolhida_transfor: "Transformação Demoníaca",
+  hab_escolhida_tsuyoi: "Tsuyoi",
+  hab_escolhida_marechi: "Marechi",
+  hab_escolhida_oketsu: "Oketsu",
+  hab_escolhida_marca_destino: "Marca do Destino",
+});
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -9,9 +23,14 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function cleanChoice(value, prefix) {
-  const raw = String(value ?? "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim();
+function cleanText(value) {
+  return String(value ?? "").replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
+}
+
+function cleanChoice(value, prefix, labels = {}) {
+  const raw = cleanText(value);
   if (!raw) return "Não definido";
+  if (labels[raw]) return labels[raw];
   return raw
     .replace(new RegExp(`^${prefix}_?`, "i"), "")
     .replaceAll("_", " ")
@@ -27,66 +46,114 @@ function resource(props, currentKey, maxKey) {
 
 export function hunterData(actor) {
   const props = actor.system?.props ?? {};
-  const trackedKeys = ["nome_cacador", "pdv_total_valor", "pdr_total_valor", "pdv_atual_valor_display", "pdr_atual_valor_display"];
-  if (!trackedKeys.some((key) => props[key] !== undefined && props[key] !== null && props[key] !== "")) return null;
+  const name = cleanText(props.nome_cacador);
+  if (!name) return null;
 
   return {
     actor,
-    name: String(props.nome_cacador ?? "").replace(/<[^>]*>/g, " ").trim() || actor.name,
+    name,
+    image: actor.img || "icons/svg/mystery-man.svg",
     pdv: resource(props, "pdv_atual_valor_display", "pdv_total_valor"),
     pdr: resource(props, "pdr_atual_valor_display", "pdr_total_valor"),
-    ability: cleanChoice(props.hab_escolhida, "hab_escolhida"),
+    ability: cleanChoice(props.hab_escolhida, "hab_escolhida", ABILITY_LABELS),
     metal: cleanChoice(props.metal_escolhido, "metal"),
   };
 }
 
-function resourceBar(label, data, color) {
-  return `<div class="na-gm-resource">
-    <div class="na-gm-resource-line"><strong style="color:${color}">${label}</strong><span>${data.current} / ${data.max}</span></div>
-    <div class="na-gm-track"><i style="width:${data.percent.toFixed(2)}%;background:${color}"></i></div>
+function resourceBar(label, data, tone) {
+  const empty = data.current <= 0 ? " is-empty" : "";
+  return `<div class="na-gm-resource na-gm-resource--${tone}${empty}">
+    <div class="na-gm-resource-line"><span>${label}</span><strong>${data.current}<small>/ ${data.max}</small></strong></div>
+    <div class="na-gm-track"><i style="width:${data.percent.toFixed(2)}%"></i></div>
+    <em>${Math.round(data.percent)}%</em>
   </div>`;
 }
 
-function renderDashboard(hunters) {
-  const cards = hunters.map(({ actor, name, pdv, pdr, ability, metal }) => `<article class="na-gm-card">
-    <header><div><small>CAÇADOR</small><h3>${escapeHtml(name)}</h3></div><span>${escapeHtml(actor.name)}</span></header>
-    ${resourceBar("PDV", pdv, "#ef3340")}
-    ${resourceBar("PDR", pdr, "#15d7e6")}
-    <dl><div><dt>Habilidade</dt><dd>${escapeHtml(ability)}</dd></div><div><dt>Metal / Cor</dt><dd>${escapeHtml(metal)}</dd></div></dl>
-  </article>`).join("");
+function hunterCard({ actor, name, image, pdv, pdr, ability, metal }) {
+  const search = `${name} ${actor.name} ${ability} ${metal}`.toLocaleLowerCase("pt-BR");
+  return `<article class="na-gm-card" data-search="${escapeHtml(search)}">
+    <div class="na-gm-card-accent"></div>
+    <header class="na-gm-card-head">
+      <img src="${escapeHtml(image)}" alt="" />
+      <div class="na-gm-identity"><small>CAÇADOR</small><h3>${escapeHtml(name)}</h3><span>${escapeHtml(actor.name)}</span></div>
+      <button type="button" class="na-gm-open-sheet" data-actor-uuid="${escapeHtml(actor.uuid)}" title="Abrir ficha"><i class="fa-solid fa-user-pen"></i></button>
+    </header>
+    <div class="na-gm-resources">${resourceBar("PDV", pdv, "pdv")}${resourceBar("PDR", pdr, "pdr")}</div>
+    <footer class="na-gm-card-meta">
+      <div><small>HABILIDADE ESPECIAL</small><strong>${escapeHtml(ability)}</strong></div>
+      <div><small>METAL / COR</small><strong>${escapeHtml(metal)}</strong></div>
+    </footer>
+  </article>`;
+}
 
-  return `<style>
-    .na-gm-board{--ink:#eee8dc;--muted:#9f978b;--line:#443d34;background:#100f0d;color:var(--ink);padding:14px;border:1px solid #5d5142;border-radius:8px;}
-    .na-gm-summary{display:flex;justify-content:space-between;align-items:end;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
-    .na-gm-summary small,.na-gm-card small{color:#e5b84f;font-size:9px;font-weight:900;letter-spacing:.16em}.na-gm-summary h2{margin:2px 0 0;font-family:Georgia,serif;font-size:22px}.na-gm-summary strong{font-size:28px;color:#e5b84f}
-    .na-gm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;max-height:65vh;overflow:auto;padding-right:4px}
-    .na-gm-card{background:linear-gradient(145deg,#1c1915,#131210);border:1px solid var(--line);border-left:3px solid #e5b84f;border-radius:6px;padding:11px;box-shadow:0 8px 24px rgba(0,0,0,.22)}
-    .na-gm-card header{display:flex;justify-content:space-between;gap:10px;align-items:start;margin-bottom:10px}.na-gm-card h3{margin:2px 0 0;font-size:16px}.na-gm-card header>span{color:var(--muted);font-size:9px;text-align:right}
-    .na-gm-resource{margin:7px 0}.na-gm-resource-line{display:flex;justify-content:space-between;font-size:11px}.na-gm-track{height:8px;margin-top:4px;background:#080807;border:1px solid #34302a;border-radius:99px;overflow:hidden}.na-gm-track i{display:block;height:100%;border-radius:inherit;box-shadow:0 0 12px currentColor;transition:width .2s ease}
-    .na-gm-card dl{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0 0}.na-gm-card dl div{background:#0c0b0a;border:1px solid #302c27;border-radius:4px;padding:6px}.na-gm-card dt{color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.1em}.na-gm-card dd{margin:3px 0 0;font-size:10px;font-weight:700}
-    .na-gm-empty{padding:30px;text-align:center;color:var(--muted)}
-  </style><section class="na-gm-board">
-    <div class="na-gm-summary"><div><small>VISÃO TÁTICA DO MESTRE</small><h2>Controle dos Caçadores</h2></div><strong>${hunters.length}</strong></div>
-    <div class="na-gm-grid">${cards || '<div class="na-gm-empty">Nenhum Actor com campos Night Assassins foi encontrado.</div>'}</div>
+function renderDashboard(hunters) {
+  const cards = hunters.map(hunterCard).join("");
+  return `<section class="na-gm-board">
+    <header class="na-gm-hero">
+      <div><small>VISÃO TÁTICA DO MESTRE</small><h2>Controle dos Caçadores</h2><p>Recursos e identidade de combate em tempo real.</p></div>
+      <div class="na-gm-count"><strong>${hunters.length}</strong><span>Caçadores</span></div>
+    </header>
+    <div class="na-gm-toolbar">
+      <label><i class="fa-solid fa-magnifying-glass"></i><input type="search" class="na-gm-search" placeholder="Buscar caçador, habilidade ou metal..." autocomplete="off" /></label>
+      <span class="na-gm-visible-count">${hunters.length} visíveis</span>
+    </div>
+    <div class="na-gm-grid">${cards || '<div class="na-gm-empty"><i class="fa-solid fa-user-slash"></i><strong>Nenhum Caçador encontrado</strong><span>Preencha a key nome_cacador nas fichas dos jogadores.</span></div>'}</div>
   </section>`;
+}
+
+function bindDashboard(dialog, element) {
+  const root = element instanceof HTMLElement ? element : element?.[0];
+  if (!root) return;
+
+  const cards = [...root.querySelectorAll(".na-gm-card")];
+  const visibleCount = root.querySelector(".na-gm-visible-count");
+  root.querySelector(".na-gm-search")?.addEventListener("input", (event) => {
+    const query = event.currentTarget.value.trim().toLocaleLowerCase("pt-BR");
+    let visible = 0;
+    for (const card of cards) {
+      const show = !query || card.dataset.search.includes(query);
+      card.hidden = !show;
+      if (show) visible += 1;
+    }
+    if (visibleCount) visibleCount.textContent = `${visible} visíveis`;
+  });
+
+  for (const button of root.querySelectorAll(".na-gm-open-sheet")) {
+    button.addEventListener("click", async () => {
+      const actor = await fromUuid(button.dataset.actorUuid);
+      actor?.sheet?.render(true);
+    });
+  }
+
+  requestAnimationFrame(() => dialog.setPosition({ width: Math.min(1120, window.innerWidth - 80), height: Math.min(820, window.innerHeight - 80) }));
 }
 
 export async function openGmDashboard() {
   if (!game.user?.isGM) return ui.notifications.error("Somente o GM pode abrir o Controle dos Caçadores.");
+
+  if (window.__NAGmDashboard) {
+    try { await window.__NAGmDashboard.close(); } catch (_) { /* janela antiga já fechada */ }
+  }
+
+  const hunters = game.actors.contents.map(hunterData).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   const DialogV2 = foundry.applications.api.DialogV2;
-  let action;
-  do {
-    const hunters = game.actors.contents.map(hunterData).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-    action = await DialogV2.wait({
-      window: { title: "Controle GM — Night Assassins" },
-      position: { width: 940, height: "auto" },
-      modal: false,
-      rejectClose: false,
-      content: renderDashboard(hunters),
-      buttons: [
-        { action: "close", label: "Fechar", callback: () => "close" },
-        { action: "refresh", label: "Atualizar", default: true, callback: () => "refresh" },
-      ],
-    });
-  } while (action === "refresh");
+  const dialog = new DialogV2({
+    window: { title: "Controle GM — Night Assassins" },
+    classes: ["na-gm-dashboard-window"],
+    position: { width: Math.min(1120, window.innerWidth - 80), height: Math.min(820, window.innerHeight - 80) },
+    modal: false,
+    content: renderDashboard(hunters),
+    buttons: [
+      { action: "close", label: "Fechar", callback: () => "close" },
+      { action: "refresh", label: "Atualizar dados", default: true, callback: () => void openGmDashboard() },
+    ],
+  });
+
+  Hooks.once("renderDialogV2", (app, element) => {
+    if (app === dialog) bindDashboard(dialog, element);
+  });
+
+  window.__NAGmDashboard = dialog;
+  dialog.render({ force: true });
+  return dialog;
 }

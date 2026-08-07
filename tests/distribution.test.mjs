@@ -7,7 +7,7 @@ import { registerSettings, SETTINGS } from "../scripts/settings.mjs";
 describe("module distribution", () => {
   it("declara o Compendium de macros no manifesto", async () => {
     const manifest = JSON.parse(await readFile(new URL("../module.json", import.meta.url), "utf8"));
-    assert.equal(manifest.version, "0.2.1");
+    assert.equal(manifest.version, "0.2.2");
     assert.equal(manifest.socket, true);
     assert.deepEqual(manifest.packs, [{
       name: "night-assassins-macros",

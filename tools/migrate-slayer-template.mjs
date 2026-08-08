@@ -70,14 +70,27 @@ function walk(node, callback) {
   else Object.values(node).forEach((entry) => walk(entry, callback));
 }
 
+function removeComponentsByKey(node, keys) {
+  if (!node || typeof node !== "object") return;
+  if (Array.isArray(node)) {
+    for (let index = node.length - 1; index >= 0; index -= 1) {
+      const entry = node[index];
+      if (entry && typeof entry === "object" && keys.has(entry.key)) node.splice(index, 1);
+      else removeComponentsByKey(entry, keys);
+    }
+    return;
+  }
+  for (const value of Object.values(node)) removeComponentsByKey(value, keys);
+}
+
 function fixCurrentPdvLabel(template) {
   let title = null;
   let numeric = null;
-  walk(template.system?.header, (node) => {
+  walk(template.system, (node) => {
     if (node.type !== "label") return;
     const value = String(node.value ?? "");
-    if (value.includes(">PDV Atual<")) title = node;
-    if (value.includes("${pdv_slayer_conta_atual}$")) numeric = node;
+    if (node.key === "pdv_slayer_atual_titulo" || value.includes(">PDV Atual<")) title = node;
+    if (node.key === "pdv_slayer_atual_valor_display" || value.includes("${pdv_slayer_conta_atual}$")) numeric = node;
   });
   if (!title || !numeric) throw new Error("Labels de PDV atual não encontrados.");
   title.key = "pdv_slayer_atual_titulo";
@@ -154,6 +167,10 @@ const attributeButtons = new Map([
 function labelText(value) {
   return String(value ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
     .replace(/^@import url\([^)]*\);\s*/i, "");
+}
+
+function orbitron(text, color = "#D45CA4", size = 16) {
+  return `<div class="custom-orbitron-wrapper"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style="font-family: 'Orbitron', 'Times New Roman', serif; font-size: ${size}px; font-weight: 700; color:${color}; text-transform: uppercase; letter-spacing: .12em;">${text}</span>\n</div>`;
 }
 
 function attributeRoll(test, attr, color) {
@@ -260,7 +277,7 @@ function fixResistanceAndWoundContract(template) {
     const text = labelText(node.value);
     if (node.type === "label" && text === "GERENCIAR RESISTÊNCIAS") resistanceButton = node;
     if (node.key === "status_slayer_resistencias_display") resistanceDisplay = node;
-    if ((node.key === "tes" || node.key === "combat_slayer_table") && node.type === "table") combatTable = node;
+    if ((node.key === "tes" || node.key === "combat_slayer_table") && ["table", "panel"].includes(node.type)) combatTable = node;
     if (node.key === "configs_tab" && node.type === "tab") configTab = node;
     if (node.key === "pdv_slayer_dano_ferida") woundField = node;
     if (node.key === "pdv_slayer_total_valor") totalLabel = node;
@@ -297,9 +314,15 @@ function fixResistanceAndWoundContract(template) {
   const statusDisplay = structuredClone(resistanceDisplay);
   statusDisplay.key = "status_slayer_display";
   statusDisplay.value = "${status_slayer_resumo}$";
-  combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) =>
-    entry?.key === "status_slayer_gerenciar" || entry?.key === "status_slayer_display" || entry?.key === "descanso_slayer_gerenciar"));
-  combatTable.contents.push([statusButton, statusDisplay, null, null]);
+  removeComponentsByKey(template.system, new Set(["status_slayer_gerenciar", "status_slayer_display", "descanso_slayer_gerenciar"]));
+  const removedKeys = new Set(["status_slayer_gerenciar", "status_slayer_display", "descanso_slayer_gerenciar"]);
+  if (combatTable.type === "table") {
+    combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) => removedKeys.has(entry?.key)));
+    combatTable.contents.push([statusButton, statusDisplay, null, null]);
+  } else {
+    combatTable.contents = combatTable.contents.filter((entry) => !removedKeys.has(entry?.key));
+    combatTable.contents.push(statusButton, statusDisplay);
+  }
 
   const restButton = structuredClone(statusButton);
   restButton.key = "descanso_slayer_gerenciar";
@@ -307,8 +330,10 @@ function fixResistanceAndWoundContract(template) {
   restButton.icon = "fas fa-campground";
   restButton.tooltip = "Solicitar Descanso de Campo, Descanso Completo ou Recuperação Profunda ao GM.";
   restButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARestManage0001'))?.execute({actorUuid:entity.uuid}); return '';}%";
-  combatTable.contents.push([restButton, null, null, null]);
-  combatTable.rows = Math.max(Number(combatTable.rows) || 0, combatTable.contents.length);
+  if (combatTable.type === "table") {
+    combatTable.contents.push([restButton, null, null, null]);
+    combatTable.rows = Math.max(Number(combatTable.rows) || 0, combatTable.contents.length);
+  } else combatTable.contents.push(restButton);
 
   const storageKeys = new Set();
   let storagePanel = null;
@@ -372,11 +397,11 @@ function fixMovementDisplay(template) {
 
   let combatTable = null;
   walk(template.system?.body, (node) => {
-    if (node.key === "combat_slayer_table" && node.type === "table") combatTable = node;
+    if (node.key === "combat_slayer_table" && ["table", "panel"].includes(node.type)) combatTable = node;
   });
-  if (!combatTable) throw new Error("Tabela de combate do Slayer não encontrada.");
-  combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) => entry?.key === "deslocamento_slayer_display"));
-  combatTable.contents.push([
+  if (!combatTable) throw new Error("Área de combate do Slayer não encontrada.");
+  removeComponentsByKey(template.system, new Set(["deslocamento_slayer_titulo", "deslocamento_slayer_display"]));
+  const components = [
     {
       key: "deslocamento_slayer_titulo",
       colSpan: 1,
@@ -392,7 +417,7 @@ function fixMovementDisplay(template) {
       type: "label",
       size: "full-size",
       icon: "fas fa-person-running",
-      value: "DESLOCAMENTO",
+      value: orbitron("DESLOCAMENTO", "#28D7FF"),
       prefix: "",
       suffix: "",
       rollMessage: "",
@@ -425,10 +450,15 @@ function fixMovementDisplay(template) {
       altRollMessageToChat: false,
       style: "label",
     },
-    null,
-    null,
-  ]);
-  combatTable.rows = combatTable.contents.length;
+  ];
+  if (combatTable.type === "table") {
+    combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) => entry?.key === "deslocamento_slayer_display"));
+    combatTable.contents.push([...components, null, null]);
+    combatTable.rows = combatTable.contents.length;
+  } else {
+    combatTable.contents = combatTable.contents.filter((entry) => !["deslocamento_slayer_titulo", "deslocamento_slayer_display"].includes(entry?.key));
+    combatTable.contents.push(...components);
+  }
 }
 
 function fixFolegoDisplay(template) {
@@ -442,14 +472,15 @@ function fixFolegoDisplay(template) {
   walk(template.system?.body, (node) => {
     if (node.type !== "table" || attributeTable) return;
     const source = JSON.stringify(node.contents ?? []);
-    if (source.includes("atr_vit_valor") && source.includes(">Fôlego</span>")) attributeTable = node;
+    if (source.includes("folego_slayer_titulo") || source.includes(">Fôlego</span>")) attributeTable = node;
   });
   if (!attributeTable) throw new Error("Tabela principal de atributos do Slayer não encontrada.");
 
-  const titleRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.value?.includes?.(">Fôlego</span>")));
+  const titleRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "folego_slayer_titulo" || entry?.value?.includes?.(">Fôlego</span>")));
   if (!titleRow) throw new Error("Título de Fôlego não encontrado.");
-  const title = titleRow.find((entry) => entry?.value?.includes?.(">Fôlego</span>"));
+  const title = titleRow.find((entry) => entry?.key === "folego_slayer_titulo" || entry?.value?.includes?.(">Fôlego</span>"));
   title.key = "folego_slayer_titulo";
+  title.value = orbitron("FÔLEGO", "#D45CA4");
   title.tooltip = "Fôlego de Combate máximo: 2 + FDV atual.";
 
   let valueRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "folego_slayer_atual"));
@@ -464,12 +495,43 @@ function fixFolegoDisplay(template) {
   current.maxVal = "${folego_slayer_maximo}$";
   current.tooltip = "Fôlego atual. Recupera 1 no início do turno e em crítico positivo.";
 
-  attributeTable.cols = 8;
-  attributeTable.layout = "cccccccc";
+  if (attributeTable.cols >= 8) attributeTable.layout = "c".repeat(attributeTable.cols);
+}
+
+function organizeSlayerCombatLayout(template) {
+  let combatTab = null;
+  let actionButton = null;
+  walk(template.system?.body, (node) => {
+    if (node.key === "combat_slayer_tab" && node.type === "tab") combatTab = node;
+    if (node.key === "acoes_slayer_gerenciar" && node.type === "label") actionButton = structuredClone(node);
+  });
+  if (!combatTab || !actionButton) throw new Error("Aba Combate ou botão Gerenciar Ações não encontrado.");
+
+  removeComponentsByKey(template.system, new Set(["acoes_slayer_gerenciar", "acoes_slayer_display", "acoes_slayer_panel"]));
+  actionButton.value = orbitron("GERENCIAR AÇÕES", "#FF9100");
+  actionButton.style = "button";
+  actionButton.rollMessageToChat = false;
+  actionButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAActionManage01'))?.execute({actorUuid:entity.uuid}); return '';}%";
+  const summary = structuredClone(actionButton);
+  summary.key = "acoes_slayer_display";
+  summary.value = "${acoes_slayer_resumo}$";
+  summary.style = "label";
+  summary.icon = "";
+  summary.rollMessage = "";
+  combatTab.contents.splice(Math.min(3, combatTab.contents.length), 0, {
+    key: "acoes_slayer_panel", colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip: "", visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "panel", contents: [actionButton, summary], flow: "grid-2", align: "center", verticalAlign: "top",
+    collapsible: false, defaultCollapsed: false, title: "Economia de Ações", titleStyle: "default",
+  });
 }
 
 export function migrateSlayerTemplate(template) {
   const migrated = visit(structuredClone(template));
+  if (migrated.flags?.["custom-system-builder"]) {
+    delete migrated.flags["custom-system-builder"].templateHistory;
+    delete migrated.flags["custom-system-builder"].templateHistoryRedo;
+  }
   fixCurrentPdvLabel(migrated);
   fixKnownAttributeErrors(migrated);
   fixBars(migrated);
@@ -478,6 +540,7 @@ export function migrateSlayerTemplate(template) {
   fixResistanceAndWoundContract(migrated);
   fixMovementDisplay(migrated);
   fixFolegoDisplay(migrated);
+  organizeSlayerCombatLayout(migrated);
   return migrated;
 }
 

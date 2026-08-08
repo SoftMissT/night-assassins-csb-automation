@@ -990,3 +990,21 @@
   .na-hit-grid { grid-template-columns: 1fr; }
   .na-hit-summary { grid-template-columns: 1fr 1fr; }
 }
+
+.na-action-manager {
+  display: grid;
+  gap: 10px;
+  font-family: "Orbitron", "Trebuchet MS", sans-serif;
+}
+.na-action-row,
+.na-action-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 11px;
+  border-left: 3px solid #ff9100;
+  background: #17130f;
+}
+.na-action-note { align-items: start; border-left-color: #d45ca4; }
+.na-action-note span { color: #b9ad9b; font: 11px/1.4 "Trebuchet MS", sans-serif; text-align: right; }
+.na-action-reference { display: grid; gap: 6px; }

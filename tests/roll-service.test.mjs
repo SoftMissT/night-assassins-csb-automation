@@ -67,4 +67,13 @@ describe("roll-service", () => {
     await rollTest({ actorUuid: "Actor.inexistente" });
     assert.strictEqual(warned, true);
   });
+
+  it("crítico natural em Defesa recupera 1 Fôlego", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    _rollResult = { total: 24, toMessage: async () => {}, dice: [{ results: [{ result: 20, active: true }] }] };
+    const actor = makeActor({ props: { nome_slayer: "Slayer", pdv_slayer_total_valor: 20, for_display: "4", fdv_display: "4", folego_slayer_atual: 2 } });
+    actor.update = async (patch) => { actor.system.props.folego_slayer_atual = patch["system.props.folego_slayer_atual"]; };
+    await rollTest({ actor, test: "Bloqueio", attr: "FOR" });
+    assert.equal(actor.system.props.folego_slayer_atual, 3);
+  });
 });

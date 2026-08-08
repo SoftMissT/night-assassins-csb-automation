@@ -6,6 +6,11 @@ import { parseAttributeValue } from "./parsing.mjs";
 import { openHitConfirmationDialog, openHitDialog } from "./dialogs/hit-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 import { TIPOS_ACAO } from "./constants.mjs";
+import { recoverSlayerFolego } from "./action-service.mjs";
+
+function naturalD20(roll) {
+  return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
+}
 
 function getDice(mode) {
   if (mode === "advantage") return "2d20kh1";
@@ -72,6 +77,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
       break;
     }
     attempts.push({ roll, hit: decision.hit });
+    if (decision.hit && naturalD20(roll) === 20) await recoverSlayerFolego(actor, 1);
     if (!decision.continue && index + 1 < maximum) {
       interrupted = true;
       break;

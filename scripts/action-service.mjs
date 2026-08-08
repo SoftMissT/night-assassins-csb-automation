@@ -68,6 +68,19 @@ export function slayerFolegoPatch(props = {}, { full = false } = {}) {
   return { "system.props.folego_slayer_atual": full ? maximum : Math.min(maximum, stored + 1) };
 }
 
+export async function recoverSlayerFolego(actor, amount = 1) {
+  if (!actor?.update || !isSlayerActor(actor)) return { changed: false, current: 0, maximum: 0 };
+  const props = actor.system?.props ?? {};
+  const maximum = slayerFolegoMaximum(props);
+  const current = props.folego_slayer_atual === undefined || props.folego_slayer_atual === ""
+    ? maximum
+    : Math.max(0, Math.trunc(parseNumber(props.folego_slayer_atual)));
+  const next = Math.min(maximum, current + Math.max(0, Math.trunc(parseNumber(amount))));
+  if (next === current) return { changed: false, current, maximum };
+  await actor.update({ "system.props.folego_slayer_atual": next }, { naCsbAutomation: true, naFolego: true });
+  return { changed: true, current: next, maximum };
+}
+
 export function actionSummary(state, props = {}) {
   const maximums = actionMaximums(props);
   return [...TURN_KEYS, ...ROUND_KEYS]
@@ -210,9 +223,11 @@ export async function openActionManager(options = {}) {
     return `<div class="na-action-row"><strong>${meta?.label ?? key}</strong><span>${remaining} / ${maximums[key]}</span></div>`;
   }).join("");
   const optionsHtml = keys.map((key) => `<option value="${key}">${TIPOS_ACAO.find((entry) => entry.key === key)?.label ?? key}</option>`).join("");
+  const informational = TIPOS_ACAO.filter((entry) => ["free", "special"].includes(entry.scope))
+    .map((entry) => `<div class="na-action-note"><strong>${entry.label}</strong><span>${entry.desc}</span></div>`).join("");
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: `Ações — ${actor.name}` },
-    content: `<div class="na-action-manager"><p><strong>Deslocamento disponível:</strong> ${slayerMovementMeters(props)}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque. Defesa e Ação Livre não gastam contador.</p></div>`,
+    content: `<div class="na-action-manager"><p><strong>Fôlego:</strong> ${Math.max(0, parseNumber(props.folego_slayer_atual))} / ${slayerFolegoMaximum(props)} · <strong>Deslocamento:</strong> ${slayerMovementMeters(props)}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p><div class="na-action-reference">${informational}</div></div>`,
     buttons: [
       { action: "use", label: "Usar ação", callback: (_event, _button, dialog) => `use:${dialog.element.querySelector('[name="na-action-use"]')?.value ?? ""}` },
       { action: "reset-turn", label: "Restaurar turno", callback: () => "turn" },

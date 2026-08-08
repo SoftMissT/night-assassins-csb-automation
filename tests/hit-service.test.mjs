@@ -112,4 +112,16 @@ describe("hit-service", () => {
     await rollHit({ actor });
     assert.equal(rolls, 1);
   });
+
+  it("crítico positivo confirmado recupera 1 Fôlego", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 24, toMessage: async () => ({ id: "crit" }), dice: [{ results: [{ result: 20, active: true }] }] };
+    const actor = makeActor({ props: { nome_slayer: "Slayer", pdv_slayer_total_valor: 20, acerto_label: "acerto_label_dex", dex_display: "4", fdv_display: "4", folego_slayer_atual: 2 } });
+    actor.update = async (patch) => { actor.system.props.folego_slayer_atual = patch["system.props.folego_slayer_atual"]; };
+    await rollHit({ actor });
+    assert.equal(actor.system.props.folego_slayer_atual, 3);
+  });
 });

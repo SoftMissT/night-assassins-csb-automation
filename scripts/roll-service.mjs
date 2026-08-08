@@ -6,6 +6,11 @@ import { ATTR_NAMES } from "./constants.mjs";
 import { parseAttributeValue } from "./parsing.mjs";
 import { openRollDialog } from "./dialogs/roll-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
+import { recoverSlayerFolego } from "./action-service.mjs";
+
+function naturalD20(roll) {
+  return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
+}
 
 function getDice(mode) {
   if (mode === "advantage") return "2d20kh1";
@@ -64,6 +69,7 @@ async function doRoll({ actor, test, attr, val, mode, rollMode, secVal, bonusRaw
     speaker: ChatMessage.getSpeaker({ actor }),
     rollMode: rollMode,
   });
+  if (["Bloqueio", "Esquiva"].includes(test) && naturalD20(roll) === 20) await recoverSlayerFolego(actor, 1);
 }
 
 /**

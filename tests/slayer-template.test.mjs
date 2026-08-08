@@ -108,4 +108,7 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   assert.match(source, /"folego_slayer_atual"/);
   assert.match(source, /"defaultValue":"\$\{folego_slayer_maximo\}\$"/);
   assert.match(source, /"maxVal":"\$\{folego_slayer_maximo\}\$"/);
+  assert.match(source, /font-size: 16px/);
+  assert.match(source, /"acoes_slayer_panel"/);
+  assert.match(source, /"title":"Economia de Ações"/);
 });

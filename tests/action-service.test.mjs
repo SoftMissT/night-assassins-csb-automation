@@ -4,10 +4,15 @@ setupFoundryMocks();
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { makeActor } from "./fixtures/actor.mjs";
-import { actionMaximums, consumeSlayerActions, parseActionState, resetSlayerActions, slayerFolegoMaximum, slayerFolegoPatch, slayerMovementMeters } from "../scripts/action-service.mjs";
+import { actionMaximums, consumeSlayerActions, parseActionState, recoverSlayerFolego, resetSlayerActions, slayerFolegoMaximum, slayerFolegoPatch, slayerMovementMeters } from "../scripts/action-service.mjs";
+import { TIPOS_ACAO } from "../scripts/constants.mjs";
 
 describe("action-service", () => {
   const makeSlayer = (props = {}) => makeActor({ props: { nome_slayer: "Teste", pdv_slayer_total_valor: 20, ...props } });
+
+  it("cataloga todos os tipos de ação oficiais", () => {
+    assert.deepEqual(TIPOS_ACAO.map(({ key }) => key), ["movimento", "ataque", "especial", "unica", "completa", "reacao", "defesa", "livre", "epica", "lendaria", "covil", "vilao"]);
+  });
 
   it("consome Ataque e impede um segundo uso no mesmo turno", async () => {
     const actor = makeSlayer();
@@ -69,5 +74,14 @@ describe("action-service", () => {
     assert.deepEqual(slayerFolegoPatch({ fdv_display: 4, folego_slayer_atual: 6 }), {
       "system.props.folego_slayer_atual": 6,
     });
+  });
+
+  it("recupera Fôlego persistente sem ultrapassar o máximo", async () => {
+    const actor = makeSlayer({ fdv_display: 4, folego_slayer_atual: 4 });
+    actor.update = async (patch) => { actor.system.props.folego_slayer_atual = patch["system.props.folego_slayer_atual"]; };
+    assert.deepEqual(await recoverSlayerFolego(actor), { changed: true, current: 5, maximum: 6 });
+    await recoverSlayerFolego(actor, 10);
+    assert.equal(actor.system.props.folego_slayer_atual, 6);
+    assert.equal((await recoverSlayerFolego(actor)).changed, false);
   });
 });

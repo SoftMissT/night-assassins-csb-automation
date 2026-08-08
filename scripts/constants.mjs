@@ -59,6 +59,9 @@ export const TIPOS_ACAO = Object.freeze([
   { key: "defesa", label: "Defesa", scope: "free", damage: false, desc: "Ilimitada quando o personagem é alvo." },
   { key: "livre", label: "Ação Livre", scope: "free", damage: false, desc: "Limitada pelo Mestre. Sem efeito mecânico." },
   { key: "epica", label: "Ação Épica", scope: "special", damage: true, desc: "Tudo ou Nada. Exige autorização e resolução própria do Mestre." },
+  { key: "lendaria", label: "Ação Lendária", scope: "gm-round", damage: true, desc: "1 por rodada. Exclusiva de chefes Oni e controlada pelo Mestre." },
+  { key: "covil", label: "Ação de Covil", scope: "gm-round", damage: true, desc: "Evento ambiental na contagem 20 da iniciativa." },
+  { key: "vilao", label: "Ação de Vilão", scope: "gm-phase", damage: false, desc: "Evento de mudança de fase do chefe; limpa status negativos e libera capacidades." },
 ]);
 
 export const TIPOS_DANO = Object.freeze([

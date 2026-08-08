@@ -18,7 +18,7 @@ import { openResistanceManager } from "./resistance-service.mjs";
 import { openStatusManager } from "./status-service.mjs";
 import { getRollStatusEffects, getDamageStatusEffects, getStatusCapabilities, mergeRollMode, isReactionBlocked } from "./status-effects.mjs";
 import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcileSlayerExhaustion, registerStatusEngine, resolveSlayerHealing } from "./status-engine.mjs";
-import { consumeSlayerActions, openActionManager, parseActionState, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
+import { consumeSlayerActions, openActionManager, parseActionState, recoverSlayerFolego, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
 
 Hooks.once("init", () => {
@@ -75,6 +75,7 @@ Hooks.once("ready", () => {
       parseActionState,
       openActionManager,
       slayerMovementMeters,
+      recoverSlayerFolego,
       openRestManager,
       resolveRestTier,
       restEligibleStatuses,

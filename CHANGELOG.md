@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.12 - 2026-08-07
+
+- Adota o layout reorganizado pelo operador como base do template Slayer distribuído.
+- Cataloga todos os tipos oficiais de ação, mantendo ações de chefe/GM fora dos contadores do Slayer.
+- Automatiza recuperação de Fôlego no início do combate, início do turno e críticos positivos de Acerto/Defesa.
+- Move Economia de Ações para a aba Combate e padroniza novos títulos visuais em Orbitron 16px.
+- Torna o migrador compatível com componentes CSB organizados em painéis ou tabelas.
+
 ## [0.5.11] - 2026-08-07
 
 ### Adicionado

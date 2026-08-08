@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.8] - 2026-08-07
+
+### Corrigido
+
+- Sangramento, Hemorragia e Envenenamento agora exigem fórmula de dano e quantidade de turnos definidas pela fonte antes de serem salvos.
+- O gerenciador mostra cabeçalhos explícitos para `Dano/turno`, `Turnos`, `Pilhas`, `Teste`, `CD` e `Fonte`, com largura suficiente para os campos mecânicos.
+- Dano contínuo é aplicado no início do turno pelo GM autoritativo, reduz a duração uma vez por turno e expira exatamente ao chegar a zero.
+- O chat informa o dano causado e quantos turnos permanecem.
+- Estados antigos incompletos não causam dano nem consomem duração; o GM recebe um aviso para completar a configuração.
+
+### Validação
+
+- Testes cobrem validação obrigatória, progressão `3 → 2` e proteção contra Sangramento incompleto.
+
 ## [0.5.7] - 2026-08-07
 
 ### Corrigido

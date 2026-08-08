@@ -119,7 +119,24 @@ async function resolveActor(actorUuid) {
   return canvas.tokens.controlled[0]?.actor ?? game.user?.character ?? null;
 }
 
-export async function openStatusManager({ actorUuid } = {}) {
+const FINITE_SOURCE_DAMAGE = Object.freeze(["sangramento", "hemorragia", "envenenamento"]);
+
+export function validateStatusConfiguration(active, effects = {}) {
+  const selected = new Set(normalizeStatusKeys(active));
+  const errors = [];
+  for (const key of FINITE_SOURCE_DAMAGE) {
+    if (!selected.has(key)) continue;
+    const effect = effects[key] ?? {};
+    const label = STATUS_BY_KEY.get(key)?.label ?? key;
+    if (!String(effect.damageFormula ?? "").trim()) errors.push(`${label}: informe o dano por turno.`);
+    if (!Number.isInteger(Number(effect.remainingTurns)) || Number(effect.remainingTurns) < 1) {
+      errors.push(`${label}: informe a quantidade de turnos.`);
+    }
+  }
+  return errors;
+}
+
+export async function openStatusManager({ actorUuid, draft = null } = {}) {
   if (!canvas.ready) return ui.notifications.warn("Canvas não pronto.");
   const actor = await resolveActor(actorUuid);
   if (!actor) return ui.notifications.warn("Não há personagem ativo.");
@@ -127,6 +144,11 @@ export async function openStatusManager({ actorUuid } = {}) {
 
   const props = actor.system?.props ?? {};
   const state = parseStatusState(props[CONTRACT.data]);
+  if (draft) {
+    state.active = normalizeStatusKeys(draft.active);
+    state.effects = normalizeStatusEffects(draft.effects);
+    state.exhaustion = clampExhaustion(draft.exhaustion);
+  }
   state.exhaustion = clampExhaustion(props[CONTRACT.exhaustion] ?? state.exhaustion);
   const selected = new Set(state.active);
   const categories = new Map();
@@ -173,7 +195,7 @@ export async function openStatusManager({ actorUuid } = {}) {
       ? `<input name="effect.${key}.formula" value="${escapeHtml(effect.damageFormula ?? "")}" placeholder="Dano da fonte">`
       : config.damage === "1d4" ? `<span title="Dano fixo">1d4 fixo</span>` : `<span>—</span>`;
     const turnsInput = config.duration === "source" || config.defaultTurns
-      ? `<input type="number" min="1" name="effect.${key}.turns" value="${effect.remainingTurns ?? config.defaultTurns ?? ""}" placeholder="Fonte">`
+      ? `<input type="number" min="1" step="1" name="effect.${key}.turns" value="${effect.remainingTurns ?? config.defaultTurns ?? ""}" placeholder="Turnos" title="Quantidade de turnos definida pela fonte">`
       : `<span>Manual</span>`;
     const stacksInput = config.stacks
       ? `<input type="number" min="1" max="99" name="effect.${key}.stacks" value="${effect.stacks ?? 1}" title="Pilhas">`
@@ -202,10 +224,14 @@ export async function openStatusManager({ actorUuid } = {}) {
       <fieldset style="border:1px solid #433b34;padding:8px;margin:0;">
         <legend>Configuração mecânica</legend>
         <p class="hint">Somente Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas causam dano no início do turno. “Fonte” significa que fórmula ou duração vêm da técnica.</p>
+        ${draft?.errors?.length ? `<div style="border-left:4px solid #d64545;background:#2a1515;padding:8px;color:#ffb5b5;">${draft.errors.map(escapeHtml).join("<br>")}</div>` : ""}
+        <div style="display:grid;grid-template-columns:1.4fr 1fr .65fr .55fr .7fr .65fr 1fr;gap:5px;padding:5px 8px;color:#d7ad5b;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">
+          <strong>Status</strong><strong>Dano/turno</strong><strong>Turnos</strong><strong>Pilhas</strong><strong>Teste</strong><strong>CD</strong><strong>Fonte</strong>
+        </div>
         <div style="display:grid;gap:4px;">${configRows}</div>
       </fieldset>
     </div>`,
-    position: { width: 720 },
+    position: { width: 920 },
     modal: true,
     rejectClose: false,
     buttons: [
@@ -231,7 +257,10 @@ export async function openStatusManager({ actorUuid } = {}) {
               ].includes(key) ? "end" : "start"),
             };
           }
-          return { active: form.getAll("na-status"), exhaustion: form.get("na-exhaustion"), effects };
+          const active = form.getAll("na-status");
+          const exhaustion = form.get("na-exhaustion");
+          const errors = validateStatusConfiguration(active, effects);
+          return { active, exhaustion, effects, errors, invalid: errors.length > 0 };
         },
       },
       { action: "clear-statuses", label: "Limpar", callback: () => ({ active: [], exhaustion: 0 }) },
@@ -239,6 +268,10 @@ export async function openStatusManager({ actorUuid } = {}) {
     ],
   });
   if (result === null || result === undefined) return null;
+  if (result.invalid) {
+    ui.notifications.error(result.errors[0]);
+    return openStatusManager({ actorUuid: actor.uuid, draft: result });
+  }
   const retainedMilestones = state.exhaustionMilestones.filter((level) => clampExhaustion(result.exhaustion) >= level);
   const saved = await saveSlayerStatuses(actor, result.active, result.exhaustion, result.effects, retainedMilestones);
   ui.notifications.info(`Status de ${actor.name}: ${saved.summary}.`);

@@ -8,6 +8,7 @@ import {
   normalizeStatusKeys,
   parseStatusState,
   saveSlayerStatuses,
+  validateStatusConfiguration,
 } from "../scripts/status-service.mjs";
 import { STATUS_SLAYER_DANO_CONTINUO } from "../scripts/constants.mjs";
 
@@ -53,4 +54,16 @@ test("salva status e Exaustão em uma atualização atômica", async () => {
     "system.props.status_slayer_exaustao": 6,
   });
   assert.deepEqual(update[1], { naCsbAutomation: true });
+});
+
+test("Sangramento exige dano e quantidade de turnos da fonte", () => {
+  assert.deepEqual(validateStatusConfiguration(["sangramento"], {
+    sangramento: { damageFormula: "", remainingTurns: null },
+  }), [
+    "Sangramento: informe o dano por turno.",
+    "Sangramento: informe a quantidade de turnos.",
+  ]);
+  assert.deepEqual(validateStatusConfiguration(["sangramento"], {
+    sangramento: { damageFormula: "1d6", remainingTurns: 3 },
+  }), []);
 });

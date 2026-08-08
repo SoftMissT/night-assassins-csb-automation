@@ -8,6 +8,7 @@ import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
 
 const TURN_FLAG = "lastStatusTurn";
 const resolvingExhaustion = new Set();
+const FINITE_SOURCE_DAMAGE = new Set(["sangramento", "hemorragia", "envenenamento"]);
 
 function primaryActiveGm() {
   return game.users?.filter((user) => user.active && user.isGM)
@@ -170,6 +171,12 @@ export async function processActorStatusTiming(actor, timing = "start") {
 
     if (damageKeys.has(key)) {
       const formula = key === "em_chamas" ? "1d4" : effect?.damageFormula;
+      if (FINITE_SOURCE_DAMAGE.has(key) && (!formula || !Number.isInteger(effect?.remainingTurns) || effect.remainingTurns < 1)) {
+        const label = key.replaceAll("_", " ");
+        ui.notifications?.error?.(`${actor.name}: ${label} precisa de dano e quantidade de turnos.`);
+        messages.push(`${label}: configuração incompleta; efeito não processado`);
+        continue;
+      }
       try {
         const { roll, total } = await rollFormula(key === "corroido" ? repeatedFormula(formula, effect?.stacks) : formula);
         if (total > 0) await applySlayerDamage(actor, total, { isAttack: false, source: key });
@@ -180,7 +187,8 @@ export async function processActorStatusTiming(actor, timing = "start") {
           }
         }
         await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>${key.replaceAll("_", " ")}</strong> — dano no início do turno` });
-        messages.push(`${key}: ${total} de dano`);
+        const remainingAfterTick = effect?.remainingTurns === null ? null : Math.max(0, (effect?.remainingTurns ?? 1) - 1);
+        messages.push(`${key}: ${total} de dano${remainingAfterTick === null ? "" : ` · ${remainingAfterTick} turno(s) restante(s)`}`);
       } catch (error) {
         ui.notifications?.error?.(`${actor.name}: ${key} não processado — ${error.message}`);
       }

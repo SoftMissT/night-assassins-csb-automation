@@ -72,6 +72,42 @@ test("Sangramento causa dano no início do turno e expira", async () => {
   assert.deepEqual(JSON.parse(actor.system.props.status_slayer_dados).active, []);
 });
 
+test("Sangramento mantém e reduz a quantidade de turnos", async () => {
+  rollTotal = 2;
+  const actor = actorWith({
+    pdv_slayer_dano_tomado: 0,
+    status_slayer_dados: JSON.stringify({
+      version: 2,
+      active: ["sangramento"],
+      exhaustion: 0,
+      effects: { sangramento: { damageFormula: "1d4", remainingTurns: 3, stacks: 1, tick: "start" } },
+      exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "start");
+  const state = JSON.parse(actor.system.props.status_slayer_dados);
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 2);
+  assert.equal(state.effects.sangramento.remainingTurns, 2);
+  assert.ok(state.active.includes("sangramento"));
+});
+
+test("Sangramento incompleto não causa dano nem perde duração", async () => {
+  globalThis.ui.notifications.error = () => {};
+  const actor = actorWith({
+    pdv_slayer_dano_tomado: 0,
+    status_slayer_dados: JSON.stringify({
+      version: 2, active: ["sangramento"], exhaustion: 0,
+      effects: { sangramento: { damageFormula: "", remainingTurns: null, stacks: 1, tick: "start" } },
+      exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "start");
+  const state = JSON.parse(actor.system.props.status_slayer_dados);
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 0);
+  assert.equal(state.effects.sangramento.remainingTurns, null);
+  assert.ok(state.active.includes("sangramento"));
+});
+
 test("Corroído soma um dado por pilha", async () => {
   rollTotal = 8;
   const actor = actorWith({

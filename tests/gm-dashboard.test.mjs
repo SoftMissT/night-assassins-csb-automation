@@ -3,7 +3,7 @@ setupFoundryMocks();
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { hunterData, oniData, openGmDashboard } from "../scripts/gm-dashboard.mjs";
+import { hunterData, loadDashboardData, oniData, openGmDashboard } from "../scripts/gm-dashboard.mjs";
 
 describe("gm-dashboard", () => {
   it("lê somente nome, PDV e PDR do Caçador", () => {
@@ -74,12 +74,26 @@ describe("gm-dashboard", () => {
     assert.equal(data.pdr.current, 8);
   });
 
+  it("lista todos e somente os Combatants da luta ativa", () => {
+    const slayer = { name: "Tanjiro", system: { props: { nome_slayer: "Tanjiro", pdv_slayer_total_valor: 20 } } };
+    const unknownHostile = { name: "Demônio mascarado", system: { props: {} } };
+    const outside = { name: "Fora da luta", system: { props: { nome_slayer: "Fora" } } };
+    game.actors = { contents: [slayer, unknownHostile, outside] };
+    const result = loadDashboardData({ combatants: { contents: [
+      { name: "Tanjiro", actor: slayer, token: { disposition: 1 } },
+      { name: "Demônio mascarado", actor: unknownHostile, token: { disposition: -1, texture: { src: "oni.webp" } } },
+    ] } });
+    assert.deepEqual(result.hunters.map((entry) => entry.name), ["Tanjiro"]);
+    assert.deepEqual(result.onis.map((entry) => entry.name), ["Demônio mascarado"]);
+    assert.equal(result.hunters.some((entry) => entry.name === "Fora"), false);
+  });
+
   it("abre painel compacto, não modal e com fechamento explícito", async () => {
     let config;
     game.user.isGM = true;
-    game.actors = { contents: [
-      {
+    const zenitsu = {
         name: "Actor Zenitsu",
+        uuid: "Actor.zenitsu",
         system: { props: {
           nome_slayer: "Zenitsu",
           pdv_slayer_total_valor: 22,
@@ -87,9 +101,10 @@ describe("gm-dashboard", () => {
           pdv_slayer_atual_valor_display: 11,
           pdr_slayer_atual_valor_display: 6,
         } },
-      },
-      {
+      };
+    const gyutaro = {
         name: "Gyutaro",
+        uuid: "Actor.gyutaro",
         system: { props: {
           nome_oni: "Gyutaro",
           pdv_oni_total_valor: 180,
@@ -97,8 +112,12 @@ describe("gm-dashboard", () => {
           pdr_oni_total_valor: 30,
           pdr_oni_atual_valor_display: 15,
         } },
-      },
-    ] };
+      };
+    game.actors = { contents: [] };
+    game.combat = { combatants: { contents: [
+      { actor: zenitsu, token: { disposition: 1 } },
+      { actor: gyutaro, token: { disposition: -1 } },
+    ] } };
     globalThis.window = { innerWidth: 1280, innerHeight: 900, __NAGmDashboard: null };
     globalThis.Hooks = { once: () => undefined, on: () => 1, off: () => undefined };
     class MockDialogV2 {

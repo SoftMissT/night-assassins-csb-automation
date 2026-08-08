@@ -86,10 +86,13 @@ export function normalizeAbilityKey(raw) {
     "olfato sobrenatural": "hab_escolhida_olfato",
     "metamorfose carnivora": "hab_escolhida_metamorfose",
     "tsuyoi — o inabalavel": "hab_escolhida_tsuyoi",
+    "tsuyoi o inabalavel": "hab_escolhida_tsuyoi",
     "tsuyoi - o inabalavel": "hab_escolhida_tsuyoi",
     "marechi — o sangue raro": "hab_escolhida_marechi",
+    "marechi o sangue raro": "hab_escolhida_marechi",
     "marechi - o sangue raro": "hab_escolhida_marechi",
     "oketsu — o sangue real": "hab_escolhida_oketsu",
+    "oketsu o sangue real": "hab_escolhida_oketsu",
     "oketsu - o sangue real": "hab_escolhida_oketsu",
     "marca do destino": "hab_escolhida_marca_destino",
   };

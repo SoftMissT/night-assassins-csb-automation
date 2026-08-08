@@ -86,6 +86,53 @@ function makeEntradaHtml(e, idx, attrValues) {
   </div>`;
 }
 
+function bindDamageDialogInteractions(root, attrValues) {
+  const container = root?.querySelector?.("#na-entradas-container");
+  const addButton = root?.querySelector?.("#na-add-btn");
+  const totalPreview = root?.querySelector?.("#na-total-preview");
+  if (!container || !addButton) return;
+
+  const renumber = () => {
+    container.querySelectorAll(".na-entrada").forEach((entry, index) => {
+      const label = entry.querySelector(".na-entry-num");
+      if (label) label.textContent = `DANO ${index + 1}`;
+    });
+  };
+
+  const updatePreview = () => {
+    const formulas = [...container.querySelectorAll(".na-entrada")].map((entry) => {
+      const idx = entry.dataset.idx;
+      const dado = entry.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() ?? "";
+      const fixo = Number(entry.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
+      const attrs = [...entry.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`)].map((checkbox) => checkbox.value);
+      return buildEntryFormula(dado, fixo, attrs, attrValues);
+    }).filter((formula) => formula !== "0");
+    if (totalPreview) totalPreview.textContent = formulas.length ? formulas.join(" + ") : "0";
+  };
+
+  addButton.addEventListener("click", () => {
+    const indexes = [...container.querySelectorAll(".na-entrada")]
+      .map((entry) => Number(entry.dataset.idx))
+      .filter(Number.isFinite);
+    const nextIndex = indexes.length ? Math.max(...indexes) + 1 : 0;
+    container.insertAdjacentHTML("beforeend", makeEntradaHtml({ tipoAcao: "", dado: "", fixo: 0, attrs: [], tiposDano: [] }, nextIndex, attrValues));
+    renumber();
+    updatePreview();
+  });
+
+  container.addEventListener("click", (event) => {
+    const removeButton = event.target.closest?.(".na-remove-btn");
+    if (!removeButton) return;
+    removeButton.closest(".na-entrada")?.remove();
+    renumber();
+    updatePreview();
+  });
+  container.addEventListener("input", updatePreview);
+  container.addEventListener("change", updatePreview);
+  renumber();
+  updatePreview();
+}
+
 /**
  * Abre o dialog de dano e retorna os dados confirmados ou null.
  * @param {object} options
@@ -141,7 +188,16 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto, critic
     </label>
   </div>`;
 
-  const result = await foundry.applications.api.DialogV2.wait({
+  const hookApi = globalThis.Hooks;
+  const renderHook = hookApi?.on?.("renderDialogV2", (dialog, element) => {
+    const root = element?.querySelector ? element : element?.[0];
+    if (!root?.querySelector?.("#na-add-btn")) return;
+    bindDamageDialogInteractions(root, attrValues);
+  });
+
+  let result;
+  try {
+    result = await foundry.applications.api.DialogV2.wait({
     window: { title: "Rolar Dano — Night Assassins" },
     content,
     modal: true,
@@ -175,9 +231,12 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto, critic
           };
         },
       },
-      { action: "cancel", label: "Cancelar", callback: () => null },
+      { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
     ],
-  });
+    });
+  } finally {
+    if (renderHook !== undefined) hookApi?.off?.("renderDialogV2", renderHook);
+  }
 
-  return result ?? null;
+  return !result || result.cancelled ? null : result;
 }

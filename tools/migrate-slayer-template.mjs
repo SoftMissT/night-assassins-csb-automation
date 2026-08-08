@@ -265,6 +265,206 @@ function numberField(key, label, defaultValue = 0, minVal = 0, maxVal = null) {
   };
 }
 
+function displayLabel(key, value, tooltip = "") {
+  return {
+    key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip, visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "label", size: "full-size", icon: "", value, prefix: "", suffix: "",
+    rollMessage: "", altRollMessage: "", rollMessageToChat: false, altRollMessageToChat: false,
+    style: "label",
+  };
+}
+
+function richTextArea(key, label, defaultValue = "") {
+  return {
+    key, colSpan: 1, rowSpan: 4, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip: "", visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "textArea", size: "full-size", label, defaultValue, style: "sheet",
+  };
+}
+
+function panel(key, title, contents, flow = "grid-1") {
+  return {
+    key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip: "", visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "panel", contents, flow, align: "center", verticalAlign: "top",
+    collapsible: true, defaultCollapsed: false, title, titleStyle: "default",
+  };
+}
+
+function tab(key, name, contents) {
+  return { key, type: "tab", name, tooltip: "", role: 0, permission: 0, visibilityFormula: "", contents };
+}
+
+function itemContainer(key, title, category) {
+  return {
+    key, colSpan: 1, rowSpan: 3, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip: `Itens classificados como ${category}.`, visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "itemContainer", contents: [], rowLayout: [], title, hideEmpty: false,
+    hiddenColumns: [], sortOption: "manual", headDisplay: true, showCreate: false,
+    defaultTemplate: "", createItemDialogTitle: "", createItemDialogShowTemplateList: false,
+    createItemDialogButton: "", newItemDefaultName: "", showDelete: true,
+    statusIcon: true, nameAlign: "left", nameLabel: "Nome", templateFilter: [],
+    itemFilterFormula: `equalText(item.inventario_categoria, '${category}')`, sortPredicates: [],
+  };
+}
+
+function organizeSlayerTabs(template) {
+  let tabs = null;
+  walk(template.system?.body, (node) => {
+    if (node.type === "tabbedPanel" && !tabs) tabs = node;
+  });
+  if (!tabs || !Array.isArray(tabs.contents)) throw new Error("Painel de abas principal do Slayer não encontrado.");
+
+  const byKey = new Map(tabs.contents.map((entry) => [entry?.key, entry]));
+  const pericias = byKey.get("pericias_tab");
+  const combate = byKey.get("combat_slayer_tab");
+  const configuracoes = byKey.get("configs_tab");
+  const dados = byKey.get("dados_tab");
+  if (!pericias || !combate || !configuracoes || !dados) {
+    throw new Error("Abas canônicas Perícias/Combate/Configurações/Dados não encontradas.");
+  }
+
+  removeComponentsByKey(template.system, new Set([
+    "perfil_slayer_tab", "skills_slayer_tab", "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab",
+    "vida_morte_slayer_panel", "skills_marca_slayer_panel",
+  ]));
+
+  pericias.name = "Perícias";
+  pericias.contents.push(panel("vida_morte_slayer_panel", "Vida e Morte", [
+    displayLabel("vida_morte_slayer_titulo", orbitron("TESTE DE VIDA E MORTE", "#C1000C"), "A mecânica será conectada ao serviço de Vida e Morte."),
+    textField("vida_morte_slayer_estado", "Estado atual", "Estável"),
+    numberField("vida_morte_slayer_sucessos", "Sucessos", 0, 0, 3),
+    numberField("vida_morte_slayer_falhas", "Falhas", 0, 0, 3),
+  ], "grid-2"));
+
+  const markIndex = combate.contents.findIndex((entry) => entry?.title === "Marca do Caçador" || JSON.stringify(entry).includes("marca_despertada_display"));
+  const markPanel = markIndex >= 0 ? combate.contents.splice(markIndex, 1)[0] : panel("skills_marca_slayer_panel", "Marca do Caçador", []);
+  markPanel.key = "skills_marca_slayer_panel";
+
+  const perfil = tab("perfil_slayer_tab", "Perfil/Bio", [
+    displayLabel("perfil_slayer_titulo", orbitron("PERFIL DO CAÇADOR", "#D45CA4", 18)),
+    panel("perfil_slayer_resumo_panel", "Identidade", [
+      textField("perfil_slayer_nome_social", "Nome / Apelido", ""),
+      textField("perfil_slayer_pronomes", "Pronomes", ""),
+      textField("perfil_slayer_aparencia", "Aparência", ""),
+      textField("perfil_slayer_personalidade", "Personalidade", ""),
+    ], "grid-2"),
+    richTextArea("perfil_slayer_bio", "Biografia"),
+  ]);
+
+  const skills = tab("skills_slayer_tab", "Skills", [
+    displayLabel("skills_slayer_titulo", orbitron("SKILLS", "#FF9100", 18)),
+    panel("skills_slayer_escolhas_panel", "Escolhas do Caçador", [
+      displayLabel("skills_slayer_resp_display", "Respiração: ${resp}$"),
+      displayLabel("skills_slayer_hab_display", "Habilidade Especial: ${hab_escolhida}$"),
+      displayLabel("skills_slayer_classe_display", "Classe: ${classe_escolhida}$"),
+      displayLabel("skills_slayer_origem_display", "Habilidade de Origem: ${origem_dropdown}$"),
+    ], "grid-2"),
+    markPanel,
+    panel("skills_slayer_avancadas_panel", "Estados Avançados", [
+      textField("mundo_transparente_slayer_estado", "Mundo Transparente", "Não desbloqueado"),
+      textField("estado_altruista_slayer_estado", "Estado Altruísta", "Não desbloqueado"),
+      textField("lamina_carmesim_slayer_estado", "Lâmina Carmesim", "Não desbloqueada"),
+      textField("hab_origem_slayer_resumo", "Habilidade de Origem", ""),
+    ], "grid-2"),
+  ]);
+
+  const inventario = tab("inventario_slayer_tab", "Inventário", [
+    displayLabel("inventario_slayer_titulo", orbitron("INVENTÁRIO", "#F8EB4D", 18)),
+    panel("inventario_slayer_moedas_panel", "Recursos", [
+      numberField("dinheiro_slayer_atual", "Dinheiro atual", 0, 0),
+      numberField("moedas_honra_slayer_atual", "Moedas de Honra atual", 0, 0),
+    ], "grid-2"),
+    itemContainer("inventario_slayer_armas", "Armas", "arma"),
+    itemContainer("inventario_slayer_equipamentos", "Equipamentos", "equipamento"),
+    itemContainer("inventario_slayer_itens", "Itens", "item"),
+  ]);
+
+  const interludios = tab("interludios_slayer_tab", "Interlúdios", [
+    displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIOS CONCLUÍDOS", "#28D7FF", 18)),
+    richTextArea("interludios_slayer_registro", "Registro de Interlúdios"),
+  ]);
+  const notas = tab("notas_slayer_tab", "Notas/Diário", [
+    displayLabel("notas_slayer_titulo", orbitron("NOTAS & DIÁRIO", "#D45CA4", 18)),
+    richTextArea("notas_slayer_diario", "Diário"),
+    richTextArea("notas_slayer_anotacoes", "Anotações"),
+  ]);
+
+  combate.name = "Combate";
+  configuracoes.name = "Configurações";
+  dados.name = "Dados";
+  tabs.contents = [perfil, pericias, combate, skills, inventario, interludios, notas, configuracoes, dados];
+}
+
+function fixBreathingState(template) {
+  const hidden = template.system?.hidden;
+  if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
+
+  const attributes = ["vit", "dex", "for", "car", "fdv", "int", "sab"];
+  for (const attribute of attributes) {
+    const display = hidden.find((entry) => entry.name === `${attribute}_display`);
+    if (!display) throw new Error(`Hidden Attribute ${attribute}_display não encontrado.`);
+    const bonus = `${attribute}_resp_bonus_temp_slayer`;
+    if (!String(display.value).includes(bonus)) {
+      display.value = String(display.value).replace(/}\$$/, `+${bonus}}$`);
+    }
+  }
+
+  let combatTab = null;
+  let configTab = null;
+  walk(template.system?.body, (node) => {
+    if (node.key === "combat_slayer_tab" && node.type === "tab") combatTab = node;
+    if (node.key === "configs_tab" && node.type === "tab") configTab = node;
+  });
+  if (!combatTab || !configTab) throw new Error("Abas Combate/Configurações do Slayer não encontradas.");
+
+  const numericFields = [
+    ["resp_bonus_acerto_temp", "Bônus de Acerto", 0],
+    ["resp_bonus_esquiva_temp", "Bônus de Esquiva", 0],
+    ["resp_bonus_bloqueio_temp", "Bônus de Bloqueio", 0],
+    ["resp_bonus_dano_fixo", "Dano fixo adicional", 0],
+    ["resp_efeito_duracao", "Duração do efeito", 0],
+    ["resp_combo_turno", "Turno do combo", 0],
+    ["resp_carga_acumulada", "Carga acumulada", 0],
+    ["resp_carga_turno_inicio", "Início do carregamento", 0],
+    ["resp_agua_11_usos_hoje", "Água 11 — usos hoje", 0],
+    ["resp_agua_08_recarga_turno", "Água 8 — turno de recarga", 0],
+    ...attributes.map((attribute) => [`${attribute}_resp_bonus_temp_slayer`, `${attribute.toUpperCase()} temporário de Respiração`, 0]),
+  ];
+  const textFields = [
+    ["resp_bonus_dano_dados", "Dados adicionais", ""],
+    ["resp_efeito_flag", "Efeito ativo", ""],
+    ["resp_combo_origem", "Origem do combo", ""],
+  ];
+
+  removeComponentsByKey(template.system, new Set(["resp_slayer_panel", "resp_slayer_storage_panel"]));
+  const statePanel = {
+    key: "resp_slayer_panel", colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip: "Estado atual das técnicas de Respiração.", visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "panel", flow: "grid-2", align: "center", verticalAlign: "top", collapsible: true,
+    defaultCollapsed: false, title: "Respiração", titleStyle: "default", contents: [
+      displayLabel("resp_slayer_titulo", orbitron("RESPIRAÇÃO", "#28D7FF")),
+      displayLabel("resp_slayer_nivel_display", "Nível de Respiração: ${nvl_respiracao_num}$"),
+      displayLabel("resp_slayer_efeito_display", "Efeito: ${resp_efeito_flag}$ · ${resp_efeito_duracao}$ turno(s)"),
+      displayLabel("resp_slayer_combo_display", "Combo: ${resp_combo_origem}$ · Carga: ${resp_carga_acumulada}$"),
+    ],
+  };
+  const actionIndex = combatTab.contents.findIndex((entry) => entry?.key === "acoes_slayer_panel");
+  combatTab.contents.splice(actionIndex >= 0 ? actionIndex + 1 : combatTab.contents.length, 0, statePanel);
+
+  configTab.contents.push({
+    key: "resp_slayer_storage_panel", colSpan: 1, rowSpan: 1, cssClass: "", role: 4, editRole: 4,
+    permission: 0, tooltip: "Estado persistente gerenciado pelo motor de Respirações.", visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "panel", flow: "grid-3", align: "center", verticalAlign: "top", collapsible: true,
+    defaultCollapsed: true, title: "Dados de Respiração", titleStyle: "default",
+    contents: [
+      ...textFields.map(([key, label, value]) => textField(key, label, value)),
+      ...numericFields.map(([key, label, value]) => numberField(key, label, value, 0)),
+    ],
+  });
+}
+
 function fixResistanceAndWoundContract(template) {
   let resistanceButton = null;
   let resistanceDisplay = null;
@@ -541,6 +741,8 @@ export function migrateSlayerTemplate(template) {
   fixMovementDisplay(migrated);
   fixFolegoDisplay(migrated);
   organizeSlayerCombatLayout(migrated);
+  fixBreathingState(migrated);
+  organizeSlayerTabs(migrated);
   return migrated;
 }
 

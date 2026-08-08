@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.5.15] - 2026-08-08
+
+- Reorganiza a ficha Slayer em nove abas: Perfil/Bio, Perícias, Combate, Skills, Inventário, Interlúdios, Notas/Diário, Configurações e Dados.
+- Adiciona Item Containers separados para Armas, Equipamentos e Itens, além de Dinheiro e Moedas de Honra.
+- Adiciona áreas nativas de texto rico para Biografia, Interlúdios e Diário, e preserva a aba Dados como área técnica.
+- Agrupa Respiração, Habilidade Especial, Classe, Marca, Mundo Transparente, Estado Altruísta, Lâmina Carmesim e Habilidade de Origem na aba Skills.
+- Adiciona o estado estrutural do Teste de Vida e Morte à aba Perícias sem simular uma mecânica ainda não implementada.
+- Adiciona o estado persistente e o painel organizado das técnicas de Respiração ao template Slayer.
+- Integra os sete bônus temporários de Respiração aos atributos finais `*_display`.
+- Faz o Controle GM listar exclusivamente todos os Combatants da luta ativa e atualizar entradas e saídas em tempo real.
+- Corrige o botão de adicionar múltiplas entradas no diálogo de dano sem alterar seu layout.
+- Impede que resultados incompletos do diálogo causem `entradas.length` em valor indefinido.
+- Torna o cancelamento da configuração de Acerto explícito e impede qualquer rolagem após cancelar.
+- Exibe `marca_despertada` como `ATIVADA` ou `NÃO DESPERTADA` no template Slayer.
+- Restaura aliases com travessão das Habilidades Especiais e a identificação restrita da macro de Controle GM.
+
 ## 0.5.14 - 2026-08-08
 
 ### Corrigido

@@ -43,9 +43,9 @@ export const ABILITY_OPTIONS = Object.freeze([
   { key: "hab_escolhida_visao", label: "Visão Aguçada" },
   { key: "hab_escolhida_olfato", label: "Olfato Sobrenatural" },
   { key: "hab_escolhida_metamorfose", label: "Metamorfose Carnívora" },
-  { key: "hab_escolhida_tsuyoi", label: "Tsuyoi — O Inabalável" },
-  { key: "hab_escolhida_marechi", label: "Marechi — O Sangue Raro" },
-  { key: "hab_escolhida_oketsu", label: "Ōketsu — O Sangue Real" },
+  { key: "hab_escolhida_tsuyoi", label: "Tsuyoi O Inabalável" },
+  { key: "hab_escolhida_marechi", label: "Marechi O Sangue Raro" },
+  { key: "hab_escolhida_oketsu", label: "Ōketsu O Sangue Real" },
   { key: "hab_escolhida_marca_destino", label: "Marca do Destino" },
 ]);
 

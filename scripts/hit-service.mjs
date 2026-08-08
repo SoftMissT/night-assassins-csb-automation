@@ -66,7 +66,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
     }
     const countLine = maximum > 1 ? ` ${index + 1}/${maximum}` : "";
     const message = await roll.toMessage({
-      flavor: `${actionLabel ? `${actionLabel} · ` : ""}Acerto${countLine} (${modeLabel}) — ${attrName} ${attrVal}${bonusLine}${statusLine}${cdLine}`,
+      flavor: `${actionLabel ? `${actionLabel} · ` : ""}Acerto${countLine} (${modeLabel}) ${attrName} ${attrVal}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker({ actor }),
       rollMode,
     });

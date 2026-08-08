@@ -1,4 +1,4 @@
-// Night Assassins — Marca do Caçador, Fase 1
+// Night Assassins Marca do Caçador, Fase 1
 // CSB: %{return await game.macros.getName('na-marca-cacador')?.execute({actorUuid:entity.uuid});}%
 (async () => {
   const startedAt = performance.now();
@@ -91,7 +91,7 @@
     }).join("");
 
     const chosen = await DialogV2.wait({
-      window: { title: "Marca do Caçador — Atributo da Cicatriz" },
+      window: { title: "Marca do Caçador Atributo da Cicatriz" },
       position: DIALOG_POSITION,
       content: panel(`
         <p style="margin:0">Escolha o atributo ligado à cicatriz.</p>
@@ -138,7 +138,7 @@
       const fdv = attribute(props, "fdv");
       const roll = await new Roll(`1d20 + ${fdv}`).evaluate();
       await roll.toMessage({
-        flavor: `<strong>Despertar da Marca do Caçador</strong> — FDV ${fdv} contra CD ${cd}`,
+        flavor: `<strong>Despertar da Marca do Caçador</strong> FDV ${fdv} contra CD ${cd}`,
         speaker: ChatMessage.getSpeaker({ actor }),
       });
       if (roll.total < cd) return ui.notifications.warn("A Marca não despertou.");
@@ -175,7 +175,7 @@
       .map(value => `<option value="${value}">${value} ${bornMarked ? "de Intensidade" : value === 1 ? "Ano de Vida" : "Anos de Vida"}</option>`)
       .join("");
     return DialogV2.wait({
-      window: { title: bornMarked ? "Ativar Marca — Intensidade" : "Ativar Marca — Anos de Vida" },
+      window: { title: bornMarked ? "Ativar Marca Intensidade" : "Ativar Marca Anos de Vida" },
       position: DIALOG_POSITION,
       content: panel(`
         <p style="margin:0">${bornMarked ? `Intensidade máxima: ${breathLevel}.` : `Limite desta ativação: ${max}.`}</p>

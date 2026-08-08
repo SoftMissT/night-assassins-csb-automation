@@ -5,7 +5,7 @@
 
   const automationModule = game.modules.get('night-assassins-csb-automation');
   if (!automationModule?.active || typeof automationModule.api?.openGmDashboard !== 'function') {
-    return ui.notifications.error('Ative ou atualize o módulo Night Assassins — CSB Automation e recarregue o mundo.');
+    return ui.notifications.error('Ative ou atualize o módulo Night Assassins CSB Automation e recarregue o mundo.');
   }
 
   await automationModule.api.openGmDashboard();

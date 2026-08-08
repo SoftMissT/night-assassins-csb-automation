@@ -30,6 +30,23 @@ describe("hit-service", () => {
     assert.strictEqual(warned, true);
   });
 
+  it("Cancelar a configuração não cria nenhuma rolagem", async () => {
+    _dialogReturn = { cancelled: true };
+    let rolls = 0;
+    const previousCreate = Roll.create;
+    Roll.create = () => {
+      rolls += 1;
+      return { evaluate: async () => _rollResult };
+    };
+    const actor = makeActor({ props: { acerto_label: "acerto_label_dex", dex_display: "4" } });
+    try {
+      await rollHit({ actor });
+      assert.equal(rolls, 0);
+    } finally {
+      Roll.create = previousCreate;
+    }
+  });
+
   it("rola para DEX", async () => {
     _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0 };
     let called = false;

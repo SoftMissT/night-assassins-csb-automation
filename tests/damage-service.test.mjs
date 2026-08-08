@@ -29,6 +29,15 @@ describe("damage-service", () => {
     assert.strictEqual(rolled, false);
   });
 
+  it("não quebra quando o diálogo retorna sem entradas", async () => {
+    _dialogReturn = { nome: "Golpe", pdrGasto: 0 };
+    const actor = makeActor();
+    let warned = false;
+    ui.notifications.warn = (message) => { if (message.includes("Adicione ao menos uma entrada")) warned = true; };
+    await assert.doesNotReject(() => rollDamage({ actor }));
+    assert.strictEqual(warned, true);
+  });
+
   it("aplica PDR e dano em atacante e alvo diferentes", async () => {
     game.user.isGM = true;
     _dialogReturn = [

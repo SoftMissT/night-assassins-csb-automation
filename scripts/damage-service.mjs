@@ -9,7 +9,7 @@ import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 
-function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
+function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
   const cleanDado = (dado || "").trim();
   if (cleanDado) parts.push(cleanDado);
@@ -36,8 +36,11 @@ function markDamageFormula(props, entries) {
   const faces = Math.max(0, Math.trunc(parseNumber(props.marca_dano_faces)));
   if (dice < 1 || faces < 2) return "";
   const continuous = new Set(["sangramento", "envenenamento"]);
-  const directAttack = entries.some((entry) => entry.tipoAcao === "ataque"
-    && (entry.selTiposDano.length === 0 || entry.selTiposDano.some((type) => !continuous.has(type))));
+  const directAttack = entries.some((entry) => {
+    const damageTypes = Array.isArray(entry.selTiposDano) ? entry.selTiposDano : [];
+    return entry.tipoAcao === "ataque"
+      && (damageTypes.length === 0 || damageTypes.some((type) => !continuous.has(type)));
+  });
   return directAttack ? `${dice}d${faces}` : "";
 }
 
@@ -69,7 +72,7 @@ async function resolveActor(options) {
  * @param {string} [options.tipoDano]
  * @returns {Promise<void>}
  */
-export async function rollDamage(options) {
+export async function rollDamage(options = {}) {
   const actor = await resolveActor(options);
   if (!actor) {
     ui.notifications?.warn?.("Nenhum Actor encontrado para dano.");
@@ -105,7 +108,8 @@ export async function rollDamage(options) {
   });
   if (!dialogResult) return;
 
-  const { nome, entradas } = dialogResult;
+  const nome = dialogResult.nome ?? "Dano";
+  const entradas = Array.isArray(dialogResult.entradas) ? dialogResult.entradas : [];
   let critical = dialogResult.critical === true;
   if (critical && !statusEffects.criticalAllowed) {
     critical = false;

@@ -20,6 +20,7 @@ import { getRollStatusEffects, getDamageStatusEffects, getStatusCapabilities, me
 import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcileSlayerExhaustion, registerStatusEngine, resolveSlayerHealing } from "./status-engine.mjs";
 import { consumeSlayerActions, openActionManager, parseActionState, recoverSlayerFolego, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
+import { useBreathForm } from "./breath-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -79,6 +80,7 @@ Hooks.once("ready", () => {
       openRestManager,
       resolveRestTier,
       restEligibleStatuses,
+      useBreathForm,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

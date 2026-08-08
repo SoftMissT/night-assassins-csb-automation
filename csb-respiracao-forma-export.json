@@ -1,0 +1,494 @@
+{
+  "isCustomSystemExport": true,
+  "items": [
+    {
+      "id": "NABreathTpl001",
+      "type": "_equippableItemTemplate",
+      "name": "NA Respiração - Forma",
+      "img": "icons/svg/wind.svg",
+      "data": {
+        "body": {
+          "contents": [
+            {
+              "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+              "role": 0, "editRole": 0, "permission": 0,
+              "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+              "type": "tabbedPanel",
+              "contents": [
+                {
+                  "key": "tab_info", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                  "role": 0, "editRole": 0, "permission": 0,
+                  "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                  "type": "tab",
+                  "contents": [
+                    {
+                      "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "nome_forma", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "full-size", "label": "Nome (PT)",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "full-size", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nome_jp", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "full-size", "label": "Nome (JP)",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "respiracao_nome", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "Respiração",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "tipo_manobra", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "Tipo de Manobra",
+                          "defaultValue": "Única", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nivel_req", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "numberField", "size": "medium", "label": "Nível Req.",
+                          "defaultValue": "1", "allowDecimal": false, "minVal": "1", "maxVal": "4",
+                          "allowRelative": false, "showControls": true, "controlsStyle": "hover",
+                          "controlsCustomIncrements": "", "inputStyle": "text"
+                        }
+                      ],
+                      "flow": "grid-3", "align": "left", "verticalAlign": "top",
+                      "collapsible": false, "defaultCollapsed": false, "title": "", "titleStyle": "default"
+                    },
+                    {
+                      "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "descricao", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "richTextArea", "label": "Descrição",
+                          "defaultValue": "", "style": "dialogEditor"
+                        }
+                      ],
+                      "flow": "vertical", "align": "left", "verticalAlign": "top",
+                      "collapsible": false, "defaultCollapsed": false, "title": "", "titleStyle": "default"
+                    },
+                    {
+                      "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "tem_requisito", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "checkbox", "size": "medium", "label": "Tem Requisito",
+                          "defaultValue": false
+                        },
+                        {
+                          "key": "requisito_texto", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "tem_requisito != true && tem_requisito != 1",
+                          "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "full-size", "label": "Requisito",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        }
+                      ],
+                      "flow": "horizontal", "align": "left", "verticalAlign": "center",
+                      "collapsible": false, "defaultCollapsed": false, "title": "", "titleStyle": "default"
+                    }
+                  ]
+                },
+                {
+                  "key": "tab_niveis", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                  "role": 0, "editRole": 0, "permission": 0,
+                  "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                  "type": "tab",
+                  "contents": [
+                    {
+                      "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Disponível", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Nível", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Custo PDR", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Dano (fórmula)", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Efeito", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Status", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        }
+                      ],
+                      "flow": "grid-6", "align": "center", "verticalAlign": "center",
+                      "collapsible": false, "defaultCollapsed": false, "title": "", "titleStyle": "default"
+                    },
+                    {
+                      "key": "nvl1_panel", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "tem_nvl1", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "checkbox", "size": "medium", "label": "", "defaultValue": true
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Nível 1", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "nvl1_custo", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "numberField", "size": "medium", "label": "",
+                          "defaultValue": "1", "allowDecimal": false, "minVal": "0", "maxVal": "",
+                          "allowRelative": false, "showControls": false, "controlsStyle": "hover",
+                          "controlsCustomIncrements": "", "inputStyle": "text"
+                        },
+                        {
+                          "key": "nvl1_dano", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "1d6", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl1_efeito", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl1_status", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        }
+                      ],
+                      "flow": "grid-6", "align": "center", "verticalAlign": "center",
+                      "collapsible": true, "defaultCollapsed": false, "title": "Nível 1", "titleStyle": "default"
+                    },
+                    {
+                      "key": "nvl2_panel", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "tem_nvl2", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "checkbox", "size": "medium", "label": "", "defaultValue": false
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Nível 2", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "nvl2_custo", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "numberField", "size": "medium", "label": "",
+                          "defaultValue": "2", "allowDecimal": false, "minVal": "0", "maxVal": "",
+                          "allowRelative": false, "showControls": false, "controlsStyle": "hover",
+                          "controlsCustomIncrements": "", "inputStyle": "text"
+                        },
+                        {
+                          "key": "nvl2_dano", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "2d6", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl2_efeito", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl2_status", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        }
+                      ],
+                      "flow": "grid-6", "align": "center", "verticalAlign": "center",
+                      "collapsible": true, "defaultCollapsed": false, "title": "Nível 2", "titleStyle": "default"
+                    },
+                    {
+                      "key": "nvl3_panel", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "tem_nvl3", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "checkbox", "size": "medium", "label": "", "defaultValue": false
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Nível 3", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "nvl3_custo", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "numberField", "size": "medium", "label": "",
+                          "defaultValue": "3", "allowDecimal": false, "minVal": "0", "maxVal": "",
+                          "allowRelative": false, "showControls": false, "controlsStyle": "hover",
+                          "controlsCustomIncrements": "", "inputStyle": "text"
+                        },
+                        {
+                          "key": "nvl3_dano", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "3d6", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl3_efeito", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl3_status", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        }
+                      ],
+                      "flow": "grid-6", "align": "center", "verticalAlign": "center",
+                      "collapsible": true, "defaultCollapsed": false, "title": "Nível 3", "titleStyle": "default"
+                    },
+                    {
+                      "key": "nvl4_panel", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "tem_nvl4", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "checkbox", "size": "medium", "label": "", "defaultValue": false
+                        },
+                        {
+                          "key": "", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "label", "size": "full-size", "icon": "",
+                          "value": "Nível 4", "prefix": "", "suffix": "",
+                          "rollMessage": "", "altRollMessage": "",
+                          "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold"
+                        },
+                        {
+                          "key": "nvl4_custo", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "numberField", "size": "medium", "label": "",
+                          "defaultValue": "3", "allowDecimal": false, "minVal": "0", "maxVal": "",
+                          "allowRelative": false, "showControls": false, "controlsStyle": "hover",
+                          "controlsCustomIncrements": "", "inputStyle": "text"
+                        },
+                        {
+                          "key": "nvl4_dano", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "4d6", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl4_efeito", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        },
+                        {
+                          "key": "nvl4_status", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                          "role": 0, "editRole": 0, "permission": 0,
+                          "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                          "type": "textField", "size": "medium", "label": "",
+                          "defaultValue": "", "allowedCharacters": "", "maxLength": ""
+                        }
+                      ],
+                      "flow": "grid-6", "align": "center", "verticalAlign": "center",
+                      "collapsible": true, "defaultCollapsed": false, "title": "Nível 4", "titleStyle": "default"
+                    }
+                  ]
+                },
+                {
+                  "key": "tab_usar", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                  "role": 0, "editRole": 0, "permission": 0,
+                  "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                  "type": "tab",
+                  "contents": [
+                    {
+                      "key": "btn_usar", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "Clique para usar esta forma de respiração.",
+                      "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "label", "size": "full-size", "icon": "fa-solid fa-bolt",
+                      "value": "Usar Forma",
+                      "prefix": "", "suffix": "",
+                      "rollMessage": "%{return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({itemUuid:entity.uuid, actorUuid:entity.parent?.uuid});}%",
+                      "altRollMessage": "", "rollMessageToChat": false, "altRollMessageToChat": false,
+                      "style": "button"
+                    },
+                    {
+                      "key": "form_resumo", "colSpan": 1, "rowSpan": 1, "cssClass": "",
+                      "role": 0, "editRole": 0, "permission": 0,
+                      "tooltip": "", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "label", "size": "full-size", "icon": "",
+                      "value": "<div style=\"font-size:13px;color:#888;line-height:1.6;margin-top:12px;\"><strong>${nome_forma}$</strong><br><em>${nome_jp}$</em><br>${respiracao_nome}$ · ${tipo_manobra}$ · Nível Req: ${nivel_req}$<br><br>${descricao}$</div>",
+                      "prefix": "", "suffix": "",
+                      "rollMessage": "", "altRollMessage": "",
+                      "rollMessageToChat": true, "altRollMessageToChat": false, "style": "default"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "NABreathAgua01",
+      "type": "equippableItem",
+      "name": "Água — 1º Estilo: Barra de Superfície da Água",
+      "img": "icons/svg/water.svg",
+      "data": {
+        "template": "NABreathTpl001",
+        "props": {
+          "nome_forma": "Barra de Superfície da Água",
+          "nome_jp": "Ichi no Kata Minamo Giri",
+          "respiracao_nome": "Água",
+          "tipo_manobra": "Única",
+          "nivel_req": 1,
+          "descricao": "O usuário gera um impulso de força concentrado, que ganha velocidade suficiente para criar um corte de água, causando dano adicional em seu próximo ataque bem-sucedido. Não é considerado um efeito de contato!",
+          "tem_requisito": 0,
+          "requisito_texto": "",
+          "tem_nvl1": 1,
+          "nvl1_custo": 1,
+          "nvl1_dano": "1d6",
+          "nvl1_efeito": "+1d6 de dano adicional no próximo ataque bem-sucedido",
+          "nvl1_status": "",
+          "nvl1_buff": "",
+          "tem_nvl2": 1,
+          "nvl2_custo": 2,
+          "nvl2_dano": "2d6",
+          "nvl2_efeito": "+2d6 de dano adicional no próximo ataque bem-sucedido",
+          "nvl2_status": "",
+          "nvl2_buff": "",
+          "tem_nvl3": 1,
+          "nvl3_custo": 3,
+          "nvl3_dano": "3d6",
+          "nvl3_efeito": "+3d6 de dano adicional no próximo ataque bem-sucedido",
+          "nvl3_status": "",
+          "nvl3_buff": "",
+          "tem_nvl4": 1,
+          "nvl4_custo": 3,
+          "nvl4_dano": "4d6",
+          "nvl4_efeito": "+4d6 de dano adicional no próximo ataque bem-sucedido",
+          "nvl4_status": "",
+          "nvl4_buff": ""
+        }
+      }
+    }
+  ]
+}

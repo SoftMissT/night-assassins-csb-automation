@@ -90,6 +90,13 @@ test("atributos compartilhados e snapshots 1, 3 e 7 permanecem válidos", () => 
   assert.doesNotMatch(source, /dex_nvl7dex_nvl7|car_nvl6/);
 });
 
+test("Marca despertada é exibida como estado textual", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const source = JSON.stringify(template.system.body);
+  assert.match(source, /marca_despertada > 0 \? 'ATIVADA' : 'NÃO DESPERTADA'/);
+  assert.doesNotMatch(source, /Despertada: \$\{marca_despertada\}\$/);
+});
+
 test("template Slayer mostra deslocamento base como 7m mais DEX atual", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const movement = template.system.hidden.find((entry) => entry.name === "deslocamento_slayer");
@@ -111,4 +118,62 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   assert.match(source, /font-size: 16px/);
   assert.match(source, /"acoes_slayer_panel"/);
   assert.match(source, /"title":"Economia de Ações"/);
+});
+
+test("template Slayer possui estado completo de Respiração organizado", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const source = JSON.stringify(template.system.body);
+  const hidden = new Map(template.system.hidden.map((entry) => [entry.name, entry.value]));
+  const fields = [
+    "resp_bonus_acerto_temp", "resp_bonus_esquiva_temp", "resp_bonus_bloqueio_temp",
+    "resp_bonus_dano_dados", "resp_bonus_dano_fixo", "resp_efeito_flag", "resp_efeito_duracao",
+    "resp_combo_origem", "resp_combo_turno", "resp_carga_acumulada", "resp_carga_turno_inicio",
+    "resp_agua_11_usos_hoje", "resp_agua_08_recarga_turno",
+  ];
+  for (const key of fields) assert.match(source, new RegExp(`"${key}"`));
+  for (const attribute of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
+    assert.match(source, new RegExp(`"${attribute}_resp_bonus_temp_slayer"`));
+    assert.match(hidden.get(`${attribute}_display`), new RegExp(`${attribute}_resp_bonus_temp_slayer`));
+  }
+  assert.match(source, /"resp_slayer_panel"/);
+  assert.match(source, /"resp_slayer_storage_panel"/);
+  assert.match(source, /RESPIRAÇÃO/);
+});
+
+test("template Slayer possui as nove abas funcionais na ordem definida", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  let tabbedPanel = null;
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (!tabbedPanel && node.type === "tabbedPanel") tabbedPanel = node;
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  assert.ok(tabbedPanel);
+  assert.deepEqual(tabbedPanel.contents.map((entry) => entry.key), [
+    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "skills_slayer_tab",
+    "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "configs_tab", "dados_tab",
+  ]);
+  assert.deepEqual(tabbedPanel.contents.map((entry) => entry.name), [
+    "Perfil/Bio", "Perícias", "Combate", "Skills", "Inventário",
+    "Interlúdios", "Notas/Diário", "Configurações", "Dados",
+  ]);
+});
+
+test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB próprios", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const source = JSON.stringify(template.system.body);
+  for (const key of ["inventario_slayer_armas", "inventario_slayer_equipamentos", "inventario_slayer_itens"]) {
+    assert.match(source, new RegExp(`"key":"${key}"[^}]+"type":"itemContainer"`));
+  }
+  for (const key of ["dinheiro_slayer_atual", "moedas_honra_slayer_atual"]) assert.match(source, new RegExp(`"${key}"`));
+  for (const key of [
+    "skills_slayer_resp_display", "skills_slayer_hab_display", "skills_slayer_classe_display",
+    "skills_marca_slayer_panel", "mundo_transparente_slayer_estado", "estado_altruista_slayer_estado",
+    "lamina_carmesim_slayer_estado", "hab_origem_slayer_resumo",
+  ]) assert.match(source, new RegExp(`"${key}"`));
+  for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario"]) {
+    assert.match(source, new RegExp(`"${key}"`));
+  }
+  assert.match(source, /"type":"textArea"/);
 });

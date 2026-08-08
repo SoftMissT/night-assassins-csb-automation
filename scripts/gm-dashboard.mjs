@@ -29,6 +29,30 @@ function firstDefined(props, keys) {
   return 0;
 }
 
+function combatantsOf(combat) {
+  if (!combat?.combatants) return [];
+  if (Array.isArray(combat.combatants.contents)) return combat.combatants.contents;
+  return [...combat.combatants];
+}
+
+function actorFromCombatant(combatant) {
+  return combatant?.actor ?? combatant?.token?.actor ?? null;
+}
+
+function fallbackCombatantData(combatant, actor) {
+  const hostile = Number(combatant?.token?.disposition ?? combatant?.disposition) < 0;
+  const kind = hostile ? "oni" : "hunter";
+  const name = cleanText(combatant?.name) || cleanText(actor?.name) || (hostile ? "Oni sem nome" : "Slayer sem nome");
+  return {
+    actor,
+    kind,
+    name,
+    image: combatant?.img || combatant?.token?.texture?.src || actor?.img || "icons/svg/mystery-man.svg",
+    pdv: resourceFromValues(0, 0),
+    pdr: resourceFromValues(0, 0),
+  };
+}
+
 export function hunterData(actor) {
   const props = actor.system?.props ?? {};
   const hasSlayerData = Object.keys(props).some((key) => key.includes("_slayer_")) || props.nome_slayer !== undefined;
@@ -98,10 +122,14 @@ function section(title, icon, entries, kind) {
   </section>`;
 }
 
-function loadDashboardData() {
-  const actors = game.actors.contents;
-  const hunters = actors.map(hunterData).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-  const onis = actors.map(oniData).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+export function loadDashboardData(combat = game.combat) {
+  const entries = combatantsOf(combat).map((combatant) => {
+    const actor = actorFromCombatant(combatant);
+    if (!actor) return null;
+    return hunterData(actor) ?? oniData(actor) ?? fallbackCombatantData(combatant, actor);
+  }).filter(Boolean);
+  const hunters = entries.filter((entry) => entry.kind === "hunter").sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  const onis = entries.filter((entry) => entry.kind === "oni").sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   return { hunters, onis };
 }
 
@@ -160,10 +188,30 @@ function bindDashboard(dialog, element) {
     clearTimeout(refreshTimer);
     refreshTimer = setTimeout(() => refreshDashboard(root), 120);
   });
+  const combatHook = Hooks.on("updateCombat", () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => refreshDashboard(root), 50);
+  });
+  const combatantHook = Hooks.on("updateCombatant", () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => refreshDashboard(root), 50);
+  });
+  const createCombatantHook = Hooks.on("createCombatant", () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => refreshDashboard(root), 50);
+  });
+  const deleteCombatantHook = Hooks.on("deleteCombatant", () => {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => refreshDashboard(root), 50);
+  });
   Hooks.once("closeDialogV2", (app) => {
     if (app !== dialog) return;
     clearTimeout(refreshTimer);
     Hooks.off("updateActor", updateHook);
+    Hooks.off("updateCombat", combatHook);
+    Hooks.off("updateCombatant", combatantHook);
+    Hooks.off("createCombatant", createCombatantHook);
+    Hooks.off("deleteCombatant", deleteCombatantHook);
     if (window.__NAGmDashboard === dialog) window.__NAGmDashboard = null;
   });
 
@@ -180,7 +228,7 @@ export async function openGmDashboard() {
   const DialogV2 = foundry.applications.api.DialogV2;
   let dialog;
   dialog = new DialogV2({
-    window: { title: "Controle GM — Night Assassins" },
+    window: { title: "Controle GM Night Assassins" },
     classes: ["na-gm-dashboard-window"],
     position: { width: Math.min(680, window.innerWidth - 40), height: Math.min(640, window.innerHeight - 60) },
     modal: false,

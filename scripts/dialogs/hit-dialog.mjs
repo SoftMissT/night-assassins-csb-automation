@@ -113,11 +113,11 @@ export async function openHitDialog({ attrName, attrVal, color }) {
           };
         },
       },
-      { action: "cancel", label: "Cancelar", callback: () => null },
+      { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
     ],
   });
 
-  return result ?? null;
+  return !result || result.cancelled ? null : result;
 }
 
 /**

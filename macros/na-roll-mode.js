@@ -34,13 +34,13 @@
     test,
     attr,
     kind: ['Bloqueio', 'Esquiva'].includes(test) ? 'defense' : 'test',
-  }) ?? { blocked:false, mode:'normal', modifier:0, reasons:[] };
+  }) ?? { blocked: false, mode: 'normal', modifier: 0, reasons: [] };
   if (statusEffects.blocked) return ui.notifications?.warn('Este personagem está incapacitado e não pode realizar a rolagem.');
   if (statusEffects.autoFail) return ui.notifications?.warn('Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.');
 
-  const ATTR_KEYS = ['vit','for','dex','fdv','car','int','sab'];
-  const ATTR_NAMES = { vit:'VIT', for:'FOR', dex:'DEX', fdv:'FDV', car:'CAR', int:'INT', sab:'SAB' };
-  const ATTR_COLORS = { vit:'#36D67A', for:'#C1000C', dex:'#28D7FF', fdv:'#BB97F9', car:'#FF9100', int:'#F8EB4D', sab:'#D45CA4' };
+  const ATTR_KEYS = ['vit', 'for', 'dex', 'fdv', 'car', 'int', 'sab'];
+  const ATTR_NAMES = { vit: 'VIT', for: 'FOR', dex: 'DEX', fdv: 'FDV', car: 'CAR', int: 'INT', sab: 'SAB' };
+  const ATTR_COLORS = { vit: '#36D67A', for: '#C1000C', dex: '#28D7FF', fdv: '#BB97F9', car: '#FF9100', int: '#F8EB4D', sab: '#D45CA4' };
 
   function readDisplayAttribute(key) {
     const propKey = `${key}_display`;
@@ -61,10 +61,10 @@
   // Atributos disponíveis como secundários (exclui o primário se houver)
   const primaryKey = attr ? attr.toLowerCase() : '';
   const val = ATTR_KEYS.includes(primaryKey) ? attrValues[primaryKey] : 0;
-  const secondaryOptions = [{ key:'', label:'Nenhum', val:0 }];
+  const secondaryOptions = [{ key: '', label: 'Nenhum', val: 0 }];
   for (const k of ATTR_KEYS) {
     if (k !== primaryKey) {
-      secondaryOptions.push({ key:k, label:ATTR_NAMES[k], val:attrValues[k] });
+      secondaryOptions.push({ key: k, label: ATTR_NAMES[k], val: attrValues[k] });
     }
   }
 
@@ -123,7 +123,7 @@
     }
 
     await roll.toMessage({
-      flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' — ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
+      flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker(),
       rollMode: rollMode,
     });
@@ -201,7 +201,7 @@
       },
       cancel: {
         label: 'Cancelar',
-        callback: () => {}
+        callback: () => { }
       }
     },
     default: 'normal',

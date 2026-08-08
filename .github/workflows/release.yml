@@ -71,6 +71,17 @@ jobs:
             --compendiumName night-assassins-respiracoes \
             --inputDirectory build/compendium/respiracoes \
             --outputDirectory packs
+      - name: Build Art Compendium
+        shell: bash
+        run: |
+          node tools/build-asset-sources.mjs
+          rm -rf packs/night-assassins-arte
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-arte \
+            --inputDirectory build/compendium/artes \
+            --outputDirectory packs
       - name: Build module.zip
         shell: bash
         run: |
@@ -80,6 +91,7 @@ jobs:
             styles \
             lang \
             packs \
+            assets/icons \
             README.md \
             CHANGELOG.md
 

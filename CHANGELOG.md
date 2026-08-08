@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.5.18] - 2026-08-08
+
+- Cria o Compendium de Arte `Night Assassin's Arte`, um pack de Items CSB que cataloga os ícones das Respirações disponíveis em `assets/icons` por caminho `modules/<id>/assets/icons/*.webp`.
+- Move os ícones para `assets/icons/` e inclui a pasta no `module.zip` do release, garantindo que as imagens cheguem ao Foundry.
+- Usa o ícone `resp_agua.webp` como arte das onze Formas da Respiração da Água no Compêndio de Items.
+- Adiciona `tools/build-asset-sources.mjs` para gerar o Compendium de Arte na pipeline de release.
+
 ## [0.5.17] - 2026-08-08
 
 - Torna cada Forma de Respiração rolável diretamente no Item Container da aba Skills, usando o Item vinculado e o Actor dono da ficha.

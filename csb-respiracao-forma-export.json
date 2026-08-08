@@ -1122,7 +1122,7 @@
       "id": "NAWaterFrm000001",
       "type": "equippableItem",
       "name": "Água — 1º Estilo Barra de Superfície da Água",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1172,7 +1172,7 @@
       "id": "NAWaterFrm000002",
       "type": "equippableItem",
       "name": "Água — 2º Estilo Roda D'Água",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1222,7 +1222,7 @@
       "id": "NAWaterFrm000003",
       "type": "equippableItem",
       "name": "Água — 3º Estilo Dança da Corrente Rápida",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1272,7 +1272,7 @@
       "id": "NAWaterFrm000004",
       "type": "equippableItem",
       "name": "Água — 4º Estilo Maré Impressionante",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1322,7 +1322,7 @@
       "id": "NAWaterFrm000005",
       "type": "equippableItem",
       "name": "Água — 5º Estilo Chuva Misericordiosa de um Dia Seco",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1372,7 +1372,7 @@
       "id": "NAWaterFrm000006",
       "type": "equippableItem",
       "name": "Água — 6º Estilo Torção de Hidromassagem",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1422,7 +1422,7 @@
       "id": "NAWaterFrm000007",
       "type": "equippableItem",
       "name": "Água — 7º Estilo Gota de Chuva Penetrante",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1472,7 +1472,7 @@
       "id": "NAWaterFrm000008",
       "type": "equippableItem",
       "name": "Água — 8º Estilo Força da Cascata",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1522,7 +1522,7 @@
       "id": "NAWaterFrm000009",
       "type": "equippableItem",
       "name": "Água — 9º Estilo Respingos de Água",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1572,7 +1572,7 @@
       "id": "NAWaterFrm000010",
       "type": "equippableItem",
       "name": "Água — 10º Estilo O Dragão da Mudança",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {
@@ -1622,7 +1622,7 @@
       "id": "NAWaterFrm000011",
       "type": "equippableItem",
       "name": "Água — 11º Estilo Calmaria",
-      "img": "icons/magic/water/elemental-water.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
       "data": {
         "template": "NABreathTpl00001",
         "props": {

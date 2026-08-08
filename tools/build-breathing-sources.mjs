@@ -63,7 +63,7 @@ function formDocument(form, source) {
     id: form.documentId,
     type: "equippableItem",
     name: source?.name ? `Água — ${source.name}` : `Água — ${form.order}º Estilo: ${form.name}`,
-    img: "icons/magic/water/elemental-water.webp",
+    img: "modules/night-assassins-csb-automation/assets/icons/resp_agua.webp",
     data: { template: WATER_BREATH_TEMPLATE_ID, props: formProps(form, source) },
   };
 }

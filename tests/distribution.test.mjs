@@ -18,7 +18,22 @@ describe("module distribution", () => {
       { name: "night-assassins-slayer", label: "Night Assassin's Slayer", type: "Actor" },
       { name: "night-assassins-onis", label: "Night Assassin's Onis", type: "Actor" },
       { name: "night-assassins-respiracoes", label: "Night Assassin's Respirações", type: "Item" },
+      { name: "night-assassins-arte", label: "Night Assassin's Arte", type: "Item" },
     ]);
+  });
+
+  it("cataloga todo asset de icons/ no Compêndio de Arte", async () => {
+    const { readdir } = await import("node:fs/promises");
+    const icons = (await readdir(new URL("../assets/icons", import.meta.url))).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file));
+    assert.ok(icons.length > 0, "assets/icons deve conter ao menos um ícone");
+
+    for (const file of icons) {
+      const asset = await readFile(new URL(`../assets/icons/${file}`, import.meta.url));
+      assert.ok(asset.length > 0, `${file} deve existir em assets/icons`);
+    }
+
+    const source = await readFile(new URL("../tools/build-asset-sources.mjs", import.meta.url), "utf8");
+    assert.match(source, /modules\/\$\{MODULE_ID\}\/assets\/icons/i);
   });
 
   it("prepara um template válido para cada Compêndio de Actor", async () => {

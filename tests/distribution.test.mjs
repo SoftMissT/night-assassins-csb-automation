@@ -17,6 +17,7 @@ describe("module distribution", () => {
       { name: "night-assassins-macros", label: "Macros Night Assassins", type: "Macro" },
       { name: "night-assassins-slayer", label: "Night Assassin's Slayer", type: "Actor" },
       { name: "night-assassins-onis", label: "Night Assassin's Onis", type: "Actor" },
+      { name: "night-assassins-respiracoes", label: "Night Assassin's Respirações", type: "Item" },
     ]);
   });
 

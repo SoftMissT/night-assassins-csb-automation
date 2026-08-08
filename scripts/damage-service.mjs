@@ -8,6 +8,7 @@ import { openDamageDialog } from "./dialogs/damage-dialog.mjs";
 import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
+import { parseWaterBreathingState } from "./breath-service.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -136,6 +137,14 @@ export async function rollDamage(options = {}) {
   })).filter((spec) => spec.formula !== "0");
   const markFormula = markDamageFormula(props, entradas);
   if (markFormula) specs.push({ label: "Marca do Caçador", types: ["ferida"], formula: markFormula });
+  const breathingState = parseWaterBreathingState(props.resp_agua_estado);
+  const breathingDamage = breathingState.pendingDamage;
+  const hasAttackDamage = entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
+  if (breathingDamage?.formula && hasAttackDamage) {
+    const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) => String(attrValues[key.toLowerCase()] ?? 0));
+    specs.push({ label: "Respiração da Água", types: [], formula, breathing: true });
+    if (breathingDamage.critical) critical = true;
+  }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
   let rolls;
@@ -166,6 +175,21 @@ export async function rollDamage(options = {}) {
 
   if (Object.keys(actionResult.patch ?? {}).length > 0) {
     updatesByActor.set(actor.uuid, { actor, changes: { ...actionResult.patch } });
+  }
+
+  if (breathingDamage && hasAttackDamage) {
+    const nextState = { ...breathingState };
+    const remaining = Math.max(0, Math.trunc(parseNumber(breathingDamage.uses)) - 1);
+    if (remaining > 0) nextState.pendingDamage = { ...breathingDamage, uses: remaining };
+    else delete nextState.pendingDamage;
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    existing.changes["system.props.resp_agua_estado"] = JSON.stringify(nextState);
+    existing.changes["system.props.resp_bonus_dano_dados"] = remaining > 0 ? breathingDamage.formula ?? "" : "";
+    existing.changes["system.props.resp_efeito_flag"] = remaining > 0 ? props.resp_efeito_flag ?? "" : "";
+    if (breathingDamage.exhaustion) {
+      existing.changes["system.props.status_slayer_exaustao"] = Math.min(8, parseNumber(props.status_slayer_exaustao) + parseNumber(breathingDamage.exhaustion));
+    }
+    updatesByActor.set(actor.uuid, existing);
   }
 
   if (pdrGasto > 0) {

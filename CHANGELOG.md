@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.5.16] - 2026-08-08
+
+- Adiciona o template CSB equipável de Forma de Respiração e as onze Formas oficiais da Respiração da Água como Items reais.
+- Publica o Compendium `Night Assassin's Respirações` e inclui sua construção automática no release.
+- Adiciona à aba Skills um Item Container dedicado às Formas de Respiração, filtrado pelo template correto.
+- Implementa níveis 1–4, requisitos, custos, ações, dano, estados, recargas, cargas, usos diários e encadeamentos das onze Formas.
+- Integra os efeitos da Respiração da Água às rolagens de Acerto e Dano e ao avanço de turnos do combate.
+- Faz `nvl_respiracao_num` controlar os níveis de Forma disponíveis.
+- Torna a reorganização da ficha idempotente e restaura o botão e o estado textual da Marca do Caçador em migrações repetidas.
+
+### Validação
+
+- `node --test`: 155 testes aprovados, 0 falhas.
+- O gerador produz 1 template e 11 Items, todos com IDs Foundry estáveis de 16 caracteres.
+
 ## [0.5.15] - 2026-08-08
 
 - Reorganiza a ficha Slayer em nove abas: Perfil/Bio, Perícias, Combate, Skills, Inventário, Interlúdios, Notas/Diário, Configurações e Dados.

@@ -7,6 +7,7 @@ import { openHitConfirmationDialog, openHitDialog } from "./dialogs/hit-dialog.m
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 import { TIPOS_ACAO } from "./constants.mjs";
 import { recoverSlayerFolego } from "./action-service.mjs";
+import { parseWaterBreathingState } from "./breath-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -148,16 +149,29 @@ export async function rollHit(options) {
   const dialogResult = await openHitDialog({ attrName, attrVal, color });
   if (!dialogResult) return;
 
-  await doRoll({
+  const breathingState = parseWaterBreathingState(props.resp_agua_estado);
+  const breathHit = breathingState.nextHit;
+  const breathBonus = Number(breathHit?.bonus) || 0;
+  const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
+  const requestedMode = breathHit?.advantage ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
+
+  const result = await doRoll({
     actor,
     attrName,
     attrVal,
-    mode: dialogResult.mode,
+    mode: requestedMode,
     rollMode: dialogResult.rollMode,
-    bonusRaw: dialogResult.bonusRaw,
+    bonusRaw,
     cdVal: dialogResult.cdVal,
-    rollCount: dialogResult.rollCount,
+    rollCount: Math.max(dialogResult.rollCount, Number(breathHit?.count) || 1),
     actionType: dialogResult.actionType,
     statusEffects,
   });
+  if (result?.attempts?.length && breathHit) {
+    delete breathingState.nextHit;
+    await actor.update({
+      "system.props.resp_agua_estado": JSON.stringify(breathingState),
+      "system.props.resp_bonus_acerto_temp": 0,
+    }, { naCsbAutomation: true, naBreathing: true });
+  }
 }

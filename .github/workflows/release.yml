@@ -60,6 +60,17 @@ jobs:
             --inputDirectory build/compendium/onis \
             --outputDirectory packs
 
+      - name: Build Breathing Item Compendium
+        shell: bash
+        run: |
+          node tools/build-breathing-sources.mjs
+          rm -rf packs/night-assassins-respiracoes
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-respiracoes \
+            --inputDirectory build/compendium/respiracoes \
+            --outputDirectory packs
       - name: Build module.zip
         shell: bash
         run: |

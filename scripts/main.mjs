@@ -20,7 +20,7 @@ import { getRollStatusEffects, getDamageStatusEffects, getStatusCapabilities, me
 import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcileSlayerExhaustion, registerStatusEngine, resolveSlayerHealing } from "./status-engine.mjs";
 import { consumeSlayerActions, openActionManager, parseActionState, recoverSlayerFolego, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
-import { useBreathForm } from "./breath-service.mjs";
+import { registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -34,6 +34,7 @@ Hooks.once("ready", () => {
   registerStatusEngine();
   registerActionEngine();
   registerRestEngine();
+  registerBreathingEngine();
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);

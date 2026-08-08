@@ -309,6 +309,31 @@ function itemContainer(key, title, category) {
   };
 }
 
+function breathingItemContainer() {
+  const container = itemContainer("skills_slayer_respiracoes", orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF"), "respiracao");
+  container.headDisplay = false;
+  container.hideEmpty = false;
+  container.nameLabel = "Forma";
+  container.templateFilter = ["NABreathTpl00001"];
+  container.tooltip = "Arraste as Formas do Compêndio Night Assassin's Respirações para o Caçador.";
+  return container;
+}
+
+function hunterMarkPanel() {
+  const status = displayLabel(
+    "marca_despertada_display",
+    orbitron("Despertada: ${marca_despertada > 0 ? 'ATIVADA' : 'NÃO DESPERTADA'}$", "#28D7FF", 12),
+  );
+  const button = displayLabel(
+    "marca_slayer_gerenciar",
+    orbitron("MARCA DO CAÇADOR", "#FF9100", 14),
+    "Despertar, ativar, consultar ou encerrar a Marca do Caçador.",
+  );
+  button.style = "button";
+  button.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAHunterMark0001'))?.execute({actorUuid:entity.uuid});}%";
+  return panel("skills_marca_slayer_panel", "Marca do Caçador", [status, button], "grid-2");
+}
+
 function organizeSlayerTabs(template) {
   let tabs = null;
   walk(template.system?.body, (node) => {
@@ -325,6 +350,13 @@ function organizeSlayerTabs(template) {
     throw new Error("Abas canônicas Perícias/Combate/Configurações/Dados não encontradas.");
   }
 
+  let existingMarkPanel = null;
+  walk(tabs, (node) => {
+    if (!existingMarkPanel && (node.key === "skills_marca_slayer_panel" || node.title === "Marca do Caçador")) {
+      existingMarkPanel = structuredClone(node);
+    }
+  });
+
   removeComponentsByKey(template.system, new Set([
     "perfil_slayer_tab", "skills_slayer_tab", "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab",
     "vida_morte_slayer_panel", "skills_marca_slayer_panel",
@@ -339,8 +371,12 @@ function organizeSlayerTabs(template) {
   ], "grid-2"));
 
   const markIndex = combate.contents.findIndex((entry) => entry?.title === "Marca do Caçador" || JSON.stringify(entry).includes("marca_despertada_display"));
-  const markPanel = markIndex >= 0 ? combate.contents.splice(markIndex, 1)[0] : panel("skills_marca_slayer_panel", "Marca do Caçador", []);
+  const markPanel = markIndex >= 0 ? combate.contents.splice(markIndex, 1)[0] : existingMarkPanel ?? hunterMarkPanel();
   markPanel.key = "skills_marca_slayer_panel";
+  if (!JSON.stringify(markPanel).includes("marca_despertada_display")) {
+    markPanel.contents ??= [];
+    markPanel.contents.unshift(...hunterMarkPanel().contents);
+  }
 
   const perfil = tab("perfil_slayer_tab", "Perfil/Bio", [
     displayLabel("perfil_slayer_titulo", orbitron("PERFIL DO CAÇADOR", "#D45CA4", 18)),
@@ -361,6 +397,7 @@ function organizeSlayerTabs(template) {
       displayLabel("skills_slayer_classe_display", "Classe: ${classe_escolhida}$"),
       displayLabel("skills_slayer_origem_display", "Habilidade de Origem: ${origem_dropdown}$"),
     ], "grid-2"),
+    breathingItemContainer(),
     markPanel,
     panel("skills_slayer_avancadas_panel", "Estados Avançados", [
       textField("mundo_transparente_slayer_estado", "Mundo Transparente", "Não desbloqueado"),
@@ -433,6 +470,7 @@ function fixBreathingState(template) {
     ...attributes.map((attribute) => [`${attribute}_resp_bonus_temp_slayer`, `${attribute.toUpperCase()} temporário de Respiração`, 0]),
   ];
   const textFields = [
+    ["resp_agua_estado", "Estado mecânico da Respiração da Água", '{"version":1}'],
     ["resp_bonus_dano_dados", "Dados adicionais", ""],
     ["resp_efeito_flag", "Efeito ativo", ""],
     ["resp_combo_origem", "Origem do combo", ""],

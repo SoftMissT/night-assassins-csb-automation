@@ -298,12 +298,24 @@ function fixResistanceAndWoundContract(template) {
   statusDisplay.key = "status_slayer_display";
   statusDisplay.value = "${status_slayer_resumo}$";
   combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) =>
-    entry?.key === "status_slayer_gerenciar" || entry?.key === "status_slayer_display"));
+    entry?.key === "status_slayer_gerenciar" || entry?.key === "status_slayer_display" || entry?.key === "descanso_slayer_gerenciar"));
   combatTable.contents.push([statusButton, statusDisplay, null, null]);
+
+  const restButton = structuredClone(statusButton);
+  restButton.key = "descanso_slayer_gerenciar";
+  restButton.value = "DESCANSO";
+  restButton.icon = "fas fa-campground";
+  restButton.tooltip = "Solicitar Descanso de Campo, Descanso Completo ou Recuperação Profunda ao GM.";
+  restButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARestManage0001'))?.execute({actorUuid:entity.uuid}); return '';}%";
+  combatTable.contents.push([restButton, null, null, null]);
   combatTable.rows = Math.max(Number(combatTable.rows) || 0, combatTable.contents.length);
 
   const storageKeys = new Set();
-  walk(configTab, (node) => { if (node.key) storageKeys.add(node.key); });
+  let storagePanel = null;
+  walk(configTab, (node) => {
+    if (node.key) storageKeys.add(node.key);
+    if (node.key === "status_slayer_storage_panel" && node.type === "panel") storagePanel = node;
+  });
   const storage = [];
   if (!storageKeys.has("status_slayer_resistencias_dados")) {
     storage.push(textField("status_slayer_resistencias_dados", "Resistências (dados)", ""));
@@ -320,7 +332,12 @@ function fixResistanceAndWoundContract(template) {
   if (!storageKeys.has("status_slayer_exaustao")) {
     storage.push(numberField("status_slayer_exaustao", "Exaustão", 0, 0, 8));
   }
-  if (storage.length > 0) {
+  if (!storageKeys.has("descanso_slayer_dados")) {
+    storage.push(textField("descanso_slayer_dados", "Último descanso (dados)", ""));
+  }
+  if (storage.length > 0 && storagePanel) {
+    storagePanel.contents.push(...storage);
+  } else if (storage.length > 0) {
     configTab.contents.push({
       key: "status_slayer_storage_panel",
       colSpan: 1,

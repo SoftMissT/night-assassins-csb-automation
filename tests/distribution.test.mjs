@@ -7,7 +7,7 @@ import { registerSettings, SETTINGS } from "../scripts/settings.mjs";
 describe("module distribution", () => {
   it("declara o Compendium de macros no manifesto", async () => {
     const manifest = JSON.parse(await readFile(new URL("../module.json", import.meta.url), "utf8"));
-    assert.equal(manifest.version, "0.5.10");
+    assert.equal(manifest.version, "0.5.11");
     assert.equal(manifest.socket, true);
     assert.deepEqual(manifest.packs.map(({ name, label, type }) => ({ name, label, type })), [
       { name: "night-assassins-macros", label: "Macros Night Assassins", type: "Macro" },
@@ -30,7 +30,7 @@ describe("module distribution", () => {
     }
   });
 
-  it("inclui as nove macros canônicas", async () => {
+  it("inclui as dez macros canônicas", async () => {
     const files = [
       "na-roll-mode.js",
       "na-acerto-roll.js",
@@ -41,6 +41,7 @@ describe("module distribution", () => {
       "na-gerenciar-resistencias.js",
       "na-gerenciar-status.js",
       "na-gerenciar-acoes.js",
+      "na-gerenciar-descanso.js",
     ];
 
     for (const file of files) {

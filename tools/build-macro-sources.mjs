@@ -16,6 +16,7 @@ const macros = [
   { id: "NAResistance0001", file: "na-gerenciar-resistencias.js", name: "Night Assassins — Gerenciar Resistências" },
   { id: "NAStatusManage01", file: "na-gerenciar-status.js", name: "Night Assassins — Gerenciar Status" },
   { id: "NAActionManage01", file: "na-gerenciar-acoes.js", name: "Night Assassins — Gerenciar Ações" },
+  { id: "NARestManage0001", file: "na-gerenciar-descanso.js", name: "Night Assassins — Gerenciar Descanso" },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

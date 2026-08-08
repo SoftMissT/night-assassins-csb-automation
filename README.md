@@ -110,7 +110,12 @@ Exemplos das outras entradas públicas:
 %{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAStatusManage01'))?.execute({actorUuid:entity.uuid}); return '';}%
 
 %{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAActionManage01'))?.execute({actorUuid:entity.uuid}); return '';}%
+
+// Descanso
+%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARestManage0001'))?.execute({actorUuid:entity.uuid}); return '';}%
 ```
+
+O botão **DESCANSO** solicita ao GM um Descanso de Campo (2h), Descanso Completo (8h) ou Recuperação Profunda (24h+). O benefício somente é gravado após a confirmação antiabuso do GM. Descanso Completo também oferece a remoção autorizada das Fadigas da Respiração da Recuperação.
 
 `actorUuid:entity.uuid` é o UUID do Actor que clicou; o UUID em `fromUuid(...)` é o UUID permanente da macro fornecida pelo módulo.
 

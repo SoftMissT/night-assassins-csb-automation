@@ -1,7 +1,7 @@
 ---
 title: "Night Assassins - Descanso Slayer v1"
 created: "2026-08-07"
-status: planned
+status: accepted-for-implementation
 type: spec
 tags: [foundry, night-assassins, descanso, slayer]
 ---
@@ -45,3 +45,18 @@ PDV recuperado incrementa `pdv_slayer_curado`; PDR recuperado incrementa `pdr_sl
 - Dano Necrótico da Marca exige a regra específica da Marca; descanso não o apaga genericamente.
 - Regeneração Suprimida respeita sua própria duração.
 - Fôlego usa `folego_slayer_maximo = 2 + fdv_display` e o campo persistente `folego_slayer_atual`. Qualquer descanso restaura o atual ao máximo; o início de cada combate também começa cheio.
+
+## Respiração da Recuperação
+
+- Descanso Completo e Recuperação Profunda podem remover `Fadiga Corporal`, `Fadiga Espiritual` e `Fadiga Mental`, porque a regra dessas condições aceita Sono Completo. A remoção continua visível na confirmação do GM.
+- Descanso de Campo não remove nenhuma das três Fadigas.
+- `Ofegante` não é removido por descanso: sua remoção exige Ação Especial do próprio praticante ou ajuda de aliado adjacente.
+- As quatro Formas da Respiração da Recuperação são técnicas de combate independentes. O gerenciador de descanso não rola, substitui nem simula essas Formas.
+
+## Contrato executável
+
+- O botão `DESCANSO` executa a macro `Night Assassins — Gerenciar Descanso` pelo UUID estável do Compendium e sempre envia `actorUuid: entity.uuid`.
+- O jogador escolhe a modalidade e informa quantas horas foram realmente concluídas. Interrupções rebaixam o benefício conforme a tabela oficial.
+- O GM primário recebe um `DialogV2` com o benefício calculado, a validação antiabuso, os status removíveis e os tratamentos graves aplicáveis.
+- Sem GM ativo não existe alteração. Recusa, fechamento do modal ou falha de validação também não escrevem no Actor.
+- A aprovação grava recursos, status e `descanso_slayer_dados` em um único `Actor#update`.

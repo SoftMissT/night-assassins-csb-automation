@@ -19,6 +19,7 @@ import { openStatusManager } from "./status-service.mjs";
 import { getRollStatusEffects, getDamageStatusEffects, getStatusCapabilities, mergeRollMode, isReactionBlocked } from "./status-effects.mjs";
 import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcileSlayerExhaustion, registerStatusEngine, resolveSlayerHealing } from "./status-engine.mjs";
 import { consumeSlayerActions, openActionManager, parseActionState, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
+import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -31,6 +32,7 @@ Hooks.once("ready", () => {
   }
   registerStatusEngine();
   registerActionEngine();
+  registerRestEngine();
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);
@@ -73,6 +75,9 @@ Hooks.once("ready", () => {
       parseActionState,
       openActionManager,
       slayerMovementMeters,
+      openRestManager,
+      resolveRestTier,
+      restEligibleStatuses,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

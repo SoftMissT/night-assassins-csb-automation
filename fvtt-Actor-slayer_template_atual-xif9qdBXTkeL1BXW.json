@@ -1618,6 +1618,35 @@
                     ],
                     [
                       {
+                        "key": "descanso_slayer_gerenciar",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "Solicitar Descanso de Campo, Descanso Completo ou Recuperação Profunda ao GM.",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "fas fa-campground",
+                        "value": "DESCANSO",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARestManage0001'))?.execute({actorUuid:entity.uuid}); return '';}%",
+                        "altRollMessage": "",
+                        "rollMessageToChat": false,
+                        "altRollMessageToChat": false,
+                        "style": "button"
+                      },
+                      null,
+                      null,
+                      null
+                    ],
+                    [
+                      {
                         "key": "deslocamento_slayer_titulo",
                         "colSpan": 1,
                         "rowSpan": 1,
@@ -1670,7 +1699,7 @@
                     ]
                   ],
                   "cols": 4,
-                  "rows": 6,
+                  "rows": 7,
                   "layout": "cccc"
                 }
               ],
@@ -3518,6 +3547,26 @@
                       "allowRelative": false,
                       "showControls": false,
                       "controlsStyle": "hover"
+                    },
+                    {
+                      "key": "descanso_slayer_dados",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 4,
+                      "editRole": 4,
+                      "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "textField",
+                      "size": "full-size",
+                      "label": "Último descanso (dados)",
+                      "defaultValue": "",
+                      "charList": "",
+                      "maxLength": null,
+                      "autocomplete": ""
                     }
                   ],
                   "flow": "grid-2",

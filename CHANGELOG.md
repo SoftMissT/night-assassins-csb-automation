@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.5.11] - 2026-08-07
+
+### Adicionado
+
+- Botão `DESCANSO` no template Slayer e macro canônica `Night Assassins — Gerenciar Descanso` no Compendium.
+- Descanso de Campo, Descanso Completo e Recuperação Profunda com rebaixamento automático quando o repouso é interrompido.
+- Confirmação obrigatória do GM e registro `descanso_slayer_dados` para aplicar a regra antiabuso.
+- Atualização atômica de PDV, PDR, Fôlego, Exaustão e status autorizados.
+- Recuperação Profunda com testes opcionais de Fratura e Corrupção e devolução explícita de PDV máximo perdido por Ferida.
+- Integração da Respiração da Recuperação: Sono Completo pode remover Fadiga Corporal, Espiritual e Mental; `Ofegante` continua exigindo sua remoção própria.
+
+### Corrigido
+
+- Descanso de Campo usa literalmente `1d4 × VIT`, em vez de rolar vários d4.
+- PDR restaurado considera `metal_slayer_pdr_bonus` e grava a key canônica `pdr_slayer_gasto_valor`.
+
+### Validação
+
+- Testes cobrem interrupção, recursos, Fôlego, Exaustão, Fadigas, tratamentos profundos, macro, UUID do Compendium e export do template.
+
 ## [0.5.10] - 2026-08-07
 
 ### Adicionado

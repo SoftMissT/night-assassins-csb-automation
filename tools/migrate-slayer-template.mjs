@@ -414,6 +414,43 @@ function fixMovementDisplay(template) {
   combatTable.rows = combatTable.contents.length;
 }
 
+function fixFolegoDisplay(template) {
+  const hidden = template.system?.hidden;
+  if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
+  const maximum = hidden.find((entry) => entry.name === "folego_slayer_maximo");
+  if (maximum) maximum.value = "${2+fdv_display}$";
+  else hidden.push({ name: "folego_slayer_maximo", value: "${2+fdv_display}$" });
+
+  let attributeTable = null;
+  walk(template.system?.body, (node) => {
+    if (node.type !== "table" || attributeTable) return;
+    const source = JSON.stringify(node.contents ?? []);
+    if (source.includes("atr_vit_valor") && source.includes(">Fôlego</span>")) attributeTable = node;
+  });
+  if (!attributeTable) throw new Error("Tabela principal de atributos do Slayer não encontrada.");
+
+  const titleRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.value?.includes?.(">Fôlego</span>")));
+  if (!titleRow) throw new Error("Título de Fôlego não encontrado.");
+  const title = titleRow.find((entry) => entry?.value?.includes?.(">Fôlego</span>"));
+  title.key = "folego_slayer_titulo";
+  title.tooltip = "Fôlego de Combate máximo: 2 + FDV atual.";
+
+  let valueRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "folego_slayer_atual"));
+  if (!valueRow) {
+    valueRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "bonus_atr_sab_valor_temp"));
+    if (!valueRow) throw new Error("Linha de recursos dos atributos não encontrada.");
+    valueRow.push(numberField("folego_slayer_atual", "", "${folego_slayer_maximo}$", 0));
+  }
+  const current = valueRow.find((entry) => entry?.key === "folego_slayer_atual");
+  current.defaultValue = "${folego_slayer_maximo}$";
+  current.minVal = "0";
+  current.maxVal = "${folego_slayer_maximo}$";
+  current.tooltip = "Fôlego atual. Recupera 1 no início do turno e em crítico positivo.";
+
+  attributeTable.cols = 8;
+  attributeTable.layout = "cccccccc";
+}
+
 export function migrateSlayerTemplate(template) {
   const migrated = visit(structuredClone(template));
   fixCurrentPdvLabel(migrated);
@@ -423,6 +460,7 @@ export function migrateSlayerTemplate(template) {
   removeDuplicateAttributeButton(migrated);
   fixResistanceAndWoundContract(migrated);
   fixMovementDisplay(migrated);
+  fixFolegoDisplay(migrated);
   return migrated;
 }
 

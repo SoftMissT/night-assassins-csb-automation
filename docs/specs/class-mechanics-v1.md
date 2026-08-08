@@ -27,13 +27,15 @@ A escolha ocorre no nível 4. O rank é derivado de `nvl_pj`; `rank_atual` conti
 
 ## Serviços previstos
 
-- Mestre de Batalha: ataque básico/proficiência, bônus C/B, Sangramento crítico A, PDV 2d6 no S, aparar e contra-ataque.
+- Mestre de Batalha: ataque básico/proficiência, bônus C/B, Sangramento crítico A, PDV `+2d6` uma única vez ao alcançar o Rank S no nível 11, aparar e contra-ataque.
 - Usuário de Veneno: instâncias independentes, duração, limite 3, ataque adicional e Corta-Cura.
 - Kakushi: cura/estabilização, retirada, PDR e Tatakaaaaeee.
 - Companheiro de Oni: vínculo com Actor Oni, interceptação, resistência e sinergia.
 - Usuário de Duas Respirações: secundária, compatibilidade, variações e limites por turno.
 
 ## Consistência pendente
+
+A decisão canônica da mesa prevalece sobre o texto antigo de `Regras de Level Up Exterminadores.md`: o incremento único de `2d6` PDV do Mestre de Batalha acontece no **nível 11 (Rank S)**, não no nível 12. O motor deve guardar um marcador persistente para impedir nova aplicação ao recarregar a ficha ou trocar temporariamente o nível.
 
 `Regras de Level Up Exterminadores.md` lista Mestre de Batalha, Usuário de Veneno e Kakushi na escolha do nível 4, enquanto `Classes.md` também define Companheiro de Oni e Usuário de Duas Respirações. O motor preservará as cinco opções já existentes no dropdown, mas essa divergência documental deve permanecer registrada.
 

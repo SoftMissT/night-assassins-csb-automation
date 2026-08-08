@@ -96,3 +96,14 @@ test("template Slayer mostra deslocamento base como 7m mais DEX atual", () => {
   assert.match(source, /"deslocamento_slayer_display"/);
   assert.match(source, /\$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
 });
+
+test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const maximum = template.system.hidden.find((entry) => entry.name === "folego_slayer_maximo");
+  assert.deepEqual(maximum, { name: "folego_slayer_maximo", value: "${2+fdv_display}$" });
+  const source = JSON.stringify(template.system.body);
+  assert.match(source, /"folego_slayer_titulo"/);
+  assert.match(source, /"folego_slayer_atual"/);
+  assert.match(source, /"defaultValue":"\$\{folego_slayer_maximo\}\$"/);
+  assert.match(source, /"maxVal":"\$\{folego_slayer_maximo\}\$"/);
+});

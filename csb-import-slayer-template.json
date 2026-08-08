@@ -386,14 +386,14 @@
                     "style": "subtitle"
                   },
                   {
-                    "key": "",
+                    "key": "folego_slayer_titulo",
                     "colSpan": 1,
                     "rowSpan": 1,
                     "cssClass": "",
                     "role": 0,
                     "editRole": 0,
                     "permission": 0,
-                    "tooltip": "",
+                    "tooltip": "Fôlego de Combate máximo: 2 + FDV atual.",
                     "visibilityFormula": "",
                     "editableFormula": "",
                     "escapeHTML": false,
@@ -614,6 +614,29 @@
                     "controlsStyle": "hover",
                     "controlsCustomIncrements": "",
                     "inputStyle": "text"
+                  },
+                  {
+                    "key": "folego_slayer_atual",
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "cssClass": "",
+                    "role": 4,
+                    "editRole": 4,
+                    "permission": 0,
+                    "tooltip": "Fôlego atual. Recupera 1 no início do turno e em crítico positivo.",
+                    "visibilityFormula": "",
+                    "editableFormula": "",
+                    "escapeHTML": false,
+                    "type": "numberField",
+                    "size": "full-size",
+                    "label": "",
+                    "defaultValue": "${folego_slayer_maximo}$",
+                    "allowDecimal": false,
+                    "minVal": "0",
+                    "maxVal": "${folego_slayer_maximo}$",
+                    "allowRelative": false,
+                    "showControls": false,
+                    "controlsStyle": "hover"
                   }
                 ],
                 [
@@ -641,7 +664,7 @@
                   null
                 ]
               ],
-              "cols": 7,
+              "cols": 8,
               "rows": 4,
               "layout": "cccccccc"
             },
@@ -6999,6 +7022,10 @@
           {
             "name": "deslocamento_slayer",
             "value": "${7+dex_display}$"
+          },
+          {
+            "name": "folego_slayer_maximo",
+            "value": "${2+fdv_display}$"
           }
         ],
         "attributeBar": {

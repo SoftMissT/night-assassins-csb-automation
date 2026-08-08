@@ -4,7 +4,7 @@ setupFoundryMocks();
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { makeActor } from "./fixtures/actor.mjs";
-import { actionMaximums, consumeSlayerActions, parseActionState, resetSlayerActions, slayerMovementMeters } from "../scripts/action-service.mjs";
+import { actionMaximums, consumeSlayerActions, parseActionState, resetSlayerActions, slayerFolegoMaximum, slayerFolegoPatch, slayerMovementMeters } from "../scripts/action-service.mjs";
 
 describe("action-service", () => {
   const makeSlayer = (props = {}) => makeActor({ props: { nome_slayer: "Teste", pdv_slayer_total_valor: 20, ...props } });
@@ -52,5 +52,22 @@ describe("action-service", () => {
   it("calcula deslocamento por DEX e modificadores de status", () => {
     assert.equal(slayerMovementMeters({ dex_display: 4 }), 11);
     assert.equal(slayerMovementMeters({ dex_display: 4, status_slayer_dados: JSON.stringify({ version: 2, active: ["fratura"], exhaustion: 0, effects: {} }) }), 5.5);
+  });
+
+  it("calcula Fôlego máximo como 2 + FDV final", () => {
+    assert.equal(slayerFolegoMaximum({ fdv_display: 4 }), 6);
+    assert.equal(slayerFolegoMaximum({ fdv_display: "<span>7</span>" }), 9);
+  });
+
+  it("enche Fôlego no combate e recupera 1 no início do turno", () => {
+    assert.deepEqual(slayerFolegoPatch({ fdv_display: 4, folego_slayer_atual: 2 }, { full: true }), {
+      "system.props.folego_slayer_atual": 6,
+    });
+    assert.deepEqual(slayerFolegoPatch({ fdv_display: 4, folego_slayer_atual: 5 }), {
+      "system.props.folego_slayer_atual": 6,
+    });
+    assert.deepEqual(slayerFolegoPatch({ fdv_display: 4, folego_slayer_atual: 6 }), {
+      "system.props.folego_slayer_atual": 6,
+    });
   });
 });

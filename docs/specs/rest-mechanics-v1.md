@@ -44,4 +44,4 @@ PDV recuperado incrementa `pdv_slayer_curado`; PDR recuperado incrementa `pdr_sl
 - [[life-and-death-mechanics-v1|Vida e Morte]]: cura em 0 PDV acorda o Slayer e aplica suas consequências.
 - Dano Necrótico da Marca exige a regra específica da Marca; descanso não o apaga genericamente.
 - Regeneração Suprimida respeita sua própria duração.
-- A key de Fôlego ainda precisa ser definida no template antes da implementação; o serviço não deve inventar um nome silenciosamente.
+- Fôlego usa `folego_slayer_maximo = 2 + fdv_display` e o campo persistente `folego_slayer_atual`. Qualquer descanso restaura o atual ao máximo; o início de cada combate também começa cheio.

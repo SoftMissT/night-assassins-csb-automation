@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.5.10] - 2026-08-07
+
+### Adicionado
+
+- Fôlego de Combate do Slayer com máximo `2 + FDV final` e campo persistente `folego_slayer_atual` no template.
+- O GM preenche o Fôlego de todos os Slayers ao iniciar o combate e recupera 1 no início de cada turno, limitado ao máximo.
+- SPEC de Estado Altruísta e Mundo Transparente registra requisitos, ações, custos, duração, alvos por UUID e integrações com acerto, defesa e dano.
+
+### Corrigido
+
+- O ganho único de `2d6` PDV do Mestre de Batalha foi fixado pela regra canônica da mesa no nível 11, Rank S.
+
+### Validação
+
+- Testes cobrem fórmula do máximo, preenchimento no combate, recuperação por turno, export do Actor e pacote global CSB.
+
 ## [0.5.9] - 2026-08-07
 
 ### Adicionado

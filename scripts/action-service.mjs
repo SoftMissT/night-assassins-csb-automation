@@ -56,6 +56,18 @@ export function slayerMovementMeters(props = {}) {
   return Math.max(0, (7 + dex) * capabilities.movementMultiplier - capabilities.movementPenaltyMeters);
 }
 
+export function slayerFolegoMaximum(props = {}) {
+  return Math.max(0, 2 + Math.trunc(parseNumber(props.fdv_display)));
+}
+
+export function slayerFolegoPatch(props = {}, { full = false } = {}) {
+  const maximum = slayerFolegoMaximum(props);
+  const stored = props.folego_slayer_atual === undefined || props.folego_slayer_atual === ""
+    ? maximum
+    : Math.max(0, Math.trunc(parseNumber(props.folego_slayer_atual)));
+  return { "system.props.folego_slayer_atual": full ? maximum : Math.min(maximum, stored + 1) };
+}
+
 export function actionSummary(state, props = {}) {
   const maximums = actionMaximums(props);
   return [...TURN_KEYS, ...ROUND_KEYS]
@@ -138,25 +150,37 @@ function isPrimaryGm() {
 }
 
 export function registerActionEngine() {
-  Hooks.on("combatStart", (combat) => void resetCombatActions(combat, true));
+  Hooks.on("combatStart", (combat) => void resetCombatActions(combat, { resetRound: true, fillFolego: true }));
   Hooks.on("updateCombat", (combat, changes) => {
     if (!isPrimaryGm()) return;
-    if (Object.hasOwn(changes, "round")) void resetCombatActions(combat, true);
-    else if (Object.hasOwn(changes, "turn")) void resetCombatActions(combat, false);
+    if (Object.hasOwn(changes, "round")) void resetCombatActions(combat, { resetRound: true });
+    else if (Object.hasOwn(changes, "turn")) void resetCombatActions(combat);
   });
 }
 
-async function resetCombatActions(combat, resetRound) {
+async function resetCombatActions(combat, { resetRound = false, fillFolego = false } = {}) {
   if (!isPrimaryGm() || !combat?.started) return;
   const actor = combat.combatant?.actor;
-  const key = `${combat.id}:${combat.round}:${combat.turn}:${actor?.id ?? "none"}:${resetRound}`;
+  const key = `${combat.id}:${combat.round}:${combat.turn}:${actor?.id ?? "none"}:${resetRound}:${fillFolego}`;
   if (combat.getFlag?.(MODULE_ID, ACTION_FLAG) === key) return;
   await combat.setFlag?.(MODULE_ID, ACTION_FLAG, key);
-  const jobs = [];
-  if (resetRound) {
-    for (const combatant of combat.combatants ?? []) if (isSlayerActor(combatant.actor)) jobs.push(resetSlayerActions(combatant.actor, "round"));
-  }
-  if (isSlayerActor(actor)) jobs.push(resetSlayerActions(actor, "turn"));
+  const slayers = [...(combat.combatants ?? [])].map((combatant) => combatant.actor).filter(isSlayerActor);
+  const jobs = slayers.map(async (slayer) => {
+    const props = slayer.system?.props ?? {};
+    const state = parseActionState(props.acoes_slayer_dados);
+    let changed = false;
+    if (resetRound) {
+      state.round = emptyUses(ROUND_KEYS);
+      changed = true;
+    }
+    if (slayer === actor) {
+      state.turn = emptyUses(TURN_KEYS);
+      changed = true;
+    }
+    const patch = changed ? actionPatch(state, props) : {};
+    if (fillFolego || slayer === actor) Object.assign(patch, slayerFolegoPatch(props, { full: fillFolego }));
+    if (Object.keys(patch).length > 0) await slayer.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+  });
   await Promise.allSettled(jobs);
 }
 

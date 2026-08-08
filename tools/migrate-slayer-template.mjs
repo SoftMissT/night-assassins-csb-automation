@@ -316,6 +316,15 @@ function breathingItemContainer() {
   container.nameLabel = "Forma";
   container.templateFilter = ["NABreathTpl00001"];
   container.tooltip = "Arraste as Formas do Compêndio Night Assassin's Respirações para o Caçador.";
+  const useButton = displayLabel(
+    "respiracao_slayer_usar",
+    orbitron("USAR", "#28D7FF", 11),
+    "Executa a mecânica desta Forma para o Caçador.",
+  );
+  useButton.style = "button";
+  useButton.icon = "fa-solid fa-droplet";
+  useButton.rollMessage = "%{return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({itemUuid:linkedEntity.uuid,actorUuid:entity.uuid});}%";
+  container.rowLayout = [{ ...useButton, align: "center", colName: "Usar" }];
   return container;
 }
 

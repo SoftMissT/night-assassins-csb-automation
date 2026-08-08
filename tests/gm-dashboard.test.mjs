@@ -88,7 +88,7 @@ describe("gm-dashboard", () => {
     assert.equal(result.hunters.some((entry) => entry.name === "Fora"), false);
   });
 
-  it("abre painel compacto, não modal e com fechamento explícito", async () => {
+  it("abre painel legível, sem retratos, não modal e com fechamento explícito", async () => {
     let config;
     game.user.isGM = true;
     const zenitsu = {
@@ -135,7 +135,8 @@ describe("gm-dashboard", () => {
     assert.match(config.content, /Zenitsu/);
     assert.match(config.content, /Gyutaro/);
     assert.doesNotMatch(config.content, /Classe|Origem|Respiração|Esquiva|Bloqueio/);
-    assert.equal(config.position.width, 680);
+    assert.doesNotMatch(config.content, /<img\b/);
+    assert.equal(config.position.width, 780);
     assert.equal(config.modal, false);
     assert.deepEqual(config.buttons.map(({ action }) => action), ["close"]);
     await config.buttons[0].callback();

@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.5.17] - 2026-08-08
+
+- Torna cada Forma de Respiração rolável diretamente no Item Container da aba Skills, usando o Item vinculado e o Actor dono da ficha.
+- Adota `respiracao_da_agua.json` como fonte editorial das onze Formas da Água no Compêndio CSB.
+- Aumenta a legibilidade do Controle GM e remove os retratos dos combatentes.
+
 ## [0.5.16] - 2026-08-08
 
 - Adiciona o template CSB equipável de Forma de Respiração e as onze Formas oficiais da Respiração da Água como Items reais.

@@ -104,9 +104,8 @@ function resourceBar(label, data, tone) {
   </div>`;
 }
 
-function combatantRow({ actor, kind, name, image, pdv, pdr }) {
+function combatantRow({ actor, kind, name, pdv, pdr }) {
   return `<article class="na-gm-mini-row na-gm-mini-row--${kind}" data-search="${escapeHtml(`${name} ${actor.name}`.toLocaleLowerCase("pt-BR"))}">
-    <img src="${escapeHtml(image)}" alt="" />
     <div class="na-gm-mini-name"><small>${kind === "oni" ? "ONI" : "CAÇADOR"}</small><strong>${escapeHtml(name)}</strong></div>
     <div class="na-gm-mini-resources">${resourceBar("PDV", pdv, "pdv")}${resourceBar(kind === "oni" ? "PDK" : "PDR", pdr, "pdr")}</div>
     <button type="button" class="na-gm-open-sheet" data-actor-uuid="${escapeHtml(actor.uuid)}" title="Abrir ficha"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
@@ -215,7 +214,7 @@ function bindDashboard(dialog, element) {
     if (window.__NAGmDashboard === dialog) window.__NAGmDashboard = null;
   });
 
-  requestAnimationFrame(() => dialog.setPosition({ width: Math.min(680, window.innerWidth - 40), height: Math.min(640, window.innerHeight - 60) }));
+  requestAnimationFrame(() => dialog.setPosition({ width: Math.min(780, window.innerWidth - 40), height: Math.min(640, window.innerHeight - 60) }));
 }
 
 export async function openGmDashboard() {
@@ -230,7 +229,7 @@ export async function openGmDashboard() {
   dialog = new DialogV2({
     window: { title: "Controle GM Night Assassins" },
     classes: ["na-gm-dashboard-window"],
-    position: { width: Math.min(680, window.innerWidth - 40), height: Math.min(640, window.innerHeight - 60) },
+    position: { width: Math.min(780, window.innerWidth - 40), height: Math.min(640, window.innerHeight - 60) },
     modal: false,
     content: renderDashboard(loadDashboardData()),
     buttons: [

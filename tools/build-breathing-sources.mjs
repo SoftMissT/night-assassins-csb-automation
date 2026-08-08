@@ -5,6 +5,7 @@ import { WATER_BREATHING_FORMS, WATER_BREATH_TEMPLATE_ID } from "../scripts/wate
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const exportPath = path.join(root, "csb-respiracao-forma-export.json");
+const sourcePath = path.join(root, "respiracao_da_agua.json");
 const outputDirectory = path.join(root, "build", "compendium", "respiracoes");
 
 const actionLabels = Object.freeze({
@@ -21,39 +22,49 @@ function normalizeTemplateNode(node) {
   return normalized;
 }
 
-function formProps(form) {
+function sourceForForm(sourceItems, form) {
+  return sourceItems.find((item) => new RegExp(`^${form.order}º\\s+Estilo\\b`, "i").test(item.name));
+}
+
+function formProps(form, source) {
+  const sourceSystem = source?.system ?? {};
   const props = {
     inventario_categoria: "respiracao",
     forma_id: form.id,
     forma_ordem: form.order,
     nome_forma: form.name,
-    nome_jp: form.jp,
+    nome_jp: sourceSystem.japaneseName || form.jp,
     respiracao_nome: "Água",
-    tipo_manobra: actionLabels[form.action] ?? form.action,
+    tipo_manobra: sourceSystem.maneuverType || actionLabels[form.action] || form.action,
     nivel_req: form.minLevel,
-    descricao: form.description,
-    tem_requisito: form.requirement ? 1 : 0,
-    requisito_texto: form.requirement ?? "",
+    descricao: sourceSystem.description || form.description,
+    tem_requisito: (sourceSystem.requirement || form.requirement) ? 1 : 0,
+    requisito_texto: sourceSystem.requirement || form.requirement || "",
+    gatilho_texto: sourceSystem.trigger || "",
+    combo_texto: sourceSystem.combo || "",
+    notas_texto: sourceSystem.notes || "",
+    sinergias_texto: Array.isArray(sourceSystem.synergy) ? sourceSystem.synergy.join("\n") : "",
   };
   for (let level = 1; level <= 4; level += 1) {
     const data = form.levels[level - 1];
+    const sourceLevel = sourceSystem.levels?.find((entry) => Number(String(entry.level).match(/\d+/)?.[0]) === level);
     props[`tem_nvl${level}`] = data ? 1 : 0;
     props[`nvl${level}_custo`] = data?.cost ?? 0;
     props[`nvl${level}_dano`] = data?.damage ?? "";
-    props[`nvl${level}_efeito`] = data?.effect ?? "Indisponível";
+    props[`nvl${level}_efeito`] = sourceLevel?.effect || data?.effect || "Indisponível";
     props[`nvl${level}_status`] = "";
     props[`nvl${level}_buff`] = "";
   }
   return props;
 }
 
-function formDocument(form) {
+function formDocument(form, source) {
   return {
     id: form.documentId,
     type: "equippableItem",
-    name: `Água — ${form.order}º Estilo: ${form.name}`,
+    name: source?.name ? `Água — ${source.name}` : `Água — ${form.order}º Estilo: ${form.name}`,
     img: "icons/magic/water/elemental-water.webp",
-    data: { template: WATER_BREATH_TEMPLATE_ID, props: formProps(form) },
+    data: { template: WATER_BREATH_TEMPLATE_ID, props: formProps(form, source) },
   };
 }
 
@@ -80,12 +91,13 @@ function compendiumDocument(source, index) {
 }
 
 const previous = JSON.parse(await readFile(exportPath, "utf8"));
+const sourceItems = JSON.parse(await readFile(sourcePath, "utf8"));
 const previousTemplate = previous.items?.find((item) => item.type === "_equippableItemTemplate");
 if (!previousTemplate?.data?.body) throw new Error("Template-base de Forma de Respiração não encontrado.");
 const template = normalizeTemplateNode(structuredClone(previousTemplate));
 template.id = WATER_BREATH_TEMPLATE_ID;
 template.name = "NA Respiração - Forma";
-const documents = [template, ...WATER_BREATHING_FORMS.map(formDocument)];
+const documents = [template, ...WATER_BREATHING_FORMS.map((form) => formDocument(form, sourceForForm(sourceItems, form)))];
 
 await writeFile(exportPath, `${JSON.stringify({ isCustomSystemExport: true, items: documents }, null, 2)}\n`);
 await rm(outputDirectory, { recursive: true, force: true });

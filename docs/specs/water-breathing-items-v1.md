@@ -13,11 +13,12 @@ tags:
 
 ## Objetivo
 
-Distribuir a [[Respiração da Água]] como conteúdo oficial do módulo: um template `_equippableItemTemplate`, onze `equippableItem`, um Compêndio de Items e um Item Displayer na ficha Slayer.
+Distribuir a [[Respiração da Água]] como conteúdo oficial do módulo: um template `_equippableItemTemplate`, onze `equippableItem`, um Compêndio de Items e um Item Displayer rolável na ficha Slayer. O arquivo `respiracao_da_agua.json` é a fonte editorial canônica; o catálogo mecânico continua em `scripts/water-breathing-data.mjs`.
 
 ## Contrato dos Items
 
 - Template: `NA Respiração - Forma`.
+- Cada linha do Item Displayer possui `USAR`, chamando `useBreathForm` com `linkedEntity.uuid` e `entity.uuid`.
 - Cada Forma possui `forma_id`, nomes, tipo de manobra, nível mínimo, descrição, requisito e dados dos níveis 1 a 4.
 - A macro do Item chama `useBreathForm({ itemUuid: entity.uuid, actorUuid: entity.parent?.uuid })`.
 - Items são únicos e clonados no Actor ao arrastar do Compêndio.

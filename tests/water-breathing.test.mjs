@@ -90,5 +90,8 @@ describe("Respiração da Água", () => {
     assert.equal(documents.filter((document) => document.type === "_equippableItemTemplate").length, 1);
     assert.equal(documents.filter((document) => document.type === "equippableItem").length, 11);
     assert.ok(documents.filter((document) => document.type === "equippableItem").every((document) => document.data.template === WATER_BREATH_TEMPLATE_ID));
+    const first = documents.find((document) => document.data?.props?.forma_id === "agua_01");
+    assert.match(first.data.props.descricao, /impulso de força concentrado/);
+    assert.equal(first.data.props.nome_jp, "Ichi no Kata Minamo Giri");
   });
 });

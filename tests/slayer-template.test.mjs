@@ -33,10 +33,15 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
     Object.values(node).forEach(walk);
   }
   walk(template.system);
-  assert.equal(buttons.length, 34);
+  assert.equal(buttons.length, 35);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
-    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
+    if (button.key === "respiracao_slayer_usar") {
+      assert.match(button.rollMessage, /linkedEntity\.uuid/);
+      assert.match(button.rollMessage, /useBreathForm/);
+    } else {
+      assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
+    }
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
   const source = buttons.map((button) => button.rollMessage).join("\n");
@@ -138,6 +143,10 @@ test("template Slayer possui estado completo de Respiração organizado", () => 
   assert.match(source, /"resp_slayer_panel"/);
   assert.match(source, /"resp_slayer_storage_panel"/);
   assert.match(source, /RESPIRAÇÃO/);
+  assert.match(source, /"key":"skills_slayer_respiracoes"/);
+  assert.match(source, /"key":"respiracao_slayer_usar"/);
+  assert.match(source, /linkedEntity\.uuid/);
+  assert.match(source, /useBreathForm/);
 });
 
 test("template Slayer possui as nove abas funcionais na ordem definida", () => {

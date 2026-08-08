@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.6] - 2026-08-07
+
+### Corrigido
+
+- A Marca do Caçador voltou a ler os sete atributos finais `vit_display`, `dex_display`, `for_display`, `car_display`, `fdv_display`, `int_display` e `sab_display`.
+- A leitura usa `_display` primeiro, `_config` como fallback e `atr_*_valor` somente para fichas antigas.
+- O parser interno da Marca remove blocos de estilo antes de extrair números, evitando interpretar `css2`, pesos e tamanhos de fonte como atributos.
+- Adicionados testes garantindo a escrita dos sete `*_marca_temp` e a integração de cada temporário com seu respectivo `_display` no template Slayer.
+
 ## [0.5.5] - 2026-08-07
 
 ### Corrigido

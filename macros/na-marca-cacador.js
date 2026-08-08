@@ -31,6 +31,7 @@
   function number(raw) {
     if (typeof raw === "number" && Number.isFinite(raw)) return raw;
     const text = String(raw ?? "")
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
       .replace(/<[^>]*>/g, " ")
       .replace(/&nbsp;|&#160;/gi, " ")
       .replace(",", ".");
@@ -43,7 +44,11 @@
   }
 
   function attribute(props, key) {
-    return number(props[`atr_${key}_valor`] ?? props[`atr_${key}_valor_config`]);
+    const display = props[`${key}_display`];
+    if (display !== undefined && display !== null && display !== "") return number(display);
+    const configured = props[`atr_${key}_valor_config`];
+    if (configured !== undefined && configured !== null && configured !== "") return number(configured);
+    return number(props[`atr_${key}_valor`]);
   }
 
   function isDestinyMark(props) {

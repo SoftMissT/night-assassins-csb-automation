@@ -260,14 +260,16 @@ function fixResistanceAndWoundContract(template) {
     const text = labelText(node.value);
     if (node.type === "label" && text === "GERENCIAR RESISTÊNCIAS") resistanceButton = node;
     if (node.key === "status_slayer_resistencias_display") resistanceDisplay = node;
-    if (node.key === "tes" && node.type === "table") combatTable = node;
+    if ((node.key === "tes" || node.key === "combat_slayer_table") && node.type === "table") combatTable = node;
     if (node.key === "configs_tab" && node.type === "tab") configTab = node;
     if (node.key === "pdv_slayer_dano_ferida") woundField = node;
     if (node.key === "pdv_slayer_total_valor") totalLabel = node;
   });
 
   if (!resistanceButton || !resistanceDisplay || !combatTable || !configTab || !woundField || !totalLabel) {
-    throw new Error("Componentes novos de Resistências/Ferida não encontrados no export Slayer.");
+    const missing = Object.entries({ resistanceButton, resistanceDisplay, combatTable, configTab, woundField, totalLabel })
+      .filter(([, value]) => !value).map(([key]) => key);
+    throw new Error(`Componentes novos de Resistências/Ferida não encontrados no export Slayer: ${missing.join(", ")}.`);
   }
 
   combatTable.key = "combat_slayer_table";
@@ -295,6 +297,8 @@ function fixResistanceAndWoundContract(template) {
   const statusDisplay = structuredClone(resistanceDisplay);
   statusDisplay.key = "status_slayer_display";
   statusDisplay.value = "${status_slayer_resumo}$";
+  combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) =>
+    entry?.key === "status_slayer_gerenciar" || entry?.key === "status_slayer_display"));
   combatTable.contents.push([statusButton, statusDisplay, null, null]);
   combatTable.rows = Math.max(Number(combatTable.rows) || 0, combatTable.contents.length);
 
@@ -342,6 +346,74 @@ function fixResistanceAndWoundContract(template) {
   }
 }
 
+function fixMovementDisplay(template) {
+  const hidden = template.system?.hidden;
+  if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
+  const movement = hidden.find((entry) => entry.name === "deslocamento_slayer");
+  if (movement) movement.value = "${7+dex_display}$";
+  else hidden.push({ name: "deslocamento_slayer", value: "${7+dex_display}$" });
+
+  let combatTable = null;
+  walk(template.system?.body, (node) => {
+    if (node.key === "combat_slayer_table" && node.type === "table") combatTable = node;
+  });
+  if (!combatTable) throw new Error("Tabela de combate do Slayer não encontrada.");
+  combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) => entry?.key === "deslocamento_slayer_display"));
+  combatTable.contents.push([
+    {
+      key: "deslocamento_slayer_titulo",
+      colSpan: 1,
+      rowSpan: 1,
+      cssClass: "",
+      role: 0,
+      editRole: 0,
+      permission: 0,
+      tooltip: "Deslocamento base: 7m + DEX atual.",
+      visibilityFormula: "",
+      editableFormula: "",
+      escapeHTML: false,
+      type: "label",
+      size: "full-size",
+      icon: "fas fa-person-running",
+      value: "DESLOCAMENTO",
+      prefix: "",
+      suffix: "",
+      rollMessage: "",
+      altRollMessage: "",
+      rollMessageToChat: false,
+      altRollMessageToChat: false,
+      style: "title",
+    },
+    {
+      key: "deslocamento_slayer_display",
+      colSpan: 3,
+      rowSpan: 1,
+      cssClass: "",
+      role: 0,
+      editRole: 0,
+      permission: 0,
+      tooltip: "Deslocamento base calculado automaticamente.",
+      visibilityFormula: "",
+      editableFormula: "",
+      escapeHTML: false,
+      type: "label",
+      size: "full-size",
+      icon: "",
+      value: "${deslocamento_slayer}$m (7m + DEX)",
+      prefix: "",
+      suffix: "",
+      rollMessage: "",
+      altRollMessage: "",
+      rollMessageToChat: false,
+      altRollMessageToChat: false,
+      style: "label",
+    },
+    null,
+    null,
+  ]);
+  combatTable.rows = combatTable.contents.length;
+}
+
 export function migrateSlayerTemplate(template) {
   const migrated = visit(structuredClone(template));
   fixCurrentPdvLabel(migrated);
@@ -350,6 +422,7 @@ export function migrateSlayerTemplate(template) {
   fixRollButtons(migrated);
   removeDuplicateAttributeButton(migrated);
   fixResistanceAndWoundContract(migrated);
+  fixMovementDisplay(migrated);
   return migrated;
 }
 

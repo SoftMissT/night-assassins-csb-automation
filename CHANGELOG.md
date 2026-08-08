@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.9] - 2026-08-07
+
+### Adicionado
+
+- Hidden Attribute `deslocamento_slayer` com a fórmula `${7+dex_display}$`.
+- A aba Combate mostra `DESLOCAMENTO` e o valor em metros diretamente na ficha.
+- O migrador do template passou a ser idempotente para as linhas de Status e aceita o template namespaced já migrado.
+- SPECs iniciais de Descanso, Vida e Morte e Classes registram os contratos antes da implementação dos serviços.
+
+### Validação
+
+- Testes verificam DEX 4 = 11m, modificadores de Status e a presença do cálculo no Actor e no pacote global CSB.
+
 ## [0.5.8] - 2026-08-07
 
 ### Corrigido

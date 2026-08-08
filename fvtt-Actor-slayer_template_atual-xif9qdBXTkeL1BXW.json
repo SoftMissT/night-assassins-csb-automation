@@ -1493,6 +1493,56 @@
                     ],
                     [
                       {
+                        "key": "acoes_slayer_gerenciar",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "GERENCIAR AÇÕES",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAActionManage01'))?.execute({actorUuid:entity.uuid}); return '';}%",
+                        "altRollMessage": "",
+                        "rollMessageToChat": false,
+                        "altRollMessageToChat": false,
+                        "style": "button"
+                      },
+                      {
+                        "key": "acoes_slayer_display",
+                        "colSpan": 3,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "${acoes_slayer_resumo}$",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": false,
+                        "altRollMessageToChat": false,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
                         "key": "status_slayer_gerenciar",
                         "colSpan": 1,
                         "rowSpan": 1,
@@ -1545,45 +1595,45 @@
                     ],
                     [
                       {
-                        "key": "acoes_slayer_gerenciar",
+                        "key": "deslocamento_slayer_titulo",
                         "colSpan": 1,
                         "rowSpan": 1,
                         "cssClass": "",
                         "role": 0,
                         "editRole": 0,
                         "permission": 0,
-                        "tooltip": "",
+                        "tooltip": "Deslocamento base: 7m + DEX atual.",
                         "visibilityFormula": "",
                         "editableFormula": "",
                         "escapeHTML": false,
                         "type": "label",
                         "size": "full-size",
-                        "icon": "",
-                        "value": "GERENCIAR AÇÕES",
+                        "icon": "fas fa-person-running",
+                        "value": "DESLOCAMENTO",
                         "prefix": "",
                         "suffix": "",
-                        "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAActionManage01'))?.execute({actorUuid:entity.uuid}); return '';}%",
+                        "rollMessage": "",
                         "altRollMessage": "",
                         "rollMessageToChat": false,
                         "altRollMessageToChat": false,
-                        "style": "button"
+                        "style": "title"
                       },
                       {
-                        "key": "acoes_slayer_display",
+                        "key": "deslocamento_slayer_display",
                         "colSpan": 3,
                         "rowSpan": 1,
                         "cssClass": "",
                         "role": 0,
                         "editRole": 0,
                         "permission": 0,
-                        "tooltip": "",
+                        "tooltip": "Deslocamento base calculado automaticamente.",
                         "visibilityFormula": "",
                         "editableFormula": "",
                         "escapeHTML": false,
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${acoes_slayer_resumo}$",
+                        "value": "${deslocamento_slayer}$m (7m + DEX)",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1591,11 +1641,13 @@
                         "rollMessageToChat": false,
                         "altRollMessageToChat": false,
                         "style": "label"
-                      }
+                      },
+                      null,
+                      null
                     ]
                   ],
                   "cols": 4,
-                  "rows": 4,
+                  "rows": 6,
                   "layout": "cccc"
                 }
               ],
@@ -6940,6 +6992,10 @@
       {
         "name": "nvl_respiracao_num",
         "value": "${switchCase(\n  nvl_pj,\n  'nvl_1', 1,\n  'nvl_2', 1,\n  'nvl_3', 1,\n  'nvl_4', 2,\n  'nvl_5', 2,\n  'nvl_6', 2,\n  'nvl_7', 2,\n  'nvl_8', 3,\n  'nvl_9', 3,\n  'nvl_10', 3,\n  'nvl_11', 3,\n  'nvl_12', 4,\n  'nvl_13', 4,\n  'nvl_14', 4,\n  0\n)}$"
+      },
+      {
+        "name": "deslocamento_slayer",
+        "value": "${7+dex_display}$"
       }
     ],
     "attributeBar": {

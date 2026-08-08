@@ -87,3 +87,12 @@ test("atributos compartilhados e snapshots 1, 3 e 7 permanecem válidos", () => 
   assert.match(source, /hab_tsuyoi_vit_bonus/);
   assert.doesNotMatch(source, /dex_nvl7dex_nvl7|car_nvl6/);
 });
+
+test("template Slayer mostra deslocamento base como 7m mais DEX atual", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const movement = template.system.hidden.find((entry) => entry.name === "deslocamento_slayer");
+  assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display}$" });
+  const source = JSON.stringify(template.system.body);
+  assert.match(source, /"deslocamento_slayer_display"/);
+  assert.match(source, /\$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
+});

@@ -26,7 +26,7 @@ Também é possível consultar as cópias originais em `Compêndios` → `Macros
 
 O Compendium **Night Assassin's Slayer** fornece o template canônico atualizado. Na v0.3.0 ele inclui **Gerenciar Resistências**, **Gerenciar Status**, Exaustão acumulativa e separação entre dano comum e Dano de Ferida. Fichas já existentes não são sobrescritas automaticamente.
 
-Na v0.5.8, Sangramento, Hemorragia e Envenenamento exigem dano por turno e duração definidos pela fonte. O GM autoritativo aplica o dano no início do turno, reduz o contador e encerra o status automaticamente. A versão também preserva as correções de Exaustão, Acertos sequenciais, dano automático, Marca do Caçador e Controle do GM.
+Na v0.5.9, o template Slayer calcula e mostra o deslocamento base como `7m + DEX atual`. Sangramento, Hemorragia e Envenenamento continuam usando dano e duração definidos pela fonte, processados pelo GM no início do turno. Descanso, Vida e Morte e Classes possuem SPECs próprias e serão implementados como serviços separados.
 
 Na v0.4.0, **Gerenciar Status** também configura fórmula, quantidade de turnos, pilhas, salvaguarda e fonte. O GM ativo processa automaticamente dano contínuo, expiração, Confuso, salvaguardas e Exaustão pelo Combat nativo. O módulo continua compatível com Combat Tracker Dock porque não depende da interface do tracker.
 

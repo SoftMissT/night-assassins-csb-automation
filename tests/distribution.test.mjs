@@ -7,7 +7,11 @@ import { registerSettings, SETTINGS } from "../scripts/settings.mjs";
 describe("module distribution", () => {
   it("declara o Compendium de macros no manifesto", async () => {
     const manifest = JSON.parse(await readFile(new URL("../module.json", import.meta.url), "utf8"));
-    assert.equal(manifest.version, "0.5.12");
+    assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
+    assert.equal(
+      manifest.download,
+      `https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v${manifest.version}/module.zip`,
+    );
     assert.equal(manifest.socket, true);
     assert.deepEqual(manifest.packs.map(({ name, label, type }) => ({ name, label, type })), [
       { name: "night-assassins-macros", label: "Macros Night Assassins", type: "Macro" },

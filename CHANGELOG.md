@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.14 - 2026-08-08
+
+### Corrigido
+
+- O teste de distribuição não fixa mais uma versão antiga do módulo.
+- A validação agora exige SemVer e confirma que o download aponta para o mesmo tag declarado no manifesto.
+
 ## 0.5.13 - 2026-08-08
 
 ### Corrigido

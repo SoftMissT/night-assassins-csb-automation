@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.13 - 2026-08-08
+
+### Corrigido
+
+- A macro de dano deixou de exibir dados em duplicidade no Dice So Nice.
+- A chamada manual a `game.dice3d.showForRoll` foi removida; o `ChatMessage.create` com `rolls` já aciona as animações automaticamente no Foundry v14.
+
 ## 0.5.12 - 2026-08-07
 
 - Adota o layout reorganizado pelo operador como base do template Slayer distribuído.

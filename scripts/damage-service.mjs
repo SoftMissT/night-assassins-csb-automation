@@ -141,7 +141,7 @@ export async function rollDamage(options) {
     ui.notifications?.error?.(`Fórmula inválida: ${specs.map((spec) => spec.formula).join(" + ")}`);
     return;
   }
-  if (game.dice3d?.showForRoll) await Promise.allSettled(rolls.map((roll) => game.dice3d.showForRoll(roll, game.user, true)));
+  // Dice So Nice é acionado automaticamente pelo ChatMessage.create quando rolls está preenchido.
   const components = specs.map((spec, index) => ({
     label: spec.label,
     types: spec.types,

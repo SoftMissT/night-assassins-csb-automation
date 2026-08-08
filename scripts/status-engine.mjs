@@ -27,10 +27,8 @@ function statePatch(state) {
 }
 
 function currentPdv(props = {}) {
-  const computedCurrent = props.pdv_slayer_conta_atual;
-  if (computedCurrent !== undefined && computedCurrent !== null && computedCurrent !== "") {
-    return Math.max(0, parseNumber(computedCurrent));
-  }
+  // Prefere as parcelas numéricas canônicas. Labels do CSB podem conter CSS
+  // com outros números (font-size, weight etc.) e não são uma fonte segura.
   const computedTotal = props.pdv_slayer_total_conta;
   if (computedTotal !== undefined && computedTotal !== null && computedTotal !== "") {
     const wound = parseNumber(props.pdv_slayer_dano_ferida);
@@ -38,6 +36,10 @@ function currentPdv(props = {}) {
     const extra = parseNumber(props.pdv_slayer_extra);
     const damage = parseNumber(props.pdv_slayer_dano_tomado);
     return Math.max(0, parseNumber(computedTotal) - wound + healed + extra - damage);
+  }
+  const computedCurrent = props.pdv_slayer_conta_atual;
+  if (typeof computedCurrent === "number" && Number.isFinite(computedCurrent)) {
+    return Math.max(0, computedCurrent);
   }
   const display = props.pdv_slayer_atual_valor_display;
   if (display !== undefined && display !== null && display !== "") {

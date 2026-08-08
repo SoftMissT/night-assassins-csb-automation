@@ -1,3 +1,5 @@
+import { TIPOS_ACAO } from "../constants.mjs";
+
 /**
  * @fileoverview DialogV2 para rolagem de acerto.
  */
@@ -41,6 +43,14 @@ export async function openHitDialog({ attrName, attrVal, color }) {
         <small>Uma rolagem por vez. Depois de cada resultado você confirma o acerto ou encerra a sequência.</small>
       </label>
       <label class="na-hit-field">
+        <span>Tipo de ação</span>
+        <select id="na-ac-action">
+          <option value="">— Não informar —</option>
+          ${TIPOS_ACAO.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join("")}
+        </select>
+        <small>Identifica a técnica no chat. A rolagem de Acerto não gasta a ação.</small>
+      </label>
+      <label class="na-hit-field">
         <span>Visibilidade da rolagem</span>
         <select id="na-ac-rollmode">
           <option value="publicroll">Rolar Público</option>
@@ -69,6 +79,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             bonusRaw: form.elements["na-ac-bonus"].value ?? "",
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
+            actionType: form.elements["na-ac-action"].value ?? "",
           };
         },
       },
@@ -83,6 +94,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             bonusRaw: form.elements["na-ac-bonus"].value ?? "",
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
+            actionType: form.elements["na-ac-action"].value ?? "",
           };
         },
       },
@@ -97,6 +109,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             bonusRaw: form.elements["na-ac-bonus"].value ?? "",
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
+            actionType: form.elements["na-ac-action"].value ?? "",
           };
         },
       },
@@ -130,6 +143,7 @@ export async function openHitConfirmationDialog({ current, maximum, total, cdVal
     buttons: [
       { action: "hit", label: "Acertou", default: true, callback: (event, button) => ({ hit: true, continue: !isLast && !button.form.elements["na-hit-stop"]?.checked }) },
       { action: "miss", label: "Errou", callback: (event, button) => ({ hit: false, continue: !isLast && !button.form.elements["na-hit-stop"]?.checked }) },
+      { action: "stop", label: "Encerrar sequência", callback: () => ({ stop: true }) },
     ],
   });
   return decision ?? null;

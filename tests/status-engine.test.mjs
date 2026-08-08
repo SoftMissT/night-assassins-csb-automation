@@ -120,6 +120,23 @@ test("Exaustão 5 usa o PDV atual numérico e ignora números do CSS do Label", 
   assert.equal(actor.system.props.pdv_slayer_dano_tomado, 7);
 });
 
+test("Exaustão 5 deriva o atual das parcelas canônicas quando o Label calculado está contaminado", async () => {
+  globalThis.game.combats = [];
+  const actor = actorWith({
+    pdv_slayer_total_conta: 14,
+    pdv_slayer_conta_atual: "<span style=\"font-size:2px\">13</span>",
+    pdv_slayer_dano_tomado: 1,
+    pdv_slayer_dano_ferida: 0,
+    pdv_slayer_curado: 0,
+    pdv_slayer_extra: 0,
+    status_slayer_exaustao: 5,
+    status_slayer_dados: JSON.stringify({ version: 2, active: [], exhaustion: 5, effects: {}, exhaustionMilestones: [] }),
+  });
+  const result = await reconcileSlayerExhaustion(actor);
+  assert.equal(result.extraDamage, 6);
+  assert.equal(actor.system.props.pdv_slayer_dano_tomado, 7);
+});
+
 test("Corrupção e Regeneração Suprimida reduzem cura pela metade", () => {
   const props = {
     pdv_slayer_curado: 2,

@@ -95,7 +95,7 @@ function makeEntradaHtml(e, idx, attrValues) {
  * @param {number} options.pdrCusto
  * @returns {Promise<{nome:string,pdrGasto:number,entradas:Array}|null>}
  */
-export async function openDamageDialog({ actor, nome, entradas, pdrCusto }) {
+export async function openDamageDialog({ actor, nome, entradas, pdrCusto, critical = false }) {
   const props = actor?.system?.props ?? {};
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
@@ -135,6 +135,10 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto }) {
     </div>
     <label class="na-label">Fórmula Total</label>
     <div id="na-total-preview">—</div>
+    <label class="na-critical-toggle">
+      <input type="checkbox" id="na-dmg-critical" ${critical ? "checked" : ""} />
+      <span><strong>Foi crítico?</strong><small>Dobra cada parcela deste ataque antes da resistência.</small></span>
+    </label>
   </div>`;
 
   const result = await foundry.applications.api.DialogV2.wait({
@@ -166,6 +170,7 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto }) {
           return {
             nome: form.querySelector("#na-dmg-nome")?.value?.trim() || "Dano",
             pdrGasto: Math.max(0, Number(form.querySelector("#na-dmg-pdr")?.value) || 0),
+            critical: Boolean(form.querySelector("#na-dmg-critical")?.checked),
             entradas: entries,
           };
         },

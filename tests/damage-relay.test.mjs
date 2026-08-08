@@ -3,7 +3,7 @@ setupFoundryMocks();
 
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { applyOniDamage, calculateApprovedDamage, DAMAGE_RELAY_KEY, DAMAGE_TYPES, requestDamageApproval, WOUND_DAMAGE_KEY } from "../scripts/damage-relay.mjs";
+import { applyOniDamage, applySlayerDamageAuto, calculateApprovedDamage, DAMAGE_RELAY_KEY, DAMAGE_TYPES, requestDamageApproval, WOUND_DAMAGE_KEY } from "../scripts/damage-relay.mjs";
 
 describe("damage-relay", () => {
   it("acumula somente pdv_oni_dano_tomado quando o usuário pode atualizar", async () => {
@@ -91,5 +91,28 @@ describe("damage-relay", () => {
     assert.strictEqual(calculateApprovedDamage(42, false), 42);
     assert.strictEqual(calculateApprovedDamage(42, true), 21);
     assert.strictEqual(calculateApprovedDamage(41, true), 20);
+  });
+
+  it("aplica automaticamente dano e Ferida no Slayer quando há ownership", async () => {
+    game.user.isGM = false;
+    const patches = [];
+    const actor = {
+      id: "slayer",
+      name: "Slayer",
+      uuid: "Actor.slayer",
+      isOwner: true,
+      system: { props: { pdv_slayer_dano_tomado: 2, pdv_slayer_dano_ferida: 1 } },
+      update: async (patch) => patches.push(patch),
+    };
+    const result = await applySlayerDamageAuto(actor, 7, {
+      components: [
+        { label: "Corte", types: ["cortante"], subtotal: 5 },
+        { label: "Marca", types: ["ferida"], subtotal: 2 },
+      ],
+    });
+    assert.equal(result.normalDamage, 5);
+    assert.equal(result.woundDamage, 2);
+    assert.equal(patches[0]["system.props.pdv_slayer_dano_tomado"], 7);
+    assert.equal(patches[0]["system.props.pdv_slayer_dano_ferida"], 3);
   });
 });

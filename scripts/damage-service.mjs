@@ -5,9 +5,8 @@
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from "./constants.mjs";
 import { parseAttributeValue, parseNumber } from "./parsing.mjs";
 import { openDamageDialog } from "./dialogs/damage-dialog.mjs";
-import { applyOniDamage } from "./damage-relay.mjs";
+import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
-import { applySlayerDamage } from "./status-engine.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
@@ -29,6 +28,17 @@ function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
   }
 
   return parts.length > 0 ? parts.join(" ") : "0";
+}
+
+function markDamageFormula(props, entries) {
+  if (parseNumber(props.marca_ativa) !== 1) return "";
+  const dice = Math.max(0, Math.trunc(parseNumber(props.marca_dano_dados)));
+  const faces = Math.max(0, Math.trunc(parseNumber(props.marca_dano_faces)));
+  if (dice < 1 || faces < 2) return "";
+  const continuous = new Set(["sangramento", "envenenamento"]);
+  const directAttack = entries.some((entry) => entry.tipoAcao === "ataque"
+    && (entry.selTiposDano.length === 0 || entry.selTiposDano.some((type) => !continuous.has(type))));
+  return directAttack ? `${dice}d${faces}` : "";
 }
 
 async function resolveActor(options) {
@@ -91,10 +101,16 @@ export async function rollDamage(options) {
     nome: options.nome ?? "",
     entradas: preEntradas,
     pdrCusto: options.pdrCusto ?? 0,
+    critical: options.critical === true,
   });
   if (!dialogResult) return;
 
   const { nome, entradas } = dialogResult;
+  let critical = dialogResult.critical === true;
+  if (critical && !statusEffects.criticalAllowed) {
+    critical = false;
+    ui.notifications?.warn?.("Fadiga Corporal impede Acertos Críticos. O dano será rolado normalmente.");
+  }
   const pdrGastoBase = dialogResult.pdrGasto;
   const pdrGasto = pdrGastoBase > 0 ? pdrGastoBase + statusEffects.pdrSurcharge : 0;
   if (entradas.length === 0) {
@@ -109,17 +125,37 @@ export async function rollDamage(options) {
   if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
 
   const formulaParts = entradas.map((e) => buildEntryFormula(e.dado, e.fixo, e.selAttrs, attrValues));
-  const validParts = formulaParts.filter((p) => p !== "0");
-  let formula = validParts.length > 0 ? validParts.join(" + ") : "0";
-  if (statusEffects.modifier) formula = `max(0, (${formula}) ${statusEffects.modifier > 0 ? "+" : "-"} ${Math.abs(statusEffects.modifier)})`;
+  const specs = entradas.map((entry, index) => ({
+    label: TIPOS_ACAO.find((type) => type.key === entry.tipoAcao)?.label ?? `Dano ${index + 1}`,
+    types: entry.selTiposDano,
+    formula: formulaParts[index],
+  })).filter((spec) => spec.formula !== "0");
+  const markFormula = markDamageFormula(props, entradas);
+  if (markFormula) specs.push({ label: "Marca do Caçador", types: ["ferida"], formula: markFormula });
+  if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
-  let roll;
+  let rolls;
   try {
-    roll = await Roll.create(formula).evaluate();
+    rolls = await Promise.all(specs.map((spec) => Roll.create(critical ? `2 * (${spec.formula})` : spec.formula).evaluate()));
   } catch (_) {
-    ui.notifications?.error?.(`Fórmula inválida: ${formula}`);
+    ui.notifications?.error?.(`Fórmula inválida: ${specs.map((spec) => spec.formula).join(" + ")}`);
     return;
   }
+  if (game.dice3d?.showForRoll) await Promise.allSettled(rolls.map((roll) => game.dice3d.showForRoll(roll, game.user, true)));
+  const components = specs.map((spec, index) => ({
+    label: spec.label,
+    types: spec.types,
+    subtotal: Math.max(0, Math.trunc(Number(rolls[index].total) || 0)),
+  }));
+  let penalty = Math.max(0, -Math.trunc(statusEffects.modifier || 0));
+  for (const component of components) {
+    if (penalty <= 0) break;
+    const reduction = Math.min(component.subtotal, penalty);
+    component.subtotal -= reduction;
+    penalty -= reduction;
+  }
+  const finalDamage = components.reduce((total, component) => total + component.subtotal, 0);
+  const damageTypes = [...new Set(components.flatMap((component) => component.types))];
 
   // Agrupar atualizações por Actor
   const updatesByActor = new Map();
@@ -137,18 +173,11 @@ export async function rollDamage(options) {
 
   const damageRequests = [];
   const targets = game?.user?.targets;
-  if (targets && targets.size > 0 && roll.total > 0) {
+  if (targets && targets.size > 0 && finalDamage > 0) {
     for (const targetToken of targets) {
       const targetActor = targetToken.actor;
       if (!targetActor) continue;
-      if (targetActor.uuid === actor.uuid && (game.user.isGM || targetActor.isOwner)) {
-        const current = parseNumber(targetActor.system?.props?.pdv_oni_dano_tomado);
-        const existing = updatesByActor.get(targetActor.uuid) ?? { actor: targetActor, changes: {} };
-        existing.changes["system.props.pdv_oni_dano_tomado"] = current + roll.total;
-        updatesByActor.set(targetActor.uuid, existing);
-        continue;
-      }
-      damageRequests.push({ actor: targetActor, amount: roll.total });
+      damageRequests.push({ actor: targetActor, amount: finalDamage });
     }
   }
 
@@ -161,8 +190,8 @@ export async function rollDamage(options) {
       const targetProps = targetActor.system?.props ?? {};
       const isSlayerTarget = targetProps.pdv_slayer_total_valor !== undefined || targetProps.nome_slayer !== undefined;
       return isSlayerTarget
-        ? applySlayerDamage(targetActor, amount, { isAttack: true })
-        : applyOniDamage(targetActor, amount);
+        ? applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components })
+        : applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true });
     }),
   ]);
 
@@ -175,46 +204,14 @@ export async function rollDamage(options) {
     ui.notifications?.warn?.(`Não foi possível atualizar ${targetName}.`);
   }
 
-  // Chat message
-  const entradasHtml = entradas.map((e, i) => {
-    const acaoMeta = TIPOS_ACAO.find((t) => t.key === e.tipoAcao);
-    const danoMetas = e.selTiposDano.map((k) => TIPOS_DANO.find((t) => t.key === k)).filter(Boolean);
-
-    const acaoStr = acaoMeta
-      ? `<span style="background:#2A2520;color:#D8B45D;border:1px solid #4A3A2A;border-radius:3px;padding:1px 5px;font-size:10px;font-weight:bold;">${acaoMeta.label}</span> `
-      : "";
-
-    const danoStr = danoMetas.length
-      ? `<span style="background:#2A2520;color:#A4FE23;border:1px solid #4A3A2A;border-radius:3px;padding:1px 5px;font-size:10px;font-weight:bold;">${danoMetas.map((t) => t.label).join(", ")}</span> `
-      : "";
-
-    const attrStr = e.selAttrs
-      .filter((k) => attrValues[k] !== 0)
-      .map((k) => {
-        const meta = ATTRIBUTES.find((a) => a.key === k);
-        return `<span style="color:${meta.color};font-weight:bold;">${meta.label}(${attrValues[k]})</span>`;
-      })
-      .join(" + ");
-
-    const descs = danoMetas.map((t) => t.desc).filter(Boolean);
-    const danoTipHtml = descs.length
-      ? `<div style="font-size:11px;color:#D4CBBC;font-style:italic;margin-top:3px;background:rgba(0,0,0,0.15);padding:3px 6px;border-left:2px solid #D8B45D;">${descs.join(" | ")}</div>`
-      : "";
-
-    return `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.1);">
-      <div>${acaoStr}${danoStr}<code style="font-size:12px;font-weight:bold;">${formulaParts[i]}</code> ${attrStr ? "(" + attrStr + ")" : ""}</div>
-      ${danoTipHtml}
-    </div>`;
+  if (finalDamage > 0 && (!targets || targets.size === 0)) ui.notifications?.warn?.("Nenhum alvo marcado. O dano foi rolado, mas nenhuma ficha foi atualizada.");
+  const componentLines = components.map((component) => {
+    const labels = component.types.map((key) => TIPOS_DANO.find((type) => type.key === key)?.label ?? key).join(" · ") || "Sem tipo";
+    return `<div><strong>${component.label}</strong> — ${labels}: <strong>${component.subtotal}</strong></div>`;
   }).join("");
-
-  const pdrLine = pdrGasto > 0
-    ? ` <span style="color:#BB97F9;">| PDR/PDK gasto: <strong>${pdrGasto}</strong></span>`
-    : "";
-  const statusLine = statusEffects.reasons.length
-    ? `<div style="font-size:11px;color:#D8B45D;">Status: ${statusEffects.reasons.join(" · ")}</div>`
-    : "";
-
-  const flavor = `<div style="font-family:'Lexend',sans-serif;"><strong style="font-size:13px;color:#D8B45D;">${nome}</strong>${pdrLine}${statusLine}${entradasHtml}</div>`;
-
-  await roll.toMessage({ flavor, speaker: ChatMessage.getSpeaker({ actor }) });
+  const targetLine = damageRequests.length ? `<div>Alvo(s): ${damageRequests.map((request) => request.actor.name).join(", ")}</div>` : "<div>Nenhum alvo — ficha não atualizada</div>";
+  const flavor = `<div><strong>${nome}</strong>${critical ? " · CRÍTICO" : ""}${pdrGasto ? ` · −${pdrGasto} PDR` : ""}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(" · ")}</div>` : ""}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
+  const mode = game.settings?.get?.("core", "rollMode") ?? "publicroll";
+  const chatData = { speaker: ChatMessage.getSpeaker({ actor }), flavor, rolls };
+  await ChatMessage.create(ChatMessage.applyMode ? ChatMessage.applyMode(chatData, { publicroll: "public", gmroll: "gm", blindroll: "blind", selfroll: "self" }[mode] ?? "public") : chatData);
 }

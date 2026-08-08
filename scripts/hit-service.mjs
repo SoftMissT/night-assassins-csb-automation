@@ -5,6 +5,7 @@
 import { parseAttributeValue } from "./parsing.mjs";
 import { openHitConfirmationDialog, openHitDialog } from "./dialogs/hit-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
+import { TIPOS_ACAO } from "./constants.mjs";
 
 function getDice(mode) {
   if (mode === "advantage") return "2d20kh1";
@@ -32,7 +33,7 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
   return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
 
-async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, statusEffects }) {
+async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects }) {
   mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
   const formula = buildFormula(mode, attrVal, extra, statusEffects.modifier);
@@ -43,6 +44,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
   const attempts = [];
   let interrupted = false;
+  const actionLabel = TIPOS_ACAO.find((entry) => entry.key === actionType)?.label;
 
   for (let index = 0; index < maximum; index += 1) {
     let roll;
@@ -59,13 +61,13 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
     }
     const countLine = maximum > 1 ? ` ${index + 1}/${maximum}` : "";
     const message = await roll.toMessage({
-      flavor: `<strong>Acerto${countLine}</strong> (${modeLabel}) — ${attrName} = ${attrVal}${bonusLine}${statusLine}${cdLine}`,
+      flavor: `${actionLabel ? `${actionLabel} · ` : ""}Acerto${countLine} (${modeLabel}) — ${attrName} ${attrVal}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker({ actor }),
       rollMode,
     });
     await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
     const decision = await openHitConfirmationDialog({ current: index + 1, maximum, total: roll.total, cdVal });
-    if (!decision) {
+    if (!decision || decision.stop) {
       interrupted = true;
       break;
     }
@@ -80,7 +82,8 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   const misses = attempts.length - hits;
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<div class="na-hit-summary"><strong>Sequência de Acerto</strong><span>${attempts.length}/${maximum} tentativas</span><span>✅ ${hits} acerto(s)</span><span>❌ ${misses} erro(s)</span>${interrupted ? "<em>Sequência encerrada antes do limite.</em>" : ""}</div>`,
+    flavor: "Sequência de Acerto",
+    content: `<p><strong>${attempts.length}/${maximum}</strong> tentativa(s) · <strong>${hits}</strong> acerto(s) · <strong>${misses}</strong> erro(s)${interrupted ? " · encerrada" : ""}</p>`,
   });
   return { attempts, hits, misses, interrupted, maximum };
 }
@@ -148,6 +151,7 @@ export async function rollHit(options) {
     bonusRaw: dialogResult.bonusRaw,
     cdVal: dialogResult.cdVal,
     rollCount: dialogResult.rollCount,
+    actionType: dialogResult.actionType,
     statusEffects,
   });
 }

@@ -62,6 +62,18 @@ describe("gm-dashboard", () => {
     assert.equal(oniData({ name: "Tanjiro", system: { props: { nome_slayer: "Tanjiro", pdv_oni_dano_tomado: 0 } } }), null);
   });
 
+  it("identifica Slayer pelas keys namespaced mesmo sem nome_slayer", () => {
+    const data = hunterData({ name: "Kwon Baem", system: { props: {
+      pdv_slayer_total_conta: 14,
+      pdv_slayer_conta_atual: 13,
+      pdr_slayer_total_conta: 9,
+      pdr_slayer_conta_atual: 8,
+    } } });
+    assert.equal(data.name, "Kwon Baem");
+    assert.equal(data.pdv.current, 13);
+    assert.equal(data.pdr.current, 8);
+  });
+
   it("abre painel compacto, não modal e com fechamento explícito", async () => {
     let config;
     game.user.isGM = true;

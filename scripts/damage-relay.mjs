@@ -1,11 +1,14 @@
 import { MODULE_ID } from "./constants.mjs";
 import { parseNumber } from "./parsing.mjs";
+import { applySlayerDamage } from "./status-engine.mjs";
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const DAMAGE_KEY = "pdv_oni_dano_tomado";
 const WOUND_KEY = "pdv_oni_dano_ferida";
 const REQUEST_TYPE = "applyOniDamage";
 const RESPONSE_TYPE = "applyOniDamageResult";
+const SLAYER_REQUEST_TYPE = "applySlayerDamage";
+const SLAYER_RESPONSE_TYPE = "applySlayerDamageResult";
 const REQUEST_TIMEOUT_MS = 60000;
 
 const pendingRequests = new Map();
@@ -29,6 +32,8 @@ function normalizeDamageContext(context = {}) {
   return {
     attackName: String(context.attackName ?? "Dano").slice(0, 120),
     critical: context.critical === true,
+    isAttack: context.isAttack !== false,
+    isDemonic: context.isDemonic === true,
     rolledTotal: Math.max(0, Math.trunc(Number(context.rolledTotal) || 0)),
     damageTypes: [...new Set(Array.isArray(context.damageTypes) ? context.damageTypes.filter((key) => allowed.has(key)) : [])],
     components,
@@ -74,6 +79,15 @@ async function updateOniDamage(actor, normalDamage, woundDamage = 0) {
 function emitResult(recipientId, requestId, result) {
   game.socket.emit(SOCKET_NAME, {
     type: RESPONSE_TYPE,
+    recipientId,
+    requestId,
+    ...result,
+  });
+}
+
+function emitSlayerResult(recipientId, requestId, result) {
+  game.socket.emit(SOCKET_NAME, {
+    type: SLAYER_RESPONSE_TYPE,
     recipientId,
     requestId,
     ...result,
@@ -199,6 +213,28 @@ async function handleDamageRequest(message) {
   }
 }
 
+async function handleSlayerDamageRequest(message) {
+  if (!game.user.isGM || message.gmId !== game.user.id) return;
+  const requester = game.users.get(message.requesterId);
+  const amount = Math.trunc(Number(message.amount));
+  if (!requester?.active || !Number.isSafeInteger(amount) || amount <= 0 || amount > 100000) {
+    emitSlayerResult(message.requesterId, message.requestId, { ok: false, error: "Pedido de dano inválido." });
+    return;
+  }
+  const document = await fromUuid(message.actorUuid);
+  const actor = document?.actor ?? document;
+  if (!actor || actor.documentName !== "Actor") {
+    emitSlayerResult(message.requesterId, message.requestId, { ok: false, error: "Slayer alvo não encontrado." });
+    return;
+  }
+  try {
+    const result = await applySlayerDamage(actor, amount, normalizeDamageContext(message.context));
+    emitSlayerResult(message.requesterId, message.requestId, { ok: true, ...result });
+  } catch (error) {
+    emitSlayerResult(message.requesterId, message.requestId, { ok: false, error: error?.message || "Falha ao atualizar o Slayer." });
+  }
+}
+
 function handleDamageResponse(message) {
   if (message.recipientId !== game.user.id) return;
   const pending = pendingRequests.get(message.requestId);
@@ -211,7 +247,35 @@ function handleDamageResponse(message) {
 export function registerDamageRelay() {
   game.socket.on(SOCKET_NAME, (message = {}) => {
     if (message.type === REQUEST_TYPE) void handleDamageRequest(message);
-    if (message.type === RESPONSE_TYPE) handleDamageResponse(message);
+    if (message.type === SLAYER_REQUEST_TYPE) void handleSlayerDamageRequest(message);
+    if (message.type === RESPONSE_TYPE || message.type === SLAYER_RESPONSE_TYPE) handleDamageResponse(message);
+  });
+}
+
+export async function applySlayerDamageAuto(actor, amount, rawContext = {}) {
+  const damage = Math.trunc(Number(amount));
+  const context = normalizeDamageContext(rawContext);
+  if (!actor || !Number.isSafeInteger(damage) || damage <= 0) throw new Error("Slayer alvo ou dano inválido.");
+  if (game.user.isGM || actor.isOwner) return applySlayerDamage(actor, damage, context);
+
+  const gm = activePrimaryGM();
+  if (!gm) throw new Error("Nenhum GM ativo para aplicar o dano no Slayer.");
+  const requestId = foundry.utils.randomID();
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      pendingRequests.delete(requestId);
+      reject(new Error("O GM não respondeu ao dano do Slayer."));
+    }, REQUEST_TIMEOUT_MS);
+    pendingRequests.set(requestId, { resolve, reject, timeoutId });
+    game.socket.emit(SOCKET_NAME, {
+      type: SLAYER_REQUEST_TYPE,
+      requestId,
+      requesterId: game.user.id,
+      gmId: gm.id,
+      actorUuid: actor.uuid,
+      amount: damage,
+      context,
+    });
   });
 }
 

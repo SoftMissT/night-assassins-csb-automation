@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.7] - 2026-08-07
+
+### Corrigido
+
+- Exaustão continua acumulativa nos níveis 1–8; o marco 5 agora deriva o PDV atual das parcelas numéricas canônicas e não de Labels/CSS contaminados.
+- A rolagem de Acerto recuperou a seleção do tipo de ação, mantém uma tentativa por vez e ganhou `Encerrar sequência`, que nunca dispara uma rolagem adicional.
+- As mensagens de Acerto deixaram o card CSS estreito e voltaram a usar o cartão nativo da rolagem com um resumo textual simples.
+- A macro de dano do Compendium agora é apenas a entrada do serviço canônico do módulo, eliminando duas implementações concorrentes.
+- Dano volta a ser rolado em parcelas separadas, preservando tipo de ação, tipos de dano, crítico, Marca do Caçador, Dice So Nice e total final.
+- Dano/Ferida em Slayer sem ownership é encaminhado automaticamente ao GM; gasto de PDR e economia de ações continuam atualizados no atacante.
+- O Controle do GM identifica Slayers pelas keys `*_slayer_*`, usa o nome do Actor como fallback e lê os campos numéricos de PDV/PDR antes dos Labels.
+- O painel mantém compatibilidade com as keys antigas do Oni, mas exibe o recurso correto como PDK.
+
+### Validação
+
+- Suíte local ampliada para 120 testes, incluindo cancelamento do Acerto, Exaustão 5 com Label contaminado, fallback de Slayer no painel e dano automático no Slayer.
+
 ## [0.5.6] - 2026-08-07
 
 ### Corrigido

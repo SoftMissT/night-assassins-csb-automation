@@ -100,4 +100,16 @@ describe("hit-service", () => {
     await rollHit({ actor });
     assert.equal(messages, 2);
   });
+
+  it("Cancelar confirmação encerra sem rolar outro dado", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 4, actionType: "ataque" },
+      { stop: true },
+    ];
+    let rolls = 0;
+    _rollResult = { total: 12, toMessage: async () => { rolls += 1; } };
+    const actor = makeActor({ props: { acerto_label: "acerto_label_dex", dex_display: "4" } });
+    await rollHit({ actor });
+    assert.equal(rolls, 1);
+  });
 });

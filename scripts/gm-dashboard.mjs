@@ -24,18 +24,28 @@ function resourceFromValues(currentValue, maxValue) {
   return { current, max, percent };
 }
 
+function firstDefined(props, keys) {
+  for (const key of keys) if (props[key] !== undefined && props[key] !== null && props[key] !== "") return props[key];
+  return 0;
+}
+
 export function hunterData(actor) {
   const props = actor.system?.props ?? {};
-  const name = cleanText(props.nome_slayer);
-  if (!name) return null;
+  const hasSlayerData = Object.keys(props).some((key) => key.includes("_slayer_")) || props.nome_slayer !== undefined;
+  if (!hasSlayerData) return null;
+  const name = cleanText(props.nome_slayer) || cleanText(actor.name) || "Slayer sem nome";
+  const pdvMax = firstDefined(props, ["pdv_slayer_total_conta", "pdv_slayer_total_valor"]);
+  const pdvCurrent = firstDefined(props, ["pdv_slayer_conta_atual", "pdv_slayer_atual_valor_display"]);
+  const pdrMax = firstDefined(props, ["pdr_slayer_total_conta", "pdr_slayer_total_valor"]);
+  const pdrCurrent = firstDefined(props, ["pdr_slayer_conta_atual", "pdr_slayer_atual_valor_display"]);
 
   return {
     actor,
     kind: "hunter",
     name,
     image: actor.img || "icons/svg/mystery-man.svg",
-    pdv: resourceFromValues(props.pdv_slayer_atual_valor_display, props.pdv_slayer_total_valor),
-    pdr: resourceFromValues(props.pdr_slayer_atual_valor_display, props.pdr_slayer_total_valor),
+    pdv: resourceFromValues(pdvCurrent, pdvMax),
+    pdr: resourceFromValues(pdrCurrent, pdrMax),
   };
 }
 
@@ -45,14 +55,12 @@ export function oniData(actor) {
   if (!hasOniData || props.nome_slayer) return null;
 
   const name = cleanText(props.nome_oni) || cleanText(actor.name) || "Oni sem nome";
-  const pdvMax = Math.max(0, parseNumber(props.pdv_oni_total_valor));
-  const pdvCurrent = props.pdv_oni_atual_valor_display !== undefined
-    ? props.pdv_oni_atual_valor_display
-    : Math.max(0, pdvMax - parseNumber(props.pdv_oni_dano_tomado));
-  const pdrMax = Math.max(0, parseNumber(props.pdr_oni_total_valor));
-  const pdrCurrent = props.pdr_oni_atual_valor_display !== undefined
-    ? props.pdr_oni_atual_valor_display
-    : Math.max(0, pdrMax - parseNumber(props.pdr_oni_gasto_valor));
+  const pdvMax = Math.max(0, parseNumber(firstDefined(props, ["pdv_oni_total_conta", "pdv_oni_total_valor", "pdv_total_valor"])));
+  const pdvCurrent = firstDefined(props, ["pdv_oni_conta_atual", "pdv_oni_atual_valor_display", "pdv_atual_valor", "pdv_conta_prov"])
+    || Math.max(0, pdvMax - parseNumber(props.pdv_oni_dano_tomado));
+  const pdkMax = Math.max(0, parseNumber(firstDefined(props, ["pdk_oni_total_conta", "pdk_oni_total_valor", "pdr_oni_total_valor", "pdr_total_valor"])));
+  const pdkCurrent = firstDefined(props, ["pdk_oni_conta_atual", "pdk_oni_atual_valor_display", "pdr_oni_atual_valor_display", "pdr_atual_valor", "pdr_conta_prov"])
+    || Math.max(0, pdkMax - parseNumber(firstDefined(props, ["pdk_oni_gasto_valor", "pdr_oni_gasto_valor", "pdr_gasto_valor"])));
 
   return {
     actor,
@@ -60,7 +68,7 @@ export function oniData(actor) {
     name,
     image: actor.img || "icons/svg/mystery-man.svg",
     pdv: resourceFromValues(pdvCurrent, pdvMax),
-    pdr: resourceFromValues(pdrCurrent, pdrMax),
+    pdr: resourceFromValues(pdkCurrent, pdkMax),
   };
 }
 
@@ -76,14 +84,14 @@ function combatantRow({ actor, kind, name, image, pdv, pdr }) {
   return `<article class="na-gm-mini-row na-gm-mini-row--${kind}" data-search="${escapeHtml(`${name} ${actor.name}`.toLocaleLowerCase("pt-BR"))}">
     <img src="${escapeHtml(image)}" alt="" />
     <div class="na-gm-mini-name"><small>${kind === "oni" ? "ONI" : "CAÇADOR"}</small><strong>${escapeHtml(name)}</strong></div>
-    <div class="na-gm-mini-resources">${resourceBar("PDV", pdv, "pdv")}${resourceBar("PDR", pdr, "pdr")}</div>
+    <div class="na-gm-mini-resources">${resourceBar("PDV", pdv, "pdv")}${resourceBar(kind === "oni" ? "PDK" : "PDR", pdr, "pdr")}</div>
     <button type="button" class="na-gm-open-sheet" data-actor-uuid="${escapeHtml(actor.uuid)}" title="Abrir ficha"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
   </article>`;
 }
 
 function section(title, icon, entries, kind) {
   const rows = entries.map(combatantRow).join("");
-  const emptyLabel = kind === "oni" ? "Nenhum Oni identificado pelas keys *_oni*." : "Nenhum Slayer com nome_slayer.";
+  const emptyLabel = kind === "oni" ? "Nenhum Oni identificado pelas keys *_oni*." : "Nenhum Slayer identificado pelas keys *_slayer*.";
   return `<section class="na-gm-mini-section na-gm-mini-section--${kind}">
     <header><h3><i class="${icon}"></i>${title}</h3><span>${entries.length}</span></header>
     <div class="na-gm-mini-list">${rows || `<div class="na-gm-mini-empty">${emptyLabel}</div>`}</div>

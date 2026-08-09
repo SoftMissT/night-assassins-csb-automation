@@ -2832,7 +2832,7 @@
                           "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 11px; font-weight: 700; color:#28D7FF; text-transform: uppercase; letter-spacing: .12em;\">USAR</span>\n</div>",
                           "prefix": "",
                           "suffix": "",
-                          "rollMessage": "%{return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({itemUuid:linkedEntity.uuid,actorUuid:entity.uuid});}%",
+                          "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.uuid,itemUuid:linkedEntity.uuid});}%",
                           "altRollMessage": "",
                           "rollMessageToChat": false,
                           "altRollMessageToChat": false,

@@ -38,7 +38,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     if (button.key === "respiracao_slayer_usar") {
       assert.match(button.rollMessage, /linkedEntity\.uuid/);
-      assert.match(button.rollMessage, /useBreathForm/);
+      assert.match(button.rollMessage, /Macro\.NARespFormUse001/);
     } else {
       assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
     }
@@ -146,7 +146,8 @@ test("template Slayer possui estado completo de Respiração organizado", () => 
   assert.match(source, /"key":"skills_slayer_respiracoes"/);
   assert.match(source, /"key":"respiracao_slayer_usar"/);
   assert.match(source, /linkedEntity\.uuid/);
-  assert.match(source, /useBreathForm/);
+  assert.match(source, /Macro\.NARespFormUse001/);
+  assert.doesNotMatch(source, /useBreathForm/);
 });
 
 test("template Slayer possui as nove abas funcionais na ordem definida", () => {

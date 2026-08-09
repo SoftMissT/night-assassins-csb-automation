@@ -1080,7 +1080,7 @@
                       "value": "Usar Forma",
                       "prefix": "",
                       "suffix": "",
-                      "rollMessage": "%{return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({itemUuid:entity.uuid, actorUuid:entity.parent?.uuid});}%",
+                      "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.parent?.uuid,itemUuid:entity.uuid});}%",
                       "altRollMessage": "",
                       "rollMessageToChat": false,
                       "altRollMessageToChat": false,

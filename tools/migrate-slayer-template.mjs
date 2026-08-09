@@ -323,7 +323,7 @@ function breathingItemContainer() {
   );
   useButton.style = "button";
   useButton.icon = "fa-solid fa-droplet";
-  useButton.rollMessage = "%{return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({itemUuid:linkedEntity.uuid,actorUuid:entity.uuid});}%";
+  useButton.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.uuid,itemUuid:linkedEntity.uuid});}%";
   container.rowLayout = [{ ...useButton, align: "center", colName: "Usar" }];
   return container;
 }

@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.5.20] - 2026-08-08
+
+- Liga os botões de usar Forma de Respiração à macro `NARespFormUse001` (lançador universal) pelo UUID estável do Compendium, substituindo a chamada direta à API nos quatro pontos: template do item (aba "Usar"), container de Respirações do template Slayer, pacote de importação CSB e o migrador que gera esses botões.
+- O botão do item vazio do Actor captura `itemUuid: linkedEntity.uuid` + `actorUuid: entity.uuid`; o botão da ficha do Item captura `itemUuid: entity.uuid` + `actorUuid: entity.parent?.uuid`, preservando a resolução defensiva da macro.
+
+### Validação
+
+- `node --test`: 157 testes aprovados, 0 falhas.
+
 ## [0.5.19] - 2026-08-08
 
 - Adiciona tipo de dano às Formas de Respiração: as Formas da Água passam a carregar `cortante` (padrão) por `tipo_dano_base` e `nvlN_tipos_dano` em cada item, resolvendo a resistência cega que mantinha o dano da Respiração como "Sem tipo".

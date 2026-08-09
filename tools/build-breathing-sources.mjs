@@ -1,7 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { WATER_BREATHING_FORMS, WATER_BREATH_TEMPLATE_ID } from "../scripts/water-breathing-data.mjs";
+import { resolveWaterDamageTypes, WATER_BREATHING_FORMS, WATER_BREATH_TEMPLATE_ID } from "../scripts/water-breathing-data.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const exportPath = path.join(root, "csb-respiracao-forma-export.json");
@@ -36,6 +36,7 @@ function formProps(form, source) {
     nome_jp: sourceSystem.japaneseName || form.jp,
     respiracao_nome: "Água",
     tipo_manobra: sourceSystem.maneuverType || actionLabels[form.action] || form.action,
+    tipo_dano_base: resolveWaterDamageTypes(form).join(","),
     nivel_req: form.minLevel,
     descricao: sourceSystem.description || form.description,
     tem_requisito: (sourceSystem.requirement || form.requirement) ? 1 : 0,
@@ -54,6 +55,7 @@ function formProps(form, source) {
     props[`nvl${level}_efeito`] = sourceLevel?.effect || data?.effect || "Indisponível";
     props[`nvl${level}_status`] = "";
     props[`nvl${level}_buff`] = "";
+    props[`nvl${level}_tipos_dano`] = data ? resolveWaterDamageTypes(form, data).join(",") : "";
   }
   return props;
 }

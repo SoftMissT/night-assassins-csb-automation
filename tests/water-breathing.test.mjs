@@ -21,7 +21,26 @@ describe("Respiração da Água", () => {
     const plan = buildWaterBreathingPlan("agua_01", 4, props);
     assert.equal(plan.cost, 3);
     assert.equal(plan.patch["system.props.resp_bonus_dano_dados"], "4d6");
-    assert.equal(parseWaterBreathingState(plan.patch["system.props.resp_agua_estado"]).pendingDamage.uses, 1);
+    const pending = parseWaterBreathingState(plan.patch["system.props.resp_agua_estado"]).pendingDamage;
+    assert.equal(pending.uses, 1);
+    assert.deepEqual(pending.types, ["cortante"]);
+  });
+
+  it("Formas de dano carregam tipo cortante por padrão", () => {
+    const cases = [
+      { formId: "agua_01", level: 1, choices: {} },
+      { formId: "agua_02", level: 1, choices: { jumpPassed: true } },
+      { formId: "agua_03", level: 1, choices: {} },
+      { formId: "agua_06", level: 1, choices: { submerged: true } },
+      { formId: "agua_08", level: 1, choices: {} },
+      { formId: "agua_10", level: 2, choices: { release: true, charges: 1 } },
+    ];
+    for (const { formId, level, choices } of cases) {
+      const plan = buildWaterBreathingPlan(formId, level, props, choices);
+      const pending = parseWaterBreathingState(plan.patch?.["system.props.resp_agua_estado"] ?? "{}").pendingDamage;
+      assert.ok(pending?.formula, `${formId} deveria persistir dano pendente`);
+      assert.deepEqual(pending.types, ["cortante"], `${formId} deveria carregar tipo cortante`);
+    }
   });
 
   it("2ª Forma falha sem gastar PDR quando não supera o pulo", () => {
@@ -90,8 +109,13 @@ describe("Respiração da Água", () => {
     assert.equal(documents.filter((document) => document.type === "_equippableItemTemplate").length, 1);
     assert.equal(documents.filter((document) => document.type === "equippableItem").length, 11);
     assert.ok(documents.filter((document) => document.type === "equippableItem").every((document) => document.data.template === WATER_BREATH_TEMPLATE_ID));
-    const first = documents.find((document) => document.data?.props?.forma_id === "agua_01");
+const first = documents.find((document) => document.data?.props?.forma_id === "agua_01");
     assert.match(first.data.props.descricao, /impulso de força concentrado/);
     assert.equal(first.data.props.nome_jp, "Ichi no Kata Minamo Giri");
+    assert.equal(first.data.props.tipo_dano_base, "cortante");
+    assert.equal(first.data.props.nvl1_tipos_dano, "cortante");
+    const eighth = documents.find((document) => document.data?.props?.forma_id === "agua_08");
+    assert.equal(eighth.data.props.tipo_dano_base, "cortante");
+    assert.equal(eighth.data.props.nvl4_tipos_dano, "cortante");
   });
 });

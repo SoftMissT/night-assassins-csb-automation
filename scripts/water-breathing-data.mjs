@@ -1,5 +1,23 @@
 export const WATER_BREATH_TEMPLATE_ID = "NABreathTpl00001";
 
+/** Tipos de dano padrão das Formas de Respiração da Água (chaves de TIPOS_DANO). */
+export const WATER_DEFAULT_DAMAGE_TYPES = Object.freeze(["cortante"]);
+
+/**
+ * Resolve os tipos de dano efetivos de um nível.
+ * Precedência: types do nível → types da forma → padrão da Respiração.
+ * @param {object} form Forma do catálogo (possui `types` opcional).
+ * @param {object} [selected] Nível do catálogo (possui `types` opcional).
+ * @returns {string[]}
+ */
+export function resolveWaterDamageTypes(form = {}, selected = {}) {
+  const candidates = [selected.types, form.types, WATER_DEFAULT_DAMAGE_TYPES];
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate) && candidate.length > 0) return candidate;
+  }
+  return WATER_DEFAULT_DAMAGE_TYPES;
+}
+
 export const WATER_BREATHING_FORMS = Object.freeze([
   {
     id: "agua_01", documentId: "NAWaterFrm000001", order: 1,

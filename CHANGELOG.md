@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [0.5.19] - 2026-08-08
+
+- Adiciona tipo de dano às Formas de Respiração: as Formas da Água passam a carregar `cortante` (padrão) por `tipo_dano_base` e `nvlN_tipos_dano` em cada item, resolvendo a resistência cega que mantinha o dano da Respiração como "Sem tipo".
+- O motor agora persiste `types` no `pendingDamage` de toda Forma que rola dano (1ª, 2ª, 3ª, 5ª, 6ª, 8ª e 10ª), via `resolveWaterDamageTypes` no catálogo, com ajuste individual por nível quando necessário.
+- O serviço de dano passa a propagar o tipo da Respiração para o relé de dano e o diálogo de autorização do GM, em vez de `types: []`.
+- Adiciona macro canônica `na-resp-usar-forma` no Compendium: lançador universal que resolve o item da técnica com fallback por `forma_id`, nome do item e seletor de Formas quando há mais de uma.
+- Reforça a suíte de testes com a regressão dos tipos de dano nas Formas (piso, níveis) e sobre os props gerados no export do Compendium.
+
+### Validação
+
+- `node --test`: 157 testes aprovados, 0 falhas.
+
 ## [0.5.18] - 2026-08-08
 
 - Cria o Compendium de Arte `Night Assassin's Arte`, um pack de Items CSB que cataloga os ícones das Respirações disponíveis em `assets/icons` por caminho `modules/<id>/assets/icons/*.webp`.

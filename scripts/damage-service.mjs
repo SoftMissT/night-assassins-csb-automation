@@ -142,7 +142,8 @@ export async function rollDamage(options = {}) {
   const hasAttackDamage = entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
   if (breathingDamage?.formula && hasAttackDamage) {
     const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) => String(attrValues[key.toLowerCase()] ?? 0));
-    specs.push({ label: "Respiração da Água", types: [], formula, breathing: true });
+    const types = Array.isArray(breathingDamage.types) ? breathingDamage.types : [];
+    specs.push({ label: "Respiração da Água", types, formula, breathing: true });
     if (breathingDamage.critical) critical = true;
   }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");

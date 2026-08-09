@@ -21,13 +21,15 @@
  *   nvl_N_efeito   (string)  Descrição do efeito
  *   nvl_N_status   (string)  Status aplicado (vazio = nenhum)
  *   nvl_N_buff     (string)  Buff aplicado ao self (vazio = nenhum)
+ *   nvl_N_tipos_dano(string) Tipos de dano (ex: "cortante,impacto"; vazio = catálogo)
+ *   tipo_dano_base (string)  Tipos padrão da forma (fallback quando nvl_N_tipos_dano vazio)
  */
 
 import { MODULE_ID, TIPOS_ACAO } from "./constants.mjs";
 import { parseNumber } from "./parsing.mjs";
 import { getDamageStatusEffects } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
-import { waterFormById } from "./water-breathing-data.mjs";
+import { resolveWaterDamageTypes, waterFormById } from "./water-breathing-data.mjs";
 
 const MANOBRA_MAP = {
   "unica": "unica",
@@ -48,9 +50,16 @@ function normalizeManobra(raw) {
   return MANOBRA_MAP[key] ?? null;
 }
 
+function parseDamageTypes(raw) {
+  const value = String(raw ?? "").trim();
+  if (!value) return [];
+  return value.split(",").map((type) => type.trim().toLowerCase()).filter(Boolean);
+}
+
 function getFormData(item) {
   const props = item?.system?.props ?? {};
   const catalog = waterFormById(String(props.forma_id ?? ""));
+  const baseTypes = parseDamageTypes(props.tipo_dano_base);
   const levels = [];
   for (let i = 1; i <= 4; i++) {
     const disponivel = parseNumber(props[`tem_nvl${i}`]) === 1 ||
@@ -64,6 +73,7 @@ function getFormData(item) {
       efeito: String(props[`nvl${i}_efeito`] ?? "").trim(),
       status: String(props[`nvl${i}_status`] ?? "").trim(),
       buff: String(props[`nvl${i}_buff`] ?? "").trim(),
+      tiposDano: parseDamageTypes(props[`nvl${i}_tipos_dano`]),
     });
   }
   return {
@@ -76,6 +86,7 @@ function getFormData(item) {
     descricao: String(props.descricao ?? ""),
     temRequisito: parseNumber(props.tem_requisito) === 1,
     requisito: String(props.requisito_texto ?? ""),
+    baseTypes,
     levels,
   };
 }
@@ -169,23 +180,24 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
   const form = waterFormById(formId);
   const selected = form?.levels?.[level - 1];
   if (!form || !selected) return { ok: false, reason: "Forma ou nível indisponível." };
+  const damageTypes = resolveWaterDamageTypes(form, selected);
   const state = parseWaterBreathingState(props.resp_agua_estado);
   const int = parseNumber(props.int_display);
   const dex = parseNumber(props.dex_display);
   const base = { ok: true, form, selected, action: form.action === "ataque_especial" ? (choices.special ? "especial" : "ataque") : form.action, cost: selected.cost, patch: {}, state };
   if (formId === "agua_01") {
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1 } }, {
+    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, types: damageTypes } }, {
       "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_efeito_flag": "Água 1: próximo ataque", "system.props.resp_efeito_duracao": 0,
     }));
   } else if (formId === "agua_02") {
     if (!choices.jumpPassed && !choices.water9Active) return { ok: false, noCost: true, reason: "Falha no teste de DEX CD 12." };
     if (choices.special && !choices.comboWater1) base.cost += 1;
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, halfOnDefense: true }, nextHit: { advantage: true, source: formId } }, {
+    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, halfOnDefense: true, types: damageTypes }, nextHit: { advantage: true, source: formId } }, {
       "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_bonus_acerto_temp": 0, "system.props.resp_efeito_flag": "Água 2: Vantagem e metade na Defesa",
     }));
   } else if (formId === "agua_03") {
     const bonus = level < 2 ? 0 : int + (level >= 3 ? level - 2 : 0);
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 3 }, nextHit: { count: 3, bonus, distinctTargets: true, source: formId } }, {
+    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 3, types: damageTypes }, nextHit: { count: 3, bonus, distinctTargets: true, source: formId } }, {
       "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_bonus_acerto_temp": bonus, "system.props.resp_efeito_flag": "Água 3: até 3 alvos distintos",
     }));
   } else if (formId === "agua_04") {
@@ -193,10 +205,10 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
     Object.assign(base.patch, statePatch({ ...state, nextHit: { source: formId, immediate: true, range: parseNumber(props.deslocamento_slayer) } }, { "system.props.resp_efeito_flag": "Água 4: ataque imediato" }));
   } else if (formId === "agua_05") {
     if (!choices.targetIncapacitated) return { ok: false, noCost: true, reason: "O alvo precisa estar rendido ou atordoado." };
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, critical: true, uses: 1, recoverPdrOnKill: level } }, { "system.props.resp_efeito_flag": "Água 5: crítico automático" }));
+    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, critical: true, uses: 1, recoverPdrOnKill: level, types: damageTypes } }, { "system.props.resp_efeito_flag": "Água 5: crítico automático" }));
   } else if (formId === "agua_06") {
     const hitBonus = choices.submerged ? 3 : 0;
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, area: true, allyDefenseBonus: dex }, nextHit: { bonus: hitBonus, source: formId } }, {
+    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, area: true, allyDefenseBonus: dex, types: damageTypes }, nextHit: { bonus: hitBonus, source: formId } }, {
       "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_bonus_acerto_temp": hitBonus, "system.props.resp_efeito_flag": `Água 6: área; aliados +${dex} Defesa`,
     }));
   } else if (formId === "agua_07") {
@@ -205,7 +217,7 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
     }));
   } else if (formId === "agua_08") {
     if (parseNumber(props.resp_agua_08_recarga_turno) > 0) return { ok: false, noCost: true, reason: "A 8ª Forma ainda está em recarga." };
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, suppressResistanceTurns: 2, vitCheck: level >= 2, criticalDiceInt: level >= 3 }, nextHit: { advantage: level >= 4, source: formId } }, {
+    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, suppressResistanceTurns: 2, vitCheck: level >= 2, criticalDiceInt: level >= 3, types: damageTypes }, nextHit: { advantage: level >= 4, source: formId } }, {
       "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_agua_08_recarga_turno": 3, "system.props.resp_efeito_flag": "Água 8: resistência suprimida por 2 turnos",
     }));
   } else if (formId === "agua_09") {
@@ -218,7 +230,7 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
     if (choices.release) {
       if (charges < 1) return { ok: false, noCost: true, reason: "A 10ª Forma exige ao menos um turno carregado." };
       const formula = Array.from({ length: charges }, () => `(${selected.damage})`).join(" + ");
-      Object.assign(base.patch, statePatch({ ...state, water10: null, pendingDamage: { source: formId, formula, uses: 1, charges, exhaustion: charges > 1 ? 2 : 0 } }, {
+      Object.assign(base.patch, statePatch({ ...state, water10: null, pendingDamage: { source: formId, formula, uses: 1, charges, exhaustion: charges > 1 ? 2 : 0, types: damageTypes } }, {
         "system.props.resp_bonus_dano_dados": formula, "system.props.resp_carga_acumulada": 0, "system.props.resp_efeito_flag": `Água 10: liberar ${charges} carga(s)`,
       }));
     } else {

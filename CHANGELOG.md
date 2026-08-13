@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-12
+
+- Reestrutura a fundação da ficha ONI com níveis 0–20, ranks, origens ONI e progressão cumulativa de PDV/PDK.
+- Salva separadamente os ganhos rolados de PDV dos níveis 2–12 para impedir novas rolagens ao renderizar a ficha.
+- Corrige as barras de recursos do Slayer e do ONI para consumirem Hidden Attributes estritamente numéricos, sem Labels Orbitron/HTML.
+- Separa máximo e atual de PDV/PDR/PDK, com limites inferiores e superiores para dano, Ferida, cura, extras e gasto.
+- Regenera o template Slayer de forma idempotente, preservando nove abas, Inventário, Skills, Respiração, movimento e Fôlego.
+- Corrige múltiplas parcelas no dano, usa `core.messageMode` no Foundry v14 e informa quando o dano foi aplicado ao alvo.
+- Faz o nível de Respiração aceitar somente 1–4, evitando que o nível do personagem seja usado por engano.
+
+### Validação
+
+- `node --test`: 161 testes aprovados, 0 falhas.
+- Templates de Actor e pacote global CSB regenerados.
+
 ## [0.5.20] - 2026-08-08
 
 - Liga os botões de usar Forma de Respiração à macro `NARespFormUse001` (lançador universal) pelo UUID estável do Compendium, substituindo a chamada direta à API nos quatro pontos: template do item (aba "Usar"), container de Respirações do template Slayer, pacote de importação CSB e o migrador que gera esses botões.

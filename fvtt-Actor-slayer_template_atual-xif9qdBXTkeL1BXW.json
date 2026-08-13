@@ -58,7 +58,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#36D67A; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(54,214,122,.4);\">VIT</span>",
+              "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color: #36D67A; text-transform: uppercase; letter-spacing: .12em;\">VIT</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE VITALIDADE',attr:'VIT',color:'#36D67A'});}%",
@@ -82,7 +82,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#28D7FF; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(40,215,255,.4);\">DEX</span>",
+              "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color: #28D7FF; text-transform: uppercase; letter-spacing: .12em;\">DEX</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE DESTREZA',attr:'DEX',color:'#28D7FF'});}%",
@@ -106,7 +106,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#C1000C; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(193,0,12,.4);\">FOR</span>",
+              "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#C1000C; text-transform: uppercase; letter-spacing: .12em;\">FOR</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE FORÇA',attr:'FOR',color:'#C1000C'});}%",
@@ -130,7 +130,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#FF9100; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">CAR</span>",
+              "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#FF9100; text-transform: uppercase; letter-spacing: .12em;\">CAR</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE CARISMA',attr:'CAR',color:'#FF9100'});}%",
@@ -154,7 +154,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#BB97F9; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(187,151,249,.4);\">FDV</span>",
+              "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#BB97F9; text-transform: uppercase; letter-spacing: .12em;\">FDV</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE FORÇA DE VONTADE',attr:'FDV',color:'#BB97F9'});}%",
@@ -178,7 +178,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#F8EB4D; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(248,235,77,.4);\">INT</span>",
+              "value": "\n<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#F8EB4D; text-transform: uppercase; letter-spacing: .12em;\">INT</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE INTELIGÊNCIA',attr:'INT',color:'#F8EB4D'});}%",
@@ -202,7 +202,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#D45CA4; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(212,92,164,.4);\">SAB</span>",
+              "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#D45CA4; text-transform: uppercase; letter-spacing: .12em;\">SAB</span>\n</div>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE SABEDORIA',attr:'SAB',color:'#D45CA4'});}%",
@@ -403,7 +403,7 @@
           "type": "label",
           "size": "full-size",
           "icon": "",
-          "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:orange; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">Bônus Temporários</span>",
+          "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 22px; font-weight: 700; color:Orange; text-transform: uppercase; letter-spacing: .12em;\">Atributos Temporários</span>\n</div>\n",
           "prefix": "",
           "suffix": "",
           "rollMessage": "",
@@ -607,7 +607,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -632,7 +632,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -657,7 +657,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -682,7 +682,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -707,7 +707,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -732,7 +732,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -757,7 +757,7 @@
               "editableFormula": "",
               "escapeHTML": false,
               "type": "numberField",
-              "size": "medium",
+              "size": "full-size",
               "label": "",
               "defaultValue": "0",
               "allowDecimal": false,
@@ -772,7 +772,7 @@
           ],
           "flow": "grid-7",
           "align": "center",
-          "verticalAlign": "center",
+          "verticalAlign": "top",
           "collapsible": false,
           "defaultCollapsed": false,
           "title": "",
@@ -998,7 +998,7 @@
                       "altRollMessage": "",
                       "rollMessageToChat": false,
                       "altRollMessageToChat": false,
-                      "style": "label"
+                      "style": "button"
                     },
                     {
                       "key": "",
@@ -1015,7 +1015,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Atletismo</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Atletismo</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Atletismo',attr:'FOR',color:'#C1000C'});}%",
@@ -1039,7 +1039,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Arrombamento</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Arrombamento</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Arrombamento',attr:'FOR',color:'#C1000C'});}%",
@@ -1070,7 +1070,7 @@
                       "altRollMessage": "",
                       "rollMessageToChat": false,
                       "altRollMessageToChat": false,
-                      "style": "label"
+                      "style": "button"
                     },
                     {
                       "key": "",
@@ -1087,7 +1087,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Corrida</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Corrida</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Corrida',attr:'DEX',color:'#28D7FF'});}%",
@@ -1111,7 +1111,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">História</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">História</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'História',attr:'INT',color:'#F8EB4D'});}%",
@@ -1135,14 +1135,14 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Intuição</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Intuição</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Intuição',attr:'SAB',color:'#D45CA4'});}%",
                       "altRollMessage": "",
                       "rollMessageToChat": false,
                       "altRollMessageToChat": true,
-                      "style": "label"
+                      "style": "button"
                     },
                     {
                       "key": "",
@@ -1159,7 +1159,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Religião</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Religião</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Religião',attr:'FDV',color:'#BB97F9'});}%",
@@ -1183,7 +1183,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Foco</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Foco</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Concentração',attr:'FDV',color:'#BB97F9'});}%",
@@ -1207,14 +1207,14 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Adestramento</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Adestramento</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Adestramento',attr:'CAR',color:'#FF9100'});}%",
                       "altRollMessage": "",
                       "rollMessageToChat": false,
                       "altRollMessageToChat": false,
-                      "style": "label"
+                      "style": "button"
                     },
                     {
                       "key": "",
@@ -1231,7 +1231,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Percepção</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Percepção</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Percepção',attr:'SAB',color:'#D45CA4'});}%",
@@ -1255,7 +1255,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Linguística</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Linguística</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Linguística',attr:'INT',color:'#F8EB4D'});}%",
@@ -1279,7 +1279,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Sobrevivência</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Sobrevivência</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Sobrevivência',attr:'SAB',color:'#D45CA4'});}%",
@@ -1303,13 +1303,13 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Enganação</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Enganação</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Enganação',attr:'CAR',color:'#FF9100'});}%",
                       "altRollMessage": "",
                       "rollMessageToChat": false,
-                      "altRollMessageToChat": true,
+                      "altRollMessageToChat": false,
                       "style": "button"
                     },
                     {
@@ -1327,7 +1327,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Investigação</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Investigação</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Investigação',attr:'INT',color:'#F8EB4D'});}%",
@@ -1351,13 +1351,13 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Presença</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Presença</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Presença',attr:'CAR',color:'#FF9100'});}%",
                       "altRollMessage": "",
                       "rollMessageToChat": false,
-                      "altRollMessageToChat": true,
+                      "altRollMessageToChat": false,
                       "style": "button"
                     },
                     {
@@ -1375,7 +1375,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Etiqueta</span>\n</div>",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Etiqueta</span>\n</div>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Etiqueta',attr:'CAR',color:'#FF9100'});}%",
@@ -1383,37 +1383,39 @@
                       "rollMessageToChat": false,
                       "altRollMessageToChat": false,
                       "style": "button"
+                    },
+                    {
+                      "key": "",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 0,
+                      "editRole": 0,
+                      "permission": 0,
+                      "tooltip": "",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "label",
+                      "size": "full-size",
+                      "icon": "",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 10px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Performance</span>\n</div>",
+                      "prefix": "",
+                      "suffix": "",
+                      "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'Performance',attr:'CAR',color:'#F8EB4D'});}%",
+                      "altRollMessage": "",
+                      "rollMessageToChat": false,
+                      "altRollMessageToChat": false,
+                      "style": "button"
                     }
                   ],
                   "flow": "grid-3",
-                  "align": "center",
+                  "align": "justify",
                   "verticalAlign": "top",
                   "collapsible": true,
-                  "defaultCollapsed": true,
-                  "title": "Pericias",
+                  "defaultCollapsed": false,
+                  "title": "<div class=\"custom-orbitron-wrapper\">    <style>     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');   </style>   <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:White; text-transform: uppercase; letter-spacing: .12em;\">Pericias</span> </div>",
                   "titleStyle": "title"
-                },
-                {
-                  "key": "",
-                  "colSpan": 1,
-                  "rowSpan": 1,
-                  "cssClass": "",
-                  "role": 0,
-                  "editRole": 0,
-                  "permission": 0,
-                  "tooltip": "",
-                  "visibilityFormula": "",
-                  "editableFormula": "",
-                  "escapeHTML": false,
-                  "type": "panel",
-                  "contents": [],
-                  "flow": "grid-2",
-                  "align": "center",
-                  "verticalAlign": "top",
-                  "collapsible": true,
-                  "defaultCollapsed": true,
-                  "title": "",
-                  "titleStyle": "default"
                 },
                 {
                   "key": "vida_morte_slayer_panel",
@@ -1575,7 +1577,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#C1000C; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDV Total</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:red; text-transform: uppercase; letter-spacing: .12em;\">PDV Total</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1599,7 +1601,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#C1000C; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDV Atual</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:red; text-transform: uppercase; letter-spacing: .12em;\">PDV Atual</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1623,7 +1625,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#C1000C; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">Dano Tomado</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:red; text-transform: uppercase; letter-spacing: .12em;\">Dano Tomado</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1647,7 +1649,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#C1000C; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">Curado</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:red; text-transform: uppercase; letter-spacing: .12em;\">Curado</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1671,7 +1673,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#C1000C; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDV Extra</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:red; text-transform: uppercase; letter-spacing: .12em;\">PDV Extra</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1697,7 +1699,7 @@
                         "type": "label",
                         "size": "m-small",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #C1000C; text-transform: uppercase; letter-spacing: .12em;\">${pdv_slayer_total_conta-pdv_slayer_dano_ferida}$</span>\n</div>\n",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color:#C1000C; text-transform: uppercase; letter-spacing: .12em;\">${pdv_slayer_maximo_num}$</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1721,7 +1723,7 @@
                         "type": "label",
                         "size": "m-small",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #C1000C; text-transform: uppercase; letter-spacing: .12em;\">${pdv_slayer_conta_atual}$</span>\n</div>\n",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color:#C1000C; text-transform: uppercase; letter-spacing: .12em;\">${pdv_slayer_atual_num}$</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1822,7 +1824,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#0EF5FF; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDR Total</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">PDR Total</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1846,7 +1848,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#0EF5FF; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDR Atual</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">PDR Atual</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1870,7 +1872,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#0EF5FF; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDR Gasto</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">PDR Gasto</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1894,7 +1896,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#0EF5FF; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">Recuperado</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">Recuperado</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1918,7 +1920,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span style=\"font-family:'Orbitron','Times New Roman',serif; font-size:16px; font-weight:700; color:#0EF5FF; text-transform:uppercase; letter-spacing:.12em; text-shadow:0 0 8px rgba(255,145,0,.4);\">PDR Extra</span>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">PDR Extra</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1944,7 +1946,7 @@
                         "type": "label",
                         "size": "m-small",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">${pdr_slayer_total_conta}$</span>\n</div>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">${pdr_slayer_maximo_num}$</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1968,7 +1970,7 @@
                         "type": "label",
                         "size": "m-small",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">${pdr_slayer_conta_atual}$</span>\n</div>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color:#0EF5FF; text-transform: uppercase; letter-spacing: .12em;\">${pdr_slayer_atual_num}$</span>\n</div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2596,20 +2598,67 @@
                       "visibilityFormula": "",
                       "editableFormula": "",
                       "escapeHTML": false,
-                      "type": "label",
-                      "size": "full-size",
-                      "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 12px; font-weight: 700; color:#D45CA4; text-transform: uppercase; letter-spacing: .12em;\">GERENCIAR RESISTÊNCIAS</span>\n</div>\n",
-                      "prefix": "",
-                      "suffix": "",
-                      "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'}); return '';}%",
-                      "altRollMessage": "",
-                      "rollMessageToChat": false,
-                      "altRollMessageToChat": false,
-                      "style": "button"
+                      "type": "panel",
+                      "contents": [
+                        {
+                          "key": "",
+                          "colSpan": 1,
+                          "rowSpan": 1,
+                          "cssClass": "",
+                          "role": 0,
+                          "editRole": 0,
+                          "permission": 0,
+                          "tooltip": "",
+                          "visibilityFormula": "",
+                          "editableFormula": "",
+                          "escapeHTML": false,
+                          "type": "label",
+                          "size": "full-size",
+                          "icon": "",
+                          "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 12px; font-weight: 700; color:#D45CA4; text-transform: uppercase; letter-spacing: .12em;\">GERENCIAR RESISTÊNCIAS</span>\n</div>\n",
+                          "prefix": "",
+                          "suffix": "",
+                          "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'}); return '';}%",
+                          "altRollMessage": "",
+                          "rollMessageToChat": false,
+                          "altRollMessageToChat": false,
+                          "style": "button"
+                        },
+                        {
+                          "key": "status_slayer_resistencias_display",
+                          "colSpan": 1,
+                          "rowSpan": 1,
+                          "cssClass": "",
+                          "role": 0,
+                          "editRole": 0,
+                          "permission": 0,
+                          "tooltip": "",
+                          "visibilityFormula": "",
+                          "editableFormula": "",
+                          "escapeHTML": false,
+                          "type": "label",
+                          "size": "full-size",
+                          "icon": "",
+                          "value": "${status_slayer_resistencias_resumo}$",
+                          "prefix": "",
+                          "suffix": "",
+                          "rollMessage": "",
+                          "altRollMessage": "",
+                          "rollMessageToChat": true,
+                          "altRollMessageToChat": true,
+                          "style": "label"
+                        }
+                      ],
+                      "flow": "vertical",
+                      "align": "center",
+                      "verticalAlign": "top",
+                      "collapsible": false,
+                      "defaultCollapsed": false,
+                      "title": "",
+                      "titleStyle": "default"
                     },
                     {
-                      "key": "status_slayer_resistencias_display",
+                      "key": "",
                       "colSpan": 1,
                       "rowSpan": 1,
                       "cssClass": "",
@@ -2620,17 +2669,15 @@
                       "visibilityFormula": "",
                       "editableFormula": "",
                       "escapeHTML": false,
-                      "type": "label",
-                      "size": "full-size",
-                      "icon": "",
-                      "value": "${status_slayer_resistencias_resumo}$",
-                      "prefix": "",
-                      "suffix": "",
-                      "rollMessage": "",
-                      "altRollMessage": "",
-                      "rollMessageToChat": true,
-                      "altRollMessageToChat": true,
-                      "style": "label"
+                      "type": "panel",
+                      "contents": [],
+                      "flow": "vertical",
+                      "align": "center",
+                      "verticalAlign": "top",
+                      "collapsible": false,
+                      "defaultCollapsed": false,
+                      "title": "",
+                      "titleStyle": "default"
                     }
                   ],
                   "flow": "grid-2",
@@ -2638,7 +2685,7 @@
                   "verticalAlign": "top",
                   "collapsible": true,
                   "defaultCollapsed": true,
-                  "title": "Status e Resistências",
+                  "title": "<div class=\"custom-orbitron-wrapper\">    <style>     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');   </style>   <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:White; text-transform: uppercase; letter-spacing: .12em;\">Status e Resistências</span> </div>",
                   "titleStyle": "title"
                 }
               ],
@@ -3145,14 +3192,41 @@
                   "role": 0,
                   "editRole": 0,
                   "permission": 0,
-                  "tooltip": "Itens classificados como arma.",
+                  "tooltip": "Arraste uma arma para o inventário e use Rolar para abrir o dano com os dados do Item.",
                   "visibilityFormula": "",
                   "editableFormula": "",
                   "escapeHTML": false,
                   "type": "itemContainer",
                   "contents": [],
-                  "rowLayout": [],
-                  "title": "Armas",
+                  "rowLayout": [
+                    {
+                      "key": "arma_slayer_rolar",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 0,
+                      "editRole": 0,
+                      "permission": 0,
+                      "tooltip": "Rola o dano desta arma.",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "label",
+                      "size": "full-size",
+                      "icon": "fa-solid fa-khanda",
+                      "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 11px; font-weight: 700; color:#C1000C; text-transform: uppercase; letter-spacing: .12em;\">ROLAR</span>\n</div>",
+                      "prefix": "",
+                      "suffix": "",
+                      "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NADamageRoll0001'))?.execute({actorUuid:entity.uuid,nome:linkedEntity.name,formulaBase:linkedEntity.system.props.arma_dano_dados||'',fixo:Number(linkedEntity.system.props.arma_dano_fixo)||0,attrs:linkedEntity.system.props.arma_dano_atributo?[linkedEntity.system.props.arma_dano_atributo]:[],tiposDano:linkedEntity.system.props.arma_tipos_dano?[linkedEntity.system.props.arma_tipos_dano]:[],tipoAcao:'ataque'});}%",
+                      "altRollMessage": "",
+                      "rollMessageToChat": false,
+                      "altRollMessageToChat": false,
+                      "style": "button",
+                      "align": "center",
+                      "colName": "Rolar"
+                    }
+                  ],
+                  "title": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:#C1000C; text-transform: uppercase; letter-spacing: .12em;\">ARMAS</span>\n</div>",
                   "hideEmpty": false,
                   "hiddenColumns": [],
                   "sortOption": "manual",
@@ -3166,7 +3240,7 @@
                   "showDelete": true,
                   "statusIcon": true,
                   "nameAlign": "left",
-                  "nameLabel": "Nome",
+                  "nameLabel": "Arma",
                   "templateFilter": [],
                   "itemFilterFormula": "equalText(item.inventario_categoria, 'arma')",
                   "sortPredicates": []
@@ -3370,7 +3444,7 @@
               "colSpan": 1,
               "rowSpan": 1,
               "cssClass": "",
-              "role": 1,
+              "role": 4,
               "editRole": 0,
               "permission": 0,
               "tooltip": "",
@@ -5957,31 +6031,25 @@
                     ],
                     [
                       null,
+                      null
+                    ],
+                    [
                       null,
                       null
                     ],
                     [
                       null,
+                      null
+                    ],
+                    [
                       null,
                       null
                     ],
                     [
                       null,
-                      null,
                       null
                     ],
                     [
-                      null,
-                      null,
-                      null
-                    ],
-                    [
-                      null,
-                      null,
-                      null
-                    ],
-                    [
-                      null,
                       null,
                       null
                     ],
@@ -8177,6 +8245,987 @@
                   "defaultCollapsed": false,
                   "title": "Dados de Origem, pdv e pdr",
                   "titleStyle": "title"
+                },
+                {
+                  "key": "",
+                  "colSpan": 1,
+                  "rowSpan": 1,
+                  "cssClass": "",
+                  "role": 0,
+                  "editRole": 0,
+                  "permission": 0,
+                  "tooltip": "",
+                  "visibilityFormula": "",
+                  "editableFormula": "",
+                  "escapeHTML": false,
+                  "type": "table",
+                  "contents": [
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #FF93FF; text-transform: uppercase; letter-spacing: .12em;\">Origem</span>\n</div>\n",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "subtitle"
+                      },
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #FF93FF; text-transform: uppercase; letter-spacing: .12em;\">Habilidade especial 1</span>\n</div>\n",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "subtitle"
+                      },
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div class=\"custom-orbitron-wrapper\"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 18px; font-weight: 700; color: #FF93FF; text-transform: uppercase; letter-spacing: .12em;\">Habilidade especial 2</span>\n</div>\n",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "subtitle"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Artista Marcial",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_artista_marcial_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    💎 Corpo de Diamante\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Seus ataques desarmados contam como arma proficiente. Além disso, você pode escolher manoplas, tonfas, bastões curtos, correntes leves ou armas flexíveis de curto alcance como sua arma proficiente inicial.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Quando você acerta <strong style=\"color:#9fb8c9;\">dois ou mais ataques no mesmo turno contra o mesmo alvo</strong> usando ataques desarmados ou uma arma compatível com esta Origem, você inicia uma <strong style=\"color:#9fb8c9;\">Cadeia de Impacto</strong>.\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px;\">\n    <li>O primeiro acerto causa dano normal.</li>\n    <li>O segundo acerto causa <strong style=\"color:#c9a86a;\">+1 de dano</strong>.</li>\n    <li>O terceiro acerto em diante causa <strong style=\"color:#c9a86a;\">+2 de dano</strong>.</li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    A Cadeia de Impacto termina se você errar um ataque, trocar de alvo ou usar uma Técnica de Respiração.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Esta habilidade não se aplica a ataques feitos com armas longas, armas pesadas, armas de disparo ou Técnicas de Respiração.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_artista_marcial_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    ⛩️ Oito Portões\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por rodada, como <strong style=\"color:#9fb8c9;\">Ação Livre</strong>, você pode gastar <strong style=\"color:#c9a86a;\">2 PDR</strong> para abrir um dos Oito Portões internos do corpo até o fim do seu turno.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Escolha um dos efeitos abaixo:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Portão da Força:</strong> seu próximo ataque corpo a corpo neste turno causa <strong style=\"color:#c9a86a;\">+1d6 de dano</strong>.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Portão da Rocha:</strong> você recebe <strong style=\"color:#c9a86a;\">Redução de Dano 2</strong> contra o próximo dano físico sofrido até o início do seu próximo turno.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Portão da Velocidade:</strong> você pode se mover <strong style=\"color:#c9a86a;\">+3m</strong> neste turno ou se reposicionar após acertar um ataque corpo a corpo.\n    </li>\n  </ul>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Você só pode ativar um Portão por rodada.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Civilizado",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_civilizado_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🕸️ Rede de Informantes\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você começa com <strong style=\"color:#9fb8c9;\">2 Contatos</strong> criados junto ao Mestre. Cada Contato deve ter nome, área de atuação e uma razão para ainda falar com você.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Escolha uma categoria para cada Contato:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Submundo:</strong> contrabando, esconderijos, movimentação suspeita e rumores perigosos.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Nobreza:</strong> eventos sociais, permissões, favores e influência política.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Slayer Corps:</strong> missões antecipadas, patrulhas, registros e boatos internos.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Mercado:</strong> itens raros, fornecedores, descontos e rotas comerciais.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Povo:</strong> guias locais, abrigo, rumores de vila e sinais de desaparecimentos.\n    </li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Antes de uma missão, você pode consultar <strong style=\"color:#9fb8c9;\">1 Contato</strong>. Faça um teste social ou mental apropriado definido pelo Mestre contra <strong style=\"color:#c9a86a;\">CD 10</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 6px 0;\">\n    Em sucesso, o grupo recebe <strong style=\"color:#c9a86a;\">1 informação útil</strong> sobre a missão.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 6px 0;\">\n    Essa informação pode revelar, por exemplo:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px;\">\n    <li>uma fraqueza conhecida do alvo;</li>\n    <li>uma rota de entrada segura;</li>\n    <li>uma pessoa envolvida;</li>\n    <li>um perigo ambiental;</li>\n    <li>uma pista sobre o comportamento do Oni;</li>\n    <li>uma vantagem social antes do conflito.</li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Em sucesso por <strong style=\"color:#c9a86a;\">5 ou mais</strong>, além da informação, o grupo recebe <strong style=\"color:#c9a86a;\">+1 no primeiro teste relevante da missão</strong>, desde que esse teste use diretamente a informação obtida.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Em falha, o Contato está indisponível, mal informado ou com medo.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Em falha crítica, a consulta gera uma complicação: o alvo pode ser alertado, o Contato pode cobrar um favor, ou uma informação incompleta pode colocar o grupo em risco.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Você só pode fazer 1 consulta por missão.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_civilizado_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🎭 Controle de Multidão\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por combate, como <strong style=\"color:#9fb8c9;\">Ação Especial</strong>, escolha um inimigo que possa ver ou ouvir você a até <strong style=\"color:#c9a86a;\">9m</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você provoca, distrai, confunde ou manipula o alvo. Faça um teste social ou mental apropriado contra a resistência definida pelo Mestre.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Em sucesso, escolha um efeito:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Abrir Guarda:</strong> o próximo ataque de um aliado contra esse alvo recebe <strong style=\"color:#c9a86a;\">+2 no Acerto</strong>.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Forçar Foco:</strong> o alvo sofre <strong style=\"color:#c9a86a;\">-2 no próximo ataque</strong> que fizer contra uma criatura que não seja você.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Hesitação Calculada:</strong> o alvo não pode usar <strong style=\"color:#c9a86a;\">Reação</strong> até o início do próximo turno dele.\n    </li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Em falha, o alvo percebe a tentativa e recebe <strong style=\"color:#c9a86a;\">+1 no próximo teste contra você</strong> durante este combate.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Criaturas sem mente racional, sem audição, sem linguagem corporal compreensível ou incapazes de serem provocadas podem ser imunes a esta habilidade, a critério do Mestre.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Corsário",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_corsario_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🥋 Jūken-Ryū A Arte do Golpe Sujo\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por turno, quando acertar um ataque corpo a corpo com uma arma curta, leve, flexível, improvisada ou ataque desarmado, você pode reduzir parte do dano causado para aplicar um <strong style=\"color:#9fb8c9;\">Golpe Sujo</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Escolha um dos efeitos:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Areia nos Olhos:</strong> reduza o dano em <strong style=\"color:#c9a86a;\">2</strong>. O alvo sofre <strong style=\"color:#c9a86a;\">-2 no próximo teste de ataque</strong> que fizer até o fim do próximo turno dele.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Joelhada Baixa:</strong> reduza o dano em <strong style=\"color:#c9a86a;\">1</strong>. O deslocamento do alvo é reduzido em <strong style=\"color:#c9a86a;\">3m</strong> até o fim do próximo turno dele.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Cotovelada no Plexo:</strong> reduza o dano em <strong style=\"color:#c9a86a;\">3</strong>. O alvo não pode usar <strong style=\"color:#c9a86a;\">Reações</strong> até o fim do próximo turno dele.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Cabeçada:</strong> reduza o dano em <strong style=\"color:#c9a86a;\">3</strong>. O alvo faz um teste de resistência física contra <strong style=\"color:#c9a86a;\">CD 10 + FOR</strong>. Em falha, fica <strong style=\"color:#c9a86a;\">Cambaleante</strong> até o fim do próximo turno dele.\n    </li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    <strong style=\"color:#9fb8c9;\">Cambaleante:</strong> o alvo sofre <strong style=\"color:#c9a86a;\">-2 na Defesa</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Golpe Sujo não funciona contra criaturas sem anatomia vulnerável, sem sistema nervoso reconhecível ou que sejam imunes narrativamente ao tipo de interferência aplicada.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Esta habilidade não se aplica a Técnicas de Respiração.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_corsario_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    💥 Pólvora\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você aprende a transformar caos, dor e oportunidade em pressão de combate.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    No início de cada combate, sua Pólvora começa em <strong style=\"color:#c9a86a;\">0</strong>. Você pode acumular até <strong style=\"color:#c9a86a;\">3 cargas</strong> de Pólvora.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Você ganha <strong style=\"color:#c9a86a;\">1 carga</strong> de Pólvora quando:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 12px 0; padding-left:22px;\">\n    <li>aplica um Golpe Sujo com sucesso;</li>\n    <li>sofre dano de um inimigo, no máximo uma vez por rodada;</li>\n    <li>reduz um inimigo a 0 PDV.</li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Uma vez por rodada, como <strong style=\"color:#9fb8c9;\">Ação Livre</strong>, você pode gastar Pólvora para escolher um efeito:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:8px;\">\n      <strong style=\"color:#c9a86a;\">1 Pólvora Aposta Rápida:</strong> role novamente um teste que você acabou de fazer. O segundo resultado é obrigatório. Deve ser usado antes do Mestre narrar as consequências.\n    </li>\n    <li style=\"margin-bottom:8px;\">\n      <strong style=\"color:#c9a86a;\">2 Pólvoras Canhão Curto:</strong> seu próximo ataque corpo a corpo neste turno causa <strong style=\"color:#9fb8c9;\">+1d6 de dano</strong>.\n    </li>\n    <li style=\"margin-bottom:8px;\">\n      <strong style=\"color:#c9a86a;\">3 Pólvoras Tudo ou Nada:</strong> após acertar um ataque corpo a corpo, cause <strong style=\"color:#9fb8c9;\">+1d6 de dano adicional</strong> e empurre o alvo <strong style=\"color:#9fb8c9;\">3m</strong>. Se o alvo colidir com uma parede, objeto sólido ou outra criatura, ele sofre mais <strong style=\"color:#9fb8c9;\">1d4 de dano contundente</strong>.\n    </li>\n  </ul>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Toda Pólvora não utilizada é perdida ao fim do combate.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Criado por Ex-Hashira",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_criado_ex_hashira_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🗡️ Memória do Mestre\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 6px 0;\">\n    Às vezes, no meio do combate, seu corpo se move antes de você pensar.\n  </p>\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Não é instinto. É treinamento gravado fundo demais.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Quando você rolar <strong style=\"color:#c9a86a;\">1 natural</strong> em um teste de ataque, pode ignorar a falha crítica e rolar novamente o ataque.\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px;\">\n    <li>Se o novo ataque acertar, causa dano normal.</li>\n    <li>Se o novo ataque errar, a falha crítica acontece normalmente.</li>\n    <li>Você pode usar esta habilidade <strong style=\"color:#9fb8c9;\">uma vez por combate</strong>.</li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Além disso, quando estiver com <strong style=\"color:#c9a86a;\">metade dos seus PDV ou menos</strong>, você recebe <strong style=\"color:#9fb8c9;\">+1 em testes de ataque</strong> com sua arma proficiente.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_criado_ex_hashira_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🌑 Forma Secreta\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por sessão, ao acertar um ataque com sua arma proficiente ou uma Técnica de Respiração, você pode declarar que executa uma técnica ensinada pelo seu antigo mestre.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Esse ataque causa <strong style=\"color:#c9a86a;\">+2d6 de dano adicional</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Após resolver o ataque, você sofre <strong style=\"color:#c9a86a;\">1d4 de dano irredutível</strong>. Esse dano representa o corpo repetindo um método que nunca foi feito para ser usado sem consequências.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 0 0;\">\n    Se o ataque reduzir o alvo a <strong style=\"color:#9fb8c9;\">0 PDV</strong>, você recupera <strong style=\"color:#9fb8c9;\">1 PDR</strong>.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Descendente Perdido",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_descendente_perdido_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🩸 Ressonância Sanguínea\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Seu sangue reage à presença de Onis poderosos.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Quando um Oni relevante para a missão, especialmente um Oni de grande poder ou importância narrativa, estiver a até <strong style=\"color:#c9a86a;\">30m</strong>, o Mestre pode informar que você sente uma perturbação no sangue.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Essa sensação pode indicar:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px;\">\n    <li>direção aproximada;</li>\n    <li>intensidade relativa da ameaça;</li>\n    <li>se a presença parece familiar, antiga ou anormal;</li>\n    <li>se há mais de uma presença sobrenatural próxima.</li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Essa detecção não revela identidade exata, localização precisa, ficha, nome, intenção ou fraquezas automaticamente.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Além disso, <strong style=\"color:#9fb8c9;\">uma vez por sessão</strong>, fora de combate, você pode usar <strong style=\"color:#9fb8c9;\">Pulso Ancestral</strong> para forçar seu sangue a revelar mais sobre um Oni percebido pela Ressonância.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Faça um teste de <strong style=\"color:#c9a86a;\">FDV</strong> contra <strong style=\"color:#c9a86a;\">CD 14</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 6px 0;\">\n    Em sucesso, escolha um:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px;\">\n    <li>descobrir uma fraqueza narrativa ou mecânica do Oni;</li>\n    <li>receber <strong style=\"color:#c9a86a;\">+1 no primeiro ataque</strong> contra esse Oni nesta missão;</li>\n    <li>descobrir um traço do Kekkijutsu ou padrão de caça do Oni.</li>\n  </ul>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Em sucesso crítico, escolha dois efeitos.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Em falha, o Oni também sente sua presença. Ele recebe <strong style=\"color:#c9a86a;\">+1 no primeiro ataque ou teste hostil</strong> contra você nesta missão.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Em falha crítica, além do efeito da falha, você sofre 1d6 de dano irredutível.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_descendente_perdido_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🩸 Marca Latente\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    O sangue antigo resiste ao que o treinamento comum não alcança.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por combate, quando falhar em um teste de resistência contra <strong style=\"color:#9fb8c9;\">Kekkijutsu, veneno sobrenatural, corrupção demoníaca ou efeito causado por sangue Oni</strong>, você pode rolar novamente o teste.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você deve aceitar o segundo resultado.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Se o segundo resultado for sucesso, você também recupera <strong style=\"color:#c9a86a;\">1 PDR</strong>.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Se o segundo resultado for falha crítica, o sangue reage mal: você sofre 1d4 de dano irredutível.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Estrangeiro",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_estrangeiro_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🌏 Ritmo Desconhecido\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Na primeira rodada de um combate, você recebe <strong style=\"color:#c9a86a;\">+2 na Defesa</strong> contra ataques feitos por humanoides, Onis inteligentes ou criaturas capazes de interpretar padrões de luta.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Além disso, uma vez por combate, quando acertar um ataque contra um alvo que ainda não havia sido atingido por você nesse combate, você pode aplicar <strong style=\"color:#9fb8c9;\">Movimento Exótico</strong>. Escolha um efeito:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Ângulo Inesperado:</strong> o alvo sofre <strong style=\"color:#c9a86a;\">-2 na Defesa</strong> contra o próximo ataque feito contra ele até o início do seu próximo turno.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Ritmo Quebrado:</strong> o alvo sofre <strong style=\"color:#c9a86a;\">-2 no próximo teste de ataque</strong> que fizer até o fim do próximo turno dele.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Passo Estranho:</strong> após o ataque, você pode se mover <strong style=\"color:#c9a86a;\">3m</strong> sem provocar abertura óbvia.\n    </li>\n  </ul>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Esta habilidade não funciona contra criaturas sem instinto de combate, sem percepção corporal ou incapazes de reagir à imprevisibilidade dos seus movimentos.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_estrangeiro_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🧭 Adaptação Cultural\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você aprende mecanicamente com inimigos durante o combate.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por rodada, quando for atingido por um ataque de um inimigo, você pode registrar o padrão daquele tipo de ameaça.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    A partir da rodada seguinte, contra inimigos do mesmo tipo, você recebe <strong style=\"color:#c9a86a;\">+1 na Defesa</strong> ou <strong style=\"color:#c9a86a;\">+1 no Acerto</strong>, escolhido no momento em que registra o padrão.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você pode manter apenas <strong style=\"color:#9fb8c9;\">1 padrão registrado por vez</strong>. Se registrar um novo padrão, o anterior é perdido. O padrão também é perdido ao fim do combate.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Para registrar um padrão, você precisa sofrer o ataque. Esquivar, bloquear completamente ou evitar o dano não ensina o suficiente.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Isolado",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_isolado_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🐻 Pele Grossa\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Seu corpo endureceu nos lugares onde mais apanhou.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Sempre que sofrer <strong style=\"color:#9fb8c9;\">dano físico</strong>, reduza o dano recebido em <strong style=\"color:#c9a86a;\">2</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Essa redução se aplica a cortes, perfurações, impactos, mordidas, garras, quedas e outros danos corporais diretos.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 6px 0;\">\n    Esta redução não se aplica contra:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 0 0; padding-left:22px;\">\n    <li>dano elemental;</li>\n    <li>venenos;</li>\n    <li>Kekkijutsu;</li>\n    <li>dano espiritual, mental ou sobrenatural;</li>\n    <li>efeitos que não causem dano físico direto.</li>\n  </ul>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_isolado_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    💪 Segundo Fôlego\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por combate, quando um ataque reduziria seus PDV a <strong style=\"color:#c9a86a;\">0 ou menos</strong>, você pode usar sua <strong style=\"color:#9fb8c9;\">Reação</strong> para se manter de pé.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você permanece com <strong style=\"color:#c9a86a;\">1 PDV</strong> e recebe <strong style=\"color:#c9a86a;\">+2 no próximo ataque corpo a corpo</strong> que fizer até o fim do seu próximo turno.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Após usar Segundo Fôlego, você sofre <strong style=\"color:#c9a86a;\">-2 na Defesa</strong> até o fim do seu próximo turno.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Esta habilidade não funciona se o dano recebido for massivo o bastante para ultrapassar seu limite de morte imediata, a critério das regras da mesa.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Militar",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_militar_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🎖️ Ordem de Campo\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Duas vezes por combate, como <strong style=\"color:#9fb8c9;\">Ação Especial</strong>, você pode dar uma ordem tática a um aliado que possa ouvir você a até <strong style=\"color:#c9a86a;\">12m</strong>. Escolha um efeito:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Reposicionar:</strong> o aliado pode se mover <strong style=\"color:#c9a86a;\">3m</strong> imediatamente sem gastar o próprio movimento.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Foco de Ataque:</strong> o aliado recebe <strong style=\"color:#c9a86a;\">+1 no próximo teste de ataque</strong> contra um alvo que você indique.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Recuar e Cobrir:</strong> o aliado recebe <strong style=\"color:#c9a86a;\">+2 na Defesa</strong> até o início do próximo turno dele, desde que se afaste de um inimigo ou busque cobertura.\n    </li>\n  </ul>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Você não pode escolher a si mesmo como alvo da Ordem de Campo.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_militar_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🔫 Fogo de Cobertura\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Duas vezes por combate, quando um inimigo que você possa ver declarar um ataque contra um aliado, você pode usar sua <strong style=\"color:#9fb8c9;\">Reação</strong> para fazer um ataque com arma de disparo contra esse inimigo.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Se acertar, você causa o dano normal da arma e o ataque do inimigo sofre <strong style=\"color:#c9a86a;\">-2 no Acerto</strong>.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Para usar esta habilidade, você precisa estar com uma arma de disparo carregada ou pronta para uso.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Monge",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_monge_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🔥 Chama Interna\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Duas vezes por combate, como <strong style=\"color:#9fb8c9;\">Ação Especial</strong>, você pode gastar PDR para canalizar sua Respiração em cura ou purificação.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Escolha um efeito:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px; list-style:none;\">\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Toque Restaurador:</strong> gaste <strong style=\"color:#c9a86a;\">3 PDR</strong> para restaurar <strong style=\"color:#c9a86a;\">1d6 + FDV</strong> PDV de uma criatura adjacente.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Purificação Menor:</strong> gaste <strong style=\"color:#c9a86a;\">2 PDR</strong> para remover uma condição menor de uma criatura adjacente, como <strong style=\"color:#c9a86a;\">Envenenado, Cego, Surdo ou Amedrontado</strong>, desde que a condição não venha de uma fonte superior ou permanente.\n    </li>\n    <li style=\"margin-bottom:6px;\">\n      <strong style=\"color:#9fb8c9;\">Autopreservação:</strong> gaste <strong style=\"color:#c9a86a;\">4 PDR</strong> para restaurar <strong style=\"color:#c9a86a;\">1d8 + FDV</strong> PDV em si mesmo.\n    </li>\n  </ul>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Você não pode usar Chama Interna no mesmo turno em que usa uma Técnica de Respiração ofensiva.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_monge_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🙏 Mantra de Proteção\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por combate, quando você ou um aliado a até <strong style=\"color:#c9a86a;\">3m</strong> sofrer dano, você pode usar sua <strong style=\"color:#9fb8c9;\">Reação</strong> para entoar um mantra defensivo.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Reduza o dano recebido em <strong style=\"color:#c9a86a;\">1d6 + FDV</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 0 0;\">\n    Se essa redução impedir que o alvo caia a 0 PDV, ele recebe <strong style=\"color:#9fb8c9;\">+1 na Defesa</strong> até o início do próximo turno dele.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Ninja",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_ninja_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    👤 Passo Fantasma\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Você ignora terreno difícil nos primeiros <strong style=\"color:#c9a86a;\">3m</strong> de deslocamento do seu turno.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Além disso, pode escalar superfícies simples, saltar entre apoios próximos e ignorar dano de queda de até <strong style=\"color:#c9a86a;\">6m</strong>, desde que haja uma forma plausível de reduzir o impacto.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 0 0;\">\n    Uma vez por combate, você pode usar <strong style=\"color:#9fb8c9;\">Desengajar</strong> ou <strong style=\"color:#9fb8c9;\">Ficar Furtivo</strong> como <strong style=\"color:#9fb8c9;\">Ação Livre</strong>.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_ninja_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🎯 Ponto Cego\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 8px 0;\">\n    Uma vez por rodada, ao acertar um ataque com arma leve, curta, arremessável ou ataque desarmado, você causa <strong style=\"color:#c9a86a;\">+1d6 de dano adicional</strong> se pelo menos uma das condições abaixo for verdadeira:\n  </p>\n\n  <ul style=\"color:#e8e2d0; line-height:1.6; margin:0 0 10px 0; padding-left:22px;\">\n    <li>o alvo ainda não agiu neste combate;</li>\n    <li>você estava Furtivo;</li>\n    <li>o alvo está Surpreso;</li>\n    <li>o alvo está Flanqueado;</li>\n    <li>você atacou a partir de posição elevada ou ângulo inesperado.</li>\n  </ul>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Esta habilidade não se aplica a Técnicas de Respiração.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Samurai",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_samurai_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    ⚔️ Bushidō\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Enquanto estiver lutando face a face contra um inimigo que possa ver você, usando uma espada como arma proficiente, você recebe <strong style=\"color:#c9a86a;\">+1 no Acerto</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Além disso, você recebe <strong style=\"color:#9fb8c9;\">vantagem em testes de resistência</strong> contra Medo, intimidação sobrenatural ou efeitos que tentem forçar sua fuga.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Você perde o benefício de Bushidō contra um alvo se atacar pelas costas, a partir de furtividade ou usando uma vantagem que viole claramente o duelo direto.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_samurai_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🗡️ Iaidō — O Golpe do Desembainhar\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por combate, apenas no seu primeiro turno, se sua espada estiver embainhada, você pode declarar um Iaidō antes de atacar.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Faça um ataque com espada recebendo <strong style=\"color:#c9a86a;\">+2 no Acerto</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Se acertar, maximize apenas o <strong style=\"color:#9fb8c9;\">dado base de dano da arma</strong>. Bônus fixos e dados adicionais são rolados normalmente.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Este ataque não se acumula com Técnicas de Respiração.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Após o Iaidō, sua espada permanece desembainhada.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ],
+                    [
+                      {
+                        "key": "",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "Tsuguko",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_tsuguko_hab_1",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    🌳 Herança Viva\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 1 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Escolha, junto ao Mestre, um Hashira mentor ou legado equivalente ligado à sua Respiração.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por combate, quando executar uma Técnica de Respiração da linhagem ensinada por esse mentor, você recebe <strong style=\"color:#c9a86a;\">+1 no Acerto</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Se essa for a primeira vez na missão que você usa uma Técnica de Respiração de um nível recém-desbloqueado, o bônus aumenta para <strong style=\"color:#c9a86a;\">+2 no Acerto</strong>.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Esse benefício representa memória muscular, correção brutal e repetição exaustiva. Não é improviso. É legado.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      },
+                      {
+                        "key": "origem_slayer_tsuguko_hab_2",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<div style=\"background-color:#1a1a1a; color:#e8e2d0; border:2px solid #7a8a99; border-radius:6px; padding:16px 20px; margin:10px 0; font-family:'Signika','Palatino Linotype',serif;\">\n\n  <h2 style=\"color:#9fb8c9; border-bottom:2px solid #7a8a99; padding-bottom:6px; margin-top:0; margin-bottom:4px; font-size:1.3em; letter-spacing:0.5px;\">\n    ⛓️ Sucessão Perfeita\n  </h2>\n  <p style=\"color:#b8c9d4; font-style:italic; margin-top:0; margin-bottom:12px; font-size:0.9em;\">\n    Desbloqueado no Nível 6 de Personagem\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Uma vez por sessão, ao executar uma Técnica de Respiração da sua linhagem, você pode reduzir o custo dela para <strong style=\"color:#c9a86a;\">0 PDR</strong>.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Se a técnica acertar ou cumprir seu efeito principal, ela funciona normalmente.\n  </p>\n\n  <p style=\"color:#e8e2d0; line-height:1.5; margin:0 0 10px 0;\">\n    Se a técnica errar ou falhar completamente, você sofre <strong style=\"color:#c9a86a;\">dano irredutível igual ao custo original da técnica</strong>.\n  </p>\n\n  <p style=\"color:#a89b8c; font-size:0.9em; font-style:italic; border-top:1px solid #4a4a4a; padding-top:8px; margin-top:12px; margin-bottom:0;\">\n    Você não pode usar Sucessão Perfeita em uma técnica criada livremente por Versatilidade Criativa, a menos que o Mestre aprove que ela pertence ao legado do seu Hashira.\n  </p>\n\n</div>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "",
+                        "altRollMessage": "",
+                        "rollMessageToChat": true,
+                        "altRollMessageToChat": true,
+                        "style": "label"
+                      }
+                    ]
+                  ],
+                  "cols": 3,
+                  "rows": 14,
+                  "layout": "ccc"
                 }
               ],
               "name": "Dados"
@@ -8215,7 +9264,7 @@
                 "key": "nome_slayer",
                 "colSpan": 1,
                 "rowSpan": 1,
-                "cssClass": "",
+                "cssClass": " <div class=\"custom-orbitron-wrapper\">    <style>     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');   </style>   <span style=\"font-family: 'Orbitron', 'Times New Roman', serif; font-size: 6px; font-weight: 700; color: White; text-transform: uppercase; letter-spacing: .12em;\">Nome:</span> </div>",
                 "role": 0,
                 "editRole": 0,
                 "permission": 0,
@@ -8225,7 +9274,7 @@
                 "escapeHTML": false,
                 "type": "textField",
                 "size": "m-large",
-                "label": "Nome:",
+                "label": "Nome: ",
                 "defaultValue": "",
                 "charList": "",
                 "maxLength": null,
@@ -8499,12 +9548,12 @@
                 "type": "select",
                 "size": "m-large",
                 "label": "Classe:",
-                "defaultValue": "Escolha",
+                "defaultValue": "classe_escolha",
                 "selectedOptionType": "custom",
                 "options": [
                   {
                     "key": "classe_escolha",
-                    "value": "Escolha"
+                    "value": "Escolha Sua Classe"
                   },
                   {
                     "key": "classe_mb",
@@ -8701,7 +9750,7 @@
                 ]
               },
               {
-                "key": "resp",
+                "key": "resp_slayer_display",
                 "colSpan": 1,
                 "rowSpan": 1,
                 "cssClass": "",
@@ -8712,16 +9761,196 @@
                 "visibilityFormula": "",
                 "editableFormula": "",
                 "escapeHTML": false,
-                "type": "textField",
+                "type": "select",
                 "size": "m-large",
                 "label": "Respiração: ",
-                "defaultValue": "",
-                "charList": "",
-                "maxLength": null,
-                "autocomplete": ""
+                "defaultValue": "resp_slayer_base",
+                "selectedOptionType": "custom",
+                "options": [
+                  {
+                    "key": "resp_slayer_base",
+                    "value": "Selecionar"
+                  },
+                  {
+                    "key": "resp_slayer_agua",
+                    "value": "Respiração da Água"
+                  },
+                  {
+                    "key": "resp_slayer_ameixeira",
+                    "value": "Respiração da Ameixeira"
+                  },
+                  {
+                    "key": "resp_slayer_amor",
+                    "value": "Respiração da Amor"
+                  },
+                  {
+                    "key": "resp_slayer_aranha",
+                    "value": "Respiração da Aranha"
+                  },
+                  {
+                    "key": "resp_slayer_areia",
+                    "value": "Respiração da Areia"
+                  },
+                  {
+                    "key": "resp_slayer_besta",
+                    "value": "Respiração da Besta"
+                  },
+                  {
+                    "key": "resp_slayer_cerejeira",
+                    "value": "Respiração da Cerejeira"
+                  },
+                  {
+                    "key": "resp_slayer_chamas",
+                    "value": "Respiração das Chamas"
+                  },
+                  {
+                    "key": "resp_slayer_corvo",
+                    "value": "Respiração do Corvo"
+                  },
+                  {
+                    "key": "resp_slayer_cristal",
+                    "value": "Respiração do Cristal"
+                  },
+                  {
+                    "key": "resp_slayer_dragao",
+                    "value": "Respiração do Dragão"
+                  },
+                  {
+                    "key": "resp_slayer_eclipse",
+                    "value": "Respiração do Eclipse"
+                  },
+                  {
+                    "key": "resp_slayer_estrelas",
+                    "value": "Respiração das Estrelas"
+                  },
+                  {
+                    "key": "resp_slayer_flores",
+                    "value": "Respiração das Flores"
+                  },
+                  {
+                    "key": "resp_slayer_grama",
+                    "value": "Respiração da Grama"
+                  },
+                  {
+                    "key": "resp_slayer_insetos",
+                    "value": "Respiração dos Insetos"
+                  },
+                  {
+                    "key": "resp_slayer_lobo",
+                    "value": "Respiração do Lobo"
+                  },
+                  {
+                    "key": "resp_slayer_lua",
+                    "value": "Respiração da Lua"
+                  },
+                  {
+                    "key": "resp_slayer_luz",
+                    "value": "Respiração da Luz"
+                  },
+                  {
+                    "key": "resp_slayer_macaco",
+                    "value": "Respiração do Macaco"
+                  },
+                  {
+                    "key": "resp_slayer_madeira",
+                    "value": "Respiração da Madeira"
+                  },
+                  {
+                    "key": "resp_slayer_magma",
+                    "value": "Respiração do Magma"
+                  },
+                  {
+                    "key": "resp_slayer_metal",
+                    "value": "Respiração do Metal"
+                  },
+                  {
+                    "key": "resp_slayer_neve",
+                    "value": "Respiração da Neve"
+                  },
+                  {
+                    "key": "resp_slayer_nevasca",
+                    "value": "Respiração da Nevasca"
+                  },
+                  {
+                    "key": "resp_slayer_nevoa",
+                    "value": "Respiração da Névoa"
+                  },
+                  {
+                    "key": "resp_slayer_pedra",
+                    "value": "Respiração da Pedra"
+                  },
+                  {
+                    "key": "resp_slayer_raposa",
+                    "value": "Respiração da Raposa"
+                  },
+                  {
+                    "key": "resp_slayer_sangue",
+                    "value": "Respiração do Sangue "
+                  },
+                  {
+                    "key": "resp_slayer_serpente",
+                    "value": "Respiração da Serpente"
+                  },
+                  {
+                    "key": "resp_slayer_sol",
+                    "value": "Respiração do Sol"
+                  },
+                  {
+                    "key": "resp_slayer_som",
+                    "value": "Respiração do Som"
+                  },
+                  {
+                    "key": "resp_slayer_sombras",
+                    "value": "Respiração das Sombras"
+                  },
+                  {
+                    "key": "resp_slayer_sonhos",
+                    "value": "Respiração dos Sonhos"
+                  },
+                  {
+                    "key": "resp_slayer_tartaruga",
+                    "value": "Respiração da Tartaruga"
+                  },
+                  {
+                    "key": "resp_slayer_tempo",
+                    "value": "Respiração do Tempo"
+                  },
+                  {
+                    "key": "resp_slayer_tigre",
+                    "value": "Respiração do Tigre"
+                  },
+                  {
+                    "key": "resp_slayer_tinta",
+                    "value": "Respiração da Tinta"
+                  },
+                  {
+                    "key": "resp_slayer_tormenta",
+                    "value": "Respiração da Tormenta"
+                  },
+                  {
+                    "key": "resp_slayer_trovao",
+                    "value": "Respiração do Trovão"
+                  },
+                  {
+                    "key": "resp_slayer_tubarao",
+                    "value": "Respiração do Tubarão"
+                  },
+                  {
+                    "key": "resp_slayer_vagalume",
+                    "value": "Respiração do Vagalume"
+                  },
+                  {
+                    "key": "resp_slayer_veneno",
+                    "value": "Respiração do Veneno"
+                  },
+                  {
+                    "key": "resp_slayer_vento",
+                    "value": "Respiração do Vento"
+                  }
+                ]
               },
               {
-                "key": "resp_copy1",
+                "key": "resp_slayer_display_2",
                 "colSpan": 1,
                 "rowSpan": 1,
                 "cssClass": "",
@@ -8729,22 +9958,226 @@
                 "editRole": 0,
                 "permission": 0,
                 "tooltip": "",
-                "visibilityFormula": "",
+                "visibilityFormula": "equalText(classe_escolhida, 'classe_usuario_de_duas_resp')",
                 "editableFormula": "",
                 "escapeHTML": false,
-                "type": "textField",
+                "type": "select",
                 "size": "m-large",
                 "label": "Respiração: ",
-                "defaultValue": "",
-                "charList": "",
-                "maxLength": null,
-                "autocomplete": ""
+                "defaultValue": "resp_slayer_base",
+                "selectedOptionType": "custom",
+                "options": [
+                  {
+                    "key": "resp_slayer_base",
+                    "value": "Selecionar"
+                  },
+                  {
+                    "key": "resp_slayer_agua",
+                    "value": "Respiração da Água"
+                  },
+                  {
+                    "key": "resp_slayer_ameixeira",
+                    "value": "Respiração da Ameixeira"
+                  },
+                  {
+                    "key": "resp_slayer_amor",
+                    "value": "Respiração da Amor"
+                  },
+                  {
+                    "key": "resp_slayer_aranha",
+                    "value": "Respiração da Aranha"
+                  },
+                  {
+                    "key": "resp_slayer_areia",
+                    "value": "Respiração da Areia"
+                  },
+                  {
+                    "key": "resp_slayer_besta",
+                    "value": "Respiração da Besta"
+                  },
+                  {
+                    "key": "resp_slayer_cerejeira",
+                    "value": "Respiração da Cerejeira"
+                  },
+                  {
+                    "key": "resp_slayer_chamas",
+                    "value": "Respiração das Chamas"
+                  },
+                  {
+                    "key": "resp_slayer_corvo",
+                    "value": "Respiração do Corvo"
+                  },
+                  {
+                    "key": "resp_slayer_cristal",
+                    "value": "Respiração do Cristal"
+                  },
+                  {
+                    "key": "resp_slayer_dragao",
+                    "value": "Respiração do Dragão"
+                  },
+                  {
+                    "key": "resp_slayer_eclipse",
+                    "value": "Respiração do Eclipse"
+                  },
+                  {
+                    "key": "resp_slayer_estrelas",
+                    "value": "Respiração das Estrelas"
+                  },
+                  {
+                    "key": "resp_slayer_flores",
+                    "value": "Respiração das Flores"
+                  },
+                  {
+                    "key": "resp_slayer_grama",
+                    "value": "Respiração da Grama"
+                  },
+                  {
+                    "key": "resp_slayer_insetos",
+                    "value": "Respiração dos Insetos"
+                  },
+                  {
+                    "key": "resp_slayer_lobo",
+                    "value": "Respiração do Lobo"
+                  },
+                  {
+                    "key": "resp_slayer_lua",
+                    "value": "Respiração da Lua"
+                  },
+                  {
+                    "key": "resp_slayer_luz",
+                    "value": "Respiração da Luz"
+                  },
+                  {
+                    "key": "resp_slayer_macaco",
+                    "value": "Respiração do Macaco"
+                  },
+                  {
+                    "key": "resp_slayer_madeira",
+                    "value": "Respiração da Madeira"
+                  },
+                  {
+                    "key": "resp_slayer_magma",
+                    "value": "Respiração do Magma"
+                  },
+                  {
+                    "key": "resp_slayer_metal",
+                    "value": "Respiração do Metal"
+                  },
+                  {
+                    "key": "resp_slayer_neve",
+                    "value": "Respiração da Neve"
+                  },
+                  {
+                    "key": "resp_slayer_nevasca",
+                    "value": "Respiração da Nevasca"
+                  },
+                  {
+                    "key": "resp_slayer_nevoa",
+                    "value": "Respiração da Névoa"
+                  },
+                  {
+                    "key": "resp_slayer_pedra",
+                    "value": "Respiração da Pedra"
+                  },
+                  {
+                    "key": "resp_slayer_raposa",
+                    "value": "Respiração da Raposa"
+                  },
+                  {
+                    "key": "resp_slayer_sangue",
+                    "value": "Respiração do Sangue "
+                  },
+                  {
+                    "key": "resp_slayer_serpente",
+                    "value": "Respiração da Serpente"
+                  },
+                  {
+                    "key": "resp_slayer_sol",
+                    "value": "Respiração do Sol"
+                  },
+                  {
+                    "key": "resp_slayer_som",
+                    "value": "Respiração do Som"
+                  },
+                  {
+                    "key": "resp_slayer_sombras",
+                    "value": "Respiração das Sombras"
+                  },
+                  {
+                    "key": "resp_slayer_sonhos",
+                    "value": "Respiração dos Sonhos"
+                  },
+                  {
+                    "key": "resp_slayer_tartaruga",
+                    "value": "Respiração da Tartaruga"
+                  },
+                  {
+                    "key": "resp_slayer_tempo",
+                    "value": "Respiração do Tempo"
+                  },
+                  {
+                    "key": "resp_slayer_tigre",
+                    "value": "Respiração do Tigre"
+                  },
+                  {
+                    "key": "resp_slayer_tinta",
+                    "value": "Respiração da Tinta"
+                  },
+                  {
+                    "key": "resp_slayer_tormenta",
+                    "value": "Respiração da Tormenta"
+                  },
+                  {
+                    "key": "resp_slayer_trovao",
+                    "value": "Respiração do Trovão"
+                  },
+                  {
+                    "key": "resp_slayer_tubarao",
+                    "value": "Respiração do Tubarão"
+                  },
+                  {
+                    "key": "resp_slayer_vagalume",
+                    "value": "Respiração do Vagalume"
+                  },
+                  {
+                    "key": "resp_slayer_veneno",
+                    "value": "Respiração do Veneno"
+                  },
+                  {
+                    "key": "resp_slayer_vento",
+                    "value": "Respiração do Vento"
+                  }
+                ]
               }
             ]
           ],
           "cols": 3,
           "rows": 5,
           "layout": "lll"
+        },
+        {
+          "key": "",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 0,
+          "editRole": 0,
+          "permission": 0,
+          "tooltip": "",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "label",
+          "size": "full-size",
+          "icon": "",
+          "value": "${classe_escolhida}$",
+          "prefix": "",
+          "suffix": "",
+          "rollMessage": "",
+          "altRollMessage": "",
+          "rollMessageToChat": true,
+          "altRollMessageToChat": true,
+          "style": "label"
         }
       ],
       "key": "custom_header",
@@ -8886,21 +10319,45 @@
       {
         "name": "folego_slayer_maximo",
         "value": "${2+fdv_display}$"
+      },
+      {
+        "name": "origem_hab_1_display",
+        "value": "${switchCase(origem_dropdown, \n  'origem_artista_marcial', origem_slayer_artista_marcial_hab_1,\n  'origem_civilizado', origem_slayer_civilizado_hab_1,\n  'origem_corsario', origem_slayer_corsario_hab_1,\n  'origem_criado_ex_hashira', origem_slayer_criado_ex_hashira_hab_1,\n  'origem_descendente_perdido', origem_slayer_descendente_perdido_hab_1,\n  'origem_estrangeiro', origem_slayer_estrangeiro_hab_1,\n  'origem_isolado', origem_slayer_isolado_hab_1,\n  'origem_militar', origem_slayer_militar_hab_1,\n  'origem_monge', origem_slayer_monge_hab_1,\n  'origem_ninja', origem_slayer_ninja_hab_1,\n  'origem_samurai', origem_slayer_samurai_hab_1,\n  'origem_tsuguko', origem_slayer_tsuguko_hab_1,\n  'Selecione Origem'\n)}$"
+      },
+      {
+        "name": "origem_hab_2_display",
+        "value": "${switchCase(origem_dropdown, \n  'origem_artista_marcial', origem_slayer_artista_marcial_hab_2,\n  'origem_civilizado', origem_slayer_civilizado_hab_2,\n  'origem_corsario', origem_slayer_corsario_hab_2,\n  'origem_criado_ex_hashira', origem_slayer_criado_ex_hashira_hab_2,\n  'origem_descendente_perdido', origem_slayer_descendente_perdido_hab_2,\n  'origem_estrangeiro', origem_slayer_estrangeiro_hab_2,\n  'origem_isolado', origem_slayer_isolado_hab_2,\n  'origem_militar', origem_slayer_militar_hab_2,\n  'origem_monge', origem_slayer_monge_hab_2,\n  'origem_ninja', origem_slayer_ninja_hab_2,\n  'origem_samurai', origem_slayer_samurai_hab_2,\n  'origem_tsuguko', origem_slayer_tsuguko_hab_2,\n  'Selecione Origem'\n)}$"
+      },
+      {
+        "name": "pdv_slayer_maximo_num",
+        "value": "${max(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_extra)}$"
+      },
+      {
+        "name": "pdv_slayer_atual_num",
+        "value": "${min(pdv_slayer_maximo_num,max(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado))}$"
+      },
+      {
+        "name": "pdr_slayer_maximo_num",
+        "value": "${max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_extra)}$"
+      },
+      {
+        "name": "pdr_slayer_atual_num",
+        "value": "${min(pdr_slayer_maximo_num,max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_curado+pdr_slayer_extra-pdr_slayer_gasto_valor))}$"
       }
     ],
     "attributeBar": {
       "pdv_slayer_barra": {
-        "value": "${pdv_slayer_atual_valor_display}$",
-        "max": "${pdv_slayer_total_valor}$",
+        "value": "${pdv_slayer_atual_num}$",
+        "max": "${pdv_slayer_maximo_num}$",
         "editable": false
       },
       "pdr_slayer_barra": {
-        "value": "${pdr_slayer_atual_valor_display}$",
-        "max": "${pdr_slayer_total_valor}$",
+        "value": "${pdr_slayer_atual_num}$",
+        "max": "${pdr_slayer_maximo_num}$",
         "editable": false
       }
     },
-    "templateSystemUniqueVersion": 252444529
+    "templateSystemUniqueVersion": 1747984449
   },
   "prototypeToken": {
     "name": "Slayer_template_atual",
@@ -9223,14 +10680,14 @@
     "coreVersion": "14.365",
     "systemId": "custom-system-builder",
     "systemVersion": "6.0.2",
-    "createdTime": 1784231925857,
-    "modifiedTime": 1786069066802,
+    "createdTime": 1786249728022,
+    "modifiedTime": 1786251163102,
     "lastModifiedBy": "Pb1B7hDUJ0CwI1ns",
-    "compendiumSource": null,
-    "duplicateSource": "Actor.xif9qdBXTkeL1BXW",
+    "compendiumSource": "Compendium.night-assassins-csb-automation.night-assassins-oni.Actor.NASlayerTpl00001",
+    "duplicateSource": "Actor.NASlayerTpl00001",
     "exportSource": {
       "worldId": "one-shot",
-      "uuid": "Actor.PQR15WSdSqBcN15w",
+      "uuid": "Actor.PjgkA98zC6otkZxp",
       "coreVersion": "14.365",
       "systemId": "custom-system-builder",
       "systemVersion": "6.0.2"

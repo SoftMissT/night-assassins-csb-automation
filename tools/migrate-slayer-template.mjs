@@ -123,16 +123,40 @@ function fixBars(template) {
   if (!pdv || !pdr) throw new Error("Barras de PDV/PDR do Slayer não encontradas.");
   bars.pdv_slayer_barra = {
     ...pdv,
-    value: "${pdv_slayer_atual_valor_display}$",
-    max: "${pdv_slayer_total_valor}$",
+    value: "${pdv_slayer_atual_num}$",
+    max: "${pdv_slayer_maximo_num}$",
+    editable: false,
   };
   bars.pdr_slayer_barra = {
     ...pdr,
-    value: "${pdr_slayer_atual_valor_display}$",
-    max: "${pdr_slayer_total_valor}$",
+    value: "${pdr_slayer_atual_num}$",
+    max: "${pdr_slayer_maximo_num}$",
+    editable: false,
   };
   delete bars.pdv_barra;
   delete bars.pdr_barra;
+
+  const hidden = template.system?.hidden;
+  if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
+  const formulas = new Map([
+    ["pdv_slayer_maximo_num", "${max(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_extra)}$"],
+    ["pdv_slayer_atual_num", "${min(pdv_slayer_maximo_num,max(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado))}$"],
+    ["pdr_slayer_maximo_num", "${max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_extra)}$"],
+    ["pdr_slayer_atual_num", "${min(pdr_slayer_maximo_num,max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_curado+pdr_slayer_extra-pdr_slayer_gasto_valor))}$"],
+  ]);
+  for (const [name, value] of formulas) {
+    const existing = hidden.find((entry) => entry.name === name);
+    if (existing) existing.value = value;
+    else hidden.push({ name, value });
+  }
+
+  walk(template.system, (node) => {
+    if (node.type !== "label") return;
+    if (node.key === "pdv_slayer_total_valor") node.value = orbitron("${pdv_slayer_maximo_num}$", "#C1000C", 18);
+    if (node.key === "pdv_slayer_atual_valor_display") node.value = orbitron("${pdv_slayer_atual_num}$", "#C1000C", 18);
+    if (node.key === "pdr_slayer_total_valor") node.value = orbitron("${pdr_slayer_maximo_num}$", "#0EF5FF", 18);
+    if (node.key === "pdr_slayer_atual_valor_display") node.value = orbitron("${pdr_slayer_atual_num}$", "#0EF5FF", 18);
+  });
 }
 
 const attributeButtons = new Map([
@@ -309,6 +333,28 @@ function itemContainer(key, title, category) {
   };
 }
 
+function weaponItemContainer() {
+  const container = itemContainer("inventario_slayer_armas", orbitron("ARMAS", "#C1000C"), "arma");
+  container.nameLabel = "Arma";
+  container.tooltip = "Arraste uma arma para o inventário e use Rolar para abrir o dano com os dados do Item.";
+  const rollButton = displayLabel("arma_slayer_rolar", orbitron("ROLAR", "#C1000C", 11), "Rola o dano desta arma.");
+  rollButton.style = "button";
+  rollButton.icon = "fa-solid fa-khanda";
+  rollButton.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NADamageRoll0001'))?.execute({actorUuid:entity.uuid,nome:linkedEntity.name,formulaBase:linkedEntity.system.props.arma_dano_dados||'',fixo:Number(linkedEntity.system.props.arma_dano_fixo)||0,attrs:linkedEntity.system.props.arma_dano_atributo?[linkedEntity.system.props.arma_dano_atributo]:[],tiposDano:linkedEntity.system.props.arma_tipos_dano?[linkedEntity.system.props.arma_tipos_dano]:[],tipoAcao:'ataque'});}%";
+  container.rowLayout = [{ ...rollButton, align: "center", colName: "Rolar" }];
+  return container;
+}
+
+function fixTextVisibilityFormulas(template) {
+  walk(template.system, (node) => {
+    if (typeof node.visibilityFormula !== "string") return;
+    node.visibilityFormula = node.visibilityFormula.replace(
+      /^\s*classe_escolhida\s*==\s*'classe_usuario_de_duas_resp'\s*$/,
+      "equalText(classe_escolhida, 'classe_usuario_de_duas_resp')",
+    );
+  });
+}
+
 function breathingItemContainer() {
   const container = itemContainer("skills_slayer_respiracoes", orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF"), "respiracao");
   container.headDisplay = false;
@@ -369,6 +415,9 @@ function organizeSlayerTabs(template) {
   removeComponentsByKey(template.system, new Set([
     "perfil_slayer_tab", "skills_slayer_tab", "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab",
     "vida_morte_slayer_panel", "skills_marca_slayer_panel",
+    "skills_slayer_respiracoes", "respiracao_slayer_usar",
+    "skills_slayer_hab_display", "skills_slayer_classe_display", "skills_slayer_origem_display",
+    "mundo_transparente_slayer_estado", "estado_altruista_slayer_estado", "lamina_carmesim_slayer_estado",
   ]));
 
   pericias.name = "Perícias";
@@ -422,7 +471,7 @@ function organizeSlayerTabs(template) {
       numberField("dinheiro_slayer_atual", "Dinheiro atual", 0, 0),
       numberField("moedas_honra_slayer_atual", "Moedas de Honra atual", 0, 0),
     ], "grid-2"),
-    itemContainer("inventario_slayer_armas", "Armas", "arma"),
+    weaponItemContainer(),
     itemContainer("inventario_slayer_equipamentos", "Equipamentos", "equipamento"),
     itemContainer("inventario_slayer_itens", "Itens", "item"),
   ]);
@@ -790,6 +839,7 @@ export function migrateSlayerTemplate(template) {
   organizeSlayerCombatLayout(migrated);
   fixBreathingState(migrated);
   organizeSlayerTabs(migrated);
+  fixTextVisibilityFormulas(migrated);
   return migrated;
 }
 
@@ -852,7 +902,11 @@ export function buildActorExport(template, shell) {
 export function validateSlayerTemplate(template) {
   const componentKeys = [];
   walk(template, (node) => {
-    if (typeof node.key === "string" && node.key) componentKeys.push(node.key);
+    // Dropdown option keys are values, not component identifiers. The two
+    // respiration selectors intentionally share the same option keys.
+    if (typeof node.type === "string" && typeof node.key === "string" && node.key) {
+      componentKeys.push(node.key);
+    }
   });
   const hiddenNames = (template.system?.hidden ?? []).map((entry) => entry.name).filter(Boolean);
   const duplicates = [...componentKeys, ...hiddenNames].filter((key, index, all) => all.indexOf(key) !== index);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
-import { buildWaterBreathingPlan, parseWaterBreathingState, tickWaterBreathing } from "../scripts/breath-service.mjs";
+import { buildWaterBreathingPlan, getBreathLevel, parseWaterBreathingState, tickWaterBreathing } from "../scripts/breath-service.mjs";
 import { WATER_BREATHING_FORMS, WATER_BREATH_TEMPLATE_ID } from "../scripts/water-breathing-data.mjs";
 
 const props = {
@@ -15,6 +15,17 @@ describe("Respiração da Água", () => {
     assert.equal(WATER_BREATH_TEMPLATE_ID.length, 16);
     assert.deepEqual(WATER_BREATHING_FORMS.map((form) => form.order), [1,2,3,4,5,6,7,8,9,10,11]);
     assert.ok(WATER_BREATHING_FORMS.every((form) => form.documentId.length === 16));
+  });
+
+  it("getBreathLevel é fail-closed (1–4) e ignora nível de personagem vazando", () => {
+    assert.equal(getBreathLevel({ nvl_respiracao_num: 3 }), 3);
+    assert.equal(getBreathLevel({ nvl_respiracao_num: "2" }), 2);
+    assert.equal(getBreathLevel({ nvl_respiracao_num: 14 }), 1, "nível de personagem (14) não pode vazar");
+    assert.equal(getBreathLevel({ nvl_pj: "nvl_14" }), 1, "nvl_pj não é fonte de nível de respiração");
+    assert.equal(getBreathLevel({ respiracao_nivel: 4 }), 4, "fallback de respiração_nivel aceito");
+    assert.equal(getBreathLevel({ respiracao_nivel: 7 }), 1, "fallback acima de 4 é rejeitado");
+    assert.equal(getBreathLevel({}), 1, "sem props cai para 1");
+    assert.equal(getBreathLevel({ nvl_respiracao_num: 0 }), 1);
   });
 
   it("1ª Forma persiste o dano para o próximo ataque", () => {

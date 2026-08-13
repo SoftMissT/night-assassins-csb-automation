@@ -125,4 +125,37 @@ describe("damage-service", () => {
     await rollDamage({ actor: attacker });
     assert.equal(JSON.parse(attacker.system.props.acoes_slayer_dados).turn.ataque, 1);
   });
+
+  it("rola múltiplas parcelas, usa messageMode v14 e avisa o dano aplicado", async () => {
+    game.user.isGM = true;
+    game.settings = { get: (namespace, key) => namespace === "core" && key === "messageMode" ? "gm" : undefined };
+    _dialogReturn = [
+      {
+        nome: "Golpe dividido",
+        pdrGasto: 0,
+        entradas: [
+          { dado: "1d6", fixo: 0, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" },
+          { dado: "1d4", fixo: 0, selAttrs: [], selTiposDano: ["ferida"], tipoAcao: "" },
+        ],
+      },
+      { approved: true, normalDamage: 8, woundDamage: 8, appliedDamage: 16, resisted: false, damageTypes: ["cortante", "ferida"] },
+    ];
+    const attacker = makeActor({ id: "atk", uuid: "Actor.atk", props: { nome_slayer: "Slayer", pdv_slayer_total_valor: 20 } });
+    const target = makeActor({ id: "oni", uuid: "Actor.oni", props: { pdv_oni_dano_tomado: 0, pdv_oni_dano_ferida: 0 } });
+    target.update = async () => {};
+    game.user.targets = new Set([{ actor: target }]);
+    const notices = [];
+    ui.notifications.info = (message) => notices.push(message);
+    let chatData;
+    ChatMessage.create = async (data) => { chatData = data; return data; };
+    _rollResult = { total: 8, toMessage: async () => {} };
+
+    await rollDamage({ actor: attacker });
+
+    assert.equal(chatData.rolls.length, 2);
+    assert.equal(chatData.messageMode, "gm");
+    assert.match(chatData.flavor, /Cortante/);
+    assert.match(chatData.flavor, /Ferida/);
+    assert.match(notices[0], /recebeu 16 de dano \(8 de Ferida\)/);
+  });
 });

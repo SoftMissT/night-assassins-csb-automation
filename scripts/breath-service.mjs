@@ -103,10 +103,24 @@ function slayerPdrInfo(props = {}) {
   return { pdrMax, pdrCurrent };
 }
 
-function getBreathLevel(props = {}) {
-  const raw = props.nvl_respiracao_num ?? props.nvl_respiracao ?? props.respiracao_nivel ?? props.nivel_respiracao;
-  const val = parseNumber(raw);
-  return val > 0 ? val : 1;
+export function getBreathLevel(props = {}) {
+  const candidates = [
+    ["nvl_respiracao_num", props.nvl_respiracao_num],
+    ["respiracao_nivel", props.respiracao_nivel],
+    ["nivel_respiracao", props.nivel_respiracao],
+    ["nvl_respiracao", props.nvl_respiracao],
+  ];
+
+  for (const [key, raw] of candidates) {
+    if (raw === undefined || raw === null || raw === "") continue;
+    const val = Math.trunc(parseNumber(raw));
+    // Nível de Respiração válido é 1–4. Qualquer valor acima disso
+    // provavelmente é nível de personagem vazando para a key errada.
+    if (val >= 1 && val <= 4) return val;
+    console.warn(`[NA Breath] Ignorando ${key}=${raw}; nível de respiração deve estar entre 1 e 4.`);
+  }
+
+  return 1;
 }
 
 async function resolveActorFromItem(item, fallbackUuid) {
@@ -271,7 +285,14 @@ export function tickWaterBreathing(props = {}) {
 }
 
 async function openBreathDialog({ form, pdrCurrent, breathLevel }) {
-  const html = buildDialogHtml(form, pdrCurrent, breathLevel);
+  const allowedLevels = form.levels.filter((level) => level.level <= breathLevel);
+  if (allowedLevels.length === 0) {
+    ui.notifications?.warn?.(
+      `Nenhum nível disponível para ${form.nome}. Respiração atual: ${breathLevel}; requisito: ${form.nivelReq}.`
+    );
+    return null;
+  }
+  const html = buildDialogHtml({ ...form, levels: allowedLevels }, pdrCurrent, breathLevel);
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: `Respiração da ${form.respiracao} ${form.nome}` },
     content: html,

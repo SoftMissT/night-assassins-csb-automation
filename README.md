@@ -7,9 +7,9 @@
 | Ficha | Versão | Estado |
 | --- | ---: | --- |
 | **Caçador humano** | **2.0** | Versão principal em uso |
-| **Oni** | **Alpha 0.01** | Desenvolvimento inicial; mecânicas, keys e automações ainda podem mudar |
+| **Oni** | **Alpha 0.1** | Fundação 0–20 utilizável; mecânicas avançadas ainda podem mudar |
 
-> A ficha de Oni ainda não deve ser considerada estável ou completa.
+> A ficha de Oni ainda não deve ser considerada estável ou completa. A progressão de PDV/PDK, as barras e o recebimento de dano já usam o contrato canônico do módulo.
 
 ## Conteúdo do módulo
 

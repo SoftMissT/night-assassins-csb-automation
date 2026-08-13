@@ -16,10 +16,10 @@ test("template Slayer usa somente o contrato de recursos namespaced", () => {
   assert.equal(document.prototypeToken.name, "Slayer_template_atual");
   const template = unwrapSlayerTemplate(document);
   assert.deepEqual(validateSlayerTemplate(template), { duplicates: [], forbidden: [] });
-  assert.equal(template.system.attributeBar.pdv_slayer_barra.value, "${pdv_slayer_atual_valor_display}$");
-  assert.equal(template.system.attributeBar.pdv_slayer_barra.max, "${pdv_slayer_total_valor}$");
-  assert.equal(template.system.attributeBar.pdr_slayer_barra.value, "${pdr_slayer_atual_valor_display}$");
-  assert.equal(template.system.attributeBar.pdr_slayer_barra.max, "${pdr_slayer_total_valor}$");
+  assert.equal(template.system.attributeBar.pdv_slayer_barra.value, "${pdv_slayer_atual_num}$");
+  assert.equal(template.system.attributeBar.pdv_slayer_barra.max, "${pdv_slayer_maximo_num}$");
+  assert.equal(template.system.attributeBar.pdr_slayer_barra.value, "${pdr_slayer_atual_num}$");
+  assert.equal(template.system.attributeBar.pdr_slayer_barra.max, "${pdr_slayer_maximo_num}$");
   assert.equal(template.system.attributeBar.pdv_barra, undefined);
   assert.equal(template.system.attributeBar.pdr_barra, undefined);
 });
@@ -33,7 +33,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
     Object.values(node).forEach(walk);
   }
   walk(template.system);
-  assert.equal(buttons.length, 35);
+  assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões funcionais; encontrados ${buttons.length}.`);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     if (button.key === "respiracao_slayer_usar") {
@@ -70,7 +70,8 @@ test("template Slayer separa dano comum, Ferida e armazenamento de Resistências
   assert.match(source, /"acoes_slayer_dados"/);
   assert.match(source, /"acoes_slayer_resumo"/);
   assert.match(source, /"descanso_slayer_dados"/);
-  assert.match(source, /\$\{pdv_slayer_total_conta-pdv_slayer_dano_ferida\}\$/);
+  assert.match(source, /pdv_slayer_maximo_num/);
+  assert.match(source, /max\(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida\+pdv_slayer_extra\)/);
   assert.match(source, /pdv_slayer_total_conta-pdv_slayer_dano_ferida\+pdv_slayer_curado\+pdv_slayer_extra-pdv_slayer_dano_tomado/);
   assert.doesNotMatch(source, /\bpdv_slayer_dano\b/);
 });

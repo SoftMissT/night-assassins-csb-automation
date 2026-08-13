@@ -224,8 +224,21 @@ export async function rollDamage(options = {}) {
     }),
   ]);
 
+  const appliedTargets = [];
   for (const [index, result] of results.entries()) {
-    if (result.status === "fulfilled") continue;
+    if (result.status === "fulfilled") {
+      if (index >= pending.length) {
+        const targetActor = damageRequests[index - pending.length]?.actor;
+        const applied = result.value;
+        if (targetActor && applied?.ok !== false) {
+          const amount = Math.max(0, Math.trunc(Number(applied?.appliedDamage) || 0));
+          const wound = Math.max(0, Math.trunc(Number(applied?.woundDamage) || 0));
+          appliedTargets.push({ name: targetActor.name, amount, wound });
+          ui.notifications?.info?.(`${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ""}.`);
+        }
+      }
+      continue;
+    }
     const targetName = index < pending.length
       ? pending[index].actor.name
       : damageRequests[index - pending.length]?.actor?.name ?? "alvo";
@@ -238,9 +251,11 @@ export async function rollDamage(options = {}) {
     const labels = component.types.map((key) => TIPOS_DANO.find((type) => type.key === key)?.label ?? key).join(" · ") || "Sem tipo";
     return `<div><strong>${component.label}</strong> — ${labels}: <strong>${component.subtotal}</strong></div>`;
   }).join("");
-  const targetLine = damageRequests.length ? `<div>Alvo(s): ${damageRequests.map((request) => request.actor.name).join(", ")}</div>` : "<div>Nenhum alvo — ficha não atualizada</div>";
+  const targetLine = appliedTargets.length
+    ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${target.amount}${target.wound ? `, Ferida ${target.wound}` : ""})`).join(", ")}</div>`
+    : damageRequests.length ? "<div>Alvo solicitado, mas a ficha não foi atualizada</div>" : "<div>Nenhum alvo — ficha não atualizada</div>";
   const flavor = `<div><strong>${nome}</strong>${critical ? " · CRÍTICO" : ""}${pdrGasto ? ` · −${pdrGasto} PDR` : ""}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(" · ")}</div>` : ""}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
-  const mode = game.settings?.get?.("core", "rollMode") ?? "publicroll";
-  const chatData = { speaker: ChatMessage.getSpeaker({ actor }), flavor, rolls };
-  await ChatMessage.create(ChatMessage.applyMode ? ChatMessage.applyMode(chatData, { publicroll: "public", gmroll: "gm", blindroll: "blind", selfroll: "self" }[mode] ?? "public") : chatData);
+  const messageMode = game.settings?.get?.("core", "messageMode") ?? "public";
+  const chatData = { speaker: ChatMessage.getSpeaker({ actor }), flavor, rolls, messageMode };
+  await ChatMessage.create(chatData);
 }

@@ -17,6 +17,7 @@
         { "key": "arma_critico", "type": "numberField", "size": "medium", "label": "Crítico natural", "defaultValue": 20, "allowDecimal": false, "minVal": 1, "maxVal": 20, "allowRelative": false, "showControls": false, "inputStyle": "text" },
         { "key": "arma_alcance", "type": "textField", "size": "medium", "label": "Alcance", "defaultValue": "" },
         { "key": "arma_propriedades", "type": "textField", "size": "full-size", "label": "Propriedades", "defaultValue": "" },
+        { "key": "arma_imagem_vertical", "type": "textField", "size": "full-size", "label": "Arte vertical da arma (9:16)", "defaultValue": "", "tooltip": "Caminho da ilustração expandida. Ex.: modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp" },
         { "key": "arma_requisito", "type": "textField", "size": "full-size", "label": "Requisito", "defaultValue": "" }
       ]
     },

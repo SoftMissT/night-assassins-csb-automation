@@ -9,7 +9,7 @@ const outputDirectory = path.join(root, "build", "compendium", "armas-slayer");
 const catalog = JSON.parse(await readFile(catalogPath, "utf8"));
 if (catalog.format !== 1 || !Array.isArray(catalog.documents)) throw new Error("Catálogo mecânico de armas Slayer inválido.");
 
-const templatePath = path.join(root, "fvtt-Item-na-arma-slayer-NAWeaponTpl00001.json");
+const templatePath = path.join(root, "src", "templates", "items", "slayer-weapon-template.json");
 const weaponTemplate = JSON.parse(await readFile(templatePath, "utf8"));
 weaponTemplate._key = `!items!${weaponTemplate._id}`;
 

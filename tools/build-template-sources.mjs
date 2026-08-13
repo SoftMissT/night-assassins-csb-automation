@@ -5,12 +5,12 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const templates = [
   {
-    file: "fvtt-Actor-slayer_template_atual-xif9qdBXTkeL1BXW.json",
+    file: "src/templates/actors/slayer-template.json",
     id: "NASlayerTpl00001",
     output: "slayer",
   },
   {
-    file: "fvtt-Actor-oni_template-PQR15WSdSqBcN15w.json",
+    file: "src/templates/actors/oni-template.json",
     id: "NAOniTemplate001",
     output: "onis",
   },

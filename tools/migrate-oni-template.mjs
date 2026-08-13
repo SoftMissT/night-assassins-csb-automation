@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const defaultSource = path.join(root, "oni.json");
-const defaultTarget = path.join(root, "fvtt-Actor-oni_template-PQR15WSdSqBcN15w.json");
+const defaultTarget = path.join(root, "src", "templates", "actors", "oni-template.json");
 
 const PDV_DICE_LEVELS = Object.freeze({
   2: "1d4", 3: "1d4", 4: "1d6", 5: "1d6", 6: "1d6",

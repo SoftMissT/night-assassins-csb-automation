@@ -3,9 +3,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const defaultTemplate = path.join(repoRoot, "fvtt-Actor-slayer_template_atual-xif9qdBXTkeL1BXW.json");
-const csbPackagePath = path.join(repoRoot, "csb-import-slayer-template.json");
-const oniShellPath = path.join(repoRoot, "fvtt-Actor-oni_template-PQR15WSdSqBcN15w.json");
+const defaultTemplate = path.join(repoRoot, "src", "templates", "actors", "slayer-template.json");
+const csbPackagePath = path.join(repoRoot, "src", "imports", "csb-import-slayer-template.json");
+const oniShellPath = path.join(repoRoot, "src", "templates", "actors", "oni-template.json");
 
 const directRenames = new Map([
   ["nome_cacador", "nome_slayer"],

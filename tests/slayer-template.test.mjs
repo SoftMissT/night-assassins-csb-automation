@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 import { unwrapSlayerTemplate, validateSlayerTemplate } from "../tools/migrate-slayer-template.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const templatePath = path.join(repoRoot, "fvtt-Actor-slayer_template_atual-xif9qdBXTkeL1BXW.json");
-const csbPackagePath = path.join(repoRoot, "csb-import-slayer-template.json");
+const templatePath = path.join(repoRoot, "src", "templates", "actors", "slayer-template.json");
+const csbPackagePath = path.join(repoRoot, "src", "imports", "csb-import-slayer-template.json");
 
 test("template Slayer usa somente o contrato de recursos namespaced", () => {
   const document = JSON.parse(fs.readFileSync(templatePath, "utf8"));

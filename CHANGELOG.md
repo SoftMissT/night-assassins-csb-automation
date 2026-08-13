@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.5] - 2026-08-13
+
+- Move as cinco fontes JSON de template/importação da raiz para `src/imports/` e `src/templates/`.
+- Renomeia os exports do Foundry para nomes estáveis e legíveis, preservando os IDs internos dos documentos.
+- Atualiza builders, migrações e testes para os novos caminhos.
+- Adiciona `arma_imagem_vertical` ao Item de arma e cria `assets/weapons/vertical/` para artes 9:16.
+- Mantém `src/` fora do `module.zip` e inclui `assets/weapons/` no pacote distribuído.
+
+### Validação
+
+- Builders: 2 templates de Actor, 43 armas e 300 Formas de Respiração preparados.
+- `node --test`: 180 testes aprovados, 0 falhas.
+
 ## [0.7.4] - 2026-08-13
 
 - Substitui o template de Respiração reutilizado indevidamente por um `_equippableItemTemplate` exclusivo de armas Slayer.

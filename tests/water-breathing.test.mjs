@@ -114,7 +114,7 @@ describe("Respiração da Água", () => {
   });
 
   it("gera um template e onze Items para o Compêndio", async () => {
-    const exported = JSON.parse(await readFile(new URL("../csb-respiracao-forma-export.json", import.meta.url), "utf8"));
+    const exported = JSON.parse(await readFile(new URL("../src/templates/items/breathing-form-template.json", import.meta.url), "utf8"));
     const documents = exported.items;
     assert.equal(documents.length, 12);
     assert.equal(documents.filter((document) => document.type === "_equippableItemTemplate").length, 1);

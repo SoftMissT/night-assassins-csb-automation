@@ -104,6 +104,7 @@ jobs:
             lang \
             packs \
             assets/icons \
+            assets/weapons \
             README.md \
             CHANGELOG.md
 

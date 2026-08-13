@@ -39,8 +39,8 @@ describe("module distribution", () => {
 
   it("prepara um template válido para cada Compêndio de Actor", async () => {
     const files = [
-      ["../fvtt-Actor-slayer_template_atual-xif9qdBXTkeL1BXW.json", "_template"],
-      ["../fvtt-Actor-oni_template-PQR15WSdSqBcN15w.json", "_template"],
+      ["../src/templates/actors/slayer-template.json", "_template"],
+      ["../src/templates/actors/oni-template.json", "_template"],
     ];
     for (const [file, type] of files) {
       const actor = JSON.parse(await readFile(new URL(file, import.meta.url), "utf8"));

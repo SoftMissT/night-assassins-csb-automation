@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const macro = fs.readFileSync(new URL("../macros/na-marca-cacador.js", import.meta.url), "utf8");
-const template = JSON.parse(fs.readFileSync(new URL("../fvtt-Actor-slayer_template_atual-xif9qdBXTkeL1BXW.json", import.meta.url), "utf8"));
+const template = JSON.parse(fs.readFileSync(new URL("../src/templates/actors/slayer-template.json", import.meta.url), "utf8"));
 const templateSource = JSON.stringify(template);
 const attributes = ["vit", "dex", "for", "car", "fdv", "int", "sab"];
 

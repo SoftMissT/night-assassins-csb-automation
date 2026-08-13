@@ -85,6 +85,7 @@ jobs:
       - name: Build module.zip
         shell: bash
         run: |
+          rm -f module.zip
           zip -r module.zip \
             module.json \
             scripts \

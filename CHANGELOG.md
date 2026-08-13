@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-08-13
+
+- Recria `module.zip` do zero em cada release para impedir resíduos de pacotes antigos.
+- Substitui a distribuição inválida `v0.6.1`, cujo ZIP remoto não continha `module.json` nem todos os scripts atuais.
+
+### Validação
+
+- O pacote só é publicado se `module.json` for a primeira entrada do ZIP.
+
 ## [0.6.1] - 2026-08-13
 
 - Corrige VIT e FOR da ficha ONI removendo dependências de bônus exclusivos do Slayer das sete fórmulas finais.

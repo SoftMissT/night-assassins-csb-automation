@@ -6,7 +6,7 @@ import { MODULE_ID, ATTRIBUTES } from "./constants.mjs";
 import { handleActorUpdate } from "./trigger-router.mjs";
 import { rollTest } from "./roll-service.mjs";
 import { rollHit } from "./hit-service.mjs";
-import { rollDamage } from "./damage-service.mjs";
+import { rollDamage, rollWeaponItem } from "./damage-service.mjs";
 import { createLevelOneValues, processLevelGain } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
 import { applyOniDamage, registerDamageRelay } from "./damage-relay.mjs";
@@ -58,6 +58,7 @@ Hooks.once("ready", () => {
       rollTest,
       rollHit,
       rollDamage,
+      rollWeaponItem,
       applyOniDamage,
       openGmDashboard,
       openResistanceManager,

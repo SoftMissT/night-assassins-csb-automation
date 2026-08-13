@@ -16,7 +16,7 @@ Roll.create = (formula) => ({
   dice: [{ results: [{ result: 1, active: true }] }],
 });
 
-import { rollDamage } from "../scripts/damage-service.mjs";
+import { rollDamage, rollWeaponItem } from "../scripts/damage-service.mjs";
 
 describe("damage-service", () => {
   it("cancela quando dialog retorna null", async () => {
@@ -179,5 +179,47 @@ describe("damage-service", () => {
     });
     assert.equal(chatData.rolls.length, 1);
     assert.match(chatData.flavor, /Perfurante/);
+  });
+
+  it("rola o Item de arma com dado do Rank e atributo final do portador", async () => {
+    game.user.targets = new Set();
+    const actor = makeActor({ props: { nvl_num: 6, for_display: 7, dex_display: 3, nome_slayer: "Slayer", pdv_slayer_total_valor: 20 } });
+    actor.documentName = "Actor";
+    const item = {
+      name: "Rebellion",
+      parent: actor,
+      system: { props: {
+        arma_nome: "Rebellion",
+        arma_perfis_ataque: [{ nome: "Espadão", dano_fixo: 7, dano_dados: "", atributos: [{ key: "FOR", multiplicador: 1 }], tipos_dano: ["cortante"] }],
+        arma_formulas_por_rank: { B: ["7 + FOR + 1d10 / Cortante"] },
+      } },
+    };
+    _dialogReturn = { nome: "Rebellion", pdrGasto: 0, entradas: [{ dado: "1d10", fixo: 14, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }] };
+    const formulas = [];
+    Roll.create = (formula) => {
+      formulas.push(formula);
+      return { evaluate: async () => ({ total: 19, dice: [] }) };
+    };
+    await rollWeaponItem({ item });
+    assert.deepEqual(formulas, ["1d10 + 14"]);
+  });
+
+  it("soma FDV ao maior valor entre metade de FOR ou DEX", async () => {
+    game.user.targets = new Set();
+    const actor = makeActor({ props: { nvl_num: 2, for_display: 7, dex_display: 4, fdv_display: 3, nome_slayer: "Slayer", pdv_slayer_total_valor: 20 } });
+    actor.documentName = "Actor";
+    const item = { name: "Gáe Bolg", parent: actor, system: { props: {
+      arma_nome: "Gáe Bolg",
+      arma_perfis_ataque: [{ formula_texto: "5 + metade de FOR ou DEX + FDV / Perfurante", dano_fixo: 5, atributos: [{ key: "FOR", multiplicador: 0.5 }, { key: "DEX", multiplicador: 0.5 }, { key: "FDV", multiplicador: 1 }], tipos_dano: ["perfurante"] }],
+      arma_formulas_por_rank: { D: ["5 + metade de FOR ou DEX + FDV + 1d6 / Perfurante"] },
+    } } };
+    _dialogReturn = { nome: "Gáe Bolg", pdrGasto: 0, entradas: [{ dado: "1d6", fixo: 11, selAttrs: [], selTiposDano: ["perfurante"], tipoAcao: "ataque" }] };
+    const formulas = [];
+    Roll.create = (formula) => {
+      formulas.push(formula);
+      return { evaluate: async () => ({ total: 17, dice: [] }) };
+    };
+    await rollWeaponItem({ item });
+    assert.deepEqual(formulas, ["1d6 + 11"]);
   });
 });

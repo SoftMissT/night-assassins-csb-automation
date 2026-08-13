@@ -10,6 +10,7 @@ import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs"
 import { consumeSlayerActions } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { isSlayerActor } from "./actor-kind.mjs";
+import { weaponProfilesForActor } from "./weapon-service.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -59,19 +60,20 @@ async function resolveActor(options) {
 
 function weaponProfileEntry(profile, attrValues) {
   const attributeRules = Array.isArray(profile?.atributos) ? profile.atributos : [];
-  const selected = attributeRules.some((rule) => rule?.escolha) && attributeRules.length > 1
-    ? attributeRules.reduce((best, rule) => {
+  const choiceRules = attributeRules.filter((rule) => rule?.escolha === true);
+  const additiveRules = attributeRules.filter((rule) => rule?.escolha !== true);
+  const selected = choiceRules.length > 0
+    ? choiceRules.reduce((best, rule) => {
         const key = String(rule?.key ?? "").toLowerCase();
         const value = Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
         return value > best.value ? { key, value } : best;
       }, { key: "", value: 0 })
     : null;
-  const attributeTotal = selected
-    ? selected.value
-    : attributeRules.reduce((total, rule) => {
+  const additiveTotal = additiveRules.reduce((total, rule) => {
         const key = String(rule?.key ?? "").toLowerCase();
         return total + Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
       }, 0);
+  const attributeTotal = (selected?.value ?? 0) + additiveTotal;
   return {
     tipoAcao: "ataque",
     dado: String(profile?.dano_dados ?? ""),
@@ -304,4 +306,31 @@ export async function rollDamage(options = {}) {
   const messageMode = game.settings?.get?.("core", "messageMode") ?? "public";
   const chatData = { speaker: ChatMessage.getSpeaker({ actor }), flavor, rolls, messageMode };
   await ChatMessage.create(chatData);
+}
+
+/**
+ * Rola uma arma embutida usando o Rank e os atributos finais do Actor portador.
+ * @param {object} options
+ * @param {string} [options.itemUuid]
+ * @param {string} [options.actorUuid]
+ * @returns {Promise<void>}
+ */
+export async function rollWeaponItem(options = {}) {
+  const item = options.item ?? (options.itemUuid ? await fromUuid(options.itemUuid) : null);
+  if (!item) return ui.notifications?.warn?.("Item de arma não encontrado.");
+  const actor = item.parent?.documentName === "Actor"
+    ? item.parent
+    : await resolveActor(options);
+  if (!actor) return ui.notifications?.warn?.("A arma precisa estar vinculada a um Caçador para calcular o dano.");
+
+  const itemProps = item.system?.props ?? {};
+  const profiles = weaponProfilesForActor(itemProps, actor.system?.props ?? {});
+  if (profiles.length === 0) return ui.notifications?.warn?.("Esta arma não possui perfil de ataque configurado.");
+
+  return rollDamage({
+    actor,
+    nome: itemProps.arma_nome || item.name,
+    weaponProfiles: profiles,
+    tipoAcao: "ataque",
+  });
 }

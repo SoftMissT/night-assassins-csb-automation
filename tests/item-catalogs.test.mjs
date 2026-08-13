@@ -49,6 +49,8 @@ describe("catálogo de armas Slayer", () => {
     const weapons = documents.filter((document) => document.type === "equippableItem");
     assert.equal(weapons.length, 43);
     assert.ok(weapons.every((item) => item.system?.props?.inventario_categoria === "arma"));
+    assert.ok(weapons.every((item) => item.system?.template === "NAWeaponTpl00001"));
+    assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_perfis_ataque) && item.system.props.arma_perfis_ataque.length > 0));
     assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_tipos_dano)));
     const special = weapons.filter((item) => item.system.props.arma_categoria === "especial");
     assert.equal(special.length, 17);
@@ -56,5 +58,17 @@ describe("catálogo de armas Slayer", () => {
     assert.ok(special.every((item) => Array.isArray(item.system.props.arma_perfis_ataque)));
     assert.ok(special.every((item) => Object.keys(item.system.props.arma_dano_por_rank).length >= 6));
     assert.ok(special.every((item) => item.system.props.arma_regra_completa.length > 1000));
+    assert.ok(special.every((item) => ["D", "C", "B", "A", "S", "SS"].every((rank) => item.system.props.arma_formulas_por_rank[rank]?.length > 0)));
+    assert.ok(special.every((item) => item.system.props.arma_rank_ss_formula));
+  });
+
+  it("usa um template exclusivo de arma com rolagem pelo Item portado", async () => {
+    const documents = await sourceDocuments("../build/compendium/armas-slayer/");
+    const template = documents.find((document) => document.type === "_equippableItemTemplate");
+    const serialized = JSON.stringify(template.system);
+    assert.match(serialized, /rollWeaponItem/);
+    assert.match(serialized, /arma_perfis_resumo/);
+    assert.match(serialized, /arma_rank_ss_formula/);
+    assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
   });
 });

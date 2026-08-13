@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.4] - 2026-08-13
+
+- Substitui o template de Respiração reutilizado indevidamente por um `_equippableItemTemplate` exclusivo de armas Slayer.
+- Preenche no Item nome, tipo, crítico, alcance, propriedades, requisito, perfis, atributos, tipos de dano e fórmulas evolutivas D–SS.
+- Adiciona `rollWeaponItem`, que identifica o Actor portador e calcula o dano com `for_display`, `dex_display`, `fdv_display` e o Rank atual.
+- Corrige `FOR ou DEX` para usar o maior valor aplicável sem descartar atributos adicionais como FDV.
+
+### Validação
+
+- `node --test`: 180 testes aprovados, 0 falhas.
+- Foundry CLI 3.0.4: template e 43 Items empacotados com sucesso.
+
 ## [0.7.3] - 2026-08-13
 
 - Aplica os onze ícones locais disponíveis às 87 Formas correspondentes no Compêndio de Respirações.

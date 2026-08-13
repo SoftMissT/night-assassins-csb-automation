@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
-import { buildWaterBreathingPlan, getBreathLevel, parseWaterBreathingState, tickWaterBreathing } from "../scripts/breath-service.mjs";
+import { buildGenericBreathingPlan, buildWaterBreathingPlan, getBreathLevel, parseWaterBreathingState, tickWaterBreathing } from "../scripts/breath-service.mjs";
 import { WATER_BREATHING_FORMS, WATER_BREATH_TEMPLATE_ID } from "../scripts/water-breathing-data.mjs";
 
 const props = {
@@ -134,5 +134,12 @@ const first = documents.find((document) => document.data?.props?.forma_id === "a
     const source = await readFile(new URL("../scripts/breath-service.mjs", import.meta.url), "utf8");
     assert.match(source, /core\", \"messageMode/);
     assert.doesNotMatch(source, /core\", \"rollMode/);
+  });
+
+  it("formas das demais Respirações usam o plano genérico sem entrar no motor da Água", () => {
+    const plan = buildGenericBreathingPlan({ tipo: "Ação de Ataque" }, { custo: 3, dano: "2d6 + @int" });
+    assert.equal(plan.ok, true);
+    assert.equal(plan.action, "ataque");
+    assert.equal(plan.cost, 3);
   });
 });

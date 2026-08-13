@@ -2,7 +2,7 @@
   "id": "night-assassins-csb-automation",
   "title": "Night Assassins — CSB Automation",
   "description": "Automação de atributos, progressão e Habilidades Especiais de Night Assassins para Custom System Builder.",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "socket": true,
   "authors": [
     {
@@ -57,6 +57,13 @@
       "system": "custom-system-builder"
     },
     {
+      "name": "night-assassins-armas-slayer",
+      "label": "Night Assassin's Armas dos Caçadores",
+      "path": "packs/night-assassins-armas-slayer",
+      "type": "Item",
+      "system": "custom-system-builder"
+    },
+    {
       "name": "night-assassins-arte",
       "label": "Night Assassin's Arte",
       "path": "packs/night-assassins-arte",
@@ -77,7 +84,7 @@
   },
   "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
   "manifest": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/latest/download/module.json",
-  "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.6.2/module.zip",
+  "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.7.0/module.zip",
   "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
   "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
   "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"

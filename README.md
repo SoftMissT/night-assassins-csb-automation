@@ -17,6 +17,10 @@
 - Automação de atributos e progressão da ficha do Custom System Builder.
 - Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
 - Configurações de mundo para ativar ou desativar a automação e o relay.
+- Compêndio **Night Assassin's Respirações** com 44 pastas e Items de Formas utilizáveis pela macro universal.
+- Compêndio **Night Assassin's Armas dos Caçadores** com 26 armas oficiais como Items CSB roláveis.
+
+As oito Respirações sem arquivo editorial individual no vault (Ameixeira, Estrelas, Macaco, Nevasca, Tartaruga, Tinta, Tormenta e Tubarão) já possuem pasta reservada, mas não recebem Formas inventadas. Quando suas fontes oficiais forem adicionadas, o build passa a gerar os Items automaticamente.
 
 Ao entrar no mundo como GM, o módulo cria ou atualiza automaticamente no Diretório de Macros a pasta **Night Assassins** com as nove macros canônicas. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
 

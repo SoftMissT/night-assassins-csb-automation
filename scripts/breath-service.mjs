@@ -35,8 +35,13 @@ const MANOBRA_MAP = {
   "unica": "unica",
   "u00fanica": "unica",
   "ataque": "ataque",
+  "acao de ataque": "ataque",
   "especial": "especial",
+  "acao especial": "especial",
   "completa": "completa",
+  "acao completa": "completa",
+  "livre": "livre",
+  "acao livre": "livre",
   "reaka": "reacao",
   "reakatilde;o": "reacao",
   "reação": "reacao",
@@ -264,6 +269,22 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
   return base;
 }
 
+export function buildGenericBreathingPlan(form, selected) {
+  if (!form || !selected) return { ok: false, reason: "Forma ou nível indisponível." };
+  return {
+    ok: true,
+    action: normalizeManobra(form.tipo),
+    cost: Math.max(0, parseNumber(selected.custo)),
+    patch: {},
+  };
+}
+
+function resolveGenericDamageFormula(formula, props = {}) {
+  return String(formula ?? "")
+    .replace(/@(vit|dex|for|car|fdv|int|sab)\b/giu, (_match, key) => String(parseNumber(props[`${String(key).toLowerCase()}_display`])))
+    .trim();
+}
+
 export function tickWaterBreathing(props = {}) {
   const state = parseWaterBreathingState(props.resp_agua_estado);
   const patch = {};
@@ -438,8 +459,11 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     return;
   }
 
-  const choices = await collectWaterChoices(actor, form, selected.level, props);
-  const plan = buildWaterBreathingPlan(form.id, selected.level, props, choices);
+  const isWaterForm = Boolean(waterFormById(form.id));
+  const choices = isWaterForm ? await collectWaterChoices(actor, form, selected.level, props) : {};
+  const plan = isWaterForm
+    ? buildWaterBreathingPlan(form.id, selected.level, props, choices)
+    : buildGenericBreathingPlan(form, selected);
   if (!plan.ok) {
     ui.notifications?.warn?.(plan.reason);
     return;
@@ -481,7 +505,10 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     await actor.update(patch, { naCsbAutomation: true, naBreathForm: true });
   }
 
-  await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });
+  const genericFormula = isWaterForm ? "" : resolveGenericDamageFormula(selected.dano, props);
+  const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
+  if (damageRoll && game.dice3d?.showForRoll) await game.dice3d.showForRoll(damageRoll, game.user, true);
+  await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
 }
 
 function primaryActiveGm() {

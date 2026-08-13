@@ -82,6 +82,17 @@ jobs:
             --compendiumName night-assassins-arte \
             --inputDirectory build/compendium/artes \
             --outputDirectory packs
+      - name: Build Slayer Weapon Compendium
+        shell: bash
+        run: |
+          node tools/build-weapon-sources.mjs
+          rm -rf packs/night-assassins-armas-slayer
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-armas-slayer \
+            --inputDirectory build/compendium/armas-slayer \
+            --outputDirectory packs
       - name: Build module.zip
         shell: bash
         run: |

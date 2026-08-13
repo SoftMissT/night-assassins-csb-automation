@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0] - 2026-08-13
+
+- O Compêndio de Respirações agora possui 44 pastas, 300 técnicas extraídas das 36 fontes oficiais disponíveis e preserva as 11 Formas mecânicas da Água.
+- Técnicas fora da Água podem consumir ação/PDR e rolar a fórmula catalogada pelo lançador universal.
+- Adicionado o Compêndio `Night Assassin's Armas dos Caçadores` com 26 armas oficiais como Items CSB roláveis.
+- Oito Respirações sem arquivo individual no vault são distribuídas como pastas vazias, sem inventar regras.
+
 ## [Unreleased]
 
 ## [0.6.2] - 2026-08-13

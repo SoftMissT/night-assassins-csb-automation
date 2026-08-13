@@ -16,6 +16,8 @@ tags:
 
 Substituir o catálogo especial da Água por um pipeline reproduzível de Items CSB. O Compêndio de Respirações deve conter uma pasta para cada Respiração oficial solicitada e Items para todas as técnicas com fonte editorial disponível. O Compêndio de Armas Slayer deve conter um template e um Item rolável para cada arma de `Armas.md`.
 
+Os arquivos editoriais permanecem na base de conhecimento `MACRO-NA-FOUNDRY`. O repositório do módulo versiona apenas os documentos mecânicos compilados em `catalogs/`, necessários para reconstruir os Compêndios no GitHub Actions.
+
 ## Respirações
 
 - Um único template `_equippableItemTemplate`: `NA Respiração - Forma`.
@@ -50,4 +52,3 @@ As Respirações Ameixeira, Estrelas, Macaco, Nevasca, Tartaruga, Tinta, Torment
 
 - [[water-breathing-items-v1|Respiração da Água como Items CSB]]
 - [[../../ROADMAP|Roadmap do módulo]]
-

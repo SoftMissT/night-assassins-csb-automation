@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.1] - 2026-08-13
+
+- Torna a geração dos Compêndios de Respirações e Armas reproduzível no GitHub Actions por meio de catálogos mecânicos compilados, sem distribuir os documentos editoriais da base de conhecimento.
+- Corrige o release que dependia incorretamente da pasta irmã local `MACRO-NA-FOUNDRY`.
+
 ## [0.7.0] - 2026-08-13
 
 - O Compêndio de Respirações agora possui 44 pastas, 300 técnicas extraídas das 36 fontes oficiais disponíveis e preserva as 11 Formas mecânicas da Água.

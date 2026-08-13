@@ -20,7 +20,9 @@
 - Compêndio **Night Assassin's Respirações** com 44 pastas e Items de Formas utilizáveis pela macro universal.
 - Compêndio **Night Assassin's Armas dos Caçadores** com 26 armas oficiais como Items CSB roláveis.
 
-As oito Respirações sem arquivo editorial individual no vault (Ameixeira, Estrelas, Macaco, Nevasca, Tartaruga, Tinta, Tormenta e Tubarão) já possuem pasta reservada, mas não recebem Formas inventadas. Quando suas fontes oficiais forem adicionadas, o build passa a gerar os Items automaticamente.
+Os geradores usam somente os catálogos mecânicos versionados em `catalogs/`. Os documentos editoriais permanecem exclusivamente na base de conhecimento `MACRO-NA-FOUNDRY` e não são distribuídos no módulo.
+
+As oito Respirações sem arquivo editorial individual no vault (Ameixeira, Estrelas, Macaco, Nevasca, Tartaruga, Tinta, Tormenta e Tubarão) já possuem pasta reservada, mas não recebem Formas inventadas. Quando suas fontes oficiais forem adicionadas, seus Items deverão ser compilados novamente para o catálogo mecânico.
 
 Ao entrar no mundo como GM, o módulo cria ou atualiza automaticamente no Diretório de Macros a pasta **Night Assassins** com as nove macros canônicas. A macro **Controle GM** permanece exclusiva do GM; as demais ficam disponíveis aos jogadores.
 

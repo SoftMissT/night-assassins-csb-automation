@@ -3109,6 +3109,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/boosted-gear.webp",
           "arma_nome": "Boosted Gear Manoplas do Imperador Dragão Vermelho",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -3223,12 +3224,13 @@
       "_key": "!items!badf1efb4c4a9241",
       "name": "Cérbero",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/cerberus_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/cerberus.webp",
           "arma_nome": "Cérbero",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -3381,6 +3383,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/correntes-kai.webp",
           "arma_nome": "Correntes de Jade Ceifadoras de Chi",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -3491,6 +3494,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/extase.webp",
           "arma_nome": "Êxtase Tesoura da Névoa Sagrada",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -3721,6 +3725,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/gilgamesh.webp",
           "arma_nome": "Gilgamesh Yoroi do Sol",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -3846,6 +3851,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/gunbai.webp",
           "arma_nome": "Gumbai Leque do Pilar Quebrado",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -3958,6 +3964,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/imperator's-edge.webp",
           "arma_nome": "Imperator's Edge Estandarte das Cem Legiões",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4068,6 +4075,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/ohagi-man.webp",
           "arma_nome": "Impurity Arms Punhos Gêmeos de Kegare",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4295,6 +4303,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/orochimaru.webp",
           "arma_nome": "Orochimaru Jakkojin",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4400,6 +4409,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/playful-cloud.webp",
           "arma_nome": "Playful Cloud Sansetsukon da Nuvem Irônica",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4504,12 +4514,13 @@
       "_key": "!items!69e0eda60a612b28",
       "name": "Rebellion",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rebelion_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp",
           "arma_nome": "Rebellion",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4606,12 +4617,13 @@
       "_key": "!items!1f1cb379aab19509",
       "name": "Red Queen Motor Carmesim",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/red_queen_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/red-queen.webp",
           "arma_nome": "Red Queen Motor Carmesim",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4727,6 +4739,7 @@
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/weal-and-woe.webp",
           "arma_nome": "Weal and Woe Lanças Gêmeas de Obsidiana Umbral",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",
@@ -4941,12 +4954,13 @@
       "_key": "!items!b83631cc0afd9785",
       "name": "Yamato The Rift-Walker's Legacy",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/yamato_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
           "inventario_categoria": "arma",
           "arma_categoria": "especial",
+          "arma_imagem_vertical": "modules/night-assassins-csb-automation/assets/weapons/vertical/yamato.webp",
           "arma_nome": "Yamato The Rift-Walker's Legacy",
           "arma_tipo": "Corpo a Corpo",
           "arma_dano_dados": "",

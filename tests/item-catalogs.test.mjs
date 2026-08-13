@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { BREATHING_CATALOG, BREATHING_FOLDER_NAMES } from "../tools/build-breathing-sources.mjs";
 import { BREATHING_ICONS } from "../scripts/breathing-icons.mjs";
@@ -70,5 +70,22 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /arma_perfis_resumo/);
     assert.match(serialized, /arma_rank_ss_formula/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
+  });
+
+  it("publica ícones de compêndio e artes verticais existentes", async () => {
+    const documents = await sourceDocuments("../build/compendium/armas-slayer/");
+    const weapons = documents.filter((document) => document.type === "equippableItem");
+    const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
+    const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
+    assert.equal(illustrated.length, 14);
+    assert.equal(customIcons.length, 4);
+    for (const item of illustrated) {
+      const relativePath = item.system.props.arma_imagem_vertical.replace("modules/night-assassins-csb-automation/", "../");
+      await access(new URL(relativePath, import.meta.url));
+    }
+    for (const item of customIcons) {
+      const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");
+      await access(new URL(relativePath, import.meta.url));
+    }
   });
 });

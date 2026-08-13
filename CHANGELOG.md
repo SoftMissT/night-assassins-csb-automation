@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.6] - 2026-08-13
+
+- Conecta 14 artes verticais WebP às respectivas armas especiais pelo campo `arma_imagem_vertical`.
+- Usa os ícones próprios de Cérbero, Rebellion, Red Queen e Yamato no diretório e no Compêndio de Items.
+- Mantém o ícone genérico apenas nas armas que ainda não possuem um ícone próprio.
+- Substitui as artes PNG anteriores pelas versões WebP organizadas em `assets/weapons/vertical/`.
+
+### Validação
+
+- Catálogo reconstruído com 43 Items de armas Slayer.
+- Caminhos locais validados para 14 artes verticais e quatro ícones.
+- `node --test`: 181 testes aprovados, 0 falhas.
+
 ## [0.7.5] - 2026-08-13
 
 - Move as cinco fontes JSON de template/importação da raiz para `src/imports/` e `src/templates/`.

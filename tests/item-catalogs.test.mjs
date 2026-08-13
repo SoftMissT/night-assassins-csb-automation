@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { BREATHING_CATALOG, BREATHING_FOLDER_NAMES } from "../tools/build-breathing-sources.mjs";
+import "../tools/build-weapon-sources.mjs";
 
 async function sourceDocuments(directory) {
   const files = (await readdir(new URL(directory, import.meta.url))).filter((file) => file.endsWith(".json"));

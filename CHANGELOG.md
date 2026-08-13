@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.2] - 2026-08-13
+
+- Corrige o teste do catálogo de armas para executar seu próprio builder em ambientes limpos, removendo a dependência acidental de resíduos locais em `build/`.
+
 ## [0.7.1] - 2026-08-13
 
 - Torna a geração dos Compêndios de Respirações e Armas reproduzível no GitHub Actions por meio de catálogos mecânicos compilados, sem distribuir os documentos editoriais da base de conhecimento.

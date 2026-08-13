@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.3] - 2026-08-13
+
+- Aplica os onze ícones locais disponíveis às 87 Formas correspondentes no Compêndio de Respirações.
+- Expande o Compêndio de armas de 26 básicas para 43 Items, incluindo as 17 armas especiais descritas na base de regras.
+- Preserva nas armas especiais entidade, demônio, despertar, dano por Rank, técnicas e texto mecânico integral.
+- Adiciona perfis de ataque selecionáveis e cálculo explícito de metade de atributo, corrigindo armas com distância, forma ou empunhadura variável.
+- Corrige o botão de arma da ficha Slayer para passar arrays sem aninhamento acidental.
+
+### Validação
+
+- `node --test`: 172 testes aprovados, 0 falhas.
+
 ## [0.7.2] - 2026-08-13
 
 - Corrige o teste do catálogo de armas para executar seu próprio builder em ambientes limpos, removendo a dependência acidental de resíduos locais em `build/`.

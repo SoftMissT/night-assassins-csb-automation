@@ -57,6 +57,46 @@ async function resolveActor(options) {
   return game?.user?.character ?? null;
 }
 
+function weaponProfileEntry(profile, attrValues) {
+  const attributeRules = Array.isArray(profile?.atributos) ? profile.atributos : [];
+  const selected = attributeRules.some((rule) => rule?.escolha) && attributeRules.length > 1
+    ? attributeRules.reduce((best, rule) => {
+        const key = String(rule?.key ?? "").toLowerCase();
+        const value = Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
+        return value > best.value ? { key, value } : best;
+      }, { key: "", value: 0 })
+    : null;
+  const attributeTotal = selected
+    ? selected.value
+    : attributeRules.reduce((total, rule) => {
+        const key = String(rule?.key ?? "").toLowerCase();
+        return total + Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
+      }, 0);
+  return {
+    tipoAcao: "ataque",
+    dado: String(profile?.dano_dados ?? ""),
+    fixo: Math.trunc(parseNumber(profile?.dano_fixo)) + attributeTotal,
+    attrs: [],
+    tiposDano: Array.isArray(profile?.tipos_dano) ? profile.tipos_dano : [],
+  };
+}
+
+async function chooseWeaponProfile(profiles) {
+  if (profiles.length === 1) return profiles[0];
+  const options = profiles.map((profile, index) => `<option value="${index}">${profile.nome || `Perfil ${index + 1}`}${profile.alcance ? ` — ${profile.alcance}` : ""}</option>`).join("");
+  const result = await foundry.applications.api.DialogV2.wait({
+    window: { title: "Escolher ataque da arma" },
+    content: `<label>Perfil de ataque</label><select name="weaponProfile">${options}</select>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      { action: "select", label: "Continuar", callback: (_event, button) => Number(button.form.elements.weaponProfile.value) },
+      { action: "cancel", label: "Cancelar", callback: () => null },
+    ],
+  });
+  return Number.isInteger(result) ? profiles[result] ?? null : null;
+}
+
 /**
  * API pública: rolagem de dano.
  * @param {object} options
@@ -87,6 +127,13 @@ export async function rollDamage(options = {}) {
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
     attrValues[key] = parseAttributeValue(props[`${key}_display`]);
+  }
+
+  const weaponProfiles = Array.isArray(options.weaponProfiles) ? options.weaponProfiles.filter((profile) => profile && typeof profile === "object") : [];
+  if (weaponProfiles.length > 0) {
+    const selectedProfile = await chooseWeaponProfile(weaponProfiles);
+    if (!selectedProfile) return;
+    options = { ...options, entradas: [weaponProfileEntry(selectedProfile, attrValues)] };
   }
 
   // Compatibilidade de entradas

@@ -18,7 +18,8 @@
 - Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
 - Configurações de mundo para ativar ou desativar a automação e o relay.
 - Compêndio **Night Assassin's Respirações** com 44 pastas e Items de Formas utilizáveis pela macro universal.
-- Compêndio **Night Assassin's Armas dos Caçadores** com 26 armas oficiais como Items CSB roláveis.
+- Compêndio **Night Assassin's Armas dos Caçadores** com 26 armas básicas e 17 armas especiais como Items CSB; ataques com distância, forma ou empunhadura própria oferecem perfis selecionáveis.
+- As Formas usam automaticamente os ícones locais disponíveis em `assets/icons/`; Respirações sem arte própria mantêm o fallback do Foundry.
 
 Os geradores usam somente os catálogos mecânicos versionados em `catalogs/`. Os documentos editoriais permanecem exclusivamente na base de conhecimento `MACRO-NA-FOUNDRY` e não são distribuídos no módulo.
 

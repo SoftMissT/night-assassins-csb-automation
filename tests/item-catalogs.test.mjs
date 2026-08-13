@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 import { BREATHING_CATALOG, BREATHING_FOLDER_NAMES } from "../tools/build-breathing-sources.mjs";
+import { BREATHING_ICONS } from "../scripts/breathing-icons.mjs";
 import "../tools/build-weapon-sources.mjs";
 
 async function sourceDocuments(directory) {
@@ -28,16 +29,32 @@ describe("catálogo de Respirações", () => {
     assert.equal(water.length, 11);
     assert.ok(water.every((item) => item.system.props.tipo_dano_base === "cortante"));
   });
+
+  it("usa os ícones locais disponíveis sem fabricar assets ausentes", async () => {
+    const documents = await sourceDocuments("../build/compendium/respiracoes/");
+    const items = documents.filter((document) => document.type === "equippableItem");
+    for (const [breathing, file] of Object.entries(BREATHING_ICONS)) {
+      const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
+      assert.ok(forms.length > 0, `a Respiração ${breathing} deve possuir Formas catalogadas`);
+      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/${file}`));
+    }
+  });
 });
 
 describe("catálogo de armas Slayer", () => {
-  it("cria uma pasta, um template e as 26 armas roláveis", async () => {
+  it("separa as 26 armas básicas e as 17 armas especiais", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
-    assert.equal(documents.filter((document) => String(document._key).startsWith("!folders!")).length, 1);
+    assert.equal(documents.filter((document) => String(document._key).startsWith("!folders!")).length, 2);
     assert.equal(documents.filter((document) => document.type === "_equippableItemTemplate").length, 1);
     const weapons = documents.filter((document) => document.type === "equippableItem");
-    assert.equal(weapons.length, 26);
+    assert.equal(weapons.length, 43);
     assert.ok(weapons.every((item) => item.system?.props?.inventario_categoria === "arma"));
     assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_tipos_dano)));
+    const special = weapons.filter((item) => item.system.props.arma_categoria === "especial");
+    assert.equal(special.length, 17);
+    assert.ok(special.every((item) => item.system.props.arma_entidade && item.system.props.arma_demonio));
+    assert.ok(special.every((item) => Array.isArray(item.system.props.arma_perfis_ataque)));
+    assert.ok(special.every((item) => Object.keys(item.system.props.arma_dano_por_rank).length >= 6));
+    assert.ok(special.every((item) => item.system.props.arma_regra_completa.length > 1000));
   });
 });

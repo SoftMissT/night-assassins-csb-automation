@@ -158,4 +158,26 @@ describe("damage-service", () => {
     assert.match(chatData.flavor, /Ferida/);
     assert.match(notices[0], /recebeu 16 de dano \(8 de Ferida\)/);
   });
+
+  it("seleciona um perfil de arma e aplica metade do atributo para baixo", async () => {
+    game.user.targets = new Set();
+    _dialogReturn = [
+      1,
+      { nome: "Arco", pdrGasto: 0, entradas: [{ dado: "", fixo: 6, selAttrs: [], selTiposDano: ["perfurante"], tipoAcao: "ataque" }] },
+    ];
+    const actor = makeActor({ props: { dex_display: 5, nome_slayer: "Slayer", pdv_slayer_total_valor: 20 } });
+    let chatData;
+    ChatMessage.create = async (data) => { chatData = data; return data; };
+    _rollResult = { total: 6, toMessage: async () => {} };
+    await rollDamage({
+      actor,
+      nome: "Arco",
+      weaponProfiles: [
+        { nome: "até 5m", dano_fixo: 3, atributos: [{ key: "DEX", multiplicador: 0.5 }], tipos_dano: ["perfurante"] },
+        { nome: "até 10m", dano_fixo: 4, atributos: [{ key: "DEX", multiplicador: 0.5 }], tipos_dano: ["perfurante"] },
+      ],
+    });
+    assert.equal(chatData.rolls.length, 1);
+    assert.match(chatData.flavor, /Perfurante/);
+  });
 });

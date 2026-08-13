@@ -1,6 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { breathingIconPath } from "../scripts/breathing-icons.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogPath = path.join(root, "catalogs", "breathing.json");
@@ -26,6 +27,12 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
 
 const catalog = JSON.parse(await readFile(catalogPath, "utf8"));
 if (catalog.format !== 1 || !Array.isArray(catalog.documents)) throw new Error("Catálogo mecânico de Respirações inválido.");
+
+for (const document of catalog.documents) {
+  if (document.type !== "equippableItem") continue;
+  const icon = breathingIconPath(document.system?.props?.respiracao_nome);
+  if (icon) document.img = icon;
+}
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });

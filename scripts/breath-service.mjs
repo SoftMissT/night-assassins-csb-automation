@@ -374,12 +374,8 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
   if (damageRoll) {
     chatData.rolls = [damageRoll];
   }
-  const mode = game.settings?.get?.("core", "rollMode") ?? "publicroll";
-  await ChatMessage.create(
-    ChatMessage.applyMode
-      ? ChatMessage.applyMode(chatData, { publicroll: "public", gmroll: "gm", blindroll: "blind", selfroll: "self" }[mode] ?? "public")
-      : chatData
-  );
+  chatData.messageMode = game.settings?.get?.("core", "messageMode") ?? "public";
+  await ChatMessage.create(chatData);
 }
 
 /**

@@ -31,4 +31,14 @@ describe("oni-template", () => {
     ]) assert.match(serialized, new RegExp(key));
     assert.match(serialized, /"key":"nvl_20","value":"20"/);
   });
+
+  it("calcula os sete atributos sem depender de bônus exclusivos do Slayer", () => {
+    const migrated = migrateOniTemplate(source);
+    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
+      const formula = hidden.get(`${attr}_display`);
+      assert.equal(formula, `\${atr_${attr}_valor_config+bonus_atr_${attr}_valor_temp}$`);
+      assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
+    }
+  });
 });

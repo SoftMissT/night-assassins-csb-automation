@@ -10901,31 +10901,31 @@
       },
       {
         "name": "vit_display",
-        "value": "${atr_vit_valor_config+hab_tsuyoi_vit_bonus+bonus_atr_vit_valor_temp+vit_marca_temp+vit_resp_bonus_temp_oni}$"
+        "value": "${atr_vit_valor_config+bonus_atr_vit_valor_temp}$"
       },
       {
         "name": "dex_display",
-        "value": "${atr_dex_valor_config+bonus_atr_dex_valor_temp+dex_marca_temp+dex_resp_bonus_temp_oni}$"
+        "value": "${atr_dex_valor_config+bonus_atr_dex_valor_temp}$"
       },
       {
         "name": "for_display",
-        "value": "${atr_for_valor_config+hab_tsuyoi_for_bonus+bonus_atr_for_valor_temp+for_marca_temp+for_resp_bonus_temp_oni}$"
+        "value": "${atr_for_valor_config+bonus_atr_for_valor_temp}$"
       },
       {
         "name": "car_display",
-        "value": "${atr_car_valor_config+bonus_atr_car_valor_temp+car_marca_temp+car_resp_bonus_temp_oni}$"
+        "value": "${atr_car_valor_config+bonus_atr_car_valor_temp}$"
       },
       {
         "name": "fdv_display",
-        "value": "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp+fdv_marca_temp+fdv_resp_bonus_temp_oni}$"
+        "value": "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp}$"
       },
       {
         "name": "int_display",
-        "value": "${atr_int_valor_config+bonus_atr_int_valor_temp+int_marca_temp+int_resp_bonus_temp_oni}$"
+        "value": "${atr_int_valor_config+bonus_atr_int_valor_temp}$"
       },
       {
         "name": "sab_display",
-        "value": "${atr_sab_valor_config+bonus_atr_sab_valor_temp+sab_marca_temp+sab_resp_bonus_temp_oni}$"
+        "value": "${atr_sab_valor_config+bonus_atr_sab_valor_temp}$"
       },
       {
         "name": "pdk_oni_conta_atual",

@@ -9,6 +9,7 @@ import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
+import { isSlayerActor } from "./actor-kind.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -216,9 +217,7 @@ export async function rollDamage(options = {}) {
       await up.actor.update(up.changes, { naCsbAutomation: true });
     }),
     ...damageRequests.map(({ actor: targetActor, amount }) => {
-      const targetProps = targetActor.system?.props ?? {};
-      const isSlayerTarget = targetProps.pdv_slayer_total_valor !== undefined || targetProps.nome_slayer !== undefined;
-      return isSlayerTarget
+      return isSlayerActor(targetActor)
         ? applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components })
         : applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true });
     }),

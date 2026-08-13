@@ -129,4 +129,10 @@ const first = documents.find((document) => document.data?.props?.forma_id === "a
     assert.equal(eighth.data.props.tipo_dano_base, "cortante");
     assert.equal(eighth.data.props.nvl4_tipos_dano, "cortante");
   });
+
+  it("publica mensagens com messageMode do Foundry v14", async () => {
+    const source = await readFile(new URL("../scripts/breath-service.mjs", import.meta.url), "utf8");
+    assert.match(source, /core\", \"messageMode/);
+    assert.doesNotMatch(source, /core\", \"rollMode/);
+  });
 });

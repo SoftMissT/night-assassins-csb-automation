@@ -193,6 +193,19 @@ function configureOniProgression(template) {
   upsertHidden(template, "pdk_oni_atual_num", "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor))}$");
 }
 
+function configureOniAttributes(template) {
+  const formulas = {
+    vit_display: "${atr_vit_valor_config+bonus_atr_vit_valor_temp}$",
+    dex_display: "${atr_dex_valor_config+bonus_atr_dex_valor_temp}$",
+    for_display: "${atr_for_valor_config+bonus_atr_for_valor_temp}$",
+    car_display: "${atr_car_valor_config+bonus_atr_car_valor_temp}$",
+    fdv_display: "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp}$",
+    int_display: "${atr_int_valor_config+bonus_atr_int_valor_temp}$",
+    sab_display: "${atr_sab_valor_config+bonus_atr_sab_valor_temp}$",
+  };
+  for (const [name, formula] of Object.entries(formulas)) upsertHidden(template, name, formula);
+}
+
 function configureOniBarsAndLabels(template) {
   template.system.attributeBar = {
     pdv_oni_barra: { value: "${pdv_oni_atual_num}$", max: "${pdv_oni_maximo_num}$", editable: false },
@@ -239,6 +252,7 @@ export function migrateOniTemplate(source) {
 
   configureOniLevelAndRank(migrated);
   configureOniOrigins(migrated);
+  configureOniAttributes(migrated);
   configureOniProgression(migrated);
   configureOniBarsAndLabels(migrated);
   configureOniProgressionFields(migrated);

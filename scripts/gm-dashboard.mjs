@@ -1,4 +1,5 @@
 import { parseNumber } from "./parsing.mjs";
+import { actorKind } from "./actor-kind.mjs";
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -55,8 +56,7 @@ function fallbackCombatantData(combatant, actor) {
 
 export function hunterData(actor) {
   const props = actor.system?.props ?? {};
-  const hasSlayerData = Object.keys(props).some((key) => key.includes("_slayer_")) || props.nome_slayer !== undefined;
-  if (!hasSlayerData) return null;
+  if (actorKind(actor) !== "slayer") return null;
   const name = cleanText(props.nome_slayer) || cleanText(actor.name) || "Slayer sem nome";
   const pdvMax = firstDefined(props, ["pdv_slayer_total_conta", "pdv_slayer_total_valor"]);
   const pdvCurrent = firstDefined(props, ["pdv_slayer_conta_atual", "pdv_slayer_atual_valor_display"]);
@@ -75,8 +75,7 @@ export function hunterData(actor) {
 
 export function oniData(actor) {
   const props = actor.system?.props ?? {};
-  const hasOniData = Object.keys(props).some((key) => key.includes("oni"));
-  if (!hasOniData || props.nome_slayer) return null;
+  if (actorKind(actor) !== "oni") return null;
 
   const name = cleanText(props.nome_oni) || cleanText(actor.name) || "Oni sem nome";
   const pdvMax = Math.max(0, parseNumber(firstDefined(props, ["pdv_oni_total_conta", "pdv_oni_total_valor", "pdv_total_valor"])));
@@ -141,6 +140,7 @@ function renderDashboard(data) {
     <header class="na-gm-mini-hero">
       <div><small>VISÃO DO MESTRE</small><h2>Controle de Combate</h2></div>
       <div class="na-gm-mini-actions">
+        <button type="button" class="na-gm-minimize" title="Minimizar"><i class="fa-solid fa-window-minimize"></i></button>
         <button type="button" class="na-gm-refresh" title="Atualizar"><i class="fa-solid fa-rotate"></i></button>
         <button type="button" class="na-gm-close" title="Fechar"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -179,6 +179,7 @@ function bindDashboard(dialog, element) {
 
   root.querySelector(".na-gm-mini-search input")?.addEventListener("input", () => filterRows(root));
   root.querySelector(".na-gm-refresh")?.addEventListener("click", () => refreshDashboard(root));
+  root.querySelector(".na-gm-minimize")?.addEventListener("click", () => void dialog.minimize());
   root.querySelector(".na-gm-close")?.addEventListener("click", () => void dialog.close());
   bindRowActions(root);
 
@@ -227,7 +228,7 @@ export async function openGmDashboard() {
   const DialogV2 = foundry.applications.api.DialogV2;
   let dialog;
   dialog = new DialogV2({
-    window: { title: "Controle GM Night Assassins" },
+    window: { title: "Controle GM Night Assassins", minimizable: true },
     classes: ["na-gm-dashboard-window"],
     position: { width: Math.min(780, window.innerWidth - 40), height: Math.min(640, window.innerHeight - 60) },
     modal: false,

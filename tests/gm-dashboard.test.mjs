@@ -62,6 +62,18 @@ describe("gm-dashboard", () => {
     assert.equal(oniData({ name: "Tanjiro", system: { props: { nome_slayer: "Tanjiro", pdv_oni_dano_tomado: 0 } } }), null);
   });
 
+  it("prioriza identidade ONI mesmo quando o template copiado ainda contém keys Slayer", () => {
+    const actor = { name: "Kokushibo", system: { props: {
+      classe_oni_escolha: "classe_oni_lua_superior",
+      pdk_oni_total_valor: 80,
+      pdv_oni_total_valor: 300,
+      pdv_slayer_total_valor: 20,
+      pdr_slayer_total_valor: 10,
+    } } };
+    assert.equal(hunterData(actor), null);
+    assert.equal(oniData(actor).kind, "oni");
+  });
+
   it("identifica Slayer pelas keys namespaced mesmo sem nome_slayer", () => {
     const data = hunterData({ name: "Kwon Baem", system: { props: {
       pdv_slayer_total_conta: 14,
@@ -124,6 +136,7 @@ describe("gm-dashboard", () => {
       constructor(value) { config = value; }
       render() { this.rendered = true; }
       async close() { this.closed = true; }
+      async minimize() { this.minimized = true; }
     }
     foundry.applications = { api: { DialogV2: MockDialogV2 } };
 
@@ -138,6 +151,8 @@ describe("gm-dashboard", () => {
     assert.doesNotMatch(config.content, /<img\b/);
     assert.equal(config.position.width, 780);
     assert.equal(config.modal, false);
+    assert.equal(config.window.minimizable, true);
+    assert.match(config.content, /na-gm-minimize/);
     assert.deepEqual(config.buttons.map(({ action }) => action), ["close"]);
     await config.buttons[0].callback();
     assert.equal(dialog.closed, true);

@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-08-13
+
+- Corrige VIT e FOR da ficha ONI removendo dependências de bônus exclusivos do Slayer das sete fórmulas finais.
+- Introduz identificação canônica de Actor com precedência ONI, mesmo em fichas antigas que ainda carreguem keys Slayer herdadas.
+- Corrige o despacho de dano para atualizar `pdv_oni_dano_tomado` e `pdv_oni_dano_ferida` no alvo correto.
+- Faz o Controle GM classificar corretamente todos os combatentes e habilita minimizar/restaurar sem fechar o painel.
+- Moderniza as mensagens das Formas de Respiração para `core.messageMode` no Foundry v14.
+
+### Validação
+
+- `node --test`: 166 testes aprovados, 0 falhas.
+- Templates Slayer/ONI e os 12 documentos da Respiração da Água regenerados.
+
 ## [0.6.0] - 2026-08-12
 
 - Reestrutura a fundação da ficha ONI com níveis 0–20, ranks, origens ONI e progressão cumulativa de PDV/PDK.

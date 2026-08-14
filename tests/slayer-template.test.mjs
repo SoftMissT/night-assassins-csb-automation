@@ -36,12 +36,8 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões funcionais; encontrados ${buttons.length}.`);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
-    if (button.key === "respiracao_slayer_usar") {
-      assert.match(button.rollMessage, /linkedEntity\.uuid/);
-      assert.match(button.rollMessage, /Macro\.NARespFormUse001/);
-    } else {
-      assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
-    }
+    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
+    assert.match(String(button.value), /custom-orbitron-wrapper/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
   const source = buttons.map((button) => button.rollMessage).join("\n");
@@ -55,6 +51,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.match(source, /Macro\.NAStatusManage01[^\n]+return '';/);
   assert.match(source, /Macro\.NAActionManage01[^\n]+return '';/);
   assert.match(source, /Macro\.NARestManage0001[^\n]+return '';/);
+  assert.match(source, /Macro\.NALifeDeath00001[^\n]+return '';/);
 });
 
 test("template Slayer separa dano comum, Ferida e armazenamento de Resistências", () => {
@@ -126,7 +123,7 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   assert.match(source, /"title":"Economia de Ações"/);
 });
 
-test("template Slayer possui estado completo de Respiração organizado", () => {
+test("template Slayer preserva armazenamento de Respiração sem expor automação incompleta", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const source = JSON.stringify(template.system.body);
   const hidden = new Map(template.system.hidden.map((entry) => [entry.name, entry.value]));
@@ -143,17 +140,14 @@ test("template Slayer possui estado completo de Respiração organizado", () => 
     assert.match(source, new RegExp(`"${attribute}_resp_bonus_temp_slayer"`));
     assert.match(hidden.get(`${attribute}_display`), new RegExp(`${attribute}_resp_bonus_temp_slayer`));
   }
-  assert.match(source, /"resp_slayer_panel"/);
   assert.match(source, /"resp_slayer_storage_panel"/);
-  assert.match(source, /RESPIRAÇÃO/);
   assert.match(source, /"key":"skills_slayer_respiracoes"/);
-  assert.match(source, /"key":"respiracao_slayer_usar"/);
-  assert.match(source, /linkedEntity\.uuid/);
-  assert.match(source, /Macro\.NARespFormUse001/);
+  assert.doesNotMatch(source, /"resp_slayer_panel"/);
+  assert.doesNotMatch(source, /"key":"respiracao_slayer_usar"/);
   assert.doesNotMatch(source, /useBreathForm/);
 });
 
-test("template Slayer possui as nove abas funcionais na ordem definida", () => {
+test("template Slayer separa Condições da aba de Combate", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -164,13 +158,19 @@ test("template Slayer possui as nove abas funcionais na ordem definida", () => {
   walk(template.system.body);
   assert.ok(tabbedPanel);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.key), [
-    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "skills_slayer_tab",
+    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "status_slayer_tab", "skills_slayer_tab",
     "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "configs_tab", "dados_tab",
   ]);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.name), [
-    "Perfil/Bio", "Perícias", "Combate", "Skills", "Inventário",
+    "Perfil/Bio", "Perícias", "Combate", "Condições", "Skills", "Inventário",
     "Interlúdios", "Notas/Diário", "Configurações", "Dados",
   ]);
+  const combat = tabbedPanel.contents.find((entry) => entry.key === "combat_slayer_tab");
+  const conditions = tabbedPanel.contents.find((entry) => entry.key === "status_slayer_tab");
+  assert.doesNotMatch(JSON.stringify(combat), /status_slayer_(gerenciar|display)|status_slayer_resistencias_display/);
+  assert.match(JSON.stringify(combat), /deslocamento_slayer_display/);
+  assert.match(JSON.stringify(conditions), /status_slayer_gerenciar/);
+  assert.match(JSON.stringify(conditions), /resistencia_slayer_gerenciar/);
 });
 
 test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB próprios", () => {
@@ -186,6 +186,9 @@ test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB
     "lamina_carmesim_slayer_estado", "hab_origem_slayer_resumo",
   ]) assert.match(source, new RegExp(`"${key}"`));
   for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario"]) {
+    assert.match(source, new RegExp(`"${key}"`));
+  }
+  for (const key of ["vida_morte_slayer_dados", "vida_morte_slayer_resumo", "vida_morte_slayer_marcas", "vida_morte_slayer_quedas", "vida_morte_slayer_gerenciar"]) {
     assert.match(source, new RegExp(`"${key}"`));
   }
   assert.match(source, /"type":"textArea"/);

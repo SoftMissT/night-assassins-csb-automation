@@ -21,6 +21,7 @@ import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcile
 import { consumeSlayerActions, openActionManager, parseActionState, recoverSlayerFolego, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
 import { registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
+import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, stabilizeSlayer } from "./life-death-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -35,6 +36,7 @@ Hooks.once("ready", () => {
   registerActionEngine();
   registerRestEngine();
   registerBreathingEngine();
+  registerLifeDeathEngine();
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);
@@ -83,6 +85,11 @@ Hooks.once("ready", () => {
       resolveRestTier,
       restEligibleStatuses,
       useBreathForm,
+      openLifeDeathManager,
+      parseLifeDeathState,
+      processDeathTest,
+      slayerCurrentPdv,
+      stabilizeSlayer,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

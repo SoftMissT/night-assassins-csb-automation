@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.1 — 2026-08-14
+
+- Implementa Vida e Morte Slayer: À Beira da Morte, Marcas, Queda Repetida, Teste de Morte, Determinação Final, cura em 0 PDV e estabilização por INT/SAB.
+- Bloqueia ataques, defesas, dano, Respiração, movimento e Reação enquanto o Slayer está À Beira da Morte ou morto.
+- Remove da ficha o botão incompleto de execução das Formas e o painel técnico de Respiração no Combate; permanece apenas o espaço de Items em Skills.
+- Separa Status e Resistências em uma aba própria de Condições.
+- Normaliza todos os Labels roláveis para o wrapper Orbitron.
+
 ## [0.8.0] - 2026-08-14
 
 - Implementa a Respiração das Chamas como motor mecânico próprio, preservando os nove Items do Compêndio.

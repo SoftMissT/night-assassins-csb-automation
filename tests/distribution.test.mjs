@@ -51,7 +51,7 @@ describe("module distribution", () => {
     }
   });
 
-  it("inclui as onze macros canônicas", async () => {
+  it("inclui as doze macros canônicas", async () => {
     const files = [
       "na-roll-mode.js",
       "na-acerto-roll.js",
@@ -64,6 +64,7 @@ describe("module distribution", () => {
       "na-gerenciar-acoes.js",
       "na-gerenciar-descanso.js",
       "na-resp-usar-forma.js",
+      "na-gerenciar-vida-morte.js",
     ];
 
     for (const file of files) {

@@ -222,6 +222,16 @@ function fixRollButtons(template) {
   });
 }
 
+function fixRollButtonTypography(template) {
+  walk(template.system, (node) => {
+    if (node.type !== "label" || !node.rollMessage) return;
+    if (String(node.value ?? "").includes("custom-orbitron-wrapper")) return;
+    const text = labelText(node.value);
+    if (!text) return;
+    node.value = orbitron(text, "#28D7FF", 16);
+  });
+}
+
 function removeDuplicateAttributeButton(template) {
   let foundSab = false;
   function prune(node) {
@@ -361,16 +371,8 @@ function breathingItemContainer() {
   container.hideEmpty = false;
   container.nameLabel = "Forma";
   container.templateFilter = ["NABreathTpl00001"];
-  container.tooltip = "Arraste as Formas do Compêndio Night Assassin's Respirações para o Caçador.";
-  const useButton = displayLabel(
-    "respiracao_slayer_usar",
-    orbitron("USAR", "#28D7FF", 11),
-    "Executa a mecânica desta Forma para o Caçador.",
-  );
-  useButton.style = "button";
-  useButton.icon = "fa-solid fa-droplet";
-  useButton.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.uuid,itemUuid:linkedEntity.uuid});}%";
-  container.rowLayout = [{ ...useButton, align: "center", colName: "Usar" }];
+  container.tooltip = "Espaço para organizar as Formas de Respiração do personagem.";
+  container.rowLayout = [];
   return container;
 }
 
@@ -406,10 +408,18 @@ function organizeSlayerTabs(template) {
   }
 
   let existingMarkPanel = null;
+  let resistanceButton = null;
+  let resistanceDisplay = null;
+  let statusButton = null;
+  let statusDisplay = null;
   walk(tabs, (node) => {
     if (!existingMarkPanel && (node.key === "skills_marca_slayer_panel" || node.title === "Marca do Caçador")) {
       existingMarkPanel = structuredClone(node);
     }
+    if (node.key === "resistencia_slayer_gerenciar") resistanceButton = structuredClone(node);
+    if (node.key === "status_slayer_resistencias_display") resistanceDisplay = structuredClone(node);
+    if (node.key === "status_slayer_gerenciar") statusButton = structuredClone(node);
+    if (node.key === "status_slayer_display") statusDisplay = structuredClone(node);
   });
 
   removeComponentsByKey(template.system, new Set([
@@ -418,14 +428,20 @@ function organizeSlayerTabs(template) {
     "skills_slayer_respiracoes", "respiracao_slayer_usar",
     "skills_slayer_hab_display", "skills_slayer_classe_display", "skills_slayer_origem_display",
     "mundo_transparente_slayer_estado", "estado_altruista_slayer_estado", "lamina_carmesim_slayer_estado",
+    "resistencia_slayer_gerenciar", "status_slayer_resistencias_display", "status_slayer_gerenciar", "status_slayer_display",
   ]));
 
   pericias.name = "Perícias";
   pericias.contents.push(panel("vida_morte_slayer_panel", "Vida e Morte", [
-    displayLabel("vida_morte_slayer_titulo", orbitron("TESTE DE VIDA E MORTE", "#C1000C"), "A mecânica será conectada ao serviço de Vida e Morte."),
-    textField("vida_morte_slayer_estado", "Estado atual", "Estável"),
-    numberField("vida_morte_slayer_sucessos", "Sucessos", 0, 0, 3),
-    numberField("vida_morte_slayer_falhas", "Falhas", 0, 0, 3),
+    displayLabel("vida_morte_slayer_titulo", orbitron("VIDA E MORTE", "#C1000C")),
+    displayLabel("vida_morte_slayer_estado_display", "${vida_morte_slayer_resumo}$"),
+    displayLabel("vida_morte_slayer_marcas_display", "Marcas de Morte: ${vida_morte_slayer_marcas}$/3"),
+    displayLabel("vida_morte_slayer_quedas_display", "Quedas neste combate: ${vida_morte_slayer_quedas}$"),
+    Object.assign(displayLabel("vida_morte_slayer_gerenciar", orbitron("GERENCIAR VIDA E MORTE", "#C1000C", 16)), {
+      style: "button",
+      icon: "fa-solid fa-heart-pulse",
+      rollMessage: "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NALifeDeath00001'))?.execute({actorUuid:entity.uuid}); return '';}%",
+    }),
   ], "grid-2"));
 
   const markIndex = combate.contents.findIndex((entry) => entry?.title === "Marca do Caçador" || JSON.stringify(entry).includes("marca_despertada_display"));
@@ -476,6 +492,18 @@ function organizeSlayerTabs(template) {
     itemContainer("inventario_slayer_itens", "Itens", "item"),
   ]);
 
+  const condicoes = tab("status_slayer_tab", "Condições", [
+    displayLabel("status_slayer_titulo", orbitron("STATUS E RESISTÊNCIAS", "#D45CA4", 18)),
+    panel("resistencias_slayer_panel", "Resistências", [
+      resistanceButton ?? displayLabel("resistencia_slayer_indisponivel", "Gerenciador de Resistências indisponível"),
+      resistanceDisplay ?? displayLabel("status_slayer_resistencias_display", "${status_slayer_resistencias_resumo}$"),
+    ], "grid-2"),
+    panel("status_slayer_panel", "Status", [
+      statusButton ?? displayLabel("status_slayer_indisponivel", "Gerenciador de Status indisponível"),
+      statusDisplay ?? displayLabel("status_slayer_display", "${status_slayer_resumo}$"),
+    ], "grid-2"),
+  ]);
+
   const interludios = tab("interludios_slayer_tab", "Interlúdios", [
     displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIOS CONCLUÍDOS", "#28D7FF", 18)),
     richTextArea("interludios_slayer_registro", "Registro de Interlúdios"),
@@ -489,7 +517,7 @@ function organizeSlayerTabs(template) {
   combate.name = "Combate";
   configuracoes.name = "Configurações";
   dados.name = "Dados";
-  tabs.contents = [perfil, pericias, combate, skills, inventario, interludios, notas, configuracoes, dados];
+  tabs.contents = [perfil, pericias, combate, condicoes, skills, inventario, interludios, notas, configuracoes, dados];
 }
 
 function fixBreathingState(template) {
@@ -541,20 +569,6 @@ function fixBreathingState(template) {
   ];
 
   removeComponentsByKey(template.system, new Set(["resp_slayer_panel", "resp_slayer_storage_panel"]));
-  const statePanel = {
-    key: "resp_slayer_panel", colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
-    permission: 0, tooltip: "Estado atual das técnicas de Respiração.", visibilityFormula: "", editableFormula: "", escapeHTML: false,
-    type: "panel", flow: "grid-2", align: "center", verticalAlign: "top", collapsible: true,
-    defaultCollapsed: false, title: "Respiração", titleStyle: "default", contents: [
-      displayLabel("resp_slayer_titulo", orbitron("RESPIRAÇÃO", "#28D7FF")),
-      displayLabel("resp_slayer_nivel_display", "Nível de Respiração: ${nvl_respiracao_num}$"),
-      displayLabel("resp_slayer_efeito_display", "Efeito: ${resp_efeito_flag}$ · ${resp_efeito_duracao}$ turno(s)"),
-      displayLabel("resp_slayer_combo_display", "Combo: ${resp_combo_origem}$ · Carga: ${resp_carga_acumulada}$"),
-      displayLabel("resp_chamas_display", "${resp_chamas_resumo}$"),
-    ],
-  };
-  const actionIndex = combatTab.contents.findIndex((entry) => entry?.key === "acoes_slayer_panel");
-  combatTab.contents.splice(actionIndex >= 0 ? actionIndex + 1 : combatTab.contents.length, 0, statePanel);
 
   configTab.contents.push({
     key: "resp_slayer_storage_panel", colSpan: 1, rowSpan: 1, cssClass: "", role: 4, editRole: 4,
@@ -566,6 +580,21 @@ function fixBreathingState(template) {
       ...numericFields.map(([key, label, value]) => numberField(key, label, value, 0)),
     ],
   });
+}
+
+function fixLifeDeathStorage(template) {
+  let configTab = null;
+  walk(template.system?.body, (node) => {
+    if (node.key === "configs_tab" && node.type === "tab") configTab = node;
+  });
+  if (!configTab) throw new Error("Aba Configurações do Slayer não encontrada.");
+  removeComponentsByKey(configTab, new Set(["vida_morte_slayer_storage_panel"]));
+  configTab.contents.push(panel("vida_morte_slayer_storage_panel", "Dados de Vida e Morte", [
+    textField("vida_morte_slayer_dados", "Estado persistente", '{"version":1,"dying":false,"stabilized":false,"dead":false,"deathMarks":0,"fallsThisCombat":0,"finalDeterminationUsed":false,"bondHelpUsed":false}'),
+    textField("vida_morte_slayer_resumo", "Resumo", "Estável"),
+    numberField("vida_morte_slayer_marcas", "Marcas de Morte", 0, 0, 3),
+    numberField("vida_morte_slayer_quedas", "Quedas neste combate", 0, 0, 4),
+  ], "grid-2"));
 }
 
 function fixResistanceAndWoundContract(template) {
@@ -594,6 +623,7 @@ function fixResistanceAndWoundContract(template) {
 
   combatTable.key = "combat_slayer_table";
   resistanceButton.style = "button";
+  resistanceButton.key = "resistencia_slayer_gerenciar";
   resistanceButton.rollMessageToChat = false;
   resistanceButton.altRollMessageToChat = false;
   resistanceButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAResistance0001'))?.execute({actorUuid:entity.uuid,kind:'slayer'}); return '';}%";
@@ -846,6 +876,8 @@ export function migrateSlayerTemplate(template) {
   organizeSlayerCombatLayout(migrated);
   fixBreathingState(migrated);
   organizeSlayerTabs(migrated);
+  fixLifeDeathStorage(migrated);
+  fixRollButtonTypography(migrated);
   fixTextVisibilityFormulas(migrated);
   return migrated;
 }

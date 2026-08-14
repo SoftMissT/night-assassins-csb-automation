@@ -90,3 +90,18 @@ test("capacidades refletem movimento, silêncio, cura e hipotermia", () => {
     deadFromExhaustion: false,
   });
 });
+
+test("À Beira da Morte bloqueia ataque, defesa, dano, movimento e reação", () => {
+  const props = {
+    status_slayer_dados: JSON.stringify({ version: 2, active: [], exhaustion: 0, effects: {} }),
+    vida_morte_slayer_dados: JSON.stringify({ version: 1, dying: true, dead: false }),
+  };
+  assert.equal(getRollStatusEffects(props, { test: "Acerto", attr: "DEX", kind: "attack" }).blocked, true);
+  assert.equal(getRollStatusEffects(props, { test: "Esquiva", attr: "DEX", kind: "defense" }).blocked, true);
+  assert.equal(getDamageStatusEffects(props).blocked, true);
+  assert.equal(isReactionBlocked(props), true);
+  const capabilities = getStatusCapabilities(props);
+  assert.equal(capabilities.movementAllowed, false);
+  assert.equal(capabilities.spiritualActionsAllowed, false);
+  assert.equal(capabilities.reactionsAllowed, false);
+});

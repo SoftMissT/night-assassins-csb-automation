@@ -10,6 +10,23 @@ function statusContext(props = {}) {
   return { active: new Set(state.active), exhaustion };
 }
 
+function lifeDeathBlocked(props = {}) {
+  try {
+    let raw = props.vida_morte_slayer_dados;
+    if (!raw) return false;
+    if (typeof raw === "string") {
+      raw = raw.replace(/<[^>]*>/g, "").replaceAll("&quot;", '"').replaceAll("&amp;", "&").trim();
+      const first = raw.indexOf("{");
+      const last = raw.lastIndexOf("}");
+      if (first >= 0 && last > first) raw = raw.slice(first, last + 1);
+      raw = JSON.parse(raw);
+    }
+    return Boolean(raw?.dying || raw?.dead);
+  } catch {
+    return false;
+  }
+}
+
 export function mergeRollMode(requested = "normal", forced = "normal") {
   const modes = new Set([requested, forced].filter((mode) => mode === "advantage" || mode === "disadvantage"));
   if (modes.size !== 1) return "normal";
@@ -36,9 +53,10 @@ export function getRollStatusEffects(props = {}, { test = "", attr = "", kind = 
   let modifier = 0;
   let disadvantage = false;
 
-  const blocked = !defense && (active.has("atordoamento") || active.has("suprimido") || active.has("sonhando") || exhaustion >= 7);
+  const lifeBlocked = lifeDeathBlocked(props);
+  const blocked = lifeBlocked || (!defense && (active.has("atordoamento") || active.has("suprimido") || active.has("sonhando") || exhaustion >= 7));
   const autoFail = !defense && active.has("paralisia") && (attribute === "FOR" || attribute === "DEX");
-  if (blocked) reasons.push("incapacitado");
+  if (blocked) reasons.push(lifeBlocked ? "À Beira da Morte" : "incapacitado");
   if (autoFail) reasons.push("Paralisia: falha automática");
 
   if (active.has("fratura") && attribute === "FOR") { modifier -= 2; reasons.push("Fratura −2 FOR"); }
@@ -95,13 +113,13 @@ export function getDamageStatusEffects(props = {}) {
   if (active.has("fadiga_espiritual")) { pdrSurcharge = 1; reasons.push("Fadiga Espiritual +1 PDR"); }
   const criticalAllowed = !active.has("fadiga_corporal");
   if (!criticalAllowed) reasons.push("Fadiga Corporal impede crítico");
-  const blocked = active.has("atordoamento") || active.has("suprimido") || active.has("sonhando") || exhaustion >= 7;
+  const blocked = lifeDeathBlocked(props) || active.has("atordoamento") || active.has("suprimido") || active.has("sonhando") || exhaustion >= 7;
   return { blocked, criticalAllowed, modifier, pdrSurcharge, reasons };
 }
 
 export function isReactionBlocked(props = {}) {
   const { active, exhaustion } = statusContext(props);
-  return exhaustion >= 7 || ["atordoamento", "suprimido", "sonhando", "frenesi", "desorientado", "distraido"]
+  return lifeDeathBlocked(props) || exhaustion >= 7 || ["atordoamento", "suprimido", "sonhando", "frenesi", "desorientado", "distraido"]
     .some((key) => active.has(key));
 }
 
@@ -110,16 +128,17 @@ export function getStatusCapabilities(props = {}) {
   const active = new Set(state.active);
   const exhaustion = Math.max(state.exhaustion, Number.parseInt(props.status_slayer_exaustao, 10) || 0);
   const hypothermiaStacks = active.has("hipotermia") ? Math.max(1, state.effects?.hipotermia?.stacks || 1) : 0;
+  const lifeBlocked = lifeDeathBlocked(props);
   return {
     targetable: !active.has("invisivel_inalvejavel"),
-    movementAllowed: !(exhaustion >= 3 || active.has("restricao_movimentos") || active.has("colapso")),
+    movementAllowed: !(lifeBlocked || exhaustion >= 3 || active.has("restricao_movimentos") || active.has("colapso")),
     movementMultiplier: active.has("fratura") ? 0.5 : 1,
     movementPenaltyMeters: hypothermiaStacks > 0 ? 3 + Math.max(0, hypothermiaStacks - 1) * 1.5 : 0,
-    spiritualActionsAllowed: !active.has("silenciado"),
+    spiritualActionsAllowed: !lifeBlocked && !active.has("silenciado"),
     sprintAllowed: !active.has("fadiga_corporal"),
     healingMultiplier: active.has("corrupcao") || active.has("regeneracao_suprimida") ? 0.5 : 1,
     incomingDemonicDamageBonus: active.has("corrupcao") ? 2 : 0,
-    reactionsAllowed: !isReactionBlocked(props),
+    reactionsAllowed: !lifeBlocked && !isReactionBlocked(props),
     ignoresFear: active.has("encorajado") || active.has("frenesi"),
     ignoresConfusion: active.has("encorajado"),
     deadFromExhaustion: exhaustion >= 8,

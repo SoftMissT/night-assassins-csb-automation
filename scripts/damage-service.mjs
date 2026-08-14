@@ -8,8 +8,9 @@ import { openDamageDialog } from "./dialogs/damage-dialog.mjs";
 import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
+import { consumeOniActions } from "./oni-action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
-import { isSlayerActor } from "./actor-kind.mjs";
+import { actorKind, isSlayerActor } from "./actor-kind.mjs";
 import { weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
@@ -128,6 +129,7 @@ export async function rollDamage(options = {}) {
   }
 
   const props = actor.system?.props ?? {};
+  const attackerKind = actorKind(actor) ?? "slayer";
   const statusEffects = getDamageStatusEffects(props);
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode causar dano.");
   const attrValues = {};
@@ -141,7 +143,7 @@ export async function rollDamage(options = {}) {
     || Number(options.fixo) !== 0
     || Array.isArray(options.attrs) && options.attrs.length > 0
     || Boolean(options.attr);
-  if (!hasExplicitDamage && options.builder !== false && isSlayerActor(actor)) {
+  if (!hasExplicitDamage && options.builder !== false) {
     const selection = await openAttackBuilder(actor);
     if (!selection || selection.cancelled) return;
     if (!selection.manual) {
@@ -149,7 +151,7 @@ export async function rollDamage(options = {}) {
         ...options,
         nome: selection.nome || options.nome,
         entradas: selection.entradas,
-        pdrCusto: parseNumber(options.pdrCusto) + parseNumber(selection.pdrCusto),
+        pdrCusto: parseNumber(options.pdrCusto) + parseNumber(selection.resourceCost),
       };
     }
   }
@@ -178,6 +180,8 @@ export async function rollDamage(options = {}) {
     nome: options.nome ?? "",
     entradas: preEntradas,
     pdrCusto: options.pdrCusto ?? 0,
+    resourceLabel: attackerKind === "oni" ? "PDK" : "PDR",
+    resourceKey: attackerKind === "oni" ? "pdk_oni_gasto_valor" : "pdr_slayer_gasto_valor",
     critical: options.critical === true,
   });
   if (!dialogResult) return;
@@ -199,7 +203,9 @@ export async function rollDamage(options = {}) {
     return ui.notifications?.warn?.("Os status atuais impedem o uso de Reações.");
   }
   const actionTypes = [...new Set(entradas.map((entry) => entry.tipoAcao).filter(Boolean))];
-  const actionResult = await consumeSlayerActions(actor, actionTypes, { update: false });
+  const actionResult = attackerKind === "oni"
+    ? await consumeOniActions(actor, actionTypes, { update: false })
+    : await consumeSlayerActions(actor, actionTypes, { update: false });
   if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
 
   const formulaParts = entradas.map((e) => buildEntryFormula(e.dado, e.fixo, e.selAttrs, attrValues));
@@ -208,9 +214,9 @@ export async function rollDamage(options = {}) {
     types: entry.selTiposDano,
     formula: formulaParts[index],
   })).filter((spec) => spec.formula !== "0");
-  const markFormula = markDamageFormula(props, entradas);
+  const markFormula = attackerKind === "slayer" ? markDamageFormula(props, entradas) : "";
   if (markFormula) specs.push({ label: "Marca do Caçador", types: ["ferida"], formula: markFormula });
-  const breathingState = parseWaterBreathingState(props.resp_agua_estado);
+  const breathingState = parseWaterBreathingState(attackerKind === "slayer" ? props.resp_agua_estado : "");
   const breathingDamage = breathingState.pendingDamage;
   const hasAttackDamage = entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
   if (breathingDamage?.formula && hasAttackDamage) {
@@ -219,7 +225,7 @@ export async function rollDamage(options = {}) {
     specs.push({ label: "Respiração da Água", types, formula, breathing: true });
     if (breathingDamage.critical) critical = true;
   }
-  const flameState = parseFlameBreathingState(props.resp_chamas_estado);
+  const flameState = parseFlameBreathingState(attackerKind === "slayer" ? props.resp_chamas_estado : "");
   const hasFlameBreathing = Boolean(props.resp_chamas_estado) || [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Chamas");
   const flameDamage = flameState.pendingDamage;
   const flameTier = flameWeaponTier(flameState.weaponHeat);
@@ -284,9 +290,10 @@ export async function rollDamage(options = {}) {
   }
 
   if (pdrGasto > 0) {
-    const pdrAtual = parseNumber(props.pdr_slayer_gasto_valor);
+    const resourceProp = attackerKind === "oni" ? "pdk_oni_gasto_valor" : "pdr_slayer_gasto_valor";
+    const pdrAtual = parseNumber(props[resourceProp]);
     const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
-    existing.changes["system.props.pdr_slayer_gasto_valor"] = pdrAtual + pdrGasto;
+    existing.changes[`system.props.${resourceProp}`] = pdrAtual + pdrGasto;
     updatesByActor.set(actor.uuid, existing);
   }
 
@@ -323,7 +330,7 @@ export async function rollDamage(options = {}) {
     }
   }
 
-  const knowsStone = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Pedra");
+  const knowsStone = attackerKind === "slayer" && [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Pedra");
   if (knowsStone && hasAttackDamage && finalDamage > 0 && damageTypes.includes("concussao")) {
     const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
     const weaponId = passiveState.lastWeapon?.id ?? "";
@@ -349,9 +356,10 @@ export async function rollDamage(options = {}) {
         exhaustionOnHit: Number(flameDamage.exhaustionOnHit) || 0,
         exhaustionOverDamage: Number(flameDamage.exhaustionOverDamage) || 0,
       } : null;
-      return isSlayerActor(targetActor)
-        ? applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components, flame: flameContext })
-        : applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true, flame: flameContext });
+      const targetKind = actorKind(targetActor);
+      if (targetKind === "slayer") return applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components, flame: flameContext });
+      if (targetKind === "oni") return applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true, flame: flameContext });
+      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni."));
     }),
   ]);
 

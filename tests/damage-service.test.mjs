@@ -45,7 +45,7 @@ describe("damage-service", () => {
       { approved: true, normalDamage: 8, woundDamage: 0, appliedDamage: 8, resisted: false, damageTypes: ["cortante"] },
     ];
     const attacker = makeActor({ id: "atk", uuid: "Actor.atk" });
-    const target = makeActor({ id: "tgt", uuid: "Actor.tgt", props: { pdv_oni_dano_tomado: 0 } });
+    const target = makeActor({ id: "tgt", uuid: "Actor.tgt", props: { nome_oni: "Oni", pdv_oni_dano_tomado: 0 } });
 
     let attackerUpdated = false;
     let targetUpdated = false;
@@ -77,15 +77,15 @@ describe("damage-service", () => {
       { nome: "Golpe", pdrGasto: 2, entradas: [{ dado: "1d6", fixo: 0, selAttrs: [], selTiposDano: [], tipoAcao: "" }] },
       { approved: true, normalDamage: 5, woundDamage: 0, appliedDamage: 5, resisted: false, damageTypes: [] },
     ];
-    const actor = makeActor({ id: "self", uuid: "Actor.self", props: { pdr_slayer_gasto_valor: 1, pdv_oni_dano_tomado: 0 } });
+    const actor = makeActor({ id: "self", uuid: "Actor.self", props: { nome_oni: "Oni", pdk_oni_gasto_valor: 1, pdv_oni_dano_tomado: 0 } });
     actor.system.props.pdr_slayer_gasto_valor = 1;
 
     let pdrUpdated = false;
     let damageUpdated = false;
     actor.update = async (patch, options) => {
       assert.strictEqual(options?.naCsbAutomation, true);
-      if (patch["system.props.pdr_slayer_gasto_valor"] !== undefined) {
-        assert.strictEqual(patch["system.props.pdr_slayer_gasto_valor"], 3);
+      if (patch["system.props.pdk_oni_gasto_valor"] !== undefined) {
+        assert.strictEqual(patch["system.props.pdk_oni_gasto_valor"], 3);
         pdrUpdated = true;
       }
       if (patch["system.props.pdv_oni_dano_tomado"] !== undefined) {
@@ -141,7 +141,7 @@ describe("damage-service", () => {
       { approved: true, normalDamage: 8, woundDamage: 8, appliedDamage: 16, resisted: false, damageTypes: ["cortante", "ferida"] },
     ];
     const attacker = makeActor({ id: "atk", uuid: "Actor.atk", props: { nome_slayer: "Slayer", pdv_slayer_total_valor: 20 } });
-    const target = makeActor({ id: "oni", uuid: "Actor.oni", props: { pdv_oni_dano_tomado: 0, pdv_oni_dano_ferida: 0 } });
+    const target = makeActor({ id: "oni", uuid: "Actor.oni", props: { nome_oni: "Oni", pdv_oni_dano_tomado: 0, pdv_oni_dano_ferida: 0 } });
     target.update = async () => {};
     game.user.targets = new Set([{ actor: target }]);
     const notices = [];

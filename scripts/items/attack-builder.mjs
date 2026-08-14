@@ -1,6 +1,8 @@
 import { parseAttributeValue, parseNumber } from "../parsing.mjs";
 import { weaponProfilesForActor } from "../weapon-service.mjs";
 import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./item-technique-normalizers.mjs";
+import { actorKind } from "../actor-kind.mjs";
+import { oniUnarmedProfile } from "../oni/progression-service.mjs";
 
 const WEAPON_TEMPLATE_ID = "NAWeaponTpl00001";
 const BREATH_TEMPLATE_ID = "NABreathTpl00001";
@@ -31,6 +33,27 @@ function attributeValues(actor) {
 function selectedLevel(actor) {
   const props = actor?.system?.props ?? {};
   return Math.min(4, Math.max(1, Math.trunc(parseNumber(props.nvl_respiracao_num) || 1)));
+}
+
+function oniLevel(actor) {
+  const props = actor?.system?.props ?? {};
+  return Math.max(1, Math.trunc(parseNumber(props.nvl_num ?? props.nivel_oni_num ?? props.nvl_pj) || 1));
+}
+
+function oniUnarmedDefinitions(actor) {
+  const level = oniLevel(actor);
+  const make = (id, name, style, types) => {
+    const profile = oniUnarmedProfile(level, style);
+    const [base] = profile.formula.split("+");
+    const die = /d/iu.test(base) ? base : "";
+    return ({
+    id: `oni-unarmed:${id}:level-${level}`, name, ownerKind: "oni",
+    costs: { actions: [{ type: "ataque", amount: 1 }], resources: [] },
+    damage: [{ id, label: name, formula: die, fixed: die ? 0 : Number(base), attributeTerms: [{ key: profile.attribute, multiplier: 1, rounding: "floor" }], types }],
+    });
+  };
+  return [make("martial", "Ataque Marcial", "martial", ["concussao"]), make("claw", "Garras", "claw", ["cortante"]), make("bite", "Mordida", "bite", ["perfurante"])]
+    .map((definition) => ({ key: definition.id, label: `${definition.name} — Nível ${level}`, definition }));
 }
 
 function roundedTerm(term, values) {
@@ -73,16 +96,18 @@ export function definitionDamageEntries(definition, actor) {
 
 export function createAttackBuilderModel(actor) {
   const actorProps = actor?.system?.props ?? {};
+  const ownerKind = actorKind(actor);
   const breathingLevel = selectedLevel(actor);
   const weapons = [];
   const breathing = [];
+  const innate = ownerKind === "oni" ? oniUnarmedDefinitions(actor) : [];
 
   for (const item of itemsOf(actor)) {
     const props = itemProps(item);
     if (isWeapon(item)) {
       const profiles = weaponProfilesForActor(props, actorProps);
       profiles.forEach((profile, profileIndex) => {
-        const normalized = normalizeWeaponTechnique({ ...item, system: { ...item.system, props: { ...props, arma_perfis_ataque: profiles } } }, { profileIndex });
+        const normalized = normalizeWeaponTechnique({ ...item, system: { ...item.system, props: { ...props, arma_perfis_ataque: profiles } } }, { profileIndex, ownerKind: ownerKind ?? "slayer" });
         if (!normalized.ok || normalized.definition.damage.length === 0) return;
         weapons.push({
           key: `${item.uuid ?? item.id ?? item.name}::${profileIndex}`,
@@ -94,8 +119,8 @@ export function createAttackBuilderModel(actor) {
       });
     }
 
-    if (isBreathingForm(item)) {
-      const normalized = normalizeBreathingTechnique(item, { level: breathingLevel });
+    if (ownerKind === "slayer" && isBreathingForm(item)) {
+      const normalized = normalizeBreathingTechnique(item, { level: breathingLevel, ownerKind });
       if (!normalized.ok || normalized.definition.metadata.passive || normalized.definition.damage.length === 0) continue;
       breathing.push({
         key: item.uuid ?? item.id ?? item.name,
@@ -106,14 +131,15 @@ export function createAttackBuilderModel(actor) {
     }
   }
 
-  return { actor, breathingLevel, weapons, breathing };
+  return { actor, ownerKind, breathingLevel, weapons, breathing, innate };
 }
 
-export function buildAttackSelection(model, { weaponKey = "", breathingKey = "", manual = false } = {}) {
-  if (manual) return { cancelled: false, manual: true, nome: "", entradas: [], pdrCusto: 0 };
+export function buildAttackSelection(model, { weaponKey = "", breathingKey = "", innateKey = "", manual = false } = {}) {
+  if (manual) return { cancelled: false, manual: true, nome: "", entradas: [], resourceCost: 0 };
   const weapon = model.weapons.find((entry) => entry.key === weaponKey) ?? null;
   const breath = model.breathing.find((entry) => entry.key === breathingKey) ?? null;
-  const definitions = [weapon?.definition, breath?.definition].filter(Boolean);
+  const innate = model.innate.find((entry) => entry.key === innateKey) ?? null;
+  const definitions = [weapon?.definition, breath?.definition, innate?.definition].filter(Boolean);
   const entradas = definitions.flatMap((definition) => definitionDamageEntries(definition, model.actor));
   if (weapon && breath) {
     const breathingAction = breath.definition.costs.actions?.[0]?.type;
@@ -121,11 +147,12 @@ export function buildAttackSelection(model, { weaponKey = "", breathingKey = "",
       for (const entry of entradas.filter((candidate) => candidate.sourceId === weapon.definition.id)) entry.tipoAcao = "";
     }
   }
-  const pdrCusto = definitions.flatMap((definition) => definition.costs.resources ?? [])
-    .filter((cost) => cost.resource === "pdr")
+  const resourceKey = model.ownerKind === "oni" ? "pdk" : "pdr";
+  const resourceCost = definitions.flatMap((definition) => definition.costs.resources ?? [])
+    .filter((cost) => cost.resource === resourceKey || model.ownerKind === "oni" && cost.resource === "pdr")
     .reduce((total, cost) => total + Number(cost.amount ?? 0), 0);
-  const names = [weapon?.label, breath?.label].filter(Boolean);
-  return { cancelled: false, manual: false, nome: names.join(" + "), entradas, pdrCusto };
+  const names = [weapon?.label, breath?.label, innate?.label].filter(Boolean);
+  return { cancelled: false, manual: false, nome: names.join(" + "), entradas, resourceCost, resourceKey };
 }
 
 function optionsHtml(entries, emptyLabel) {
@@ -134,7 +161,7 @@ function optionsHtml(entries, emptyLabel) {
 
 export async function openAttackBuilder(actor) {
   const model = createAttackBuilderModel(actor);
-  if (model.weapons.length === 0 && model.breathing.length === 0) return buildAttackSelection(model, { manual: true });
+  if (model.weapons.length === 0 && model.breathing.length === 0 && model.innate.length === 0) return buildAttackSelection(model, { manual: true });
 
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: "Montar Ataque — Night Assassins" },
@@ -144,13 +171,13 @@ export async function openAttackBuilder(actor) {
       <p>Escolha as fontes do ataque. As parcelas permanecem separadas para crítico, resistência e Ferida.</p>
       <label>Arma / Perfil</label>
       <select name="weaponKey">${optionsHtml(model.weapons, "— Sem arma —")}</select>
-      <label>Forma de Respiração</label>
-      <select name="breathingKey">${optionsHtml(model.breathing, "— Sem Respiração —")}</select>
+      ${model.ownerKind === "oni" ? `<label>Ataque Demoníaco</label><select name="innateKey">${optionsHtml(model.innate, "— Sem ataque desarmado —")}</select>` : `<label>Forma de Respiração</label><select name="breathingKey">${optionsHtml(model.breathing, "— Sem Respiração —")}</select>`}
     </div>`,
     buttons: [
       { action: "continue", label: "Continuar", callback: (_event, button) => buildAttackSelection(model, {
         weaponKey: button.form.elements.weaponKey.value,
-        breathingKey: button.form.elements.breathingKey.value,
+        breathingKey: button.form.elements.breathingKey?.value ?? "",
+        innateKey: button.form.elements.innateKey?.value ?? "",
       }) },
       { action: "manual", label: "Dano Manual", callback: () => buildAttackSelection(model, { manual: true }) },
       { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },

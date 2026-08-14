@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.2 — 2026-08-14
+
+- Integra Onis ao Montador de Ataque sem reutilizar as chaves de recurso do Slayer.
+- Adiciona Ataque Marcial, Garras e Mordida com progressão natural dos níveis 1–20 e atributos finais `*_display`.
+- Persiste custos Oni em `pdk_oni_gasto_valor` e ações em `acoes_oni_*`.
+- Mostra PDR para Slayer e PDK para Oni no diálogo de dano.
+- Impede Marca, Respirações e passivas exclusivas do Slayer de vazarem para atacantes Oni.
+- Rejeita alvos sem identidade Slayer/Oni em vez de tratá-los automaticamente como Oni.
+
+### Validação
+
+- `node --test`: 246 testes aprovados, 0 falhas.
+- Testes focados do builder, dano e ações Oni: 14 aprovados, 0 falhas.
+
 ## 0.9.1 — 2026-08-14
 
 - Conecta o botão geral de dano aos Items de arma e Formas de Respiração portados pelo Slayer.

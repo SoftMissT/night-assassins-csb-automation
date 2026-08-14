@@ -30,6 +30,12 @@ Relacionados: [[adaptacao-completa-night-assassins-v1]] e [[flame-breathing-item
 - RF-008: permitir Arma sem Forma, Forma sem Arma e Dano Manual.
 - RF-009: cancelar o montador sem gastar acao, PDR ou realizar rolagem.
 - RF-010: permitir revisar, remover ou adicionar parcelas no dialogo de dano existente.
+- RF-011: abrir o montador para Slayer e Oni, identificado pelo contrato de Actor do modulo.
+- RF-012: Oni recebe ataques desarmados escalonados por nivel e pode usar armas embutidas.
+- RF-013: custos do atacante usam PDR/`pdr_slayer_gasto_valor` para Slayer e PDK/`pdk_oni_gasto_valor` para Oni.
+- RF-014: ações Oni persistem em `acoes_oni_dados`; nenhuma chave Slayer pode ser escrita no atacante Oni.
+- RF-015: efeitos exclusivos de Marca e Respiracao somente podem ser processados para Slayer.
+- RF-016: alvos sem identidade Slayer/Oni devem ser rejeitados sem update.
 
 ## Pipeline
 
@@ -58,3 +64,5 @@ Botao Rolar Dano
 - CA-004: cancelar retorna sem ChatMessage e sem update do Actor.
 - CA-005: o modo manual continua abrindo uma entrada vazia.
 - CA-006: a suite completa permanece verde.
+- CA-007: Oni pode montar dano desarmado ou de arma e gastar PDK/acao Oni.
+- CA-008: cancelar o fluxo Oni nao gasta PDK nem acao.

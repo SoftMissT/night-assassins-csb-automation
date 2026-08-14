@@ -59,7 +59,19 @@ describe("attack-builder", () => {
     assert.equal(result.entradas[1].dado, "2d6 + 4");
     assert.equal(result.entradas[1].tipoAcao, "especial");
     assert.deepEqual(result.entradas[1].tiposDano, ["fogo"]);
-    assert.equal(result.pdrCusto, 3);
+    assert.equal(result.resourceCost, 3);
+  });
+
+  it("oferece ataques desarmados escalonados para Oni", () => {
+    const actor = makeActor({ props: { nome_oni: "Akuma", nvl_num: 10, for_display: 6, dex_display: 5 } });
+    actor.items = [];
+    const model = createAttackBuilderModel(actor);
+    const result = buildAttackSelection(model, { innateKey: model.innate[0].key });
+    assert.equal(model.ownerKind, "oni");
+    assert.equal(model.breathing.length, 0);
+    assert.equal(result.entradas[0].dado, "2d8");
+    assert.equal(result.entradas[0].fixo, 6);
+    assert.equal(result.resourceKey, "pdk");
   });
 
   it("ignora Formas passivas e preserva o modo manual", () => {

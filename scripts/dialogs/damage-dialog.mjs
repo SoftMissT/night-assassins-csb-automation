@@ -142,7 +142,7 @@ function bindDamageDialogInteractions(root, attrValues) {
  * @param {number} options.pdrCusto
  * @returns {Promise<{nome:string,pdrGasto:number,entradas:Array}|null>}
  */
-export async function openDamageDialog({ actor, nome, entradas, pdrCusto, critical = false }) {
+export async function openDamageDialog({ actor, nome, entradas, pdrCusto, resourceLabel = "PDR", resourceKey = "pdr_slayer_gasto_valor", critical = false }) {
   const props = actor?.system?.props ?? {};
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
@@ -176,9 +176,9 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto, critic
     <div id="na-entradas-container">${entradasIniciais}</div>
     <button type="button" id="na-add-btn">+ Adicionar Entrada de Dano</button>
     <div style="margin-bottom:8px;">
-      <label class="na-label">PDR / PDK a Gastar <span class="na-hint">(total)</span></label>
+      <label class="na-label">${resourceLabel} a Gastar <span class="na-hint">(total)</span></label>
       <input type="number" id="na-dmg-pdr" min="0" value="${Number.isFinite(Number(pdrCusto)) ? Number(pdrCusto) : 0}" placeholder="0" />
-      <div class="na-hint" style="margin-top:2px;">Somado à chave <code>pdr_slayer_gasto_valor</code>.</div>
+      <div class="na-hint" style="margin-top:2px;">Somado à chave <code>${resourceKey}</code>.</div>
     </div>
     <label class="na-label">Fórmula Total</label>
     <div id="na-total-preview">—</div>

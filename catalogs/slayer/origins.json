@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "origins": {
+    "origem_artista_marcial": {
+      "label": "Artista Marcial", "pdvBase": 16, "pdrBase": 10,
+      "abilities": [
+        { "id": "cadeia_impacto", "level": 1, "trigger": "weapon-hit", "cycle": "turn", "state": ["targetUuid", "consecutiveHits"], "rules": { "compatibleWeaponsOnly": true, "damageByHit": [0, 1, 2], "resetOn": ["miss", "target-change", "breathing-technique"] } },
+        { "id": "oito_portoes", "level": 6, "trigger": "free-action", "cycle": "round", "uses": 1, "cost": { "pdr": 2 }, "duration": "end-of-turn", "choices": ["forca:+1d6-next-melee", "rocha:rd2-next-physical", "velocidade:+3m-or-reposition"] }
+      ]
+    },
+    "origem_civilizado": {
+      "label": "Civilizado", "pdvBase": 10, "pdrBase": 5,
+      "abilities": [
+        { "id": "rede_informantes", "level": 1, "trigger": "pre-mission", "cycle": "mission", "uses": 1, "test": { "dc": 10, "attribute": "social-or-mental" }, "state": ["contacts"] },
+        { "id": "controle_multidao", "level": 6, "trigger": "special-action", "cycle": "combat", "uses": 1, "target": { "rangeMeters": 9, "requiresSightOrHearing": true }, "choices": ["open-guard:+2-next-ally-hit", "force-focus:-2-next-attack-other", "hesitation:no-reaction-until-next-turn"] }
+      ]
+    },
+    "origem_corsario": {
+      "label": "Corsário", "pdvBase": 14, "pdrBase": 7,
+      "abilities": [
+        { "id": "juken_ryu", "level": 1, "trigger": "compatible-melee-hit", "cycle": "turn", "uses": 1, "choices": ["eyes:-2damage,-2next-attack", "knee:-1damage,-3m", "plexus:-3damage,no-reaction", "head:-3damage,physical-save-10+FOR,cambaleante"] },
+        { "id": "polvora", "level": 6, "trigger": "combat-events", "cycle": "combat", "state": ["charges:0..3", "damageTakenAwardedRound"], "gainOn": ["dirty-hit", "damage-once-per-round", "reduce-enemy-to-zero"], "spend": { "action": "free", "cycle": "round", "uses": 1 } }
+      ]
+    },
+    "origem_criado_ex_hashira": {
+      "label": "Criado por Ex-Hashira", "pdvBase": 12, "pdrBase": 9,
+      "abilities": [
+        { "id": "memoria_mestre", "level": 1, "trigger": "natural-one-attack", "cycle": "combat", "uses": 1, "effect": "reroll;critical-failure-if-second-misses", "passive": "below-half-pdv:+1-proficient-attack" },
+        { "id": "forma_secreta", "level": 6, "trigger": "confirmed-hit", "cycle": "session", "uses": 1, "damage": "+2d6", "after": "1d4-irreducible", "onKill": "recover-1-pdr" }
+      ]
+    },
+    "origem_descendente_perdido": {
+      "label": "Descendente Perdido", "pdvBase": 12, "pdrBase": 10,
+      "abilities": [
+        { "id": "ressonancia_sanguinea", "level": 1, "trigger": "relevant-oni-within-30m", "cycle": "scene", "effect": "gm-reveals-approximate-presence" },
+        { "id": "marca_latente", "level": 6, "trigger": "failed-demonic-save", "cycle": "combat", "uses": 1, "effect": "reroll-mandatory", "onSuccess": "recover-1-pdr", "onCriticalFailure": "1d4-irreducible" }
+      ]
+    },
+    "origem_estrangeiro": {
+      "label": "Estrangeiro", "pdvBase": 13, "pdrBase": 8,
+      "abilities": [
+        { "id": "ritmo_desconhecido", "level": 1, "trigger": "combat", "cycle": "combat", "state": ["firstRound", "firstHitTargets"], "passive": "first-round:+2-defense", "uses": 1 },
+        { "id": "adaptacao_cultural", "level": 6, "trigger": "take-damage", "cycle": "round", "uses": 1, "state": ["registeredThreatType", "chosenBonus"], "effect": "+1-defense-or-hit-from-next-round", "expires": "combat-end" }
+      ]
+    },
+    "origem_isolado": {
+      "label": "Isolado", "pdvBase": 16, "pdrBase": 4,
+      "abilities": [
+        { "id": "pele_grossa", "level": 1, "trigger": "physical-damage-before-application", "effect": "reduce-2", "excludes": ["elemental", "poison", "kekkijutsu", "spiritual", "mental", "supernatural"] },
+        { "id": "segundo_folego", "level": 6, "trigger": "would-drop-to-zero", "action": "reaction", "cycle": "combat", "uses": 1, "effect": "remain-1-pdv", "buff": "+2-next-melee-until-next-turn-end", "debuff": "-2-defense-until-next-turn-end" }
+      ]
+    },
+    "origem_militar": {
+      "label": "Militar", "pdvBase": 13, "pdrBase": 6,
+      "abilities": [
+        { "id": "ordem_campo", "level": 1, "trigger": "special-action", "cycle": "combat", "uses": 2, "target": { "allyOnly": true, "rangeMeters": 12, "requiresHearing": true }, "choices": ["move-3m", "+1-next-attack", "+2-defense-until-next-turn"] },
+        { "id": "fogo_cobertura", "level": 6, "trigger": "enemy-declares-attack-on-ally", "action": "reaction", "cycle": "combat", "uses": 2, "requirement": "ready-ranged-weapon", "effect": "normal-attack;on-hit-enemy-attack--2" }
+      ]
+    },
+    "origem_monge": {
+      "label": "Monge", "pdvBase": 12, "pdrBase": 14,
+      "abilities": [
+        { "id": "chama_interna", "level": 1, "trigger": "special-action", "cycle": "combat", "uses": 2, "choices": ["3pdr:heal-adjacent-1d6+FDV", "2pdr:remove-minor-condition", "4pdr:self-heal-1d8+FDV"], "exclusion": "same-turn-offensive-breathing" },
+        { "id": "mantra_protecao", "level": 6, "trigger": "damage-within-3m", "action": "reaction", "cycle": "combat", "uses": 1, "effect": "reduce-1d6+FDV", "onPreventZero": "+1-defense-until-next-turn" }
+      ]
+    },
+    "origem_ninja": {
+      "label": "Ninja", "pdvBase": 13, "pdrBase": 14,
+      "abilities": [
+        { "id": "passo_fantasma", "level": 1, "trigger": "movement", "passive": "ignore-first-3m-difficult-terrain;ignore-fall-up-to-6m", "active": { "cycle": "combat", "uses": 1, "action": "free", "choices": ["disengage", "hide"] } },
+        { "id": "ponto_cego", "level": 6, "trigger": "compatible-hit", "cycle": "round", "uses": 1, "damage": "+1d6", "requiresAny": ["target-not-acted", "hidden", "surprised", "flanked", "elevated-or-unexpected-angle"], "excludes": ["breathing-technique"] }
+      ]
+    },
+    "origem_samurai": {
+      "label": "Samurai", "pdvBase": 14, "pdrBase": 6,
+      "abilities": [
+        { "id": "bushido", "level": 1, "trigger": "attack-or-fear-save", "passive": "+1-hit-face-to-face-with-proficient-sword;advantage-vs-fear", "lostWhen": ["backstab", "hidden-attack", "dishonorable-advantage"] },
+        { "id": "iaido", "level": 6, "trigger": "first-turn-before-sword-attack", "cycle": "combat", "uses": 1, "bonusHit": 2, "onHit": "maximize-base-weapon-die-only", "excludes": ["breathing-technique"] }
+      ]
+    },
+    "origem_tsuguko": {
+      "label": "Tsuguko", "pdvBase": 12, "pdrBase": 16,
+      "abilities": [
+        { "id": "heranca_viva", "level": 1, "trigger": "lineage-breathing-technique", "cycle": "combat", "uses": 1, "bonusHit": 1, "newLevelFirstMissionBonus": 2, "state": ["mentor", "lineage"] },
+        { "id": "sucessao_perfeita", "level": 6, "trigger": "lineage-breathing-technique", "cycle": "session", "uses": 1, "effect": "pdr-cost-zero", "onCompleteFailure": "irreducible-damage-original-cost", "excludes": ["unapproved-creative-versatility"] }
+      ]
+    }
+  }
+}

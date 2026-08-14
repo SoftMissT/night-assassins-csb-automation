@@ -19,7 +19,10 @@ function parseBonus(raw) {
  * @param {string} options.color
  * @returns {Promise<{mode:string,rollMode:string,bonusRaw:string,cdVal:number,rollCount:number}|null>}
  */
-export async function openHitDialog({ attrName, attrVal, color }) {
+export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) {
+  const weaponOptions = weapons.map((weapon) =>
+    `<option value="${weapon.id}" data-critical="${weapon.effectiveCritical}">${weapon.name} — crítico ${weapon.effectiveCritical}+</option>`
+  ).join("");
   const content = `
     <div class="na-csb-automation na-hit-setup">
       <header class="na-hit-hero" style="--na-hit-color:${color}">
@@ -51,6 +54,14 @@ export async function openHitDialog({ attrName, attrVal, color }) {
         <small>Identifica a técnica no chat. A rolagem de Acerto não gasta a ação.</small>
       </label>
       <label class="na-hit-field">
+        <span>Arma usada / crítico</span>
+        <select id="na-ac-weapon">
+          <option value="">Sem arma — crítico 20</option>
+          ${weaponOptions}
+        </select>
+        <small>O crítico vem da arma. Quebra da Respiração da Pedra reduz este número.</small>
+      </label>
+      <label class="na-hit-field">
         <span>Visibilidade da rolagem</span>
         <select id="na-ac-rollmode">
           <option value="publicroll">Rolar Público</option>
@@ -80,6 +91,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
             actionType: form.elements["na-ac-action"].value ?? "",
+            weaponId: form.elements["na-ac-weapon"].value ?? "",
           };
         },
       },
@@ -95,6 +107,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
             actionType: form.elements["na-ac-action"].value ?? "",
+            weaponId: form.elements["na-ac-weapon"].value ?? "",
           };
         },
       },
@@ -110,6 +123,7 @@ export async function openHitDialog({ attrName, attrVal, color }) {
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
             actionType: form.elements["na-ac-action"].value ?? "",
+            weaponId: form.elements["na-ac-weapon"].value ?? "",
           };
         },
       },

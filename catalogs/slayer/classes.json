@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "rankLevels": { "C": 4, "B": 6, "A": 8, "S": 11, "SS": 12 },
+  "classes": {
+    "classe_mb": {
+      "label": "Mestre de Batalha",
+      "ranks": {
+        "C": { "id": "ataque_dilacerador", "trigger": "proficient-basic-hit", "damageBonus": 2, "excludes": ["automatic", "bleeding", "poison", "terrain", "aura", "replacement-technique"] },
+        "B": { "id": "ataque_dilacerador_aprimorado", "replaces": "ataque_dilacerador", "damageBonus": 4, "pressure": { "cycle": "turn", "uses": 1, "state": ["targetUuid"], "effect": "+1-next-basic-hit-same-target", "expires": ["target-change", "turn-end", "technique"] } },
+        "A": { "id": "critico_brutal", "trigger": "proficient-basic-critical", "bleeding": { "formula": "1d4", "tick": "turn-start", "turns": "ceil(max(FOR,DEX)/2)" }, "choices": ["tendon:-1.5m-until-target-next-turn-end", "open-guard:-1-next-defense", "deep-impact:+2-critical-damage"] },
+        "S": { "id": "corpo_guerra", "level": 11, "permanent": { "once": true, "pdvMaximumFormula": "2d6", "stateKey": "slayer_class_mb_corpo_guerra_applied" }, "parry": { "trigger": "physical-melee-damage", "action": "reaction", "cycle": "round", "uses": 1, "formula": "1d6 + weaponDefenseAttribute", "onReduceZero": "attacker:-1-defense-next-hit-until-next-turn" } },
+        "SS": { "id": "contraataque", "trigger": "enemy-misses-melee", "action": "reaction", "cycle": "round", "uses": 1, "naturalHitThreshold": 17, "effect": "normal-proficient-basic-attack", "excludes": ["nitoryu", "ryoto", "third-cut", "extra-attack-source", "incapacitated"] }
+      }
+    },
+    "classe_usuario_de_veneno": {
+      "label": "Usuário de Veneno",
+      "ranks": {
+        "C": { "id": "envenenar", "trigger": "valid-hit", "damage": "CAR", "tick": "turn-start", "rounds": 2, "stackLimit": 1 },
+        "B": { "id": "veneno_agravado", "damage": "CAR+2", "rounds": 3, "onReapply": "refresh-and--1-resistance-tests" },
+        "A": { "id": "ataque_adicional", "trigger": "declare-attack-action", "cycle": "turn", "uses": 1, "effect": "one-additional-normal-weapon-attack" },
+        "S": { "id": "maestria_suprema", "stackLimit": 3, "instancesIndependent": true, "onOverflow": "refresh-or-replace-shortest" },
+        "SS": { "id": "corta_cura", "trigger": "poisoned-target-turn-start", "healingMultiplier": 0.5, "threeStacks": "-1-defense-until-next-turn" }
+      }
+    },
+    "classe_kakushi": {
+      "label": "Kakushi",
+      "ranks": {
+        "C": { "id": "amparar", "action": "attack", "cycle": "round", "uses": 1, "heal": "INT-or-SAB", "rangeMeters": 1.5 },
+        "B": { "id": "amparar_aprimorado", "replaces": "amparar", "heal": "3+INT-or-SAB", "buff": "+1-defense-until-next-turn", "inspectStatuses": true },
+        "A": { "id": "retirada_estrategica", "effect": "disengage-as-special;move-adjacent-ally-1.5m", "priority": "+2-next-amparar-on-below-half-until-next-turn" },
+        "S": { "id": "injecao_adrenalina", "action": "attack", "cycle": "combat", "uses": 1, "pdr": "targetVIT+INT-or-SAB", "choices": ["physical-save+1", "mental-save+1", "zero-pdv-to-one"] },
+        "SS": { "id": "tatakaaaaeee", "trigger": "heal-other-with-kakushi", "cycle": "round", "uses": 1, "test": "1d20+CAR>=15", "healBonus": "2*CAR", "onSuccess": "advantage-next-test-until-next-turn" }
+      }
+    },
+    "classe_companheiro_oni": {
+      "label": "Companheiro Oni",
+      "ranks": {
+        "C": { "id": "cercar_proteger", "actorPair": true, "trigger": "slayer-fails-defense", "oniAction": "reaction", "cycle": "round", "uses": 1, "cost": { "pdk": 2 }, "rangeMeters": 3, "defensePenalty": -2 },
+        "B": { "id": "guarda_vinculada", "defensePenalty": 0, "after": "oni-reposition-1.5m", "onSuccess": "enemy--1-next-melee-vs-slayer" },
+        "A": { "id": "resistencia_elemental", "state": ["chosenDamageType"], "intercept": "apply-resistance-before-other-defense" },
+        "S": { "id": "presenca_intimidadora", "context": "social-outside-combat", "bonusCar": 2, "gmMayOverride": true },
+        "SS": { "id": "sinergia_kekkijutsu", "trigger": "slayer-breathing-hit-on-shared-target", "cycle": "round", "uses": 1, "choices": ["target--1-next-defense", "continuous-effect+1-round", "oni+1-next-hit"] }
+      }
+    },
+    "classe_usuario_de_duas_resp": {
+      "label": "Usuário de Duas Respirações",
+      "secondaryBreathingLevels": { "1": 2, "2": 6, "3": 10, "4": 14 },
+      "ranks": {
+        "C": { "id": "segunda_respiracao", "limit": "one-secondary-or-variation-per-turn", "minorVariations": 1 },
+        "B": { "id": "forja_variacoes", "minorVariations": 2 },
+        "A": { "id": "tecnica_derivada", "derivedTechniques": 1, "changesUpToTraits": 2, "extraCost": { "pdr": 1 }, "limits": ["no-free-damage-increase", "no-extra-attack", "no-contact-duplication", "known-effects-only"] },
+        "S": { "id": "forma_intermediaria", "state": ["primaryBreathing", "secondaryBreathing", "compatibility", "chosenMode"], "modes": ["sequence", "alternation", "overload", "fixed-stance"], "variationsPerTurn": 2, "endsOn": ["stunned", "paralyzed", "insufficient-pdr"] },
+        "SS": { "id": "forma_composta", "trigger": "special-action", "cycle": "combat", "uses": 1, "mixTypes": ["form", "movement", "condition", "defense", "conditional-execution"], "cost": "max(primary,secondary)+compatibility+2pdr", "requiresOnePrice": true, "state": ["registeredCompositeTechnique"] }
+      },
+      "surcharges": { "compatible": { "pdr": 1, "pdv": 0 }, "incompatible": { "pdr": 2, "pdv": 2 } }
+    }
+  }
+}

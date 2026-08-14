@@ -34,6 +34,7 @@ import { flameFormById } from "./flame-breathing-data.mjs";
 import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, tickFlameBreathing } from "./flame-breathing-service.mjs";
 import { applySlayerDamage } from "./status-engine.mjs";
 import { parseStatusState } from "./status-service.mjs";
+import { isPassiveItem } from "./breath-passives.mjs";
 
 const MANOBRA_MAP = {
   "unica": "unica",
@@ -448,6 +449,11 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   }
 
   const props = actor.system?.props ?? {};
+  if (isPassiveItem(form.id)) {
+    const passiveName = form.id === "metal_05" ? "Martelo do Julgamento" : "Congelar";
+    ui.notifications?.info?.(`${passiveName} é uma passiva automática e não gasta ação ou PDR.`);
+    return;
+  }
   const { pdrCurrent } = slayerPdrInfo(props);
   const breathLevel = getBreathLevel(props);
 

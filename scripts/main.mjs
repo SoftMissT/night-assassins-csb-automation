@@ -23,6 +23,14 @@ import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatu
 import { registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
 import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, stabilizeSlayer } from "./life-death-service.mjs";
 import { executeInterludeActivity, openInterludeManager } from "./interlude-service.mjs";
+import { createCombatContext, validateCombatContext } from "./core/combat-context.mjs";
+import { createActorTransaction } from "./core/actor-transaction.mjs";
+import { normalizeTechniqueDefinition, splitDamageTotal, validateTechniqueDefinition } from "./core/technique-definition.mjs";
+import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./items/item-technique-normalizers.mjs";
+import * as slayerProgression from "./slayer/progression-service.mjs";
+import * as slayerOrigins from "./slayer/origin-contracts.mjs";
+import * as slayerClasses from "./slayer/class-contracts.mjs";
+import * as oniProgression from "./oni/progression-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -93,6 +101,26 @@ Hooks.once("ready", () => {
       stabilizeSlayer,
       openInterludeManager,
       executeInterludeActivity,
+      core: {
+        createCombatContext,
+        validateCombatContext,
+        createActorTransaction,
+        normalizeTechniqueDefinition,
+        validateTechniqueDefinition,
+        splitDamageTotal,
+      },
+      items: {
+        normalizeWeaponTechnique,
+        normalizeBreathingTechnique,
+      },
+      slayer: {
+        progression: slayerProgression,
+        origins: slayerOrigins,
+        classes: slayerClasses,
+      },
+      oni: {
+        progression: oniProgression,
+      },
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

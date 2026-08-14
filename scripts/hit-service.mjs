@@ -10,6 +10,7 @@ import { recoverSlayerFolego } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlamePending, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -41,7 +42,7 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
   return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
 
-async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects }) {
+async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects, weapon = null }) {
   mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
   const formula = buildFormula(mode, attrVal, extra, statusEffects.modifier);
@@ -53,6 +54,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   const attempts = [];
   let interrupted = false;
   const actionLabel = TIPOS_ACAO.find((entry) => entry.key === actionType)?.label;
+  const criticalThreshold = weapon?.effectiveCritical ?? 20;
 
   for (let index = 0; index < maximum; index += 1) {
     let roll;
@@ -79,8 +81,10 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
       interrupted = true;
       break;
     }
-    attempts.push({ roll, hit: decision.hit });
-    if (decision.hit && naturalD20(roll) === 20) await recoverSlayerFolego(actor, 1);
+    const natural = naturalD20(roll);
+    const critical = decision.hit && statusEffects.criticalAllowed !== false && natural >= criticalThreshold;
+    attempts.push({ roll, hit: decision.hit, natural, critical, criticalThreshold, weaponId: weapon?.id ?? "" });
+    if (critical) await recoverSlayerFolego(actor, 1);
     if (!decision.continue && index + 1 < maximum) {
       interrupted = true;
       break;
@@ -94,7 +98,7 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
     flavor: "Sequência de Acerto",
     content: `<p><strong>${attempts.length}/${maximum}</strong> tentativa(s) · <strong>${hits}</strong> acerto(s) · <strong>${misses}</strong> erro(s)${interrupted ? " · encerrada" : ""}</p>`,
   });
-  return { attempts, hits, misses, interrupted, maximum };
+  return { attempts, hits, misses, interrupted, maximum, criticals: attempts.filter((attempt) => attempt.critical).length };
 }
 
 async function resolveActor(options) {
@@ -148,7 +152,13 @@ export async function rollHit(options) {
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode atacar.");
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática neste Acerto.");
 
-  const dialogResult = await openHitDialog({ attrName, attrVal, color });
+  const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
+  const strength = parseAttributeValue(props.for_display);
+  const weapons = actorWeapons(actor).map((weapon) => ({
+    ...weapon,
+    effectiveCritical: effectiveWeaponCritical({ base: weapon.critical, state: passiveState, weaponId: weapon.id, strength }),
+  }));
+  const dialogResult = await openHitDialog({ attrName, attrVal, color, weapons });
   if (!dialogResult) return;
 
   const breathingState = parseWaterBreathingState(props.resp_agua_estado);
@@ -159,6 +169,7 @@ export async function rollHit(options) {
   const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0) + flameTier.hit;
   const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
   const requestedMode = breathHit?.advantage || flameHit?.advantage ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
+  const weapon = weapons.find((entry) => entry.id === dialogResult.weaponId) ?? null;
 
   const result = await doRoll({
     actor,
@@ -171,7 +182,21 @@ export async function rollHit(options) {
     rollCount: Math.max(dialogResult.rollCount, Number(breathHit?.count) || 1, Number(flameHit?.count) || 1),
     actionType: dialogResult.actionType,
     statusEffects,
+    weapon,
   });
+  const confirmedCritical = result?.attempts?.find((attempt) => attempt.critical);
+  const knowsMetal = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Metal");
+  if (result?.attempts?.length && weapon) {
+    let nextPassiveState = registerWeaponUse(passiveState, weapon);
+    if (confirmedCritical && knowsMetal) nextPassiveState = registerConfirmedCritical(nextPassiveState, {
+      weaponId: weapon?.id ?? "",
+      weaponName: weapon?.name ?? "Sem arma",
+      natural: confirmedCritical.natural,
+      threshold: confirmedCritical.criticalThreshold,
+    });
+    await actor.update(passiveStatePatch(nextPassiveState), { naCsbAutomation: true, naBreathing: true });
+    if (confirmedCritical && knowsMetal) ui.notifications?.info?.("Martelo do Julgamento disponível: ataque adicional liberado pelo crítico.");
+  }
   if (result?.attempts?.length && breathHit) {
     delete breathingState.nextHit;
     await actor.update({

@@ -13,6 +13,7 @@ import { isSlayerActor } from "./actor-kind.mjs";
 import { weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { addStoneBreak, parseBreathPassiveState, passiveStatePatch } from "./breath-passives.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -299,6 +300,18 @@ export async function rollDamage(options = {}) {
         if (save.total < flameDamage.saveDc) amount *= 2;
       }
       damageRequests.push({ actor: targetActor, amount, rengokuBonus, heatBefore });
+    }
+  }
+
+  const knowsStone = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Pedra");
+  if (knowsStone && hasAttackDamage && finalDamage > 0 && damageTypes.includes("concussao")) {
+    const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
+    const weaponId = passiveState.lastWeapon?.id ?? "";
+    if (weaponId) {
+      const nextPassiveState = addStoneBreak(passiveState, weaponId, attrValues.for);
+      const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+      Object.assign(existing.changes, passiveStatePatch(nextPassiveState));
+      updatesByActor.set(actor.uuid, existing);
     }
   }
 

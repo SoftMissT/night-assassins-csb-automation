@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.9.0 — 2026-08-14
+
+- Introduz o contrato canônico `TechniqueDefinition` para armas, Respirações, Kekkijutsu e equipamentos.
+- Adiciona contexto de combate e transações que consolidam custos e efeitos em uma escrita por Actor.
+- Estrutura a progressão Slayer 1–14, as 12 Origens, as cinco Classes e o Mestre de Batalha no nível 11.
+- Estrutura a progressão Oni 1–20, ranks, PDV/PDK, regeneração, ataques naturais e ações lendárias.
+- Integra crítico por arma e as passivas iniciais de Pedra, Metal, Neve e Névoa aos serviços de acerto/dano.
+- Corrige o fluxo de Acerto sequencial para cancelar sem criar uma rolagem adicional.
+- Mantém dano em múltiplas parcelas e inclui `catalogs/` no pacote publicado.
+
+### Validação
+
+- `node --test`: 241 testes aprovados, 0 falhas.
+- GitNexus reindexado com PDG: 8.578 nós, 19.044 relações, 86 clusters e 300 fluxos.
+- Alterações centrais de acerto/dano/Respiração classificadas como CRITICAL pelo conjunto de fluxos afetados e cobertas por testes focados e regressivos.
+
 ## 0.8.4 — 2026-08-14
 
 - Adiciona o gerenciador funcional de Interlúdio para Cabaças e Copo de Chá Medicinal.

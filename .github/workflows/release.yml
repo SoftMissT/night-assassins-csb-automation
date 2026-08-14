@@ -100,6 +100,7 @@ jobs:
           zip -r module.zip \
             module.json \
             scripts \
+            catalogs \
             styles \
             lang \
             packs \

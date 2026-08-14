@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "source": "Mecânicas para fazer na ficha/Onis/Progressao_dos_Onis_1-20_corrigida.md",
+  "levels": [
+    { "level": 1, "title": "Oni Recém-Transformado", "band": "oni", "pdv": null, "pdk": 0, "attributeChoices": 0, "features": ["origem", "corpo_demoniaco_inicial", "escolha_inicial"] },
+    { "level": 2, "title": "Oni Faminto", "band": "oni", "pdv": "1d4", "pdk": 4, "attributeChoices": 0, "features": ["regeneracao_oni"] },
+    { "level": 3, "title": "Oni Sanguinário", "band": "oni", "pdv": "1d4", "pdk": 4, "attributeChoices": 1, "specializationRank": "C", "kekkijutsuRank": "inicial", "features": ["primeiro_kekkijutsu"] },
+    { "level": 4, "title": "Oni Predador", "band": "oni", "pdv": "1d6", "pdk": 6, "attributeChoices": 1, "unarmedTier": 2, "features": ["ataques_sobrenaturais"] },
+    { "level": 5, "title": "Oni Notório", "band": "oni", "pdv": "1d6", "pdk": 6, "attributeChoices": 0, "kekkijutsuRank": "C", "features": ["inimigo_jurado", "regeneracao_aprimorada"] },
+    { "level": 6, "title": "Oni Aberrante", "band": "oni", "pdv": "1d6", "pdk": 6, "attributeChoices": 1, "features": ["pressao_demoniaca"] },
+    { "level": 7, "title": "Candidato às Doze Kizuki", "band": "candidato", "pdv": "2d4", "pdk": 8, "attributeChoices": 0, "specializationRank": "B", "unarmedTier": 3, "features": ["tecnica_derivada"] },
+    { "level": 8, "title": "Lua Inferior Seis", "band": "lua_inferior", "pdv": "2d4", "pdk": 8, "attributeChoices": 1, "features": ["novo_kekkijutsu_ou_variacao", "corpo_de_elite"] },
+    { "level": 9, "title": "Lua Inferior Cinco", "band": "lua_inferior", "pdv": "2d4", "pdk": 20, "attributeChoices": 0, "kekkijutsuRank": "B", "features": ["pulso_de_sangue_superior", "regeneracao_superior", "reanexacao_de_membros"] },
+    { "level": 10, "title": "Lua Inferior Quatro", "band": "lua_inferior", "pdv": "2d6", "pdk": 10, "attributeChoices": 0, "unarmedTier": 4, "features": ["aura_predatoria", "semente_demoniaca"] },
+    { "level": 11, "title": "Lua Inferior Três", "band": "lua_inferior", "pdv": "2d6", "pdk": 10, "attributeChoices": 1, "features": ["kekkijutsu_supremo_incompleto", "recusar_a_queda"] },
+    { "level": 12, "title": "Lua Inferior Dois", "band": "lua_inferior", "pdv": "2d6", "pdk": 12, "attributeChoices": 2, "specializationRank": "A", "kekkijutsuRank": "A", "features": ["aprimoramento_amplo"] },
+    { "level": 13, "title": "Lua Inferior Um", "band": "lua_inferior", "pdv": "30+VIT", "pdk": 12, "attributeChoices": 0, "unarmedTier": 5, "legendaryActions": 1, "features": ["aumento_corpo_demoniaco", "regeneracao_monstruosa"] },
+    { "level": 14, "title": "Lua Superior Seis", "band": "lua_superior", "pdv": "30+VIT", "pdk": 14, "attributeChoices": 0, "features": ["imunidade_parcial_criticos", "resistencia_demoniaca", "transformar_humanos"] },
+    { "level": 15, "title": "Lua Superior Cinco", "band": "lua_superior", "pdv": "30+VIT", "pdk": 14, "attributeChoices": 0, "kekkijutsuRank": "S", "extraAttackActions": 1, "movementBonusMeters": 3, "features": ["velocidade_divina", "deslocamento_predatorio"] },
+    { "level": 16, "title": "Lua Superior Quatro", "band": "lua_superior", "pdv": "40+VIT", "pdk": 16, "attributeChoices": 0, "fixedAttributes": { "fdv": 2 }, "specializationRank": "S", "unarmedTier": 6, "features": ["dominio_demoniaco"] },
+    { "level": 17, "title": "Lua Superior Três", "band": "lua_superior", "pdv": "40+VIT", "pdk": 16, "attributeChoices": 0, "legendaryActions": 2, "features": ["mundo_transparente_invertido", "regeneracao_avancada"] },
+    { "level": 18, "title": "Lua Superior Dois", "band": "lua_superior", "pdv": "40+VIT", "pdk": 18, "attributeChoices": 0, "kekkijutsuRank": "SS", "features": ["superar_decapitacao", "presenca_lua_superior"] },
+    { "level": 19, "title": "Lua Superior Um", "band": "lua_superior", "pdv": "40+VIT", "pdk": 20, "attributeChoices": 0, "specializationRank": "SS", "legendaryActions": 3, "features": ["arte_de_sangue_perfeita", "corpo_irreversivel"] },
+    { "level": 20, "title": "Rei dos Onis", "band": "rei_oni", "pdv": "50+(VIT*5)", "pdk": 50, "attributeChoices": 0, "unarmedTier": 7, "legendaryActions": 3, "features": ["kekkijutsu_absoluto", "comando_metafisico", "transmissao_de_sangue", "imortalidade_mega_boss", "acao_mitica"] }
+  ],
+  "unarmedTiers": {
+    "1": { "minLevel": 1, "maxLevel": 3, "martial": "2+FOR", "clawBite": "2+DEX" },
+    "2": { "minLevel": 4, "maxLevel": 6, "martial": "1d6+FOR", "clawBite": "1d6+DEX" },
+    "3": { "minLevel": 7, "maxLevel": 9, "martial": "2d6+FOR", "clawBite": "2d6+DEX" },
+    "4": { "minLevel": 10, "maxLevel": 12, "martial": "2d8+FOR", "clawBite": "2d8+DEX" },
+    "5": { "minLevel": 13, "maxLevel": 15, "martial": "3d8+FOR", "clawBite": "3d8+DEX" },
+    "6": { "minLevel": 16, "maxLevel": 19, "martial": "4d10+FOR", "clawBite": "4d10+DEX" },
+    "7": { "minLevel": 20, "maxLevel": 20, "martial": "6d10+FOR", "clawBite": "6d10+DEX" }
+  }
+}

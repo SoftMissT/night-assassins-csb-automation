@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "levels": {
+    "1": { "rank": "Aspirante a Exterminador", "breathingLevel": 1, "events": ["attributes:create", "breathing:choose-primary", "weapon:choose-proficiency"] },
+    "2": { "rank": "Mizunoto", "breathingLevel": 1, "events": ["selection-final:complete", "nichirin:receive"] },
+    "3": { "rank": "Mizuone", "breathingLevel": 1, "events": ["attributes:gain-one"] },
+    "4": { "rank": "Kanoto", "breathingLevel": 2, "classRank": "C", "events": ["class:choose", "class:unlock-C", "breathing:unlock-2"] },
+    "5": { "rank": "Kanoe", "breathingLevel": 2, "events": ["breathing:variation"] },
+    "6": { "rank": "Tsuchinoto", "breathingLevel": 2, "classRank": "B", "events": ["class:unlock-B", "ability:unlock-6"] },
+    "7": { "rank": "Tsuchinoe", "breathingLevel": 2, "events": ["attributes:gain-one", "transparent-world:eligible"] },
+    "8": { "rank": "Hinoto", "breathingLevel": 3, "classRank": "A", "events": ["class:unlock-A", "breathing:unlock-3"] },
+    "9": { "rank": "Hinoe", "breathingLevel": 3, "events": ["breathing:exclusive-technique"] },
+    "10": { "rank": "Kinoto", "breathingLevel": 3, "events": ["breathing:master-discovery", "crimson-blade:eligible"] },
+    "11": { "rank": "Kinoe", "breathingLevel": 3, "classRank": "S", "events": ["class:unlock-S", "altruistic-state:eligible"] },
+    "12": { "rank": "Hashira Novato", "breathingLevel": 4, "classRank": "SS", "events": ["class:unlock-SS", "breathing:unlock-4", "ability:unlock-12"] },
+    "13": { "rank": "Hashira Experiente", "breathingLevel": 4, "events": ["breathing:creative-versatility"] },
+    "14": { "rank": "Hashira de Elite", "breathingLevel": 4, "events": ["mark:higher-power"] }
+  }
+}

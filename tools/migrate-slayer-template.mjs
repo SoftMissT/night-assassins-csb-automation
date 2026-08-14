@@ -139,8 +139,9 @@ function fixBars(template) {
   const hidden = template.system?.hidden;
   if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
   const formulas = new Map([
-    ["pdv_slayer_maximo_num", "${max(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_extra)}$"],
-    ["pdv_slayer_atual_num", "${min(pdv_slayer_maximo_num,max(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado))}$"],
+    ["interludio_pdv_permanente", "${interludio_cabaca_pequena_completa ? 2 : 0}$"],
+    ["pdv_slayer_maximo_num", "${max(0,pdv_slayer_total_conta+interludio_pdv_permanente-pdv_slayer_dano_ferida+pdv_slayer_extra)}$"],
+    ["pdv_slayer_atual_num", "${min(pdv_slayer_maximo_num,max(0,pdv_slayer_total_conta+interludio_pdv_permanente-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado))}$"],
     ["pdr_slayer_maximo_num", "${max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_extra)}$"],
     ["pdr_slayer_atual_num", "${min(pdr_slayer_maximo_num,max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_curado+pdr_slayer_extra-pdr_slayer_gasto_valor))}$"],
   ]);
@@ -299,6 +300,22 @@ function numberField(key, label, defaultValue = 0, minVal = 0, maxVal = null) {
   };
 }
 
+function playerNumberField(key, label, defaultValue = 0, minVal = 0, maxVal = null) {
+  return { ...numberField(key, label, defaultValue, minVal, maxVal), role: 0, editRole: 0, tooltip: "Valor persistente do personagem." };
+}
+
+function playerTextField(key, label, defaultValue = "") {
+  return { ...textField(key, label, defaultValue), role: 0, editRole: 0, tooltip: "Valor persistente do personagem." };
+}
+
+function checkboxField(key, label, defaultValue = false, tooltip = "") {
+  return {
+    key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip, visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "checkbox", size: "full-size", label, defaultValue,
+  };
+}
+
 function displayLabel(key, value, tooltip = "") {
   return {
     key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
@@ -391,6 +408,44 @@ function hunterMarkPanel() {
   return panel("skills_marca_slayer_panel", "Marca do Caçador", [status, button], "grid-2");
 }
 
+function interludePanels() {
+  const manager = displayLabel(
+    "interludio_slayer_gerenciar",
+    orbitron("GERENCIAR TREINO", "#28D7FF", 14),
+    "Realiza o teste, atualiza o progresso e desbloqueia o beneficio automaticamente.",
+  );
+  manager.style = "button";
+  manager.icon = "fa-solid fa-dumbbell";
+  manager.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAInterlude00001'))?.execute({actorUuid:entity.uuid});}%";
+  return [
+    panel("interludio_semana_panel", "Semana de Interlúdio", [
+      manager,
+      playerNumberField("interludio_semana_atual", "Semana", 0, 0),
+      playerTextField("interludio_atividade_principal", "Atividade Principal", ""),
+      playerTextField("interludio_atividade_secundaria", "Atividade Secundária leve", ""),
+      playerTextField("interludio_resultado", "Resultado / Recompensa", ""),
+      playerNumberField("interludio_ecos", "Ecos", 0, 0),
+      playerNumberField("interludio_pdis_gastos", "PDis gastos", 0, 0),
+      richTextArea("interludios_slayer_registro", "Registro das semanas"),
+    ], "grid-2"),
+    panel("interludio_cabacas_panel", "Mansão Borboleta — Cabaças", [
+      playerNumberField("interludio_cabaca_pequena_sucessos", "Pequena — sucessos consecutivos (VIT CD 14)", 0, 0, 3),
+      checkboxField("interludio_cabaca_pequena_completa", "Cabaça Pequena completa (+2 PDV máximo)"),
+      playerNumberField("interludio_cabaca_media_sucessos", "Média — sucessos consecutivos (VIT+FDV CD 16)", 0, 0, 3),
+      checkboxField("interludio_cabaca_media_completa", "Cabaça Média completa (+2 PDR em descanso)"),
+      playerNumberField("interludio_cabaca_gigante_sucessos", "Gigante — sucessos consecutivos (VIT+FDV CD 18)", 0, 0, 3),
+      checkboxField("interludio_cabaca_gigante_completa", "Cabaça Gigante completa"),
+      checkboxField("interludio_concentracao_total_constante", "Concentração Total Constante desbloqueada"),
+      checkboxField("interludio_respiracao_repouso", "Respiração em Repouso desbloqueada"),
+    ], "grid-2"),
+    panel("interludio_reflexo_panel", "Copo de Chá Medicinal", [
+      playerNumberField("interludio_copo_cha_vitorias", "Vitórias totais (DEX CD 20)", 0, 0, 3),
+      checkboxField("interludio_olhos_falcao", "Olhos de Falcão desbloqueado (+2 Iniciativa)"),
+      checkboxField("interludio_tokito_consolidado", "Treino de Tokito consolidado"),
+    ], "grid-2"),
+  ];
+}
+
 function organizeSlayerTabs(template) {
   let tabs = null;
   walk(template.system?.body, (node) => {
@@ -473,12 +528,7 @@ function organizeSlayerTabs(template) {
     ], "grid-2"),
     breathingItemContainer(),
     markPanel,
-    panel("skills_slayer_avancadas_panel", "Estados Avançados", [
-      textField("mundo_transparente_slayer_estado", "Mundo Transparente", "Não desbloqueado"),
-      textField("estado_altruista_slayer_estado", "Estado Altruísta", "Não desbloqueado"),
-      textField("lamina_carmesim_slayer_estado", "Lâmina Carmesim", "Não desbloqueada"),
-      textField("hab_origem_slayer_resumo", "Habilidade de Origem", ""),
-    ], "grid-2"),
+    panel("skills_slayer_origem_panel", "Habilidade de Origem", [textField("hab_origem_slayer_resumo", "Resumo", "")]),
   ]);
 
   const inventario = tab("inventario_slayer_tab", "Inventário", [
@@ -505,8 +555,8 @@ function organizeSlayerTabs(template) {
   ]);
 
   const interludios = tab("interludios_slayer_tab", "Interlúdios", [
-    displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIOS CONCLUÍDOS", "#28D7FF", 18)),
-    richTextArea("interludios_slayer_registro", "Registro de Interlúdios"),
+    displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIO, TREINO & REABILITAÇÃO", "#28D7FF", 18)),
+    ...interludePanels(),
   ]);
   const notas = tab("notas_slayer_tab", "Notas/Diário", [
     displayLabel("notas_slayer_titulo", orbitron("NOTAS & DIÁRIO", "#D45CA4", 18)),
@@ -532,6 +582,10 @@ function fixBreathingState(template) {
     if (!String(display.value).includes(bonus)) {
       display.value = String(display.value).replace(/}\$$/, `+${bonus}}$`);
     }
+  }
+  const vitDisplay = hidden.find((entry) => entry.name === "vit_display");
+  if (vitDisplay && !String(vitDisplay.value).includes("interludio_concentracao_total_constante")) {
+    vitDisplay.value = String(vitDisplay.value).replace(/}\$$/, "+(interludio_concentracao_total_constante ? 1 : 0)}$");
   }
 
   let combatTab = null;
@@ -725,8 +779,8 @@ function fixMovementDisplay(template) {
   const hidden = template.system?.hidden;
   if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
   const movement = hidden.find((entry) => entry.name === "deslocamento_slayer");
-  if (movement) movement.value = "${7+dex_display}$";
-  else hidden.push({ name: "deslocamento_slayer", value: "${7+dex_display}$" });
+  if (movement) movement.value = "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$";
+  else hidden.push({ name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
 
   let combatTable = null;
   walk(template.system?.body, (node) => {

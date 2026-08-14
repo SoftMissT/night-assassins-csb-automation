@@ -19,6 +19,7 @@ const macros = [
   { id: "NARestManage0001", file: "na-gerenciar-descanso.js", name: "Night Assassins — Gerenciar Descanso" },
   { id: "NARespFormUse001", file: "na-resp-usar-forma.js", name: "Night Assassins — Usar Forma de Respiração" },
   { id: "NALifeDeath00001", file: "na-gerenciar-vida-morte.js", name: "Night Assassins — Vida e Morte" },
+  { id: "NAInterlude00001", file: "na-gerenciar-interludio.js", name: "Night Assassins — Gerenciar Interludio" },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

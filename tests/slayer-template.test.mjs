@@ -68,8 +68,8 @@ test("template Slayer separa dano comum, Ferida e armazenamento de Resistências
   assert.match(source, /"acoes_slayer_resumo"/);
   assert.match(source, /"descanso_slayer_dados"/);
   assert.match(source, /pdv_slayer_maximo_num/);
-  assert.match(source, /max\(0,pdv_slayer_total_conta-pdv_slayer_dano_ferida\+pdv_slayer_extra\)/);
-  assert.match(source, /pdv_slayer_total_conta-pdv_slayer_dano_ferida\+pdv_slayer_curado\+pdv_slayer_extra-pdv_slayer_dano_tomado/);
+  assert.match(source, /max\(0,pdv_slayer_total_conta\+interludio_pdv_permanente-pdv_slayer_dano_ferida\+pdv_slayer_extra\)/);
+  assert.match(source, /pdv_slayer_total_conta\+interludio_pdv_permanente-pdv_slayer_dano_ferida\+pdv_slayer_curado\+pdv_slayer_extra-pdv_slayer_dano_tomado/);
   assert.doesNotMatch(source, /\bpdv_slayer_dano\b/);
 });
 
@@ -100,10 +100,10 @@ test("Marca despertada é exibida como estado textual", () => {
   assert.doesNotMatch(source, /Despertada: \$\{marca_despertada\}\$/);
 });
 
-test("template Slayer mostra deslocamento base como 7m mais DEX atual", () => {
+test("template Slayer mostra deslocamento e bonus da Concentracao Total Constante", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const movement = template.system.hidden.find((entry) => entry.name === "deslocamento_slayer");
-  assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display}$" });
+  assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
   const source = JSON.stringify(template.system.body);
   assert.match(source, /"deslocamento_slayer_display"/);
   assert.match(source, /\$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
@@ -182,12 +182,15 @@ test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB
   for (const key of ["dinheiro_slayer_atual", "moedas_honra_slayer_atual"]) assert.match(source, new RegExp(`"${key}"`));
   for (const key of [
     "skills_slayer_resp_display", "skills_slayer_hab_display", "skills_slayer_classe_display",
-    "skills_marca_slayer_panel", "mundo_transparente_slayer_estado", "estado_altruista_slayer_estado",
-    "lamina_carmesim_slayer_estado", "hab_origem_slayer_resumo",
+    "skills_marca_slayer_panel", "hab_origem_slayer_resumo",
   ]) assert.match(source, new RegExp(`"${key}"`));
   for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario"]) {
     assert.match(source, new RegExp(`"${key}"`));
   }
+  assert.match(source, /"interludio_slayer_gerenciar"/);
+  assert.match(source, /Macro\.NAInterlude00001/);
+  assert.doesNotMatch(source, /"interludio_arma_panel"|"interludio_hashira_panel"|"interludio_repetitivo_panel"/);
+  assert.doesNotMatch(source, /"mundo_transparente_slayer_panel"|"estado_altruista_slayer_panel"|"lamina_carmesim_slayer_panel"/);
   for (const key of ["vida_morte_slayer_dados", "vida_morte_slayer_resumo", "vida_morte_slayer_marcas", "vida_morte_slayer_quedas", "vida_morte_slayer_gerenciar"]) {
     assert.match(source, new RegExp(`"${key}"`));
   }

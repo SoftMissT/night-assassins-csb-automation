@@ -22,6 +22,7 @@ import { consumeSlayerActions, openActionManager, parseActionState, recoverSlaye
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
 import { registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
 import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, stabilizeSlayer } from "./life-death-service.mjs";
+import { executeInterludeActivity, openInterludeManager } from "./interlude-service.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -90,6 +91,8 @@ Hooks.once("ready", () => {
       processDeathTest,
       slayerCurrentPdv,
       stabilizeSlayer,
+      openInterludeManager,
+      executeInterludeActivity,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

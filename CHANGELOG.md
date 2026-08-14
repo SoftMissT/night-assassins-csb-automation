@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.4 — 2026-08-14
+
+- Adiciona o gerenciador funcional de Interlúdio para Cabaças e Copo de Chá Medicinal.
+- Persiste sucessos, zera sequências de Cabaça em falha e desbloqueia benefícios no terceiro sucesso.
+- Integra Cabaça Pequena ao PDV máximo e Concentração Total Constante a VIT e movimento.
+- Remove da aba os treinamentos e estados avançados que ainda não possuem motor completo, evitando controles decorativos.
+- Atualiza o Compêndio com a macro `Night Assassins — Gerenciar Interlúdio`.
+
+### Validação
+
+- `node --test`: 208 testes aprovados, 0 falhas.
+- GitNexus reindexado com PDG: 7.552 nós, 16.951 relações, 70 clusters e 291 fluxos.
+
 ## 0.8.3 — 2026-08-14
 
 - Converte Markdown dos catálogos de Respirações e armas em HTML enriquecível pelo Foundry VTT durante o build.

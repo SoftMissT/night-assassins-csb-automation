@@ -3,10 +3,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { breathingIconPath } from "../scripts/breathing-icons.mjs";
 import { flameFormById } from "../scripts/flame-breathing-data.mjs";
+import { markdownToFoundryHtml } from "./compendium-catalog-utils.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogPath = path.join(root, "catalogs", "breathing.json");
 const outputDirectory = path.join(root, "build", "compendium", "respiracoes");
+const templatePath = path.join(root, "src", "templates", "items", "breathing-form-template.json");
 
 export const BREATHING_CATALOG = Object.freeze([
   "Água", "Ameixeira", "Amor", "Aranha", "Areia", "Besta", "Cerejeira", "Chamas", "Corvo", "Cristal", "Dragão",
@@ -28,12 +30,23 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
 
 const catalog = JSON.parse(await readFile(catalogPath, "utf8"));
 if (catalog.format !== 1 || !Array.isArray(catalog.documents)) throw new Error("Catálogo mecânico de Respirações inválido.");
+const templateExport = JSON.parse(await readFile(templatePath, "utf8"));
+const breathingTemplate = templateExport.items?.find((item) => item.type === "_equippableItemTemplate" && item.id === "NABreathTpl00001");
+if (!breathingTemplate) throw new Error("Template de Forma de Respiração inválido.");
+const templateDocument = { _id: breathingTemplate.id, _key: `!items!${breathingTemplate.id}`, name: breathingTemplate.name, type: breathingTemplate.type, img: breathingTemplate.img, system: breathingTemplate.data };
+catalog.documents = catalog.documents.map((document) => document.type === "_equippableItemTemplate" && document._id === templateDocument._id ? templateDocument : document);
 
 for (const document of catalog.documents) {
   if (document.type !== "equippableItem") continue;
   const icon = breathingIconPath(document.system?.props?.respiracao_nome);
   if (icon) document.img = icon;
   const flame = flameFormById(document.system?.props?.forma_id);
+  const props = document.system.props;
+  props.forma_passiva = flame?.passive || /passiva/iu.test(String(props.tipo_manobra ?? "")) ? 1 : 0;
+  const richTextKeys = ["descricao", "requisito_texto", "gatilho_texto", "combo_texto", "notas_texto", "sinergias_texto", "nvl1_efeito", "nvl2_efeito", "nvl3_efeito", "nvl4_efeito"];
+  for (const key of richTextKeys) {
+    if (typeof props[key] === "string" && props[key].trim()) props[key] = markdownToFoundryHtml(props[key]);
+  }
   if (flame) {
     document.system.props.tipo_manobra = flame.passive ? "Passiva" : ({ ataque: "Ação de Ataque", especial: "Ação Especial", reacao: "Reação" }[flame.action] ?? flame.action);
     for (let level = 1; level <= 4; level += 1) {

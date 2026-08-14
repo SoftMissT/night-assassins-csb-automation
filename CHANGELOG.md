@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3 — 2026-08-14
+
+- Converte Markdown dos catálogos de Respirações e armas em HTML enriquecível pelo Foundry VTT durante o build.
+- Impede que a mesma arma apareça novamente em Equipamentos e Itens usando filtros exclusivos por template CSB.
+- Marca formas passivas explicitamente e oculta sua aba de ativação manual; `Esquentar` permanece automática, sem custo de ação ou PDR.
+- Adiciona testes de conversão, isolamento dos contêineres e publicação de passivas.
+
 ## 0.8.2 — 2026-08-14
 
 - Corrige a resolução do Item de arma no CSB: a ficha passa `linkedEntity` ao motor em vez de confundir o Actor com a arma.

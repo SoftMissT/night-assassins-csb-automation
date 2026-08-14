@@ -330,7 +330,7 @@ function tab(key, name, contents) {
   return { key, type: "tab", name, tooltip: "", role: 0, permission: 0, visibilityFormula: "", contents };
 }
 
-function itemContainer(key, title, category) {
+function itemContainer(key, title, category, templateId = "") {
   return {
     key, colSpan: 1, rowSpan: 3, cssClass: "", role: 0, editRole: 0,
     permission: 0, tooltip: `Itens classificados como ${category}.`, visibilityFormula: "", editableFormula: "", escapeHTML: false,
@@ -338,13 +338,13 @@ function itemContainer(key, title, category) {
     hiddenColumns: [], sortOption: "manual", headDisplay: true, showCreate: false,
     defaultTemplate: "", createItemDialogTitle: "", createItemDialogShowTemplateList: false,
     createItemDialogButton: "", newItemDefaultName: "", showDelete: true,
-    statusIcon: true, nameAlign: "left", nameLabel: "Nome", templateFilter: [],
+    statusIcon: true, nameAlign: "left", nameLabel: "Nome", templateFilter: templateId ? [templateId] : [],
     itemFilterFormula: `equalText(item.inventario_categoria, '${category}')`, sortPredicates: [],
   };
 }
 
 function weaponItemContainer() {
-  const container = itemContainer("inventario_slayer_armas", orbitron("ARMAS", "#C1000C"), "arma");
+  const container = itemContainer("inventario_slayer_armas", orbitron("ARMAS", "#C1000C"), "arma", "NAWeaponTpl00001");
   container.nameLabel = "Arma";
   container.tooltip = "Arraste uma arma para o inventário e use Rolar para abrir o dano com os dados do Item.";
   const rollButton = displayLabel("arma_slayer_rolar", orbitron("ROLAR", "#C1000C", 11), "Rola o dano desta arma.");
@@ -366,7 +366,7 @@ function fixTextVisibilityFormulas(template) {
 }
 
 function breathingItemContainer() {
-  const container = itemContainer("skills_slayer_respiracoes", orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF"), "respiracao");
+  const container = itemContainer("skills_slayer_respiracoes", orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF"), "respiracao", "NABreathTpl00001");
   container.headDisplay = false;
   container.hideEmpty = false;
   container.nameLabel = "Forma";
@@ -488,8 +488,8 @@ function organizeSlayerTabs(template) {
       numberField("moedas_honra_slayer_atual", "Moedas de Honra atual", 0, 0),
     ], "grid-2"),
     weaponItemContainer(),
-    itemContainer("inventario_slayer_equipamentos", "Equipamentos", "equipamento"),
-    itemContainer("inventario_slayer_itens", "Itens", "item"),
+    itemContainer("inventario_slayer_equipamentos", "Equipamentos", "equipamento", "NAEquipmentTpl01"),
+    itemContainer("inventario_slayer_itens", "Itens", "item", "NAInventoryTpl001"),
   ]);
 
   const condicoes = tab("status_slayer_tab", "Condições", [

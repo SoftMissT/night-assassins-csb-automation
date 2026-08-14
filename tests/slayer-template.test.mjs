@@ -201,3 +201,18 @@ test("botão de arma envia o Item vinculado ao motor próprio", () => {
   assert.match(serialized, /item:weapon/);
   assert.doesNotMatch(serialized, /formulaBase:linkedEntity/);
 });
+
+test("inventário filtra cada categoria por template exclusivo", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const containers = new Map();
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (node.type === "itemContainer") containers.set(node.key, node);
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  assert.deepEqual(containers.get("skills_slayer_respiracoes")?.templateFilter, ["NABreathTpl00001"]);
+  assert.deepEqual(containers.get("inventario_slayer_armas")?.templateFilter, ["NAWeaponTpl00001"]);
+  assert.deepEqual(containers.get("inventario_slayer_equipamentos")?.templateFilter, ["NAEquipmentTpl01"]);
+  assert.deepEqual(containers.get("inventario_slayer_itens")?.templateFilter, ["NAInventoryTpl001"]);
+});

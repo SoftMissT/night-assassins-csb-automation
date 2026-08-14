@@ -3205,7 +3205,9 @@
                   "statusIcon": true,
                   "nameAlign": "left",
                   "nameLabel": "Arma",
-                  "templateFilter": [],
+                  "templateFilter": [
+                    "NAWeaponTpl00001"
+                  ],
                   "itemFilterFormula": "equalText(item.inventario_categoria, 'arma')",
                   "sortPredicates": []
                 },
@@ -3239,7 +3241,9 @@
                   "statusIcon": true,
                   "nameAlign": "left",
                   "nameLabel": "Nome",
-                  "templateFilter": [],
+                  "templateFilter": [
+                    "NAEquipmentTpl01"
+                  ],
                   "itemFilterFormula": "equalText(item.inventario_categoria, 'equipamento')",
                   "sortPredicates": []
                 },
@@ -3273,7 +3277,9 @@
                   "statusIcon": true,
                   "nameAlign": "left",
                   "nameLabel": "Nome",
-                  "templateFilter": [],
+                  "templateFilter": [
+                    "NAInventoryTpl001"
+                  ],
                   "itemFilterFormula": "equalText(item.inventario_categoria, 'item')",
                   "sortPredicates": []
                 }

@@ -12,6 +12,82 @@ export function stripMarkdown(value = "") {
     .trim();
 }
 
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/gu, "&amp;")
+    .replace(/</gu, "&lt;")
+    .replace(/>/gu, "&gt;")
+    .replace(/"/gu, "&quot;");
+}
+
+function inlineMarkdown(value = "") {
+  return escapeHtml(value)
+    .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/gu, (_match, target, label) => `<span class="na-wikilink">${label || target}</span>`)
+    .replace(/`([^`]+)`/gu, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/gu, "<strong>$1</strong>")
+    .replace(/__([^_]+)__/gu, "<strong>$1</strong>")
+    .replace(/(?<!\*)\*([^*]+)\*(?!\*)/gu, "<em>$1</em>");
+}
+
+/** Convert trusted rule Markdown into HTML accepted by Foundry's enriched editor. */
+export function markdownToFoundryHtml(markdown = "") {
+  const lines = String(markdown).replace(/\r\n?/gu, "\n").trim().split("\n");
+  const output = [];
+  let paragraph = [];
+  let listType = null;
+  let listItems = [];
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return;
+    output.push(`<p>${paragraph.map(inlineMarkdown).join("<br>")}</p>`);
+    paragraph = [];
+  };
+  const flushList = () => {
+    if (!listType) return;
+    output.push(`<${listType}>${listItems.map((item) => `<li>${inlineMarkdown(item)}</li>`).join("")}</${listType}>`);
+    listType = null;
+    listItems = [];
+  };
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index].trimEnd();
+    if (!line.trim()) { flushParagraph(); flushList(); continue; }
+    if (/^---+$/u.test(line.trim())) { flushParagraph(); flushList(); output.push("<hr>"); continue; }
+    const heading = line.match(/^(#{1,6})\s+(.+)$/u);
+    if (heading) { flushParagraph(); flushList(); const level = heading[1].length; output.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`); continue; }
+    const quote = line.match(/^>\s?(.*)$/u);
+    if (quote) { flushParagraph(); flushList(); output.push(`<blockquote><p>${inlineMarkdown(quote[1])}</p></blockquote>`); continue; }
+    const unordered = line.match(/^[-*+]\s+(.+)$/u);
+    const ordered = line.match(/^\d+[.)]\s+(.+)$/u);
+    if (unordered || ordered) {
+      flushParagraph();
+      const nextType = unordered ? "ul" : "ol";
+      if (listType && listType !== nextType) flushList();
+      listType = nextType;
+      listItems.push((unordered || ordered)[1]);
+      continue;
+    }
+    if (/^\|.*\|$/u.test(line) && /^\|?\s*:?-{3,}/u.test(lines[index + 1]?.trim() || "")) {
+      flushParagraph(); flushList();
+      const rows = [line];
+      let cursor = index + 2;
+      while (cursor < lines.length && /^\|.*\|$/u.test(lines[cursor].trim())) {
+        rows.push(lines[cursor]);
+        cursor += 1;
+      }
+      const header = rows.shift().split("|").slice(1, -1).map((cell) => `<th>${inlineMarkdown(cell.trim())}</th>`).join("");
+      const body = rows.map((row) => `<tr>${row.split("|").slice(1, -1).map((cell) => `<td>${inlineMarkdown(cell.trim())}</td>`).join("")}</tr>`).join("");
+      output.push(`<table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`);
+      index = cursor - 1;
+      continue;
+    }
+    flushList();
+    paragraph.push(line.trim());
+  }
+  flushParagraph(); flushList();
+  return output.join("\n");
+}
+
 export function splitLevelTwoSections(markdown = "") {
   const matches = [...String(markdown).matchAll(/^##\s+(.+)$/gmu)];
   return matches.map((match, index) => ({
@@ -68,4 +144,3 @@ export function folderDocument(id, name, sort = 0) {
     flags: {},
   };
 }
-

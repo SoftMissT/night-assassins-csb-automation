@@ -2,6 +2,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractWeaponRankFormulas } from "../scripts/weapon-service.mjs";
+import { markdownToFoundryHtml } from "./compendium-catalog-utils.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogPath = path.join(root, "catalogs", "slayer-weapons.json");
@@ -25,6 +26,8 @@ const documents = catalog.documents.map((document) => {
       ...document.system,
       props: {
         ...props,
+        descricao: markdownToFoundryHtml(props.descricao ?? ""),
+        arma_regra_completa: markdownToFoundryHtml(props.arma_regra_completa ?? ""),
         arma_formulas_por_rank: formulas,
         arma_perfis_resumo: profiles.map((profile) => profile.formula_texto || profile.nome).filter(Boolean).join("\n"),
         arma_tipos_dano_resumo: (Array.isArray(props.arma_tipos_dano) ? props.arma_tipos_dano : []).join(", "),

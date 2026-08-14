@@ -21,6 +21,7 @@ describe("catálogo de Respirações", () => {
     assert.deepEqual(folders.map((folder) => folder.name).sort(), [...BREATHING_FOLDER_NAMES].sort());
     assert.ok(items.length >= 300, "todas as técnicas oficiais disponíveis devem virar Items");
     assert.ok(items.every((item) => item.folder && item.system?.props?.inventario_categoria === "respiracao"));
+    assert.ok(items.every((item) => /^<(?:p|h[1-6]|ul|ol|blockquote|table|hr)/u.test(item.system.props.descricao)), "descrições publicadas devem ser HTML do Foundry");
   });
 
   it("preserva as onze Formas mecânicas de Água", async () => {
@@ -35,6 +36,8 @@ describe("catálogo de Respirações", () => {
     const flames = documents.filter((document) => document.type === "equippableItem" && document.system?.props?.respiracao_nome === "Chamas");
     assert.equal(flames.length, 9);
     assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_01").system.props.tipo_manobra, "Passiva");
+    assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_01").system.props.forma_passiva, 1);
+    assert.ok(flames.filter((item) => item.system.props.forma_id !== "chamas_01").every((item) => item.system.props.forma_passiva === 0));
     assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_04").system.props.tipo_manobra, "Reação");
     const storm = flames.find((item) => item.system.props.forma_id === "chamas_06");
     assert.equal(storm.system.props.tem_nvl2, 0);
@@ -61,6 +64,7 @@ describe("catálogo de armas Slayer", () => {
     const weapons = documents.filter((document) => document.type === "equippableItem");
     assert.equal(weapons.length, 43);
     assert.ok(weapons.every((item) => item.system?.props?.inventario_categoria === "arma"));
+    assert.ok(weapons.every((item) => /^<(?:p|h[1-6]|ul|ol|blockquote|table|hr)/u.test(item.system.props.descricao)), "descrições de armas devem ser HTML do Foundry");
     assert.ok(weapons.every((item) => item.system?.template === "NAWeaponTpl00001"));
     assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_perfis_ataque) && item.system.props.arma_perfis_ataque.length > 0));
     assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_tipos_dano)));
@@ -85,6 +89,13 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /arma_perfis_resumo/);
     assert.match(serialized, /arma_rank_ss_formula/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
+  });
+
+  it("publica passivas sem botão de ativação manual", async () => {
+    const documents = await sourceDocuments("../build/compendium/respiracoes/");
+    const template = documents.find((document) => document.type === "_equippableItemTemplate");
+    const serialized = JSON.stringify(template.system);
+    assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
   });
 
   it("publica ícones de compêndio e artes verticais existentes", async () => {

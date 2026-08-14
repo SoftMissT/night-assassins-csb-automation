@@ -14,6 +14,7 @@ import { weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { addStoneBreak, parseBreathPassiveState, passiveStatePatch } from "./breath-passives.mjs";
+import { openAttackBuilder } from "./items/attack-builder.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -132,6 +133,25 @@ export async function rollDamage(options = {}) {
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
     attrValues[key] = parseAttributeValue(props[`${key}_display`]);
+  }
+
+  const hasExplicitDamage = Array.isArray(options.entradas) && options.entradas.length > 0
+    || Array.isArray(options.weaponProfiles) && options.weaponProfiles.length > 0
+    || Boolean(options.formulaBase)
+    || Number(options.fixo) !== 0
+    || Array.isArray(options.attrs) && options.attrs.length > 0
+    || Boolean(options.attr);
+  if (!hasExplicitDamage && options.builder !== false && isSlayerActor(actor)) {
+    const selection = await openAttackBuilder(actor);
+    if (!selection || selection.cancelled) return;
+    if (!selection.manual) {
+      options = {
+        ...options,
+        nome: selection.nome || options.nome,
+        entradas: selection.entradas,
+        pdrCusto: parseNumber(options.pdrCusto) + parseNumber(selection.pdrCusto),
+      };
+    }
   }
 
   const weaponProfiles = Array.isArray(options.weaponProfiles) ? options.weaponProfiles.filter((profile) => profile && typeof profile === "object") : [];

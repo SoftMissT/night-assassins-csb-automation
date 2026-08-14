@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.9.1 — 2026-08-14
+
+- Conecta o botão geral de dano aos Items de arma e Formas de Respiração portados pelo Slayer.
+- Monta parcelas independentes para arma e Respiração usando Rank, nível de Respiração e atributos finais `*_display`.
+- Transporta tipo de ação, tipos de dano e custo de PDR para o diálogo de dano existente.
+- Mantém o dano manual como fallback e não executa Formas passivas.
+- Evita cobrar Ação de Ataque separada quando uma Forma ativa já define a ação da técnica.
+
+### Validação
+
+- `node --test`: 243 testes aprovados, 0 falhas.
+- GitNexus: impacto final classificado como MEDIUM em quatro fluxos existentes de `rollWeaponItem`.
+
 ## 0.9.0 — 2026-08-14
 
 - Introduz o contrato canônico `TechniqueDefinition` para armas, Respirações, Kekkijutsu e equipamentos.

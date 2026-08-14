@@ -79,6 +79,9 @@ describe("catálogo de armas Slayer", () => {
     const template = documents.find((document) => document.type === "_equippableItemTemplate");
     const serialized = JSON.stringify(template.system);
     assert.match(serialized, /rollWeaponItem/);
+    assert.match(serialized, /linkedEntity/);
+    assert.doesNotMatch(serialized, /itemUuid:entity\.uuid/);
+    assert.match(serialized, /custom-orbitron-wrapper/);
     assert.match(serialized, /arma_perfis_resumo/);
     assert.match(serialized, /arma_rank_ss_formula/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);

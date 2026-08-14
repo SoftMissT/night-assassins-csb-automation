@@ -366,7 +366,9 @@ export async function rollDamage(options = {}) {
  * @returns {Promise<void>}
  */
 export async function rollWeaponItem(options = {}) {
-  const item = options.item ?? (options.itemUuid ? await fromUuid(options.itemUuid) : null);
+  const directItem = options.item?.documentName === "Actor" ? null : options.item;
+  const resolvedUuid = options.itemUuid ? await fromUuid(options.itemUuid) : null;
+  const item = directItem ?? (resolvedUuid?.documentName === "Actor" ? null : resolvedUuid);
   if (!item) return ui.notifications?.warn?.("Item de arma não encontrado.");
   const actor = item.parent?.documentName === "Actor"
     ? item.parent

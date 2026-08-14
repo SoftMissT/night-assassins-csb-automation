@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.2 — 2026-08-14
+
+- Corrige a resolução do Item de arma no CSB: a ficha passa `linkedEntity` ao motor em vez de confundir o Actor com a arma.
+- Faz o botão da linha do Inventário e o botão do Item aberto usarem o mesmo `rollWeaponItem` especializado.
+- Impede que um Actor recebido como `itemUuid` produza falsamente “Esta arma não possui perfil de ataque configurado”.
+- Padroniza “Rolar Dano da Arma” com o wrapper Orbitron da ficha.
+
 ## 0.8.1 — 2026-08-14
 
 - Implementa Vida e Morte Slayer: À Beira da Morte, Marcas, Queda Repetida, Teste de Morte, Determinação Final, cura em 0 PDV e estabilização por INT/SAB.

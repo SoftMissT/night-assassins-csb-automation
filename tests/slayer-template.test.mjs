@@ -36,7 +36,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões funcionais; encontrados ${buttons.length}.`);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
-    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\./);
+    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.rollWeaponItem/);
     assert.match(String(button.value), /custom-orbitron-wrapper/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
@@ -192,4 +192,12 @@ test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB
     assert.match(source, new RegExp(`"${key}"`));
   }
   assert.match(source, /"type":"textArea"/);
+});
+
+test("botão de arma envia o Item vinculado ao motor próprio", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const serialized = JSON.stringify(template.system);
+  assert.match(serialized, /rollWeaponItem/);
+  assert.match(serialized, /item:weapon/);
+  assert.doesNotMatch(serialized, /formulaBase:linkedEntity/);
 });

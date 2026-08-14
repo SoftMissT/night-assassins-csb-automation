@@ -350,7 +350,7 @@ function weaponItemContainer() {
   const rollButton = displayLabel("arma_slayer_rolar", orbitron("ROLAR", "#C1000C", 11), "Rola o dano desta arma.");
   rollButton.style = "button";
   rollButton.icon = "fa-solid fa-khanda";
-  rollButton.rollMessage = "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NADamageRoll0001'))?.execute({actorUuid:entity.uuid,nome:linkedEntity.name,formulaBase:linkedEntity.system.props.arma_dano_dados||'',fixo:Number(linkedEntity.system.props.arma_dano_fixo)||0,attrs:linkedEntity.system.props.arma_dano_atributo?[linkedEntity.system.props.arma_dano_atributo]:[],tiposDano:linkedEntity.system.props.arma_tipos_dano?[linkedEntity.system.props.arma_tipos_dano]:[],tipoAcao:'ataque'});}%";
+  rollButton.rollMessage = "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!weapon)return ui.notifications.warn('Arma não encontrada nesta linha.');return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:entity,actorUuid:entity.uuid});}%";
   container.rowLayout = [{ ...rollButton, align: "center", colName: "Rolar" }];
   return container;
 }

@@ -1,6 +1,9 @@
 import { MODULE_ID } from "./constants.mjs";
 import { parseNumber } from "./parsing.mjs";
 import { applySlayerDamage } from "./status-engine.mjs";
+import { addFlameEnemyHeat, FLAME_HEAT_FLAG } from "./flame-breathing-service.mjs";
+import { parseStatusState } from "./status-service.mjs";
+import { isSlayerActor } from "./actor-kind.mjs";
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const DAMAGE_KEY = "pdv_oni_dano_tomado";
@@ -38,7 +41,50 @@ function normalizeDamageContext(context = {}) {
     damageTypes: [...new Set(Array.isArray(context.damageTypes) ? context.damageTypes.filter((key) => allowed.has(key)) : [])],
     components,
     requireApproval: context.requireApproval === true,
+    flame: context.flame && typeof context.flame === "object" ? {
+      sourceId: String(context.flame.sourceId ?? "").slice(0, 64),
+      heat: Math.max(0, Math.min(5, Math.trunc(Number(context.flame.heat) || 0))),
+      blockPenalty: Math.max(-10, Math.min(0, Math.trunc(Number(context.flame.blockPenalty) || 0))),
+      blockPenaltyTurns: Math.max(0, Math.min(10, Math.trunc(Number(context.flame.blockPenaltyTurns) || 0))),
+      exhaustionOnHit: Math.max(0, Math.min(2, Math.trunc(Number(context.flame.exhaustionOnHit) || 0))),
+      exhaustionOverDamage: Math.max(0, Math.min(1000, Math.trunc(Number(context.flame.exhaustionOverDamage) || 0))),
+    } : null,
   };
+}
+
+async function applyFlameAfterDamage(actor, context, appliedDamage) {
+  const flame = context.flame;
+  if (!flame?.sourceId || flame.heat < 1) return null;
+  const heatMap = actor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {};
+  const heat = addFlameEnemyHeat(heatMap, flame.sourceId, flame.heat);
+  await actor.setFlag(MODULE_ID, FLAME_HEAT_FLAG, heat.state);
+
+  const slayer = isSlayerActor(actor);
+  const dataKey = slayer ? "status_slayer_dados" : "status_oni_dados";
+  const exhaustionKey = slayer ? "status_slayer_exaustao" : "status_oni_exaustao";
+  const props = actor.system?.props ?? {};
+  const status = parseStatusState(props[dataKey]);
+  const thresholdExhaustion = heat.thresholds.filter((value) => [5, 20, 40].includes(value)).length;
+  const conditionalExhaustion = flame.exhaustionOnHit + (flame.exhaustionOverDamage > 0 && appliedDamage > flame.exhaustionOverDamage ? 1 : 0);
+  const patch = {};
+  if (thresholdExhaustion + conditionalExhaustion > 0) {
+    status.exhaustion = Math.min(8, Math.max(status.exhaustion, Number(props[exhaustionKey]) || 0) + thresholdExhaustion + conditionalExhaustion);
+    patch[`system.props.${exhaustionKey}`] = status.exhaustion;
+  }
+  if (heat.thresholds.includes(50)) {
+    if (!status.active.includes("atordoamento")) status.active.push("atordoamento");
+    status.effects.atordoamento = { remainingTurns: 2, tick: "end", sourceName: "Brasas Ardentes 50" };
+  }
+  if (thresholdExhaustion + conditionalExhaustion > 0 || heat.thresholds.includes(50)) patch[`system.props.${dataKey}`] = JSON.stringify(status);
+  if (flame.blockPenalty < 0 && flame.blockPenaltyTurns > 0) {
+    await actor.setFlag(MODULE_ID, "flameBlockPenalty", { value: flame.blockPenalty, turns: flame.blockPenaltyTurns });
+  }
+  if (Object.keys(patch).length) await actor.update(patch, { naCsbAutomation: true, naFlameHeat: true });
+  for (const threshold of heat.thresholds.filter((value) => value === 10 || value === 30)) {
+    if (slayer) await applySlayerDamage(actor, 5, { isAttack: false, source: `Brasas Ardentes ${threshold}` });
+    else await updateOniDamage(actor, 5, 0);
+  }
+  return { heat: heat.heat, thresholds: heat.thresholds };
 }
 
 export function calculateApprovedDamage(amount, resisted = false) {
@@ -197,6 +243,7 @@ async function handleDamageRequest(message) {
     }
 
     const { total, woundTotal } = await updateOniDamage(actor, approval.normalDamage, approval.woundDamage);
+    const flame = await applyFlameAfterDamage(actor, context, approval.appliedDamage);
     emitResult(message.requesterId, message.requestId, {
       ok: true,
       total,
@@ -207,6 +254,7 @@ async function handleDamageRequest(message) {
       woundTotal,
       resisted: approval.resisted,
       damageTypes: approval.damageTypes,
+      flame,
     });
   } catch (error) {
     emitResult(message.requesterId, message.requestId, { ok: false, error: error?.message || "Falha ao atualizar o Oni." });
@@ -228,8 +276,10 @@ async function handleSlayerDamageRequest(message) {
     return;
   }
   try {
-    const result = await applySlayerDamage(actor, amount, normalizeDamageContext(message.context));
-    emitSlayerResult(message.requesterId, message.requestId, { ok: true, ...result });
+    const context = normalizeDamageContext(message.context);
+    const result = await applySlayerDamage(actor, amount, context);
+    const flame = await applyFlameAfterDamage(actor, context, result.appliedDamage ?? result.totalDamage ?? amount);
+    emitSlayerResult(message.requesterId, message.requestId, { ok: true, ...result, flame });
   } catch (error) {
     emitSlayerResult(message.requesterId, message.requestId, { ok: false, error: error?.message || "Falha ao atualizar o Slayer." });
   }
@@ -256,7 +306,11 @@ export async function applySlayerDamageAuto(actor, amount, rawContext = {}) {
   const damage = Math.trunc(Number(amount));
   const context = normalizeDamageContext(rawContext);
   if (!actor || !Number.isSafeInteger(damage) || damage <= 0) throw new Error("Slayer alvo ou dano inválido.");
-  if (game.user.isGM || actor.isOwner) return applySlayerDamage(actor, damage, context);
+  if (game.user.isGM || actor.isOwner) {
+    const result = await applySlayerDamage(actor, damage, context);
+    const flame = await applyFlameAfterDamage(actor, context, result.appliedDamage ?? result.totalDamage ?? damage);
+    return { ...result, flame };
+  }
 
   const gm = activePrimaryGM();
   if (!gm) throw new Error("Nenhum GM ativo para aplicar o dano no Slayer.");
@@ -299,6 +353,7 @@ export async function applyOniDamage(actor, amount, rawContext = {}) {
       resolution = approval;
     }
     const { total, woundTotal } = await updateOniDamage(actor, breakdown.normalDamage, breakdown.woundDamage);
+    const flame = await applyFlameAfterDamage(actor, context, appliedDamage);
     return {
       ok: true,
       total,
@@ -308,6 +363,7 @@ export async function applyOniDamage(actor, amount, rawContext = {}) {
       ...breakdown,
       resisted: resolution.resisted,
       damageTypes: resolution.damageTypes,
+      flame,
     };
   }
 

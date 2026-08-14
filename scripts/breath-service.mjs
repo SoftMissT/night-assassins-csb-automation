@@ -30,6 +30,10 @@ import { parseNumber } from "./parsing.mjs";
 import { getDamageStatusEffects } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 import { resolveWaterDamageTypes, waterFormById } from "./water-breathing-data.mjs";
+import { flameFormById } from "./flame-breathing-data.mjs";
+import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, tickFlameBreathing } from "./flame-breathing-service.mjs";
+import { applySlayerDamage } from "./status-engine.mjs";
+import { parseStatusState } from "./status-service.mjs";
 
 const MANOBRA_MAP = {
   "unica": "unica",
@@ -63,7 +67,7 @@ function parseDamageTypes(raw) {
 
 function getFormData(item) {
   const props = item?.system?.props ?? {};
-  const catalog = waterFormById(String(props.forma_id ?? ""));
+  const catalog = waterFormById(String(props.forma_id ?? "")) ?? flameFormById(String(props.forma_id ?? ""));
   const baseTypes = parseDamageTypes(props.tipo_dano_base);
   const levels = [];
   for (let i = 1; i <= 4; i++) {
@@ -86,13 +90,21 @@ function getFormData(item) {
     nome: String(props.nome_forma ?? item?.name ?? "Forma"),
     jp: String(props.nome_jp ?? ""),
     respiracao: String(props.respiracao_nome ?? ""),
-    tipo: String(props.tipo_manobra ?? ""),
+    tipo: String(catalog?.action ?? props.tipo_manobra ?? ""),
     nivelReq: parseNumber(props.nivel_req),
     descricao: String(props.descricao ?? ""),
     temRequisito: parseNumber(props.tem_requisito) === 1,
     requisito: String(props.requisito_texto ?? ""),
     baseTypes,
-    levels,
+    levels: catalog?.levels?.map((level, index) => level ? {
+      level: index + 1,
+      custo: level.cost,
+      dano: level.damage ?? "",
+      efeito: props[`nvl${index + 1}_efeito`] ?? "",
+      status: "",
+      buff: "",
+      tiposDano: baseTypes,
+    } : null).filter(Boolean) ?? levels,
   };
 }
 
@@ -450,6 +462,13 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     return;
   }
 
+  if (form.id === "chamas_01") {
+    const selected = form.levels.find((level) => level.level <= breathLevel) ?? form.levels[0];
+    await postBreathChat({ actor, form, selected: { ...selected, custo: 0 }, damageRoll: null });
+    ui.notifications?.info?.("Esquentar é uma passiva: o módulo controla Fogo Fátuo e Brasas Ardentes automaticamente.");
+    return;
+  }
+
   const dialogResult = await openBreathDialog({ form, pdrCurrent, breathLevel });
   if (!dialogResult) return;
 
@@ -460,10 +479,13 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   }
 
   const isWaterForm = Boolean(waterFormById(form.id));
+  const isFlameForm = Boolean(flameFormById(form.id));
   const choices = isWaterForm ? await collectWaterChoices(actor, form, selected.level, props) : {};
   const plan = isWaterForm
     ? buildWaterBreathingPlan(form.id, selected.level, props, choices)
-    : buildGenericBreathingPlan(form, selected);
+    : isFlameForm
+      ? buildFlameBreathingPlan(form.id, selected.level, props)
+      : buildGenericBreathingPlan(form, selected);
   if (!plan.ok) {
     ui.notifications?.warn?.(plan.reason);
     return;
@@ -501,14 +523,31 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     patch["system.props.pdr_slayer_gasto_valor"] = pdrGastoAtual + custoFinal;
   }
 
+  let flameHealingRoll = null;
+  if (isFlameForm && plan.state?.healing) {
+    flameHealingRoll = await Roll.create(plan.state.healing.formula).evaluate();
+    patch["system.props.pdv_slayer_curado"] = parseNumber(props.pdv_slayer_curado) + Math.max(0, Math.trunc(Number(flameHealingRoll.total) || 0));
+    if (plan.state.healing.removeBleeding) {
+      const status = parseStatusState(props.status_slayer_dados);
+      status.active = status.active.filter((key) => key !== "sangramento");
+      delete status.effects.sangramento;
+      patch["system.props.status_slayer_dados"] = JSON.stringify(status);
+      patch["system.props.status_slayer_resumo"] = status.active.length ? status.active.join(" · ") : "Nenhum status ativo";
+    }
+    delete plan.state.healing;
+    Object.assign(patch, flameStatePatch(plan.state));
+  }
   if (Object.keys(patch).length > 0) {
     await actor.update(patch, { naCsbAutomation: true, naBreathForm: true });
   }
 
-  const genericFormula = isWaterForm ? "" : resolveGenericDamageFormula(selected.dano, props);
+  const genericFormula = isWaterForm || isFlameForm ? "" : resolveGenericDamageFormula(selected.dano, props);
   const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
   if (damageRoll && game.dice3d?.showForRoll) await game.dice3d.showForRoll(damageRoll, game.user, true);
   await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
+  if (flameHealingRoll) {
+    await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Cauterizar</strong> — recuperação de PDV` });
+  }
 }
 
 function primaryActiveGm() {
@@ -516,10 +555,34 @@ function primaryActiveGm() {
 }
 
 export function registerBreathingEngine() {
+  const clearCombatFlames = (combat) => {
+    if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id) return;
+    for (const combatant of combat.combatants ?? []) {
+      const actor = combatant.actor;
+      if (actor?.system?.props?.resp_chamas_estado) void actor.update(clearFlameBreathingState(), { naCsbAutomation: true, naBreathing: true });
+      if (actor?.getFlag?.(MODULE_ID, "flameHeat")) void actor.unsetFlag(MODULE_ID, "flameHeat");
+      if (actor?.getFlag?.(MODULE_ID, "flameBlockPenalty")) void actor.unsetFlag(MODULE_ID, "flameBlockPenalty");
+    }
+  };
   Hooks.on("updateCombat", (combat, changes) => {
     if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id || !Object.hasOwn(changes, "turn")) return;
     const actor = combat?.combatant?.actor;
-    if (!actor?.system?.props?.resp_agua_estado) return;
-    void actor.update(tickWaterBreathing(actor.system.props), { naCsbAutomation: true, naBreathing: true });
+    if (!actor?.system?.props) return;
+    const flameBlock = actor.getFlag?.(MODULE_ID, "flameBlockPenalty");
+    if (Number(flameBlock?.turns) > 0) {
+      const turns = Number(flameBlock.turns) - 1;
+      if (turns > 0) void actor.setFlag(MODULE_ID, "flameBlockPenalty", { ...flameBlock, turns });
+      else void actor.unsetFlag(MODULE_ID, "flameBlockPenalty");
+    }
+    if (actor.system.props.resp_agua_estado) void actor.update(tickWaterBreathing(actor.system.props), { naCsbAutomation: true, naBreathing: true });
+    if (actor.system.props.resp_chamas_estado) {
+      const tick = tickFlameBreathing(actor.system.props.resp_chamas_estado);
+      void (async () => {
+        for (const event of tick.events) await applySlayerDamage(actor, event.amount, { isAttack: false, source: event.source });
+        await actor.update(tick.patch, { naCsbAutomation: true, naBreathing: true });
+      })();
+    }
   });
+  Hooks.on("combatEnd", clearCombatFlames);
+  Hooks.on("deleteCombat", clearCombatFlames);
 }

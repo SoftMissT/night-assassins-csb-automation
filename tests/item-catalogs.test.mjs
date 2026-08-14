@@ -30,6 +30,18 @@ describe("catálogo de Respirações", () => {
     assert.ok(water.every((item) => item.system.props.tipo_dano_base === "cortante"));
   });
 
+  it("publica Chamas com ações e níveis mecânicos canônicos", async () => {
+    const documents = await sourceDocuments("../build/compendium/respiracoes/");
+    const flames = documents.filter((document) => document.type === "equippableItem" && document.system?.props?.respiracao_nome === "Chamas");
+    assert.equal(flames.length, 9);
+    assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_01").system.props.tipo_manobra, "Passiva");
+    assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_04").system.props.tipo_manobra, "Reação");
+    const storm = flames.find((item) => item.system.props.forma_id === "chamas_06");
+    assert.equal(storm.system.props.tem_nvl2, 0);
+    assert.equal(storm.system.props.tem_nvl3, 1);
+    assert.equal(storm.system.props.nvl3_dano, "8d8");
+  });
+
   it("usa os ícones locais disponíveis sem fabricar assets ausentes", async () => {
     const documents = await sourceDocuments("../build/compendium/respiracoes/");
     const items = documents.filter((document) => document.type === "equippableItem");

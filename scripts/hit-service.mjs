@@ -8,6 +8,8 @@ import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 import { TIPOS_ACAO } from "./constants.mjs";
 import { recoverSlayerFolego } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
+import { flameWeaponTier } from "./flame-breathing-data.mjs";
+import { consumeFlamePending, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -151,9 +153,12 @@ export async function rollHit(options) {
 
   const breathingState = parseWaterBreathingState(props.resp_agua_estado);
   const breathHit = breathingState.nextHit;
-  const breathBonus = Number(breathHit?.bonus) || 0;
+  const flameState = parseFlameBreathingState(props.resp_chamas_estado);
+  const flameHit = flameState.nextHit;
+  const flameTier = flameWeaponTier(flameState.weaponHeat);
+  const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0) + flameTier.hit;
   const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
-  const requestedMode = breathHit?.advantage ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
+  const requestedMode = breathHit?.advantage || flameHit?.advantage ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
 
   const result = await doRoll({
     actor,
@@ -163,7 +168,7 @@ export async function rollHit(options) {
     rollMode: dialogResult.rollMode,
     bonusRaw,
     cdVal: dialogResult.cdVal,
-    rollCount: Math.max(dialogResult.rollCount, Number(breathHit?.count) || 1),
+    rollCount: Math.max(dialogResult.rollCount, Number(breathHit?.count) || 1, Number(flameHit?.count) || 1),
     actionType: dialogResult.actionType,
     statusEffects,
   });
@@ -173,5 +178,8 @@ export async function rollHit(options) {
       "system.props.resp_agua_estado": JSON.stringify(breathingState),
       "system.props.resp_bonus_acerto_temp": 0,
     }, { naCsbAutomation: true, naBreathing: true });
+  }
+  if (result?.attempts?.length && flameHit) {
+    await actor.update(flameStatePatch(consumeFlamePending(flameState, { hit: true })), { naCsbAutomation: true, naBreathing: true });
   }
 }

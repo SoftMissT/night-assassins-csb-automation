@@ -11,6 +11,8 @@ import { consumeSlayerActions } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { isSlayerActor } from "./actor-kind.mjs";
 import { weaponProfilesForActor } from "./weapon-service.mjs";
+import { flameWeaponTier } from "./flame-breathing-data.mjs";
+import { consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -196,6 +198,15 @@ export async function rollDamage(options = {}) {
     specs.push({ label: "Respiração da Água", types, formula, breathing: true });
     if (breathingDamage.critical) critical = true;
   }
+  const flameState = parseFlameBreathingState(props.resp_chamas_estado);
+  const hasFlameBreathing = Boolean(props.resp_chamas_estado) || [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Chamas");
+  const flameDamage = flameState.pendingDamage;
+  const flameTier = flameWeaponTier(flameState.weaponHeat);
+  const flameTechnique = Boolean(flameDamage?.technique && hasAttackDamage);
+  if (flameDamage?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas", types: ["cortante"], formula: flameDamage.formula, flame: true });
+  if (flameTechnique && flameTier.techniqueDie) specs.push({ label: "Fogo Fátuo", types: ["fogo"], formula: flameTier.techniqueDie, flame: true });
+  if (flameState.ignition?.damageBonus && hasAttackDamage) specs.push({ label: "Ignição", types: ["fogo"], formula: String(flameState.ignition.damageBonus), flame: true });
+  if (flameTier.weaponDamage > 0 && hasAttackDamage) specs.push({ label: "Fogo Fátuo — Arma", types: [], formula: String(flameTier.weaponDamage), flame: true });
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
   let rolls;
@@ -218,7 +229,9 @@ export async function rollDamage(options = {}) {
     component.subtotal -= reduction;
     penalty -= reduction;
   }
-  const finalDamage = components.reduce((total, component) => total + component.subtotal, 0);
+  const subtotalDamage = components.reduce((total, component) => total + component.subtotal, 0);
+  const finalDamage = flameTier.multiplier > 1 && hasAttackDamage ? Math.floor(subtotalDamage * flameTier.multiplier) : subtotalDamage;
+  if (finalDamage > subtotalDamage) components.push({ label: "Fogo Fátuo 60 — +50%", types: ["fogo"], subtotal: finalDamage - subtotalDamage });
   const damageTypes = [...new Set(components.flatMap((component) => component.types))];
 
   // Agrupar atualizações por Actor
@@ -242,6 +255,12 @@ export async function rollDamage(options = {}) {
     }
     updatesByActor.set(actor.uuid, existing);
   }
+  if (flameDamage && hasAttackDamage) {
+    const nextState = consumeFlamePending(flameState, { damage: true });
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    Object.assign(existing.changes, flameStatePatch(nextState));
+    updatesByActor.set(actor.uuid, existing);
+  }
 
   if (pdrGasto > 0) {
     const pdrAtual = parseNumber(props.pdr_slayer_gasto_valor);
@@ -256,7 +275,30 @@ export async function rollDamage(options = {}) {
     for (const targetToken of targets) {
       const targetActor = targetToken.actor;
       if (!targetActor) continue;
-      damageRequests.push({ actor: targetActor, amount: finalDamage });
+      const heatMap = targetActor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {};
+      const heatBefore = Number(heatMap?.[actor.id]?.heat) || 0;
+      const rengokuBonus = flameDamage?.rengoku
+        ? heatBefore + (heatBefore >= 60 ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for)) : 0)
+        : 0;
+      let amount = finalDamage + rengokuBonus;
+      if (flameDamage?.damagePerEnemyHeat && heatBefore > 0) {
+        const heatRoll = await Roll.create(`${heatBefore}d8`).evaluate();
+        await heatRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Tormenta de Chamas</strong> — ${heatBefore}d8 pelas Brasas do alvo` });
+        amount += Math.max(0, Math.trunc(Number(heatRoll.total) || 0));
+      }
+      if (flameDamage?.evasionDc) {
+        const dex = parseAttributeValue(targetActor.system?.props?.dex_display);
+        const save = await Roll.create(`1d20 + ${dex}`).evaluate();
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Tormenta de Chamas</strong> — Esquiva CD ${flameDamage.evasionDc}` });
+        if (save.total >= flameDamage.evasionDc) amount = Math.floor(amount / 2);
+      }
+      if (flameDamage?.rengoku && flameDamage.saveDc) {
+        const fdv = parseAttributeValue(targetActor.system?.props?.fdv_display);
+        const save = await Roll.create(`1d20 + ${fdv}`).evaluate();
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Rengoku</strong> — FDV CD ${flameDamage.saveDc}` });
+        if (save.total < flameDamage.saveDc) amount *= 2;
+      }
+      damageRequests.push({ actor: targetActor, amount, rengokuBonus, heatBefore });
     }
   }
 
@@ -266,9 +308,17 @@ export async function rollDamage(options = {}) {
       await up.actor.update(up.changes, { naCsbAutomation: true });
     }),
     ...damageRequests.map(({ actor: targetActor, amount }) => {
+      const flameContext = hasFlameBreathing && hasAttackDamage ? {
+        sourceId: actor.id,
+        heat: 1 + Math.max(0, Number(flameState.activeForm?.enemyHeat) || 0),
+        blockPenalty: Number(flameDamage.blockPenalty) || 0,
+        blockPenaltyTurns: Number(flameDamage.blockPenaltyTurns) || 0,
+        exhaustionOnHit: Number(flameDamage.exhaustionOnHit) || 0,
+        exhaustionOverDamage: Number(flameDamage.exhaustionOverDamage) || 0,
+      } : null;
       return isSlayerActor(targetActor)
-        ? applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components })
-        : applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true });
+        ? applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components, flame: flameContext })
+        : applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true, flame: flameContext });
     }),
   ]);
 

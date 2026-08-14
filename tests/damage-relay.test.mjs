@@ -115,4 +115,31 @@ describe("damage-relay", () => {
     assert.equal(patches[0]["system.props.pdv_slayer_dano_tomado"], 7);
     assert.equal(patches[0]["system.props.pdv_slayer_dano_ferida"], 3);
   });
+
+  it("aplica Brasas no Oni pelo mesmo caminho autorizado do dano", async () => {
+    game.user.isGM = true;
+    const patches = [];
+    let flameFlag = { slayer: { heat: 4, thresholds: [] } };
+    const actor = {
+      id: "oni",
+      name: "Oni",
+      uuid: "Actor.oni-flame",
+      documentName: "Actor",
+      isOwner: false,
+      system: { props: { pdv_oni_dano_tomado: 0, status_oni_dados: "", status_oni_exaustao: 0 } },
+      getFlag: () => flameFlag,
+      setFlag: async (_module, _key, value) => { flameFlag = value; },
+      update: async (patch) => patches.push(patch),
+    };
+    const result = await applyOniDamage(actor, 7, {
+      damageTypes: ["fogo"],
+      flame: { sourceId: "slayer", heat: 1 },
+    });
+    assert.equal(result.appliedDamage, 7);
+    assert.equal(result.flame.heat, 5);
+    assert.deepEqual(result.flame.thresholds, [5]);
+    assert.equal(flameFlag.slayer.heat, 5);
+    assert.equal(patches[0]["system.props.pdv_oni_dano_tomado"], 7);
+    assert.equal(patches[1]["system.props.status_oni_exaustao"], 1);
+  });
 });

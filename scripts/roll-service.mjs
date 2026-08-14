@@ -2,11 +2,12 @@
  * @fileoverview Serviço de rolagem geral (teste).
  */
 
-import { ATTR_NAMES } from "./constants.mjs";
+import { ATTR_NAMES, MODULE_ID } from "./constants.mjs";
 import { parseAttributeValue } from "./parsing.mjs";
 import { openRollDialog } from "./dialogs/roll-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 import { recoverSlayerFolego } from "./action-service.mjs";
+import { parseFlameBreathingState } from "./flame-breathing-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -119,6 +120,18 @@ export async function rollTest(options) {
     attr,
     kind: ["Bloqueio", "Esquiva"].includes(test) ? "defense" : "test",
   });
+  if (test === "Bloqueio") {
+    const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
+    if (Number(flameState.block?.bonus) > 0) {
+      statusEffects.modifier += Number(flameState.block.bonus);
+      statusEffects.reasons.push(`Ondulação +${flameState.block.bonus} Bloqueio`);
+    }
+    const flamePenalty = actor.getFlag?.(MODULE_ID, "flameBlockPenalty");
+    if (Number(flamePenalty?.turns) > 0 && Number(flamePenalty?.value) < 0) {
+      statusEffects.modifier += Number(flamePenalty.value);
+      statusEffects.reasons.push(`Céu em Chamas ${flamePenalty.value} Bloqueio`);
+    }
+  }
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode realizar a rolagem.");
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.");
 

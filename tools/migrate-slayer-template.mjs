@@ -525,10 +525,16 @@ function fixBreathingState(template) {
     ["resp_carga_turno_inicio", "Início do carregamento", 0],
     ["resp_agua_11_usos_hoje", "Água 11 — usos hoje", 0],
     ["resp_agua_08_recarga_turno", "Água 8 — turno de recarga", 0],
+    ["resp_chamas_calor_arma", "Chamas — Fogo Fátuo", 0],
+    ["resp_chamas_bonus_acerto", "Chamas — bônus de Acerto", 0],
+    ["resp_chamas_bonus_dano", "Chamas — bônus de dano da arma", 0],
     ...attributes.map((attribute) => [`${attribute}_resp_bonus_temp_slayer`, `${attribute.toUpperCase()} temporário de Respiração`, 0]),
   ];
   const textFields = [
     ["resp_agua_estado", "Estado mecânico da Respiração da Água", '{"version":1}'],
+    ["resp_chamas_estado", "Estado mecânico da Respiração das Chamas", '{"version":1,"weaponHeat":0}'],
+    ["resp_chamas_bonus_dado", "Chamas — dado adicional de técnica", ""],
+    ["resp_chamas_resumo", "Chamas — resumo", "Fogo Fátuo 0/60"],
     ["resp_bonus_dano_dados", "Dados adicionais", ""],
     ["resp_efeito_flag", "Efeito ativo", ""],
     ["resp_combo_origem", "Origem do combo", ""],
@@ -544,6 +550,7 @@ function fixBreathingState(template) {
       displayLabel("resp_slayer_nivel_display", "Nível de Respiração: ${nvl_respiracao_num}$"),
       displayLabel("resp_slayer_efeito_display", "Efeito: ${resp_efeito_flag}$ · ${resp_efeito_duracao}$ turno(s)"),
       displayLabel("resp_slayer_combo_display", "Combo: ${resp_combo_origem}$ · Carga: ${resp_carga_acumulada}$"),
+      displayLabel("resp_chamas_display", "${resp_chamas_resumo}$"),
     ],
   };
   const actionIndex = combatTab.contents.findIndex((entry) => entry?.key === "acoes_slayer_panel");

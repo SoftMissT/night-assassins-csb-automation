@@ -2,6 +2,7 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { breathingIconPath } from "../scripts/breathing-icons.mjs";
+import { flameFormById } from "../scripts/flame-breathing-data.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogPath = path.join(root, "catalogs", "breathing.json");
@@ -32,6 +33,16 @@ for (const document of catalog.documents) {
   if (document.type !== "equippableItem") continue;
   const icon = breathingIconPath(document.system?.props?.respiracao_nome);
   if (icon) document.img = icon;
+  const flame = flameFormById(document.system?.props?.forma_id);
+  if (flame) {
+    document.system.props.tipo_manobra = flame.passive ? "Passiva" : ({ ataque: "Ação de Ataque", especial: "Ação Especial", reacao: "Reação" }[flame.action] ?? flame.action);
+    for (let level = 1; level <= 4; level += 1) {
+      const mechanics = flame.levels[level - 1];
+      document.system.props[`tem_nvl${level}`] = mechanics ? 1 : 0;
+      document.system.props[`nvl${level}_custo`] = mechanics?.cost ?? 0;
+      if (mechanics?.damage) document.system.props[`nvl${level}_dano`] = mechanics.damage;
+    }
+  }
 }
 
 await rm(outputDirectory, { recursive: true, force: true });

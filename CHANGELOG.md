@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.8.0] - 2026-08-14
+
+- Implementa a Respiração das Chamas como motor mecânico próprio, preservando os nove Items do Compêndio.
+- Automatiza Fogo Fátuo na arma, Brasas Ardentes por alvo, patamares de Acerto/dano, dano próprio e limpeza no fim do combate.
+- Integra Fogo Desconhecido, Céu em Chamas, Ondulação, Tigre Ardente, Tormenta, Cauterizar, Ignição e Rengoku com ação, PDR, Acerto, dano, cura, status e turnos.
+- Encaminha Brasas e seus limiares pelo relay autorizado do GM para funcionar em fichas de Oni e Slayer sem ownership do jogador.
+- Adiciona estado visível e armazenamento CSB da Respiração das Chamas à ficha Slayer.
+- Corrige as ações e os níveis indisponíveis dos Items de Chamas durante a geração do Compêndio.
+
+### Validação
+
+- `node --test`: 194 testes aprovados, 0 falhas.
+- Teste de integração cobre Brasas no Oni pelo mesmo caminho autorizado do dano.
+- GitNexus identificou alto alcance nos fluxos de combate; todos os testes de acerto, dano, relay, status, armas e templates permaneceram aprovados.
+
 ## [0.7.6] - 2026-08-13
 
 - Conecta 14 artes verticais WebP às respectivas armas especiais pelo campo `arma_imagem_vertical`.

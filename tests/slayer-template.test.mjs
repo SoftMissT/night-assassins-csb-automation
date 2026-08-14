@@ -135,6 +135,8 @@ test("template Slayer possui estado completo de Respiração organizado", () => 
     "resp_bonus_dano_dados", "resp_bonus_dano_fixo", "resp_efeito_flag", "resp_efeito_duracao",
     "resp_combo_origem", "resp_combo_turno", "resp_carga_acumulada", "resp_carga_turno_inicio",
     "resp_agua_11_usos_hoje", "resp_agua_08_recarga_turno",
+    "resp_chamas_calor_arma", "resp_chamas_bonus_acerto", "resp_chamas_bonus_dano",
+    "resp_chamas_estado", "resp_chamas_bonus_dado", "resp_chamas_resumo",
   ];
   for (const key of fields) assert.match(source, new RegExp(`"${key}"`));
   for (const attribute of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {

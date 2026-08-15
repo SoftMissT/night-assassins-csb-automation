@@ -88,7 +88,9 @@ Após instalar ou atualizar os arquivos do módulo, GM e jogadores devem recarre
 
 Ativar ou atualizar o módulo **não modifica o template da ficha**. Abra o template no Custom System Builder e configure manualmente cada componente que deve executar uma macro.
 
-Os templates prontos ficam nos Compêndios **Night Assassin's Slayer** e **Night Assassin's Onis**. Importe o template desejado do Compêndio para o diretório de Actors e use-o como template no CSB.
+Os templates prontos ficam no Compêndio **Night Assassins — Templates de Ficha**. Ele reúne as fichas Slayer, Oni e NPC. Importe o template desejado para o diretório de Actors do mundo antes de associá-lo a uma ficha no CSB.
+
+O template **NPC** é narrativo: use a imagem do próprio Actor como foto e preencha nome, papel, afiliação, localização, personalidade, tom de voz, aparência, contexto e notas do GM. Ele não contém combate nem automações.
 
 Os botões dos templates chamam diretamente o UUID estável da macro no Compêndio do módulo. Exemplo para Arremesso com FOR:
 

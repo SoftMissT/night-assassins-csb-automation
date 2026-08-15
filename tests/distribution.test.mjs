@@ -15,8 +15,7 @@ describe("module distribution", () => {
     assert.equal(manifest.socket, true);
     assert.deepEqual(manifest.packs.map(({ name, label, type }) => ({ name, label, type })), [
       { name: "night-assassins-macros", label: "Macros Night Assassins", type: "Macro" },
-      { name: "night-assassins-slayer", label: "Night Assassin's Slayer", type: "Actor" },
-      { name: "night-assassins-onis", label: "Night Assassin's Onis", type: "Actor" },
+      { name: "night-assassins-templates-de-ficha", label: "Night Assassins — Templates de Ficha", type: "Actor" },
       { name: "night-assassins-respiracoes", label: "Night Assassin's Respirações", type: "Item" },
       { name: "night-assassins-armas-slayer", label: "Night Assassin's Armas dos Caçadores", type: "Item" },
       { name: "night-assassins-arte", label: "Night Assassin's Arte", type: "Item" },
@@ -37,10 +36,11 @@ describe("module distribution", () => {
     assert.match(source, /modules\/\$\{MODULE_ID\}\/assets\/icons/i);
   });
 
-  it("prepara um template válido para cada Compêndio de Actor", async () => {
+  it("prepara os três templates válidos do Compêndio de Actor", async () => {
     const files = [
       ["../src/templates/actors/slayer-template.json", "_template"],
       ["../src/templates/actors/oni-template.json", "_template"],
+      ["../src/templates/actors/npc-template.json", "_template"],
     ];
     for (const [file, type] of files) {
       const actor = JSON.parse(await readFile(new URL(file, import.meta.url), "utf8"));
@@ -49,6 +49,24 @@ describe("module distribution", () => {
       assert.ok(actor.prototypeToken);
       assert.ok(actor.system?.body);
     }
+  });
+
+  it("gera Slayer, Oni e NPC no mesmo diretório intermediário", async () => {
+    const { readdir } = await import("node:fs/promises");
+    await import(`../tools/build-template-sources.mjs?test=${Date.now()}`);
+    const files = await readdir(new URL("../build/compendium/templates-de-ficha/", import.meta.url));
+    assert.deepEqual(files.sort(), ["NANpcTemplate001.json", "NAOniTemplate001.json", "NASlayerTpl00001.json"]);
+  });
+
+  it("mantém o NPC narrativo sem recursos de combate", async () => {
+    const actor = JSON.parse(await readFile(new URL("../src/templates/actors/npc-template.json", import.meta.url), "utf8"));
+    const serialized = JSON.stringify(actor.system);
+    for (const key of ["npc_nome", "npc_personalidade", "npc_tom", "npc_aparencia", "npc_contexto", "npc_notas_gm"]) {
+      assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
+    }
+    assert.deepEqual(actor.system.attributeBar, {});
+    assert.deepEqual(actor.items, []);
+    assert.deepEqual(actor.effects, []);
   });
 
   it("inclui as doze macros canônicas", async () => {

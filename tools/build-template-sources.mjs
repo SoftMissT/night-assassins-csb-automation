@@ -7,22 +7,24 @@ const templates = [
   {
     file: "src/templates/actors/slayer-template.json",
     id: "NASlayerTpl00001",
-    output: "slayer",
   },
   {
     file: "src/templates/actors/oni-template.json",
     id: "NAOniTemplate001",
-    output: "onis",
+  },
+  {
+    file: "src/templates/actors/npc-template.json",
+    id: "NANpcTemplate001",
   },
 ];
+
+const outputDirectory = path.join(root, "build", "compendium", "templates-de-ficha");
+await rm(outputDirectory, { recursive: true, force: true });
+await mkdir(outputDirectory, { recursive: true });
 
 for (const template of templates) {
   if (template.id.length !== 16) throw new Error(`ID inválido para ${template.file}: ${template.id}`);
   const source = JSON.parse(await readFile(path.join(root, template.file), "utf8"));
-  const outputDirectory = path.join(root, "build", "compendium", template.output);
-  await rm(outputDirectory, { recursive: true, force: true });
-  await mkdir(outputDirectory, { recursive: true });
-
   source._id = template.id;
   source._key = `!actors!${template.id}`;
   source.folder = null;
@@ -35,9 +37,10 @@ for (const template of templates) {
     createdTime: 0,
     modifiedTime: 0,
     lastModifiedBy: null,
+    compendiumSource: null,
   };
 
-  await writeFile(path.join(outputDirectory, `01-${template.output}.json`), `${JSON.stringify(source, null, 2)}\n`);
+  await writeFile(path.join(outputDirectory, `${template.id}.json`), `${JSON.stringify(source, null, 2)}\n`);
 }
 
-console.log("Preparados os templates Slayer e Oni para os Compêndios.");
+console.log("Preparados os templates Slayer, Oni e NPC para o Compêndio unificado.");

@@ -46,18 +46,12 @@ jobs:
         shell: bash
         run: |
           node tools/build-template-sources.mjs
-          rm -rf packs/night-assassins-slayer packs/night-assassins-onis
+          rm -rf packs/night-assassins-slayer packs/night-assassins-onis packs/night-assassins-templates-de-ficha
           npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
             --type Module \
             --id night-assassins-csb-automation \
-            --compendiumName night-assassins-slayer \
-            --inputDirectory build/compendium/slayer \
-            --outputDirectory packs
-          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
-            --type Module \
-            --id night-assassins-csb-automation \
-            --compendiumName night-assassins-onis \
-            --inputDirectory build/compendium/onis \
+            --compendiumName night-assassins-templates-de-ficha \
+            --inputDirectory build/compendium/templates-de-ficha \
             --outputDirectory packs
 
       - name: Build Breathing Item Compendium

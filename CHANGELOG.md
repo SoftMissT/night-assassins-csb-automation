@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.3 — 2026-08-14
+
+- Unifica os templates Slayer e Oni no Compêndio `Night Assassins — Templates de Ficha`.
+- Adiciona o template narrativo NPC com foto do Actor e informações básicas.
+- Preserva os IDs internos de Slayer e Oni; UUIDs completos antigos mudam por causa do novo nome do pack.
+
 ## 0.9.2 — 2026-08-14
 
 - Integra Onis ao Montador de Ataque sem reutilizar as chaves de recurso do Slayer.

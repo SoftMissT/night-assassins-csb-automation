@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.4 — 2026-08-16
+
+- Corrige vulnerabilidade de XSS (Cross-Site Scripting) no módulo de Vida e Morte dos Slayers.
+- Sanitiza o nome do Actor e o motivo de morte/reviver com escape de entidades HTML antes da publicação no chat via `ChatMessage.create`.
+
 ## 0.9.3 — 2026-08-14
 
 - Unifica os templates Slayer e Oni no Compêndio `Night Assassins — Templates de Ficha`.

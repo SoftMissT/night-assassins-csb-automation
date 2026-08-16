@@ -23,3 +23,45 @@ test("Vida e Morte apresenta estado legível", () => {
   assert.equal(formatLifeDeathSummary({ ...defaultLifeDeathState(), dead: true }), "Morto");
 });
 
+test("Vida e Morte sanitiza nome do actor e motivo no ChatMessage contra XSS", async () => {
+  const chatMessages = [];
+  globalThis.ChatMessage = {
+    getSpeaker: () => ({}),
+    create: async (msg) => {
+      chatMessages.push(msg);
+      return {};
+    },
+  };
+  globalThis.game = { combats: [], user: { isGM: true }, users: [{ id: "gm", isGM: true, active: true }] };
+  globalThis.Roll = {
+    create: () => ({
+      evaluate: async () => ({
+        total: 1,
+        dice: [{ results: [{ result: 1 }] }],
+        toMessage: async () => {},
+      }),
+    }),
+  };
+
+  const maliciousActor = {
+    name: "<script>alert('xss')</script>",
+    system: {
+      props: {
+        vida_morte_slayer_dados: JSON.stringify({ dying: true, stabilized: false, dead: false }),
+        pdv_slayer_total_conta: 20,
+        pdv_slayer_dano_tomado: 20,
+        vit_display: 2,
+      },
+    },
+    update: async () => {},
+  };
+
+  const { processDeathTest } = await import("../scripts/life-death-service.mjs");
+  await processDeathTest(maliciousActor, { force: true });
+
+  assert.ok(chatMessages.length > 0);
+  const reviveMessage = chatMessages.find((m) => m.content.includes("voltou com"));
+  assert.ok(reviveMessage, "Mensagem de revive deve ter sido gerada");
+  assert.ok(!reviveMessage.content.includes("<script>"), "Conteúdo do chat não deve conter tags <script> não escapadas");
+  assert.ok(reviveMessage.content.includes("&lt;script&gt;alert(&#039;xss&#039;)&lt;/script&gt;"), "Nome do actor deve estar escapado em HTML");
+});

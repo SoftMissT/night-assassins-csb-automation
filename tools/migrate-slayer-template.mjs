@@ -372,7 +372,25 @@ function weaponItemContainer() {
   reloadButton.style = "button";
   reloadButton.icon = "fa-solid fa-rotate-right";
   reloadButton.rollMessage = "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!weapon)return ui.notifications.warn('Arma não encontrada nesta linha.');return await game.modules.get('night-assassins-csb-automation')?.api?.reloadWeaponItem({item:weapon,actor:entity,actorUuid:entity.uuid});}%";
+  const profileSummary = displayLabel("arma_perfis_resumo", "${arma_perfis_resumo}$", "Perfil, fórmula e dano base da arma.");
+  profileSummary.colSpan = 2;
+  profileSummary.align = "left";
+  profileSummary.colName = "Dano / Perfil";
+  const damageTypes = displayLabel("arma_tipos_dano_resumo", "${arma_tipos_dano_resumo}$", "Tipos de dano causados pela arma.");
+  damageTypes.align = "left";
+  damageTypes.colName = "Tipo de dano";
+  const range = displayLabel("arma_alcance", "${arma_alcance}$", "Alcance da arma.");
+  range.align = "center";
+  range.colName = "Alcance";
+  const properties = displayLabel("arma_propriedades", "${arma_propriedades}$", "Propriedades da arma.");
+  properties.colSpan = 2;
+  properties.align = "left";
+  properties.colName = "Propriedades";
   container.rowLayout = [
+    { ...profileSummary },
+    { ...damageTypes },
+    { ...range },
+    { ...properties },
     { ...rollButton, align: "center", colName: "Rolar" },
     { ...reloadButton, align: "center", colName: "Recarga" },
   ];
@@ -396,7 +414,11 @@ function breathingItemContainer() {
   container.nameLabel = "Forma";
   container.templateFilter = ["NABreathTpl00001"];
   container.tooltip = "Espaço para organizar as Formas de Respiração do personagem.";
-  container.rowLayout = [];
+  const useButton = displayLabel("respiracao_slayer_usar", orbitron("USAR", "#28D7FF", 11), "Rola a Forma de Respiração usando o Actor e o Item portados.");
+  useButton.style = "button";
+  useButton.icon = "fa-solid fa-fire-flame-curved";
+  useButton.rollMessage = "%{const form=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!form)return ui.notifications.warn('Forma de Respiração não encontrada nesta linha.');return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({actorUuid:entity.uuid,itemUuid:form.uuid});}%";
+  container.rowLayout = [{ ...useButton, align: "center", colName: "Usar" }];
   return container;
 }
 

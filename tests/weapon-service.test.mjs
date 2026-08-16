@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { extractWeaponRankFormulas, isWeaponProficient, slayerWeaponRank, weaponAmmoPatch, weaponAmmoState, weaponAttackAttributes, weaponPropertyKeys, weaponProfilesForActor, weaponProfilesFromProps } from "../scripts/weapon-service.mjs";
+import { extractWeaponRankFormulas, isWeaponProficient, slayerWeaponRank, weaponAmmoPatch, weaponAmmoState, weaponAttackAttributes, weaponDamageTypeKeys, weaponPropertyKeys, weaponProfilesForActor, weaponProfilesFromProps } from "../scripts/weapon-service.mjs";
 
 describe("weapon-service", () => {
   it("resolve o Rank atual pela progressão do Caçador", () => {
@@ -114,6 +114,21 @@ describe("weapon-service", () => {
     assert.equal(profile.nome, "Corte");
     assert.equal(profile.dano_dados, "1d6");
     assert.deepEqual(profile.atributos, [{ key: "FOR", multiplicador: 1, escolha: false }]);
+  });
+
+  it("normaliza rótulos de dano para as chaves do relay", () => {
+    assert.deepEqual(weaponDamageTypeKeys("Cortante ou Concussivo, à escolha no acerto"), ["cortante", "concussao"]);
+  });
+
+  it("aceita aliases JSON dos campos que o CSB serializa", () => {
+    const [profile] = weaponProfilesForActor({
+      arma_nome: "Rebellion",
+      arma_perfis_ataque_json: JSON.stringify([{ nome: "Ataque Base", dano_fixo: 7, atributos: [{ key: "FOR", multiplicador: 1 }], tipos_dano: ["concussivo"] }]),
+      arma_formulas_por_rank_json: JSON.stringify({ D: ["7 + FOR + 1d6 / Concussivo"] }),
+    }, { nvl_num: 2, for_display: 5 });
+    assert.equal(profile.nome, "Ataque Base");
+    assert.deepEqual(profile.tipos_dano, ["concussao"]);
+    assert.equal(profile.dano_dados, "1d6");
   });
 
   it("bloqueia um perfil que exige dois disparos sem munição suficiente", () => {

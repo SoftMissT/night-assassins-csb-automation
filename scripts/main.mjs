@@ -26,6 +26,7 @@ import { executeInterludeActivity, openInterludeManager } from "./interlude-serv
 import { createCombatContext, validateCombatContext } from "./core/combat-context.mjs";
 import { createActorTransaction } from "./core/actor-transaction.mjs";
 import { normalizeTechniqueDefinition, splitDamageTotal, validateTechniqueDefinition } from "./core/technique-definition.mjs";
+import { repairSlayerWeaponItems } from "./weapon-migration.mjs";
 import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./items/item-technique-normalizers.mjs";
 import * as slayerProgression from "./slayer/progression-service.mjs";
 import * as slayerOrigins from "./slayer/origin-contracts.mjs";
@@ -56,6 +57,12 @@ Hooks.once("ready", () => {
   }
 
   if (game.user.isGM) {
+    void repairSlayerWeaponItems()
+      .then(({ items }) => {
+        if (items > 0) ui.notifications.info(`Armas Slayer compatibilizadas: ${items} Item(ns) atualizado(s).`);
+      })
+      .catch((error) => ui.notifications.warn(`Falha ao compatibilizar armas Slayer: ${error.message}`));
+
     void syncCanonicalMacros()
       .then(({ created, updated }) => {
         if (created > 0 || updated > 0) ui.notifications.info(`Macros Night Assassins sincronizadas: ${created} adicionadas, ${updated} atualizadas.`);
@@ -128,6 +135,7 @@ Hooks.once("ready", () => {
       processAbility: applyInitialMark,
       upgradeMark: upgradeMarkAtLevelSix,
       diagnoseActor,
+      repairSlayerWeaponItems,
     };
   }
 

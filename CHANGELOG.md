@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.6 — 2026-08-16
+
+- Corrige a perda de perfis de ataque de armas quando o CSB serializa Arrays como JSON textual ou descarta campos não declarados no template.
+- Adiciona migração idempotente para Items de armas já existentes nos Actors, reconstruindo perfil, fórmula, tipo de dano, atributos e mecânicas.
+- Faz o acerto reconhecer as armas portadas e aplicar os atributos finais do Actor Slayer.
+- Exibe na ficha o perfil/dano, tipo de dano, alcance e propriedades das armas.
+- Adiciona botão USAR para Formas de Respiração, vinculando o Item e o Actor ao motor `useBreathForm`.
+- Normaliza rótulos como `concussivo` para a chave canônica `concussao`.
+- Validação: 260 testes aprovados, 0 falhas; sintaxe e diff check aprovados.
+- O arquivo `06 - Guia de Arcos Longos.md` não faz parte deste release.
+
 ## 0.9.5 — 2026-08-16
 
 - Corrige a leitura de perfis de armas Slayer em Items antigos ou serializados como JSON pelo CSB.

@@ -36,7 +36,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões funcionais; encontrados ${buttons.length}.`);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
-    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem)/);
+    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem|useBreathForm)/);
     assert.match(String(button.value), /custom-orbitron-wrapper/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
@@ -123,7 +123,7 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   assert.match(source, /"title":"Economia de Ações"/);
 });
 
-test("template Slayer preserva armazenamento de Respiração sem expor automação incompleta", () => {
+test("template Slayer preserva armazenamento de Respiração e expõe automação rolável", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const source = JSON.stringify(template.system.body);
   const hidden = new Map(template.system.hidden.map((entry) => [entry.name, entry.value]));
@@ -143,8 +143,8 @@ test("template Slayer preserva armazenamento de Respiração sem expor automaç�
   assert.match(source, /"resp_slayer_storage_panel"/);
   assert.match(source, /"key":"skills_slayer_respiracoes"/);
   assert.doesNotMatch(source, /"resp_slayer_panel"/);
-  assert.doesNotMatch(source, /"key":"respiracao_slayer_usar"/);
-  assert.doesNotMatch(source, /useBreathForm/);
+  assert.match(source, /"key":"respiracao_slayer_usar"/);
+  assert.match(source, /useBreathForm/);
 });
 
 test("template Slayer separa Condições da aba de Combate", () => {
@@ -204,6 +204,9 @@ test("botão de arma envia o Item vinculado ao motor próprio", () => {
   assert.match(serialized, /reloadWeaponItem/);
   assert.match(serialized, /item:weapon/);
   assert.doesNotMatch(serialized, /formulaBase:linkedEntity/);
+  assert.match(serialized, /arma_perfis_resumo/);
+  assert.match(serialized, /arma_tipos_dano_resumo/);
+  assert.match(serialized, /arma_propriedades/);
 });
 
 test("inventário filtra cada categoria por template exclusivo", () => {

@@ -62,6 +62,36 @@ function textList(value) {
     .filter(Boolean);
 }
 
+const DAMAGE_TYPE_ALIASES = Object.freeze({
+  "concussao": "concussao",
+  "concussivo": "concussao",
+  "cortante": "cortante",
+  "perfurante": "perfurante",
+  "trovejante": "trovejante",
+  "sonoro": "sonoro",
+  "ferida": "ferida",
+  "sangramento": "sangramento",
+  "envenenamento": "envenenamento",
+  "necrotico": "necrotico",
+  "acido": "acido",
+  "eletrico": "eletrico",
+  "fogo": "fogo",
+  "impacto": "impacto",
+  "mental": "mental",
+  "solar": "solar",
+  "venenoso": "venenoso",
+  "congelante": "congelante",
+});
+
+export function weaponDamageTypeKeys(value = []) {
+  return [...new Set(textList(value).map((entry) => String(entry)
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/gu, "")
+    .replace(/\s+a?\s*escolha.*$/u, "")
+    .trim()).map((entry) => DAMAGE_TYPE_ALIASES[entry] ?? entry).filter((entry) => DAMAGE_TYPE_ALIASES[entry]))];
+}
+
 function objectList(value) {
   const parsed = parseStructuredValue(value);
   if (Array.isArray(parsed)) return parsed.filter((entry) => entry && typeof entry === "object");
@@ -78,7 +108,8 @@ function legacyAttributeMultiplier(itemProps, key) {
 }
 
 export function weaponProfilesFromProps(itemProps = {}) {
-  const parsedProfiles = parseStructuredValue(itemProps.arma_perfis_ataque);
+  const parsedProfiles = parseStructuredValue(itemProps.arma_perfis_ataque)
+    ?? parseStructuredValue(itemProps.arma_perfis_ataque_json);
   const profiles = Array.isArray(parsedProfiles)
     ? parsedProfiles.filter((profile) => profile && typeof profile === "object")
     : parsedProfiles && typeof parsedProfiles === "object" ? [parsedProfiles] : [];
@@ -87,7 +118,7 @@ export function weaponProfilesFromProps(itemProps = {}) {
   const hasLegacyData = ["arma_dano_dados", "arma_dano_fixo", "arma_dano_atributo", "arma_tipos_dano"].some((key) => itemProps[key] !== undefined && itemProps[key] !== "");
   if (!hasLegacyData) return [];
 
-  const legacyAttributes = textList(itemProps.arma_dano_atributo)
+  const legacyAttributes = textList(itemProps.arma_dano_atributo ?? itemProps.arma_dano_atributo_json)
     .map((key) => key.toUpperCase())
     .filter((key) => WEAPON_ATTRIBUTES.has(key));
   const attributes = legacyAttributes.map((key) => ({
@@ -97,7 +128,7 @@ export function weaponProfilesFromProps(itemProps = {}) {
   }));
   const fixed = Number.isFinite(Number(itemProps.arma_dano_fixo)) ? Number(itemProps.arma_dano_fixo) : 0;
   const dice = String(itemProps.arma_dano_dados ?? "").trim();
-  const types = textList(itemProps.arma_tipos_dano);
+  const types = weaponDamageTypeKeys(itemProps.arma_tipos_dano ?? itemProps.arma_tipos_dano_json);
   const formulaParts = [fixed || "", dice, attributes.map((rule) => `${rule.multiplicador === 0.5 ? "metade de " : ""}${rule.key}`).join(" ou ")].filter(Boolean);
   return [{
     nome: "Ataque Base",
@@ -121,10 +152,13 @@ export function weaponPropertyKeys(value = "") {
 }
 
 export function weaponAttackAttributes(itemProps = {}, profile = {}) {
-  const explicit = String(itemProps.arma_atributo_acerto ?? "")
-    .toUpperCase()
-    .split(/[/,;]|\\s+OU\\s+/u)
-    .map((key) => key.trim())
+  const explicitRaw = parseStructuredValue(itemProps.arma_atributo_acerto)
+    ?? parseStructuredValue(itemProps.arma_atributo_acerto_json)
+    ?? itemProps.arma_atributo_acerto
+    ?? itemProps.arma_atributo_acerto_json
+    ?? "";
+  const explicit = textList(explicitRaw)
+    .map((key) => key.toUpperCase())
     .filter((key) => WEAPON_ATTRIBUTES.has(key));
   if (explicit.length > 0) return [...new Set(explicit)];
 
@@ -140,7 +174,7 @@ export function weaponAttackAttributes(itemProps = {}, profile = {}) {
 }
 
 export function weaponPropertyMechanics(itemProps = {}) {
-  const mechanics = objectList(itemProps.arma_mecanicas);
+  const mechanics = objectList(itemProps.arma_mecanicas ?? itemProps.arma_mecanicas_json);
   if (mechanics.length > 0) return mechanics;
   return weaponPropertyKeys(itemProps.arma_propriedades).map((id) => ({ id, kind: "unresolved" }));
 }
@@ -174,7 +208,8 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
   const profiles = weaponProfilesFromProps(itemProps);
   const rank = slayerWeaponRank(actorProps);
   const proficient = isWeaponProficient(itemProps, actorProps);
-  const parsedRankFormulas = parseStructuredValue(itemProps.arma_formulas_por_rank);
+  const parsedRankFormulas = parseStructuredValue(itemProps.arma_formulas_por_rank)
+    ?? parseStructuredValue(itemProps.arma_formulas_por_rank_json);
   const rankFormulas = parsedRankFormulas && typeof parsedRankFormulas === "object"
     ? parsedRankFormulas
     : extractWeaponRankFormulas(itemProps.arma_regra_completa);
@@ -208,6 +243,7 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
     });
     return {
       ...profile,
+      tipos_dano: weaponDamageTypeKeys(profile.tipos_dano ?? itemProps.arma_tipos_dano ?? itemProps.arma_tipos_dano_json),
       atributos: attributes,
       dano_dados: [baseDice, rankDice].filter(Boolean).join(" + "),
       rank,

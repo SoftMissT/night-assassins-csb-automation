@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.5 — 2026-08-16
+
+- Corrige a leitura de perfis de armas Slayer em Items antigos ou serializados como JSON pelo CSB.
+- Reconstrói o perfil Ataque Base a partir dos campos legados de dano quando `arma_perfis_ataque` não está disponível como Array.
+- Alinha a listagem da ficha Slayer, o normalizador de técnicas e o montador de ataques ao mesmo contrato de perfis.
+- Adiciona suporte a proficiência, atributos por propriedade, perfis Nitoryu/Ryōtō, munição e recarga no fluxo de armas.
+- Validação: 257 testes aprovados, 0 falhas; 43 Items de armas reconstruídos.
+
 ## 0.9.4 — 2026-08-16
 
 - Corrige vulnerabilidade de XSS (Cross-Site Scripting) no módulo de Vida e Morte dos Slayers.

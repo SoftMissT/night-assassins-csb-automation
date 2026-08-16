@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { extractWeaponRankFormulas, slayerWeaponRank, weaponProfilesForActor } from "../scripts/weapon-service.mjs";
+import { extractWeaponRankFormulas, isWeaponProficient, slayerWeaponRank, weaponAmmoPatch, weaponAmmoState, weaponAttackAttributes, weaponPropertyKeys, weaponProfilesForActor, weaponProfilesFromProps } from "../scripts/weapon-service.mjs";
 
 describe("weapon-service", () => {
   it("resolve o Rank atual pela progressão do Caçador", () => {
@@ -46,5 +46,79 @@ describe("weapon-service", () => {
     assert.equal(profile.atributos.find((rule) => rule.key === "FOR").escolha, true);
     assert.equal(profile.atributos.find((rule) => rule.key === "DEX").escolha, true);
     assert.equal(profile.atributos.find((rule) => rule.key === "FDV").escolha, false);
+  });
+
+  it("resolve os atributos de acerto pelas propriedades canônicas", () => {
+    assert.deepEqual(weaponPropertyKeys("** Acuidade / Morote"), ["acuidade", "morote"]);
+    assert.deepEqual(weaponAttackAttributes({ arma_propriedades: "** Acuidade / Morote" }), ["FOR", "DEX"]);
+    assert.deepEqual(weaponAttackAttributes({ arma_propriedades: "** Manejável" }), ["DEX"]);
+    assert.deepEqual(weaponAttackAttributes({ arma_propriedades: "** Concussão" }), ["FOR"]);
+  });
+
+  it("exige proficiência explícita quando a ficha começa a declarar proficiências", () => {
+    const weapon = { arma_nome: "Katana" };
+    assert.equal(isWeaponProficient(weapon, { armas_proficientes: "Katana; Naginata" }), true);
+    assert.equal(isWeaponProficient(weapon, { armas_proficientes: "Rapieira" }), false);
+    assert.equal(isWeaponProficient(weapon, {}), true);
+  });
+
+  it("deriva o dano de Acuidade/Morote e remove atributos sem proficiência", () => {
+    const itemProps = {
+      arma_nome: "Katana",
+      arma_propriedades: "Acuidade / Morote",
+      arma_perfis_ataque: [{ nome: "Morote", dano_fixo: 7, atributos: [], tipos_dano: ["cortante"] }],
+    };
+    const [proficient] = weaponProfilesForActor(itemProps, { nvl_num: 1 });
+    assert.deepEqual(proficient.atributos.map((rule) => [rule.key, rule.multiplicador, rule.escolha]), [["FOR", 1, true], ["DEX", 1, true]]);
+    const [unproficient] = weaponProfilesForActor(itemProps, { nvl_num: 1, armas_proficientes: "Rapieira" });
+    assert.deepEqual(unproficient.atributos, []);
+  });
+
+  it("distingue perfis Nitoryu e Morote na contagem de golpes", () => {
+    const profiles = weaponProfilesForActor({
+      arma_nome: "Katana",
+      arma_propriedades: "Acuidade / Nitoryu & Morote",
+      arma_perfis_ataque: [
+        { nome: "Nitoryu", dano_fixo: 5, atributos: [], tipos_dano: ["cortante"] },
+        { nome: "Morote", dano_fixo: 7, atributos: [], tipos_dano: ["cortante"] },
+      ],
+    }, { nvl_num: 1 });
+    assert.equal(profiles[0].ataques, 2);
+    assert.equal(profiles[1].ataques, 1);
+  });
+
+  it("reconstrói o Ataque Base de um Item legado sem array de perfis", () => {
+    const [profile] = weaponProfilesFromProps({
+      arma_nome: "Arco Longo",
+      arma_dano_fixo: 3,
+      arma_dano_atributo: ["DEX"],
+      arma_tipos_dano: ["perfurante"],
+      arma_regra_completa: "Dano: 3 + Metade da DEX (arredondado para baixo)",
+    });
+    assert.equal(profile.nome, "Ataque Base");
+    assert.deepEqual(profile.atributos, [{ key: "DEX", multiplicador: 0.5, escolha: false }]);
+    assert.deepEqual(weaponProfilesForActor({
+      arma_nome: "Arco Longo",
+      arma_dano_fixo: 3,
+      arma_dano_atributo: ["DEX"],
+      arma_tipos_dano: ["perfurante"],
+      arma_regra_completa: "Dano: 3 + Metade da DEX (arredondado para baixo)",
+    }, { nvl_num: 1 })[0].atributos, profile.atributos);
+  });
+
+  it("aceita perfis e fórmulas estruturados persistidos como JSON textual", () => {
+    const [profile] = weaponProfilesForActor({
+      arma_perfis_ataque: JSON.stringify([{ nome: "Corte", dano_fixo: 4, atributos: JSON.stringify([{ key: "FOR", multiplicador: 1 }]), tipos_dano: ["cortante"] }]),
+      arma_formulas_por_rank: JSON.stringify({ D: ["4 + FOR + 1d6 / Cortante"] }),
+    }, { nvl_num: 2 });
+    assert.equal(profile.nome, "Corte");
+    assert.equal(profile.dano_dados, "1d6");
+    assert.deepEqual(profile.atributos, [{ key: "FOR", multiplicador: 1, escolha: false }]);
+  });
+
+  it("bloqueia um perfil que exige dois disparos sem munição suficiente", () => {
+    const state = weaponAmmoState({ arma_municao_capacidade: 2, arma_municao_atual: 1 }, { ataques: 2 });
+    assert.deepEqual(state, { capacity: 2, current: 1, shots: 2, required: true });
+    assert.deepEqual(weaponAmmoPatch({ arma_municao_capacidade: 2 }, -1), { "system.props.arma_municao_atual": 0 });
   });
 });

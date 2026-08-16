@@ -1,4 +1,5 @@
 import { normalizeTechniqueDefinition, validateTechniqueDefinition } from "../core/technique-definition.mjs";
+import { weaponAttackAttributes, weaponPropertyKeys, weaponPropertyMechanics, weaponProfilesFromProps } from "../weapon-service.mjs";
 
 const text = (value, fallback = "") => String(value ?? fallback).trim();
 const number = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
@@ -43,7 +44,7 @@ function weaponDamage(profile = {}) {
 
 export function normalizeWeaponTechnique(item, { profileIndex = 0, ownerKind = "slayer", sourceItemUuid } = {}) {
   const props = propsOf(item);
-  const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
+  const profiles = weaponProfilesFromProps(props);
   const profile = profiles[profileIndex] ?? profiles[0] ?? {
     nome: "Ataque Base",
     dano_dados: props.arma_dano_dados,
@@ -53,6 +54,9 @@ export function normalizeWeaponTechnique(item, { profileIndex = 0, ownerKind = "
     alcance: props.arma_alcance,
   };
   const attributes = list(profile.atributos);
+  const attackAttributes = weaponAttackAttributes(props, profile);
+  const propertyKeys = weaponPropertyKeys(props.arma_propriedades);
+  const propertyMechanics = weaponPropertyMechanics(props);
   const definition = normalizeTechniqueDefinition({
     id: `weapon:${text(props.arma_nome, item?.name || "unnamed")}:${profileIndex}`,
     name: `${text(props.arma_nome, item?.name || "Arma")} — ${text(profile.nome, "Ataque Base")}`,
@@ -63,8 +67,8 @@ export function normalizeWeaponTechnique(item, { profileIndex = 0, ownerKind = "
     costs: { actions: [{ type: "ataque", amount: 1, timing: "reserve", refund: "cancel" }], resources: [] },
     targeting: { mode: "single", count: 1, range: rangeMeters(profile.alcance ?? props.arma_alcance), disposition: "enemy" },
     attack: {
-      attribute: text(props.arma_atributo_acerto, attributes[0]?.key ?? "FOR"),
-      count: Math.max(1, number(profile.ataques, 1)),
+      attribute: text(props.arma_atributo_acerto, attackAttributes[0] ?? attributes[0]?.key ?? "FOR"),
+      count: Math.max(1, number(profile.ataques, propertyMechanics.some((mechanic) => ["nitoryu", "ryoto"].includes(mechanic?.id)) ? 2 : 1)),
       sequential: true,
       critical: { threshold: number(profile.critico, number(props.arma_critico, 20)), disabled: profile.critico_desabilitado === true, source: "weapon-profile" },
     },
@@ -77,9 +81,10 @@ export function normalizeWeaponTechnique(item, { profileIndex = 0, ownerKind = "
     metadata: {
       category: text(props.arma_categoria, "basica"),
       profileIndex,
-      properties: list(props.arma_propriedades),
+      attackAttributes,
+      properties: propertyKeys,
       unresolvedRuleText: text(props.arma_regra_completa || props.descricao),
-      structuredMechanics: Array.isArray(props.arma_mecanicas) ? props.arma_mecanicas : [],
+      structuredMechanics: propertyMechanics,
     },
   });
   return validateTechniqueDefinition(definition);

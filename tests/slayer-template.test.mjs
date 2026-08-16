@@ -36,7 +36,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões funcionais; encontrados ${buttons.length}.`);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
-    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.rollWeaponItem/);
+    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem)/);
     assert.match(String(button.value), /custom-orbitron-wrapper/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
@@ -182,7 +182,7 @@ test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB
   for (const key of ["dinheiro_slayer_atual", "moedas_honra_slayer_atual"]) assert.match(source, new RegExp(`"${key}"`));
   for (const key of [
     "skills_slayer_resp_display", "skills_slayer_hab_display", "skills_slayer_classe_display",
-    "skills_marca_slayer_panel", "hab_origem_slayer_resumo",
+    "skills_marca_slayer_panel", "hab_origem_slayer_resumo", "armas_proficientes",
   ]) assert.match(source, new RegExp(`"${key}"`));
   for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario"]) {
     assert.match(source, new RegExp(`"${key}"`));
@@ -201,6 +201,7 @@ test("botão de arma envia o Item vinculado ao motor próprio", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const serialized = JSON.stringify(template.system);
   assert.match(serialized, /rollWeaponItem/);
+  assert.match(serialized, /reloadWeaponItem/);
   assert.match(serialized, /item:weapon/);
   assert.doesNotMatch(serialized, /formulaBase:linkedEntity/);
 });

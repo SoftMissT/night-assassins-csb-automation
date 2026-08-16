@@ -20,9 +20,15 @@ function parseBonus(raw) {
  * @returns {Promise<{mode:string,rollMode:string,bonusRaw:string,cdVal:number,rollCount:number}|null>}
  */
 export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) {
-  const weaponOptions = weapons.map((weapon) =>
-    `<option value="${weapon.id}" data-critical="${weapon.effectiveCritical}">${weapon.name} — crítico ${weapon.effectiveCritical}+</option>`
-  ).join("");
+  const weaponOptions = weapons.map((weapon) => {
+    const attributes = Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes.join("/") : "";
+    const profileLabel = weapon.profileName ? ` — ${weapon.profileName}` : "";
+    const value = `${weapon.id}|${Number.isInteger(weapon.profileIndex) ? weapon.profileIndex : 0}`;
+    return `<option value="${value}" data-critical="${weapon.effectiveCritical}" data-attributes="${attributes}">${weapon.name}${profileLabel} — ${attributes || "atributo do Actor"} — crítico ${weapon.effectiveCritical}+</option>`;
+  }).join("");
+  const weaponAttributeOptions = [...new Set(weapons.flatMap((weapon) => Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes : []))]
+    .map((attribute) => `<option value="${attribute}" ${attribute === attrName ? "selected" : ""}>${attribute}</option>`)
+    .join("");
   const content = `
     <div class="na-csb-automation na-hit-setup">
       <header class="na-hit-hero" style="--na-hit-color:${color}">
@@ -62,6 +68,14 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
         <small>O crítico vem da arma. Quebra da Respiração da Pedra reduz este número.</small>
       </label>
       <label class="na-hit-field">
+        <span>Atributo do acerto</span>
+        <select id="na-ac-weapon-attribute">
+          <option value="">Usar padrão da ficha</option>
+          ${weaponAttributeOptions}
+        </select>
+        <small>Armas com Acuidade permitem FOR ou DEX; Manejável usa DEX; Concussão usa FOR.</small>
+      </label>
+      <label class="na-hit-field">
         <span>Visibilidade da rolagem</span>
         <select id="na-ac-rollmode">
           <option value="publicroll">Rolar Público</option>
@@ -91,7 +105,9 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
             actionType: form.elements["na-ac-action"].value ?? "",
-            weaponId: form.elements["na-ac-weapon"].value ?? "",
+            weaponId: (form.elements["na-ac-weapon"].value ?? "").split("|")[0],
+            weaponProfileIndex: Number((form.elements["na-ac-weapon"].value ?? "").split("|")[1] ?? 0),
+            weaponAttribute: form.elements["na-ac-weapon-attribute"].value ?? "",
           };
         },
       },
@@ -107,7 +123,9 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
             actionType: form.elements["na-ac-action"].value ?? "",
-            weaponId: form.elements["na-ac-weapon"].value ?? "",
+            weaponId: (form.elements["na-ac-weapon"].value ?? "").split("|")[0],
+            weaponProfileIndex: Number((form.elements["na-ac-weapon"].value ?? "").split("|")[1] ?? 0),
+            weaponAttribute: form.elements["na-ac-weapon-attribute"].value ?? "",
           };
         },
       },
@@ -123,7 +141,9 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
             cdVal: Number(form.elements["na-ac-cd"].value) || 0,
             rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
             actionType: form.elements["na-ac-action"].value ?? "",
-            weaponId: form.elements["na-ac-weapon"].value ?? "",
+            weaponId: (form.elements["na-ac-weapon"].value ?? "").split("|")[0],
+            weaponProfileIndex: Number((form.elements["na-ac-weapon"].value ?? "").split("|")[1] ?? 0),
+            weaponAttribute: form.elements["na-ac-weapon-attribute"].value ?? "",
           };
         },
       },

@@ -62,6 +62,29 @@ describe("attack-builder", () => {
     assert.equal(result.resourceCost, 3);
   });
 
+  it("reconhece uma arma legada sem array de perfis e gera ataque rolável", () => {
+    const actor = makeActor({ props: { nvl_num: 1, dex_display: 5 } });
+    actor.items = [{
+      id: "legacy-weapon",
+      uuid: "Actor.slayer.Item.legacy-weapon",
+      name: "Arco Longo",
+      parent: actor,
+      system: { template: "NAWeaponTpl00001", props: {
+        arma_nome: "Arco Longo",
+        arma_dano_fixo: 3,
+        arma_dano_atributo: ["DEX"],
+        arma_tipos_dano: ["perfurante"],
+        arma_regra_completa: "Dano: 3 + Metade da DEX",
+      } },
+    }];
+    const model = createAttackBuilderModel(actor);
+    const result = buildAttackSelection(model, { weaponKey: model.weapons[0].key });
+    assert.equal(model.weapons.length, 1);
+    assert.equal(result.entradas.length, 1);
+    assert.equal(result.entradas[0].fixo, 5);
+    assert.deepEqual(result.entradas[0].tiposDano, ["perfurante"]);
+  });
+
   it("oferece ataques desarmados escalonados para Oni", () => {
     const actor = makeActor({ props: { nome_oni: "Akuma", nvl_num: 10, for_display: 6, dex_display: 5 } });
     actor.items = [];

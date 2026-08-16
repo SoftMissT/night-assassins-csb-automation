@@ -368,7 +368,14 @@ function weaponItemContainer() {
   rollButton.style = "button";
   rollButton.icon = "fa-solid fa-khanda";
   rollButton.rollMessage = "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!weapon)return ui.notifications.warn('Arma não encontrada nesta linha.');return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:entity,actorUuid:entity.uuid});}%";
-  container.rowLayout = [{ ...rollButton, align: "center", colName: "Rolar" }];
+  const reloadButton = displayLabel("arma_slayer_recarregar", orbitron("RECARREGAR", "#F8EB4D", 11), "Gasta uma Ação Única e restaura a munição da arma.");
+  reloadButton.style = "button";
+  reloadButton.icon = "fa-solid fa-rotate-right";
+  reloadButton.rollMessage = "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!weapon)return ui.notifications.warn('Arma não encontrada nesta linha.');return await game.modules.get('night-assassins-csb-automation')?.api?.reloadWeaponItem({item:weapon,actor:entity,actorUuid:entity.uuid});}%";
+  container.rowLayout = [
+    { ...rollButton, align: "center", colName: "Rolar" },
+    { ...reloadButton, align: "center", colName: "Recarga" },
+  ];
   return container;
 }
 
@@ -525,6 +532,7 @@ function organizeSlayerTabs(template) {
       displayLabel("skills_slayer_hab_display", "Habilidade Especial: ${hab_escolhida}$"),
       displayLabel("skills_slayer_classe_display", "Classe: ${classe_escolhida}$"),
       displayLabel("skills_slayer_origem_display", "Habilidade de Origem: ${origem_dropdown}$"),
+      playerTextField("armas_proficientes", "Armas Proficientes (separadas por vírgula)", ""),
     ], "grid-2"),
     breathingItemContainer(),
     markPanel,

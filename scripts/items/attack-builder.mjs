@@ -17,7 +17,9 @@ function itemProps(item) {
 
 function isWeapon(item) {
   const props = itemProps(item);
-  return item?.system?.template === WEAPON_TEMPLATE_ID || Array.isArray(props.arma_perfis_ataque);
+  return item?.system?.template === WEAPON_TEMPLATE_ID
+    || props.arma_critico !== undefined
+    || Boolean(props.arma_nome && (props.arma_dano_fixo !== undefined || props.arma_dano_atributo !== undefined || props.arma_tipos_dano !== undefined));
 }
 
 function isBreathingForm(item) {
@@ -83,15 +85,20 @@ function resolvedFormula(formula, values) {
 export function definitionDamageEntries(definition, actor) {
   const values = attributeValues(actor);
   const action = definition?.costs?.actions?.[0]?.type ?? "";
-  return (definition?.damage ?? []).map((component) => ({
-    sourceId: definition.id,
-    sourceLabel: component.label || definition.name,
-    tipoAcao: action,
-    dado: resolvedFormula(component.formula, values),
-    fixo: componentFixed(component, values),
-    attrs: [],
-    tiposDano: [...(component.types ?? [])],
-  }));
+  const attackCount = Math.max(1, Math.trunc(Number(definition?.attack?.count) || 1));
+  return Array.from({ length: attackCount }, (_unused, attackIndex) => (definition?.damage ?? []).map((component) => {
+    const secondaryAttack = attackIndex > 0;
+    const secondaryComponent = secondaryAttack ? { ...component, attributeTerms: [] } : component;
+    return {
+      sourceId: definition.id,
+      sourceLabel: `${component.label || definition.name}${attackCount > 1 ? ` — Golpe ${attackIndex + 1}` : ""}`,
+      tipoAcao: action,
+      dado: resolvedFormula(component.formula, values),
+      fixo: componentFixed(secondaryComponent, values),
+      attrs: [],
+      tiposDano: [...(component.types ?? [])],
+    };
+  })).flat();
 }
 
 export function createAttackBuilderModel(actor) {
@@ -152,7 +159,7 @@ export function buildAttackSelection(model, { weaponKey = "", breathingKey = "",
     .filter((cost) => cost.resource === resourceKey || model.ownerKind === "oni" && cost.resource === "pdr")
     .reduce((total, cost) => total + Number(cost.amount ?? 0), 0);
   const names = [weapon?.label, breath?.label, innate?.label].filter(Boolean);
-  return { cancelled: false, manual: false, nome: names.join(" + "), entradas, resourceCost, resourceKey };
+  return { cancelled: false, manual: false, nome: names.join(" + "), entradas, resourceCost, resourceKey, weaponItem: weapon?.item ?? null };
 }
 
 function optionsHtml(entries, emptyLabel) {

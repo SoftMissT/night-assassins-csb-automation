@@ -1,4 +1,5 @@
 import { parseAttributeValue, parseNumber } from "./parsing.mjs";
+import { isWeaponProficient, weaponAttackAttributes, weaponPropertyKeys, weaponProfilesForActor } from "./weapon-service.mjs";
 
 export const PASSIVE_STATE_KEY = "resp_passivas_estado";
 
@@ -19,13 +20,32 @@ export function passiveStatePatch(state) {
 export function actorWeapons(actor) {
   return [...(actor?.items ?? [])].filter((item) => {
     const props = item?.system?.props ?? {};
-    return item?.system?.template === "NAWeaponTpl00001" || props.arma_critico !== undefined;
-  }).map((item) => ({
-    id: item.id,
-    uuid: item.uuid,
-    name: String(item.system?.props?.arma_nome || item.name || "Arma"),
-    critical: Math.min(20, Math.max(1, Math.trunc(parseNumber(item.system?.props?.arma_critico) || 20))),
-  }));
+    return item?.system?.template === "NAWeaponTpl00001"
+      || props.arma_critico !== undefined
+      || Boolean(props.arma_nome && (props.arma_dano_fixo !== undefined || props.arma_dano_atributo !== undefined || props.arma_tipos_dano !== undefined));
+  }).flatMap((item) => {
+    const props = item.system?.props ?? {};
+    const actorProps = actor?.system?.props ?? {};
+    const profiles = weaponProfilesForActor(props, actorProps);
+    return profiles.map((profile, profileIndex) => {
+      const profileMode = weaponPropertyKeys(profile.nome).find((key) => ["nitoryu", "ryoto"].includes(key)) ?? "";
+      const proficient = profile.proficiente !== false;
+      return {
+        id: item.id,
+        uuid: item.uuid,
+        profileIndex,
+        profileName: profile.nome ?? "Ataque Base",
+        name: String(props.arma_nome || item.name || "Arma"),
+        proficient,
+        attackAttributes: proficient ? weaponAttackAttributes(props, profile) : [],
+        attacks: Math.max(1, Math.trunc(Number(profile.ataques) || 1)),
+        secondaryPenalty: profileMode === "nitoryu" ? -2 : 0,
+        secondaryNoAttribute: ["nitoryu", "ryoto"].includes(profileMode) || Number(profile.ataques) > 1,
+        critical: Math.min(20, Math.max(1, Math.trunc(parseNumber(profile.critico ?? props.arma_critico) || 20))),
+        criticalDisabled: profile.critico_desabilitado === true,
+      };
+    });
+  });
 }
 
 export function stoneBreakStacks(state, weaponId) {

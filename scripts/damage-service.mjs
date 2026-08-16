@@ -11,7 +11,7 @@ import { consumeSlayerActions } from "./action-service.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
-import { weaponProfilesForActor } from "./weapon-service.mjs";
+import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { addStoneBreak, parseBreathPassiveState, passiveStatePatch } from "./breath-passives.mjs";
@@ -63,10 +63,11 @@ async function resolveActor(options) {
   return game?.user?.character ?? null;
 }
 
-function weaponProfileEntry(profile, attrValues) {
+function weaponProfileEntry(profile, attrValues, { includeAttributes = true, attackIndex = 0 } = {}) {
   const attributeRules = Array.isArray(profile?.atributos) ? profile.atributos : [];
-  const choiceRules = attributeRules.filter((rule) => rule?.escolha === true);
-  const additiveRules = attributeRules.filter((rule) => rule?.escolha !== true);
+  const usableRules = includeAttributes ? attributeRules : attributeRules.filter((rule) => !["FOR", "DEX"].includes(String(rule?.key ?? "").toUpperCase()));
+  const choiceRules = usableRules.filter((rule) => rule?.escolha === true);
+  const additiveRules = usableRules.filter((rule) => rule?.escolha !== true);
   const selected = choiceRules.length > 0
     ? choiceRules.reduce((best, rule) => {
         const key = String(rule?.key ?? "").toLowerCase();
@@ -85,7 +86,13 @@ function weaponProfileEntry(profile, attrValues) {
     fixo: Math.trunc(parseNumber(profile?.dano_fixo)) + attributeTotal,
     attrs: [],
     tiposDano: Array.isArray(profile?.tipos_dano) ? profile.tipos_dano : [],
+    attackIndex,
   };
+}
+
+function weaponProfileEntries(profile, attrValues) {
+  const count = Math.max(1, Math.trunc(Number(profile?.ataques) || 1));
+  return Array.from({ length: count }, (_unused, attackIndex) => weaponProfileEntry(profile, attrValues, { includeAttributes: attackIndex === 0, attackIndex }));
 }
 
 async function chooseWeaponProfile(profiles) {
@@ -151,16 +158,23 @@ export async function rollDamage(options = {}) {
         ...options,
         nome: selection.nome || options.nome,
         entradas: selection.entradas,
+        weaponItem: selection.weaponItem ?? options.weaponItem,
         pdrCusto: parseNumber(options.pdrCusto) + parseNumber(selection.resourceCost),
       };
     }
   }
 
   const weaponProfiles = Array.isArray(options.weaponProfiles) ? options.weaponProfiles.filter((profile) => profile && typeof profile === "object") : [];
+  let selectedWeaponProfile = null;
+  let weaponAmmo = null;
   if (weaponProfiles.length > 0) {
-    const selectedProfile = await chooseWeaponProfile(weaponProfiles);
-    if (!selectedProfile) return;
-    options = { ...options, entradas: [weaponProfileEntry(selectedProfile, attrValues)] };
+    selectedWeaponProfile = await chooseWeaponProfile(weaponProfiles);
+    if (!selectedWeaponProfile) return;
+    weaponAmmo = weaponAmmoState(options.weaponItem?.system?.props ?? {}, selectedWeaponProfile);
+    if (weaponAmmo.required && weaponAmmo.current < weaponAmmo.shots) {
+      return ui.notifications?.warn?.(`Munição insuficiente: são necessários ${weaponAmmo.shots} disparo(s), mas restam ${weaponAmmo.current}.`);
+    }
+    options = { ...options, entradas: weaponProfileEntries(selectedWeaponProfile, attrValues) };
   }
 
   // Compatibilidade de entradas
@@ -242,6 +256,17 @@ export async function rollDamage(options = {}) {
   } catch (_) {
     ui.notifications?.error?.(`Fórmula inválida: ${specs.map((spec) => spec.formula).join(" + ")}`);
     return;
+  }
+  if (weaponAmmo?.required && hasAttackDamage && options.weaponItem?.update) {
+    const patch = weaponAmmoPatch(options.weaponItem.system?.props ?? {}, weaponAmmo.current - weaponAmmo.shots);
+    if (patch) {
+      try {
+        await options.weaponItem.update(patch, { naCsbAutomation: true });
+      } catch (error) {
+        console.warn?.(`[${MODULE_ID}] Falha ao consumir munição`, error);
+        return ui.notifications?.warn?.("A arma não pôde atualizar a munição; o dano foi cancelado.");
+      }
+    }
   }
   // Dice So Nice é acionado automaticamente pelo ChatMessage.create quando rolls está preenchido.
   const components = specs.map((spec, index) => ({
@@ -424,6 +449,36 @@ export async function rollWeaponItem(options = {}) {
     actor,
     nome: itemProps.arma_nome || item.name,
     weaponProfiles: profiles,
+    weaponItem: item,
     tipoAcao: "ataque",
   });
+}
+
+export async function reloadWeaponItem(options = {}) {
+  const directItem = options.item?.documentName === "Actor" ? null : options.item;
+  const resolvedUuid = options.itemUuid ? await fromUuid(options.itemUuid) : null;
+  const item = directItem ?? (resolvedUuid?.documentName === "Actor" ? null : resolvedUuid);
+  if (!item) return ui.notifications?.warn?.("Item de arma não encontrado.");
+  const actor = item.parent?.documentName === "Actor" ? item.parent : await resolveActor(options);
+  if (!actor) return ui.notifications?.warn?.("A arma precisa estar vinculada a um Slayer para recarregar.");
+
+  const props = item.system?.props ?? {};
+  const capacity = Math.max(0, Math.trunc(parseNumber(props.arma_municao_capacidade)));
+  if (capacity <= 0) return ui.notifications?.warn?.("Esta arma não possui capacidade de munição configurada.");
+  const current = Math.max(0, Math.min(capacity, Math.trunc(parseNumber(props.arma_municao_atual ?? capacity))));
+  if (current >= capacity) return ui.notifications?.info?.("A arma já está com a munição cheia.");
+
+  const actionResult = await consumeSlayerActions(actor, ["unica"], { update: false });
+  if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
+  const itemPatch = weaponAmmoPatch(props, capacity);
+  try {
+    await Promise.all([
+      actor.update(actionResult.patch, { naCsbAutomation: true, naActionEconomy: true }),
+      item.update(itemPatch, { naCsbAutomation: true }),
+    ]);
+  } catch (error) {
+    console.warn?.(`[${MODULE_ID}] Falha ao recarregar arma`, error);
+    return ui.notifications?.warn?.("Não foi possível concluir a recarga da arma.");
+  }
+  return ui.notifications?.info?.(`${item.name || "Arma"} recarregada: ${capacity}/${capacity}.`);
 }

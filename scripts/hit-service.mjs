@@ -37,7 +37,7 @@ function parseBonus(raw) {
 
 function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
   const dice = getDice(mode);
-  let base = `${dice} + ${attrVal}`;
+  let base = attrVal ? `${dice} + ${attrVal}` : dice;
   if (statusModifier) base += statusModifier > 0 ? ` + ${statusModifier}` : ` - ${Math.abs(statusModifier)}`;
   return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
@@ -45,9 +45,7 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
 async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects, weapon = null }) {
   mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
-  const formula = buildFormula(mode, attrVal, extra, statusEffects.modifier);
-
-  const maximum = Math.min(20, Math.max(1, Math.trunc(rollCount || 1)));
+  const maximum = Math.min(20, Math.max(1, Math.trunc(Math.max(rollCount || 1, weapon?.attacks || 1))));
   const modeLabel = getModeLabel(mode);
   const bonusLine = display ? ` | Bônus: ${display}` : "";
   const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
@@ -57,6 +55,12 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   const criticalThreshold = weapon?.effectiveCritical ?? 20;
 
   for (let index = 0; index < maximum; index += 1) {
+    const secondaryAttack = index > 0 && weapon?.secondaryNoAttribute === true;
+    const attemptAttrVal = secondaryAttack ? 0 : attrVal;
+    const secondaryPenalty = secondaryAttack ? Number(weapon?.secondaryPenalty) || 0 : 0;
+    const secondaryBonus = secondaryPenalty > 0 ? `+ ${secondaryPenalty}` : secondaryPenalty < 0 ? `- ${Math.abs(secondaryPenalty)}` : "";
+    const attemptBonus = [extra, secondaryBonus].filter(Boolean).join(" ");
+    const formula = buildFormula(mode, attemptAttrVal, attemptBonus, statusEffects.modifier);
     let roll;
     try {
       roll = await Roll.create(formula).evaluate();
@@ -82,8 +86,8 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
       break;
     }
     const natural = naturalD20(roll);
-    const critical = decision.hit && statusEffects.criticalAllowed !== false && natural >= criticalThreshold;
-    attempts.push({ roll, hit: decision.hit, natural, critical, criticalThreshold, weaponId: weapon?.id ?? "" });
+    const critical = decision.hit && statusEffects.criticalAllowed !== false && weapon?.criticalDisabled !== true && natural >= criticalThreshold;
+    attempts.push({ roll, hit: decision.hit, natural, critical, criticalThreshold, weaponId: weapon?.id ?? "", attackIndex: index, secondary: secondaryAttack });
     if (critical) await recoverSlayerFolego(actor, 1);
     if (!decision.continue && index + 1 < maximum) {
       interrupted = true;
@@ -169,7 +173,21 @@ export async function rollHit(options) {
   const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0) + flameTier.hit;
   const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
   const requestedMode = breathHit?.advantage || flameHit?.advantage ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
-  const weapon = weapons.find((entry) => entry.id === dialogResult.weaponId) ?? null;
+  const weapon = weapons.find((entry) => entry.id === dialogResult.weaponId && entry.profileIndex === Number(dialogResult.weaponProfileIndex ?? 0))
+    ?? weapons.find((entry) => entry.id === dialogResult.weaponId)
+    ?? null;
+  const allowedWeaponAttributes = Array.isArray(weapon?.attackAttributes) ? weapon.attackAttributes : [];
+  const requestedWeaponAttribute = String(dialogResult.weaponAttribute ?? "").toUpperCase();
+  const selectedWeaponAttribute = weapon && allowedWeaponAttributes.length > 0
+    ? (allowedWeaponAttributes.includes(requestedWeaponAttribute) ? requestedWeaponAttribute : allowedWeaponAttributes.includes(attrName) ? attrName : allowedWeaponAttributes[0])
+    : attrName;
+  if (selectedWeaponAttribute !== attrName) {
+    attrName = selectedWeaponAttribute;
+    attrVal = parseAttributeValue(props[`${attrName.toLowerCase()}_display`]);
+  }
+  const finalStatusEffects = getRollStatusEffects(props, { test: "Acerto", attr: attrName, kind: "attack" });
+  if (finalStatusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode atacar.");
+  if (finalStatusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática neste Acerto.");
 
   const result = await doRoll({
     actor,
@@ -179,9 +197,9 @@ export async function rollHit(options) {
     rollMode: dialogResult.rollMode,
     bonusRaw,
     cdVal: dialogResult.cdVal,
-    rollCount: Math.max(dialogResult.rollCount, Number(breathHit?.count) || 1, Number(flameHit?.count) || 1),
+    rollCount: Math.max(dialogResult.rollCount, Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1, Number(breathHit?.count) || 1, Number(flameHit?.count) || 1),
     actionType: dialogResult.actionType,
-    statusEffects,
+    statusEffects: finalStatusEffects,
     weapon,
   });
   const confirmedCritical = result?.attempts?.find((attempt) => attempt.critical);

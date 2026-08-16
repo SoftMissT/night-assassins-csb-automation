@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
+  actorWeapons,
   addStoneBreak,
   effectiveWeaponCritical,
   isPassiveItem,
@@ -9,6 +10,28 @@ import {
 } from "../scripts/breath-passives.mjs";
 
 describe("passivas de Respiração", () => {
+  it("lista arma legada da ficha com perfil e atributo de ataque", () => {
+    const actor = {
+      system: { props: { nvl_num: 1, dex_display: 5 } },
+      items: [{
+        id: "legacy-weapon",
+        uuid: "Actor.slayer.Item.legacy-weapon",
+        name: "Arco Longo",
+        system: { props: {
+          arma_nome: "Arco Longo",
+          arma_dano_fixo: 3,
+          arma_dano_atributo: ["DEX"],
+          arma_tipos_dano: ["perfurante"],
+          arma_regra_completa: "Dano: 3 + Metade da DEX",
+        } },
+      }],
+    };
+    const [weapon] = actorWeapons(actor);
+    assert.equal(weapon.profileName, "Ataque Base");
+    assert.deepEqual(weapon.attackAttributes, ["DEX"]);
+    assert.equal(weapon.attacks, 1);
+  });
+
   it("usa o crítico da arma e reduz com Quebra até o limite de FOR", () => {
     let state = parseBreathPassiveState("");
     for (let i = 0; i < 8; i += 1) state = addStoneBreak(state, "katana", 3);

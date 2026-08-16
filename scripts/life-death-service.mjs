@@ -103,6 +103,15 @@ function isPrimaryGm() {
   return game.user?.isGM && primaryActiveGm()?.id === game.user.id;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 async function markDead(actor, state, reason) {
   state.dead = true; state.dying = false; state.stabilized = false;
   await actor.update({ ...lifePatch(state), ...statusPatch(actor.system.props, { remove: ["derrubado"] }) }, { naCsbAutomation: true, naLifeDeath: true });
@@ -110,7 +119,9 @@ async function markDead(actor, state, reason) {
     const updates = [...combat.combatants].filter((entry) => entry.actorId === actor.id && !entry.defeated).map((entry) => ({ _id: entry.id, defeated: true }));
     if (updates.length) await combat.updateEmbeddedDocuments("Combatant", updates);
   }
-  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>${actor.name} morreu.</strong><br>${reason}` });
+  const name = escapeHtml(actor.name);
+  const safeReason = escapeHtml(reason);
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>${name} morreu.</strong><br>${safeReason}` });
 }
 
 async function revive(actor, state, pdv, { exhaustion = 1, status = "desequilibrado", reason = "" } = {}) {
@@ -121,7 +132,9 @@ async function revive(actor, state, pdv, { exhaustion = 1, status = "desequilibr
     ...statusPatch(props, { add: status ? [status] : [], remove: ["derrubado"], exhaustion }),
     "system.props.pdv_slayer_dano_tomado": damageForCurrent(props, pdv),
   }, { naCsbAutomation: true, naLifeDeath: true });
-  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>${actor.name} voltou com ${pdv} PDV.</strong>${reason ? `<br>${reason}` : ""}` });
+  const name = escapeHtml(actor.name);
+  const safeReason = reason ? escapeHtml(reason) : "";
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>${name} voltou com ${pdv} PDV.</strong>${safeReason ? `<br>${safeReason}` : ""}` });
 }
 
 async function finalDetermination(actor, state, reason) {

@@ -20,7 +20,7 @@
           "type": "label",
           "size": "full-size",
           "icon": "",
-          "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#FF9100;text-transform:uppercase;letter-spacing:.12em;\">Perfil do NPC</span></div>",
+          "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-car\">Perfil do NPC</span>",
           "prefix": "",
           "suffix": "",
           "rollMessage": "",
@@ -323,8 +323,12 @@
     },
     "disposition": 0,
     "displayBars": 0,
-    "bar1": { "attribute": null },
-    "bar2": { "attribute": null },
+    "bar1": {
+      "attribute": null
+    },
+    "bar2": {
+      "attribute": null
+    },
     "flags": {},
     "randomImg": false,
     "appendNumber": false,
@@ -333,10 +337,16 @@
   "items": [],
   "effects": [],
   "folder": null,
-  "ownership": { "default": 0 },
+  "ownership": {
+    "default": 0
+  },
   "flags": {
-    "custom-system-builder": { "version": "6.0.2" },
-    "core": { "sheetClass": "custom-system-builder.TemplateSheet" }
+    "custom-system-builder": {
+      "version": "6.0.2"
+    },
+    "core": {
+      "sheetClass": "custom-system-builder.TemplateSheet"
+    }
   },
   "_stats": {
     "systemId": "custom-system-builder",

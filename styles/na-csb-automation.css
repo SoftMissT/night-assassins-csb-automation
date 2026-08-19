@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap");
 
 .na-csb-automation {
   font-family: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -997,3 +997,349 @@
 .na-action-note { align-items: start; border-left-color: #d45ca4; }
 .na-action-note span { color: #b9ad9b; font: 11px/1.4 "Trebuchet MS", sans-serif; text-align: right; }
 .na-action-reference { display: grid; gap: 6px; }
+
+/* =============================================================================
+   Night Assassins — Sheet Skin (Manhwa Dark)
+   Templates use .na-sheet-* classes. Chrome is scoped via .na-sheet on the app.
+   ============================================================================= */
+
+
+:root {
+  --na-gold: #ffd700;
+  --na-gold-dim: #d8b45d;
+  --na-blue: #00d9ff;
+  --na-purple: #a855f7;
+  --na-red: #ff2b4a;
+  --na-green: #2eff7a;
+  --na-cyan: #15d7e6;
+  --na-ink: #f5f0e8;
+  --na-muted: #9e968a;
+  --na-line: #3a342c;
+  --na-bg: #0a0a0f;
+  --na-bg-elev: #121018;
+  --na-bg-panel: #16131c;
+  --na-bg-input: #1c1915;
+  --na-vit: #36d67a;
+  --na-dex: #28d7ff;
+  --na-for: #c1000c;
+  --na-car: #ff9100;
+  --na-fdv: #bb97f9;
+  --na-int: #f8eb4d;
+  --na-sab: #d45ca4;
+  --na-font-display: "Orbitron", "Trebuchet MS", sans-serif;
+  --na-font-body: "Rajdhani", "Segoe UI", sans-serif;
+}
+
+/* --- Label / title / stat text (from migrated templates) --- */
+
+.na-sheet-text {
+  font-family: var(--na-font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1.15;
+  color: var(--na-ink);
+  display: inline-block;
+}
+
+.na-sheet-title {
+  color: var(--na-gold);
+  text-shadow: 0 0 12px rgba(255, 215, 0, 0.22);
+}
+
+.na-sheet-label {
+  color: var(--na-muted);
+}
+
+.na-sheet-stat {
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.na-sheet-size-sm { font-size: 12px; letter-spacing: 0.1em; }
+.na-sheet-size-md { font-size: 16px; }
+.na-sheet-size-lg { font-size: 18px; }
+.na-sheet-size-xl { font-size: 22px; letter-spacing: 0.14em; }
+
+.na-sheet-role-vit { color: var(--na-vit); }
+.na-sheet-role-dex { color: var(--na-dex); }
+.na-sheet-role-for { color: var(--na-for); }
+.na-sheet-role-car { color: var(--na-car); }
+.na-sheet-role-fdv { color: var(--na-fdv); }
+.na-sheet-role-int { color: var(--na-int); }
+.na-sheet-role-sab { color: var(--na-sab); }
+.na-sheet-role-accent-gold { color: var(--na-gold); }
+.na-sheet-role-accent-lime { color: var(--na-green); }
+.na-sheet-role-accent-cyan { color: var(--na-cyan); }
+.na-sheet-role-accent-red { color: var(--na-red); }
+
+.na-sheet-glow {
+  text-shadow: 0 0 8px currentColor;
+}
+
+.na-sheet-stat.na-sheet-role-vit,
+.na-sheet-stat.na-sheet-role-dex,
+.na-sheet-stat.na-sheet-role-for,
+.na-sheet-stat.na-sheet-role-car,
+.na-sheet-stat.na-sheet-role-fdv,
+.na-sheet-stat.na-sheet-role-int,
+.na-sheet-stat.na-sheet-role-sab {
+  font-size: 25px;
+  letter-spacing: 0.08em;
+}
+
+/* --- Sheet chrome (only when .na-sheet is tagged on the Application) --- */
+
+.na-sheet {
+  --color-text-primary: var(--na-ink);
+  --color-text-secondary: var(--na-muted);
+  --color-border-light-primary: var(--na-line);
+  --color-border-dark: #2a2520;
+  --color-shadow-primary: rgba(255, 215, 0, 0.55);
+}
+
+.na-sheet .window-header {
+  border-bottom: 1px solid var(--na-line);
+  background:
+    linear-gradient(90deg, rgba(255, 215, 0, 0.08), transparent 46%),
+    linear-gradient(180deg, #16131c, #100e13);
+}
+
+.na-sheet .window-header .window-title {
+  font-family: var(--na-font-display);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--na-gold-dim);
+}
+
+.na-sheet .window-content {
+  background:
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgba(168, 85, 247, 0.07), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 100%, rgba(193, 0, 12, 0.08), transparent 45%),
+    linear-gradient(165deg, #121018 0%, #0a0a0f 55%, #08070c 100%);
+  color: var(--na-ink);
+  font-family: var(--na-font-body);
+}
+
+.na-sheet .custom-system-entity {
+  color: var(--na-ink);
+}
+
+.na-sheet nav.custom-tabs,
+.na-sheet .custom-tabs {
+  margin: 6px 0 10px !important;
+  padding: 6px 4px !important;
+  border-top: 1px solid var(--na-line) !important;
+  border-bottom: 1px solid var(--na-line) !important;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 0;
+  gap: 4px;
+}
+
+.na-sheet nav.custom-tabs a.item,
+.na-sheet .custom-tabs a.item {
+  font-family: var(--na-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--na-muted) !important;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, text-shadow 0.15s ease;
+}
+
+.na-sheet nav.custom-tabs a.item:hover,
+.na-sheet .custom-tabs a.item:hover {
+  color: var(--na-ink) !important;
+  border-color: rgba(216, 180, 93, 0.35);
+  background: rgba(216, 180, 93, 0.06);
+}
+
+.na-sheet nav.custom-tabs a.item.active,
+.na-sheet .custom-tabs a.item.active,
+.na-sheet .tabs .active {
+  color: var(--na-gold) !important;
+  border-color: rgba(255, 215, 0, 0.45);
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.12), rgba(255, 215, 0, 0.03));
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.45) !important;
+}
+
+.na-sheet .custom-system-panel {
+  margin: 6px 4px;
+  border: 1px solid var(--na-line);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(28, 24, 34, 0.92), rgba(14, 12, 18, 0.95));
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.na-sheet .custom-system-panel > summary,
+.na-sheet .custom-system-panel-title {
+  font-family: var(--na-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--na-gold-dim);
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.08), transparent 55%);
+  border-bottom: 1px solid rgba(58, 52, 44, 0.85);
+  padding: 8px 12px 8px 1.4rem;
+}
+
+.na-sheet .custom-system-panel[open] > summary {
+  color: var(--na-gold);
+}
+
+.na-sheet .custom-system-field > label,
+.na-sheet .custom-system-label {
+  font-family: var(--na-font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--na-muted);
+}
+
+.na-sheet input[type="text"],
+.na-sheet input[type="number"],
+.na-sheet input[type="search"],
+.na-sheet select,
+.na-sheet textarea {
+  background: var(--na-bg-input) !important;
+  color: var(--na-ink) !important;
+  border: 1px solid #4a3a2a !important;
+  border-radius: 4px !important;
+  font-family: var(--na-font-body);
+  font-size: 13px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.na-sheet input:focus,
+.na-sheet select:focus,
+.na-sheet textarea:focus {
+  border-color: var(--na-gold-dim) !important;
+  box-shadow: 0 0 0 1px rgba(216, 180, 93, 0.25);
+  outline: none;
+}
+
+.na-sheet button,
+.na-sheet .custom-system-sheet-button,
+.na-sheet button.custom-system-label-root {
+  font-family: var(--na-font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--na-ink);
+  background: linear-gradient(180deg, #2a2520, #1c1915);
+  border: 1px solid #4a3a2a;
+  border-radius: 5px;
+  transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.na-sheet button:hover,
+.na-sheet .custom-system-sheet-button:hover,
+.na-sheet button.custom-system-label-root:hover {
+  color: var(--na-gold);
+  border-color: var(--na-gold-dim);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.na-sheet .custom-system-meter {
+  background: #050508 !important;
+  border: 1px solid #2a2520;
+  border-radius: 50vh !important;
+  min-height: 16px;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+.na-sheet .custom-system-meter-fill {
+  border-radius: 50vh !important;
+  background: linear-gradient(90deg, #9e0e18, #ff3543) !important;
+}
+
+.na-sheet .custom-system-meter-content {
+  font-family: var(--na-font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--na-ink) !important;
+  text-shadow:
+    0 0 4px rgba(0, 0, 0, 0.9),
+    0 1px 2px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* PDV / PDR / Fôlego semantic fills when parents carry known keys via title/aria — fallback accents */
+.na-sheet .hp-bar .custom-system-meter-fill,
+.na-sheet [class*="pdv"] .custom-system-meter-fill {
+  background: linear-gradient(90deg, #9e0e18, #ff2b4a) !important;
+}
+
+.na-sheet [class*="pdr"] .custom-system-meter-fill {
+  background: linear-gradient(90deg, #087b84, #15d7e6) !important;
+}
+
+.na-sheet .profile-img-container {
+  border: 1px solid var(--na-line) !important;
+  border-radius: 8px !important;
+  background: #09080a;
+  box-shadow: 0 0 0 1px rgba(255, 215, 0, 0.08), 0 10px 24px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+.na-sheet header.sheet-header h1 input {
+  font-family: var(--na-font-display) !important;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--na-ink) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.na-sheet header.sheet-header h1 input:focus {
+  border-color: rgba(216, 180, 93, 0.4) !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+}
+
+.na-sheet .custom-system-item-container,
+.na-sheet .custom-system-dynamic-table,
+.na-sheet table {
+  border-color: var(--na-line);
+}
+
+.na-sheet .custom-system-dynamic-table th,
+.na-sheet table th {
+  font-family: var(--na-font-display);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--na-gold-dim);
+  background: rgba(255, 215, 0, 0.05);
+  border-color: var(--na-line);
+}
+
+.na-sheet .custom-system-dynamic-table td,
+.na-sheet table td {
+  border-color: rgba(58, 52, 44, 0.7);
+  color: var(--na-ink);
+}
+
+.na-sheet ::-webkit-scrollbar { width: 7px; height: 7px; }
+.na-sheet ::-webkit-scrollbar-track { background: #0a0a0f; }
+.na-sheet ::-webkit-scrollbar-thumb {
+  background: #4a3a2a;
+  border-radius: 4px;
+}
+.na-sheet ::-webkit-scrollbar-thumb:hover { background: var(--na-gold-dim); }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .na-sheet button,
+  .na-sheet nav.custom-tabs a.item {
+    transition: none;
+  }
+  .na-sheet button:hover { transform: none; }
+}

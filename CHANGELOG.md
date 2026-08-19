@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.11 — 2026-08-19
+
+- **Design Manhwa Dark nas fichas:** skin `.na-sheet` (fundo, tabs, painéis, inputs, botões, meters, tipografia Orbitron/Rajdhani) aplicada automaticamente às fichas Night Assassins.
+- Remove **~270** blocos inline/`@import` Orbitron dos templates Slayer, Oni e arma; labels usam classes semânticas (`.na-sheet-text`, `.na-sheet-role-vit|dex|for|…`, `.na-sheet-stat`).
+- Hook `tagNightAssassinsSheet` em `renderActorSheet` / V2 marca o Application com `.na-sheet` quando detecta props NA.
+- Validação: `node --test` 314/314.
+
 ## 0.9.10 — 2026-08-19
 
 - **Hotfix crítico:** o hook `ready` crashava com `ReferenceError: registerAdvancedStatesEngine is not defined`, impedindo a ativação completa do módulo (API, engines, repair de armas/respirações e sync de macros não rodavam).

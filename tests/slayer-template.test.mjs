@@ -37,7 +37,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem|useBreathForm)/);
-    assert.match(String(button.value), /custom-orbitron-wrapper/);
+    assert.match(String(button.value), /na-sheet-text/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
   const source = buttons.map((button) => button.rollMessage).join("\n");
@@ -118,7 +118,7 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   assert.match(source, /"folego_slayer_atual"/);
   assert.match(source, /"defaultValue":"\$\{folego_slayer_maximo\}\$"/);
   assert.match(source, /"maxVal":"\$\{folego_slayer_maximo\}\$"/);
-  assert.match(source, /font-size: 16px/);
+  assert.match(source, /na-sheet-size-md|na-sheet-label/);
   assert.match(source, /"acoes_slayer_panel"/);
   assert.match(source, /"title":"Economia de Ações"/);
 });

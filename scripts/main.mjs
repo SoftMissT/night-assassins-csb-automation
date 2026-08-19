@@ -40,6 +40,33 @@ Hooks.once("init", () => {
   registerSettings();
 });
 
+/**
+ * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
+ * @param {Application} app
+ * @param {JQuery|HTMLElement} html
+ * @returns {void}
+ */
+function tagNightAssassinsSheet(app, html) {
+  const actor = app?.actor;
+  if (!actor?.system?.props) return;
+  const props = actor.system.props;
+  const isNa =
+    props.nome_slayer !== undefined ||
+    props.nome_oni !== undefined ||
+    props.nvl_pj !== undefined ||
+    props.pdv_slayer_total_conta !== undefined ||
+    props.pdv_oni_total_conta !== undefined ||
+    props.estados_slayer_dados !== undefined ||
+    props.vida_morte_slayer_dados !== undefined;
+  if (!isNa) return;
+
+  const root = html?.[0] ?? html;
+  const el = root instanceof HTMLElement ? root : null;
+  const appEl = app?.element instanceof HTMLElement ? app.element : el?.closest?.(".app, .application") ?? el;
+  appEl?.classList?.add("na-sheet");
+  el?.classList?.add("na-sheet");
+}
+
 Hooks.once("ready", () => {
   if (game.system.id !== "custom-system-builder") {
     console.warn?.(`[${MODULE_ID}] Sistema incompatível: ${game.system.id}. Módulo desativado.`);
@@ -51,6 +78,11 @@ Hooks.once("ready", () => {
   registerBreathingEngine();
   registerLifeDeathEngine();
   registerAdvancedStatesEngine();
+  Hooks.on("renderActorSheet", tagNightAssassinsSheet);
+  Hooks.on("renderActorSheetV2", tagNightAssassinsSheet);
+  Hooks.on("renderApplicationV2", (app, element) => {
+    if (app?.actor) tagNightAssassinsSheet(app, element);
+  });
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);

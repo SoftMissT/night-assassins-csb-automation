@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.8 — 2026-08-19
+
+- Corrige as Formas de Respiração existentes nos Caçadores: itens legados sem `inventario_categoria` quebravam o filtro do container `skills_slayer_respiracoes` (`equalText(item.inventario_categoria, 'respiracao')`), impedindo a seção e o botão **USAR** de renderizar.
+- Adiciona a migração idempotente `repairBreathingItems`, que sincroniza os itens legados com o Compendium canônico `night-assassins-respiracoes` (por `forma_id` ou nome normalizado) e roda automaticamente no GM ready, junto ao reparo de armas.
+- Adiciona a macro **Night Assassins — Corrigir Respirações dos Caçadores** (`NABreathRepair01`), que executa a migração sob demanda e reporta no chat.
+- Cobre a migração com testes unitários: mapa canônico, patch completo, idempotência, formas sem correspondência e contabilização de Actors.
+- Validação: `node --test` com a suíte completa aprovada (273/273).
+
 ## 0.9.7 — 2026-08-19
 
 - Adiciona a macro **Night Assassins — Corrigir Armas dos Caçadores**, que executa sob demanda a migração idempotente `repairSlayerWeaponItems` em todos os Caçadores do mundo e reporta no chat quantos itens foram atualizados.

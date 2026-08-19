@@ -22,7 +22,7 @@ import { consumeSlayerActions, openActionManager, parseActionState, recoverSlaye
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
 import { registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
 import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, slayerMaxPdv, stabilizeSlayer } from "./life-death-service.mjs";
-import { openAdvancedStatesManager } from "./slayer/advanced-states.mjs";
+import { openAdvancedStatesManager, registerAdvancedStatesEngine } from "./slayer/advanced-states.mjs";
 import { executeInterludeActivity, openInterludeManager } from "./interlude-service.mjs";
 import { createCombatContext, validateCombatContext } from "./core/combat-context.mjs";
 import { createActorTransaction } from "./core/actor-transaction.mjs";

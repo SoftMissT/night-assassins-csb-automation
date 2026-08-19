@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.10 — 2026-08-19
+
+- **Hotfix crítico:** o hook `ready` crashava com `ReferenceError: registerAdvancedStatesEngine is not defined`, impedindo a ativação completa do módulo (API, engines, repair de armas/respirações e sync de macros não rodavam).
+- Causa: `scripts/main.mjs` chamava `registerAdvancedStatesEngine()` sem importar a função de `scripts/slayer/advanced-states.mjs`.
+- Validação: `node --check scripts/main.mjs`; `node --test` 314/314.
+
 ## 0.9.9 — 2026-08-19
 
 - Adiciona o painel **Estados Avançados** na ficha Slayer (tab Skills) com o botão **GERENCIAR ESTADOS AVANÇADOS** e armazenamento de `estados_slayer_dados`/`estados_slayer_resumo` em Configurações.

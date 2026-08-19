@@ -21,6 +21,7 @@ const macros = [
   { id: "NALifeDeath00001", file: "na-gerenciar-vida-morte.js", name: "Night Assassins — Vida e Morte" },
   { id: "NAInterlude00001", file: "na-gerenciar-interludio.js", name: "Night Assassins — Gerenciar Interludio" },
   { id: "NAWeaponRepair01", file: "na-corrigir-armas.js", name: "Night Assassins — Corrigir Armas dos Caçadores" },
+  { id: "NABreathRepair01", file: "na-corrigir-respiracoes.js", name: "Night Assassins — Corrigir Respirações dos Caçadores" },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

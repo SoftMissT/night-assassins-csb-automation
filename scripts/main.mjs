@@ -27,6 +27,7 @@ import { createCombatContext, validateCombatContext } from "./core/combat-contex
 import { createActorTransaction } from "./core/actor-transaction.mjs";
 import { normalizeTechniqueDefinition, splitDamageTotal, validateTechniqueDefinition } from "./core/technique-definition.mjs";
 import { repairSlayerWeaponItems } from "./weapon-migration.mjs";
+import { repairBreathingItems } from "./breath-migration.mjs";
 import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./items/item-technique-normalizers.mjs";
 import * as slayerProgression from "./slayer/progression-service.mjs";
 import * as slayerOrigins from "./slayer/origin-contracts.mjs";
@@ -63,6 +64,12 @@ Hooks.once("ready", () => {
       })
       .catch((error) => ui.notifications.warn(`Falha ao compatibilizar armas Slayer: ${error.message}`));
 
+    void repairBreathingItems()
+      .then(({ items }) => {
+        if (items > 0) ui.notifications.info(`Respirações compatibilizadas: ${items} Item(ns) atualizado(s).`);
+      })
+      .catch((error) => ui.notifications.warn(`Falha ao compatibilizar respirações: ${error.message}`));
+
     void syncCanonicalMacros()
       .then(({ created, updated }) => {
         if (created > 0 || updated > 0) ui.notifications.info(`Macros Night Assassins sincronizadas: ${created} adicionadas, ${updated} atualizadas.`);
@@ -77,7 +84,8 @@ Hooks.once("ready", () => {
       rollHit,
       rollDamage,
       rollWeaponItem,
-      reloadWeaponItem,
+reloadWeaponItem,
+      repairBreathingItems,
       applyOniDamage,
       openGmDashboard,
       openResistanceManager,
@@ -136,6 +144,7 @@ Hooks.once("ready", () => {
       upgradeMark: upgradeMarkAtLevelSix,
       diagnoseActor,
       repairSlayerWeaponItems,
+      repairBreathingItems,
     };
   }
 

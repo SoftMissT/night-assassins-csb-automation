@@ -83,6 +83,8 @@ describe("module distribution", () => {
       "na-gerenciar-descanso.js",
       "na-resp-usar-forma.js",
       "na-gerenciar-vida-morte.js",
+      "na-corrigir-armas.js",
+      "na-corrigir-respiracoes.js",
     ];
 
     for (const file of files) {

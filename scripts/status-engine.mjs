@@ -93,7 +93,7 @@ export async function applySlayerDamage(actor, amount, context = {}) {
     "system.props.pdv_slayer_dano_tomado": currentDamage + resolution.damage,
     "system.props.pdv_slayer_dano_ferida": currentWounds + resolution.woundDamage,
     ...statePatch(state),
-  }, { naCsbAutomation: true, naStatusDamage: true });
+  }, { naCsbAutomation: true, naStatusDamage: true, naCritical: context.critical === true });
   return {
     ...resolution,
     normalDamage: resolution.damage,

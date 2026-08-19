@@ -184,13 +184,17 @@ test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB
     "skills_slayer_resp_display", "skills_slayer_hab_display", "skills_slayer_classe_display",
     "skills_marca_slayer_panel", "hab_origem_slayer_resumo", "armas_proficientes",
   ]) assert.match(source, new RegExp(`"${key}"`));
-  for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario"]) {
+  for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario", "estados_avancados_slayer_panel"]) {
     assert.match(source, new RegExp(`"${key}"`));
   }
   assert.match(source, /"interludio_slayer_gerenciar"/);
   assert.match(source, /Macro\.NAInterlude00001/);
   assert.doesNotMatch(source, /"interludio_arma_panel"|"interludio_hashira_panel"|"interludio_repetitivo_panel"/);
   assert.doesNotMatch(source, /"mundo_transparente_slayer_panel"|"estado_altruista_slayer_panel"|"lamina_carmesim_slayer_panel"/);
+  assert.match(source, /"estados_slayer_dados"/);
+  assert.match(source, /"estados_slayer_resumo"/);
+  assert.match(source, /"estados_avancados_slayer_gerenciar"/);
+  assert.match(source, /Macro\.NAAdvStates00001/);
   for (const key of ["vida_morte_slayer_dados", "vida_morte_slayer_resumo", "vida_morte_slayer_marcas", "vida_morte_slayer_quedas", "vida_morte_slayer_gerenciar"]) {
     assert.match(source, new RegExp(`"${key}"`));
   }

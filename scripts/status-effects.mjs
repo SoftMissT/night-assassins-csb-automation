@@ -119,7 +119,7 @@ export function getDamageStatusEffects(props = {}) {
 
 export function isReactionBlocked(props = {}) {
   const { active, exhaustion } = statusContext(props);
-  return lifeDeathBlocked(props) || exhaustion >= 7 || ["atordoamento", "suprimido", "sonhando", "frenesi", "desorientado", "distraido"]
+  return lifeDeathBlocked(props) || exhaustion >= 7 || ["atordoamento", "suprimido", "sonhando", "frenesi", "desorientado", "distraido", "sem_reacao"]
     .some((key) => active.has(key));
 }
 

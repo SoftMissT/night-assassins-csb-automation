@@ -120,6 +120,54 @@ export function oniRandomPdvRequirements(level, persisted = {}) {
   return Object.freeze({ total, required, missing, complete: missing.length === 0 });
 }
 
+/**
+ * Lista os ganhos aleatórios de PDV (níveis 2–12) ainda não persistidos.
+ * @param {number} level
+ * @param {object} [persisted] Props do Actor (`pdv_oni_ganho_nvl{N}` ou índice).
+ * @returns {object[]} Entradas `{level, key, dice}` pendentes.
+ */
+export function missingOniPdvGains(level, persisted = {}) {
+  const normalized = normalizeOniLevel(level);
+  return oniRandomPdvRequirements(normalized, persisted).missing;
+}
+
+/**
+ * Rola e persiste os ganhos aleatórios de PDV (níveis 2–12) pendentes.
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {number} [options.level] Nível atual; usa `nvl_oni` das props quando omitido.
+ * @param {boolean} [options.onlyMissing] Rola apenas ganhos pendentes (padrão).
+ * @returns {Promise<{results: object[], total: number, complete: boolean}>}
+ */
+export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) {
+  if (!actor?.update) throw new Error("Actor inválido para rolar ganhos de PDV Oni.");
+  const props = actor.system?.props ?? {};
+  const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? 1);
+  const plan = onlyMissing
+    ? missingOniPdvGains(normalized, props)
+    : oniRandomPdvRequirements(normalized, {}).required;
+  const results = [];
+  const patch = {};
+  for (const entry of plan) {
+    let value = 0;
+    let rollTotal = 0;
+    try {
+      const roll = await Roll.create(entry.dice).evaluate();
+      rollTotal = Number(roll.total) || 0;
+      value = Math.max(0, Math.trunc(rollTotal));
+    } catch (error) {
+      ui.notifications?.error?.(`Falha ao rolar ganho do nível ${entry.level}: ${error.message}`);
+      continue;
+    }
+    patch[`system.props.${entry.key}`] = value;
+    results.push({ level: entry.level, key: entry.key, dice: entry.dice, value, rollTotal });
+  }
+  if (results.length) await actor.update(patch, { naCsbAutomation: true });
+  const total = results.reduce((sum, result) => sum + result.value, 0);
+  const remaining = missingOniPdvGains(normalized, { ...props, ...Object.fromEntries(results.map((r) => [r.key, r.value])) });
+  return { results, total, complete: remaining.length === 0 };
+}
+
 function fixedPdvGain(level, vitality) {
   if (level === 20) return 50 + (vitality * 5);
   if (level >= 16) return 40 + vitality;

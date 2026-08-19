@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   calculateOniResources,
+  missingOniPdvGains,
   normalizeOniLevel,
   oniKekkijutsuRank,
   oniLegendaryActions,
@@ -69,6 +70,13 @@ describe("oni progression core", () => {
     assert.equal(state.total, 7);
     assert.equal(state.complete, false);
     assert.deepEqual(state.missing.map((entry) => entry.level), [4, 5]);
+  });
+
+  it("lista ganhos aleatórios pendentes para rolagem automática", () => {
+    assert.deepEqual(missingOniPdvGains(5, { pdv_oni_ganho_nvl2: 3, pdv_oni_ganho_nvl3: 4 }).map((entry) => entry.level), [4, 5]);
+    assert.deepEqual(missingOniPdvGains(5, { 2: 3, 3: 4 }).map((entry) => entry.level), [4, 5]);
+    assert.deepEqual(missingOniPdvGains(12, {}).map((entry) => entry.level), Array.from({ length: 11 }, (_, index) => index + 2));
+    assert.equal(missingOniPdvGains(4, { pdv_oni_ganho_nvl2: 2, pdv_oni_ganho_nvl3: 3, pdv_oni_ganho_nvl4: 4 }).length, 0);
   });
 
   it("calcula PDV e PDK máximos sem rerrolar parcelas aleatórias", () => {

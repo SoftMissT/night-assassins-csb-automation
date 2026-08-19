@@ -1,7 +1,8 @@
 ---
 title: "Night Assassins - Estados avançados Slayer v1"
 created: "2026-08-07"
-status: planned
+updated: "2026-08-19"
+status: implemented
 type: spec
 tags: [foundry, night-assassins, slayer, mundo-transparente, estado-altruista]
 ---

@@ -54,6 +54,13 @@ test("Atordoamento bloqueia ações e Frenesi bloqueia Reações", () => {
   assert.equal(isReactionBlocked(props(["frenesi"])), true);
 });
 
+test("Sem Reação bloqueia Reações mas não ações", () => {
+  assert.equal(isReactionBlocked(props(["sem_reacao"])), true);
+  assert.equal(getRollStatusEffects(props(["sem_reacao"]), { test: "Acerto", kind: "attack" }).blocked, false);
+  assert.equal(getRollStatusEffects(props(["sem_reacao"]), { test: "Bloqueio", kind: "defense" }).blocked, false);
+  assert.equal(getStatusCapabilities(props(["sem_reacao"])).reactionsAllowed, false);
+});
+
 test("Paralisia falha FOR/DEX fora da Defesa", () => {
   assert.equal(getRollStatusEffects(props(["paralisia"]), { test: "Atletismo", attr: "FOR" }).autoFail, true);
   assert.equal(getRollStatusEffects(props(["paralisia"]), { test: "Esquiva", attr: "DEX", kind: "defense" }).autoFail, false);

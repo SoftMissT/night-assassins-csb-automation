@@ -21,7 +21,8 @@ import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcile
 import { consumeSlayerActions, openActionManager, parseActionState, recoverSlayerFolego, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
 import { registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
-import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, stabilizeSlayer } from "./life-death-service.mjs";
+import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, slayerMaxPdv, stabilizeSlayer } from "./life-death-service.mjs";
+import { openAdvancedStatesManager } from "./slayer/advanced-states.mjs";
 import { executeInterludeActivity, openInterludeManager } from "./interlude-service.mjs";
 import { createCombatContext, validateCombatContext } from "./core/combat-context.mjs";
 import { createActorTransaction } from "./core/actor-transaction.mjs";
@@ -32,6 +33,7 @@ import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./items/i
 import * as slayerProgression from "./slayer/progression-service.mjs";
 import * as slayerOrigins from "./slayer/origin-contracts.mjs";
 import * as slayerClasses from "./slayer/class-contracts.mjs";
+import * as slayerAdvancedStates from "./slayer/advanced-states.mjs";
 import * as oniProgression from "./oni/progression-service.mjs";
 
 Hooks.once("init", () => {
@@ -48,6 +50,7 @@ Hooks.once("ready", () => {
   registerRestEngine();
   registerBreathingEngine();
   registerLifeDeathEngine();
+  registerAdvancedStatesEngine();
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);
@@ -114,6 +117,7 @@ reloadWeaponItem,
       parseLifeDeathState,
       processDeathTest,
       slayerCurrentPdv,
+      slayerMaxPdv,
       stabilizeSlayer,
       openInterludeManager,
       executeInterludeActivity,
@@ -133,6 +137,8 @@ reloadWeaponItem,
         progression: slayerProgression,
         origins: slayerOrigins,
         classes: slayerClasses,
+        advancedStates: slayerAdvancedStates,
+        openAdvancedStatesManager,
       },
       oni: {
         progression: oniProgression,

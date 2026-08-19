@@ -181,6 +181,7 @@ export async function openStatusManager({ actorUuid, draft = null } = {}) {
     { key: "confuso", label: "Confuso", duration: "source" },
     { key: "amedrontado", label: "Amedrontado", duration: "source" },
     { key: "desequilibrado", label: "Desequilibrado" },
+    { key: "sem_reacao", label: "Sem Reação", duration: "source" },
     { key: "desorientado", label: "Desorientado", defaultTurns: 1 },
     { key: "hipotermia", label: "Hipotermia", save: "VIT", stacks: true },
     { key: "corrupcao", label: "Corrupção", stacks: true },

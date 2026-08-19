@@ -101,6 +101,7 @@ export const STATUS_SLAYER = Object.freeze([
   { key: "paralisia", label: "Paralisia", category: "Incapacitação" },
   { key: "colapso", label: "Colapso", category: "Incapacitação" },
   { key: "derrubado", label: "Derrubado", category: "Incapacitação" },
+  { key: "sem_reacao", label: "Sem Reação", category: "Incapacitação" },
   { key: "confuso", label: "Confuso", category: "Incapacitação" },
   { key: "fratura", label: "Fratura", category: "Incapacitação" },
   { key: "sonhando", label: "Sonhando", category: "Incapacitação" },

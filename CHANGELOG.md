@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.9 — 2026-08-19
+
+- Adiciona o painel **Estados Avançados** na ficha Slayer (tab Skills) com o botão **GERENCIAR ESTADOS AVANÇADOS** e armazenamento de `estados_slayer_dados`/`estados_slayer_resumo` em Configurações.
+- Implementa o gerenciador `openAdvancedStatesManager` (DialogV2) com as ações: **Ler Alvo**, **Foco Transparente** (inclui o teste automático de uso extra `1d20 + FDV` contra CD 13+, com falha aplicando -1 de acerto), **Ignição da Lâmina** por Sangue (1d4 PDV), Atrito (3 PDR) e Pressão (5 PDR + VIT CD 16 com 1d6 de Dano Solar interno em falha), **Apagar Lâmina**, **Estado Altruísta** e **Corte Sem Ego** (zera o PDR, soma 2 de Exaustão e encerra o estado).
+- Corrige o bug latente em `scripts/slayer/advanced-states.mjs`: `MODULE_ID` agora é importado de `scripts/constants.mjs`.
+- Expõe `slayer.openAdvancedStatesManager` na API do módulo e registra a macro **Night Assassins — Estados Avançados** (`NAAdvStates00001`).
+- Validação: `node --test` com a suíte completa aprovada (314/314).
+
 ## 0.9.8 — 2026-08-19
 
 - Corrige as Formas de Respiração existentes nos Caçadores: itens legados sem `inventario_categoria` quebravam o filtro do container `skills_slayer_respiracoes` (`equalText(item.inventario_categoria, 'respiracao')`), impedindo a seção e o botão **USAR** de renderizar.

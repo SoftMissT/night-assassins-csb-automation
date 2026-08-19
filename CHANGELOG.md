@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.7 — 2026-08-19
+
+- Adiciona a macro **Night Assassins — Corrigir Armas dos Caçadores**, que executa sob demanda a migração idempotente `repairSlayerWeaponItems` em todos os Caçadores do mundo e reporta no chat quantos itens foram atualizados.
+- Cobre a migração com testes unitários: geração do patch de resumos, idempotência, itens não-armas e contabilização de Actors.
+- Validação: `node --test` com a suíte completa aprovada.
+
 ## 0.9.6 — 2026-08-16
 
 - Corrige a perda de perfis de ataque de armas quando o CSB serializa Arrays como JSON textual ou descarta campos não declarados no template.

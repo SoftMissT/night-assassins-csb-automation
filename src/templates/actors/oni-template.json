@@ -4919,52 +4919,44 @@
         "value": "${switchCase(nvl_pj,\n  'nvl_0',\n  'Não definido',\n  'nvl_1',\n  'Oni Recém-Transformado',\n  'nvl_2',\n  'Oni Faminto',\n  'nvl_3',\n  'Oni Sanguinário',\n  'nvl_4',\n  'Oni Predador',\n  'nvl_5',\n  'Oni Notório',\n  'nvl_6',\n  'Oni Aberrante',\n  'nvl_7',\n  'Candidato às Doze Kizuki',\n  'nvl_8',\n  'Lua Inferior Seis',\n  'nvl_9',\n  'Lua Inferior Cinco',\n  'nvl_10',\n  'Lua Inferior Quatro',\n  'nvl_11',\n  'Lua Inferior Três',\n  'nvl_12',\n  'Lua Inferior Dois',\n  'nvl_13',\n  'Lua Inferior Um',\n  'nvl_14',\n  'Lua Superior Seis',\n  'nvl_15',\n  'Lua Superior Cinco',\n  'nvl_16',\n  'Lua Superior Quatro',\n  'nvl_17',\n  'Lua Superior Três',\n  'nvl_18',\n  'Lua Superior Dois',\n  'nvl_19',\n  'Lua Superior Um',\n  'nvl_20',\n  'Rei dos Onis',\n  'Desconhecido'\n)}$"
       },
       {
-        "name": "origem_oni_pdv_val",
-        "value": "${switchCase(origem_dropdown, \n  'origem_artista_marcial', 16,\n  'origem_civilizado', 10,\n  'origem_corsario', 14,\n  'origem_criado_ex_hashira', 12,\n  'origem_descendente_perdido', 12,\n  'origem_estrangeiro', 13,\n  'origem_isolado', 16,\n  'origem_militar', 13,\n  'origem_monge', 12,\n  'origem_ninja', 13,\n  'origem_samurai', 14,\n  'origem_tsuguko', 12,\n  0\n)}$"
-      },
-      {
         "name": "nvl_num",
         "value": "${replace(nvl_pj, 'nvl_', '') * 1}$"
       },
       {
         "name": "vit_display",
-        "value": "${fallback(atr_vit_valor_config,0)+fallback(bonus_atr_vit_valor_temp,0)}$"
+        "value": "${fallback(atr_vit_valor_config,0)+fallback(origem_oni_bonus_vit,0)+fallback(bonus_atr_vit_valor_temp,0)}$"
       },
       {
         "name": "dex_display",
-        "value": "${fallback(atr_dex_valor_config,0)+fallback(bonus_atr_dex_valor_temp,0)}$"
+        "value": "${fallback(atr_dex_valor_config,0)+fallback(origem_oni_bonus_dex,0)+fallback(bonus_atr_dex_valor_temp,0)}$"
       },
       {
         "name": "for_display",
-        "value": "${fallback(atr_for_valor_config,0)+fallback(bonus_atr_for_valor_temp,0)}$"
+        "value": "${fallback(atr_for_valor_config,0)+fallback(origem_oni_bonus_for,0)+fallback(bonus_atr_for_valor_temp,0)}$"
       },
       {
         "name": "car_display",
-        "value": "${fallback(atr_car_valor_config,0)+fallback(bonus_atr_car_valor_temp,0)}$"
+        "value": "${fallback(atr_car_valor_config,0)+fallback(origem_oni_bonus_car,0)+fallback(bonus_atr_car_valor_temp,0)}$"
       },
       {
         "name": "fdv_display",
-        "value": "${fallback(atr_fdv_valor_config,0)+fallback(bonus_atr_fdv_valor_temp,0)}$"
+        "value": "${fallback(atr_fdv_valor_config,0)+fallback(origem_oni_bonus_fdv,0)+fallback(bonus_atr_fdv_valor_temp,0)}$"
       },
       {
         "name": "int_display",
-        "value": "${fallback(atr_int_valor_config,0)+fallback(bonus_atr_int_valor_temp,0)}$"
+        "value": "${fallback(atr_int_valor_config,0)+fallback(origem_oni_bonus_int,0)+fallback(bonus_atr_int_valor_temp,0)}$"
       },
       {
         "name": "sab_display",
-        "value": "${fallback(atr_sab_valor_config,0)+fallback(bonus_atr_sab_valor_temp,0)}$"
+        "value": "${fallback(atr_sab_valor_config,0)+fallback(origem_oni_bonus_sab,0)+fallback(bonus_atr_sab_valor_temp,0)}$"
       },
       {
         "name": "pdk_oni_conta_atual",
-        "value": "${(pdk_oni_total_conta+metal_oni_pdr_bonus)+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor}$"
+        "value": "${pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor}$"
       },
       {
         "name": "pdv_oni_conta_atual",
         "value": "${pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_curado+pdv_oni_extra-pdv_oni_dano_tomado}$"
-      },
-      {
-        "name": "origem_oni_pdr_val",
-        "value": "${switchCase(origem_dropdown, \n  'origem_artista_marcial', 10,\n  'origem_civilizado', 5,\n  'origem_corsario', 7,\n  'origem_criado_ex_hashira', 9,\n  'origem_descendente_perdido', 10,\n  'origem_estrangeiro', 8,\n  'origem_isolado', 4,\n  'origem_militar', 6,\n  'origem_monge', 14,\n  'origem_ninja', 14,\n  'origem_samurai', 6,\n  'origem_tsuguko', 16,\n  0\n)}$"
       },
       {
         "name": "pdv_oni_total_conta",
@@ -4997,6 +4989,34 @@
       {
         "name": "origem_oni_pdk_inicial",
         "value": "${switchCase(origem_dropdown,\n  'origem_oni_passado_triste',\n  2+(fdv_nvl1*4),\n  'origem_oni_personalidade_maligna',\n  3+(fdv_nvl1*4),\n  'origem_oni_rastreador_de_sangue',\n  1+(fdv_nvl1*4),\n  'origem_oni_genio_do_mal',\n  2+(fdv_nvl1*4),\n  'origem_oni_adepto_das_trevas',\n  4+(fdv_nvl1*4),\n  'origem_oni_comum',\n  8+(fdv_nvl1*3),\n  'origem_oni_corte_palida',\n  18+(fdv_nvl1*3),\n  'origem_oni_mare_negra',\n  18+(fdv_nvl1*3),\n  'origem_oni_raiz_podre',\n  14+(fdv_nvl1*3),\n  'origem_oni_realidade_distorcida',\n  20+(fdv_nvl1*3),\n  'origem_oni_tela_do_submundo',\n  24+(fdv_nvl1*3),\n  'origem_oni_oni_de_outras_terras',\n  16+(fdv_nvl1*3),\n  'origem_oni_transfigurado',\n  14+(fdv_nvl1*3),\n  'origem_oni_eco_eterno',\n  22+(fdv_nvl1*3),\n  'origem_oni_chama_negra',\n  20+(fdv_nvl1*3),\n  'origem_oni_demonio_de_linhagem_infernal',\n  20+(fdv_nvl1*3),\n  'origem_oni_espirito_ceifador',\n  18+(fdv_nvl1*3),\n  'origem_oni_monarca_demoniaco',\n  20+(fdv_nvl1*3),\n  'origem_oni_vampiro_de_linhagem',\n  20+(fdv_nvl1*3),\n  'origem_oni_exterminador_corrompido',\n  oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3),\n  0\n)}$"
+      },
+      {
+        "name": "origem_oni_bonus_vit",
+        "value": "${switchCase(origem_dropdown,'origem_oni_exterminador_corrompido',1,'origem_oni_comum',1,'origem_oni_raiz_podre',2,'origem_oni_transfigurado',1,'origem_oni_canibal',1,'origem_oni_chama_negra',1,0)}$"
+      },
+      {
+        "name": "origem_oni_bonus_dex",
+        "value": "${switchCase(origem_dropdown,'origem_oni_mare_negra',1,'origem_oni_transfigurado',1,0)}$"
+      },
+      {
+        "name": "origem_oni_bonus_for",
+        "value": "${switchCase(origem_dropdown,'origem_oni_chama_negra',1,0)}$"
+      },
+      {
+        "name": "origem_oni_bonus_car",
+        "value": "${switchCase(origem_dropdown,'origem_oni_passado_triste',1,'origem_oni_personalidade_maligna',1,'origem_oni_corte_palida',1,0)}$"
+      },
+      {
+        "name": "origem_oni_bonus_fdv",
+        "value": "${switchCase(origem_dropdown,'origem_oni_adepto_das_trevas',1,'origem_oni_corte_palida',1,'origem_oni_mare_negra',1,'origem_oni_realidade_distorcida',1,'origem_oni_tela_do_submundo',1,'origem_oni_oni_de_outras_terras',1,'origem_oni_eco_eterno',2,'origem_oni_chama_negra',1,0)}$"
+      },
+      {
+        "name": "origem_oni_bonus_int",
+        "value": "${switchCase(origem_dropdown,'origem_oni_genio_do_mal',1,'origem_oni_realidade_distorcida',1,'origem_oni_tela_do_submundo',1,'origem_oni_oni_de_outras_terras',1,0)}$"
+      },
+      {
+        "name": "origem_oni_bonus_sab",
+        "value": "${switchCase(origem_dropdown,'origem_oni_rastreador_de_sangue',1,'origem_oni_tela_do_submundo',1,'origem_oni_eco_eterno',1,0)}$"
       },
       {
         "name": "pdv_oni_maximo_num",

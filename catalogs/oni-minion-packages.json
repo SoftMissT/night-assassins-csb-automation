@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "source": "Mecânicas para fazer na ficha/Onis/Guia de Criação Rápida Minions Onis.md",
+  "types": {
+    "fraco": { "pdvBase": 8, "pdkBase": 2, "levelOffset": -5 },
+    "comum": { "pdvBase": 12, "pdkBase": 4, "levelOffset": -4 },
+    "forte": { "pdvBase": 16, "pdkBase": 6, "levelOffset": -3 }
+  },
+  "levelMin": 1,
+  "levelMax": 6,
+  "packages": [
+    {
+      "id": "bruto",
+      "name": "Bruto",
+      "description": "Oni forte, agressivo, Titan ou esmagador",
+      "attributes": { "for": 4, "vit": 3, "fdv": 2, "dex": 1, "int": 0, "sab": 1, "car": 0 }
+    },
+    {
+      "id": "rapido",
+      "name": "Rápido",
+      "description": "Oni corredor, emboscador ou Caçador Noturno",
+      "attributes": { "dex": 4, "sab": 3, "fdv": 2, "vit": 1, "for": 1, "int": 0, "car": 0 }
+    },
+    {
+      "id": "resistente",
+      "name": "Resistente",
+      "description": "Guarda, parede ou Oni difícil de derrubar",
+      "attributes": { "vit": 4, "for": 3, "fdv": 2, "dex": 1, "int": 0, "sab": 1, "car": 0 }
+    },
+    {
+      "id": "toxico",
+      "name": "Tóxico",
+      "description": "Oni venenoso, doente ou contaminado",
+      "attributes": { "vit": 4, "dex": 3, "car": 2, "fdv": 1, "for": 1, "int": 0, "sab": 0 }
+    },
+    {
+      "id": "tecnico",
+      "name": "Técnico",
+      "description": "Oni com truque, fios, lâmina ou pequeno Kekkijutsu",
+      "attributes": { "int": 4, "dex": 3, "fdv": 2, "sab": 1, "for": 0, "vit": 1, "car": 0 }
+    },
+    {
+      "id": "intimidador",
+      "name": "Intimidador",
+      "description": "Oni que grita, assusta ou comanda outros minions",
+      "attributes": { "car": 4, "fdv": 3, "vit": 2, "for": 1, "dex": 0, "int": 1, "sab": 0 }
+    }
+  ],
+  "attacks": [
+    {
+      "id": "garras",
+      "name": "Garras",
+      "testAttribute": "dex",
+      "dice": "1d6",
+      "damageAttribute": "dex",
+      "damageType": "cortante"
+    },
+    {
+      "id": "mordida",
+      "name": "Mordida",
+      "testAttribute": "for|dex",
+      "dice": "1d6",
+      "damageAttribute": "for|dex",
+      "damageType": "perfurante",
+      "effect": "recupera 1 PDK ao causar dano"
+    },
+    {
+      "id": "pancada",
+      "name": "Pancada",
+      "testAttribute": "for",
+      "dice": "1d6",
+      "damageAttribute": "for",
+      "damageType": "concussao"
+    },
+    {
+      "id": "arma_suja",
+      "name": "Arma Suja",
+      "testAttribute": "for|dex",
+      "dice": "1d8",
+      "damageAttribute": "for|dex",
+      "damageType": "cortante|perfurante|concussao"
+    }
+  ],
+  "traits": [
+    { "id": "regeneracao_fraca", "name": "Regeneração Fraca", "category": "origem", "source": "Oni Comum", "description": "No início do turno, recupera 1 PDV. Bloqueado por Nichirin, Solar, Glicínia ou Lâmina Carmesim." },
+    { "id": "crueldade_simples", "name": "Crueldade Simples", "category": "origem", "source": "Personalidade Maligna", "description": "1x/cena, ao causar dano, alvo testa 1d20+FDV vs CD 10+CAR. Falha: Amedrontado." },
+    { "id": "faro_facil", "name": "Faro Fácil", "category": "origem", "source": "Rastreador de Sangue", "description": "+2 SAB rastrear ferido. +1 primeiro ataque vs alvo ferido." },
+    { "id": "casca_ruim", "name": "Casca Ruim", "category": "origem", "source": "Oni da Raiz Podre", "description": "Reduz 1 dano Cortante/Perfurante/Concussão. Não vs Fogo/Solar/Nichirin/Glicínia/Ácido." },
+    { "id": "empurrao_bruto", "name": "Empurrão Bruto", "category": "especializacao", "source": "Titan", "description": "1x/turno, empurra 1.5m. Alvo resiste 1d20+FOR vs CD 10+FOR." },
+    { "id": "veneno_raso", "name": "Veneno Raso", "category": "especializacao", "source": "Tóxico", "description": "1x/cena, 1d20+VIT vs CD 10+VIT. Falha: 1d4 venenoso próximo turno." },
+    { "id": "carne_teimosa", "name": "Carne Teimosa", "category": "especializacao", "source": "Mestre da Recuperação", "description": "1x/cena, metade PDV → recupera 3 PDV. Não com Regeneração Suprimida." },
+    { "id": "guarda_instintiva", "name": "Guarda Instintiva", "category": "especializacao", "source": "Artista Marcial", "description": "1x/cena, +1 Esquiva ou Bloqueio vs corpo a corpo." },
+    { "id": "corte_sujo", "name": "Corte Sujo", "category": "especializacao", "source": "Espadachim Profano", "description": "1x/turno, +1 dano Necrótico ao acertar arma." },
+    { "id": "mordida_dominante", "name": "Mordida Dominante", "category": "especializacao", "source": "Nobre de Sangue", "description": "Mordida recupera +1 PDK adicional." },
+    { "id": "truque_de_sangue", "name": "Truque de Sangue", "category": "especializacao", "source": "Tecelão de Sangue", "description": "1x/cena, 2 PDK, Ação Especial, 6m, Distraído/Desequilibrado." },
+    { "id": "presa_ferida", "name": "Presa Ferida", "category": "especializacao", "source": "Caçador Noturno", "description": "+1 ataques vs alvos com metade ou menos PDV." },
+    { "id": "fio_forte", "name": "Fio Fraco", "category": "especializacao", "source": "Marionetista", "description": "1x/cena, 2 PDK, Ação Especial, 6m, Restrição de Movimentos." },
+    { "id": "ordem_simples", "name": "Ordem Simples", "category": "especializacao", "source": "Soberano Demoníaco", "description": "1x/rodada, minion aliado a 6m recebe +1 próximo ataque." }
+  ],
+  "weaknesses": [
+    "foge ao sofrer dano de Nichirin",
+    "ataca sempre o alvo mais ferido",
+    "abandona tudo para se alimentar",
+    "obedece ordens sem pensar",
+    "tem medo de fogo",
+    "não atravessa glicínia",
+    "protege uma vítima específica",
+    "não entende armadilhas",
+    "persegue quem o feriu primeiro",
+    "fica previsível depois de errar um ataque"
+  ]
+}

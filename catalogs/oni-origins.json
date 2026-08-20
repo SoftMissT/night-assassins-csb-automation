@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "source": "Mecânicas para fazer na ficha/Onis/Origens de Onis.md",
+  "pdkRule": "PDK Inicial = pdkBase + (FDV × 3); origens legacy somam FDV extra no pdkBase",
+  "origins": [
+    {
+      "id": "passado_triste",
+      "name": "Passado Triste",
+      "attributeBonus": { "car": 1 },
+      "pdvBase": 22,
+      "pdvFormula": "22 + VIT",
+      "pdkBase": 2,
+      "pdkUsesLegacyFdv": true,
+      "pdkFormula": "2 + FDV + (FDV × 3)"
+    },
+    {
+      "id": "personalidade_maligna",
+      "name": "Personalidade Maligna",
+      "attributeBonus": { "car": 1 },
+      "pdvBase": 16,
+      "pdvFormula": "16 + VIT",
+      "pdkBase": 3,
+      "pdkUsesLegacyFdv": true,
+      "pdkFormula": "3 + FDV + (FDV × 3)"
+    },
+    {
+      "id": "rastreador_de_sangue",
+      "name": "Rastreador de Sangue",
+      "attributeBonus": { "sab": 1 },
+      "pdvBase": 20,
+      "pdvFormula": "20 + VIT",
+      "pdkBase": 1,
+      "pdkUsesLegacyFdv": true,
+      "pdkFormula": "1 + FDV + (FDV × 3)"
+    },
+    {
+      "id": "genio_do_mal",
+      "name": "Gênio do Mal",
+      "attributeBonus": { "int": 1 },
+      "pdvBase": 20,
+      "pdvFormula": "20 + VIT",
+      "pdkBase": 2,
+      "pdkUsesLegacyFdv": true,
+      "pdkFormula": "2 + FDV + (FDV × 3)"
+    },
+    {
+      "id": "adepto_das_trevas",
+      "name": "Adepto das Trevas",
+      "attributeBonus": { "fdv": 1 },
+      "pdvBase": 19,
+      "pdvFormula": "19 + VIT",
+      "pdkBase": 4,
+      "pdkUsesLegacyFdv": true,
+      "pdkFormula": "4 + FDV + (FDV × 3)"
+    },
+    {
+      "id": "exterior_corrompido",
+      "name": "Exterminador Corrompido",
+      "attributeBonus": { "vit": 1 },
+      "pdvBase": null,
+      "pdvFormula": "30 + (VIT × 3) + (10 × Nível da Queda)",
+      "pdkBase": null,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "PDR máximo anterior + (Nível da Queda × 2) + (FDV × 3)",
+      "special": "fallen_slayer"
+    },
+    {
+      "id": "oni_comum",
+      "name": "Oni Comum",
+      "attributeBonus": { "vit": 1 },
+      "pdvBase": 18,
+      "pdvFormula": "18 + VIT",
+      "pdkBase": 8,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "8 + (FDV × 3)"
+    },
+    {
+      "id": "corte_palida",
+      "name": "Oni da Corte Pálida",
+      "attributeBonus": { "car": 1, "fdv": 1 },
+      "pdvBase": 22,
+      "pdvFormula": "22 + VIT",
+      "pdkBase": 18,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "18 + (FDV × 3)"
+    },
+    {
+      "id": "mare_negra",
+      "name": "Oni da Maré Negra",
+      "attributeBonus": { "dex": 1, "fdv": 1 },
+      "pdvBase": 28,
+      "pdvFormula": "28 + VIT",
+      "pdkBase": 18,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "18 + (FDV × 3)"
+    },
+    {
+      "id": "raiz_podre",
+      "name": "Oni da Raiz Podre",
+      "attributeBonus": { "vit": 2 },
+      "pdvBase": 30,
+      "pdvFormula": "30 + VIT",
+      "pdkBase": 14,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "14 + (FDV × 3)"
+    },
+    {
+      "id": "realidade_distorcida",
+      "name": "Oni da Realidade Distorcida",
+      "attributeBonus": { "int": 1, "fdv": 1 },
+      "pdvBase": 28,
+      "pdvFormula": "28 + VIT",
+      "pdkBase": 20,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "20 + (FDV × 3)"
+    },
+    {
+      "id": "tela_do_submundo",
+      "name": "Oni da Tela do Submundo",
+      "attributeBonus": { "sab": 1, "fdv": 1 },
+      "pdvBase": 30,
+      "pdvFormula": "30 + VIT",
+      "pdkBase": 24,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "24 + (FDV × 3)"
+    },
+    {
+      "id": "outras_terras",
+      "name": "Oni de Outras Terras",
+      "attributeBonus": { "int": 1, "fdv": 1 },
+      "pdvBase": 20,
+      "pdvFormula": "20 + VIT",
+      "pdkBase": 16,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "16 + (FDV × 3)"
+    },
+    {
+      "id": "transfigurado",
+      "name": "Oni Transfigurado",
+      "attributeBonus": { "vit": 1, "dex": 1 },
+      "pdvBase": 28,
+      "pdvFormula": "28 + VIT",
+      "pdkBase": 14,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "14 + (FDV × 3)"
+    },
+    {
+      "id": "canibal",
+      "name": "Oni Canibal",
+      "attributeBonus": { "vit": 1 },
+      "pdvBase": 22,
+      "pdvFormula": "22 + VIT",
+      "pdkBase": 18,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "18 + (FDV × 3)"
+    },
+    {
+      "id": "eco_eterno",
+      "name": "Oni do Eco Eterno",
+      "attributeBonus": { "sab": 1, "fdv": 2 },
+      "pdvBase": 26,
+      "pdvFormula": "26 + VIT",
+      "pdkBase": 22,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "22 + (FDV × 3)"
+    },
+    {
+      "id": "chama_negra",
+      "name": "Oni da Chama Negra",
+      "attributeBonus": { "vit": 1, "for": 1, "fdv": 1 },
+      "pdvBase": 32,
+      "pdvFormula": "32 + VIT",
+      "pdkBase": 20,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "20 + (FDV × 3)"
+    },
+    {
+      "id": "espirito_ceifador",
+      "name": "Espírito Ceifador",
+      "attributeBonus": {},
+      "pdvBase": 20,
+      "pdvFormula": "20 + VIT",
+      "pdkBase": 18,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "18 + (FDV × 3)"
+    },
+    {
+      "id": "vampiro_de_linhagem",
+      "name": "Vampiro de Linhagem",
+      "attributeBonus": {},
+      "pdvBase": 19,
+      "pdvFormula": "19 + VIT",
+      "pdkBase": 20,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "20 + (FDV × 3)"
+    },
+    {
+      "id": "monarca_demoniaco",
+      "name": "Monarca Demoníaco",
+      "attributeBonus": {},
+      "pdvBase": 22,
+      "pdvFormula": "22 + VIT",
+      "pdkBase": 20,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "20 + (FDV × 3)"
+    },
+    {
+      "id": "demonio_de_linhagem_infernal",
+      "name": "Demônio de Linhagem Infernal",
+      "attributeBonus": {},
+      "pdvBase": 21,
+      "pdvFormula": "21 + VIT",
+      "pdkBase": 20,
+      "pdkUsesLegacyFdv": false,
+      "pdkFormula": "20 + (FDV × 3)"
+    }
+  ]
+}

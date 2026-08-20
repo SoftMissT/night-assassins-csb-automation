@@ -1,3 +1,4 @@
+const ONI_MINION_TEMPLATE_IDS = new Set(["naoniminiontpl001"]);
 const ONI_TEMPLATE_IDS = new Set(["pqr15wsdsqbcn15w"]);
 const SLAYER_TEMPLATE_IDS = new Set(["naslayertpl00001", "xif9qdbxtkel1bxw"]);
 
@@ -12,6 +13,13 @@ function templateMarkers(actor) {
 export function actorKind(actor) {
   const props = actor?.system?.props ?? {};
   const markers = templateMarkers(actor);
+  const explicitOniMinion = props.oni_minion_nome !== undefined
+    || props.oni_minion_tipo !== undefined
+    || props.oni_minion_pdv_base !== undefined
+    || props.oni_minion_pdk_base !== undefined
+    || markers.some((value) => value === "oni_minion_template" || value.includes("oni_minion_template") || ONI_MINION_TEMPLATE_IDS.has(value));
+  if (explicitOniMinion) return "oni_minion";
+
   const explicitOni = props.nome_oni !== undefined
     || props.classe_oni_escolha !== undefined
     || props.pdv_oni_total_conta !== undefined
@@ -28,5 +36,6 @@ export function actorKind(actor) {
   return explicitSlayer ? "slayer" : null;
 }
 
+export const isOniMinionActor = (actor) => actorKind(actor) === "oni_minion";
 export const isOniActor = (actor) => actorKind(actor) === "oni";
 export const isSlayerActor = (actor) => actorKind(actor) === "slayer";

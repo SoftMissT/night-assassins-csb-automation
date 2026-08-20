@@ -193,15 +193,37 @@ function configureOniProgression(template) {
   upsertHidden(template, "pdk_oni_atual_num", "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor))}$");
 }
 
+const ONI_ORIGIN_BONUSES = Object.freeze({
+  vit: { exterminador_corrompido: 1, comum: 1, raiz_podre: 2, transfigurado: 1, canibal: 1, chama_negra: 1 },
+  dex: { mare_negra: 1, transfigurado: 1 },
+  for: { chama_negra: 1 },
+  car: { passado_triste: 1, personalidade_maligna: 1, corte_palida: 1 },
+  fdv: { adepto_das_trevas: 1, corte_palida: 1, mare_negra: 1, realidade_distorcida: 1, tela_do_submundo: 1, oni_de_outras_terras: 1, eco_eterno: 2, chama_negra: 1 },
+  int: { genio_do_mal: 1, realidade_distorcida: 1, tela_do_submundo: 1, oni_de_outras_terras: 1 },
+  sab: { rastreador_de_sangue: 1, tela_do_submundo: 1, eco_eterno: 1 },
+});
+
+function originBonusSwitchCase(attr) {
+  const table = ONI_ORIGIN_BONUSES[attr] ?? {};
+  const args = Object.entries(table).flatMap(([origin, bonus]) => [`'origem_oni_${origin}'`, bonus]).join(",");
+  return `\${switchCase(origem_dropdown,${args},0)}$`;
+}
+
+function configureOniOriginBonuses(template) {
+  for (const attr of Object.keys(ONI_ORIGIN_BONUSES)) {
+    upsertHidden(template, `origem_oni_bonus_${attr}`, originBonusSwitchCase(attr));
+  }
+}
+
 function configureOniAttributes(template) {
   const formulas = {
-    vit_display: "${fallback(atr_vit_valor_config,0)+fallback(bonus_atr_vit_valor_temp,0)}$",
-    dex_display: "${fallback(atr_dex_valor_config,0)+fallback(bonus_atr_dex_valor_temp,0)}$",
-    for_display: "${fallback(atr_for_valor_config,0)+fallback(bonus_atr_for_valor_temp,0)}$",
-    car_display: "${fallback(atr_car_valor_config,0)+fallback(bonus_atr_car_valor_temp,0)}$",
-    fdv_display: "${fallback(atr_fdv_valor_config,0)+fallback(bonus_atr_fdv_valor_temp,0)}$",
-    int_display: "${fallback(atr_int_valor_config,0)+fallback(bonus_atr_int_valor_temp,0)}$",
-    sab_display: "${fallback(atr_sab_valor_config,0)+fallback(bonus_atr_sab_valor_temp,0)}$",
+    vit_display: "${fallback(atr_vit_valor_config,0)+fallback(origem_oni_bonus_vit,0)+fallback(bonus_atr_vit_valor_temp,0)}$",
+    dex_display: "${fallback(atr_dex_valor_config,0)+fallback(origem_oni_bonus_dex,0)+fallback(bonus_atr_dex_valor_temp,0)}$",
+    for_display: "${fallback(atr_for_valor_config,0)+fallback(origem_oni_bonus_for,0)+fallback(bonus_atr_for_valor_temp,0)}$",
+    car_display: "${fallback(atr_car_valor_config,0)+fallback(origem_oni_bonus_car,0)+fallback(bonus_atr_car_valor_temp,0)}$",
+    fdv_display: "${fallback(atr_fdv_valor_config,0)+fallback(origem_oni_bonus_fdv,0)+fallback(bonus_atr_fdv_valor_temp,0)}$",
+    int_display: "${fallback(atr_int_valor_config,0)+fallback(origem_oni_bonus_int,0)+fallback(bonus_atr_int_valor_temp,0)}$",
+    sab_display: "${fallback(atr_sab_valor_config,0)+fallback(origem_oni_bonus_sab,0)+fallback(bonus_atr_sab_valor_temp,0)}$",
   };
   for (const [name, formula] of Object.entries(formulas)) upsertHidden(template, name, formula);
 }
@@ -252,6 +274,7 @@ export function migrateOniTemplate(source) {
 
   configureOniLevelAndRank(migrated);
   configureOniOrigins(migrated);
+  configureOniOriginBonuses(migrated);
   configureOniAttributes(migrated);
   configureOniProgression(migrated);
   configureOniBarsAndLabels(migrated);

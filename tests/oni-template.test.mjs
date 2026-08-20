@@ -32,13 +32,33 @@ describe("oni-template", () => {
     assert.match(serialized, /"key":"nvl_20","value":"20"/);
   });
 
-  it("calcula os sete atributos sem depender de bônus exclusivos do Slayer", () => {
+  it("calcula os sete atributos somando bonus de origem Oni, sem depender de bonus exclusivos do Slayer", () => {
     const migrated = migrateOniTemplate(source);
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
       const formula = hidden.get(`${attr}_display`);
-      assert.equal(formula, `\${fallback(atr_${attr}_valor_config,0)+fallback(bonus_atr_${attr}_valor_temp,0)}$`);
+      assert.equal(formula, `\${fallback(atr_${attr}_valor_config,0)+fallback(origem_oni_bonus_${attr},0)+fallback(bonus_atr_${attr}_valor_temp,0)}$`);
       assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
     }
+    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
+      const bonus = hidden.get(`origem_oni_bonus_${attr}`);
+      assert.ok(bonus, `origem_oni_bonus_${attr} deve existir`);
+      assert.match(bonus, /switchCase\(origem_dropdown/);
+    }
+  });
+
+  it("pdk_oni_conta_atual nao referencia metal_oni_pdr_bonus", () => {
+    const migrated = migrateOniTemplate(source);
+    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+    const formula = hidden.get("pdk_oni_conta_atual");
+    assert.ok(formula, "pdk_oni_conta_atual deve existir");
+    assert.doesNotMatch(formula, /metal_oni_pdr_bonus/);
+  });
+
+  it("nao possui hidden attributes de Origens Slayer (origem_oni_pdv_val/origem_oni_pdr_val)", () => {
+    const migrated = migrateOniTemplate(source);
+    const names = migrated.system.hidden.map((h) => h.name);
+    assert.ok(!names.includes("origem_oni_pdv_val"), "origem_oni_pdv_val deve ter sido removido");
+    assert.ok(!names.includes("origem_oni_pdr_val"), "origem_oni_pdr_val deve ter sido removido");
   });
 });

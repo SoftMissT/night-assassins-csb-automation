@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.10.0 — 2026-08-20
+
+- Adiciona o catálogo canônico de **Origens Oni** (`catalogs/oni-origins.json`, 21 origens) com PDV/PDK iniciais, bônus de atributo, `fallen_slayer` (Exterminador Corrompido) e os resolvedores `scripts/oni/origin-resolver.mjs` e `scripts/oni/attribute-resolver.mjs`.
+- Atualiza o template Oni com os campos ocultos de bônus de Origem (`origem_oni_bonus_*`), displays que somam os bônus e remove os campos `metal_oni_pdr_bonus` e `origem_oni_pdv_val/pdr_val`; `tools/migrate-oni-template.mjs` ganha `configureOniOriginBonuses`.
+- Implementa a **regeneração e combate Oni** (`scripts/oni/regeneration-service.mjs`): regeneração ativa nos níveis 2/5/9, automática a partir do 13, bloqueadores Solar/Glicínia/Nichirin/Regeneração Suprimida, tick solar, mordida recuperando PDK e gasto ofensivo de PDK.
+- Adiciona o **Oni Minion** (`catalogs/oni-minion-packages.json` + `scripts/oni/minion-builder.mjs`): 3 tipos, 6 pacotes (Bruto, Rápido, Resistente, Tóxico, Técnico, Intimidador), 4 ataques, 14 traços, 10 fraquezas, escala por cena e contagem recomendada.
+- Adiciona o **runtime das Classes Slayer** (`scripts/slayer/class-runtime.mjs`): resolução de rank (4/6/8/11/12), bônus de dano de Marca do Caçador, patchers permanentes idempotentes, aparar, veneno com stacks, Kakushi amparar e resets de turno/rodada via `classEventContext`.
+- Adiciona o **Kekkijutsu** (`catalogs/oni-kekkijutsus.json` + `scripts/oni/kekkijutsu-service.mjs`): 12 técnicas canônicas das Origens com normalize, validação de nível/PDK/ação, builder de ataque, patches de uso, resets de turno/cena e potenciação.
+- Adiciona as **10 Especializações Oni** (`catalogs/oni-specializations.json` + `scripts/oni/specialization-resolver.mjs`): Titan, Tóxico, Mestre da Recuperação, Artista Marcial, Espadachim Profano, Nobre de Sangue, Tecelão de Sangue, Caçador Noturno, Marionetista e Soberano Demoníaco, cada uma com 20 graus e ranks D a SS.
+- Adiciona o **serviço de dados do painel GM** (`scripts/oni/gm-panel-data.mjs`): classifica Slayer/Oni/Minion/NPC, extrai PDV/PDR/PDK, detecta bloqueadores de regeneração e ações lendárias.
+- Validação local: `node --test` com **581/581** testes aprovados.
+
 ## 0.9.13 — 2026-08-20
 
 - Remove da ficha Oni os blocos herdados do Slayer: Respiração, Marca do Caçador, Metal, Skills, Interlúdios e a aba técnica Dados.

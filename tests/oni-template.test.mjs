@@ -37,7 +37,7 @@ describe("oni-template", () => {
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
       const formula = hidden.get(`${attr}_display`);
-      assert.equal(formula, `\${atr_${attr}_valor_config+bonus_atr_${attr}_valor_temp}$`);
+      assert.equal(formula, `\${fallback(atr_${attr}_valor_config,0)+fallback(bonus_atr_${attr}_valor_temp,0)}$`);
       assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
     }
   });

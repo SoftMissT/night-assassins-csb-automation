@@ -195,13 +195,13 @@ function configureOniProgression(template) {
 
 function configureOniAttributes(template) {
   const formulas = {
-    vit_display: "${atr_vit_valor_config+bonus_atr_vit_valor_temp}$",
-    dex_display: "${atr_dex_valor_config+bonus_atr_dex_valor_temp}$",
-    for_display: "${atr_for_valor_config+bonus_atr_for_valor_temp}$",
-    car_display: "${atr_car_valor_config+bonus_atr_car_valor_temp}$",
-    fdv_display: "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp}$",
-    int_display: "${atr_int_valor_config+bonus_atr_int_valor_temp}$",
-    sab_display: "${atr_sab_valor_config+bonus_atr_sab_valor_temp}$",
+    vit_display: "${fallback(atr_vit_valor_config,0)+fallback(bonus_atr_vit_valor_temp,0)}$",
+    dex_display: "${fallback(atr_dex_valor_config,0)+fallback(bonus_atr_dex_valor_temp,0)}$",
+    for_display: "${fallback(atr_for_valor_config,0)+fallback(bonus_atr_for_valor_temp,0)}$",
+    car_display: "${fallback(atr_car_valor_config,0)+fallback(bonus_atr_car_valor_temp,0)}$",
+    fdv_display: "${fallback(atr_fdv_valor_config,0)+fallback(bonus_atr_fdv_valor_temp,0)}$",
+    int_display: "${fallback(atr_int_valor_config,0)+fallback(bonus_atr_int_valor_temp,0)}$",
+    sab_display: "${fallback(atr_sab_valor_config,0)+fallback(bonus_atr_sab_valor_temp,0)}$",
   };
   for (const [name, formula] of Object.entries(formulas)) upsertHidden(template, name, formula);
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.13 — 2026-08-20
+
+- Remove da ficha Oni os blocos herdados do Slayer: Respiração, Marca do Caçador, Metal, Skills, Interlúdios e a aba técnica Dados.
+- Reduz a navegação Oni às áreas próprias: Biografia, Perícias, Combate, Inventário, Notas/Diário e Configurações.
+- Corrige os sete atributos Oni, incluindo FOR, com fórmulas tolerantes a campos temporários ausentes.
+- Padroniza as fichas em `1200 × 1200`, retrato `250 × 400` e redimensionamento permitido.
+- Adiciona o template separado **Oni Minion** ao Compêndio unificado, sem herdar progressão, Respiração ou regras Slayer.
+- Atualiza o painel GM para exibir os recursos próprios do Minion.
+- Validação local: `node --test` com **387/387** testes aprovados.
+
 ## 0.9.12 — 2026-08-20
 
 - Torna as Respirações prioritárias **Chamas, Pedra, Névoa, Metal e Neve** executáveis pelo Item, com custos, ações, acerto, dano, estados persistentes, passivas e resolução por turno.

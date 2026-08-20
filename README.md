@@ -109,7 +109,9 @@ Após instalar ou atualizar os arquivos do módulo, GM e jogadores devem recarre
 
 Ativar ou atualizar o módulo **não modifica o template da ficha**. Abra o template no Custom System Builder e configure manualmente cada componente que deve executar uma macro.
 
-Os templates prontos ficam no Compêndio **Night Assassins — Templates de Ficha**. Ele reúne as fichas Slayer, Oni e NPC. Importe o template desejado para o diretório de Actors do mundo antes de associá-lo a uma ficha no CSB.
+Os templates prontos ficam no Compêndio **Night Assassins — Templates de Ficha**. Ele reúne as fichas Slayer, Oni, Oni Minion e NPC. Importe o template desejado para o diretório de Actors do mundo antes de associá-lo a uma ficha no CSB.
+
+Contrato visual dos templates: ficha `1200 × 1200`, retrato `250 × 400` e redimensionamento permitido. O Oni Minion é uma ficha separada e simplificada; não usa Origem Oni completa nem progressão 1–20.
 
 O template **NPC** é narrativo: use a imagem do próprio Actor como foto e preencha nome, papel, afiliação, localização, personalidade, tom de voz, aparência, contexto e notas do GM. Ele não contém combate nem automações.
 

@@ -6,6 +6,20 @@ import assert from "node:assert/strict";
 import { hunterData, loadDashboardData, oniData, openGmDashboard } from "../scripts/gm-dashboard.mjs";
 
 describe("gm-dashboard", () => {
+  it("lê Oni Minion pelos recursos próprios sem contaminá-lo com Slayer", () => {
+    const actor = {
+      name: "Garra",
+      system: { props: {
+        oni_minion_nome: "Garra",
+        oni_minion_pdv_total: 10,
+        oni_minion_pdv_atual: 7,
+        oni_minion_pdk_total: 4,
+        oni_minion_pdk_atual: 3,
+      } },
+    };
+    assert.deepEqual(oniData(actor)?.pdv, { current: 7, max: 10, percent: 70 });
+    assert.deepEqual(oniData(actor)?.pdr, { current: 3, max: 4, percent: 75 });
+  });
   it("lê somente nome, PDV e PDR do Caçador", () => {
     const data = hunterData({
       name: "Actor Tanjiro",

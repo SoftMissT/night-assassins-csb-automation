@@ -75,6 +75,18 @@ export function hunterData(actor) {
 
 export function oniData(actor) {
   const props = actor.system?.props ?? {};
+  const isMinion = props.oni_minion_nome !== undefined || props.oni_minion_tipo !== undefined || props.oni_minion_pdv_total !== undefined;
+  if (isMinion) {
+    return {
+      actor,
+      kind: "oni",
+      subtype: "minion",
+      name: cleanText(props.oni_minion_nome) || cleanText(actor.name) || "Minion sem nome",
+      image: actor.img || "icons/svg/mystery-man.svg",
+      pdv: resourceFromValues(props.oni_minion_pdv_atual, props.oni_minion_pdv_total),
+      pdr: resourceFromValues(props.oni_minion_pdk_atual, props.oni_minion_pdk_total),
+    };
+  }
   if (actorKind(actor) !== "oni") return null;
 
   const name = cleanText(props.nome_oni) || cleanText(actor.name) || "Oni sem nome";

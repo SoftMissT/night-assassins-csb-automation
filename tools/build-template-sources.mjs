@@ -13,6 +13,10 @@ const templates = [
     id: "NAOniTemplate001",
   },
   {
+    file: "src/templates/actors/oni-minion-template.json",
+    id: "NAOniMinionTpl01",
+  },
+  {
     file: "src/templates/actors/npc-template.json",
     id: "NANpcTemplate001",
   },
@@ -43,4 +47,4 @@ for (const template of templates) {
   await writeFile(path.join(outputDirectory, `${template.id}.json`), `${JSON.stringify(source, null, 2)}\n`);
 }
 
-console.log("Preparados os templates Slayer, Oni e NPC para o Compêndio unificado.");
+console.log("Preparados os templates Slayer, Oni, Oni Minion e NPC para o Compêndio unificado.");

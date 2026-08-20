@@ -36,10 +36,11 @@ describe("module distribution", () => {
     assert.match(source, /modules\/\$\{MODULE_ID\}\/assets\/icons/i);
   });
 
-  it("prepara os três templates válidos do Compêndio de Actor", async () => {
+  it("prepara os quatro templates válidos do Compêndio de Actor", async () => {
     const files = [
       ["../src/templates/actors/slayer-template.json", "_template"],
       ["../src/templates/actors/oni-template.json", "_template"],
+      ["../src/templates/actors/oni-minion-template.json", "_template"],
       ["../src/templates/actors/npc-template.json", "_template"],
     ];
     for (const [file, type] of files) {
@@ -51,11 +52,26 @@ describe("module distribution", () => {
     }
   });
 
-  it("gera Slayer, Oni e NPC no mesmo diretório intermediário", async () => {
+  it("gera Slayer, Oni, Oni Minion e NPC no mesmo diretório intermediário", async () => {
     const { readdir } = await import("node:fs/promises");
     await import(`../tools/build-template-sources.mjs?test=${Date.now()}`);
     const files = await readdir(new URL("../build/compendium/templates-de-ficha/", import.meta.url));
-    assert.deepEqual(files.sort(), ["NANpcTemplate001.json", "NAOniTemplate001.json", "NASlayerTpl00001.json"]);
+    assert.deepEqual(files.sort(), ["NANpcTemplate001.json", "NAOniMinionTpl01.json", "NAOniTemplate001.json", "NASlayerTpl00001.json"]);
+  });
+
+  it("aplica o contrato visual e mantém atributos Oni/Minion visíveis", async () => {
+    for (const file of ["slayer-template.json", "oni-template.json", "oni-minion-template.json", "npc-template.json"]) {
+      const actor = JSON.parse(await readFile(new URL(`../src/templates/actors/${file}`, import.meta.url), "utf8"));
+      assert.deepEqual(actor.system.display, { width: 1200, height: 1200, fix_size: false, pp_width: 250, pp_height: 400 });
+    }
+    const oni = JSON.parse(await readFile(new URL("../src/templates/actors/oni-template.json", import.meta.url), "utf8"));
+    const minion = JSON.parse(await readFile(new URL("../src/templates/actors/oni-minion-template.json", import.meta.url), "utf8"));
+    const oniHidden = new Map(oni.system.hidden.map(({ name, value }) => [name, value]));
+    const minionHidden = new Map(minion.system.hidden.map(({ name, value }) => [name, value]));
+    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
+      assert.match(oniHidden.get(`${attr}_display`), /fallback/);
+      assert.match(minionHidden.get(`oni_minion_${attr}_display`), /fallback/);
+    }
   });
 
   it("mantém o NPC narrativo sem recursos de combate", async () => {

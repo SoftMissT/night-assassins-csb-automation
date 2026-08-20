@@ -10285,8 +10285,8 @@
       "width": 1200,
       "height": 1200,
       "fix_size": false,
-      "pp_width": 100,
-      "pp_height": 100
+      "pp_width": 250,
+      "pp_height": 400
     },
     "header": {
       "contents": [

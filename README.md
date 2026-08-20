@@ -7,9 +7,30 @@
 | Ficha | Versão | Estado |
 | --- | ---: | --- |
 | **Caçador humano** | **2.0** | Versão principal em uso |
-| **Oni** | **Alpha 0.1** | Fundação 0–20 utilizável; mecânicas avançadas ainda podem mudar |
+| **Oni completo** | **Alpha 0.1** | Fundação de recursos/progressão presente; recuperação, Origens, Especializações e Kekkijutsus ainda não formam um ciclo completo |
+| **Oni Minion** | **Planejado** | Template e construtor rápido ainda não distribuídos |
 
-> A ficha de Oni ainda não deve ser considerada estável ou completa. A progressão de PDV/PDK, as barras e o recebimento de dano já usam o contrato canônico do módulo.
+> A ficha de Oni ainda não deve ser considerada estável ou completa. PDV/PDK, barras, dano e parte da progressão possuem fundação técnica, mas isso não significa que todas as regras 1–20 estejam automatizadas.
+
+## Estado mecânico atual
+
+O módulo está na versão **0.9.12**. O foco atual de desenvolvimento é transformar as fundações já existentes em ciclos realmente jogáveis:
+
+- **Oni completo:** separar definitivamente os atributos Oni dos atributos Slayer; concluir progressão, recuperação, mordida/PDK, Origens, Especializações e ações de chefe.
+- **Oni Minion:** criar uma ficha própria e um construtor rápido baseado em escala da cena, tipo, pacote de atributos, ataque, um traço e uma fraqueza.
+- **Classes Slayer:** conectar os cinco catálogos de classe ao runtime de combate; hoje a maior parte dessas regras ainda é declarativa.
+- **Kekkijutsus:** criar template Item, Compendium e execução integrada a acerto, dano, status, ações e gasto de PDK.
+
+Uma funcionalidade só será marcada como concluída quando tiver comportamento executável, persistência, testes e validação no Foundry. Dropdowns, descrições e catálogos isolados não contam como automação completa.
+
+### Ordem de implementação
+
+1. Estabilizar a baseline e separar o trabalho pendente de Respirações.
+2. Corrigir identidade, atributos, PDV/PDK e recuperação do Oni completo.
+3. Entregar a ficha e o construtor de Oni Minion.
+4. Tornar as cinco Classes Slayer executáveis.
+5. Entregar Kekkijutsus como Items e completar Origens/Especializações Oni.
+6. Validar tudo com GM e jogadores antes de publicar uma nova release.
 
 ## Conteúdo do módulo
 

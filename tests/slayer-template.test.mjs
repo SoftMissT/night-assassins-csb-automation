@@ -223,7 +223,36 @@ test("inventário filtra cada categoria por template exclusivo", () => {
   }
   walk(template.system.body);
   assert.deepEqual(containers.get("skills_slayer_respiracoes")?.templateFilter, ["NABreathTpl00001"]);
+  assert.equal(containers.get("skills_slayer_respiracoes")?.headDisplay, true);
+  assert.match(JSON.stringify(containers.get("skills_slayer_respiracoes")?.rowLayout), /useBreathForm/);
   assert.deepEqual(containers.get("inventario_slayer_armas")?.templateFilter, ["NAWeaponTpl00001"]);
   assert.deepEqual(containers.get("inventario_slayer_equipamentos")?.templateFilter, ["NAEquipmentTpl01"]);
   assert.deepEqual(containers.get("inventario_slayer_itens")?.templateFilter, ["NAInventoryTpl001"]);
+});
+
+test("armas ficam exclusivamente na aba Inventário", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  let tabs = null;
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (!tabs && node.type === "tabbedPanel") tabs = node;
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  const combat = tabs.contents.find((entry) => entry.key === "combat_slayer_tab");
+  const inventory = tabs.contents.find((entry) => entry.key === "inventario_slayer_tab");
+  assert.doesNotMatch(JSON.stringify(combat), /inventario_slayer_armas|arma_slayer_rolar/);
+  assert.match(JSON.stringify(inventory), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(inventory), /arma_slayer_rolar/);
+});
+
+test("template persiste estados das cinco Respirações prioritárias", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const source = JSON.stringify(template.system);
+  for (const key of ["resp_chamas_estado", "resp_pedra_estado", "resp_metal_estado", "resp_neve_estado", "resp_nevoa_estado"]) {
+    assert.match(source, new RegExp(`"key":"${key}"`));
+  }
+  for (const key of ["resp_metal_bloqueio_bonus", "resp_metal_for_temp", "resp_metal_fdv_temp"]) {
+    assert.match(source, new RegExp(`"key":"${key}"`));
+  }
 });

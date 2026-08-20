@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.12 — 2026-08-20
+
+- Torna as Respirações prioritárias **Chamas, Pedra, Névoa, Metal e Neve** executáveis pelo Item, com custos, ações, acerto, dano, estados persistentes, passivas e resolução por turno.
+- Integra múltiplas parcelas de dano, defesa das Respirações, resistências e efeitos confirmados ao fluxo canônico de dano/acerto.
+- Corrige cancelamento da sequência de Acerto, ordem das mensagens de treino e manutenção da duração de Sangramento.
+- Amplia o template Slayer com os estados persistentes exigidos pelas cinco Respirações prioritárias, mantendo armas exclusivamente no Inventário.
+- Atualiza o catálogo de Respirações para publicar dados mecânicos, ações, custos, danos e passivas dos Items.
+- Higieniza o repositório: arquivos de contexto local, exports de referência e grafo gerado permanecem locais e fora do versionamento.
+- Validação local: `node --test` com **382/382** testes aprovados.
+
 ## 0.9.11 — 2026-08-19
 
 - **Design Manhwa Dark nas fichas:** skin `.na-sheet` (fundo, tabs, painéis, inputs, botões, meters, tipografia Orbitron/Rajdhani) aplicada automaticamente às fichas Night Assassins.
@@ -303,51 +313,7 @@
 - Publica o Compendium `Night Assassin's Respirações` e inclui sua construção automática no release.
 - Adiciona à aba Skills um Item Container dedicado às Formas de Respiração, filtrado pelo template correto.
 - Implementa níveis 1–4, requisitos, custos, ações, dano, estados, recargas, cargas, usos diários e encadeamentos das onze Formas.
-- Integra os efeitos da Respiração da Água às rolagens de Acerto e Dano e ao avanço de turnos do combate.
-- Faz `nvl_respiracao_num` controlar os níveis de Forma disponíveis.
-- Torna a reorganização da ficha idempotente e restaura o botão e o estado textual da Marca do Caçador em migrações repetidas.
-
-### Validação
-
-- `node --test`: 155 testes aprovados, 0 falhas.
-- O gerador produz 1 template e 11 Items, todos com IDs Foundry estáveis de 16 caracteres.
-
-## [0.5.15] - 2026-08-08
-
-- Reorganiza a ficha Slayer em nove abas: Perfil/Bio, Perícias, Combate, Skills, Inventário, Interlúdios, Notas/Diário, Configurações e Dados.
-- Adiciona Item Containers separados para Armas, Equipamentos e Itens, além de Dinheiro e Moedas de Honra.
-- Adiciona áreas nativas de texto rico para Biografia, Interlúdios e Diário, e preserva a aba Dados como área técnica.
-- Agrupa Respiração, Habilidade Especial, Classe, Marca, Mundo Transparente, Estado Altruísta, Lâmina Carmesim e Habilidade de Origem na aba Skills.
-- Adiciona o estado estrutural do Teste de Vida e Morte à aba Perícias sem simular uma mecânica ainda não implementada.
-- Adiciona o estado persistente e o painel organizado das técnicas de Respiração ao template Slayer.
-- Integra os sete bônus temporários de Respiração aos atributos finais `*_display`.
-- Faz o Controle GM listar exclusivamente todos os Combatants da luta ativa e atualizar entradas e saídas em tempo real.
-- Corrige o botão de adicionar múltiplas entradas no diálogo de dano sem alterar seu layout.
-- Impede que resultados incompletos do diálogo causem `entradas.length` em valor indefinido.
-- Torna o cancelamento da configuração de Acerto explícito e impede qualquer rolagem após cancelar.
-- Exibe `marca_despertada` como `ATIVADA` ou `NÃO DESPERTADA` no template Slayer.
-- Restaura aliases com travessão das Habilidades Especiais e a identificação restrita da macro de Controle GM.
-
-## 0.5.14 - 2026-08-08
-
-### Corrigido
-
-- O teste de distribuição não fixa mais uma versão antiga do módulo.
-- A validação agora exige SemVer e confirma que o download aponta para o mesmo tag declarado no manifesto.
-
-## 0.5.13 - 2026-08-08
-
-### Corrigido
-
-- A macro de dano deixou de exibir dados em duplicidade no Dice So Nice.
-- A chamada manual a `game.dice3d.showForRoll` foi removida; o `ChatMessage.create` com `rolls` já aciona as animações automaticamente no Foundry v14.
-
-## 0.5.12 - 2026-08-07
-
-- Adota o layout reorganizado pelo operador como base do template Slayer distribuído.
-- Cataloga todos os tipos oficiais de ação, mantendo ações de chefe/GM fora dos contadores do Slayer.
-- Automatiza recuperação de Fôlego no início do combate, início do turno e críticos positivos de Acerto/Defesa.
-- Move Economia de Ações para a aba Combate e padroniza novos títulos visuais em Orbitron 16px.
+- Integra os efeitos da Respira…701 tokens truncated… e padroniza novos títulos visuais em Orbitron 16px.
 - Torna o migrador compatível com componentes CSB organizados em painéis ou tabelas.
 
 ## [0.5.11] - 2026-08-07

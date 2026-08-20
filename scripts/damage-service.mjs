@@ -13,9 +13,15 @@ import { parseWaterBreathingState } from "./breath-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
 import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
-import { consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { consumeStonePending, parseStoneBreathingState, stoneStatePatch } from "./stone-breathing-service.mjs";
+import { consumeMistPending, mistStatePatch, parseMistBreathingState, resolveMistFormula } from "./mist-breathing-service.mjs";
+import { canApplyMetalChain, consumeMetalHammerPending, metalStatePatch, parseMetalBreathingState, registerMetalChainApplication } from "./metal-breathing-service.mjs";
+import { breakSnowRestrictionOnDamage, consumeSnowPending, parseSnowBreathingState, resolveSnowAvalancheSynergy, resolveSnowFreezeGain, resolveSnowKekkijutsuGuard, snowStatePatch } from "./snow-breathing-service.mjs";
+import { resolveBreathingDefense } from "./breathing-defense.mjs";
 import { addStoneBreak, parseBreathPassiveState, passiveStatePatch } from "./breath-passives.mjs";
 import { openAttackBuilder } from "./items/attack-builder.mjs";
+import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from "./metal-runtime.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -111,6 +117,32 @@ async function chooseWeaponProfile(profiles) {
   return Number.isInteger(result) ? profiles[result] ?? null : null;
 }
 
+async function chooseMetalHammerSynergy(attacker) {
+  const combatActors = [...(game?.combat?.combatants ?? [])]
+    .map((combatant) => combatant.actor)
+    .filter(Boolean);
+  const allies = metalHammerSynergyAllies(attacker, combatActors, {
+    isAlly: (candidate) => actorKind(candidate) === "slayer",
+  });
+  if (allies.length === 0) return null;
+  const options = [
+    '<option value="">Sem sinergia — metade do dano</option>',
+    ...allies.map((entry) => `<option value="${entry.uuid}">${entry.name} — ${entry.breathing} (1 PDR; dano integral)</option>`),
+  ].join("");
+  const chosenUuid = await foundry.applications.api.DialogV2.wait({
+    window: { title: "Sinergia — Martelo do Julgamento" },
+    content: `<div class="na-csb-automation"><p>Um aliado de Chamas, Pedra ou Magma pode gastar 1 PDR para elevar o ataque adicional ao dano integral.</p><select name="ally">${options}</select></div>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      { action: "continue", label: "Continuar", callback: (_event, button) => String(button.form.elements.ally.value ?? "") },
+      { action: "cancel", label: "Cancelar", callback: () => null },
+    ],
+  });
+  if (chosenUuid === null) return { canceled: true, ally: null };
+  return { canceled: false, ally: allies.find((entry) => entry.uuid === chosenUuid) ?? null };
+}
+
 /**
  * API pública: rolagem de dano.
  * @param {object} options
@@ -136,6 +168,7 @@ export async function rollDamage(options = {}) {
   }
 
   const props = actor.system?.props ?? {};
+  const actionId = String(options.actionId ?? globalThis.foundry?.utils?.randomID?.() ?? globalThis.crypto?.randomUUID?.() ?? Date.now());
   const attackerKind = actorKind(actor) ?? "slayer";
   const statusEffects = getDamageStatusEffects(props);
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode causar dano.");
@@ -217,13 +250,15 @@ export async function rollDamage(options = {}) {
     return ui.notifications?.warn?.("Os status atuais impedem o uso de Reações.");
   }
   const actionTypes = [...new Set(entradas.map((entry) => entry.tipoAcao).filter(Boolean))];
-  const actionResult = attackerKind === "oni"
-    ? await consumeOniActions(actor, actionTypes, { update: false })
-    : await consumeSlayerActions(actor, actionTypes, { update: false });
+  const actionResult = options.skipActionConsumption === true
+    ? { ok: true, patch: {} }
+    : attackerKind === "oni"
+      ? await consumeOniActions(actor, actionTypes, { update: false })
+      : await consumeSlayerActions(actor, actionTypes, { update: false });
   if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
 
   const formulaParts = entradas.map((e) => buildEntryFormula(e.dado, e.fixo, e.selAttrs, attrValues));
-  const specs = entradas.map((entry, index) => ({
+  let specs = entradas.map((entry, index) => ({
     label: TIPOS_ACAO.find((type) => type.key === entry.tipoAcao)?.label ?? `Dano ${index + 1}`,
     types: entry.selTiposDano,
     formula: formulaParts[index],
@@ -232,7 +267,8 @@ export async function rollDamage(options = {}) {
   if (markFormula) specs.push({ label: "Marca do Caçador", types: ["ferida"], formula: markFormula });
   const breathingState = parseWaterBreathingState(attackerKind === "slayer" ? props.resp_agua_estado : "");
   const breathingDamage = breathingState.pendingDamage;
-  const hasAttackDamage = entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
+  const hasAttackDamage = options.forceAttackDamage === true
+    || entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
   if (breathingDamage?.formula && hasAttackDamage) {
     const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) => String(attrValues[key.toLowerCase()] ?? 0));
     const types = Array.isArray(breathingDamage.types) ? breathingDamage.types : [];
@@ -244,10 +280,39 @@ export async function rollDamage(options = {}) {
   const flameDamage = flameState.pendingDamage;
   const flameTier = flameWeaponTier(flameState.weaponHeat);
   const flameTechnique = Boolean(flameDamage?.technique && hasAttackDamage);
+  if (flameDamage?.critical === true && hasAttackDamage) critical = true;
   if (flameDamage?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas", types: ["cortante"], formula: flameDamage.formula, flame: true });
   if (flameTechnique && flameTier.techniqueDie) specs.push({ label: "Fogo Fátuo", types: ["fogo"], formula: flameTier.techniqueDie, flame: true });
   if (flameState.ignition?.damageBonus && hasAttackDamage) specs.push({ label: "Ignição", types: ["fogo"], formula: String(flameState.ignition.damageBonus), flame: true });
   if (flameTier.weaponDamage > 0 && hasAttackDamage) specs.push({ label: "Fogo Fátuo — Arma", types: [], formula: String(flameTier.weaponDamage), flame: true });
+  const stoneState = parseStoneBreathingState(attackerKind === "slayer" ? props.resp_pedra_estado : "");
+  const stoneDamage = stoneState.pendingDamage;
+  if (stoneDamage?.formula && hasAttackDamage) {
+    const formula = String(stoneDamage.formula).replace(/@for\b/giu, String(attrValues.for ?? 0));
+    specs.push({ label: "Respiração da Pedra", types: stoneDamage.types ?? ["concussao"], formula, stone: true });
+  }
+  const mistState = parseMistBreathingState(attackerKind === "slayer" ? props.resp_nevoa_estado : "");
+  const mistDamage = mistState.pendingDamage;
+  if (mistDamage?.formula && hasAttackDamage) {
+    if (mistDamage.replaceWeaponDamage) specs = specs.filter((spec) => spec.breathing || spec.flame || spec.stone);
+    specs.push({ label: "Respiração da Névoa", types: ["cortante"], formula: resolveMistFormula(mistDamage.formula, props), mist: true });
+    if (critical && mistDamage.criticalFormula) specs.push({ label: "Colapso da Névoa — crítico", types: ["cortante"], formula: resolveMistFormula(mistDamage.criticalFormula, props), mist: true });
+  }
+  const metalState = parseMetalBreathingState(attackerKind === "slayer" ? props.resp_metal_estado : "");
+  const metalChain = metalState.chainReaction;
+  const metalChainApplies = canApplyMetalChain(metalState, actionId) && hasAttackDamage
+    && specs.some((spec) => spec.types?.some((type) => ["cortante", "perfurante"].includes(type)));
+  if (metalChainApplies) {
+    specs.push({ label: "Respiração do Metal — Reação em Cadeia", types: [], formula: String(metalChain.damageBonus || 0), metal: true });
+  }
+  const snowState = parseSnowBreathingState(attackerKind === "slayer" ? props.resp_neve_estado : "");
+  const snowDamage = snowState.pendingDamage;
+  if (snowDamage?.formula && hasAttackDamage) {
+    specs.push({ label: "Respiração da Neve", types: ["congelante"], formula: String(snowDamage.formula), snow: true });
+  }
+  if (snowState.belowZero?.fdvDamageBonus && hasAttackDamage) {
+    specs.push({ label: "Abaixo de Zero", types: ["congelante"], formula: String(snowState.belowZero.fdvDamageBonus), snow: true });
+  }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
   let rolls;
@@ -274,7 +339,8 @@ export async function rollDamage(options = {}) {
     types: spec.types,
     subtotal: Math.max(0, Math.trunc(Number(rolls[index].total) || 0)),
   }));
-  let penalty = Math.max(0, -Math.trunc(statusEffects.modifier || 0));
+  const snowPenalty = actor.getFlag?.(MODULE_ID, "snowPenalty");
+  let penalty = Math.max(0, -Math.trunc(statusEffects.modifier || 0) + Math.max(0, -(Number(snowPenalty?.damagePenalty) || 0)));
   for (const component of components) {
     if (penalty <= 0) break;
     const reduction = Math.min(component.subtotal, penalty);
@@ -313,6 +379,26 @@ export async function rollDamage(options = {}) {
     Object.assign(existing.changes, flameStatePatch(nextState));
     updatesByActor.set(actor.uuid, existing);
   }
+  if (stoneDamage && hasAttackDamage) {
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    Object.assign(existing.changes, stoneStatePatch(consumeStonePending(stoneState, { damage: true })));
+    updatesByActor.set(actor.uuid, existing);
+  }
+  if (mistDamage && hasAttackDamage) {
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    Object.assign(existing.changes, mistStatePatch(consumeMistPending(mistState, { damage: true })));
+    updatesByActor.set(actor.uuid, existing);
+  }
+  if (snowDamage && hasAttackDamage) {
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    Object.assign(existing.changes, snowStatePatch(consumeSnowPending(snowState, { damage: true })));
+    updatesByActor.set(actor.uuid, existing);
+  }
+  if (metalChainApplies) {
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    Object.assign(existing.changes, registerMetalChainApplication(metalState, actionId).patch);
+    updatesByActor.set(actor.uuid, existing);
+  }
 
   if (pdrGasto > 0) {
     const resourceProp = attackerKind === "oni" ? "pdk_oni_gasto_valor" : "pdr_slayer_gasto_valor";
@@ -326,14 +412,70 @@ export async function rollDamage(options = {}) {
   const targets = game?.user?.targets;
   if (targets && targets.size > 0 && finalDamage > 0) {
     for (const targetToken of targets) {
-      const targetActor = targetToken.actor;
-      if (!targetActor) continue;
+      const protectedActor = targetToken.actor;
+      if (!protectedActor) continue;
+      const interceptionFlag = protectedActor.getFlag?.(MODULE_ID, "flameInterception");
+      const interception = consumeFlameInterception(interceptionFlag, protectedActor.uuid);
+      const interceptorDocument = interception.intercepted
+        ? await fromUuid(interception.interceptorUuid)
+        : null;
+      const interceptorActor = interceptorDocument?.actor ?? interceptorDocument;
+      const targetActor = interceptorActor?.documentName === "Actor" ? interceptorActor : protectedActor;
+      const intercepted = targetActor.uuid !== protectedActor.uuid;
       const heatMap = targetActor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {};
       const heatBefore = Number(heatMap?.[actor.id]?.heat) || 0;
-      const rengokuBonus = flameDamage?.rengoku
-        ? heatBefore + (heatBefore >= 60 ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for)) : 0)
-        : 0;
-      let amount = finalDamage + rengokuBonus;
+      let rengokuBonus = 0;
+      let amount = finalDamage;
+      let targetComponents = components.map((component) => ({ ...component, types: [...component.types] }));
+      const targetMist = parseMistBreathingState(targetActor.system?.props?.resp_nevoa_estado);
+      let effectiveCritical = critical;
+      if (targetMist.dazzle?.criticalImmunity && critical) {
+        targetComponents = specs.map((spec, index) => ({
+          label: spec.label,
+          types: [...spec.types],
+          subtotal: Math.max(0, Math.trunc((Number(rolls[index].total) || 0) / 2)),
+        }));
+        const normalSubtotal = targetComponents.reduce((total, component) => total + component.subtotal, 0);
+        amount = flameTier.multiplier > 1 && hasAttackDamage
+          ? Math.floor(normalSubtotal * flameTier.multiplier)
+          : normalSubtotal;
+        if (amount > normalSubtotal) targetComponents.push({
+          label: "Fogo Fátuo 60 — +50%",
+          types: ["fogo"],
+          subtotal: amount - normalSubtotal,
+        });
+        effectiveCritical = false;
+      }
+      const blizzardStealth = actor.getFlag?.(MODULE_ID, "snowBlizzardStealth");
+      if (blizzardStealth?.sourceActorUuid) {
+        const sourceDocument = await fromUuid(blizzardStealth.sourceActorUuid);
+        const snowSource = sourceDocument?.actor ?? sourceDocument;
+        const synergy = resolveSnowAvalancheSynergy(snowSource?.system?.props?.resp_neve_estado, { targetUuid: targetActor.uuid, allyStealthed: true });
+        if (synergy.applies) {
+          const bonusRoll = await Roll.create(synergy.formula).evaluate();
+          await bonusRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Avalanche Negativa</strong> — sinergia com Nevasca" });
+          const bonus = Math.max(0, Math.trunc(Number(bonusRoll.total) || 0));
+          amount += bonus;
+          targetComponents.push({ label: "Avalanche Negativa — aliado furtivo", types: ["congelante"], subtotal: bonus });
+          await targetActor.setFlag(MODULE_ID, "snowMovementPenalty", { value: bonus, turns: synergy.movementTurns, sourceActorUuid: snowSource?.uuid ?? "" });
+        }
+      }
+      if (options.sourceFamily === "kekkijutsu") {
+        const guardSourceFlag = targetActor.getFlag?.(MODULE_ID, "snowKekkijutsuGuardSource");
+        const guardDocument = guardSourceFlag?.sourceActorUuid ? await fromUuid(guardSourceFlag.sourceActorUuid) : targetActor;
+        const guardActor = guardDocument?.actor ?? guardDocument;
+        const resolvedGuard = resolveSnowKekkijutsuGuard(guardActor?.system?.props?.resp_neve_estado, { enemyUuid: actor.uuid });
+        if (resolvedGuard.active && (!resolvedGuard.protectedUuid || resolvedGuard.protectedUuid === targetActor.uuid)) {
+          amount = Math.floor(amount * resolvedGuard.damageMultiplier);
+          targetComponents = targetComponents.map((component) => ({ ...component, subtotal: Math.floor(component.subtotal * resolvedGuard.damageMultiplier) }));
+          let nextGuardState = resolvedGuard.state;
+          if (resolvedGuard.freeze > 0) nextGuardState = resolveSnowFreezeGain(nextGuardState, actor.uuid, resolvedGuard.freeze).state;
+          await guardActor.update(snowStatePatch(nextGuardState), { naCsbAutomation: true, naBreathing: true });
+          if (guardSourceFlag) await targetActor.unsetFlag(MODULE_ID, "snowKekkijutsuGuardSource");
+          if (resolvedGuard.opportunityAttack) await guardActor.setFlag(MODULE_ID, "snowOpportunityAttack", { enemyUuid: actor.uuid, available: true });
+          if (resolvedGuard.negateEffects) ui.notifications?.info?.("A Canção de um Dia Frio anulou os efeitos negativos do Kekkijutsu.");
+        }
+      }
       if (flameDamage?.damagePerEnemyHeat && heatBefore > 0) {
         const heatRoll = await Roll.create(`${heatBefore}d8`).evaluate();
         await heatRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Tormenta de Chamas</strong> — ${heatBefore}d8 pelas Brasas do alvo` });
@@ -349,9 +491,52 @@ export async function rollDamage(options = {}) {
         const fdv = parseAttributeValue(targetActor.system?.props?.fdv_display);
         const save = await Roll.create(`1d20 + ${fdv}`).evaluate();
         await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Rengoku</strong> — FDV CD ${flameDamage.saveDc}` });
-        if (save.total < flameDamage.saveDc) amount *= 2;
+        if (save.total < flameDamage.saveDc) {
+          amount *= 2;
+          const weaponHeat = Math.max(0, Number(flameState.weaponHeat) || 0);
+          rengokuBonus = weaponHeat + (weaponHeat >= 60 ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for)) : 0);
+          amount += rengokuBonus;
+        }
       }
-      damageRequests.push({ actor: targetActor, amount, rengokuBonus, heatBefore });
+      const targetSnowPenalty = targetActor.getFlag?.(MODULE_ID, "snowPenalty");
+      if (targetSnowPenalty?.vulnerabilities?.some((type) => damageTypes.includes(type))) {
+        amount *= 2;
+        targetComponents = targetComponents.map((component) => component.types.some((type) => targetSnowPenalty.vulnerabilities.includes(type))
+          ? { ...component, subtotal: component.subtotal * 2 }
+          : component);
+      }
+      const existingSuppression = targetActor.getFlag?.(MODULE_ID, "mistResistanceSuppression");
+      const newSuppressionTurns = Math.max(0, Number(mistDamage?.suppressResistanceTurns) || 0);
+      if (newSuppressionTurns > 0) await targetActor.setFlag(MODULE_ID, "mistResistanceSuppression", { turns: newSuppressionTurns, sourceActorUuid: actor.uuid });
+      const suppressResistances = newSuppressionTurns > 0 || Number(existingSuppression?.turns) > 0;
+      const defense = resolveBreathingDefense({ amount, components: targetComponents, damageTypes, props: targetActor.system?.props ?? {}, suppressResistances });
+      amount = defense.amount;
+      targetComponents = defense.components;
+      const targetPatch = { ...defense.patches };
+      if (targetMist.incomingReduction?.formula && amount > 0) {
+        const sourceToken = actor.getActiveTokens?.()[0];
+        const targetActiveToken = targetActor.getActiveTokens?.()[0];
+        const distance = sourceToken && targetActiveToken ? canvas?.grid?.measurePath?.([sourceToken.center, targetActiveToken.center])?.distance : null;
+        const ranged = Number.isFinite(Number(distance)) && Number(distance) > 2;
+        if (!targetMist.incomingReduction.rangedOnly || ranged) {
+          const reduction = await Roll.create(targetMist.incomingReduction.formula).evaluate();
+          await reduction.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: "<strong>Expansão de Névoa</strong> — redução de dano" });
+          amount = Math.max(0, amount - Math.max(0, Math.trunc(Number(reduction.total) || 0)));
+          delete targetMist.incomingReduction;
+          Object.assign(targetPatch, mistStatePatch(targetMist));
+        }
+      }
+      if (targetMist.incomingHalfOnFailedSave && amount > 0) {
+        const dcParts = String(targetMist.incomingHalfOnFailedSave.saveDc ?? "").match(/\d+/g) ?? [];
+        const dc = dcParts.map(Number).reduce((total, value) => total + value, 0);
+        const sab = parseAttributeValue(actor.system?.props?.sab_display);
+        const save = await Roll.create(`1d20 + ${sab}`).evaluate();
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Mar de Nuvens</strong> — SAB contra CD ${dc}` });
+        if (save.total < dc) amount = Math.floor(amount / 2);
+        delete targetMist.incomingHalfOnFailedSave;
+        Object.assign(targetPatch, mistStatePatch(targetMist));
+      }
+      damageRequests.push({ actor: targetActor, protectedActor, intercepted, amount, rengokuBonus, heatBefore, components: targetComponents, patch: targetPatch, negated: defense.negated, critical: effectiveCritical });
     }
   }
 
@@ -372,7 +557,9 @@ export async function rollDamage(options = {}) {
     ...pending.map(async (up) => {
       await up.actor.update(up.changes, { naCsbAutomation: true });
     }),
-    ...damageRequests.map(({ actor: targetActor, amount }) => {
+    ...damageRequests.map(async ({ actor: targetActor, amount, components: targetComponents, patch: targetPatch, negated, critical: targetCritical }) => {
+      if (Object.keys(targetPatch ?? {}).length) await targetActor.update(targetPatch, { naCsbAutomation: true, naBreathing: true });
+      if (amount <= 0) return { ok: true, appliedDamage: 0, woundDamage: 0, negated };
       const flameContext = hasFlameBreathing && hasAttackDamage ? {
         sourceId: actor.id,
         heat: 1 + Math.max(0, Number(flameState.activeForm?.enemyHeat) || 0),
@@ -382,8 +569,8 @@ export async function rollDamage(options = {}) {
         exhaustionOverDamage: Number(flameDamage.exhaustionOverDamage) || 0,
       } : null;
       const targetKind = actorKind(targetActor);
-      if (targetKind === "slayer") return applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical, damageTypes, components, flame: flameContext });
-      if (targetKind === "oni") return applyOniDamage(targetActor, amount, { attackName: nome, critical, rolledTotal: finalDamage, damageTypes, components, requireApproval: true, flame: flameContext });
+      if (targetKind === "slayer") return applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical: targetCritical, damageTypes, components: targetComponents, flame: flameContext });
+      if (targetKind === "oni") return applyOniDamage(targetActor, amount, { attackName: nome, critical: targetCritical, rolledTotal: amount, damageTypes, components: targetComponents, requireApproval: true, flame: flameContext });
       return Promise.reject(new Error("Alvo sem identidade Slayer/Oni."));
     }),
   ]);
@@ -392,12 +579,31 @@ export async function rollDamage(options = {}) {
   for (const [index, result] of results.entries()) {
     if (result.status === "fulfilled") {
       if (index >= pending.length) {
-        const targetActor = damageRequests[index - pending.length]?.actor;
+        const request = damageRequests[index - pending.length];
+        const targetActor = request?.actor;
         const applied = result.value;
         if (targetActor && applied?.ok !== false) {
+          if (request.intercepted) {
+            await request.protectedActor.unsetFlag(MODULE_ID, "flameInterception");
+            await ChatMessage.create({
+              speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+              content: `<p><strong>Ondulação da Chama Fluorescente</strong> — ${targetActor.name} interceptou o dano destinado a ${request.protectedActor.name}.</p>`,
+            });
+          }
           const amount = Math.max(0, Math.trunc(Number(applied?.appliedDamage) || 0));
           const wound = Math.max(0, Math.trunc(Number(applied?.woundDamage) || 0));
-          appliedTargets.push({ name: targetActor.name, amount, wound });
+          if (amount + wound > 0) {
+            const restriction = targetActor.getFlag?.(MODULE_ID, "snowRestriction");
+            if (restriction?.sourceActorUuid) {
+              await targetActor.unsetFlag(MODULE_ID, "snowRestriction");
+              const source = await fromUuid(restriction.sourceActorUuid);
+              if (source?.system?.props?.resp_neve_estado) {
+                const broken = breakSnowRestrictionOnDamage(source.system.props.resp_neve_estado, targetActor.uuid);
+                await source.update(snowStatePatch(broken.state), { naCsbAutomation: true, naBreathing: true });
+              }
+            }
+          }
+          appliedTargets.push({ actor: targetActor, name: targetActor.name, amount, wound });
           ui.notifications?.info?.(`${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ""}.`);
         }
       }
@@ -411,6 +617,60 @@ export async function rollDamage(options = {}) {
   }
 
   if (finalDamage > 0 && (!targets || targets.size === 0)) ui.notifications?.warn?.("Nenhum alvo marcado. O dano foi rolado, mas nenhuma ficha foi atualizada.");
+
+  const passiveAfterDamage = parseBreathPassiveState(actor.system?.props?.resp_passivas_estado);
+  if (attackerKind === "slayer" && passiveAfterDamage.metal?.hammerPending && appliedTargets.length > 0) {
+    const useHammer = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Martelo do Julgamento" },
+      content: `<p>Usar o ataque adicional contra ${appliedTargets[0].name}? O dano será metade do dano causado, arredondado para cima, e ignorará Resistência.</p>`,
+      rejectClose: false,
+    });
+    if (useHammer) {
+      const synergyChoice = await chooseMetalHammerSynergy(actor);
+      const originalDamage = appliedTargets[0].amount + appliedTargets[0].wound;
+      let selectedAlly = synergyChoice?.canceled ? null : synergyChoice?.ally ?? null;
+      let allySpend = selectedAlly ? spendMetalHammerSynergyPdr(selectedAlly.actor, 1) : null;
+      if (selectedAlly && !allySpend.ok) {
+        ui.notifications?.warn?.(`${allySpend.reason} O Martelo seguirá sem a sinergia.`);
+        selectedAlly = null;
+        allySpend = null;
+      }
+      const hammer = consumeMetalHammerPending(passiveAfterDamage, {
+        breathingLevel: parseNumber(props.nvl_respiracao_num),
+        originalDamage,
+        synergyBreathing: selectedAlly?.breathing ?? "",
+        allySpendsPdr: Boolean(selectedAlly),
+      });
+      if (hammer.ok) {
+        if (selectedAlly) {
+          await selectedAlly.actor.update(allySpend.patch, { naCsbAutomation: true, naBreathing: true });
+        }
+        try {
+          await actor.update(passiveStatePatch(hammer.state), { naCsbAutomation: true, naBreathing: true });
+        } catch (error) {
+          if (selectedAlly && allySpend?.ok) {
+            const spentKey = "system.props.pdr_slayer_gasto_valor";
+            await selectedAlly.actor.update({ [spentKey]: Math.max(0, parseNumber(selectedAlly.actor.system?.props?.pdr_slayer_gasto_valor) - allySpend.cost) }, { naCsbAutomation: true, naBreathing: true });
+          }
+          throw error;
+        }
+        const { rollHit } = await import("./hit-service.mjs");
+        const hit = await rollHit({ actor, actorUuid: actor.uuid });
+        if (hit?.hits > 0) {
+          const targetActor = appliedTargets[0].actor;
+          const context = {
+            attackName: "Martelo do Julgamento",
+            damageTypes: ["concussao"],
+            components: [{ label: "Martelo do Julgamento", types: ["concussao"], subtotal: hammer.damage }],
+            ignoreResistance: true,
+            requireApproval: true,
+          };
+          if (actorKind(targetActor) === "slayer") await applySlayerDamageAuto(targetActor, hammer.damage, context);
+          else await applyOniDamage(targetActor, hammer.damage, context);
+        }
+      }
+    }
+  }
   const componentLines = components.map((component) => {
     const labels = component.types.map((key) => TIPOS_DANO.find((type) => type.key === key)?.label ?? key).join(" · ") || "Sem tipo";
     return `<div><strong>${component.label}</strong> — ${labels}: <strong>${component.subtotal}</strong></div>`;
@@ -442,8 +702,11 @@ export async function rollWeaponItem(options = {}) {
   if (!actor) return ui.notifications?.warn?.("A arma precisa estar vinculada a um Caçador para calcular o dano.");
 
   const itemProps = item.system?.props ?? {};
-  const profiles = weaponProfilesForActor(itemProps, actor.system?.props ?? {});
+  let profiles = weaponProfilesForActor(itemProps, actor.system?.props ?? {});
   if (profiles.length === 0) return ui.notifications?.warn?.("Esta arma não possui perfil de ataque configurado.");
+  if (Number.isInteger(options.weaponProfileIndex) && profiles[options.weaponProfileIndex]) {
+    profiles = [profiles[options.weaponProfileIndex]];
+  }
 
   return rollDamage({
     actor,
@@ -451,6 +714,10 @@ export async function rollWeaponItem(options = {}) {
     weaponProfiles: profiles,
     weaponItem: item,
     tipoAcao: "ataque",
+    critical: options.critical === true,
+    actionId: options.actionId,
+    skipActionConsumption: options.skipActionConsumption === true,
+    forceAttackDamage: options.forceAttackDamage === true,
   });
 }
 

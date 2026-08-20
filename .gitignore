@@ -7,6 +7,7 @@
 /ROADMAP.md
 /Memory/
 AGENTS.md
+/graphify-out/
 
 
 # Agentes e ferramentas locais
@@ -51,10 +52,8 @@ Thumbs.db
 desktop.ini
 
 
-respiracao_da_agua.json
 respiracao_agua_template_proposta.md
 na_template_findings.md
 ARCHITECTURE.md
-CHANGELOG.md
-oni.json
 erros.md
+CURRENT_CONTEXT.md

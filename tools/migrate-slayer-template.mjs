@@ -409,7 +409,7 @@ function fixTextVisibilityFormulas(template) {
 
 function breathingItemContainer() {
   const container = itemContainer("skills_slayer_respiracoes", orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF"), "respiracao", "NABreathTpl00001");
-  container.headDisplay = false;
+  container.headDisplay = true;
   container.hideEmpty = false;
   container.nameLabel = "Forma";
   container.templateFilter = ["NABreathTpl00001"];
@@ -645,8 +645,12 @@ function fixBreathingState(template) {
   const textFields = [
     ["resp_agua_estado", "Estado mecânico da Respiração da Água", '{"version":1}'],
     ["resp_chamas_estado", "Estado mecânico da Respiração das Chamas", '{"version":1,"weaponHeat":0}'],
+    ["resp_pedra_estado", "Estado mecânico da Respiração da Pedra", '{"version":1}'],
+    ["resp_nevoa_estado", "Estado mecânico da Respiração da Névoa", '{"version":1,"patterns":{}}'],
     ["resp_chamas_bonus_dado", "Chamas — dado adicional de técnica", ""],
     ["resp_chamas_resumo", "Chamas — resumo", "Fogo Fátuo 0/60"],
+    ["resp_pedra_resumo", "Pedra — resumo", "Pedra · sem efeito ativo"],
+    ["resp_nevoa_resumo", "Névoa — resumo", "Padrões 0/3"],
     ["resp_bonus_dano_dados", "Dados adicionais", ""],
     ["resp_efeito_flag", "Efeito ativo", ""],
     ["resp_combo_origem", "Origem do combo", ""],

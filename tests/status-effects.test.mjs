@@ -48,6 +48,23 @@ test("Fadiga Corporal impede crítico e Exaustão reduz ataque e dano", () => {
   assert.equal(damage.modifier, -1);
 });
 
+test("Ofuscamento ignora efeitos mecânicos da Exaustão sem apagar o valor salvo", () => {
+  const current = props([], 7);
+  current.resp_nevoa_estado = JSON.stringify({ dazzle: { turns: 3, exhaustionImmune: true } });
+  const attack = getRollStatusEffects(current, { test: "Acerto", attr: "DEX", kind: "attack" });
+  assert.equal(attack.blocked, false);
+  assert.equal(attack.modifier, 0);
+  assert.equal(getDamageStatusEffects(current).modifier, 0);
+  assert.equal(getStatusCapabilities(current).deadFromExhaustion, false);
+  assert.equal(current.status_slayer_exaustao, 7);
+});
+
+test("Ofuscamento expirado não concede imunidade à Exaustão", () => {
+  const current = props([], 7);
+  current.resp_nevoa_estado = JSON.stringify({ dazzle: { turns: 0, exhaustionImmune: true } });
+  assert.equal(getRollStatusEffects(current, { test: "Acerto", attr: "DEX", kind: "attack" }).blocked, true);
+});
+
 test("Atordoamento bloqueia ações e Frenesi bloqueia Reações", () => {
   assert.equal(getRollStatusEffects(props(["atordoamento"]), { test: "Acerto", kind: "attack" }).blocked, true);
   assert.equal(getRollStatusEffects(props(["atordoamento"]), { test: "Bloqueio", kind: "defense" }).blocked, false);

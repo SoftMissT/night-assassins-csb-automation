@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { FLAME_FORMS, flameFormById, flameWeaponTier } from "../scripts/flame-breathing-data.mjs";
-import { addFlameEnemyHeat, buildFlameBreathingPlan, consumeFlamePending, parseFlameBreathingState, tickFlameBreathing } from "../scripts/flame-breathing-service.mjs";
+import { addFlameEnemyHeat, buildFlameBreathingPlan, buildFlameInterception, consumeFlameInterception, consumeFlamePending, parseFlameBreathingState, tickFlameBreathing } from "../scripts/flame-breathing-service.mjs";
 
 describe("Respiração das Chamas", () => {
   it("possui uma passiva e oito formas ativas", () => {
@@ -81,6 +81,15 @@ describe("Respiração das Chamas", () => {
     const tick = tickFlameBreathing({ weaponHeat: 60, ignition: { turns: 1, damageBonus: 8, selfDamage: 5 } });
     assert.deepEqual(tick.events.map((event) => event.amount), [5, 2]);
     assert.equal(tick.state.ignition, undefined);
+  });
+
+  it("Ondulação prepara e consome interceptação para outro aliado", () => {
+    const plan = buildFlameBreathingPlan("chamas_04", 4, { resp_chamas_estado: JSON.stringify({ weaponHeat: 30 }) });
+    const prepared = buildFlameInterception(plan.state, { interceptorUuid: "Actor.Fire", protectedUuid: "Actor.Ally" });
+    assert.equal(prepared.ok, true);
+    assert.equal(consumeFlameInterception(prepared.flag, "Actor.Ally").interceptorUuid, "Actor.Fire");
+    assert.equal(consumeFlameInterception(prepared.flag, "Actor.Other").intercepted, false);
+    assert.equal(buildFlameInterception(plan.state, { interceptorUuid: "Actor.Fire", protectedUuid: "Actor.Fire" }).ok, false);
   });
 
   it("expõe as formas pelo ID canônico", () => {

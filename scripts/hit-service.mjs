@@ -5,11 +5,15 @@
 import { parseAttributeValue } from "./parsing.mjs";
 import { openHitConfirmationDialog, openHitDialog } from "./dialogs/hit-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
-import { TIPOS_ACAO } from "./constants.mjs";
-import { recoverSlayerFolego } from "./action-service.mjs";
+import { MODULE_ID, TIPOS_ACAO } from "./constants.mjs";
+import { consumeSlayerActions, recoverSlayerFolego } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlamePending, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { consumeStonePending, parseStoneBreathingState, stoneReflectionPenalty, stoneStatePatch } from "./stone-breathing-service.mjs";
+import { consumeMistPending, mistStatePatch, parseMistBreathingState } from "./mist-breathing-service.mjs";
+import { metalStatePatch, parseMetalBreathingState, registerMetalBattleHit } from "./metal-breathing-service.mjs";
+import { consumeSnowPending, parseSnowBreathingState, resolveSnowFreezeGain, snowRestrictionFlag, snowStatePatch, spendFreezeForRestriction } from "./snow-breathing-service.mjs";
 import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
 
 function naturalD20(roll) {
@@ -28,6 +32,19 @@ function getModeLabel(mode) {
   return "Normal";
 }
 
+async function chooseSnowRecovery() {
+  return foundry.applications.api.DialogV2.wait({
+    window: { title: "Abaixo de Zero" },
+    content: "<p>Uma aplicação de Congelar foi bem-sucedida. Escolha a recuperação.</p>",
+    buttons: [
+      { action: "pdv", label: "Recuperar 2 PDV", default: true, callback: () => "pdv" },
+      { action: "pdr", label: "Recuperar 1 PDR", callback: () => "pdr" },
+      { action: "none", label: "Não recuperar", callback: () => "" },
+    ],
+    rejectClose: false,
+  });
+}
+
 function parseBonus(raw) {
   const s = (raw || "").trim();
   if (!s) return { extra: "", display: "" };
@@ -42,7 +59,7 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
   return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
 
-async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects, weapon = null }) {
+async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects, weapon = null, metalReroll = false, stopOnMiss = false }) {
   mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
   const maximum = Math.min(20, Math.max(1, Math.trunc(Math.max(rollCount || 1, weapon?.attacks || 1))));
@@ -74,12 +91,26 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
       cdLine = ` | CD ${cdVal} → ${passou ? "✅ Sucesso!" : "❌ Falha!"}`;
     }
     const countLine = maximum > 1 ? ` ${index + 1}/${maximum}` : "";
-    const message = await roll.toMessage({
+    let message = await roll.toMessage({
       flavor: `${actionLabel ? `${actionLabel} · ` : ""}Acerto${countLine} (${modeLabel}) ${attrName} ${attrVal}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker({ actor }),
       rollMode,
     });
     await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+    let usedMetalReroll = false;
+    if (metalReroll && roll.total < 10) {
+      const reroll = await foundry.applications.api.DialogV2.confirm({
+        window: { title: "O Dobro ou Nada" },
+        content: `<p>O resultado foi <strong>${roll.total}</strong>. Rerolar este Acerto?</p><p>Se a nova rolagem não acertar, você recebe 1 de Exaustão.</p>`,
+        yes: { label: "Rerolar" }, no: { label: "Manter resultado" }, rejectClose: false,
+      });
+      if (reroll) {
+        roll = await Roll.create(formula).evaluate();
+        message = await roll.toMessage({ flavor: `<strong>O Dobro ou Nada</strong> — nova rolagem de Acerto`, speaker: ChatMessage.getSpeaker({ actor }), rollMode });
+        await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+        usedMetalReroll = true;
+      }
+    }
     const decision = await openHitConfirmationDialog({ current: index + 1, maximum, total: roll.total, cdVal });
     if (!decision || decision.stop) {
       interrupted = true;
@@ -88,7 +119,15 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
     const natural = naturalD20(roll);
     const critical = decision.hit && statusEffects.criticalAllowed !== false && weapon?.criticalDisabled !== true && natural >= criticalThreshold;
     attempts.push({ roll, hit: decision.hit, natural, critical, criticalThreshold, weaponId: weapon?.id ?? "", attackIndex: index, secondary: secondaryAttack });
+    if (usedMetalReroll && !decision.hit) {
+      const current = Math.max(0, Number(actor.system?.props?.status_slayer_exaustao) || 0);
+      await actor.update({ "system.props.status_slayer_exaustao": Math.min(8, current + 1) }, { naCsbAutomation: true, naBreathing: true });
+    }
     if (critical) await recoverSlayerFolego(actor, 1);
+    if (stopOnMiss && !decision.hit) {
+      interrupted = true;
+      break;
+    }
     if (!decision.continue && index + 1 < maximum) {
       interrupted = true;
       break;
@@ -131,6 +170,20 @@ export async function rollHit(options) {
   }
 
   const props = actor.system?.props ?? {};
+  const magnetismSource = [...(game.combat?.combatants ?? [])]
+    .map((combatant) => combatant.actor)
+    .find((candidate) => {
+      if (!candidate || candidate.uuid === actor.uuid) return false;
+      const state = parseMetalBreathingState(candidate.system?.props?.resp_metal_estado);
+      return state.battleForged?.magnetismEligible === true && state.battleForged?.magnetismTargetUuid === actor.uuid;
+    });
+  if (magnetismSource) {
+    const selectedTargets = new Set([...(game.user?.targets ?? [])].map((token) => token.actor?.uuid).filter(Boolean));
+    if (!selectedTargets.has(magnetismSource.uuid)) {
+      ui.notifications?.warn?.(`Magnetismo: este ataque deve ter ${magnetismSource.name} como alvo.`);
+      return;
+    }
+  }
   const acertoLabel = props.acerto_label ?? "";
 
   let attrName = "";
@@ -169,10 +222,28 @@ export async function rollHit(options) {
   const breathHit = breathingState.nextHit;
   const flameState = parseFlameBreathingState(props.resp_chamas_estado);
   const flameHit = flameState.nextHit;
+  const stoneState = parseStoneBreathingState(props.resp_pedra_estado);
+  const stoneHit = stoneState.nextHit;
+  const mistState = parseMistBreathingState(props.resp_nevoa_estado);
+  const mistHit = mistState.nextHit;
+  const metalState = parseMetalBreathingState(props.resp_metal_estado);
+  const snowState = parseSnowBreathingState(props.resp_neve_estado);
+  const snowHit = snowState.nextHit;
+  const snowPenalty = actor.getFlag?.(MODULE_ID, "snowPenalty");
+  const stonePenalty = actor.getFlag?.(MODULE_ID, "stoneReflectionPenalty");
   const flameTier = flameWeaponTier(flameState.weaponHeat);
-  const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0) + flameTier.hit;
+  const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0)
+    + (Number(stoneHit?.bonus) || 0) + (Number(mistHit?.bonus) || 0)
+    + (Number(snowHit?.bonus) || 0) + (Number(snowState.belowZero?.fdvHitBonus) || 0)
+    + (Number(snowState.iceHeart?.hitBonus) || 0) + (Number(mistState.fog?.bonus) || 0) + (Number(mistState.dazzle?.hitBonus) || 0)
+    + (Number(snowPenalty?.hitPenalty) || 0) + (Number(stonePenalty?.value) || 0) + flameTier.hit;
+  if (stonePenalty?.sourceState) {
+    const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
+    if (canonical !== Number(stonePenalty.value)) ui.notifications?.warn?.("Penalidade da Reflexão da Pedra foi normalizada.");
+  }
   const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
-  const requestedMode = breathHit?.advantage || flameHit?.advantage ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
+  const requestedMode = breathHit?.advantage || flameHit?.advantage || mistHit?.advantage
+    ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
   const weapon = weapons.find((entry) => entry.id === dialogResult.weaponId && entry.profileIndex === Number(dialogResult.weaponProfileIndex ?? 0))
     ?? weapons.find((entry) => entry.id === dialogResult.weaponId)
     ?? null;
@@ -197,10 +268,12 @@ export async function rollHit(options) {
     rollMode: dialogResult.rollMode,
     bonusRaw,
     cdVal: dialogResult.cdVal,
-    rollCount: Math.max(dialogResult.rollCount, Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1, Number(breathHit?.count) || 1, Number(flameHit?.count) || 1),
+    rollCount: Math.max(dialogResult.rollCount, Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1, Number(breathHit?.count) || 1, Number(flameHit?.count) || 1, Number(stoneHit?.count) || 1, Number(mistHit?.count) || 1, Number(snowHit?.count) || 1),
     actionType: dialogResult.actionType,
     statusEffects: finalStatusEffects,
     weapon,
+    metalReroll: metalState.chainReaction?.turns > 0,
+    stopOnMiss: mistHit?.stopOnMiss === true,
   });
   const confirmedCritical = result?.attempts?.find((attempt) => attempt.critical);
   const knowsMetal = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Metal");
@@ -225,4 +298,60 @@ export async function rollHit(options) {
   if (result?.attempts?.length && flameHit) {
     await actor.update(flameStatePatch(consumeFlamePending(flameState, { hit: true })), { naCsbAutomation: true, naBreathing: true });
   }
+  if (result?.attempts?.length && stoneHit) {
+    await actor.update(stoneStatePatch(consumeStonePending(stoneState, { hit: true })), { naCsbAutomation: true, naBreathing: true });
+  }
+  if (result?.attempts?.length && mistHit) {
+    await actor.update(mistStatePatch(consumeMistPending(mistState, { hit: true })), { naCsbAutomation: true, naBreathing: true });
+  }
+  if (result?.attempts?.length && snowHit) {
+    let nextSnow = consumeSnowPending(snowState, { hit: true });
+    const target = [...(game.user?.targets ?? [])][0]?.actor;
+    const freeze = result.hits > 0
+      ? (Number(snowState.pendingDamage?.freezeOnHit) || 0) + (result.criticals > 0 ? Number(snowHit.criticalFreeze) || 0 : 0)
+      : 0;
+    let recoveryChoice = "";
+    if (target?.uuid && freeze > 0 && snowState.belowZero?.freezeRecovery) recoveryChoice = await chooseSnowRecovery();
+    const gain = target?.uuid && freeze > 0
+      ? resolveSnowFreezeGain(nextSnow, target.uuid, freeze, { recoveryChoice })
+      : { state: nextSnow, reachedFive: false, burstFormula: "", recovery: null };
+    nextSnow = gain.state;
+    const patch = snowStatePatch(nextSnow);
+    if (gain.recovery?.pdv) patch["system.props.pdv_slayer_curado"] = (Number(actor.system?.props?.pdv_slayer_curado) || 0) + gain.recovery.pdv;
+    if (gain.recovery?.pdr) patch["system.props.pdr_slayer_gasto_valor"] = Math.max(0, (Number(actor.system?.props?.pdr_slayer_gasto_valor) || 0) - gain.recovery.pdr);
+
+    if (gain.reachedFive && target) {
+      const restrain = await foundry.applications.api.DialogV2.confirm({
+        window: { title: "Congelar — Restrição de Movimentos" },
+        content: `<p>${target.name} atingiu 5 acúmulos. Gastar uma Ação Única para restringir seus movimentos?</p>`,
+        rejectClose: false,
+      });
+      if (restrain) {
+        const action = await consumeSlayerActions(actor, ["unica"], { update: false });
+        if (action.ok) {
+          const restriction = spendFreezeForRestriction(nextSnow, target.uuid, Number(actor.system?.props?.car_display) || 0);
+          nextSnow = restriction.state;
+          Object.assign(patch, action.patch, snowStatePatch(nextSnow));
+          await target.setFlag(MODULE_ID, "snowRestriction", snowRestrictionFlag(restriction.restriction, actor.uuid));
+        } else ui.notifications?.warn?.(action.reason);
+      }
+    }
+    await actor.update(patch, { naCsbAutomation: true, naBreathing: true });
+    if (gain.burstFormula && target) {
+      const { rollDamage } = await import("./damage-service.mjs");
+      await rollDamage({
+        actor,
+        nome: "Abaixo de Zero — Explosão de Gelo",
+        entradas: [{ tipoAcao: "especial", dado: gain.burstFormula, fixo: 0, attrs: [], tiposDano: ["concussao"] }],
+        skipActionConsumption: true,
+        forceAttackDamage: true,
+      });
+    }
+  }
+  if (result?.hits > 0 && metalState.battleForged?.turns > 0) {
+    let nextMetal = metalState;
+    for (let index = 0; index < result.hits; index += 1) nextMetal = registerMetalBattleHit(nextMetal).state;
+    await actor.update(metalStatePatch(nextMetal), { naCsbAutomation: true, naBreathing: true });
+  }
+  return result ? { ...result, weapon } : result;
 }

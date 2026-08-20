@@ -119,3 +119,18 @@ export function tickFlameBreathing(rawState) {
 export function clearFlameBreathingState() {
   return flameStatePatch({ version: 1, weaponHeat: 0 });
 }
+
+export function buildFlameInterception(stateOrRaw, { interceptorUuid = "", protectedUuid = "" } = {}) {
+  const state = parseFlameBreathingState(stateOrRaw);
+  const interceptor = String(interceptorUuid || "");
+  const protectedActor = String(protectedUuid || "");
+  if (!state.block?.intercept) return { ok: false, reason: "Ondulação ainda não permite interceptar.", state };
+  if (!interceptor || !protectedActor || interceptor === protectedActor) return { ok: false, reason: "Escolha outro aliado para proteger.", state };
+  state.block = { ...state.block, protectedUuid: protectedActor, interceptorUuid: interceptor, interceptionReady: true };
+  return { ok: true, state, patch: flameStatePatch(state), flag: { interceptorUuid: interceptor, protectedUuid: protectedActor, turns: 1, source: "chamas_04" } };
+}
+
+export function consumeFlameInterception(flag, incomingTargetUuid) {
+  if (!flag || Number(flag.turns) <= 0 || String(flag.protectedUuid || "") !== String(incomingTargetUuid || "")) return { intercepted: false, interceptorUuid: "" };
+  return { intercepted: true, interceptorUuid: String(flag.interceptorUuid || ""), clearFlag: true };
+}

@@ -45,6 +45,28 @@ describe("catálogo de Respirações", () => {
     assert.equal(storm.system.props.nvl3_dano, "8d8");
   });
 
+  it("publica as cinco Respirações prioritárias como Items mecânicos", async () => {
+    const documents = await sourceDocuments("../build/compendium/respiracoes/");
+    const items = documents.filter((document) => document.type === "equippableItem");
+    const expected = new Map([
+      ["Chamas", { count: 9, passive: "chamas_01" }],
+      ["Pedra", { count: 5, passive: null }],
+      ["Metal", { count: 6, passive: "metal_05" }],
+      ["Neve", { count: 8, passive: "neve_08" }],
+      ["Névoa", { count: 8, passive: null }],
+    ]);
+
+    for (const [breathing, contract] of expected) {
+      const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
+      assert.equal(forms.length, contract.count, `${breathing} deve publicar todas as Formas e passivas`);
+      assert.ok(forms.every((item) => item.system.props.forma_id), `${breathing} deve ter IDs mecânicos`);
+      assert.ok(forms.every((item) => item.system.props.descricao.startsWith("<")), `${breathing} deve publicar descrição HTML`);
+      const passives = forms.filter((item) => item.system.props.forma_passiva === 1);
+      assert.deepEqual(passives.map((item) => item.system.props.forma_id), contract.passive ? [contract.passive] : []);
+      assert.ok(forms.filter((item) => item.system.props.forma_passiva !== 1).every((item) => Number(item.system.props.nvl1_custo) >= 0));
+    }
+  });
+
   it("usa os ícones locais disponíveis sem fabricar assets ausentes", async () => {
     const documents = await sourceDocuments("../build/compendium/respiracoes/");
     const items = documents.filter((document) => document.type === "equippableItem");

@@ -93,6 +93,20 @@ describe("damage-relay", () => {
     assert.strictEqual(calculateApprovedDamage(41, true), 20);
   });
 
+  it("bloqueia a resistência no modal quando a técnica a ignora", async () => {
+    let dialogConfig;
+    foundry.applications = { api: { DialogV2: { wait: async (config) => { dialogConfig = config; return true; } } } };
+    await requestDamageApproval(
+      { name: "Oni Lua" },
+      { name: "Caçador" },
+      12,
+      0,
+      { attackName: "Martelo do Julgamento", damageTypes: ["concussao"], ignoreResistance: true },
+    );
+    assert.match(dialogConfig.content, /Ignorada pela técnica/);
+    assert.doesNotMatch(dialogConfig.content, /name="damageResistance"/);
+  });
+
   it("aplica automaticamente dano e Ferida no Slayer quando há ownership", async () => {
     game.user.isGM = false;
     const patches = [];

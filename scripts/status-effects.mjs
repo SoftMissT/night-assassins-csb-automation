@@ -6,8 +6,15 @@ import { parseStatusState } from "./status-service.mjs";
 
 function statusContext(props = {}) {
   const state = parseStatusState(props.status_slayer_dados);
-  const exhaustion = Math.max(state.exhaustion, Number.parseInt(props.status_slayer_exaustao, 10) || 0);
-  return { active: new Set(state.active), exhaustion };
+  const storedExhaustion = Math.max(state.exhaustion, Number.parseInt(props.status_slayer_exaustao, 10) || 0);
+  let exhaustionImmune = false;
+  try {
+    const mist = typeof props.resp_nevoa_estado === "string" ? JSON.parse(props.resp_nevoa_estado) : props.resp_nevoa_estado;
+    exhaustionImmune = mist?.dazzle?.exhaustionImmune === true && Number(mist.dazzle.turns) > 0;
+  } catch (_) {
+    exhaustionImmune = false;
+  }
+  return { active: new Set(state.active), exhaustion: exhaustionImmune ? 0 : storedExhaustion, storedExhaustion, exhaustionImmune };
 }
 
 function lifeDeathBlocked(props = {}) {

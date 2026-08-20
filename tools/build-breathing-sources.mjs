@@ -3,6 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { breathingIconPath } from "../scripts/breathing-icons.mjs";
 import { flameFormById } from "../scripts/flame-breathing-data.mjs";
+import { stoneFormById } from "../scripts/stone-breathing-data.mjs";
+import { mistFormById } from "../scripts/mist-breathing-data.mjs";
+import { metalFormById } from "../scripts/metal-breathing-data.mjs";
+import { snowFormById } from "../scripts/snow-breathing-data.mjs";
 import { markdownToFoundryHtml } from "./compendium-catalog-utils.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,8 +45,13 @@ for (const document of catalog.documents) {
   const icon = breathingIconPath(document.system?.props?.respiracao_nome);
   if (icon) document.img = icon;
   const flame = flameFormById(document.system?.props?.forma_id);
+  const stone = stoneFormById(document.system?.props?.forma_id);
+  const mist = mistFormById(document.system?.props?.forma_id);
+  const metal = metalFormById(document.system?.props?.forma_id);
+  const snow = snowFormById(document.system?.props?.forma_id);
   const props = document.system.props;
-  props.forma_passiva = flame?.passive || /passiva/iu.test(String(props.tipo_manobra ?? "")) ? 1 : 0;
+  props.forma_passiva = flame?.passive || ["metal_05", "neve_08"].includes(String(props.forma_id ?? ""))
+    || /passiva/iu.test(String(props.tipo_manobra ?? "")) ? 1 : 0;
   const richTextKeys = ["descricao", "requisito_texto", "gatilho_texto", "combo_texto", "notas_texto", "sinergias_texto", "nvl1_efeito", "nvl2_efeito", "nvl3_efeito", "nvl4_efeito"];
   for (const key of richTextKeys) {
     if (typeof props[key] === "string" && props[key].trim()) props[key] = markdownToFoundryHtml(props[key]);
@@ -54,6 +63,18 @@ for (const document of catalog.documents) {
       document.system.props[`tem_nvl${level}`] = mechanics ? 1 : 0;
       document.system.props[`nvl${level}_custo`] = mechanics?.cost ?? 0;
       if (mechanics?.damage) document.system.props[`nvl${level}_dano`] = mechanics.damage;
+    }
+  }
+  const curated = stone ?? mist ?? metal ?? snow;
+  if (curated) {
+    const action = curated.action ?? curated.actions?.join(" + ") ?? "";
+    document.system.props.tipo_manobra = ({ ataque: "Ação de Ataque", especial: "Ação Especial", reacao: "Reação", unica: "Ação Única", completa: "Ação Completa" }[action] ?? action);
+    for (let level = 1; level <= 4; level += 1) {
+      const mechanics = curated.levels[level - 1];
+      document.system.props[`tem_nvl${level}`] = mechanics ? 1 : 0;
+      document.system.props[`nvl${level}_custo`] = mechanics?.cost ?? 0;
+      document.system.props[`nvl${level}_dano`] = mechanics?.damage ?? mechanics?.bonus ?? "";
+      document.system.props[`nvl${level}_tipos_dano`] = Array.isArray(mechanics?.damageTypes) ? mechanics.damageTypes.join(",") : "";
     }
   }
 }

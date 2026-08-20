@@ -41,6 +41,7 @@ function normalizeDamageContext(context = {}) {
     damageTypes: [...new Set(Array.isArray(context.damageTypes) ? context.damageTypes.filter((key) => allowed.has(key)) : [])],
     components,
     requireApproval: context.requireApproval === true,
+    ignoreResistance: context.ignoreResistance === true,
     flame: context.flame && typeof context.flame === "object" ? {
       sourceId: String(context.flame.sourceId ?? "").slice(0, 64),
       heat: Math.max(0, Math.min(5, Math.trunc(Number(context.flame.heat) || 0))),
@@ -160,6 +161,9 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
   const componentRows = context.components.length > 0
     ? context.components.map((component) => `<tr><td>${escapeHtml(component.label)}</td><td>${escapeHtml(component.types.map((key) => typeLabels.get(key) ?? key).join(" · ") || "Sem tipo")}</td><td style="text-align:right"><strong>${component.subtotal}</strong></td></tr>`).join("")
     : `<tr><td>Dano</td><td>${escapeHtml(context.damageTypes.map((key) => typeLabels.get(key) ?? key).join(" · ") || "Sem tipo")}</td><td style="text-align:right"><strong>${amount}</strong></td></tr>`;
+  const resistanceControl = context.ignoreResistance
+    ? `<div class="form-group"><label>Resistência</label><div class="form-fields"><strong>Ignorada pela técnica</strong></div></div>`
+    : `<div class="form-group"><label>Resistência</label><div class="form-fields"><select name="damageResistance"><option value="normal">Sem resistência</option><option value="resisted">Resistente · metade</option></select></div></div>`;
 
   return DialogV2.wait({
     window: { title: "Autorizar dano no inimigo" },
@@ -178,11 +182,11 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
       </fieldset>
       <fieldset>
         <legend>Resolução</legend>
-        <div class="form-group"><label>Resistência</label><div class="form-fields"><select name="damageResistance"><option value="normal">Sem resistência</option><option value="resisted">Resistente · metade</option></select></div></div>
+        ${resistanceControl}
         <label>Tipo(s) de dano</label>
         <div class="na-relay-types" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:6px;">${typeOptions}</div>
       </fieldset>
-      <p class="hint">O crítico já está incluído no dano solicitado. A resistência é aplicada depois dele.</p>`,
+      <p class="hint">${context.ignoreResistance ? "Esta técnica ignora resistência." : "O crítico já está incluído no dano solicitado. A resistência é aplicada depois dele."}</p>`,
     buttons: [
       {
         action: "deny",
@@ -195,7 +199,7 @@ export async function requestDamageApproval(actor, requester, amount, currentDam
         default: true,
         callback: (_event, _button, dialog) => {
           const root = dialog.element;
-          const resisted = root.querySelector('[name="damageResistance"]')?.value === "resisted";
+          const resisted = context.ignoreResistance ? false : root.querySelector('[name="damageResistance"]')?.value === "resisted";
           const damageTypes = [...root.querySelectorAll('[name="damageType"]:checked')].map((input) => input.value);
           const breakdown = splitDamage(amount, context, damageTypes, resisted);
           const appliedDamage = breakdown.normalDamage + breakdown.woundDamage;

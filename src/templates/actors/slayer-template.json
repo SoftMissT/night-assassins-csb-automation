@@ -2900,7 +2900,7 @@
                   "hideEmpty": false,
                   "hiddenColumns": [],
                   "sortOption": "manual",
-                  "headDisplay": false,
+                  "headDisplay": true,
                   "showCreate": false,
                   "defaultTemplate": "",
                   "createItemDialogTitle": "",
@@ -6149,6 +6149,60 @@
                       "autocomplete": ""
                     },
                     {
+                      "key": "resp_pedra_estado",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 4,
+                      "editRole": 4,
+                      "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "textField",
+                      "size": "full-size",
+                      "label": "Estado mecânico da Respiração da Pedra",
+                      "defaultValue": "{\"version\":1}",
+                      "charList": "",
+                      "maxLength": null,
+                      "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_nevoa_estado",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 4,
+                      "editRole": 4,
+                      "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "textField",
+                      "size": "full-size",
+                      "label": "Estado mecânico da Respiração da Névoa",
+                      "defaultValue": "{\"version\":1,\"patterns\":{}}",
+                      "charList": "",
+                      "maxLength": null,
+                      "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_metal_estado",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "textField", "size": "full-size", "label": "Estado mecânico da Respiração do Metal",
+                      "defaultValue": "{\"version\":1}", "charList": "", "maxLength": null, "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_neve_estado",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "textField", "size": "full-size", "label": "Estado mecânico da Respiração da Neve",
+                      "defaultValue": "{\"version\":1,\"freezeByTarget\":{},\"cooldowns\":{}}", "charList": "", "maxLength": null, "autocomplete": ""
+                    },
+                    {
                       "key": "resp_chamas_bonus_dado",
                       "colSpan": 1,
                       "rowSpan": 1,
@@ -6187,6 +6241,81 @@
                       "charList": "",
                       "maxLength": null,
                       "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_pedra_resumo",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 4,
+                      "editRole": 4,
+                      "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "textField",
+                      "size": "full-size",
+                      "label": "Pedra — resumo",
+                      "defaultValue": "Pedra · sem efeito ativo",
+                      "charList": "",
+                      "maxLength": null,
+                      "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_nevoa_resumo",
+                      "colSpan": 1,
+                      "rowSpan": 1,
+                      "cssClass": "",
+                      "role": 4,
+                      "editRole": 4,
+                      "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.",
+                      "visibilityFormula": "",
+                      "editableFormula": "",
+                      "escapeHTML": false,
+                      "type": "textField",
+                      "size": "full-size",
+                      "label": "Névoa — resumo",
+                      "defaultValue": "Padrões 0/3",
+                      "charList": "",
+                      "maxLength": null,
+                      "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_metal_resumo",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "textField", "size": "full-size", "label": "Metal — resumo", "defaultValue": "Metal · sem efeito ativo",
+                      "charList": "", "maxLength": null, "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_neve_resumo",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "textField", "size": "full-size", "label": "Neve — resumo", "defaultValue": "Neve · sem efeito ativo",
+                      "charList": "", "maxLength": null, "autocomplete": ""
+                    },
+                    {
+                      "key": "resp_metal_bloqueio_bonus",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "numberField", "size": "full-size", "label": "Metal — bônus de Bloqueio", "defaultValue": 0,
+                      "allowDecimal": false, "minVal": "0", "maxVal": "", "allowRelative": false, "showControls": false, "controlsStyle": "hover"
+                    },
+                    {
+                      "key": "resp_metal_for_temp",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "numberField", "size": "full-size", "label": "Metal — FOR temporária", "defaultValue": 0,
+                      "allowDecimal": false, "minVal": "0", "maxVal": "", "allowRelative": false, "showControls": false, "controlsStyle": "hover"
+                    },
+                    {
+                      "key": "resp_metal_fdv_temp",
+                      "colSpan": 1, "rowSpan": 1, "cssClass": "", "role": 4, "editRole": 4, "permission": 0,
+                      "tooltip": "Gerenciado automaticamente pelo módulo Night Assassins.", "visibilityFormula": "", "editableFormula": "", "escapeHTML": false,
+                      "type": "numberField", "size": "full-size", "label": "Metal — FDV temporária", "defaultValue": 0,
+                      "allowDecimal": false, "minVal": "0", "maxVal": "", "allowRelative": false, "showControls": false, "controlsStyle": "hover"
                     },
                     {
                       "key": "resp_bonus_dano_dados",
@@ -11122,7 +11251,7 @@
       },
       {
         "name": "for_display",
-        "value": "${atr_for_valor_config+hab_tsuyoi_for_bonus+bonus_atr_for_valor_temp+for_marca_temp+for_resp_bonus_temp_slayer}$"
+        "value": "${atr_for_valor_config+hab_tsuyoi_for_bonus+bonus_atr_for_valor_temp+for_marca_temp+for_resp_bonus_temp_slayer+resp_metal_for_temp}$"
       },
       {
         "name": "car_display",
@@ -11130,7 +11259,7 @@
       },
       {
         "name": "fdv_display",
-        "value": "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp+fdv_marca_temp+fdv_resp_bonus_temp_slayer}$"
+        "value": "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp+fdv_marca_temp+fdv_resp_bonus_temp_slayer+resp_metal_fdv_temp}$"
       },
       {
         "name": "int_display",

@@ -48,7 +48,14 @@ export async function executeInterludeActivity(actor, activityKey) {
   const props = actor.system?.props ?? {};
   if (parseNumber(props[activity.complete]) > 0) throw new Error(`${activity.label} ja foi concluido.`);
   const roll = await new Roll(activity.formula(props)).evaluate();
-  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `${activity.label} contra CD ${activity.dc}` });
+  const rollMessage = await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `${activity.label} contra CD ${activity.dc}` });
+  if (rollMessage?.id) {
+    try {
+      await game.dice3d?.waitFor3DAnimationByMessageID?.(rollMessage.id);
+    } catch (_) {
+      // Dice So Nice is optional. Its animation must never block training progress.
+    }
+  }
   const success = Number(roll.total) >= activity.dc;
   const result = buildInterludeProgressPatch(props, activityKey, success);
   await actor.update(result.patch, { naCsbAutomation: true, naInterlude: true });

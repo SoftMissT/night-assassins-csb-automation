@@ -7,7 +7,11 @@ import { parseAttributeValue } from "./parsing.mjs";
 import { openRollDialog } from "./dialogs/roll-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 import { recoverSlayerFolego } from "./action-service.mjs";
-import { parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { buildFlameInterception, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { parseMetalBreathingState } from "./metal-breathing-service.mjs";
+import { parseMistBreathingState } from "./mist-breathing-service.mjs";
+import { parseSnowBreathingState } from "./snow-breathing-service.mjs";
+import { consumeStoneCounterAttack, parseStoneBreathingState } from "./stone-breathing-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -60,17 +64,29 @@ async function doRoll({ actor, test, attr, val, mode, rollMode, secVal, bonusRaw
   const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
 
   let cdLine = "";
+  let success = null;
   if (cdVal > 0) {
-    const passou = roll.total >= cdVal;
-    cdLine = ` | CD ${cdVal} → ${passou ? "✅ Sucesso!" : "❌ Falha!"}`;
+    success = roll.total >= cdVal;
+    cdLine = ` | CD ${cdVal} → ${success ? "✅ Sucesso!" : "❌ Falha!"}`;
   }
 
-  await roll.toMessage({
+  const message = await roll.toMessage({
     flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? " — " + attrLine : ""}${secLine}${bonusLine}${statusLine}${cdLine}`,
     speaker: ChatMessage.getSpeaker({ actor }),
     rollMode: rollMode,
   });
   if (["Bloqueio", "Esquiva"].includes(test) && naturalD20(roll) === 20) await recoverSlayerFolego(actor, 1);
+  return { roll, message, success };
+}
+
+async function confirmDefenseSuccess(result, test) {
+  if (result?.success !== null) return result?.success === true;
+  return foundry.applications.api.DialogV2.confirm({
+    window: { title: `${test} — confirmar resultado` },
+    content: `<p>O resultado <strong>${result?.roll?.total ?? 0}</strong> defendeu o ataque?</p>`,
+    yes: { label: "Sim, defendeu" },
+    no: { label: "Não" },
+  });
 }
 
 /**
@@ -131,6 +147,22 @@ export async function rollTest(options) {
       statusEffects.modifier += Number(flamePenalty.value);
       statusEffects.reasons.push(`Céu em Chamas ${flamePenalty.value} Bloqueio`);
     }
+    const metalState = parseMetalBreathingState(actor.system?.props?.resp_metal_estado);
+    const stoneState = parseStoneBreathingState(actor.system?.props?.resp_pedra_estado);
+    const metalBonus = Number(metalState.metalized?.blockBonus) || 0;
+    const stoneBonus = Number(stoneState.reflection?.blockBonus) || 0;
+    if (metalBonus) { statusEffects.modifier += metalBonus; statusEffects.reasons.push(`Metalizado +${metalBonus}`); }
+    if (stoneBonus) { statusEffects.modifier += stoneBonus; statusEffects.reasons.push(`Reflexão +${stoneBonus}`); }
+  }
+  if (["Bloqueio", "Esquiva"].includes(test)) {
+    const mistState = parseMistBreathingState(actor.system?.props?.resp_nevoa_estado);
+    const snowState = parseSnowBreathingState(actor.system?.props?.resp_neve_estado);
+    const mistBonus = Number(mistState.fog?.bonus) || 0;
+    const snowBonus = test === "Bloqueio"
+      ? Number(snowState.iceHeart?.blockBonus) || 0
+      : Number(snowState.iceHeart?.dodgeBonus) || 0;
+    if (mistBonus) { statusEffects.modifier += mistBonus; statusEffects.reasons.push(`Neblina +${mistBonus}`); }
+    if (snowBonus) { statusEffects.modifier += snowBonus; statusEffects.reasons.push(`Coração de Gelo +${snowBonus}`); }
   }
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode realizar a rolagem.");
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.");
@@ -138,7 +170,12 @@ export async function rollTest(options) {
   const dialogResult = await openRollDialog({ actor, test, attr, value: val, color });
   if (!dialogResult) return;
 
-  await doRoll({
+  const metalState = parseMetalBreathingState(actor.system?.props?.resp_metal_estado);
+  if (["Bloqueio", "Esquiva"].includes(test) && metalState.steelDefense) {
+    if (metalState.steelDefense.defenseAdvantage) dialogResult.mode = mergeRollMode(dialogResult.mode, "advantage");
+  }
+
+  const result = await doRoll({
     actor,
     test,
     attr,
@@ -150,4 +187,28 @@ export async function rollTest(options) {
     cdVal: dialogResult.cdVal,
     statusEffects,
   });
+  const defenseSucceeded = result && ["Bloqueio", "Esquiva"].includes(test)
+    ? await confirmDefenseSuccess(result, test)
+    : false;
+  if (defenseSucceeded) {
+    const stoneState = parseStoneBreathingState(actor.system?.props?.resp_pedra_estado);
+    const counter = consumeStoneCounterAttack(stoneState);
+    if (counter.available) {
+      await actor.update(counter.patch, { naCsbAutomation: true, naBreathing: true });
+      await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: "<p><strong>Reflexão da Pedra</strong> — contra-ataque padrão liberado.</p>" });
+    }
+  }
+  if (defenseSucceeded && test === "Bloqueio") {
+    const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
+    if (flameState.block?.intercept) {
+      const protectedActor = [...(game.user?.targets ?? [])][0]?.actor ?? null;
+      const interception = buildFlameInterception(flameState, { interceptorUuid: actor.uuid, protectedUuid: protectedActor?.uuid });
+      result.interceptAvailable = interception.ok;
+      if (interception.ok) {
+        await Promise.all([actor.update(interception.patch, { naCsbAutomation: true, naBreathing: true }), protectedActor.setFlag(MODULE_ID, "flameInterception", interception.flag)]);
+        await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<p><strong>Ondulação da Chama Fluorescente</strong> — ${protectedActor.name} será interceptado pelo próximo dano recebido.</p>` });
+      } else ui.notifications?.warn?.(interception.reason);
+    }
+  }
+  return result;
 }

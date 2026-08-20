@@ -159,6 +159,37 @@ describe("damage-service", () => {
     assert.match(notices[0], /recebeu 16 de dano \(8 de Ferida\)/);
   });
 
+  it("imunidade da Névoa remove o crítico antes da resistência", async () => {
+    game.user.isGM = true;
+    _dialogReturn = {
+      nome: "Crítico cortante",
+      pdrGasto: 0,
+      critical: true,
+      entradas: [{ dado: "1d8", fixo: 0, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }],
+    };
+    const attacker = makeActor({ id: "atk-mist", uuid: "Actor.atk-mist", props: { nome_slayer: "Atacante", pdv_slayer_total_valor: 20 } });
+    const target = makeActor({ id: "tgt-mist", uuid: "Actor.tgt-mist", props: {
+      nome_slayer: "Protegido",
+      pdv_slayer_total_valor: 20,
+      pdv_slayer_dano_tomado: 0,
+      resp_nevoa_estado: JSON.stringify({ dazzle: { turns: 2, criticalImmunity: true } }),
+      resp_metal_estado: JSON.stringify({ unshakable: { turns: 2, resistances: ["cortante"] } }),
+    } });
+    let appliedDamage = null;
+    let criticalOption = null;
+    target.update = async (patch, options) => {
+      if (patch["system.props.pdv_slayer_dano_tomado"] !== undefined) appliedDamage = patch["system.props.pdv_slayer_dano_tomado"];
+      if (options?.naStatusDamage) criticalOption = options.naCritical;
+    };
+    game.user.targets = new Set([{ actor: target }]);
+    _rollResult = { total: 18, toMessage: async () => {}, dice: [] };
+
+    await rollDamage({ actor: attacker });
+
+    assert.equal(appliedDamage, 4);
+    assert.equal(criticalOption, false);
+  });
+
   it("seleciona um perfil de arma e aplica metade do atributo para baixo", async () => {
     game.user.targets = new Set();
     _dialogReturn = [

@@ -3,7 +3,7 @@ import assert from "node:assert";
 import fs from "node:fs";
 import { migrateOniTemplate } from "../tools/migrate-oni-template.mjs";
 
-const source = JSON.parse(fs.readFileSync(new URL("../oni.json", import.meta.url), "utf8"));
+const source = JSON.parse(fs.readFileSync(new URL("../src/templates/actors/oni-template.json", import.meta.url), "utf8"));
 
 describe("oni-template", () => {
   it("mantém as keys de dano e converte o recurso demoníaco para PDK", () => {

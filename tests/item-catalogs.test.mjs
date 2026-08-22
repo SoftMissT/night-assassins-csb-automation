@@ -124,10 +124,12 @@ describe("catálogo de armas Slayer", () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
     const weapons = documents.filter((document) => document.type === "equippableItem");
     const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
-    assert.equal(customIcons.length, 4);
+    assert.ok(customIcons.length >= 30, `esperado >= 30 armas com arte própria, encontrado ${customIcons.length}`);
     for (const item of customIcons) {
       const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");
       await access(new URL(relativePath, import.meta.url));
     }
+    const generic = weapons.filter((item) => item.img === "icons/svg/sword.svg");
+    assert.ok(generic.length <= 10, `esperado <= 10 armas sem arte dedicada, encontrado ${generic.length}`);
   });
 });

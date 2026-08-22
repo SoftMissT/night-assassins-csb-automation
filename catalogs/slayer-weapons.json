@@ -28,7 +28,7 @@
       "_key": "!items!6ea3dd92177c8c1b",
       "name": "Arco Longo",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/arco_longo_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -159,7 +159,7 @@
       "_key": "!items!eac3a90a1c27a77d",
       "name": "Balestra",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/balestra_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -272,7 +272,7 @@
       "_key": "!items!44b5804d70304fa2",
       "name": "Bastão Retrátil",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/bastao_retratil_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -361,7 +361,7 @@
       "_key": "!items!c3c2a9ec1d36d526",
       "name": "Chicote",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/chicote_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -442,7 +442,7 @@
       "_key": "!items!8e84ac37aa68b12e",
       "name": "Cutelos Gêmeos",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/cutelos_gemeos_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -538,7 +538,7 @@
       "_key": "!items!47e17fac9073ca55",
       "name": "Double Blade",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/double_blade_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -622,7 +622,7 @@
       "_key": "!items!b70efdb4dd64c927",
       "name": "Escopeta Cano Duplo",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/escopeta_cano_duplo_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -748,7 +748,7 @@
       "_key": "!items!7e05afe767d05c4d",
       "name": "Escudo de Batalha",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/escudo_batalha_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -1963,7 +1963,7 @@
       "_key": "!items!fabc67f64c0cb92c",
       "name": "Espada Chicote",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/espada_chicote_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2036,7 +2036,7 @@
       "_key": "!items!797163828f6cee50",
       "name": "Espada Ondular",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/espada_ondular_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2126,7 +2126,7 @@
       "_key": "!items!eed47ffc857ea7c5",
       "name": "Foice",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/foice_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2499,7 +2499,7 @@
       "_key": "!items!91df1986cfa75f80",
       "name": "Katana",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/katana_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2604,7 +2604,7 @@
       "_key": "!items!a927a2c4c93e9cfc",
       "name": "Katana Ferrão",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/katana_ferrao_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2685,7 +2685,7 @@
       "_key": "!items!72639cfc6c71a25b",
       "name": "Katana Serrilhada",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/katana_serrilhada_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2790,7 +2790,7 @@
       "_key": "!items!1a6b88a69027723b",
       "name": "Kusarigama",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/kusarigama_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2895,7 +2895,7 @@
       "_key": "!items!fd054d4ef3666ee8",
       "name": "Manoplas / Soqueiras",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/manoplas_soqueiras_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3267,7 +3267,7 @@
       "_key": "!items!862f6f717c1f45ad",
       "name": "Rapieira",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rapieira_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3348,7 +3348,7 @@
       "_key": "!items!d8a171a9819e16ee",
       "name": "Revólver",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/revolver_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3473,7 +3473,7 @@
       "_key": "!items!cba81031e7a7d7c4",
       "name": "Rifle",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rifle_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3604,7 +3604,7 @@
       "_key": "!items!e8b65370b630ffd3",
       "name": "Tetsubo",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/tetsubo_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3684,7 +3684,7 @@
       "_key": "!items!fed747dec7e1f1e5",
       "name": "Boosted Gear Manoplas do Imperador Dragão Vermelho",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Boosted_Gear_Red_Dragon_Gauntlets_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4014,7 +4014,7 @@
       "_key": "!items!80d918b6363b8a68",
       "name": "Correntes de Jade Ceifadoras de Chi",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Jade_Chains_Chi_Reapers_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4145,7 +4145,7 @@
       "_key": "!items!cf5ebde9b895acfd",
       "name": "Êxtase Tesoura da Névoa Sagrada",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Ecstasy_Sacred_Mist_Scissors_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4579,7 +4579,7 @@
       "_key": "!items!265839b7414fae51",
       "name": "Gumbai Leque do Pilar Quebrado",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Gumbai_Broken_Pillar_War_Fan_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4712,7 +4712,7 @@
       "_key": "!items!13c3f3e88f286c3b",
       "name": "Imperator's Edge Estandarte das Cem Legiões",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Imperators_Edge_Banner_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4846,7 +4846,7 @@
       "_key": "!items!0de8b551748d954f",
       "name": "Impurity Arms Punhos Gêmeos de Kegare",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Impurity_Arms_Twin_Fists_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -5124,7 +5124,7 @@
       "_key": "!items!eb8b7907fe5f599d",
       "name": "Orochimaru Jakkojin",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Orochimaru_Jakkojin_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -5252,7 +5252,7 @@
       "_key": "!items!0994ea69223116df",
       "name": "Playful Cloud Sansetsukon da Nuvem Irônica",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Playful_Cloud_Ironical_Sansetsukon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -5643,7 +5643,7 @@
       "_key": "!items!0c806f39dc4e8972",
       "name": "Weal and Woe Lanças Gêmeas de Obsidiana Umbral",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Weal_and_Woe_Twin_Spears_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {

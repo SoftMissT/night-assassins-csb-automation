@@ -78,7 +78,7 @@ hidden.push(
 const template = {
   name: "oni_minion_template",
   type: "_template",
-  img: "modules/night-assassins-csb-automation/assets/icons/oni.webp",
+  img: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_GM_Control_icon.webp",
   system: {
     body: {
       contents: [

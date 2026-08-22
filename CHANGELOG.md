@@ -1,3 +1,20 @@
+## 0.10.4 — 2026-08-22
+
+### P0 — Restauração do Módulo
+- **API**: `consumeOniActions` exposto no namespace `oni` (estava importado mas não na API pública).
+- **Oni template**: Adicionada aba **Skills** com Kekkijutsu (2→3 abas: Combate/Skills/Configs).
+- **Chat cards**: CSS classes `na-breath-chat`, `na-rest-card`, `na-interlude-card` com regras visuais; contraste melhorado (`#888`→`na-secondary`).
+- **breath-service.mjs**: Estilos inline substituídos por classes CSS para chat cards.
+- **GM macro debug**: `na-gm-control.js` agora loga `[NA-GM]` no console para troubleshooting de API.
+- **DialogV2**: `na-roll-mode.js` migrado para DialogV2 com fallback V1.
+- **Tests**: Atualizados para nova estrutura de 3 abas do Oni (836/836 pass).
+
+## 0.10.3 — 2026-08-22
+
+### Hotfix
+- Corrigido SyntaxError em `scripts/main.mjs:30` (`` `n`` entre imports matava o módulo inteiro).
+- Corrigido `openHunterMarkManager` import mas não utilizado no bloco API.
+
 ## 0.10.2 — 2026-08-22
 
 ### Release

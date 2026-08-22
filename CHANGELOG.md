@@ -1,4 +1,4 @@
-## 0.10.0 — 2026-08-22
+## 0.10.1 — 2026-08-22
 
 ### Macros — Correções Críticas
 - **`na-oni-blood-gift.js`**: Corrigido bug ternário crítico (`scope ? {}` → `scope ? scope : {}`) que impedia input de escopo.

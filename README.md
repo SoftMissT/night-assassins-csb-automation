@@ -7,12 +7,12 @@
 | Ficha | Versão | Estado |
 | --- | ---: | --- |
 | **Caçador humano** | **2.0** | Versão principal em uso |
-| **Oni completo** | **0.10.0** | Progressão, Origens, Regeneração, Kekkijutsus, Classes, Especializações e Painel GM completos |
-| **Oni Minion** | **0.10.0** | Template e construtor distribuídos com 3 tipos, 6 pacotes, 4 ataques, 14 traços e 10 fraquezas |
+| **Oni completo** | **0.10.1** | Progressão, Origens, Regeneração, Kekkijutsus, Classes, Especializações e Painel GM completos |
+| **Oni Minion** | **0.10.1** | Template e construtor distribuídos com 3 tipos, 6 pacotes, 4 ataques, 14 traços e 10 fraquezas |
 
 ## Estado mecânico atual
 
-O módulo está na versão **0.10.0**. Funcionalidades implementadas:
+O módulo está na versão **0.10.1**. Funcionalidades implementadas:
 
 - **Oni completo:** atributos Oni (7), progressão 1–20, Origens (21), Regeneração, Mordida/PDK, Kekkijutsus (29 técnicas), Classes (5 ranks), Especializações (10 × 20 graus), Painel GM.
 - **Oni Minion:** ficha separada com 3 tipos, 6 pacotes de atributos, 4 ataques, 14 traços, 10 fraquezas e escala por cena.

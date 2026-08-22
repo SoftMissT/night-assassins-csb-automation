@@ -27,7 +27,8 @@ import { executeInterludeActivity, openInterludeManager } from "./interlude-serv
 import { createCombatContext, validateCombatContext } from "./core/combat-context.mjs";
 import { createActorTransaction } from "./core/actor-transaction.mjs";
 import { normalizeTechniqueDefinition, splitDamageTotal, validateTechniqueDefinition } from "./core/technique-definition.mjs";
-import { repairSlayerWeaponItems } from "./weapon-migration.mjs";`nimport { getKekkijutsu, isKekkijutsuItem, normalizeKekkijutsu, validateKekkijutsuUse, buildKekkijutsuAttack, buildKekkijutsuUsePatch, buildKekkijutsuPdkPatch, resetKekkijutsuTurnState, resetKekkijutsuSceneState, kekkijutsuPotenciacao, KEKKIJUTSU_IDS, KEKKIJUTSU_ACTION_TYPES } from "./oni/kekkijutsu-service.mjs";
+import { repairSlayerWeaponItems } from "./weapon-migration.mjs";
+import { getKekkijutsu, isKekkijutsuItem, normalizeKekkijutsu, validateKekkijutsuUse, buildKekkijutsuAttack, buildKekkijutsuUsePatch, buildKekkijutsuPdkPatch, resetKekkijutsuTurnState, resetKekkijutsuSceneState, kekkijutsuPotenciacao, KEKKIJUTSU_IDS, KEKKIJUTSU_ACTION_TYPES } from "./oni/kekkijutsu-service.mjs";
 import { resolveKekkijutsuCD, resolveResistanceType, validateActionByScale, validateScaleLimits, auditKekkijutsuCost, getSpecialDamageRule, resolveWoundBonus, canHaveDomain, canUseRegeneration, resolveKekkijutsuUse } from "./oni/kekkijutsu-engine.mjs";
 import { ONI_SCALES, SCALE_LABELS, SCALE_CD_BONUS, FERIDAS_DOMINANTES, FERIDA_LABELS, KEKKIJUTSU_FUNCTIONS, FUNCAO_LABELS, ACTION_TYPES, ACTIONS_BY_SCALE, SPECIAL_DAMAGE_RULES, RESISTANCE_MAP, WOUND_ATTRIBUTE_MAP, REGEN_ACTIVATION } from "./oni/kekkijutsu-cost-tables.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";

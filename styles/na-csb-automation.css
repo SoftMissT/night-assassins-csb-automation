@@ -1072,6 +1072,7 @@
   --na-gold-dim: #d8b45d;
   --na-blue: #00d9ff;
   --na-purple: #a855f7;
+  --na-pink: #ff93ff;
   --na-red: #ff2b4a;
   --na-green: #2eff7a;
   --na-cyan: #15d7e6;
@@ -1134,6 +1135,8 @@
 .na-sheet-role-accent-gold { color: var(--na-gold); }
 .na-sheet-role-accent-lime { color: var(--na-green); }
 .na-sheet-role-accent-cyan { color: var(--na-cyan); }
+.na-sheet-role-accent-purple { color: var(--na-purple); }
+.na-sheet-role-accent-pink { color: var(--na-pink); }
 .na-sheet-role-accent-red { color: var(--na-red); }
 
 .na-sheet-glow {

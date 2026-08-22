@@ -105,8 +105,15 @@ test("template Slayer mostra deslocamento e bonus da Concentracao Total Constant
   const movement = template.system.hidden.find((entry) => entry.name === "deslocamento_slayer");
   assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
   const source = JSON.stringify(template.system.body);
-  assert.match(source, /"deslocamento_slayer_display"/);
-  assert.match(source, /\$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
+  const perfilPanel = JSON.stringify(
+    template.system.body.contents
+      .find((node) => node.type === "tabbedPanel")
+      ?.contents.find((tab) => tab.key === "perfil_slayer_tab")
+      ?.contents.find((node) => node.key === "perfil_slayer_resumo_panel"),
+  );
+  assert.match(perfilPanel, /"deslocamento_slayer_linha"/);
+  assert.match(perfilPanel, /DESLOCAMENTO: \$\{deslocamento_slayer\}\$m/);
+  assert.doesNotMatch(source, /"deslocamento_slayer_display"/);
 });
 
 test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
@@ -171,7 +178,8 @@ test("template Slayer mantém Condições e Formas na aba Combate", () => {
   assert.match(JSON.stringify(combat), /resistencia_slayer_gerenciar/);
   assert.match(JSON.stringify(combat), /skills_slayer_respiracoes/);
   assert.match(JSON.stringify(combat), /combat_slayer_arma_rolar/);
-  assert.match(JSON.stringify(profile), /deslocamento_slayer_display/);
+  assert.match(JSON.stringify(profile), /deslocamento_slayer_linha/);
+  assert.match(JSON.stringify(profile), /DESLOCAMENTO: \$\{deslocamento_slayer\}\$m/);
   assert.match(JSON.stringify(profile), /descanso_slayer_gerenciar/);
 });
 

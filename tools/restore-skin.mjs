@@ -49,17 +49,21 @@ function cleanValue(value, fallbackSizePx = 16) {
   return `<span class="${classes.join(" ")}">${inner}</span>`;
 }
 
-function walk(node, visitor, pathKey = "") {
+function walk(node, visitor) {
   if (!node || typeof node !== "object") return;
   if (Array.isArray(node)) {
-    node.forEach((child, i) => walk(child, visitor, `${pathKey}[${i}]`));
+    node.forEach((child) => walk(child, visitor));
     return;
   }
-  if (typeof node.value === "string" && node.value.includes("custom-orbitron-wrapper")) {
-    visitor(node, pathKey);
+  if (
+    typeof node.value === "string" &&
+    (node.value.includes("custom-orbitron-wrapper") ||
+      (node.type === "label" && node.value.includes("na-sheet-text")))
+  ) {
+    visitor(node);
   }
   for (const [key, child] of Object.entries(node)) {
-    if (key !== "parent") walk(child, visitor, `${pathKey}.${key}`);
+    if (key !== "parent") walk(child, visitor);
   }
 }
 
@@ -89,26 +93,31 @@ export async function restoreSkin(templatePath, snapshotPath = null) {
 
   const snapshotIndex = buildSnapshotIndex();
 
-  let restoredFromSnapshot = 0;
-  let cleanedOnly = 0;
+  let restored = 0;
+  let untouched = 0;
   walk(template.system.body.contents, (cell) => {
-    const inner = extractInner(cell.value);
+    if (cell.value.includes("custom-orbitron-wrapper")) {
+      cell.value = cleanValue(cell.value);
+    }
+    const innerMatch = cell.value.match(/<span[^>]*>([\s\S]*?)<\/span>/);
+    const inner = innerMatch ? innerMatch[1].trim() : "";
     const remembered = snapshotIndex.get(inner);
     if (remembered) {
       const [color, size] = remembered.split("|");
-      cell.value = cleanValue(
-        `color:${color}; font-size:${size}px;` + `<!--inner:${inner}-->`,
-        Number(size),
-      );
-      restoredFromSnapshot++;
+      const classes = ["na-sheet-text", "na-sheet-label", sizeClass(size)];
+      const role = roleClass(color);
+      if (role) classes.push(role);
+      const hadGlow = cell.value.includes("na-sheet-glow");
+      if (hadGlow) classes.push("na-sheet-glow");
+      cell.value = `<span class="${classes.join(" ")}">${inner}</span>`;
+      restored++;
     } else {
-      cell.value = cleanValue(cell.value);
-      cleanedOnly++;
+      untouched++;
     }
   });
 
   await writeFile(absolute, `${JSON.stringify(template, null, 2)}\n`);
-  return `${path.basename(absolute)}: ${restoredFromSnapshot} células restauradas com cor original, ${cleanedOnly} apenas limpas`;
+  return `${path.basename(absolute)}: ${restored} células com cor original restaurada, ${untouched} mantidas`;
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);

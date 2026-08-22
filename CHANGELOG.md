@@ -1,3 +1,13 @@
+## 0.10.2 — 2026-08-22
+
+### Release
+- Recompilação completa dos fontes de compendium: 19 macros, 300 Items de Respiração (44 pastas), 43 armas, 4 templates, 5 artes.
+- Corrigido `tools/build-macro-sources.mjs` (quebra de linha literal + IDs com tamanho inválido).
+- NPC com vida e dano (painel `npc_vida`, barra de PDV, relay) — ver 0.10.1.
+- Fix Martelo do Julgamento em Oni Minion — ver 0.10.1.
+
+> **Nota:** os packs LevelDB são compilados dentro do Foundry. O template NPC atualizado entra no Compêndio *Templates de Ficha* após reimportação no Foundry; atores já criados não mudam automaticamente.
+
 ## 0.10.1 — 2026-08-22
 
 ### NPC — Vida e Dano

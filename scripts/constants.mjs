@@ -122,6 +122,7 @@ export const STATUS_SLAYER = Object.freeze([
   { key: "fadiga_espiritual", label: "Fadiga Espiritual", category: "Fadiga" },
   { key: "fadiga_mental", label: "Fadiga Mental", category: "Fadiga" },
   { key: "encorajado", label: "Encorajado", category: "Benéfico" },
+  { key: "ofegante", label: "Ofegante", category: "Respiração" },
 ]);
 
 /** Status que realmente causam dano automático no início do turno. */

@@ -23,6 +23,7 @@ const macros = [
   { id: "NAInterlude00001", file: "na-gerenciar-interludio.js", name: "Night Assassins — Gerenciar Interludio" },
   { id: "NAWeaponRepair01", file: "na-corrigir-armas.js", name: "Night Assassins — Corrigir Armas dos Caçadores" },
   { id: "NABreathRepair01", file: "na-corrigir-respiracoes.js", name: "Night Assassins — Corrigir Respirações dos Caçadores" },
+  { id: "NAPhoneChat00001", file: "na-telefone.js", name: "Night Assassins — Telefone" },`n  { id: "NAKekkUse00001", file: "na-usar-kekki.js", name: "Night Assassins — Usar Kekkijutsu" },`n  { id: "NABloodGift00001", file: "na-oni-blood-gift.js", name: "Night Assassins — Dom do Sangue" },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });
@@ -60,3 +61,5 @@ for (const [index, macro] of macros.entries()) {
 }
 
 console.log(`Preparadas ${macros.length} macros para o Compendium.`);
+
+

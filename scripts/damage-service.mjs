@@ -174,7 +174,8 @@ export async function rollDamage(options = {}) {
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode causar dano.");
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
-    attrValues[key] = parseAttributeValue(props[`${key}_display`]);
+    const attributeKey = attackerKind === "oni_minion" ? `oni_minion_${key}_display` : `${key}_display`;
+    attrValues[key] = parseAttributeValue(props[attributeKey]);
   }
 
   const hasExplicitDamage = Array.isArray(options.entradas) && options.entradas.length > 0
@@ -312,6 +313,14 @@ export async function rollDamage(options = {}) {
   }
   if (snowState.belowZero?.fdvDamageBonus && hasAttackDamage) {
     specs.push({ label: "Abaixo de Zero", types: ["congelante"], formula: String(snowState.belowZero.fdvDamageBonus), snow: true });
+  }
+  const hasSpecializedBreathingDamage = specs.some((spec) => spec.breathing || spec.flame || spec.stone || spec.mist || spec.metal || spec.snow);
+  if (attackerKind === "slayer" && hasAttackDamage) {
+    const hasFlameSpec = specs.some((spec) => spec.flame);
+    const projectedDice = String(props.resp_bonus_dano_dados ?? "").trim();
+    const projectedFixed = parseAttributeValue(props.resp_bonus_dano_fixo) + (hasFlameSpec ? 0 : parseAttributeValue(props.resp_chamas_bonus_dano));
+    if (projectedDice && projectedDice !== "0") specs.push({ label: "Bônus de Respiração", types: [], formula: projectedDice, breathing: true });
+    if (projectedFixed) specs.push({ label: "Bônus fixo de Respiração", types: [], formula: String(projectedFixed), breathing: true });
   }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
@@ -571,7 +580,12 @@ export async function rollDamage(options = {}) {
       const targetKind = actorKind(targetActor);
       if (targetKind === "slayer") return applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical: targetCritical, damageTypes, components: targetComponents, flame: flameContext });
       if (targetKind === "oni") return applyOniDamage(targetActor, amount, { attackName: nome, critical: targetCritical, rolledTotal: amount, damageTypes, components: targetComponents, requireApproval: true, flame: flameContext });
-      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni."));
+      if (targetKind === "oni_minion") {
+        const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.oni_minion_pdv_dano)));
+        await targetActor.update({ "system.props.oni_minion_pdv_dano": current + amount }, { naCsbAutomation: true, naDamage: true });
+        return { ok: true, appliedDamage: amount, woundDamage: 0 };
+      }
+      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni/Minion."));
     }),
   ]);
 

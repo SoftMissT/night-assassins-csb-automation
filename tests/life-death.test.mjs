@@ -13,6 +13,7 @@ function baseProps(overrides = {}) {
     status_slayer_dados: "",
     vida_morte_slayer_dados: JSON.stringify(defaultLifeDeathState()),
     vit_display: 2,
+    nvl_pj: "nvl_1",
     ...overrides,
   };
 }

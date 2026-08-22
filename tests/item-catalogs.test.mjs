@@ -120,17 +120,11 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
   });
 
-  it("publica ícones de compêndio e artes verticais existentes", async () => {
+  it("publica ícones de compêndio existentes", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
     const weapons = documents.filter((document) => document.type === "equippableItem");
-    const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
     const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
-    assert.equal(illustrated.length, 14);
     assert.equal(customIcons.length, 4);
-    for (const item of illustrated) {
-      const relativePath = item.system.props.arma_imagem_vertical.replace("modules/night-assassins-csb-automation/", "../");
-      await access(new URL(relativePath, import.meta.url));
-    }
     for (const item of customIcons) {
       const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");
       await access(new URL(relativePath, import.meta.url));

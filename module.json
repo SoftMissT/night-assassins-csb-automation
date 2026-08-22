@@ -18,7 +18,8 @@
     "scripts/main.mjs"
   ],
   "styles": [
-    "styles/na-csb-automation.css"
+    "styles/na-csb-automation.css",
+    "styles/na-phone-chat.css"
   ],
   "languages": [
     {

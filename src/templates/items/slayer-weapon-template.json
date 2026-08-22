@@ -60,14 +60,6 @@
           "defaultValue": ""
         },
         {
-          "key": "arma_imagem_vertical",
-          "type": "textField",
-          "size": "full-size",
-          "label": "Arte vertical da arma (9:16)",
-          "defaultValue": "",
-          "tooltip": "Caminho da ilustração expandida. Ex.: modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp"
-        },
-        {
           "key": "arma_requisito",
           "type": "textField",
           "size": "full-size",
@@ -302,6 +294,18 @@
             },
             {
               "key": "arma_municao_atual",
+              "type": "numberField",
+              "defaultValue": 0,
+              "allowDecimal": false
+            },
+            {
+              "key": "arma_adapter_necessario",
+              "type": "numberField",
+              "defaultValue": 0,
+              "allowDecimal": false
+            },
+            {
+              "key": "arma_adapter_instalado",
               "type": "numberField",
               "defaultValue": 0,
               "allowDecimal": false

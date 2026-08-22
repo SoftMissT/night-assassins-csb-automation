@@ -1,3 +1,54 @@
+## 0.10.0 — 2026-08-22
+
+### Macros — Correções Críticas
+- **`na-oni-blood-gift.js`**: Corrigido bug ternário crítico (`scope ? {}` → `scope ? scope : {}`) que impedia input de escopo.
+- **`na-usar-kekki.js`**: Corrigido mesmo bug ternário + substituído `MODULE_ID` por string fixa `"night-assassins-csb-automation"` no console.warn.
+- **`na-marca-cacador.js`**: Refatorada para wrapper limpo chamando `api.slayer.openHunterMarkManager()`. Lógica pesada movida para service.
+
+### Novo Service — Hunter Mark
+- **`scripts/slayer/hunter-mark-service.mjs`** (352 linhas): Toda a lógica de Marca do Caçador extraída da macro — `awakenMark`, `activateMark`, `finishMark`, `markStatus`, `maxActivationPower`, `allowedScarAttributes`, `attributeLabel`, `isMarkAwakened`, `isMarkActive`.
+- **`openHunterMarkManager`**: DialogV2 completo com menu Despertar/Ativar/Encerrar, seleção de atributo da cicatriz e escolha de anos/intensidade.
+
+### API Expandida
+- `slayer.openHunterMarkManager` — abre gerenciador de Marca do Caçador
+- `slayer.awakenMark` / `slayer.activateMark` / `slayer.finishMark` — operações atômicas
+- `slayer.markStatus` / `slayer.maxActivationPower` / `slayer.allowedScarAttributes` / `slayer.attributeLabel` / `slayer.isMarkAwakened` / `slayer.isMarkActive` — consultas
+
+### Kekkijutsu — Correções de Template
+- **`kekki_funcao`**: Opções corrigidas (`anticurainvocacao` → `anticura;invocacao`, separação por ponto e vírgula).
+- **`inventario_categoria`**: Campo hidden adicionado ao template `NAKekkijutsuTpl001` com valor `kekkijutsu`.
+
+### Oni Template — Tabs Consolidadas
+- Template Oni reestruturado para 3 abas: **Combate / Skills / Configs GM**.
+- Kekkijutsu absorvido na aba Skills via item container `inventario_oni_kekkijutsus`.
+- `kekki_oni_tab` removido; `tools/clean-oni-template.mjs` atualizado.
+
+### Auditoria de Bônus de Respiração
+- Código de fluxo auditado: `breath-service.mjs` → `resp_bonus_acerto_temp` / `resp_bonus_dano_dados` / `resp_bonus_bloqueio_temp` / `resp_bonus_esquiva_temp` → `hit-service.mjs` / `damage-service.mjs` / `roll-service.mjs`.
+- Fluxo está correto no código; problema confirmado como runtime CSB (props não persistem ou display não atualiza).
+
+### Slayer Template — Validação
+- Template JSON validado: 9 abas (sem Condições), Descanso/Deslocamento em Perfil/Bio, Armas em Combate+Inventário, Respirações em Combate, Skills só com `estados_avancados_slayer_panel`.
+
+### CSB Panel Label
+- `combat_slayer_table` já tem `collapsible: false` — CSB não renderiza heading na ficha.
+- "Panel combat_slayer_table" é artefato do template editor, não da ficha.
+
+### Validação
+- `node --test` com **77/77** testes aprovados (suite Kekkijutsu + Oni template).
+
+## 0.11.0 — 2026-08-22
+
+- **Kekkijutsu UI Integration**: Template de Item Kekkijutsu (`NAKekkijutsuTpl001`) com 18 campos mecânicos (ID, nome, origem, rank, ação, custo PDK, alcance, alvo, teste, dano, duração, limite, narrativa, potenciação).
+- Adiciona aba **Kekkijutsu** à ficha Oni (`kekki_oni_tab`) com item container filtrado por `inventario_categoria = kekkijutsu`.
+- Expande catálogo `oni-kekkijutsus.json` de 12 para **29 técnicas** cobrindo 17 origens (Corte Palida, Tela do Submundo, Outras Terras, Transfigurado, Canibal, Eco Eterno, Chama Negra, Passado Triste, Personalidade Maligna, Rastreador de Sangue, Gênio do Mal, Adepto das Trevas, Monarca Demoníaco, Espírito Ceifador, Vampiro de Linhagem).
+- Macro **Night Assassins — Usar Kekkijutsu** (`NAKekkUse00001`): dialog de seleção, validação nível/PDK/ação, consumo de recursos, chat card com badges de rank/ação/PDK.
+- Macro **Night Assassins — Dom do Sangue** (`NABloodGift00001`): rolagem 1d100 com tabela de 20 domes demoníacos.
+- Expõe API kekkijutsu no `module.api.oni.kekkijutsu` (get, isItem, normalize, validate, buildAttack, buildUsePatch, buildPdkPatch, resetTurnState, resetSceneState, potenciacao, ids, actionTypes).
+- CSS: classes `.na-kekki-card`, `.na-kekki-badge-pdk`, `.na-kekki-badge-rank--{inicial,c,b,a,s,ss}`, `.na-kekki-badge-action`, `.na-kekki-origin`, `.na-kekki-list`, `.na-kekki-title` com temas Oni e Oni-Minion.
+- Template Oni Minion ganha campos kekkijutsu (título, técnica, custo PDK, tipo ação, dano, alcance) em painel colapsável.
+- `tools/clean-oni-template.mjs` atualizado para incluir `kekki_oni_tab` na ordenação.
+- Validação local: `node --test` com **756/756** testes aprovados.
 # Changelog
 
 ## 0.10.0 — 2026-08-20
@@ -658,3 +709,4 @@
 - Adicionado relay de GM para jogadores acumularem dano em `system.props.pdv_oni_dano_tomado` sem ownership do Actor inimigo.
 - O relay passa a iniciar automaticamente no hook `ready`; a macro standalone do GM não é mais necessária.
 - `na_roll_damage.js` consome a API pública `applyOniDamage` do módulo.
+

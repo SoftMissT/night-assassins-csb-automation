@@ -37,6 +37,13 @@ function label(key, value, color = "#FF2B4A") {
   };
 }
 
+function actionButton(key, value, script, color = "#FF2B4A") {
+  return {
+    ...label(key, value, color), style: "button", rollMessage: script,
+    rollMessageToChat: false, altRollMessage: "", altRollMessageToChat: false,
+  };
+}
+
 function panel(key, title, contents, flow = "grid-2") {
   return {
     ...base("panel", key, ""), contents, flow, align: "center", verticalAlign: "top",
@@ -61,6 +68,7 @@ const hidden = attributes.map(([key]) => ({
 }));
 for (const [key] of attributes) hidden.push({ name: `oni_minion_${key}_temp`, value: "0" });
 hidden.push(
+  { name: "acerto_label", value: "acerto_label_for" },
   { name: "oni_minion_pdv_total", value: "${fallback(oni_minion_pdv_base,0)+fallback(oni_minion_nivel,1)+fallback(oni_minion_vit_display,0)}$" },
   { name: "oni_minion_pdk_total", value: "${fallback(oni_minion_pdk_base,0)+fallback(oni_minion_fdv_display,0)}$" },
   { name: "oni_minion_pdv_atual", value: "${max(0,oni_minion_pdv_total-fallback(oni_minion_pdv_dano,0)+fallback(oni_minion_pdv_curado,0))}$" },
@@ -89,6 +97,10 @@ const template = {
           numberField("oni_minion_pdk_base", "PDK base", 2, 0),
           label("oni_minion_pdk_total_label", "PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$", "#28D7FF"),
           numberField("oni_minion_pdk_gasto", "PDK gasto", 0, 0), numberField("oni_minion_pdk_recuperado", "PDK recuperado", 0, 0),
+        ]),
+        panel("oni_minion_combat", "Combate", [
+          actionButton("oni_minion_acerto", "ACERTO", "%{await game.modules.get('night-assassins-csb-automation').api.rollHit({actorUuid:entity.uuid}); return '';}%", "#28D7FF"),
+          actionButton("oni_minion_dano", "DANO", "%{await game.modules.get('night-assassins-csb-automation').api.rollDamage({actorUuid:entity.uuid}); return '';}%", "#FF2B4A"),
         ]),
         textArea("oni_minion_resumo", "Resumo e observações"),
       ],

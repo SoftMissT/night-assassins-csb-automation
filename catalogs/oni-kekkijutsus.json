@@ -1,8 +1,30 @@
 {
   "schemaVersion": 1,
   "source": "Mecânicas para fazer na ficha/Onis/Guia de Criação de Kekkijutsu do Mestre.md e Origens de Onis.md",
-  "actionTypes": ["ataque", "especial", "movimento", "reacao", "completa", "unica", "lendaria", "covil", "vilao"],
-  "unlockLevels": [3, 5, 7, 8, 9, 11, 12, 15, 18, 19, 20],
+  "actionTypes": [
+    "ataque",
+    "especial",
+    "movimento",
+    "reacao",
+    "completa",
+    "unica",
+    "lendaria",
+    "covil",
+    "vilao"
+  ],
+  "unlockLevels": [
+    3,
+    5,
+    7,
+    8,
+    9,
+    11,
+    12,
+    15,
+    18,
+    19,
+    20
+  ],
   "techniques": [
     {
       "id": "kekki_comando_hematico",
@@ -18,7 +40,9 @@
       "testFormula": "1d20+FDV",
       "cdFormula": "10+CAR",
       "damage": [],
-      "status": ["distraido"],
+      "status": [
+        "distraido"
+      ],
       "duration": 1,
       "limit": "1x/turno",
       "narrative": "Força o sangue do alvo a hesitar dentro do próprio corpo."
@@ -36,8 +60,17 @@
       "testType": "vit",
       "testFormula": "1d20+VIT",
       "cdFormula": "CD_oni",
-      "damage": [{ "dice": "3d8", "type": "concussao", "onFail": "full", "onSuccess": "half" }],
-      "status": ["derrubado"],
+      "damage": [
+        {
+          "dice": "3d8",
+          "type": "concussao",
+          "onFail": "full",
+          "onSuccess": "half"
+        }
+      ],
+      "status": [
+        "derrubado"
+      ],
       "duration": 0,
       "limit": "1x/turno",
       "narrative": "Membro demoníaco emerge do corpo do Oni para golpear o alvo."
@@ -56,10 +89,16 @@
       "testFormula": "1d20+FDV",
       "cdFormula": "15",
       "damage": [],
-      "status": ["inconsciente"],
+      "status": [
+        "inconsciente"
+      ],
       "duration": 0,
       "limit": "1x/combate",
-      "potenciacao": { "extraPdk": 4, "rangeBonus": 3, "cdBonus": 3 },
+      "potenciacao": {
+        "extraPdk": 4,
+        "rangeBonus": 3,
+        "cdBonus": 3
+      },
       "narrative": "O Oni exala sono demoníaco em cone, derrubando alvos em sono profundo."
     },
     {
@@ -94,8 +133,17 @@
       "testType": "fdv",
       "testFormula": "1d20+FDV",
       "cdFormula": "13+INT",
-      "damage": [{ "dice": "2d8", "type": "cortante", "onFail": "full", "onSuccess": "half" }],
-      "status": ["desorientado"],
+      "damage": [
+        {
+          "dice": "2d8",
+          "type": "cortante",
+          "onFail": "full",
+          "onSuccess": "half"
+        }
+      ],
+      "status": [
+        "desorientado"
+      ],
       "duration": 1,
       "limit": "1x/cena",
       "narrative": "Triângulo de energia corta o espaço entre três pontos."
@@ -113,8 +161,17 @@
       "testType": "vit",
       "testFormula": "1d20+VIT",
       "cdFormula": "14+FOR",
-      "damage": [{ "dice": "1d10", "type": "concussao", "onFail": "full", "onSuccess": "half" }],
-      "status": ["puxado_adjacente"],
+      "damage": [
+        {
+          "dice": "1d10",
+          "type": "concussao",
+          "onFail": "full",
+          "onSuccess": "half"
+        }
+      ],
+      "status": [
+        "puxado_adjacente"
+      ],
       "duration": 0,
       "limit": "1x/turno",
       "narrative": "Braços demoníacos se estendem para agarrar e puxar o alvo."
@@ -132,11 +189,23 @@
       "testType": "none",
       "testFormula": "",
       "cdFormula": "",
-      "damage": [{ "dice": "1d4", "type": "perfurante", "onFail": "full", "onSuccess": "full" }],
+      "damage": [
+        {
+          "dice": "1d4",
+          "type": "perfurante",
+          "onFail": "full",
+          "onSuccess": "full"
+        }
+      ],
       "status": [],
       "duration": 0,
       "limit": "1x/turno",
-      "evolves": { "atLevel": 9, "dice": "1d6", "addsStatus": "sangramento", "statusDuration": 1 },
+      "evolves": {
+        "atLevel": 9,
+        "dice": "1d6",
+        "addsStatus": "sangramento",
+        "statusDuration": 1
+      },
       "narrative": "Espinhos de carne perfuram quem atinge o Oni corpo a corpo."
     },
     {
@@ -153,7 +222,9 @@
       "testFormula": "",
       "cdFormula": "",
       "damage": [],
-      "status": ["forma_caotica"],
+      "status": [
+        "forma_caotica"
+      ],
       "duration": 2,
       "limit": "1x/combate",
       "narrative": "Corpo se reconfigura; 25% de chance de reduzir dano recebido pela metade."
@@ -172,7 +243,9 @@
       "testFormula": "",
       "cdFormula": "",
       "damage": [],
-      "status": ["mutacao"],
+      "status": [
+        "mutacao"
+      ],
       "duration": 1,
       "limit": "1x/turno",
       "narrative": "Manifesta mutação roubada de Oni devorado: braços elásticos, carapaça, glândulas ou membros extras."
@@ -190,8 +263,18 @@
       "testType": "fdv",
       "testFormula": "1d20+FDV",
       "cdFormula": "13+FDV",
-      "damage": [{ "dice": "2d8", "type": "mental", "onFail": "full", "onSuccess": "half" }],
-      "status": ["ecos_residuais", "desorientado"],
+      "damage": [
+        {
+          "dice": "2d8",
+          "type": "mental",
+          "onFail": "full",
+          "onSuccess": "half"
+        }
+      ],
+      "status": [
+        "ecos_residuais",
+        "desorientado"
+      ],
       "duration": 2,
       "limit": "1x/turno",
       "narrative": "Vozes dos mortos atingem a mente de todos no cone."
@@ -209,8 +292,17 @@
       "testType": "vit",
       "testFormula": "1d20+VIT",
       "cdFormula": "12+FOR",
-      "damage": [{ "dice": "2d8", "type": "fogo", "onFail": "full", "onSuccess": "half" }],
-      "status": ["cicatriz_negra"],
+      "damage": [
+        {
+          "dice": "2d8",
+          "type": "fogo",
+          "onFail": "full",
+          "onSuccess": "half"
+        }
+      ],
+      "status": [
+        "cicatriz_negra"
+      ],
       "duration": 3,
       "limit": "1x/turno",
       "narrative": "Cinza negra queima inimigos em cone; reduz cura em 50% enquanto Cicatriz Negra ativa."
@@ -228,11 +320,465 @@
       "testType": "vit",
       "testFormula": "1d20+VIT",
       "cdFormula": "14+FDV",
-      "damage": [{ "dice": "3d8", "type": "fogo", "onFail": "full", "onSuccess": "half" }],
-      "status": ["preso"],
+      "damage": [
+        {
+          "dice": "3d8",
+          "type": "fogo",
+          "onFail": "full",
+          "onSuccess": "half"
+        }
+      ],
+      "status": [
+        "preso"
+      ],
       "duration": 2,
       "limit": "1x/turno",
       "narrative": "Coluna de fogo demoníaco prende inimigos; dano contínuo para quem entrar/permanecer."
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 7,
+      "cdFormula": "13+CAR",
+      "damage": [
+        {
+          "type": "cortante",
+          "onSuccess": "half",
+          "dice": "2d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+DEX",
+      "range": 9,
+      "status": [
+        "sangramento"
+      ],
+      "id": "kekki_laminas_sangue",
+      "duration": 2,
+      "name": "Lâminas de Sangue",
+      "pdkCost": 4,
+      "action": "ataque",
+      "narrative": "Lâminas de sangue solidificado são projetadas contra o alvo.",
+      "rank": "C",
+      "origin": "corte_palida",
+      "testType": "dex"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "cone 12m",
+      "unlockLevel": 3,
+      "cdFormula": "12+CAR",
+      "damage": [
+        {
+          "type": "mental",
+          "onSuccess": "half",
+          "dice": "1d8",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+CAR",
+      "range": 12,
+      "status": [
+        "desmoralizado"
+      ],
+      "id": "kekki_lamento_abismal",
+      "duration": 2,
+      "name": "Lamento Abismal",
+      "pdkCost": 4,
+      "action": "especial",
+      "narrative": "Choro demoníaco corrompe a vontade de todos que ouvem.",
+      "rank": "inicial",
+      "origin": "passado_triste",
+      "testType": "car"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "multiplas linhas 6m",
+      "unlockLevel": 9,
+      "cdFormula": "14+FDV",
+      "damage": [
+        {
+          "type": "concussao",
+          "onSuccess": "half",
+          "dice": "2d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+CAR",
+      "range": 6,
+      "status": [
+        "agarrado"
+      ],
+      "id": "kekki_tentaculos_desespero",
+      "duration": 1,
+      "name": "Tentáculos do Desespero",
+      "pdkCost": 5,
+      "action": "ataque",
+      "narrative": "Extensões etéreas do sofrimento prendem múltiplos alvos.",
+      "rank": "B",
+      "origin": "passado_triste",
+      "testType": "car"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 3,
+      "cdFormula": "12+INT",
+      "damage": [
+        {
+          "type": "necrotico",
+          "onSuccess": "half",
+          "dice": "1d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+CAR",
+      "range": 1.5,
+      "status": [
+        "enfraquecido"
+      ],
+      "id": "kekki_toque_corruptor",
+      "duration": 3,
+      "name": "Toque Corruptor",
+      "pdkCost": 3,
+      "action": "ataque",
+      "narrative": "Toque que drena a energia vital do alvo.",
+      "rank": "inicial",
+      "origin": "personalidade_maligna",
+      "testType": "car"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 7,
+      "cdFormula": "13+INT",
+      "damage": [],
+      "testFormula": "1d20+CAR",
+      "range": 9,
+      "status": [
+        "amedrontado",
+        "desorientado"
+      ],
+      "id": "kekki_sussurro_maldizente",
+      "duration": 2,
+      "name": "Sussurro Maldizente",
+      "pdkCost": 4,
+      "action": "especial",
+      "narrative": "Palavras venenosas corroem a sanidade do alvo.",
+      "rank": "C",
+      "origin": "personalidade_maligna",
+      "testType": "car"
+    },
+    {
+      "limit": "1x/cena",
+      "target": "si mesmo",
+      "unlockLevel": 3,
+      "cdFormula": "",
+      "damage": [],
+      "testFormula": "",
+      "range": 0,
+      "status": [
+        "rastreamento_sangue"
+      ],
+      "id": "kekki_rastreador_hematico",
+      "duration": 10,
+      "name": "Rastreador Hemático",
+      "pdkCost": 2,
+      "action": "especial",
+      "narrative": "Sentidos ampliados detectam qualquer ser sanguíneo em 30m.",
+      "rank": "inicial",
+      "origin": "rastreador_de_sangue",
+      "testType": "none"
+    },
+    {
+      "potenciacao": {
+        "extraPdk": 2,
+        "rangeBonus": 0,
+        "cdBonus": 2
+      },
+      "target": "unico",
+      "testType": "for",
+      "range": 1.5,
+      "origin": "rastreador_de_sangue",
+      "rank": "C",
+      "limit": "1x/turno",
+      "status": [
+        "sangramento"
+      ],
+      "pdkCost": 4,
+      "cdFormula": "13+VIT",
+      "duration": 2,
+      "damage": [
+        {
+          "type": "perfurante",
+          "onSuccess": "half",
+          "dice": "2d6",
+          "onFail": "full"
+        }
+      ],
+      "id": "kekki_mordida_vampirica",
+      "name": "Mordida Vampírica",
+      "action": "ataque",
+      "unlockLevel": 7,
+      "testFormula": "1d20+FOR",
+      "narrative": "Mordida que suga sangue e restaura parte do PDK gasto."
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 3,
+      "cdFormula": "13+INT",
+      "damage": [
+        {
+          "type": "mental",
+          "onSuccess": "half",
+          "dice": "1d8",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+INT",
+      "range": 12,
+      "status": [
+        "confuso"
+      ],
+      "id": "kekki_teia_mental",
+      "duration": 2,
+      "name": "Teia Mental",
+      "pdkCost": 4,
+      "action": "especial",
+      "narrative": "Rede de pensamentos corrompidos confunde o alvo.",
+      "rank": "inicial",
+      "origin": "genio_do_mal",
+      "testType": "int"
+    },
+    {
+      "limit": "1x/combate",
+      "target": "si mesmo",
+      "unlockLevel": 9,
+      "cdFormula": "",
+      "damage": [],
+      "testFormula": "",
+      "range": 0,
+      "status": [
+        "analise_tatica"
+      ],
+      "id": "kekki_calculadora_mortifera",
+      "duration": 3,
+      "name": "Calculadora Mortífera",
+      "pdkCost": 5,
+      "action": "especial",
+      "narrative": "Mente calcula todas as variáveis; próximo ataque ignora metade da defesa.",
+      "rank": "B",
+      "origin": "genio_do_mal",
+      "testType": "none"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "si mesmo",
+      "unlockLevel": 3,
+      "cdFormula": "",
+      "damage": [],
+      "testFormula": "",
+      "range": 0,
+      "status": [
+        "invisivel_parcial"
+      ],
+      "id": "kekki_manto_tenebroso",
+      "duration": 1,
+      "name": "Manto Tenebroso",
+      "pdkCost": 2,
+      "action": "reacao",
+      "narrative": "Sombras envolvem o Oni, concedendo invisibilidade parcial.",
+      "rank": "inicial",
+      "origin": "adepto_das_trevas",
+      "testType": "none"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 7,
+      "cdFormula": "13+FDV",
+      "damage": [
+        {
+          "type": "necrotico",
+          "onSuccess": "half",
+          "dice": "2d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+FDV",
+      "range": 6,
+      "status": [
+        "enfraquecido"
+      ],
+      "id": "kekki_drenagem_tenebrosa",
+      "duration": 3,
+      "name": "Drenagem Tenebrosa",
+      "pdkCost": 5,
+      "action": "ataque",
+      "narrative": "Trevas consomem a energia vital do alvo.",
+      "rank": "C",
+      "origin": "adepto_das_trevas",
+      "testType": "fdv"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 5,
+      "cdFormula": "14+FDV",
+      "damage": [],
+      "testFormula": "1d20+CAR",
+      "range": 15,
+      "status": [
+        "submisso"
+      ],
+      "id": "kekki_decreto_absoluto",
+      "duration": 1,
+      "name": "Decreto Absoluto",
+      "pdkCost": 5,
+      "action": "especial",
+      "narrative": "Vontade do monarca subjuga um subordinado.",
+      "rank": "inicial",
+      "origin": "monarca_demoniaco",
+      "testType": "car"
+    },
+    {
+      "limit": "1x/cena",
+      "target": "area 15m",
+      "unlockLevel": 12,
+      "cdFormula": "15+FDV",
+      "damage": [
+        {
+          "type": "concussao",
+          "onSuccess": "half",
+          "dice": "3d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+CAR",
+      "range": 0,
+      "status": [
+        "amedrontado"
+      ],
+      "id": "kekki_exercito_sombrio",
+      "duration": 3,
+      "name": "Exército Sombrio",
+      "pdkCost": 8,
+      "action": "completa",
+      "narrative": "Sombras ganham forma e atacam todos os inimigos na área.",
+      "rank": "A",
+      "origin": "monarca_demoniaco",
+      "testType": "car"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 3,
+      "cdFormula": "12+DEX",
+      "damage": [
+        {
+          "type": "cortante",
+          "onSuccess": "half",
+          "dice": "2d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+DEX",
+      "range": 3,
+      "status": [],
+      "id": "kekki_foice_eterea",
+      "duration": 0,
+      "name": "Foice Etérea",
+      "pdkCost": 3,
+      "action": "ataque",
+      "narrative": "Foice de energia espiritual corta a alma do alvo.",
+      "rank": "inicial",
+      "origin": "espirito_ceifador",
+      "testType": "dex"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "cone 6m",
+      "unlockLevel": 9,
+      "cdFormula": "14+DEX",
+      "damage": [
+        {
+          "type": "cortante",
+          "onSuccess": "half",
+          "dice": "2d8",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+DEX",
+      "range": 6,
+      "status": [
+        "sangramento"
+      ],
+      "id": "kekki_ceifa_coletiva",
+      "duration": 2,
+      "name": "Ceifa Coletiva",
+      "pdkCost": 6,
+      "action": "especial",
+      "narrative": "Múltiplas foices ceifam tudo em cone.",
+      "rank": "B",
+      "origin": "espirito_ceifador",
+      "testType": "dex"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "unico",
+      "unlockLevel": 3,
+      "cdFormula": "12+VIT",
+      "damage": [
+        {
+          "type": "perfurante",
+          "onSuccess": "half",
+          "dice": "1d8",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+FOR",
+      "range": 1.5,
+      "status": [
+        "sangramento"
+      ],
+      "id": "kekki_sangue_cervo",
+      "duration": 2,
+      "name": "Sangue Cervo",
+      "pdkCost": 3,
+      "action": "ataque",
+      "narrative": "Presas perfuram e sugam sangue do alvo.",
+      "rank": "inicial",
+      "origin": "vampiro_de_linhagem",
+      "testType": "for"
+    },
+    {
+      "limit": "1x/turno",
+      "target": "cone 6m",
+      "unlockLevel": 7,
+      "cdFormula": "13+DEX",
+      "damage": [
+        {
+          "type": "sonico",
+          "onSuccess": "half",
+          "dice": "1d6",
+          "onFail": "full"
+        }
+      ],
+      "testFormula": "1d20+DEX",
+      "range": 6,
+      "status": [
+        "atordoado"
+      ],
+      "id": "kekki_batida_sonica",
+      "duration": 1,
+      "name": "Batida Sônica",
+      "pdkCost": 4,
+      "action": "ataque",
+      "narrative": "Ondas de choque dos asas atordoam inimigos.",
+      "rank": "C",
+      "origin": "vampiro_de_linhagem",
+      "testType": "dex"
     }
   ]
 }

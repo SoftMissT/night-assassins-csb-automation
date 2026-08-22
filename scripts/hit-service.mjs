@@ -15,6 +15,7 @@ import { consumeMistPending, mistStatePatch, parseMistBreathingState } from "./m
 import { metalStatePatch, parseMetalBreathingState, registerMetalBattleHit } from "./metal-breathing-service.mjs";
 import { consumeSnowPending, parseSnowBreathingState, resolveSnowFreezeGain, snowRestrictionFlag, snowStatePatch, spendFreezeForRestriction } from "./snow-breathing-service.mjs";
 import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
+import { actorKind } from "./actor-kind.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -170,6 +171,7 @@ export async function rollHit(options) {
   }
 
   const props = actor.system?.props ?? {};
+  const kind = actorKind(actor);
   const magnetismSource = [...(game.combat?.combatants ?? [])]
     .map((combatant) => combatant.actor)
     .find((candidate) => {
@@ -184,21 +186,23 @@ export async function rollHit(options) {
       return;
     }
   }
-  const acertoLabel = props.acerto_label ?? "";
+  const acertoLabel = props.acerto_label ?? (kind === "oni_minion" ? "acerto_label_for" : "");
 
   let attrName = "";
   let attrVal = 0;
   let color = "";
 
   if (acertoLabel === "acerto_label_dex") {
-    if (!Object.prototype.hasOwnProperty.call(props, "dex_display")) return ui.notifications?.error?.("A ficha não possui a key dex_display.");
+    const key = kind === "oni_minion" ? "oni_minion_dex_display" : "dex_display";
+    if (!Object.prototype.hasOwnProperty.call(props, key)) return ui.notifications?.error?.(`A ficha não possui a key ${key}.`);
     attrName = "DEX";
-    attrVal = parseAttributeValue(props.dex_display);
+    attrVal = parseAttributeValue(props[key]);
     color = "#28D7FF";
   } else if (acertoLabel === "acerto_label_for") {
-    if (!Object.prototype.hasOwnProperty.call(props, "for_display")) return ui.notifications?.error?.("A ficha não possui a key for_display.");
+    const key = kind === "oni_minion" ? "oni_minion_for_display" : "for_display";
+    if (!Object.prototype.hasOwnProperty.call(props, key)) return ui.notifications?.error?.(`A ficha não possui a key ${key}.`);
     attrName = "FOR";
-    attrVal = parseAttributeValue(props.for_display);
+    attrVal = parseAttributeValue(props[key]);
     color = "#C1000C";
   } else {
     ui.notifications?.warn?.("Escolha DEX ou FOR no campo 'Como Acerta'.");
@@ -210,7 +214,7 @@ export async function rollHit(options) {
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática neste Acerto.");
 
   const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
-  const strength = parseAttributeValue(props.for_display);
+  const strength = parseAttributeValue(props[kind === "oni_minion" ? "oni_minion_for_display" : "for_display"]);
   const weapons = actorWeapons(actor).map((weapon) => ({
     ...weapon,
     effectiveCritical: effectiveWeaponCritical({ base: weapon.critical, state: passiveState, weaponId: weapon.id, strength }),
@@ -232,11 +236,13 @@ export async function rollHit(options) {
   const snowPenalty = actor.getFlag?.(MODULE_ID, "snowPenalty");
   const stonePenalty = actor.getFlag?.(MODULE_ID, "stoneReflectionPenalty");
   const flameTier = flameWeaponTier(flameState.weaponHeat);
-  const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0)
+  const stateBreathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0)
     + (Number(stoneHit?.bonus) || 0) + (Number(mistHit?.bonus) || 0)
     + (Number(snowHit?.bonus) || 0) + (Number(snowState.belowZero?.fdvHitBonus) || 0)
     + (Number(snowState.iceHeart?.hitBonus) || 0) + (Number(mistState.fog?.bonus) || 0) + (Number(mistState.dazzle?.hitBonus) || 0)
     + (Number(snowPenalty?.hitPenalty) || 0) + (Number(stonePenalty?.value) || 0) + flameTier.hit;
+  const projectedBreathBonus = parseAttributeValue(props.resp_bonus_acerto_temp) + parseAttributeValue(props.resp_chamas_bonus_acerto);
+  const breathBonus = stateBreathBonus + projectedBreathBonus;
   if (stonePenalty?.sourceState) {
     const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
     if (canonical !== Number(stonePenalty.value)) ui.notifications?.warn?.("Penalidade da Reflexão da Pedra foi normalizada.");

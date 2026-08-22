@@ -9,6 +9,69 @@
   width: 100%;
 }
 
+/* Identidade visual por espécie. Mantém o chrome base e troca somente tokens. */
+.na-sheet.na-sheet--oni,
+.na-sheet--oni .na-sheet {
+  --na-accent: #e11d48;
+  --na-accent-soft: rgba(225, 29, 72, 0.22);
+  --na-panel-border: rgba(239, 68, 68, 0.42);
+  --na-resource-secondary: #c026d3;
+}
+
+.na-sheet.na-sheet--oni-minion,
+.na-sheet--oni-minion .na-sheet {
+  --na-accent: #fb3b54;
+  --na-accent-soft: rgba(251, 59, 84, 0.2);
+  --na-panel-border: rgba(251, 59, 84, 0.38);
+  --na-resource-secondary: #a855f7;
+  font-size: 0.94rem;
+}
+
+.na-sheet--oni .custom-system-builder-component-contents,
+.na-sheet--oni-minion .custom-system-builder-component-contents {
+  border-color: var(--na-panel-border, rgba(239, 68, 68, 0.42));
+}
+
+/* Slayer — tokens */
+.na-sheet.na-sheet--slayer,
+.na-sheet--slayer .na-sheet {
+  --na-accent: #28D7FF;
+  --na-accent-soft: rgba(40, 215, 255, 0.18);
+  --na-panel-border: rgba(40, 215, 255, 0.35);
+  --na-resource-secondary: #36D67A;
+}
+
+.na-sheet--slayer .custom-system-builder-component-contents {
+  border-color: var(--na-panel-border, rgba(40, 215, 255, 0.35));
+}
+
+/* Identidade visual — gradiente sutil no topo do sheet */
+.na-sheet--oni .window-content,
+.na-sheet--oni-minion .window-content {
+  background: linear-gradient(180deg, rgba(225, 29, 72, 0.06) 0%, transparent 30%);
+}
+
+.na-sheet--slayer .window-content {
+  background: linear-gradient(180deg, rgba(40, 215, 255, 0.05) 0%, transparent 30%);
+}
+
+/* Borda de header do sheet por espécie */
+.na-sheet--oni > .window-header,
+.na-sheet--oni-minion > .window-header {
+  border-bottom: 2px solid var(--na-accent, #e11d48);
+}
+
+.na-sheet--slayer > .window-header {
+  border-bottom: 2px solid var(--na-accent, #28D7FF);
+}
+
+/* Painéis — header com accent suave */
+.na-sheet--oni .custom-system-builder-component-header,
+.na-sheet--oni-minion .custom-system-builder-component-header,
+.na-sheet--slayer .custom-system-builder-component-header {
+  border-bottom: 1px solid var(--na-accent-soft, transparent);
+}
+
 .na-csb-automation .na-label {
   font-weight: 700;
   font-size: 11px;
@@ -1342,4 +1405,167 @@
     transition: none;
   }
   .na-sheet button:hover { transform: none; }
+}
+
+/* Breathing Distinction Visual */
+.na-breathing-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--na-line);
+  border-radius: 4px;
+  background: rgba(0, 217, 255, 0.03);
+}
+.na-breathing-summary .field-label {
+  font-family: var(--na-font-display);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--na-gold-dim);
+}
+.na-breathing-summary .field-value {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--na-gm-cyan);
+}
+.na-breathing--ativa {
+  border-color: var(--na-gm-cyan) !important;
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.3), inset 0 0 6px rgba(0, 217, 255, 0.08);
+}
+.na-breathing--constante {
+  border-color: #c49bff !important;
+  box-shadow: 0 0 8px rgba(196, 155, 255, 0.3), inset 0 0 6px rgba(196, 155, 255, 0.08);
+}
+.na-breathing--ofegante {
+  border-color: var(--na-gm-red) !important;
+  box-shadow: 0 0 6px rgba(255, 43, 74, 0.25);
+  opacity: 0.75;
+}
+.na-breathing-form--ativa { border-left: 3px solid var(--na-gm-cyan); padding-left: 6px; }
+.na-breathing-form--passiva { border-left: 3px solid #c49bff; padding-left: 6px; }
+.na-breathing-ofegante-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: rgba(255, 43, 74, 0.15);
+  border: 1px solid var(--na-gm-red);
+  border-radius: 3px;
+  color: var(--na-gm-red);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.na-breathing-rounds-left {
+  color: var(--na-gm-gold);
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* ============================================
+   KEKKIJUTSU STYLES
+   ============================================ */
+
+/* Kekkijutsu card in Oni sheet */
+.na-kekki-card {
+  border: 1px solid rgba(255, 43, 74, 0.3);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: rgba(255, 43, 74, 0.04);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.na-kekki-card:hover {
+  border-color: var(--na-accent, #e11d48);
+  box-shadow: 0 0 8px rgba(255, 43, 74, 0.2);
+}
+
+/* Kekkijutsu list container */
+.na-kekki-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* PDK cost badge */
+.na-kekki-badge-pdk {
+  display: inline-block;
+  padding: 1px 6px;
+  background: rgba(192, 38, 211, 0.15);
+  border: 1px solid #c026d3;
+  border-radius: 3px;
+  color: #c026d3;
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Rank badge - color by rank */
+.na-kekki-badge-rank {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-left: 4px;
+}
+.na-kekki-badge-rank--inicial { background: rgba(156,163,175,0.2); border: 1px solid #9ca3af; color: #9ca3af; }
+.na-kekki-badge-rank--c { background: rgba(34,197,94,0.15); border: 1px solid #22c55e; color: #22c55e; }
+.na-kekki-badge-rank--b { background: rgba(59,130,246,0.15); border: 1px solid #3b82f6; color: #3b82f6; }
+.na-kekki-badge-rank--a { background: rgba(249,115,22,0.15); border: 1px solid #f97316; color: #f97316; }
+.na-kekki-badge-rank--s { background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #ef4444; }
+.na-kekki-badge-rank--ss { background: rgba(255,215,0,0.15); border: 1px solid #ffd700; color: #ffd700; }
+
+/* Action type badge */
+.na-kekki-badge-action {
+  display: inline-block;
+  padding: 1px 5px;
+  background: rgba(225,29,72,0.12);
+  border: 1px solid rgba(225,29,72,0.4);
+  border-radius: 3px;
+  color: #fb7185;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Origin indicator */
+.na-kekki-origin {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: 9px;
+  color: var(--na-gm-cyan, #00d9ff);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+/* Kekkijutsu title in sheet */
+.na-kekki-title {
+  font-family: var(--na-font-display, "Orbitron", sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--na-accent, #e11d48);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(225,29,72,0.3);
+}
+
+/* Oni-Minion variant */
+.sheet--oni-minion .na-kekki-card {
+  border-color: rgba(251, 59, 84, 0.3);
+  background: rgba(251, 59, 84, 0.04);
+}
+.sheet--oni-minion .na-kekki-card:hover {
+  border-color: #fb3b54;
+  box-shadow: 0 0 8px rgba(251, 59, 84, 0.2);
 }

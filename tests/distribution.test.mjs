@@ -24,7 +24,7 @@ describe("module distribution", () => {
 
   it("cataloga todo asset de icons/ no Compêndio de Arte", async () => {
     const { readdir } = await import("node:fs/promises");
-    const icons = (await readdir(new URL("../assets/icons", import.meta.url))).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file));
+    const icons = (await readdir(new URL("../assets/icons", import.meta.url), { recursive: true })).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file));
     assert.ok(icons.length > 0, "assets/icons deve conter ao menos um ícone");
 
     for (const file of icons) {

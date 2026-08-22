@@ -27,17 +27,27 @@ import { executeInterludeActivity, openInterludeManager } from "./interlude-serv
 import { createCombatContext, validateCombatContext } from "./core/combat-context.mjs";
 import { createActorTransaction } from "./core/actor-transaction.mjs";
 import { normalizeTechniqueDefinition, splitDamageTotal, validateTechniqueDefinition } from "./core/technique-definition.mjs";
-import { repairSlayerWeaponItems } from "./weapon-migration.mjs";
+import { repairSlayerWeaponItems } from "./weapon-migration.mjs";`nimport { getKekkijutsu, isKekkijutsuItem, normalizeKekkijutsu, validateKekkijutsuUse, buildKekkijutsuAttack, buildKekkijutsuUsePatch, buildKekkijutsuPdkPatch, resetKekkijutsuTurnState, resetKekkijutsuSceneState, kekkijutsuPotenciacao, KEKKIJUTSU_IDS, KEKKIJUTSU_ACTION_TYPES } from "./oni/kekkijutsu-service.mjs";
+import { resolveKekkijutsuCD, resolveResistanceType, validateActionByScale, validateScaleLimits, auditKekkijutsuCost, getSpecialDamageRule, resolveWoundBonus, canHaveDomain, canUseRegeneration, resolveKekkijutsuUse } from "./oni/kekkijutsu-engine.mjs";
+import { ONI_SCALES, SCALE_LABELS, SCALE_CD_BONUS, FERIDAS_DOMINANTES, FERIDA_LABELS, KEKKIJUTSU_FUNCTIONS, FUNCAO_LABELS, ACTION_TYPES, ACTIONS_BY_SCALE, SPECIAL_DAMAGE_RULES, RESISTANCE_MAP, WOUND_ATTRIBUTE_MAP, REGEN_ACTIVATION } from "./oni/kekkijutsu-cost-tables.mjs";
+import { consumeOniActions } from "./oni-action-service.mjs";
 import { repairBreathingItems } from "./breath-migration.mjs";
 import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./items/item-technique-normalizers.mjs";
 import * as slayerProgression from "./slayer/progression-service.mjs";
 import * as slayerOrigins from "./slayer/origin-contracts.mjs";
 import * as slayerClasses from "./slayer/class-contracts.mjs";
 import * as slayerAdvancedStates from "./slayer/advanced-states.mjs";
+import { awakenMark, activateMark, finishMark, markStatus, maxActivationPower, allowedScarAttributes, attributeLabel, isMarkAwakened, isMarkActive } from "./slayer/hunter-mark-service.mjs";
 import * as oniProgression from "./oni/progression-service.mjs";
+import { actorKind } from "./actor-kind.mjs";
+import { registerPhoneChatSettings, PHONE_CHAT_SETTINGS } from "./phone-chat/phone-chat-settings.mjs";
+import { registerPhoneChatRelay, sendMessage, requestSync } from "./phone-chat/phone-chat-relay.mjs";
+import { attachPhoneChatHeaderButton, openPhoneChat } from "./phone-chat/phone-chat-app.mjs";
+import { promptContactManager, promptConversationManager, promptGlobalSettings } from "./phone-chat/phone-chat-admin.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
+  registerPhoneChatSettings();
 });
 
 /**
@@ -50,6 +60,7 @@ function tagNightAssassinsSheet(app, html) {
   const actor = app?.actor;
   if (!actor?.system?.props) return;
   const props = actor.system.props;
+  const kind = actorKind(actor);
   const isNa =
     props.nome_slayer !== undefined ||
     props.nome_oni !== undefined ||
@@ -57,7 +68,8 @@ function tagNightAssassinsSheet(app, html) {
     props.pdv_slayer_total_conta !== undefined ||
     props.pdv_oni_total_conta !== undefined ||
     props.estados_slayer_dados !== undefined ||
-    props.vida_morte_slayer_dados !== undefined;
+    props.vida_morte_slayer_dados !== undefined ||
+    props.oni_minion_nome !== undefined;
   if (!isNa) return;
 
   const root = html?.[0] ?? html;
@@ -65,6 +77,11 @@ function tagNightAssassinsSheet(app, html) {
   const appEl = app?.element instanceof HTMLElement ? app.element : el?.closest?.(".app, .application") ?? el;
   appEl?.classList?.add("na-sheet");
   el?.classList?.add("na-sheet");
+  for (const target of [appEl, el]) {
+    target?.classList?.toggle("na-sheet--slayer", kind === "slayer");
+    target?.classList?.toggle("na-sheet--oni", kind === "oni");
+    target?.classList?.toggle("na-sheet--oni-minion", kind === "oni_minion");
+  }
 }
 
 Hooks.once("ready", () => {
@@ -90,6 +107,15 @@ Hooks.once("ready", () => {
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableDamageRelay)) {
     registerDamageRelay();
+  }
+
+  if (game.settings.get(MODULE_ID, PHONE_CHAT_SETTINGS.enable)) {
+    registerPhoneChatRelay();
+    Hooks.on("renderActorSheet", attachPhoneChatHeaderButton);
+    Hooks.on("renderActorSheetV2", attachPhoneChatHeaderButton);
+    Hooks.on("renderApplicationV2", (app, element) => {
+      if (app?.actor) attachPhoneChatHeaderButton(app, element);
+    });
   }
 
   if (game.user.isGM) {
@@ -172,9 +198,64 @@ reloadWeaponItem,
         classes: slayerClasses,
         advancedStates: slayerAdvancedStates,
         openAdvancedStatesManager,
+        openHunterMarkManager,
+        awakenMark,
+        activateMark,
+        finishMark,
+        markStatus,
+        maxActivationPower,
+        allowedScarAttributes,
+        attributeLabel,
+        isMarkAwakened,
+        isMarkActive,
       },
       oni: {
         progression: oniProgression,
+        kekkijutsu: {
+          getKekkijutsu,
+          isKekkijutsuItem,
+          normalizeKekkijutsu,
+          validateKekkijutsuUse,
+          buildKekkijutsuAttack,
+          buildKekkijutsuUsePatch,
+          buildKekkijutsuPdkPatch,
+          resetKekkijutsuTurnState,
+          resetKekkijutsuSceneState,
+          kekkijutsuPotenciacao,
+          resolveKekkijutsuCD,
+          resolveResistanceType,
+          validateActionByScale,
+          validateScaleLimits,
+          auditKekkijutsuCost,
+          getSpecialDamageRule,
+          resolveWoundBonus,
+          canHaveDomain,
+          canUseRegeneration,
+          resolveKekkijutsuUse,
+          KEKKIJUTSU_IDS,
+          KEKKIJUTSU_ACTION_TYPES,
+          ONI_SCALES,
+          SCALE_LABELS,
+          SCALE_CD_BONUS,
+          FERIDAS_DOMINANTES,
+          FERIDA_LABELS,
+          KEKKIJUTSU_FUNCTIONS,
+          FUNCAO_LABELS,
+          ACTION_TYPES,
+          ACTIONS_BY_SCALE,
+          SPECIAL_DAMAGE_RULES,
+          RESISTANCE_MAP,
+          WOUND_ATTRIBUTE_MAP,
+          REGEN_ACTIVATION,
+        },
+      },
+      openPhoneChat,
+      phoneChat: {
+        send: sendMessage,
+        requestSync,
+        openSettings: promptGlobalSettings,
+        newContact: promptContactManager,
+        newConversation: promptConversationManager,
       },
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
@@ -228,3 +309,4 @@ function diagnoseActor(actor) {
     latest: latestValues(props, level || 1),
   };
 }
+

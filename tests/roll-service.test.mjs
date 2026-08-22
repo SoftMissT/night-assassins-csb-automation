@@ -101,4 +101,30 @@ describe("roll-service", () => {
     await rollTest({ actor, test: "Bloqueio", attr: "FOR" });
     assert.equal(confirmations, 1);
   });
+
+  it("aplica bônus projetado de Bloqueio mesmo com bônus de Névoa ativo (RSP-CT-018)", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    const fogState = JSON.stringify({ fog: { bonus: 2 } });
+    const actor = makeActor({
+      props: {
+        for_display: "4",
+        resp_nevoa_estado: fogState,
+        resp_bonus_bloqueio_temp: 1,
+      },
+    });
+    await rollTest({ actor, test: "Bloqueio", attr: "FOR" });
+    assert.match(_formula, /\+ 4 \+ 3$/);
+  });
+
+  it("bônus projetado de Esquiva não vaza para Bloqueio (RSP-CT-019)", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    const actor = makeActor({
+      props: {
+        for_display: "4",
+        resp_bonus_esquiva_temp: 3,
+      },
+    });
+    await rollTest({ actor, test: "Bloqueio", attr: "FOR" });
+    assert.match(_formula, /\+ 4$/);
+  });
 });

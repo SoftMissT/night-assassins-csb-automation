@@ -10,6 +10,11 @@ const outputDirectory = path.join(root, "build", "compendium", "artes");
 const MODULE_ID = "night-assassins-csb-automation";
 
 const labels = Object.freeze({
+  Night_Assassins_Attributes_By_Level_icon: "Ícone — Atributos por Nível",
+  Night_Assassins_Breathing_Form_icon: "Ícone — Forma de Respiração",
+  Night_Assassins_Gerenciar_Acoes_icon: "Ícone — Gerenciar Ações",
+  Night_Assassins_GM_Control_icon: "Ícone — Controle do GM",
+  Night_Assassins_Slayer_Weapon_icon: "Ícone — Arma do Slayer",
   resp_agua: "Ícone — Respiração da Água",
   resp_amor: "Ícone — Respiração do Amor",
   resp_flor: "Ícone — Respiração da Flor",

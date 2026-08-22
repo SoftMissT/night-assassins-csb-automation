@@ -264,3 +264,67 @@ export function weaponActorSummary(actorProps = {}) {
     fdv: parseAttributeValue(actorProps.fdv_display),
   };
 }
+
+/**
+ * Check if the weapon has enough ammunition for an attack.
+ * @param {object} itemProps
+ * @param {object} profile - attack profile with ataques count
+ * @returns {{ ok: boolean, reason?: string, current: number|null, required: number }}
+ */
+export function checkAmmoAvailable(itemProps = {}, profile = {}) {
+  const state = weaponAmmoState(itemProps, profile);
+  if (!state.required) return { ok: true, current: null, required: 0 };
+  const needed = state.shots;
+  if (state.current === null || state.current < needed) {
+    return {
+      ok: false,
+      reason: `Munição insuficiente: ${state.current ?? 0}/${state.capacity} (necessário: ${needed})`,
+      current: state.current,
+      required: needed,
+    };
+  }
+  return { ok: true, current: state.current, required: needed };
+}
+
+/**
+ * Check if the weapon requires an adapter and if it's installed.
+ * @param {object} itemProps
+ * @returns {{ required: boolean, installed: boolean, pending: boolean }}
+ */
+export function checkAdapterStatus(itemProps = {}) {
+  const required = Number(itemProps.arma_adapter_necessario) === 1;
+  const installed = Number(itemProps.arma_adapter_instalado) === 1;
+  return { required, installed, pending: required && !installed };
+}
+
+/**
+ * Build a patch to consume ammunition after an attack.
+ * @param {object} itemProps
+ * @param {object} profile
+ * @returns {object|null} patch or null if no ammo system
+ */
+export function consumeAmmoPatch(itemProps = {}, profile = {}) {
+  const state = weaponAmmoState(itemProps, profile);
+  if (!state.required || state.current === null) return null;
+  const remaining = Math.max(0, state.current - state.shots);
+  return weaponAmmoPatch(itemProps, remaining);
+}
+
+/**
+ * Get a summary of the weapon's inline state for display.
+ * @param {object} itemProps
+ * @param {object} actorProps
+ * @returns {object}
+ */
+export function getWeaponInlineState(itemProps = {}, actorProps = {}) {
+  const rank = slayerWeaponRank(actorProps);
+  const ammo = weaponAmmoState(itemProps, { ataques: 1 });
+  const adapter = checkAdapterStatus(itemProps);
+  return {
+    rank,
+    ammoCurrent: ammo.current,
+    ammoCapacity: ammo.capacity,
+    ammoRequired: ammo.required,
+    adapterPending: adapter.pending,
+  };
+}

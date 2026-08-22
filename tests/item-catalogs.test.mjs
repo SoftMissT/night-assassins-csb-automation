@@ -73,7 +73,7 @@ describe("catálogo de Respirações", () => {
     for (const [breathing, file] of Object.entries(BREATHING_ICONS)) {
       const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
       assert.ok(forms.length > 0, `a Respiração ${breathing} deve possuir Formas catalogadas`);
-      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/${file}`));
+      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/breathing/${file}`));
     }
   });
 });

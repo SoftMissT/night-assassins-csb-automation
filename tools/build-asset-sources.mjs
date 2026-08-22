@@ -74,7 +74,21 @@ function artDocument(file, index) {
   };
 }
 
-const files = (await readdir(assetsDirectory)).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file)).sort();
+async function walkAssets(dir, base = assetsDirectory) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const results = [];
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...await walkAssets(full, base));
+    } else if (/\.(webp|png|jpg|jpeg|svg)$/i.test(entry.name)) {
+      results.push(path.relative(base, full).replace(/\\/g, "/"));
+    }
+  }
+  return results;
+}
+
+const files = (await walkAssets(assetsDirectory)).sort();
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });

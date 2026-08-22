@@ -6,7 +6,7 @@
       "_key": "!items!NABreathTpl00001",
       "name": "NA Respiração - Forma",
       "type": "_equippableItemTemplate",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "body": {
           "contents": [
@@ -3123,7 +3123,7 @@
       "_key": "!items!b07a8f117b7e057b",
       "name": "Aranha — 1ª Forma Corrente de Teias Traçantes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3198,7 +3198,7 @@
       "_key": "!items!e42bcd278ce1fbcd",
       "name": "Aranha — 2ª Forma Disparada",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3273,7 +3273,7 @@
       "_key": "!items!1d1c6fbbc39f7ff9",
       "name": "Aranha — 3ª Forma Pular e Matar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3348,7 +3348,7 @@
       "_key": "!items!da2dc04f538a8e8b",
       "name": "Aranha — 4ª Forma Vingança",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3423,7 +3423,7 @@
       "_key": "!items!6c30d197e62c5df9",
       "name": "Aranha — 5ª Forma O Brilho dos Olhos Mortos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3498,7 +3498,7 @@
       "_key": "!items!eaacceac907f798c",
       "name": "Aranha — 6ª Forma A Imparável Linha do Destino",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3573,7 +3573,7 @@
       "_key": "!items!8fced8d586a7cfa1",
       "name": "Areia — 1ª Forma Areia Movediça",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3648,7 +3648,7 @@
       "_key": "!items!a016c806af8b1301",
       "name": "Areia — 2ª Forma Caixão de Areia",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3723,7 +3723,7 @@
       "_key": "!items!e3fbb3e9e48af961",
       "name": "Areia — 3ª Forma Poeira de Hórus",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3798,7 +3798,7 @@
       "_key": "!items!1b738f62e3e93e28",
       "name": "Areia — 4ª Forma Tempestade de Areia",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3873,7 +3873,7 @@
       "_key": "!items!5d8e8bb6339d3c6c",
       "name": "Areia — 5ª Forma Ira do Deserto",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -3948,7 +3948,7 @@
       "_key": "!items!a58071ee369a43a0",
       "name": "Areia — 6ª Forma Clima Rarefeito",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4023,7 +4023,7 @@
       "_key": "!items!0ec9e8f8e46d3f4b",
       "name": "Areia — 7ª Forma Portal de Anúbis",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4098,7 +4098,7 @@
       "_key": "!items!680914225b6c024e",
       "name": "Areia — 8ª Forma Ampulheta do Caos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4173,7 +4173,7 @@
       "_key": "!items!2258952b92353e45",
       "name": "Areia — 9ª Forma A Calamidade do Faraó",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4248,7 +4248,7 @@
       "_key": "!items!1a14f5b3e134b132",
       "name": "Besta — 1ª Presa Perfurar e Extrair",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4323,7 +4323,7 @@
       "_key": "!items!7d3025ae9483af6e",
       "name": "Besta — 2ª Presa Rasgar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4398,7 +4398,7 @@
       "_key": "!items!80e80d436767874f",
       "name": "Besta — 3ª Presa Rasgue e Devore",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4473,7 +4473,7 @@
       "_key": "!items!63209507cd413769",
       "name": "Besta — 4ª Presa Triture em Pedaços",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4548,7 +4548,7 @@
       "_key": "!items!7e736a7fc7d5cf5a",
       "name": "Besta — 5ª Presa Executor Maluco",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4623,7 +4623,7 @@
       "_key": "!items!02fce782ffcb9488",
       "name": "Besta — 6ª Presa Presas Brutais",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4698,7 +4698,7 @@
       "_key": "!items!c7c56b5adc338a7a",
       "name": "Besta — 7ª Presa Percepção Espacial",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4773,7 +4773,7 @@
       "_key": "!items!60638a08bc12ce5d",
       "name": "Besta — 8ª Presa Investida Suína",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4848,7 +4848,7 @@
       "_key": "!items!93f68d09db068301",
       "name": "Besta — 9ª Presa Flexibilidade da Fera",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4923,7 +4923,7 @@
       "_key": "!items!44511509040ad281",
       "name": "Besta — 10ª Presa Presas Circulares",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -4998,7 +4998,7 @@
       "_key": "!items!a1d0e32e5a745fc7",
       "name": "Cerejeira — 1º Estilo Círculo de Rosas / Prisão de Rosas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -5073,7 +5073,7 @@
       "_key": "!items!47ad021b4b803438",
       "name": "Cerejeira — 2º Estilo Natureza Efêmera",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -5148,7 +5148,7 @@
       "_key": "!items!b428730e3aba43f6",
       "name": "Cerejeira — 3º Estilo Paralelos e Inevitáveis",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -5223,7 +5223,7 @@
       "_key": "!items!136a81cb364f3698",
       "name": "Cerejeira — 4º Estilo A Maldição do Jardim",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -5298,7 +5298,7 @@
       "_key": "!items!a4fa6ca6f938a1d4",
       "name": "Cerejeira — 5º Estilo Baile de Primavera",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -5373,7 +5373,7 @@
       "_key": "!items!af6ce668785c8387",
       "name": "Cerejeira — 6º Estilo Renovação Total!",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -5448,7 +5448,7 @@
       "_key": "!items!d034022f0d7563a3",
       "name": "Cerejeira — 7º Estilo Nada Mais Importa!",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6198,7 +6198,7 @@
       "_key": "!items!6db703ba968eabc3",
       "name": "Corvo — Passiva Kasugai de Batalha",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6273,7 +6273,7 @@
       "_key": "!items!fc4dd5b992cb6bbc",
       "name": "Corvo — Passiva Imitação",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6348,7 +6348,7 @@
       "_key": "!items!fd7210035e30dcf6",
       "name": "Corvo — Passiva Dom Natural",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6423,7 +6423,7 @@
       "_key": "!items!98b9fcd66664c98e",
       "name": "Corvo — 1º Estilo Bater das Asas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6498,7 +6498,7 @@
       "_key": "!items!a45b0e4092b8f159",
       "name": "Corvo — 2º Estilo Localizar e Reportar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6573,7 +6573,7 @@
       "_key": "!items!9928a7c77be4728f",
       "name": "Corvo — 3º Estilo Impor Limites",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6648,7 +6648,7 @@
       "_key": "!items!af0fb10e3fa6cebf",
       "name": "Corvo — 4º Estilo Isso é Meu!",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6723,7 +6723,7 @@
       "_key": "!items!bd516fc1eafc19dc",
       "name": "Corvo — 5º Estilo Centro das Atenções",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6798,7 +6798,7 @@
       "_key": "!items!e7494bd8b27bc52f",
       "name": "Corvo — 6º Estilo Vitória Prometida de Yatagarasu",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6873,7 +6873,7 @@
       "_key": "!items!c4c0e271710f96ee",
       "name": "Cristal — 1ª Forma Espelhos Reversos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -6948,7 +6948,7 @@
       "_key": "!items!fda08820874f36d8",
       "name": "Cristal — 2ª Forma Esmeraldas Cintilantes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7023,7 +7023,7 @@
       "_key": "!items!b556dc154b33f212",
       "name": "Cristal — 3ª Forma Topázio das Profundezas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7098,7 +7098,7 @@
       "_key": "!items!be817687efc6e754",
       "name": "Cristal — 4ª Forma Rubi da Princesa",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7173,7 +7173,7 @@
       "_key": "!items!bb4375defb525229",
       "name": "Cristal — 5ª Forma Ametista Enigmática",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7248,7 +7248,7 @@
       "_key": "!items!4d4c5f67dfae902a",
       "name": "Cristal — 6ª Forma Diamante Aquarela",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7323,7 +7323,7 @@
       "_key": "!items!61eedacac05cd942",
       "name": "Cristal — Passiva Especial Lótus Prismática",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7398,7 +7398,7 @@
       "_key": "!items!927c4ab56b0e1443",
       "name": "Dragão — 1ª Forma A Gula de Falcor",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7473,7 +7473,7 @@
       "_key": "!items!1686141e652df448",
       "name": "Dragão — 2ª Forma A Avareza de Smaug",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7548,7 +7548,7 @@
       "_key": "!items!d9a39424607beafe",
       "name": "Dragão — 3ª Forma A Luxúria de Draco",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7623,7 +7623,7 @@
       "_key": "!items!f47749e95622831a",
       "name": "Dragão — 4ª Forma A Ira de Tiamat",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7698,7 +7698,7 @@
       "_key": "!items!53e1110ca1b98917",
       "name": "Dragão — 5ª Forma A Preguiça de Mushu",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7773,7 +7773,7 @@
       "_key": "!items!e4a48374d59a0cf0",
       "name": "Dragão — 6ª Forma A Inveja de Rhaegal",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7848,7 +7848,7 @@
       "_key": "!items!a044a68c914b4a66",
       "name": "Dragão — 7ª Forma A Vaidade de Drogon",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7923,7 +7923,7 @@
       "_key": "!items!565ff5fd50c9b264",
       "name": "Dragão — 8ª Forma O Brilho do Último Dia",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -7998,7 +7998,7 @@
       "_key": "!items!8426c95808d69166",
       "name": "Eclipse — 1ª Forma União Solar-Lunar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -8073,7 +8073,7 @@
       "_key": "!items!5b9fcd24a199ed9b",
       "name": "Eclipse — 2ª Forma Luz e Sombra",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -8148,7 +8148,7 @@
       "_key": "!items!1662aac4a139766e",
       "name": "Eclipse — 3ª Forma Pseudo-Anoitecer",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -8223,7 +8223,7 @@
       "_key": "!items!9d741cc1bc268a01",
       "name": "Eclipse — 4ª Forma Eclipse Escaldante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -8298,7 +8298,7 @@
       "_key": "!items!c5830f54f38dfa29",
       "name": "Eclipse — 5ª Forma Eclipse Verdadeiro",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -8973,7 +8973,7 @@
       "_key": "!items!81db957a4c004417",
       "name": "Grama — 1ª Forma O Som das Folhas Secas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9048,7 +9048,7 @@
       "_key": "!items!d8dc246e0e043b3d",
       "name": "Grama — 2ª Forma Choque Natural",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9123,7 +9123,7 @@
       "_key": "!items!4a3073b4ad9bd8a8",
       "name": "Grama — 3ª Forma Parede de Proteção",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9198,7 +9198,7 @@
       "_key": "!items!357a628b1de495bf",
       "name": "Grama — 4ª Forma Vórtice",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9273,7 +9273,7 @@
       "_key": "!items!33610d789bd05926",
       "name": "Grama — 5ª Forma Nostalgia",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9348,7 +9348,7 @@
       "_key": "!items!9e240f2936f7e3e9",
       "name": "Grama — 6ª Forma Rajada de Espinhos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9423,7 +9423,7 @@
       "_key": "!items!fb767778a1e4f6d2",
       "name": "Grama — 7ª Forma Terra Devastada",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9498,7 +9498,7 @@
       "_key": "!items!6fc4e0ac4b8141b1",
       "name": "Grama — Passiva Especial Planície da Tranquilidade",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9573,7 +9573,7 @@
       "_key": "!items!2e44d16a8f35986b",
       "name": "Insetos — Passiva Especial Ferrão Venenoso",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9648,7 +9648,7 @@
       "_key": "!items!77fb9e5f476b6193",
       "name": "Insetos — 1º Estilo Dança das Borboletas: Gracejar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9723,7 +9723,7 @@
       "_key": "!items!94f9d01942458c4a",
       "name": "Insetos — 2º Estilo Dança da Ferroada: Mera Vibração",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9798,7 +9798,7 @@
       "_key": "!items!534da1f5a7815add",
       "name": "Insetos — 3º Estilo Dança da Libélula: Olho Hexagonal",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9873,7 +9873,7 @@
       "_key": "!items!80dad2e22f697dc6",
       "name": "Insetos — 4º Estilo Dança da Centopeia: Zigue-Zague de Cem Pernas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -9948,7 +9948,7 @@
       "_key": "!items!c63d90f33931febb",
       "name": "Lobo — 1ª Forma Força da Matilha",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10023,7 +10023,7 @@
       "_key": "!items!b324fe40771d7720",
       "name": "Lobo — 2ª Forma Rasgando com os Dentes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10098,7 +10098,7 @@
       "_key": "!items!f1d8f90c676eeac6",
       "name": "Lobo — 3ª Forma Faro de Sangue",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10173,7 +10173,7 @@
       "_key": "!items!9876c6134d336542",
       "name": "Lobo — 4ª Forma O Canto dos Lobos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10248,7 +10248,7 @@
       "_key": "!items!ea108463366e5fba",
       "name": "Lobo — 5ª Forma Licantropia",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10323,7 +10323,7 @@
       "_key": "!items!d66328d9c8cb736b",
       "name": "Lobo — 6ª Forma Mordida Dupla",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10398,7 +10398,7 @@
       "_key": "!items!eef5aafd193fd56c",
       "name": "Lua — 1ª Forma Lua Negra, Palácio Vespertino",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10473,7 +10473,7 @@
       "_key": "!items!518919165936a3b5",
       "name": "Lua — 2ª Forma Flor de Pérola Lunar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10548,7 +10548,7 @@
       "_key": "!items!1ec38866e806987e",
       "name": "Lua — 3ª Forma Lua Repugnante de Correntes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10623,7 +10623,7 @@
       "_key": "!items!f3b2ecb0df1f3997",
       "name": "Lua — 4ª Forma Brilho Distante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10698,7 +10698,7 @@
       "_key": "!items!7a589a506e147ac0",
       "name": "Lua — 5ª Forma Espírito da Lua, A Curva da Calamidade",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10773,7 +10773,7 @@
       "_key": "!items!548c2163bb00f01a",
       "name": "Lua — 6ª Forma Noite Perpétua, Lua Solitária Incessante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10848,7 +10848,7 @@
       "_key": "!items!878c10927dcb9ac8",
       "name": "Lua — 7ª Forma Espelho do Infortúnio, ao Luar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10923,7 +10923,7 @@
       "_key": "!items!ed76c62fb22440bb",
       "name": "Lua — 8ª Forma Cauda do Dragão da Lua",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -10998,7 +10998,7 @@
       "_key": "!items!9e4538bf31a1c9d6",
       "name": "Lua — 9ª Forma Lua Minguante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11073,7 +11073,7 @@
       "_key": "!items!ecfeada3d8a5eee7",
       "name": "Lua — 10ª Forma Cortes de Perfuração, Lua através das Folhas de Bambu",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11148,7 +11148,7 @@
       "_key": "!items!46482595db3a813e",
       "name": "Lua — 11ª Forma Brilho Distante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11223,7 +11223,7 @@
       "_key": "!items!7b328ff6585c9c05",
       "name": "Lua — 12ª Forma Íris do Céu Noturno",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11298,7 +11298,7 @@
       "_key": "!items!ecbe10c16e776c45",
       "name": "Lua — 13ª Forma Colar da Princesa da Lua",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11373,7 +11373,7 @@
       "_key": "!items!678f539cccdb42a6",
       "name": "Lua — 14ª Forma Catástrofe, Lua Crescente de Tenman",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11448,7 +11448,7 @@
       "_key": "!items!53a59be06b83181b",
       "name": "Lua — 15ª Forma Sacrifício do Duque da Lua",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11523,7 +11523,7 @@
       "_key": "!items!debf4dde637d0363",
       "name": "Lua — 16ª Forma Arco da Lua, Meia-Lua",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11598,7 +11598,7 @@
       "_key": "!items!c43019bfd18b63ae",
       "name": "Luz — Passiva Reflexo Inalcançável",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11673,7 +11673,7 @@
       "_key": "!items!2f694b715e2d3b6c",
       "name": "Luz — 1ª Forma Corta-Luz",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11748,7 +11748,7 @@
       "_key": "!items!b6ad785993d8c7b6",
       "name": "Luz — 2ª Forma Luminescência dos Justos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11823,7 +11823,7 @@
       "_key": "!items!9984b48c120bfaed",
       "name": "Luz — 3ª Forma Resplandecer",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11898,7 +11898,7 @@
       "_key": "!items!afe3735010188b4c",
       "name": "Luz — 4ª Forma Clarificação",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -11973,7 +11973,7 @@
       "_key": "!items!0ab52c964e7e7cb2",
       "name": "Luz — 5ª Forma Ponto de Vista",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -12048,7 +12048,7 @@
       "_key": "!items!42a5295cd8eb0c94",
       "name": "Luz — 6ª Forma Tudo é uma Questão de Perspectiva",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -12123,7 +12123,7 @@
       "_key": "!items!64906db6b3e927b9",
       "name": "Luz — 7ª Forma Lampejo",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -12198,7 +12198,7 @@
       "_key": "!items!7fa3d195f2028228",
       "name": "Luz — Passiva Especial Vertigem",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -12798,7 +12798,7 @@
       "_key": "!items!c462363edea6cabb",
       "name": "Magma — 1ª Forma Erupção de Ódio",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -12873,7 +12873,7 @@
       "_key": "!items!89dea713d4f29059",
       "name": "Magma — 2ª Forma Explosão Vulcânica",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -12948,7 +12948,7 @@
       "_key": "!items!21a1239d39209005",
       "name": "Magma — 3ª Forma Rio de Lava",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -13023,7 +13023,7 @@
       "_key": "!items!ab6e8a12724232df",
       "name": "Magma — 4ª Forma Cataclisma",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -13098,7 +13098,7 @@
       "_key": "!items!aed12d51206e9e02",
       "name": "Magma — 5ª Forma Proteção de Magma",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -13173,7 +13173,7 @@
       "_key": "!items!573528ea12f01c8c",
       "name": "Magma — 6ª Forma Armadura do Rei / da Rainha",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -13248,7 +13248,7 @@
       "_key": "!items!5687435a571c65da",
       "name": "Magma — 7ª Forma Pressão Sufocante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -13323,7 +13323,7 @@
       "_key": "!items!bab47e7a275d56fb",
       "name": "Magma — 8ª Forma Núcleo da Perdição",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14448,7 +14448,7 @@
       "_key": "!items!34e7228c730d452f",
       "name": "Névoa — 1ª Forma Céu Suspenso",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14523,7 +14523,7 @@
       "_key": "!items!5d201e01673c903a",
       "name": "Névoa — 2ª Forma Névoa de Oito Camadas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14598,7 +14598,7 @@
       "_key": "!items!92942699d538c7f0",
       "name": "Névoa — 3ª Forma Expansão de Névoa",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14673,7 +14673,7 @@
       "_key": "!items!2c29c884d8687772",
       "name": "Névoa — 4ª Forma Corte de Advecção / Fecha Neblinada",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14748,7 +14748,7 @@
       "_key": "!items!f7d1e0387566e319",
       "name": "Névoa — 5ª Forma Mar de Nuvens Neblinadas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14823,7 +14823,7 @@
       "_key": "!items!59af5f7f5ed4d738",
       "name": "Névoa — 6ª Forma Névoa sob o Luar",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14898,7 +14898,7 @@
       "_key": "!items!726b437efe162193",
       "name": "Névoa — 7ª Forma Neblina",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -14973,7 +14973,7 @@
       "_key": "!items!a744db98b82a31a1",
       "name": "Névoa — 8ª Forma Ofuscamento",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16173,7 +16173,7 @@
       "_key": "!items!0c3a10bd2a64b298",
       "name": "Sangue — 1º Pacto Coagulação Sanguínea",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16248,7 +16248,7 @@
       "_key": "!items!6e8d4c784b60de7a",
       "name": "Sangue — 2º Pacto Hemodiálise",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16323,7 +16323,7 @@
       "_key": "!items!e1068aa216c349ff",
       "name": "Sangue — 3º Pacto Dose de Hemorragia",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16398,7 +16398,7 @@
       "_key": "!items!1ff7bdb10ddf9836",
       "name": "Sangue — 4º Pacto Drenagem",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16473,7 +16473,7 @@
       "_key": "!items!a6dfc99eca8f5ea3",
       "name": "Sangue — Passiva Especial Aura de Sangue",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16548,7 +16548,7 @@
       "_key": "!items!bfdb25d3cafa8fba",
       "name": "Sangue — 5º Pacto Gotas de Sangue",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16623,7 +16623,7 @@
       "_key": "!items!b79d171a76ba7f29",
       "name": "Sangue — 6º Pacto Genética Aprimorada",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16698,7 +16698,7 @@
       "_key": "!items!81838208dda59ee9",
       "name": "Sangue — 7º Pacto Supressão",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -16773,7 +16773,7 @@
       "_key": "!items!88078a1aeb2c4189",
       "name": "Sangue — 8º Pacto O Último Sacrifício",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17298,7 +17298,7 @@
       "_key": "!items!850ced632608a4aa",
       "name": "Sol — 1ª Forma Valsa",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17373,7 +17373,7 @@
       "_key": "!items!c197db00f15c134c",
       "name": "Sol — 2ª Forma Céu Azul",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17448,7 +17448,7 @@
       "_key": "!items!2398aae8c3ade10c",
       "name": "Sol — 3ª Forma Espelho Carmesim Ardente",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17523,7 +17523,7 @@
       "_key": "!items!74fdc2f2fdc67325",
       "name": "Sol — 4ª Forma Arco Íris Parhelion",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17598,7 +17598,7 @@
       "_key": "!items!c713042ad946edc8",
       "name": "Sol — 5ª Forma Carruagem de Fogo",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17673,7 +17673,7 @@
       "_key": "!items!a9af7e9e42e1f684",
       "name": "Sol — 6ª Forma Sol Queimador de Ossos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17748,7 +17748,7 @@
       "_key": "!items!ebe84112a874de9f",
       "name": "Sol — 7ª Forma Lança do Girassol",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17823,7 +17823,7 @@
       "_key": "!items!3e7d85cfe2129d10",
       "name": "Sol — 8ª Forma Névoa de Chama Ardente",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17898,7 +17898,7 @@
       "_key": "!items!8d565117fb6d4ff9",
       "name": "Sol — 9ª Forma Transformação do Sol Potente",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -17973,7 +17973,7 @@
       "_key": "!items!cf6f88efde77cc5c",
       "name": "Sol — 10ª Forma Raio Brilhante de Graça",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18048,7 +18048,7 @@
       "_key": "!items!37f84303fba4a570",
       "name": "Sol — 11ª Forma Dança Solar da Auréola do Dragão",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18123,7 +18123,7 @@
       "_key": "!items!c6e695fc06008aa4",
       "name": "Sol — 12ª Forma Chama da Valsa",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18198,7 +18198,7 @@
       "_key": "!items!c6611f317f5fd06b",
       "name": "Sol — 13ª Forma A Valsa Completa",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18273,7 +18273,7 @@
       "_key": "!items!2659a76765cdb2f8",
       "name": "Som — 1º Estilo Rugido",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18348,7 +18348,7 @@
       "_key": "!items!e363ba18ac11fc62",
       "name": "Som — 2º Estilo Silêncio",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18423,7 +18423,7 @@
       "_key": "!items!2cba41d1ab364d35",
       "name": "Som — 3º Estilo Resquício Sonoro",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18498,7 +18498,7 @@
       "_key": "!items!6c20e46f2740b966",
       "name": "Som — 4º Estilo Sinos da Morte de Avīci",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18573,7 +18573,7 @@
       "_key": "!items!fa65d301b28da2d1",
       "name": "Som — 5º Estilo Sinfonia das Cordas Estridentes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -18648,7 +18648,7 @@
       "_key": "!items!19ea7f2aafc09354",
       "name": "Som — 6º Estilo Sinfonia Imortal",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19323,7 +19323,7 @@
       "_key": "!items!391262c9d77fc4f2",
       "name": "Sonhos — Passiva Especial Troca Equivalente",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19398,7 +19398,7 @@
       "_key": "!items!fd595ab014bf4cfc",
       "name": "Sonhos — 1º Estilo Hora de Dormir",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19473,7 +19473,7 @@
       "_key": "!items!6e2b78ed5b7a155f",
       "name": "Sonhos — 2º Estilo Ilusão de Ótica",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19548,7 +19548,7 @@
       "_key": "!items!adf7b9573c4608d4",
       "name": "Sonhos — 3º Estilo Estrela Cadente",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19623,7 +19623,7 @@
       "_key": "!items!9442bddf4928372c",
       "name": "Sonhos — 4º Estilo Mar de Memórias",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19698,7 +19698,7 @@
       "_key": "!items!6f61ec4ae8020d7f",
       "name": "Sonhos — 5º Estilo Radar Noturno",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19773,7 +19773,7 @@
       "_key": "!items!6cdf16973b111e02",
       "name": "Sonhos — 6º Estilo Domínio dos Pesadelos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19848,7 +19848,7 @@
       "_key": "!items!c69cce0a1ab2da00",
       "name": "Sonhos — 7º Estilo Teoria do Caos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19923,7 +19923,7 @@
       "_key": "!items!17c82e6dd0ebcc38",
       "name": "Sonhos — 8º Estilo Raio de Luz da Morte",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -19998,7 +19998,7 @@
       "_key": "!items!31af907566a9d7ab",
       "name": "Sonhos — 9º Estilo Fantasia Final",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20073,7 +20073,7 @@
       "_key": "!items!2d8f0bd7fc3963e4",
       "name": "Tempo — 1ª Hora Tik Tak",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20148,7 +20148,7 @@
       "_key": "!items!6a837b84b8aad18f",
       "name": "Tempo — 2ª Hora Estação do Limbo",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20223,7 +20223,7 @@
       "_key": "!items!f02c66c9fc7e9793",
       "name": "Tempo — 3ª Hora Fora de Frequência",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20298,7 +20298,7 @@
       "_key": "!items!57fdb49627610c13",
       "name": "Tempo — 4ª Hora Aquilo que nos Difere!",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20373,7 +20373,7 @@
       "_key": "!items!21fbf884305cb484",
       "name": "Tempo — 5ª Hora Efeito Borboleta",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20448,7 +20448,7 @@
       "_key": "!items!864edf4539765eaf",
       "name": "Tempo — 6ª Hora Fim de Temporada",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20523,7 +20523,7 @@
       "_key": "!items!7d8aa90a6cae473e",
       "name": "Tempo — 7ª Hora Atrasado",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20598,7 +20598,7 @@
       "_key": "!items!6da3a3e7662f1076",
       "name": "Tempo — 8ª Hora Vício do Relógio",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20673,7 +20673,7 @@
       "_key": "!items!5b75c938ead73f9e",
       "name": "Tempo — 9ª Hora Ponteiro Quebrado",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20748,7 +20748,7 @@
       "_key": "!items!428dd4271b5f5d6b",
       "name": "Tempo — 10ª Hora Giro Contrário",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20823,7 +20823,7 @@
       "_key": "!items!829e6ae7fafbdead",
       "name": "Tempo — 11ª Hora Translocação de Kairós",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20898,7 +20898,7 @@
       "_key": "!items!cbc96e54d66d5e0e",
       "name": "Tempo — 12ª Hora Sentença de Cronos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -20973,7 +20973,7 @@
       "_key": "!items!f5502e07f5bfe653",
       "name": "Tigre — 1º Estilo Bote Mortal",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21048,7 +21048,7 @@
       "_key": "!items!0c03e4c7854d7e80",
       "name": "Tigre — 2º Estilo Instinto Predatório",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21123,7 +21123,7 @@
       "_key": "!items!ac55a99e9c6d652f",
       "name": "Tigre — 3º Estilo Cravar os Dentes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21198,7 +21198,7 @@
       "_key": "!items!6b061b8405bb7956",
       "name": "Tigre — 4º Estilo O Rugido da Fera",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21273,7 +21273,7 @@
       "_key": "!items!cffccc41e1f2ad26",
       "name": "Tigre — 5º Estilo Colecionador de Ossos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21348,7 +21348,7 @@
       "_key": "!items!6e24bc51d7d08275",
       "name": "Tigre — 6º Estilo Salto Aterrador",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21423,7 +21423,7 @@
       "_key": "!items!bfe8aa46a2e9a4e4",
       "name": "Tigre — 7º Estilo Mestre do Terreno",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21498,7 +21498,7 @@
       "_key": "!items!a717131a98d2d66c",
       "name": "Tigre — 8º Estilo Destruição Final",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21573,7 +21573,7 @@
       "_key": "!items!db6ed2b721e3d330",
       "name": "Trovão — 1º Estilo Estrondo do Trovão",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21648,7 +21648,7 @@
       "_key": "!items!0ca03471ff030b68",
       "name": "Trovão — 2º Estilo Esfera de Raios",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21723,7 +21723,7 @@
       "_key": "!items!df9f493649a280b9",
       "name": "Trovão — 3º Estilo Enxame de Relâmpagos",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21798,7 +21798,7 @@
       "_key": "!items!3df446b1f3ed4e29",
       "name": "Trovão — 4º Estilo Raio Distante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21873,7 +21873,7 @@
       "_key": "!items!5d7602de755eb46a",
       "name": "Trovão — 5º Estilo Relâmpago Caloroso",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -21948,7 +21948,7 @@
       "_key": "!items!5d8d7a57e062443e",
       "name": "Trovão — 6º Estilo Impacto Luminoso",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22023,7 +22023,7 @@
       "_key": "!items!2e998bd0f1a2369d",
       "name": "Trovão — 7º Estilo Deus do Trovão Flamejante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22098,7 +22098,7 @@
       "_key": "!items!e0582ff7a04fe762",
       "name": "Vagalume — Passiva Acúmulo de Centelha",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22173,7 +22173,7 @@
       "_key": "!items!e16f52676d8fd277",
       "name": "Vagalume — 1º Estilo Brilho Incógnito",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22248,7 +22248,7 @@
       "_key": "!items!e5c47d5081051c35",
       "name": "Vagalume — 2º Estilo Vagalumes do Céu Noturno",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22323,7 +22323,7 @@
       "_key": "!items!fe251ee2305e5f34",
       "name": "Vagalume — 3º Estilo Brilho da Meia-Noite",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22398,7 +22398,7 @@
       "_key": "!items!7a8dc15422b17048",
       "name": "Vagalume — 4º Estilo Dança do Vagalume",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22473,7 +22473,7 @@
       "_key": "!items!ac3bf8e4345a1261",
       "name": "Vagalume — 5º Estilo Universo Brilhante",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22548,7 +22548,7 @@
       "_key": "!items!1c49cc048e631439",
       "name": "Vagalume — 6º Estilo Serenidade dos Vagalumes Brilhantes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22623,7 +22623,7 @@
       "_key": "!items!1a044f9da797d7a0",
       "name": "Vagalume — 7º Estilo Cem Vagalumes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22698,7 +22698,7 @@
       "_key": "!items!0c5437ce9b448bae",
       "name": "Vagalume — 8º Estilo Campo de Vagalumes",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22773,7 +22773,7 @@
       "_key": "!items!1eff396616ac6467",
       "name": "Veneno — Passiva Especial Artista do Venefício",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22848,7 +22848,7 @@
       "_key": "!items!7dbeeb1285ca8403",
       "name": "Veneno — 1ª Forma Nuvem Tóxica",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22923,7 +22923,7 @@
       "_key": "!items!8ee0368c1a5aa969",
       "name": "Veneno — 2ª Forma Espinhos Entrelaçados",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -22998,7 +22998,7 @@
       "_key": "!items!942a9e5ea87e6666",
       "name": "Veneno — 3ª Forma Bomba de Gás",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23073,7 +23073,7 @@
       "_key": "!items!239087dad5e029fa",
       "name": "Veneno — 4ª Forma Infecção",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23148,7 +23148,7 @@
       "_key": "!items!bff9c96df5db3d42",
       "name": "Veneno — 5ª Forma Estocada Venenosa",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23223,7 +23223,7 @@
       "_key": "!items!9998b0510bdacd65",
       "name": "Veneno — 6ª Forma Arte Corrosiva",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23298,7 +23298,7 @@
       "_key": "!items!6207a157bc86cbe8",
       "name": "Veneno — 7ª Forma Presas do Sofrimento",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23373,7 +23373,7 @@
       "_key": "!items!7ac39b2868bee990",
       "name": "Vento — Passiva Sangue Especial",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23448,7 +23448,7 @@
       "_key": "!items!0d760fa1f6ef0caa",
       "name": "Vento — 1º Estilo Redemoinho de Poeira",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23523,7 +23523,7 @@
       "_key": "!items!49b7329d59633dc7",
       "name": "Vento — 2º Estilo Garras do Vento Puro",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23598,7 +23598,7 @@
       "_key": "!items!d1418bcb8d199c50",
       "name": "Vento — 3º Estilo Árvore Balançando ao Vapor da Montanha",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23673,7 +23673,7 @@
       "_key": "!items!1d9bd74d8cdac8e8",
       "name": "Vento — 4º Estilo Tempestade Crescente de Poeira",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23748,7 +23748,7 @@
       "_key": "!items!7e4ce52e3c16ebff",
       "name": "Vento — 5º Estilo Vendaval de Inverno",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23823,7 +23823,7 @@
       "_key": "!items!0f1eb66be2887413",
       "name": "Vento — 6º Estilo Tempestade da Fumaça Escurecedora",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23898,7 +23898,7 @@
       "_key": "!items!47b6180f576698d7",
       "name": "Vento — 7º Estilo Ventania Rajadas Repentinas",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -23973,7 +23973,7 @@
       "_key": "!items!fe9ccc00d7b6de7b",
       "name": "Vento — 8º Estilo Corte da Primeira Ventania",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {
@@ -24048,7 +24048,7 @@
       "_key": "!items!feaeede4d74346aa",
       "name": "Vento — 9º Estilo Tufão Idaten",
       "type": "equippableItem",
-      "img": "icons/svg/wind.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/wind.svg",
       "system": {
         "template": "NABreathTpl00001",
         "props": {

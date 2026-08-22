@@ -74,13 +74,13 @@ describe("module distribution", () => {
     }
   });
 
-  it("mantém o NPC narrativo sem recursos de combate", async () => {
+  it("mantém o NPC narrativo com vida simples e sem automações", async () => {
     const actor = JSON.parse(await readFile(new URL("../src/templates/actors/npc-template.json", import.meta.url), "utf8"));
     const serialized = JSON.stringify(actor.system);
     for (const key of ["npc_nome", "npc_personalidade", "npc_tom", "npc_aparencia", "npc_contexto", "npc_notas_gm"]) {
       assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
     }
-    assert.deepEqual(actor.system.attributeBar, {});
+    assert.deepEqual(Object.keys(actor.system.attributeBar), ["npc_pdv_barra"]);
     assert.deepEqual(actor.items, []);
     assert.deepEqual(actor.effects, []);
   });

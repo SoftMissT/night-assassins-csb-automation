@@ -533,6 +533,118 @@
           ]
         },
         {
+          "key": "npc_vida",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "cssClass": "",
+          "role": 0,
+          "editRole": 0,
+          "permission": 0,
+          "tooltip": "",
+          "visibilityFormula": "",
+          "editableFormula": "",
+          "escapeHTML": false,
+          "type": "panel",
+          "size": "full-size",
+          "label": "",
+          "contents": [
+            {
+              "key": "npc_pdv_base",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "PDV máximo",
+              "defaultValue": "10",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            },
+            {
+              "key": "npc_pdv_total_label",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "label",
+              "size": "full-size",
+              "label": "",
+              "icon": "",
+              "prefix": "",
+              "suffix": "",
+              "style": "label",
+              "rollMessage": "",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">PDV: ${npc_pdv_atual}$ / ${npc_pdv_total}$</span></div>"
+            },
+            {
+              "key": "npc_pdv_dano",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "Dano tomado",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            },
+            {
+              "key": "npc_pdv_curado",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "Curado",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            }
+          ]
+        },
+        {
           "key": "npc_atributos_titulo",
           "colSpan": 1,
           "rowSpan": 1,
@@ -908,9 +1020,23 @@
       {
         "name": "atr_sab_valor_config",
         "formula": "0"
+      },
+      {
+        "name": "npc_pdv_total",
+        "value": "${fallback(npc_pdv_base,0)}$"
+      },
+      {
+        "name": "npc_pdv_atual",
+        "value": "${max(0,npc_pdv_total-fallback(npc_pdv_dano,0)+fallback(npc_pdv_curado,0))}$"
       }
     ],
-    "attributeBar": {},
+    "attributeBar": {
+      "npc_pdv_barra": {
+        "value": "${npc_pdv_atual}$",
+        "max": "${npc_pdv_total}$",
+        "editable": false
+      }
+    },
     "templateSystemUniqueVersion": 1
   },
   "prototypeToken": {

@@ -1,5 +1,14 @@
 ## 0.10.1 — 2026-08-22
 
+### NPC — Vida e Dano
+- Painel `npc_vida` na ficha NPC: PDV máximo, dano tomado, curado e label `PDV: atual / total`.
+- Barra de PDV (`npc_pdv_barra`) no attributeBar.
+- `actorKind()` classifica NPCs (`"npc"`) via namespace `npc_*` ou template.
+- Relay de dano aplica em NPCs (`npc_pdv_dano`) — fluxo principal e Martelo do Julgamento.
+
+### Correções
+- Martelo do Julgamento em alvo Oni Minion gravava em keys de Oni completo (dano perdido).
+
 ### Macros — Correções Críticas
 - **`na-oni-blood-gift.js`**: Corrigido bug ternário crítico (`scope ? {}` → `scope ? scope : {}`) que impedia input de escopo.
 - **`na-usar-kekki.js`**: Corrigido mesmo bug ternário + substituído `MODULE_ID` por string fixa `"night-assassins-csb-automation"` no console.warn.

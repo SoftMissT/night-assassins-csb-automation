@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { actorKind, isOniActor, isSlayerActor, isOniMinionActor } from "../scripts/actor-kind.mjs";
+import { actorKind, isOniActor, isSlayerActor, isOniMinionActor, isNpcActor } from "../scripts/actor-kind.mjs";
 
 describe("actor-kind", () => {
   it("classifica ONI antes de chaves Slayer herdadas", () => {
@@ -50,6 +50,20 @@ describe("actor-kind", () => {
     assert.equal(actorKind({ system: { props: { nome_npc: "Taverneiro" } } }), null);
   });
 
+  it("classifica NPC pelo namespace npc_*", () => {
+    assert.equal(actorKind({ system: { props: { npc_nome: "Taverneiro", npc_papel: "Aliado" } } }), "npc");
+  });
+
+  it("classifica NPC pelo marcador de template npc_template", () => {
+    assert.equal(actorKind({ system: { template: "npc_template", props: {} } }), "npc");
+  });
+
+  it("NPC nao tem precedencia sobre Slayer/Oni/Minion", () => {
+    assert.equal(actorKind({ system: { props: { nome_slayer: "Kwon", npc_nome: "X" } } }), "slayer");
+    assert.equal(actorKind({ system: { props: { pdv_oni_total_conta: 40, npc_nome: "X" } } }), "oni");
+    assert.equal(actorKind({ system: { props: { oni_minion_nome: "L", npc_nome: "X" } } }), "oni_minion");
+  });
+
   it("retorna null para Actor vazio", () => {
     assert.equal(actorKind({}), null);
     assert.equal(actorKind(null), null);
@@ -71,5 +85,12 @@ describe("actor-kind", () => {
     assert.equal(isOniMinionActor({ system: { props: { oni_minion_nome: "Lacaio" } } }), true);
     assert.equal(isOniMinionActor({ system: { props: { pdv_oni_total_conta: 40 } } }), false);
     assert.equal(isOniMinionActor({ system: { props: { nome_slayer: "Kwon" } } }), false);
+  });
+
+  it("isNpcActor reconhece NPC, nao Slayer/Oni/Minion", () => {
+    assert.equal(isNpcActor({ system: { props: { npc_nome: "Taverneiro" } } }), true);
+    assert.equal(isNpcActor({ system: { props: { nome_slayer: "Kwon" } } }), false);
+    assert.equal(isNpcActor({ system: { props: { pdv_oni_total_conta: 40 } } }), false);
+    assert.equal(isNpcActor({ system: { props: { oni_minion_nome: "Lacaio" } } }), false);
   });
 });

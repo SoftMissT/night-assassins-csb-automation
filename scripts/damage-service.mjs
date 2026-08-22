@@ -585,7 +585,12 @@ export async function rollDamage(options = {}) {
         await targetActor.update({ "system.props.oni_minion_pdv_dano": current + amount }, { naCsbAutomation: true, naDamage: true });
         return { ok: true, appliedDamage: amount, woundDamage: 0 };
       }
-      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni/Minion."));
+      if (targetKind === "npc") {
+        const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.npc_pdv_dano)));
+        await targetActor.update({ "system.props.npc_pdv_dano": current + amount }, { naCsbAutomation: true, naDamage: true });
+        return { ok: true, appliedDamage: amount, woundDamage: 0 };
+      }
+      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni/Minion/NPC."));
     }),
   ]);
 
@@ -684,6 +689,10 @@ export async function rollDamage(options = {}) {
           else if (targetKind === "oni_minion") {
             const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.oni_minion_pdv_dano)));
             await targetActor.update({ "system.props.oni_minion_pdv_dano": current + hammer.damage }, { naCsbAutomation: true, naDamage: true });
+          }
+          else if (targetKind === "npc") {
+            const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.npc_pdv_dano)));
+            await targetActor.update({ "system.props.npc_pdv_dano": current + hammer.damage }, { naCsbAutomation: true, naDamage: true });
           }
           else await applyOniDamage(targetActor, hammer.damage, context);
         }

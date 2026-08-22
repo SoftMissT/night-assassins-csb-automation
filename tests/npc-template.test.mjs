@@ -64,12 +64,51 @@ describe("NPC template - atributos e rolagens", () => {
     }
   });
 
+  it("tem painel de vida com PDV base, label, dano e cura", () => {
+    const vida = npc.system.body.contents.find((c) => c.type === "panel" && c.key === "npc_vida");
+    assert.ok(vida, "Painel npc_vida deve existir");
+    assert.equal(vida.contents.length, 4);
+    for (const key of ["npc_pdv_base", "npc_pdv_total_label", "npc_pdv_dano", "npc_pdv_curado"]) {
+      assert.ok(vida.contents.find((f) => f.key === key), `${key} deve existir`);
+    }
+    const base = vida.contents.find((f) => f.key === "npc_pdv_base");
+    assert.equal(base.type, "numberField", "PDV base deve ser editavel");
+    const dano = vida.contents.find((f) => f.key === "npc_pdv_dano");
+    assert.equal(dano.type, "numberField", "Dano tomado deve ser editavel");
+    assert.match(vida.contents.find((f) => f.key === "npc_pdv_total_label").value, /npc_pdv_atual/);
+  });
+
+  it("painel npc_vida vem depois dos atributos e antes dos dados basicos", () => {
+    const keys = npc.system.body.contents.map((c) => c.key);
+    assert.ok(keys.indexOf("npc_atributos_botoes") < keys.indexOf("npc_vida"));
+    assert.ok(keys.indexOf("npc_vida") < keys.indexOf("npc_dados_basicos"));
+  });
+
+  it("tem hidden formulas de pdv total e atual", () => {
+    const total = npc.system.hidden.find((h) => h.name === "npc_pdv_total");
+    const atual = npc.system.hidden.find((h) => h.name === "npc_pdv_atual");
+    assert.ok(total, "Hidden npc_pdv_total deve existir");
+    assert.match(total.value, /fallback\(npc_pdv_base,0\)/);
+    assert.ok(atual, "Hidden npc_pdv_atual deve existir");
+    assert.match(atual.value, /npc_pdv_total-fallback\(npc_pdv_dano,0\)\+fallback\(npc_pdv_curado,0\)/);
+    assert.match(atual.value, /max\(0,/);
+  });
+
+  it("tem barra de pdv no attributeBar", () => {
+    const barra = npc.system.attributeBar?.npc_pdv_barra;
+    assert.ok(barra, "attributeBar.npc_pdv_barra deve existir");
+    assert.equal(barra.value, "${npc_pdv_atual}$");
+    assert.equal(barra.max, "${npc_pdv_total}$");
+    assert.equal(barra.editable, false);
+  });
+
   it("preserva dados basicos do NPC", () => {
     assert.equal(npc.name, "npc_template");
     assert.equal(npc.system.body.contents[0].key, "npc_bonus_temp");
     assert.equal(npc.system.body.contents[1].key, "npc_atributos_display");
     assert.equal(npc.system.body.contents[2].key, "npc_atributos_botoes");
-    assert.equal(npc.system.body.contents[3].key, "npc_atributos_titulo");
+    assert.equal(npc.system.body.contents[3].key, "npc_vida");
+    assert.equal(npc.system.body.contents[4].key, "npc_atributos_titulo");
     const fields = findInTree(npc.system.body, (n) => n.key === "npc_papel");
     assert.ok(fields.length > 0, "Campo npc_papel deve existir");
   });

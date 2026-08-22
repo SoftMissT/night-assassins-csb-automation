@@ -1,7 +1,7 @@
 {
   "name": "oni_minion_template",
   "type": "_template",
-  "img": "modules/night-assassins-csb-automation/assets/icons/oni.webp",
+  "img": "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_GM_Control_icon.webp",
   "system": {
     "body": {
       "contents": [
@@ -28,7 +28,7 @@
           "altRollMessage": "",
           "rollMessageToChat": false,
           "altRollMessageToChat": false,
-          "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">ONI MINION</span></div>"
+          "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">ONI MINION</span>"
         },
         {
           "key": "oni_minion_identity",
@@ -304,7 +304,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#2ED36F;text-transform:uppercase;letter-spacing:.12em;\">VIT: ${oni_minion_vit_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">VIT: ${oni_minion_vit_display}$</span>"
             },
             {
               "key": "oni_minion_dex_base",
@@ -376,7 +376,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">DEX: ${oni_minion_dex_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">DEX: ${oni_minion_dex_display}$</span>"
             },
             {
               "key": "oni_minion_for_base",
@@ -448,7 +448,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">FOR: ${oni_minion_for_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">FOR: ${oni_minion_for_display}$</span>"
             },
             {
               "key": "oni_minion_car_base",
@@ -520,7 +520,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF9100;text-transform:uppercase;letter-spacing:.12em;\">CAR: ${oni_minion_car_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-car\">CAR: ${oni_minion_car_display}$</span>"
             },
             {
               "key": "oni_minion_fdv_base",
@@ -592,7 +592,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#BB97F9;text-transform:uppercase;letter-spacing:.12em;\">FDV: ${oni_minion_fdv_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">FDV: ${oni_minion_fdv_display}$</span>"
             },
             {
               "key": "oni_minion_int_base",
@@ -664,7 +664,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#F8EB4D;text-transform:uppercase;letter-spacing:.12em;\">INT: ${oni_minion_int_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-int\">INT: ${oni_minion_int_display}$</span>"
             },
             {
               "key": "oni_minion_sab_base",
@@ -736,7 +736,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#D45CA4;text-transform:uppercase;letter-spacing:.12em;\">SAB: ${oni_minion_sab_display}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-sab\">SAB: ${oni_minion_sab_display}$</span>"
             }
           ],
           "flow": "grid-7",
@@ -809,7 +809,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$</span>"
             },
             {
               "key": "oni_minion_pdv_dano",
@@ -903,7 +903,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$</span>"
             },
             {
               "key": "oni_minion_pdk_gasto",
@@ -999,7 +999,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">ACERTO</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ACERTO</span>"
             },
             {
               "key": "oni_minion_dano",
@@ -1024,7 +1024,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">DANO</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">DANO</span>"
             }
           ],
           "flow": "grid-2",
@@ -1072,7 +1072,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:14px;font-weight:700;color:#c026d3;text-transform:uppercase;letter-spacing:.1em;\">KEKKIJUTSU</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">KEKKIJUTSU</span>"
             },
             {
               "key": "oni_minion_kekki_nome",
@@ -1320,4 +1320,3 @@
   "flags": {},
   "folder": null
 }
-

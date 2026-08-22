@@ -594,7 +594,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">PDV: ${npc_pdv_atual}$ / ${npc_pdv_total}$</span></div>"
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">PDV: ${npc_pdv_atual}$ / ${npc_pdv_total}$</span>"
             },
             {
               "key": "npc_pdv_dano",

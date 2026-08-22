@@ -679,7 +679,12 @@ export async function rollDamage(options = {}) {
             ignoreResistance: true,
             requireApproval: true,
           };
-          if (actorKind(targetActor) === "slayer") await applySlayerDamageAuto(targetActor, hammer.damage, context);
+          const targetKind = actorKind(targetActor);
+          if (targetKind === "slayer") await applySlayerDamageAuto(targetActor, hammer.damage, context);
+          else if (targetKind === "oni_minion") {
+            const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.oni_minion_pdv_dano)));
+            await targetActor.update({ "system.props.oni_minion_pdv_dano": current + hammer.damage }, { naCsbAutomation: true, naDamage: true });
+          }
           else await applyOniDamage(targetActor, hammer.damage, context);
         }
       }

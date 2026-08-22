@@ -18,7 +18,7 @@ describe("limpeza do template Oni", () => {
   it("mantém somente abas próprias do Oni", () => {
     const cleaned = cleanOniTemplate(source);
     const tabs = collect(cleaned.system.body, (entry) => entry.type === "tab").map(({ key }) => key);
-    assert.deepEqual(tabs, ["combat_oni_tab", "configs_tab"]);
+    assert.deepEqual(tabs, ["combat_oni_tab", "skills_oni_tab", "configs_tab"]);
     assert.ok(!tabs.includes("pericias_tab"), "Aba de Perícias não deve existir no Oni.");
     assert.ok(!tabs.includes("notas_oni_tab"), "Aba de Notas foi removida.");
     assert.ok(!tabs.includes("perfil_oni_tab"), "Aba de Perfil foi fundida na Combate.");

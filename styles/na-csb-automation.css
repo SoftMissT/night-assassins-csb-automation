@@ -1572,3 +1572,44 @@
   border-color: #fb3b54;
   box-shadow: 0 0 8px rgba(251, 59, 84, 0.2);
 }
+
+/* ── Chat Cards ────────────────────────────────────────────── */
+.na-breath-chat,
+.na-rest-card,
+.na-interlude-card {
+  border-left: 3px solid var(--color-border-1, #28D7FF);
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-primary, #ccc);
+}
+.na-breath-chat strong,
+.na-rest-card strong,
+.na-interlude-card strong {
+  color: var(--color-text-primary, #e0e0e0);
+}
+.na-breath-chat .na-secondary,
+.na-rest-card .na-secondary,
+.na-interlude-card .na-secondary {
+  color: var(--color-text-secondary, #b0b0b0);
+}
+.na-breath-chat .na-accent,
+.na-rest-card .na-accent,
+.na-interlude-card .na-accent {
+  color: #FF9100;
+}
+.na-breath-chat .na-success,
+.na-rest-card .na-success,
+.na-interlude-card .na-success {
+  color: #2EFF7A;
+}
+.na-breath-chat .na-cost {
+  color: #A855F7;
+  font-weight: 600;
+}
+.na-rest-card {
+  border-left-color: #2EFF7A;
+}
+.na-interlude-card {
+  border-left-color: #A855F7;
+}

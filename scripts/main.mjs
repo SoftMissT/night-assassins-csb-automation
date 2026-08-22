@@ -38,7 +38,7 @@ import * as slayerProgression from "./slayer/progression-service.mjs";
 import * as slayerOrigins from "./slayer/origin-contracts.mjs";
 import * as slayerClasses from "./slayer/class-contracts.mjs";
 import * as slayerAdvancedStates from "./slayer/advanced-states.mjs";
-import { awakenMark, activateMark, finishMark, markStatus, maxActivationPower, allowedScarAttributes, attributeLabel, isMarkAwakened, isMarkActive } from "./slayer/hunter-mark-service.mjs";
+import { awakenMark, activateMark, finishMark, markStatus, maxActivationPower, allowedScarAttributes, attributeLabel, isMarkAwakened, isMarkActive, openHunterMarkManager } from "./slayer/hunter-mark-service.mjs";
 import * as oniProgression from "./oni/progression-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
 import { registerPhoneChatSettings, PHONE_CHAT_SETTINGS } from "./phone-chat/phone-chat-settings.mjs";
@@ -212,6 +212,7 @@ reloadWeaponItem,
       },
       oni: {
         progression: oniProgression,
+        consumeActions: consumeOniActions,
         kekkijutsu: {
           getKekkijutsu,
           isKekkijutsuItem,

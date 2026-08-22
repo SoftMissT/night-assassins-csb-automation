@@ -1759,6 +1759,42 @@
                   "defaultCollapsed": true,
                   "title": "Status e Resistências",
                   "titleStyle": "title"
+                }
+              ],
+              "name": "Combate"
+            },
+            {
+              "key": "skills_oni_tab",
+              "type": "tab",
+              "name": "Skills",
+              "tooltip": "",
+              "role": 0,
+              "permission": 0,
+              "visibilityFormula": "",
+              "contents": [
+                {
+                  "key": "skills_oni_titulo",
+                  "colSpan": 1,
+                  "rowSpan": 1,
+                  "cssClass": "",
+                  "role": 0,
+                  "editRole": 0,
+                  "permission": 0,
+                  "tooltip": "",
+                  "visibilityFormula": "",
+                  "editableFormula": "",
+                  "escapeHTML": false,
+                  "type": "label",
+                  "size": "full-size",
+                  "icon": "",
+                  "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-car\">SKILLS</span>",
+                  "prefix": "",
+                  "suffix": "",
+                  "rollMessage": "",
+                  "altRollMessage": "",
+                  "rollMessageToChat": false,
+                  "altRollMessageToChat": false,
+                  "style": "label"
                 },
                 {
                   "key": "inventario_oni_kekkijutsus",
@@ -1791,8 +1827,7 @@
                   "itemFilterFormula": "equalText(item.inventario_categoria, 'kekkijutsu')",
                   "sortPredicates": []
                 }
-              ],
-              "name": "Combate"
+              ]
             },
             {
               "key": "configs_tab",

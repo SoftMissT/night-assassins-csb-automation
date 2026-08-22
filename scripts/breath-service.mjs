@@ -453,23 +453,23 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
     ? `<div style="margin-top:6px;">Dano rolado: <strong>${damageRoll.total}</strong> <button class="na-breath-damage-die" style="border:none;background:none;cursor:pointer;color:#28D7FF;font-size:11px;">(ver dados)</button></div>`
     : "";
   const statusLine = selected.status
-    ? `<div style="color:#FF9100;">Status: ${selected.status}</div>`
+    ? `<div class="na-accent">Status: ${selected.status}</div>`
     : "";
   const buffLine = selected.buff
-    ? `<div style="color:#2EFF7A;">Buff (self): ${selected.buff}</div>`
+    ? `<div class="na-success">Buff (self): ${selected.buff}</div>`
     : "";
   const efeitoLine = selected.efeito
-    ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${selected.efeito}</div>`
+    ? `<div class="na-secondary" style="margin-top:4px;">${selected.efeito}</div>`
     : "";
 
   const flavor = `
-    <div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;">
-      <div style="font-size:14px;">
+    <div class="na-breath-chat">
+      <div>
         <strong>${form.nome}</strong>
-        ${form.jp ? `<span style="font-size:11px;color:#888;"> ${form.jp}</span>` : ""}
+        ${form.jp ? `<span class="na-secondary"> ${form.jp}</span>` : ""}
       </div>
-      <div style="font-size:12px;color:#888;">${form.respiracao} · ${form.tipo} · Nível ${selected.level}</div>
-      <div style="margin-top:4px;">Custo: <strong>${selected.custo} PDR</strong></div>
+      <div class="na-secondary">${form.respiracao} · ${form.tipo} · Nível ${selected.level}</div>
+      <div style="margin-top:4px;">Custo: <span class="na-cost">${selected.custo} PDR</span></div>
       ${danoLine}
       ${statusLine}
       ${buffLine}

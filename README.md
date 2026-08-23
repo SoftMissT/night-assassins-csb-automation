@@ -7,29 +7,32 @@
 | Ficha | Versão | Estado |
 | --- | ---: | --- |
 | **Caçador humano** | **2.0** | Versão principal em uso |
-| **Oni completo** | **0.10.1** | Progressão, Origens, Regeneração, Kekkijutsus, Classes, Especializações e Painel GM completos |
-| **Oni Minion** | **0.10.1** | Template e construtor distribuídos com 3 tipos, 6 pacotes, 4 ataques, 14 traços e 10 fraquezas |
+| **Oni completo** | **0.10.6** | Progressão, Origens, Regeneração, Kekkijutsus, Classes, Especializações e Painel GM completos |
+| **Oni Minion** | **0.10.6** | Template e construtor distribuídos com 3 tipos, 6 pacotes, 4 ataques, 14 traços e 10 fraquezas |
 
 ## Estado mecânico atual
 
-O módulo está na versão **0.10.1**. Funcionalidades implementadas:
+O módulo está na versão **0.10.6**. Funcionalidades implementadas:
 
 - **Oni completo:** atributos Oni (7), progressão 1–20, Origens (21), Regeneração, Mordida/PDK, Kekkijutsus (29 técnicas), Classes (5 ranks), Especializações (10 × 20 graus), Painel GM.
 - **Oni Minion:** ficha separada com 3 tipos, 6 pacotes de atributos, 4 ataques, 14 traços, 10 fraquezas e escala por cena.
 - **Slayer:** 9 abas (Perfil/Bio, Perícias, Combate, Skills, Inventário, Interlúdios, Notas/Diário, Configurações, Dados), Respirações (prioritárias Chamas/Pedra/Névoa/Metal/Neve), Estados Avançados (Mundo Transparente, Lâmina Carmesim, Estado Altruísta), Marca do Caçador, Vida e Morte, Descanso, Ações.
-- **Macros:** 15+ wrappers limpos para API do módulo (Controle GM, Gerenciar Status, Gerenciar Ações, Descanso, Respiração, Kekkijutsu, Dom do Sangue, Marca do Caçador, Telefone/Chat).
+- **Arma Atual:** contrato único de arma por Caçador — seleção persistida, rolagem automática de ataque/dano usando a arma vinculada.
+- **Phone Chat:** sistema de mensagens in-game com badge de não lido, notas privadas do GM, relay de dano e controle por settings.
+- **Macros:** 19 wrappers limpos para API do módulo (Controle GM, Gerenciar Status, Gerenciar Ações, Descanso, Respiração, Kekkijutsu, Dom do Sangue, Marca do Caçador, Telefone/Chat).
 
 Uma funcionalidade só será marcada como concluída quando tiver comportamento executável, persistência, testes e validação no Foundry.
 
 ## Conteúdo do módulo
 
-- Compendium `Macros Night Assassins` com 15+ macros canônicas.
+- Compendium **Macros Night Assassins** com 19 macros canônicas.
+- Compendium **Night Assassin's Respirações** com 300 Items em 44 pastas de Respirações (45 estilos de Água, 13 Formas de Lua, etc).
+- Compendium **Night Assassin's Armas dos Caçadores** com 26 armas básicas e 17 armas especiais como Items CSB.
+- Compendium **Night Assassin's Arte** com 104 ícones de compêndio.
+- Compendium **Night Assassins — Templates de Ficha** com 4 templates (Slayer, Oni, Oni Minion, NPC).
 - Automação de atributos e progressão da ficha do Custom System Builder.
 - Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
 - Configurações de mundo para ativar ou desativar a automação e o relay.
-- Compêndio **Night Assassin's Respirações** com 44 pastas e Items de Formas utilizáveis pela macro universal.
-- Compêndio **Night Assassin's Armas dos Caçadores** com 26 armas básicas e 17 armas especiais como Items CSB.
-- Compêndio **Night Assassin's Kekkijutsus** com 29 técnicas canônicas das Origens Oni.
 - As Formas usam automaticamente os ícones locais disponíveis em `assets/icons/`.
 
 Os geradores usam somente os catálogos mecânicos versionados em `catalogs/`.

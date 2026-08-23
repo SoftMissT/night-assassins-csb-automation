@@ -84,4 +84,9 @@ describe("Respiração da Pedra", () => {
     assert.equal(plan.state.resilience.untilCombatEnd, true);
     assert.equal(plan.state.resilience.turns, null);
   });
+
+  it("reativação pela Marca falha se Resiliência nunca foi usada neste combate (regressão)", () => {
+    const plan = buildStoneBreathingPlan("pedra_05", 4, { resp_pedra_estado: JSON.stringify({}) }, { markReactivation: true });
+    assert.equal(plan.ok, false, "sem uso prévio nesta luta, não há o que 'reativar' — a regra exige uso anterior no combate");
+  });
 });

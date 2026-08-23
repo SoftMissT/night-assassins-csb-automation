@@ -33,6 +33,12 @@ export function buildStoneBreathingPlan(formId, level, props = {}, choices = {})
   if (!form) return { ok: false, noCost: true, reason: "Forma da Pedra desconhecida." };
   if (!selected) return { ok: false, noCost: true, reason: `Esta forma não pode ser usada no Nível de Respiração ${level}.` };
   const state = parseStoneBreathingState(props[STONE_STATE_KEY]);
+  if (form.oncePerCombat && choices.markReactivation && !state.resilienceUsed) {
+    // Regra: a reativação automática pela Marca do Exterminador só existe
+    // "durante uma luta em que já utilizou esta técnica" — sem uso prévio
+    // neste combate não há o que reativar.
+    return { ok: false, noCost: true, reason: "Resiliência ainda não foi usada neste combate; não há reativação a fazer." };
+  }
   if (form.oncePerCombat && state.resilienceUsed && !choices.markReactivation) {
     return { ok: false, noCost: true, reason: "Resiliência já foi usada neste combate." };
   }

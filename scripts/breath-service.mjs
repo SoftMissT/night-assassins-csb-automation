@@ -413,7 +413,14 @@ async function collectCuratedChoices(actor, form, level, props) {
   if (form.id === "pedra_03") {
     if (!targetActor) return { cancelled: true, reason: "Marque o inimigo alvo da reação." };
     const ranged = await confirmRule("Reflexão da Pedra", "A arma usada é de distância?");
-    return { targetUuid: targetActor.uuid, weaponRange: ranged ? "distancia" : "corpo-a-corpo" };
+    const protectingAlly = await confirmRule("Reflexão da Pedra", "Você está protegendo um aliado (em vez de si mesmo)?");
+    let protectedUuid = actor.uuid;
+    if (protectingAlly) {
+      const allyToken = [...(game.user?.targets ?? [])].find((token) => token.actor?.uuid !== targetActor.uuid)
+        ?? canvas?.tokens?.controlled?.find((token) => token.actor?.uuid !== actor.uuid);
+      protectedUuid = allyToken?.actor?.uuid ?? actor.uuid;
+    }
+    return { targetUuid: targetActor.uuid, weaponRange: ranged ? "distancia" : "corpo-a-corpo", protectedUuid };
   }
   if (form.id === "pedra_05") return { markReactivation: Boolean(props.marca_ativa && parseNumber(props.marca_ativa) > 0) };
   if (form.id === "nevoa_04") {
@@ -786,6 +793,36 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       sourceActorUuid: actor.uuid,
       sourceState: plan.state,
     });
+
+    // Sinergia: aliado protegido usuário de Metal/Cristal/Madeira testa FDV
+    // (CD 16 - CAR do usuário da Pedra); se passar, recupera PDR = metade
+    // da CAR do usuário da Pedra (arredondado para cima).
+    const STONE_SYNERGY_BREATHINGS = new Set(["Metal", "Cristal", "Madeira"]);
+    const protectedUuid = choices.protectedUuid && choices.protectedUuid !== actor.uuid ? choices.protectedUuid : null;
+    if (protectedUuid) {
+      const protectedDocument = await fromUuid(protectedUuid);
+      const protectedActor = protectedDocument?.actor ?? protectedDocument;
+      const hasSynergyBreathing = [...(protectedActor?.items ?? [])]
+        .some((item) => STONE_SYNERGY_BREATHINGS.has(item.system?.props?.respiracao_nome));
+      if (protectedActor?.update && hasSynergyBreathing) {
+        const car = parseNumber(props.car_display);
+        const fdv = parseNumber(protectedActor.system?.props?.fdv_display);
+        const synergyDc = 16 - car;
+        const synergyRoll = await Roll.create(`1d20 + ${fdv}`).evaluate();
+        await synergyRoll.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor: protectedActor }),
+          flavor: `<strong>Sinergia da Pedra</strong> — FDV CD ${synergyDc}`,
+        });
+        if (synergyRoll.total >= synergyDc) {
+          const recovery = Math.ceil(car / 2);
+          const protectedPdrGasto = parseNumber(protectedActor.system?.props?.pdr_slayer_gasto_valor);
+          await protectedActor.update({
+            "system.props.pdr_slayer_gasto_valor": Math.max(0, protectedPdrGasto - recovery),
+          }, { naCsbAutomation: true, naBreathing: true });
+          ui.notifications?.info?.(`Sinergia da Pedra: ${protectedActor.name} recuperou ${recovery} PDR.`);
+        }
+      }
+    }
   }
   if (isMistForm && form.id === "nevoa_08" && plan.state?.dazzle?.allyUuid) {
     const allyDocument = await fromUuid(plan.state.dazzle.allyUuid);

@@ -36,6 +36,7 @@ build/
 /packs/
 *.log
 module.zip
+/_debug/
 slayer_template_atual_agora.json
 arrumei umas coisas oq vc acha.json
 

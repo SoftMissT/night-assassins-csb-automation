@@ -22,14 +22,28 @@ describe("module distribution", () => {
     ]);
   });
 
-  it("cataloga todo asset de icons/ no Compêndio de Arte", async () => {
+  it("cataloga todo asset de icons/ (recursivo) no Compêndio de Arte", async () => {
     const { readdir } = await import("node:fs/promises");
-    const icons = (await readdir(new URL("../assets/icons", import.meta.url))).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file));
-    assert.ok(icons.length > 0, "assets/icons deve conter ao menos um ícone");
+    const path = await import("node:path");
+    const assetsRoot = new URL("../assets/icons", import.meta.url);
 
-    for (const file of icons) {
-      const asset = await readFile(new URL(`../assets/icons/${file}`, import.meta.url));
-      assert.ok(asset.length > 0, `${file} deve existir em assets/icons`);
+    async function listImagesRecursive(directory) {
+      const entries = await readdir(directory, { withFileTypes: true });
+      const files = [];
+      for (const entry of entries) {
+        const full = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, `${directory}/`);
+        if (entry.isDirectory()) files.push(...await listImagesRecursive(full));
+        else if (/\.(webp|png|jpg|jpeg|svg)$/i.test(entry.name)) files.push(full);
+      }
+      return files;
+    }
+
+    const icons = await listImagesRecursive(assetsRoot);
+    assert.ok(icons.length > 0, "assets/icons deve conter ao menos um ícone (em qualquer subpasta)");
+
+    for (const fileUrl of icons) {
+      const asset = await readFile(fileUrl);
+      assert.ok(asset.length > 0, `${fileUrl} deve existir em assets/icons`);
     }
 
     const source = await readFile(new URL("../tools/build-asset-sources.mjs", import.meta.url), "utf8");

@@ -2,7 +2,7 @@
   "_id": "NAWeaponTpl00001",
   "name": "NA Arma - Slayer",
   "type": "_equippableItemTemplate",
-  "img": "icons/svg/sword.svg",
+  "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
   "system": {
     "header": {
       "key": "arma_header",

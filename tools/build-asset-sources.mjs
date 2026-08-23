@@ -26,17 +26,17 @@ function toArtId(file) {
   return createHash("sha1").update(`night-assassins-art:${base}`).digest("hex").slice(0, 16);
 }
 
-function artDocument(file, index) {
-  const id = toArtId(file);
+function artDocument(relativeFile, index) {
+  const id = toArtId(relativeFile);
   if (id.length !== 16) throw new Error(`ID de arte inválido (${id.length}): ${id}`);
-  const base = path.parse(file).name;
+  const base = path.parse(relativeFile).name;
   const label = labels[base] || `Ícone — ${base}`;
   return {
     _id: id,
     _key: `!items!${id}`,
     name: label,
     type: "equippableItem",
-    img: `modules/${MODULE_ID}/assets/icons/${file}`,
+    img: `modules/${MODULE_ID}/assets/icons/${relativeFile.split(path.sep).join("/")}`,
     system: {
       body: {
         contents: [],
@@ -44,7 +44,7 @@ function artDocument(file, index) {
         type: "panel",
       },
       templateSystemUniqueVersion: null,
-      uniqueId: file,
+      uniqueId: relativeFile,
       display: { width: 600, height: 600, fix_size: false, pp_width: 64, pp_height: 64 },
       header: { contents: [], key: "custom_header", type: "panel" },
       hidden: [],
@@ -69,7 +69,21 @@ function artDocument(file, index) {
   };
 }
 
-const files = (await readdir(assetsDirectory)).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file)).sort();
+async function listImagesRecursive(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const full = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await listImagesRecursive(full));
+    } else if (/\.(webp|png|jpg|jpeg|svg)$/i.test(entry.name)) {
+      files.push(path.relative(assetsDirectory, full));
+    }
+  }
+  return files;
+}
+
+const files = (await listImagesRecursive(assetsDirectory)).sort();
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });

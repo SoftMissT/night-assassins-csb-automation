@@ -1,3 +1,11 @@
+## 0.10.7 — 2026-08-23
+
+### Packs versionados no repo
+- **`.gitignore`**: `/packs/` removido — packs LevelDB agora são tracked pelo Git.
+- **Compendiums reconstruídos**: macros (19), armas (43), respirações (300+), arte (104), templates (4).
+- **Anti-regressão**: `tests/compendium-packs.test.mjs` valida que nenhum pack está vazio.
+- **README.md**: atualizado para v0.10.7 com todos os compendiums e funcionalidades.
+
 ## 0.10.6 — 2026-08-22
 
 ### Contrato Único de Arma Atual (Phase 3)

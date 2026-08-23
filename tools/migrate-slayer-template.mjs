@@ -195,7 +195,7 @@ function labelText(value) {
 }
 
 function orbitron(text, color = "#D45CA4", size = 16) {
-  return `<div class="custom-orbitron-wrapper"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span class="na-sheet-text" style="font-family: 'Orbitron', 'Times New Roman', serif; font-size: ${size}px; font-weight: 700; color:${color}; text-transform: uppercase; letter-spacing: .12em;">${text}</span>\n</div>`;
+  return `<div class="custom-orbitron-wrapper"> \n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');\n  </style>\n  <span style="font-family: 'Orbitron', 'Times New Roman', serif; font-size: ${size}px; font-weight: 700; color:${color}; text-transform: uppercase; letter-spacing: .12em;">${text}</span>\n</div>`;
 }
 
 function attributeRoll(test, attr, color) {
@@ -496,10 +496,6 @@ function organizeSlayerTabs(template) {
   let resistanceDisplay = null;
   let statusButton = null;
   let statusDisplay = null;
-  let restButton = null;
-  let movementTitle = null;
-  let movementDisplay = null;
-  let advancedStatesPanel = null;
   walk(tabs, (node) => {
     if (!existingMarkPanel && (node.key === "skills_marca_slayer_panel" || node.title === "Marca do Caçador")) {
       existingMarkPanel = structuredClone(node);
@@ -508,10 +504,6 @@ function organizeSlayerTabs(template) {
     if (node.key === "status_slayer_resistencias_display") resistanceDisplay = structuredClone(node);
     if (node.key === "status_slayer_gerenciar") statusButton = structuredClone(node);
     if (node.key === "status_slayer_display") statusDisplay = structuredClone(node);
-    if (node.key === "descanso_slayer_gerenciar") restButton = structuredClone(node);
-    if (node.key === "deslocamento_slayer_titulo") movementTitle = structuredClone(node);
-    if (node.key === "deslocamento_slayer_display") movementDisplay = structuredClone(node);
-    if (node.key === "estados_avancados_slayer_panel") advancedStatesPanel = structuredClone(node);
   });
 
   removeComponentsByKey(template.system, new Set([
@@ -521,7 +513,6 @@ function organizeSlayerTabs(template) {
     "skills_slayer_hab_display", "skills_slayer_classe_display", "skills_slayer_origem_display",
     "mundo_transparente_slayer_estado", "estado_altruista_slayer_estado", "lamina_carmesim_slayer_estado",
     "resistencia_slayer_gerenciar", "status_slayer_resistencias_display", "status_slayer_gerenciar", "status_slayer_display",
-    "descanso_slayer_gerenciar", "deslocamento_slayer_titulo", "deslocamento_slayer_display", "estados_avancados_slayer_panel",
   ]));
 
   pericias.name = "Perícias";
@@ -554,18 +545,20 @@ function organizeSlayerTabs(template) {
       textField("perfil_slayer_personalidade", "Personalidade", ""),
     ], "grid-2"),
     richTextArea("perfil_slayer_bio", "Biografia"),
-    panel("perfil_slayer_recuperacao_panel", "Deslocamento e Descanso", [
-      movementTitle ?? displayLabel("deslocamento_slayer_titulo", orbitron("DESLOCAMENTO", "#28D7FF", 16)),
-      movementDisplay ?? displayLabel("deslocamento_slayer_display", "${deslocamento_slayer}$m (7m + DEX)"),
-      restButton ?? displayLabel("descanso_slayer_indisponivel", "Descanso indisponível"),
-    ], "grid-3"),
   ]);
 
   const skills = tab("skills_slayer_tab", "Skills", [
     displayLabel("skills_slayer_titulo", orbitron("SKILLS", "#FF9100", 18)),
-    advancedStatesPanel ?? panel("estados_avancados_slayer_panel", "Estados Avançados", [
-      displayLabel("estados_avancados_slayer_indisponivel", "Mundo Transparente, Estado Altruísta e Lâmina Carmesim"),
-    ]),
+    panel("skills_slayer_escolhas_panel", "Escolhas do Caçador", [
+      displayLabel("skills_slayer_resp_display", "Respiração: ${resp}$"),
+      displayLabel("skills_slayer_hab_display", "Habilidade Especial: ${hab_escolhida}$"),
+      displayLabel("skills_slayer_classe_display", "Classe: ${classe_escolhida}$"),
+      displayLabel("skills_slayer_origem_display", "Habilidade de Origem: ${origem_dropdown}$"),
+      playerTextField("armas_proficientes", "Armas Proficientes (separadas por vírgula)", ""),
+    ], "grid-2"),
+    breathingItemContainer(),
+    markPanel,
+    panel("skills_slayer_origem_panel", "Habilidade de Origem", [textField("hab_origem_slayer_resumo", "Resumo", "")]),
   ]);
 
   const inventario = tab("inventario_slayer_tab", "Inventário", [
@@ -579,7 +572,7 @@ function organizeSlayerTabs(template) {
     itemContainer("inventario_slayer_itens", "Itens", "item", "NAInventoryTpl001"),
   ]);
 
-  const combatConditions = [
+  const condicoes = tab("status_slayer_tab", "Condições", [
     displayLabel("status_slayer_titulo", orbitron("STATUS E RESISTÊNCIAS", "#D45CA4", 18)),
     panel("resistencias_slayer_panel", "Resistências", [
       resistanceButton ?? displayLabel("resistencia_slayer_indisponivel", "Gerenciador de Resistências indisponível"),
@@ -589,18 +582,7 @@ function organizeSlayerTabs(template) {
       statusButton ?? displayLabel("status_slayer_indisponivel", "Gerenciador de Status indisponível"),
       statusDisplay ?? displayLabel("status_slayer_display", "${status_slayer_resumo}$"),
     ], "grid-2"),
-  ];
-
-  const combatWeaponButton = displayLabel("combat_slayer_arma_rolar", orbitron("ARMAS E DANO", "#C1000C", 14), "Seleciona uma arma do Inventário e abre o construtor de ataque.");
-  combatWeaponButton.style = "button";
-  combatWeaponButton.icon = "fa-solid fa-khanda";
-  combatWeaponButton.rollMessage = "%{await game.modules.get('night-assassins-csb-automation')?.api?.rollDamage({actorUuid:entity.uuid}); return '';}%";
-  combate.contents.push(
-    breathingItemContainer(),
-    markPanel,
-    panel("combat_slayer_armas_panel", "Armas", [combatWeaponButton]),
-    ...combatConditions,
-  );
+  ]);
 
   const interludios = tab("interludios_slayer_tab", "Interlúdios", [
     displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIO, TREINO & REABILITAÇÃO", "#28D7FF", 18)),
@@ -615,7 +597,7 @@ function organizeSlayerTabs(template) {
   combate.name = "Combate";
   configuracoes.name = "Configurações";
   dados.name = "Dados";
-  tabs.contents = [perfil, pericias, combate, skills, inventario, interludios, notas, configuracoes, dados];
+  tabs.contents = [perfil, pericias, combate, condicoes, skills, inventario, interludios, notas, configuracoes, dados];
 }
 
 function fixBreathingState(template) {
@@ -658,9 +640,6 @@ function fixBreathingState(template) {
     ["resp_chamas_calor_arma", "Chamas — Fogo Fátuo", 0],
     ["resp_chamas_bonus_acerto", "Chamas — bônus de Acerto", 0],
     ["resp_chamas_bonus_dano", "Chamas — bônus de dano da arma", 0],
-    ["resp_metal_bloqueio_bonus", "Metal — bônus de Bloqueio", 0],
-    ["resp_metal_for_temp", "Metal — FOR temporária", 0],
-    ["resp_metal_fdv_temp", "Metal — FDV temporária", 0],
     ...attributes.map((attribute) => [`${attribute}_resp_bonus_temp_slayer`, `${attribute.toUpperCase()} temporário de Respiração`, 0]),
   ];
   const textFields = [
@@ -668,8 +647,6 @@ function fixBreathingState(template) {
     ["resp_chamas_estado", "Estado mecânico da Respiração das Chamas", '{"version":1,"weaponHeat":0}'],
     ["resp_pedra_estado", "Estado mecânico da Respiração da Pedra", '{"version":1}'],
     ["resp_nevoa_estado", "Estado mecânico da Respiração da Névoa", '{"version":1,"patterns":{}}'],
-    ["resp_neve_estado", "Estado mecânico da Respiração da Neve", '{"version":1}'],
-    ["resp_metal_estado", "Estado mecânico da Respiração do Metal", '{"version":1}'],
     ["resp_chamas_bonus_dado", "Chamas — dado adicional de técnica", ""],
     ["resp_chamas_resumo", "Chamas — resumo", "Fogo Fátuo 0/60"],
     ["resp_pedra_resumo", "Pedra — resumo", "Pedra · sem efeito ativo"],

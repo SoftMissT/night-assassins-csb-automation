@@ -22,11 +22,10 @@ test("somente os cinco status oficiais causam dano contínuo", () => {
 });
 
 test("catálogo Slayer contém todos os status sem duplicar Resistência ou Ferida", () => {
-  assert.equal(STATUS_SLAYER.length, 37);
+  assert.equal(STATUS_SLAYER.length, 36);
   assert.equal(new Set(STATUS_SLAYER.map(({ key }) => key)).size, STATUS_SLAYER.length);
   assert.ok(STATUS_SLAYER.some(({ key }) => key === "vantagem"));
   assert.ok(STATUS_SLAYER.some(({ key }) => key === "fadiga_espiritual"));
-  assert.ok(STATUS_SLAYER.some(({ key }) => key === "ofegante"));
   assert.ok(!STATUS_SLAYER.some(({ key }) => key === "resistencia" || key === "ferida"));
 });
 

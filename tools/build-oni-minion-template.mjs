@@ -37,22 +37,6 @@ function label(key, value, color = "#FF2B4A") {
   };
 }
 
-function rollLabel(key, value, test, attr, color) {
-  return {
-    ...base("label", key, ""), icon: "", prefix: "", suffix: "", style: "label",
-    value: `<span class="na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-${attr}">${value}</span>`,
-    rollMessage: `%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'${test}',attr:'${attr}',color:'${color}'}); return '';}%`,
-    altRollMessage: "", rollMessageToChat: true, altRollMessageToChat: false,
-  };
-}
-
-function actionButton(key, value, script, color = "#FF2B4A") {
-  return {
-    ...label(key, value, color), style: "button", rollMessage: script,
-    rollMessageToChat: false, altRollMessage: "", altRollMessageToChat: false,
-  };
-}
-
 function panel(key, title, contents, flow = "grid-2") {
   return {
     ...base("panel", key, ""), contents, flow, align: "center", verticalAlign: "top",
@@ -60,29 +44,23 @@ function panel(key, title, contents, flow = "grid-2") {
   };
 }
 
-const ATTR_META = [
-  ["vit", "VIT", "TESTE DE VITALIDADE", "#2ED36F"],
-  ["dex", "DEX", "TESTE DE DESTREZA", "#28D7FF"],
-  ["for", "FOR", "TESTE DE FORCA", "#FF2B4A"],
-  ["car", "CAR", "TESTE DE CARISMA", "#FF9100"],
-  ["fdv", "FDV", "TESTE DE FORCA DE VONTADE", "#BB97F9"],
-  ["int", "INT", "TESTE DE INTELIGENCIA", "#F8EB4D"],
-  ["sab", "SAB", "TESTE DE SABEDORIA", "#D45CA4"],
+const attributes = [
+  ["vit", "VIT", "#2ED36F"], ["dex", "DEX", "#28D7FF"], ["for", "FOR", "#FF2B4A"],
+  ["car", "CAR", "#FF9100"], ["fdv", "FDV", "#BB97F9"], ["int", "INT", "#F8EB4D"],
+  ["sab", "SAB", "#D45CA4"],
 ];
 
-const attributeFields = ATTR_META.flatMap(([key, title, test, color]) => [
+const attributeFields = attributes.flatMap(([key, title, color]) => [
   numberField(`oni_minion_${key}_base`, `${title} base`, 0, 0, 20),
-  rollLabel(`oni_minion_${key}_rolar`, title, test, key, color),
   label(`oni_minion_${key}_display_label`, `${title}: \${oni_minion_${key}_display}$`, color),
 ]);
 
-const hidden = ATTR_META.map(([key]) => ({
+const hidden = attributes.map(([key]) => ({
   name: `oni_minion_${key}_display`,
   value: `\${fallback(oni_minion_${key}_base,0)+fallback(oni_minion_${key}_temp,0)}$`,
 }));
-for (const [key] of ATTR_META) hidden.push({ name: `oni_minion_${key}_temp`, value: "0" });
+for (const [key] of attributes) hidden.push({ name: `oni_minion_${key}_temp`, value: "0" });
 hidden.push(
-  { name: "acerto_label", value: "acerto_label_for" },
   { name: "oni_minion_pdv_total", value: "${fallback(oni_minion_pdv_base,0)+fallback(oni_minion_nivel,1)+fallback(oni_minion_vit_display,0)}$" },
   { name: "oni_minion_pdk_total", value: "${fallback(oni_minion_pdk_base,0)+fallback(oni_minion_fdv_display,0)}$" },
   { name: "oni_minion_pdv_atual", value: "${max(0,oni_minion_pdv_total-fallback(oni_minion_pdv_dano,0)+fallback(oni_minion_pdv_curado,0))}$" },
@@ -92,7 +70,7 @@ hidden.push(
 const template = {
   name: "oni_minion_template",
   type: "_template",
-  img: "modules/night-assassins-csb-automation/assets/icons/templates/na-oni-minion-template_icon.webp",
+  img: "modules/night-assassins-csb-automation/assets/icons/oni.webp",
   system: {
     body: {
       contents: [
@@ -103,7 +81,7 @@ const template = {
           textField("oni_minion_ataque", "Ataque"), textField("oni_minion_traco", "Traço (exatamente um)"),
           textField("oni_minion_fraqueza", "Fraqueza"), textField("oni_minion_comportamento", "Comportamento"),
         ]),
-        panel("oni_minion_attributes", "Atributos", attributeFields, "grid-7"),
+        panel("oni_minion_attributes", "Atributos", attributeFields, "grid-4"),
         panel("oni_minion_resources", "Recursos", [
           numberField("oni_minion_pdv_base", "PDV base", 8, 0),
           label("oni_minion_pdv_total_label", "PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$", "#FF2B4A"),
@@ -111,10 +89,6 @@ const template = {
           numberField("oni_minion_pdk_base", "PDK base", 2, 0),
           label("oni_minion_pdk_total_label", "PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$", "#28D7FF"),
           numberField("oni_minion_pdk_gasto", "PDK gasto", 0, 0), numberField("oni_minion_pdk_recuperado", "PDK recuperado", 0, 0),
-        ]),
-        panel("oni_minion_combat", "Combate", [
-          actionButton("oni_minion_acerto", "ACERTO", "%{await game.modules.get('night-assassins-csb-automation').api.rollHit({actorUuid:entity.uuid}); return '';}%", "#28D7FF"),
-          actionButton("oni_minion_dano", "DANO", "%{await game.modules.get('night-assassins-csb-automation').api.rollDamage({actorUuid:entity.uuid}); return '';}%", "#FF2B4A"),
         ]),
         textArea("oni_minion_resumo", "Resumo e observações"),
       ],

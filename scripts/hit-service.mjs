@@ -15,8 +15,6 @@ import { consumeMistPending, mistStatePatch, parseMistBreathingState } from "./m
 import { metalStatePatch, parseMetalBreathingState, registerMetalBattleHit } from "./metal-breathing-service.mjs";
 import { consumeSnowPending, parseSnowBreathingState, resolveSnowFreezeGain, snowRestrictionFlag, snowStatePatch, spendFreezeForRestriction } from "./snow-breathing-service.mjs";
 import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
-import { actorKind } from "./actor-kind.mjs";
-import { resolveAttackWeaponForActor, setCurrentWeaponForActor } from "./weapon-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -162,11 +160,6 @@ async function resolveActor(options) {
  * @param {object} options
  * @param {Actor} [options.actor]
  * @param {string} [options.actorUuid]
- * @param {string} [options.weaponUuid] - UUID explícito da arma (prioridade máxima)
- * @param {string} [options.slot="main"] - "main" ou "offhand"
- * @param {number} [options.profileIndex] - Índice do perfil de ataque
- * @param {boolean} [options.persistSelection=true] - Salvar arma escolhida como atual
- * @param {boolean} [options.allowDialog=true] - Abrir dialog se arma não resolvida
  * @returns {Promise<void>}
  */
 export async function rollHit(options) {
@@ -177,7 +170,6 @@ export async function rollHit(options) {
   }
 
   const props = actor.system?.props ?? {};
-  const kind = actorKind(actor);
   const magnetismSource = [...(game.combat?.combatants ?? [])]
     .map((combatant) => combatant.actor)
     .find((candidate) => {
@@ -192,23 +184,21 @@ export async function rollHit(options) {
       return;
     }
   }
-  const acertoLabel = props.acerto_label ?? (kind === "oni_minion" ? "acerto_label_for" : "");
+  const acertoLabel = props.acerto_label ?? "";
 
   let attrName = "";
   let attrVal = 0;
   let color = "";
 
   if (acertoLabel === "acerto_label_dex") {
-    const key = kind === "oni_minion" ? "oni_minion_dex_display" : "dex_display";
-    if (!Object.prototype.hasOwnProperty.call(props, key)) return ui.notifications?.error?.(`A ficha não possui a key ${key}.`);
+    if (!Object.prototype.hasOwnProperty.call(props, "dex_display")) return ui.notifications?.error?.("A ficha não possui a key dex_display.");
     attrName = "DEX";
-    attrVal = parseAttributeValue(props[key]);
+    attrVal = parseAttributeValue(props.dex_display);
     color = "#28D7FF";
   } else if (acertoLabel === "acerto_label_for") {
-    const key = kind === "oni_minion" ? "oni_minion_for_display" : "for_display";
-    if (!Object.prototype.hasOwnProperty.call(props, key)) return ui.notifications?.error?.(`A ficha não possui a key ${key}.`);
+    if (!Object.prototype.hasOwnProperty.call(props, "for_display")) return ui.notifications?.error?.("A ficha não possui a key for_display.");
     attrName = "FOR";
-    attrVal = parseAttributeValue(props[key]);
+    attrVal = parseAttributeValue(props.for_display);
     color = "#C1000C";
   } else {
     ui.notifications?.warn?.("Escolha DEX ou FOR no campo 'Como Acerta'.");
@@ -220,62 +210,13 @@ export async function rollHit(options) {
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática neste Acerto.");
 
   const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
-  const strength = parseAttributeValue(props[kind === "oni_minion" ? "oni_minion_for_display" : "for_display"]);
+  const strength = parseAttributeValue(props.for_display);
   const weapons = actorWeapons(actor).map((weapon) => ({
     ...weapon,
     effectiveCritical: effectiveWeaponCritical({ base: weapon.critical, state: passiveState, weaponId: weapon.id, strength }),
   }));
-
-  // Fase 3: Resolve arma via contrato único
-  const slot = options.slot ?? "main";
-  const persistSelection = options.persistSelection !== false;
-  const allowDialog = options.allowDialog !== false;
-
-  const weaponResolution = await resolveAttackWeaponForActor(actor, {
-    weaponUuid: options.weaponUuid,
-    slot,
-    profileIndex: options.profileIndex,
-    allowDialog,
-    persistSelection: false, // Não salva aqui, salvamos após dialog
-  });
-
-  let dialogResult;
-  if (weaponResolution.fromDialog) {
-    // Abrir dialog para jogador escolher arma
-    dialogResult = await openHitDialog({ attrName, attrVal, color, weapons });
-    if (!dialogResult) return;
-  } else if (weaponResolution.weapon) {
-    // Arma já resolvida pelo contrato
-    const resolvedWeapon = weapons.find((w) => w.id === weaponResolution.weapon.id && w.profileIndex === weaponResolution.profileIndex)
-      ?? weapons.find((w) => w.id === weaponResolution.weapon.id)
-      ?? null;
-    dialogResult = {
-      weaponId: weaponResolution.weapon.id,
-      weaponProfileIndex: weaponResolution.profileIndex,
-      weaponAttribute: attrName,
-      bonusRaw: "",
-      mode: "normal",
-      rollMode: game.user?.rollMode ?? "roll",
-      cdVal: 0,
-      rollCount: 1,
-      actionType: "ataque",
-    };
-  } else {
-    ui.notifications?.warn?.("Nenhuma arma disponível. Selecione uma arma no inventário.");
-    return;
-  }
-
-  // Salvar arma escolhida como atual (se aplicável)
-  if (persistSelection && dialogResult?.weaponId) {
-    const selectedWeapon = weapons.find((w) => w.id === dialogResult.weaponId);
-    if (selectedWeapon) {
-      await setCurrentWeaponForActor(actor, {
-        weaponUuid: selectedWeapon.uuid,
-        slot,
-        profileIndex: Number(dialogResult.weaponProfileIndex ?? 0),
-      });
-    }
-  }
+  const dialogResult = await openHitDialog({ attrName, attrVal, color, weapons });
+  if (!dialogResult) return;
 
   const breathingState = parseWaterBreathingState(props.resp_agua_estado);
   const breathHit = breathingState.nextHit;
@@ -291,13 +232,11 @@ export async function rollHit(options) {
   const snowPenalty = actor.getFlag?.(MODULE_ID, "snowPenalty");
   const stonePenalty = actor.getFlag?.(MODULE_ID, "stoneReflectionPenalty");
   const flameTier = flameWeaponTier(flameState.weaponHeat);
-  const stateBreathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0)
+  const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0)
     + (Number(stoneHit?.bonus) || 0) + (Number(mistHit?.bonus) || 0)
     + (Number(snowHit?.bonus) || 0) + (Number(snowState.belowZero?.fdvHitBonus) || 0)
     + (Number(snowState.iceHeart?.hitBonus) || 0) + (Number(mistState.fog?.bonus) || 0) + (Number(mistState.dazzle?.hitBonus) || 0)
     + (Number(snowPenalty?.hitPenalty) || 0) + (Number(stonePenalty?.value) || 0) + flameTier.hit;
-  const projectedBreathBonus = parseAttributeValue(props.resp_bonus_acerto_temp) + parseAttributeValue(props.resp_chamas_bonus_acerto);
-  const breathBonus = stateBreathBonus + projectedBreathBonus;
   if (stonePenalty?.sourceState) {
     const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
     if (canonical !== Number(stonePenalty.value)) ui.notifications?.warn?.("Penalidade da Reflexão da Pedra foi normalizada.");

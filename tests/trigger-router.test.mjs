@@ -91,22 +91,4 @@ describe("trigger-router", () => {
     // Dialog mockado retorna null, então não aplica
     assert.strictEqual(updated, false);
   });
-
-  it("Mestre de Batalha recebe 2d6 PDV uma única vez ao alcançar nível 11", async () => {
-    const actor = makeActor({ props: {
-      nvl_pj: "nvl_11", nvl_num: 11, classe_escolhida: "classe_mb",
-      pdv_slayer_extra: 3, slayer_class_mb_corpo_guerra_applied: 0,
-    } });
-    const patches = [];
-    actor.update = async (patch) => {
-      patches.push(patch);
-      for (const [key, value] of Object.entries(patch)) actor.system.props[key.replace("system.props.", "")] = value;
-    };
-    await handleActorUpdate(actor, { system: { props: { nvl_pj: "nvl_11" } } }, {}, game.user.id);
-    assert.equal(patches.length, 1);
-    assert.ok(patches[0]["system.props.pdv_slayer_extra"] >= 5);
-    assert.ok(patches[0]["system.props.slayer_class_mb_corpo_guerra_applied"] > 0);
-    await handleActorUpdate(actor, { system: { props: { nvl_pj: "nvl_11" } } }, {}, game.user.id);
-    assert.equal(patches.length, 1);
-  });
 });

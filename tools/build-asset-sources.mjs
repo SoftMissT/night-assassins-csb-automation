@@ -10,27 +10,6 @@ const outputDirectory = path.join(root, "build", "compendium", "artes");
 const MODULE_ID = "night-assassins-csb-automation";
 
 const labels = Object.freeze({
-  na_Slayer_Weapon_icon: "Ícone — Arma do Slayer",
-  "na-Breathing_Form_icon": "Ícone — Forma de Respiração",
-  "na-gm-control_icon": "Ícone — Controle do GM",
-  "na-roll-mode_icon": "Ícone — Teste de Atributo",
-  "na-gerenciar-acoes_icon": "Ícone — Gerenciar Ações",
-  "na-gerenciar-status_icon": "Ícone — Gerenciar Status",
-  "na-gerenciar-descanso_icon": "Ícone — Gerenciar Descanso",
-  "na-gerenciar-vida-morte_icon": "Ícone — Vida e Morte",
-  "na-gerenciar-estados-avancados_icon": "Ícone — Estados Avançados",
-  "na-gerenciar-interludio_icon": "Ícone — Interlúdio",
-  "na-gerenciar-resistencias_icon": "Ícone — Gerenciar Resistências",
-  "na-corrigir-armas_icon": "Ícone — Corrigir Armas",
-  "na-corrigir-respiracoes_icon": "Ícone — Corrigir Respirações",
-  "na-resp-usar-forma_icon": "Ícone — Usar Forma de Respiração",
-  "na-usar-kekki_icon": "Ícone — Usar Kekkijutsu",
-  "na-marca-cacador_icon": "Ícone — Marca do Caçador",
-  "na-oni-blood-gift_icon": "Ícone — Dom do Sangue",
-  "na-acerto-roll_icon": "Ícone — Rolagem de Acerto",
-  "na-attribute-level-snapshot_icon": "Ícone — Atributos por Nível",
-  "na-roll_damage_icon": "Ícone — Rolagem de Dano",
-  "na-telefone_icon": "Ícone — Telefone",
   resp_agua: "Ícone — Respiração da Água",
   resp_amor: "Ícone — Respiração do Amor",
   resp_flor: "Ícone — Respiração da Flor",
@@ -90,21 +69,7 @@ function artDocument(file, index) {
   };
 }
 
-async function walkAssets(dir, base = assetsDirectory) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const results = [];
-  for (const entry of entries) {
-    const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      results.push(...await walkAssets(full, base));
-    } else if (/\.(webp|png|jpg|jpeg|svg)$/i.test(entry.name)) {
-      results.push(path.relative(base, full).replace(/\\/g, "/"));
-    }
-  }
-  return results;
-}
-
-const files = (await walkAssets(assetsDirectory)).sort();
+const files = (await readdir(assetsDirectory)).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file)).sort();
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });

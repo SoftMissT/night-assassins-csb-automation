@@ -136,7 +136,6 @@ export async function rollTest(options) {
     attr,
     kind: ["Bloqueio", "Esquiva"].includes(test) ? "defense" : "test",
   });
-  const modifierBeforeBreathing = statusEffects.modifier;
   if (test === "Bloqueio") {
     const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
     if (Number(flameState.block?.bonus) > 0) {
@@ -164,12 +163,6 @@ export async function rollTest(options) {
       : Number(snowState.iceHeart?.dodgeBonus) || 0;
     if (mistBonus) { statusEffects.modifier += mistBonus; statusEffects.reasons.push(`Neblina +${mistBonus}`); }
     if (snowBonus) { statusEffects.modifier += snowBonus; statusEffects.reasons.push(`Coração de Gelo +${snowBonus}`); }
-    const projectedKey = test === "Bloqueio" ? "resp_bonus_bloqueio_temp" : "resp_bonus_esquiva_temp";
-    const projected = parseAttributeValue(actor.system?.props?.[projectedKey]);
-    if (projected) {
-      statusEffects.modifier += projected;
-      statusEffects.reasons.push(`Respiração ${projected > 0 ? "+" : ""}${projected}`);
-    }
   }
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode realizar a rolagem.");
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.");

@@ -11,9 +11,9 @@ const csbPackagePath = path.join(repoRoot, "src", "imports", "csb-import-slayer-
 
 test("template Slayer usa somente o contrato de recursos namespaced", () => {
   const document = JSON.parse(fs.readFileSync(templatePath, "utf8"));
-  assert.equal(document.name, "slayer_template");
+  assert.equal(document.name, "Slayer_template_atual");
   assert.equal(document.type, "_template");
-  assert.equal(document.prototypeToken.name, "slayer_template");
+  assert.equal(document.prototypeToken.name, "Slayer_template_atual");
   const template = unwrapSlayerTemplate(document);
   assert.deepEqual(validateSlayerTemplate(template), { duplicates: [], forbidden: [] });
   assert.equal(template.system.attributeBar.pdv_slayer_barra.value, "${pdv_slayer_atual_num}$");
@@ -36,7 +36,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões funcionais; encontrados ${buttons.length}.`);
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
-    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollHit|rollWeaponItem|reloadWeaponItem|useBreathForm|rollDamage)/);
+    assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem|useBreathForm)/);
     assert.match(String(button.value), /na-sheet-text/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
@@ -105,15 +105,8 @@ test("template Slayer mostra deslocamento e bonus da Concentracao Total Constant
   const movement = template.system.hidden.find((entry) => entry.name === "deslocamento_slayer");
   assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
   const source = JSON.stringify(template.system.body);
-  const perfilPanel = JSON.stringify(
-    template.system.body.contents
-      .find((node) => node.type === "tabbedPanel")
-      ?.contents.find((tab) => tab.key === "perfil_slayer_tab")
-      ?.contents.find((node) => node.key === "perfil_slayer_resumo_panel"),
-  );
-  assert.match(perfilPanel, /"deslocamento_slayer_linha"/);
-  assert.match(perfilPanel, /DESLOCAMENTO: \$\{deslocamento_slayer\}\$m/);
-  assert.doesNotMatch(source, /"deslocamento_slayer_display"/);
+  assert.match(source, /"deslocamento_slayer_display"/);
+  assert.match(source, /\$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
 });
 
 test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
@@ -154,7 +147,7 @@ test("template Slayer preserva armazenamento de Respiração e expõe automaçã
   assert.match(source, /useBreathForm/);
 });
 
-test("template Slayer mantém Condições e Formas na aba Combate", () => {
+test("template Slayer separa Condições da aba de Combate", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -165,22 +158,19 @@ test("template Slayer mantém Condições e Formas na aba Combate", () => {
   walk(template.system.body);
   assert.ok(tabbedPanel);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.key), [
-    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "skills_slayer_tab",
+    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "status_slayer_tab", "skills_slayer_tab",
     "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "configs_tab", "dados_tab",
   ]);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.name), [
-    "Perfil/Bio", "Perícias", "Combate", "Skills", "Inventário",
+    "Perfil/Bio", "Perícias", "Combate", "Condições", "Skills", "Inventário",
     "Interlúdios", "Notas/Diário", "Configurações", "Dados",
   ]);
   const combat = tabbedPanel.contents.find((entry) => entry.key === "combat_slayer_tab");
-  const profile = tabbedPanel.contents.find((entry) => entry.key === "perfil_slayer_tab");
-  assert.match(JSON.stringify(combat), /status_slayer_gerenciar/);
-  assert.match(JSON.stringify(combat), /resistencia_slayer_gerenciar/);
-  assert.match(JSON.stringify(combat), /skills_slayer_respiracoes/);
-  assert.match(JSON.stringify(combat), /combat_slayer_arma_rolar/);
-  assert.match(JSON.stringify(profile), /deslocamento_slayer_linha/);
-  assert.match(JSON.stringify(profile), /DESLOCAMENTO: \$\{deslocamento_slayer\}\$m/);
-  assert.match(JSON.stringify(profile), /descanso_slayer_gerenciar/);
+  const conditions = tabbedPanel.contents.find((entry) => entry.key === "status_slayer_tab");
+  assert.doesNotMatch(JSON.stringify(combat), /status_slayer_(gerenciar|display)|status_slayer_resistencias_display/);
+  assert.match(JSON.stringify(combat), /deslocamento_slayer_display/);
+  assert.match(JSON.stringify(conditions), /status_slayer_gerenciar/);
+  assert.match(JSON.stringify(conditions), /resistencia_slayer_gerenciar/);
 });
 
 test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB próprios", () => {
@@ -190,8 +180,10 @@ test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB
     assert.match(source, new RegExp(`"key":"${key}"[^}]+"type":"itemContainer"`));
   }
   for (const key of ["dinheiro_slayer_atual", "moedas_honra_slayer_atual"]) assert.match(source, new RegExp(`"${key}"`));
-  assert.match(source, /"skills_slayer_tab"/);
-  assert.match(source, /"estados_avancados_slayer_panel"/);
+  for (const key of [
+    "skills_slayer_resp_display", "skills_slayer_hab_display", "skills_slayer_classe_display",
+    "skills_marca_slayer_panel", "hab_origem_slayer_resumo", "armas_proficientes",
+  ]) assert.match(source, new RegExp(`"${key}"`));
   for (const key of ["vida_morte_slayer_panel", "perfil_slayer_bio", "interludios_slayer_registro", "notas_slayer_diario", "estados_avancados_slayer_panel"]) {
     assert.match(source, new RegExp(`"${key}"`));
   }
@@ -238,7 +230,7 @@ test("inventário filtra cada categoria por template exclusivo", () => {
   assert.deepEqual(containers.get("inventario_slayer_itens")?.templateFilter, ["NAInventoryTpl001"]);
 });
 
-test("armas operacionais em Combate sem duplicar o Inventário", () => {
+test("armas ficam exclusivamente na aba Inventário", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabs = null;
   function walk(node) {
@@ -250,8 +242,6 @@ test("armas operacionais em Combate sem duplicar o Inventário", () => {
   const combat = tabs.contents.find((entry) => entry.key === "combat_slayer_tab");
   const inventory = tabs.contents.find((entry) => entry.key === "inventario_slayer_tab");
   assert.doesNotMatch(JSON.stringify(combat), /inventario_slayer_armas|arma_slayer_rolar/);
-  assert.match(JSON.stringify(combat), /combat_slayer_armas_container/);
-  assert.match(JSON.stringify(combat), /combate_armas_rolar/);
   assert.match(JSON.stringify(inventory), /inventario_slayer_armas/);
   assert.match(JSON.stringify(inventory), /arma_slayer_rolar/);
 });

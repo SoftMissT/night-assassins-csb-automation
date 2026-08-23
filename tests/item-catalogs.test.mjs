@@ -73,7 +73,7 @@ describe("catálogo de Respirações", () => {
     for (const [breathing, file] of Object.entries(BREATHING_ICONS)) {
       const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
       assert.ok(forms.length > 0, `a Respiração ${breathing} deve possuir Formas catalogadas`);
-      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/breathing/${file}`));
+      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/${file}`));
     }
   });
 });
@@ -120,16 +120,20 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
   });
 
-  it("publica ícones de compêndio existentes", async () => {
+  it("publica ícones de compêndio e artes verticais existentes", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
     const weapons = documents.filter((document) => document.type === "equippableItem");
+    const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
     const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
-    assert.ok(customIcons.length >= 30, `esperado >= 30 armas com arte própria, encontrado ${customIcons.length}`);
+    assert.equal(illustrated.length, 14);
+    assert.equal(customIcons.length, 4);
+    for (const item of illustrated) {
+      const relativePath = item.system.props.arma_imagem_vertical.replace("modules/night-assassins-csb-automation/", "../");
+      await access(new URL(relativePath, import.meta.url));
+    }
     for (const item of customIcons) {
       const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");
       await access(new URL(relativePath, import.meta.url));
     }
-    const generic = weapons.filter((item) => item.img === "icons/svg/sword.svg");
-    assert.ok(generic.length <= 10, `esperado <= 10 armas sem arte dedicada, encontrado ${generic.length}`);
   });
 });

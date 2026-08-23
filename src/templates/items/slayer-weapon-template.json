@@ -2,7 +2,7 @@
   "_id": "NAWeaponTpl00001",
   "name": "NA Arma - Slayer",
   "type": "_equippableItemTemplate",
-  "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
+  "img": "icons/svg/sword.svg",
   "system": {
     "header": {
       "key": "arma_header",
@@ -58,6 +58,14 @@
           "size": "full-size",
           "label": "Propriedades",
           "defaultValue": ""
+        },
+        {
+          "key": "arma_imagem_vertical",
+          "type": "textField",
+          "size": "full-size",
+          "label": "Arte vertical da arma (9:16)",
+          "defaultValue": "",
+          "tooltip": "Caminho da ilustração expandida. Ex.: modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp"
         },
         {
           "key": "arma_requisito",
@@ -297,18 +305,6 @@
               "type": "numberField",
               "defaultValue": 0,
               "allowDecimal": false
-            },
-            {
-              "key": "arma_adapter_necessario",
-              "type": "numberField",
-              "defaultValue": 0,
-              "allowDecimal": false
-            },
-            {
-              "key": "arma_adapter_instalado",
-              "type": "numberField",
-              "defaultValue": 0,
-              "allowDecimal": false
             }
           ]
         },
@@ -377,12 +373,7 @@
         }
       ]
     },
-    "hidden": [
-      {
-        "name": "inventario_categoria",
-        "value": "arma"
-      }
-    ],
+    "hidden": [],
     "display": {
       "width": 760,
       "height": 760,

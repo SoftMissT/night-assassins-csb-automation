@@ -1,7 +1,6 @@
 const ONI_MINION_TEMPLATE_IDS = new Set(["naoniminiontpl001"]);
 const ONI_TEMPLATE_IDS = new Set(["pqr15wsdsqbcn15w"]);
 const SLAYER_TEMPLATE_IDS = new Set(["naslayertpl00001", "xif9qdbxtkel1bxw"]);
-const NPC_TEMPLATE_IDS = new Set(["nanpctemplate001"]);
 
 function clean(value) {
   return String(value ?? "").trim().toLocaleLowerCase("pt-BR");
@@ -34,16 +33,9 @@ export function actorKind(actor) {
     || props.pdv_slayer_total_conta !== undefined
     || props.pdv_slayer_total_valor !== undefined
     || markers.some((value) => value.includes("slayer_template") || SLAYER_TEMPLATE_IDS.has(value));
-  if (explicitSlayer) return "slayer";
-
-  const explicitNpc = props.npc_nome !== undefined
-    || props.npc_papel !== undefined
-    || props.npc_pdv_base !== undefined
-    || markers.some((value) => value.includes("npc_template") || NPC_TEMPLATE_IDS.has(value));
-  return explicitNpc ? "npc" : null;
+  return explicitSlayer ? "slayer" : null;
 }
 
 export const isOniMinionActor = (actor) => actorKind(actor) === "oni_minion";
 export const isOniActor = (actor) => actorKind(actor) === "oni";
 export const isSlayerActor = (actor) => actorKind(actor) === "slayer";
-export const isNpcActor = (actor) => actorKind(actor) === "npc";

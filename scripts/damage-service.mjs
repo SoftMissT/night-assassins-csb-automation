@@ -11,7 +11,7 @@ import { consumeSlayerActions } from "./action-service.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
-import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor, resolveAttackWeaponForActor, setCurrentWeaponForActor } from "./weapon-service.mjs";
+import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { consumeStonePending, parseStoneBreathingState, stoneStatePatch } from "./stone-breathing-service.mjs";
@@ -148,11 +148,6 @@ async function chooseMetalHammerSynergy(attacker) {
  * @param {object} options
  * @param {Actor} [options.actor]
  * @param {string} [options.actorUuid]
- * @param {string} [options.weaponUuid] - UUID explícito da arma (prioridade máxima)
- * @param {string} [options.slot="main"] - "main" ou "offhand"
- * @param {number} [options.profileIndex] - Índice do perfil de ataque
- * @param {boolean} [options.persistSelection=true] - Salvar arma escolhida como atual
- * @param {boolean} [options.allowDialog=true] - Abrir dialog se arma não resolvida
  * @param {string} [options.nome]
  * @param {Array} [options.entradas]
  * @param {number} [options.pdrCusto]
@@ -179,41 +174,7 @@ export async function rollDamage(options = {}) {
   if (statusEffects.blocked) return ui.notifications?.warn?.("Este personagem está incapacitado e não pode causar dano.");
   const attrValues = {};
   for (const { key } of ATTRIBUTES) {
-    const attributeKey = attackerKind === "oni_minion" ? `oni_minion_${key}_display` : `${key}_display`;
-    attrValues[key] = parseAttributeValue(props[attributeKey]);
-  }
-
-  // Fase 3: Resolver arma via contrato único
-  const slot = options.slot ?? "main";
-  const persistSelection = options.persistSelection !== false;
-
-  // Se weaponUuid foi passado explicitamente, resolver via contrato
-  if (options.weaponUuid) {
-    const weaponResolution = await resolveAttackWeaponForActor(actor, {
-      weaponUuid: options.weaponUuid,
-      slot,
-      profileIndex: options.profileIndex,
-      allowDialog: false,
-      persistSelection: false,
-    });
-    if (weaponResolution.weapon) {
-      const itemProps = weaponResolution.weapon.system?.props ?? {};
-      const profiles = weaponProfilesForActor(itemProps, actor.system?.props ?? {});
-      if (profiles.length > 0) {
-        const profileIndex = Math.min(options.profileIndex ?? 0, profiles.length - 1);
-        const selectedProfile = profiles[profileIndex];
-        options = {
-          ...options,
-          nome: options.nome ?? itemProps.arma_nome ?? weaponResolution.weapon.name,
-          weaponProfiles: [selectedProfile],
-          weaponItem: weaponResolution.weapon,
-        };
-        // Salvar arma como atual
-        if (persistSelection) {
-          await setCurrentWeaponForActor(actor, { weaponUuid: options.weaponUuid, slot, profileIndex });
-        }
-      }
-    }
+    attrValues[key] = parseAttributeValue(props[`${key}_display`]);
   }
 
   const hasExplicitDamage = Array.isArray(options.entradas) && options.entradas.length > 0
@@ -351,14 +312,6 @@ export async function rollDamage(options = {}) {
   }
   if (snowState.belowZero?.fdvDamageBonus && hasAttackDamage) {
     specs.push({ label: "Abaixo de Zero", types: ["congelante"], formula: String(snowState.belowZero.fdvDamageBonus), snow: true });
-  }
-  const hasSpecializedBreathingDamage = specs.some((spec) => spec.breathing || spec.flame || spec.stone || spec.mist || spec.metal || spec.snow);
-  if (attackerKind === "slayer" && hasAttackDamage) {
-    const hasFlameSpec = specs.some((spec) => spec.flame);
-    const projectedDice = String(props.resp_bonus_dano_dados ?? "").trim();
-    const projectedFixed = parseAttributeValue(props.resp_bonus_dano_fixo) + (hasFlameSpec ? 0 : parseAttributeValue(props.resp_chamas_bonus_dano));
-    if (projectedDice && projectedDice !== "0") specs.push({ label: "Bônus de Respiração", types: [], formula: projectedDice, breathing: true });
-    if (projectedFixed) specs.push({ label: "Bônus fixo de Respiração", types: [], formula: String(projectedFixed), breathing: true });
   }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
@@ -618,17 +571,7 @@ export async function rollDamage(options = {}) {
       const targetKind = actorKind(targetActor);
       if (targetKind === "slayer") return applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical: targetCritical, damageTypes, components: targetComponents, flame: flameContext });
       if (targetKind === "oni") return applyOniDamage(targetActor, amount, { attackName: nome, critical: targetCritical, rolledTotal: amount, damageTypes, components: targetComponents, requireApproval: true, flame: flameContext });
-      if (targetKind === "oni_minion") {
-        const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.oni_minion_pdv_dano)));
-        await targetActor.update({ "system.props.oni_minion_pdv_dano": current + amount }, { naCsbAutomation: true, naDamage: true });
-        return { ok: true, appliedDamage: amount, woundDamage: 0 };
-      }
-      if (targetKind === "npc") {
-        const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.npc_pdv_dano)));
-        await targetActor.update({ "system.props.npc_pdv_dano": current + amount }, { naCsbAutomation: true, naDamage: true });
-        return { ok: true, appliedDamage: amount, woundDamage: 0 };
-      }
-      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni/Minion/NPC."));
+      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni."));
     }),
   ]);
 
@@ -722,16 +665,7 @@ export async function rollDamage(options = {}) {
             ignoreResistance: true,
             requireApproval: true,
           };
-          const targetKind = actorKind(targetActor);
-          if (targetKind === "slayer") await applySlayerDamageAuto(targetActor, hammer.damage, context);
-          else if (targetKind === "oni_minion") {
-            const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.oni_minion_pdv_dano)));
-            await targetActor.update({ "system.props.oni_minion_pdv_dano": current + hammer.damage }, { naCsbAutomation: true, naDamage: true });
-          }
-          else if (targetKind === "npc") {
-            const current = Math.max(0, Math.trunc(parseNumber(targetActor.system?.props?.npc_pdv_dano)));
-            await targetActor.update({ "system.props.npc_pdv_dano": current + hammer.damage }, { naCsbAutomation: true, naDamage: true });
-          }
+          if (actorKind(targetActor) === "slayer") await applySlayerDamageAuto(targetActor, hammer.damage, context);
           else await applyOniDamage(targetActor, hammer.damage, context);
         }
       }

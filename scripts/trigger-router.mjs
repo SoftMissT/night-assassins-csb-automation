@@ -6,7 +6,6 @@ import { ATTRIBUTES, PROP_KEYS } from "./constants.mjs";
 import { changedProp, parseLevel, isDestinyMark, parseNumber } from "./parsing.mjs";
 import { createLevelOneValues, processLevelGain } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
-import { mbPermanentPdvPatch, mbShouldApplyPermanentPdv } from "./slayer/class-runtime.mjs";
 
 /** @type {Map<string, Promise<void>>} */
 const actorLocks = new Map();
@@ -59,35 +58,14 @@ export async function handleActorUpdate(actor, changes, options, userId) {
 
   const changedLevel = changedProp(changes, PROP_KEYS.level);
   const changedAbility = changedProp(changes, PROP_KEYS.ability);
-  const changedClass = changedProp(changes, "classe_escolhida");
 
   const level = changedLevel !== undefined ? parseLevel(changedLevel) : null;
   const ability = changedAbility !== undefined ? String(changedAbility ?? "").trim() : null;
-  const classKey = changedClass !== undefined ? String(changedClass ?? "").trim() : null;
 
-  if (level === null && ability === null && classKey === null) return;
+  if (level === null && ability === null) return;
 
   await withActorLock(actor.uuid, async () => {
     const props = actor.system?.props ?? {};
-    const effectiveProps = {
-      ...props,
-      nvl_num: level ?? parseLevel(props.nvl_pj),
-      classe_escolhida: classKey ?? props.classe_escolhida,
-    };
-
-    // Mestre de Batalha — Corpo de Guerra: +2d6 PDV uma única vez no nível 11.
-    if (mbShouldApplyPermanentPdv(effectiveProps)) {
-      const roll = await Roll.create("2d6").evaluate();
-      await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `<strong>Mestre de Batalha — Corpo de Guerra</strong><br>Ganho permanente de PDV no nível 11.`,
-      });
-      await actor.update(
-        mbPermanentPdvPatch(roll.total, props.pdv_slayer_extra),
-        { naCsbAutomation: true, naSlayerClass: true },
-      );
-      return;
-    }
 
     // Nível 1
     if (level === 1 && !isSnapshotComplete(props, 1)) {

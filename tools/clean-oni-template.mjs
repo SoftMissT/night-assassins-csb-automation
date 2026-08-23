@@ -5,20 +5,18 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const defaultPath = path.join(root, "src", "templates", "actors", "oni-template.json");
 
-const REMOVED_TABS = new Set(["interludios_oni_tab", "dados_tab", "perfil_oni_tab", "inventario_oni_tab", "notas_oni_tab", "pericias_tab", "kekki_oni_tab"]);
+const REMOVED_TABS = new Set(["skills_oni_tab", "interludios_oni_tab", "dados_tab"]);
 const REMOVED_KEYS = new Set([
   "skills_oni_respiracoes", "resp_oni_panel", "resp_oni_display", "resp_oni_storage_panel",
   "skills_marca_oni_panel", "marca_slayer_gerenciar", "marca_oni_gerenciar", "metal_escolhido",
-  "folego_oni_titulo", "folego_oni_atual",
 ]);
-const REMOVED_HIDDEN = /^(?:hab_|marca_|metal_|resp_|folego_oni_maximo$|nvl_respiracao_num$|(?:vit|dex|for|car|fdv|int|sab)_(?:marca|resp)_)/;
+const REMOVED_HIDDEN = /^(?:hab_|marca_|metal_|resp_|nvl_respiracao_num$|(?:vit|dex|for|car|fdv|int|sab)_(?:marca|resp)_)/;
 
 function prune(value) {
   if (Array.isArray(value)) return value.map(prune).filter((entry) => entry !== null);
   if (!value || typeof value !== "object") return value;
   if (REMOVED_TABS.has(value.key) || REMOVED_KEYS.has(value.key)) return null;
   if (/Marca do Caçador/i.test(String(value.title ?? ""))) return null;
-  if (/F[oô]lego/i.test(String(value.title ?? "")) || /F[oô]lego/i.test(String(value.value ?? ""))) return null;
   if (/Bônus Temporários de Marca/i.test(String(value.title ?? ""))) value.title = "Bônus Temporários Oni";
   for (const [key, child] of Object.entries(value)) value[key] = prune(child);
   return value;
@@ -37,7 +35,7 @@ function cleanHeader(template) {
 function orderTabs(template) {
   const tabbed = template.system?.body?.contents?.find((entry) => entry?.type === "tabbedPanel");
   if (!tabbed?.contents) return;
-  const order = ["combat_oni_tab", "skills_oni_tab", "configs_tab"];
+  const order = ["perfil_oni_tab", "pericias_tab", "combat_oni_tab", "inventario_oni_tab", "notas_oni_tab", "configs_tab"];
   tabbed.contents.sort((left, right) => order.indexOf(left.key) - order.indexOf(right.key));
 }
 
@@ -57,4 +55,3 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   await writeFile(targetPath, `${JSON.stringify(cleanOniTemplate(source), null, 2)}\n`);
   console.log(`Template Oni limpo em ${targetPath}`);
 }
-

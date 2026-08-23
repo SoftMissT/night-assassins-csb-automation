@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { actorKind, isOniActor, isSlayerActor, isOniMinionActor, isNpcActor } from "../scripts/actor-kind.mjs";
+import { actorKind, isOniActor, isSlayerActor, isOniMinionActor } from "../scripts/actor-kind.mjs";
 import {
   makeSlayerActor,
   makeOniActor,
@@ -29,8 +29,8 @@ describe("Matriz de Actors — classificacao e contratos", () => {
       assert.equal(actorKind(minion), "oni_minion");
     });
 
-    it("NPC classifica como npc", () => {
-      assert.equal(actorKind(npc), "npc");
+    it("NPC nao classifica (null)", () => {
+      assert.equal(actorKind(npc), null);
     });
   });
 
@@ -54,13 +54,6 @@ describe("Matriz de Actors — classificacao e contratos", () => {
       assert.equal(isOniMinionActor(oni), false);
       assert.equal(isOniMinionActor(minion), true);
       assert.equal(isOniMinionActor(npc), false);
-    });
-
-    it("isNpcActor reconhece apenas NPC", () => {
-      assert.equal(isNpcActor(slayer), false);
-      assert.equal(isNpcActor(oni), false);
-      assert.equal(isNpcActor(minion), false);
-      assert.equal(isNpcActor(npc), true);
     });
   });
 

@@ -3,7 +3,7 @@
  */
 
 import { MODULE_ID } from "./constants.mjs";
-import { parseNumber, parseLevel } from "./parsing.mjs";
+import { parseNumber } from "./parsing.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
 
@@ -220,8 +220,6 @@ async function confirmDirectDeath(actor, state, reason) {
 export async function reconcileActor(actor, options = {}) {
   if (!isPrimaryGm() || !isSlayer(actor) || resolving.has(actor.id)) return;
   const props = actor.system.props;
-  const level = parseLevel(props.nvl_pj);
-  if (level < 1) return;
   const state = parseLifeDeathState(props.vida_morte_slayer_dados);
   const maximum = slayerMaxPdv(props);
   const pdv = slayerCurrentPdv(props);

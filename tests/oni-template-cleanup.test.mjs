@@ -18,11 +18,7 @@ describe("limpeza do template Oni", () => {
   it("mantém somente abas próprias do Oni", () => {
     const cleaned = cleanOniTemplate(source);
     const tabs = collect(cleaned.system.body, (entry) => entry.type === "tab").map(({ key }) => key);
-    assert.deepEqual(tabs, ["combat_oni_tab", "skills_oni_tab", "configs_tab"]);
-    assert.ok(!tabs.includes("pericias_tab"), "Aba de Perícias não deve existir no Oni.");
-    assert.ok(!tabs.includes("notas_oni_tab"), "Aba de Notas foi removida.");
-    assert.ok(!tabs.includes("perfil_oni_tab"), "Aba de Perfil foi fundida na Combate.");
-    assert.ok(!tabs.includes("inventario_oni_tab"), "Aba de Inventário foi fundida na Combate.");
+    assert.deepEqual(tabs, ["perfil_oni_tab", "pericias_tab", "combat_oni_tab", "inventario_oni_tab", "notas_oni_tab", "configs_tab"]);
   });
 
   it("remove Respiração, Marca, Metal e Skills Slayer", () => {
@@ -44,5 +40,3 @@ describe("limpeza do template Oni", () => {
     assert.match(hidden.get("for_display"), /fallback\(atr_for_valor_config,0\)/);
   });
 });
-
-

@@ -24,7 +24,7 @@ describe("module distribution", () => {
 
   it("cataloga todo asset de icons/ no Compêndio de Arte", async () => {
     const { readdir } = await import("node:fs/promises");
-    const icons = (await readdir(new URL("../assets/icons", import.meta.url), { recursive: true })).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file));
+    const icons = (await readdir(new URL("../assets/icons", import.meta.url))).filter((file) => /\.(webp|png|jpg|jpeg|svg)$/i.test(file));
     assert.ok(icons.length > 0, "assets/icons deve conter ao menos um ícone");
 
     for (const file of icons) {
@@ -74,13 +74,13 @@ describe("module distribution", () => {
     }
   });
 
-  it("mantém o NPC narrativo com vida simples e sem automações", async () => {
+  it("mantém o NPC narrativo sem recursos de combate", async () => {
     const actor = JSON.parse(await readFile(new URL("../src/templates/actors/npc-template.json", import.meta.url), "utf8"));
     const serialized = JSON.stringify(actor.system);
     for (const key of ["npc_nome", "npc_personalidade", "npc_tom", "npc_aparencia", "npc_contexto", "npc_notas_gm"]) {
       assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
     }
-    assert.deepEqual(Object.keys(actor.system.attributeBar), ["npc_pdv_barra"]);
+    assert.deepEqual(actor.system.attributeBar, {});
     assert.deepEqual(actor.items, []);
     assert.deepEqual(actor.effects, []);
   });

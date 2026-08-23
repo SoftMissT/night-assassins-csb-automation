@@ -1,5 +1,0 @@
-2026/08/23-02:05:21.273 a620 Delete type=3 #1
-2026/08/23-02:05:21.321 7ea8 Level-0 table #5: started
-2026/08/23-02:05:21.360 7ea8 Level-0 table #5: 62728 bytes OK
-2026/08/23-02:05:21.435 7ea8 Delete type=0 #3
-2026/08/23-02:05:21.437 7ea8 Manual compaction at level-0 from '!actors!NANpcTemplate001' @ 72057594037927935 : 1 .. '!actors!NASlayerTpl00001' @ 0 : 0; will stop at (end)

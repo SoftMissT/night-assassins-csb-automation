@@ -33,6 +33,7 @@ node_modules/
 coverage/
 dist/
 build/
+/packs/
 *.log
 module.zip
 slayer_template_atual_agora.json
@@ -56,8 +57,3 @@ na_template_findings.md
 ARCHITECTURE.md
 erros.md
 CURRENT_CONTEXT.md
-/SDD
-/docs
-PLAN-slayer-completa.md_debug/
-PLAN-slayer-completa.md
-_debug/

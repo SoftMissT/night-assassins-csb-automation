@@ -1,10 +1,15 @@
 // UUID no Foundry: Macro.wjMm5abpGoLhTwg7
 // Integração CSB: %{return await game.macros.get('wjMm5abpGoLhTwg7').execute({actorUuid:entity.uuid,test:'Presença',attr:'CAR',color:'#FF9100'});}%
 (async () => {
+  // Foundry V13 executa macros via AsyncFunction("scope", script).
+  // Arrow IIFEs NÃO capturam 'arguments' de forma confiável dentro de AsyncFunction.
+  // Sempre use 'scope' diretamente.
   const args = (typeof scope !== 'undefined') ? (scope || {}) : {};
 
+  // Labels calculadas do CSB podem entregar o valor final dentro de HTML.
   function parseAttributeValue(raw) {
     if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+
     const text = String(raw ?? '')
       .replace(/<[^>]*>/g, ' ')
       .replace(/&nbsp;/gi, ' ')
@@ -18,6 +23,7 @@
   const attr = args.attr ?? '';
   const color = args.color ?? '';
 
+  // ── Leitura de Atributos do Ator ───────────────────────────────────────
   const actor = args.actorUuid
     ? await fromUuid(args.actorUuid)
     : canvas.tokens.controlled[0]?.actor ?? game.user?.character;
@@ -34,6 +40,7 @@
 
   const ATTR_KEYS = ['vit', 'for', 'dex', 'fdv', 'car', 'int', 'sab'];
   const ATTR_NAMES = { vit: 'VIT', for: 'FOR', dex: 'DEX', fdv: 'FDV', car: 'CAR', int: 'INT', sab: 'SAB' };
+  const ATTR_COLORS = { vit: '#36D67A', for: '#C1000C', dex: '#28D7FF', fdv: '#BB97F9', car: '#FF9100', int: '#F8EB4D', sab: '#D45CA4' };
 
   function readDisplayAttribute(key) {
     const propKey = `${key}_display`;
@@ -43,6 +50,7 @@
     return parseAttributeValue(props[propKey]);
   }
 
+  // Monta mapa exclusivamente com os valores finais *_display da ficha.
   const attrValues = {};
   try {
     for (const k of ATTR_KEYS) attrValues[k] = readDisplayAttribute(k);
@@ -50,6 +58,7 @@
     return ui.notifications?.error(error.message);
   }
 
+  // Atributos disponíveis como secundários (exclui o primário se houver)
   const primaryKey = attr ? attr.toLowerCase() : '';
   const val = ATTR_KEYS.includes(primaryKey) ? attrValues[primaryKey] : 0;
   const secondaryOptions = [{ key: '', label: 'Nenhum', val: 0 }];
@@ -59,6 +68,7 @@
     }
   }
 
+  // ── Helpers ────────────────────────────────────────────────────────────
   function getDice(mode) {
     if (mode === 'advantage') return '2d20kh1';
     if (mode === 'disadvantage') return '2d20kl1';
@@ -119,18 +129,7 @@
     });
   }
 
-  function readFormValues(dialog) {
-    const el = dialog.element;
-    const form = el?.querySelector?.('form') ?? el;
-    const get = (id) => form?.querySelector?.(`#${id}`)?.value ?? '';
-    return {
-      bonusRaw: get('na-rm-bonus'),
-      rollMode: get('na-rm-rollmode') || 'publicroll',
-      secVal: Number(get('na-rm-secattr')) || 0,
-      cdVal: Number(get('na-rm-cd')) || 0,
-    };
-  }
-
+  // ── Dialog Content (estilos inline mínimos, look nativo Foundry) ───────
   const secOptionsHtml = secondaryOptions.map(o =>
     `<option value="${o.val}" data-key="${o.key}">${o.label}${o.val ? ` = ${o.val}` : ''}</option>`
   ).join('');
@@ -165,87 +164,60 @@
     </div>
   `;
 
-  const DialogClass = foundry.applications?.api?.DialogV2 ?? Dialog;
-
-  if (DialogClass === Dialog) {
-    // Fallback V1 se DialogV2 não disponível
-    new Dialog({
-      title: test,
-      content: content,
-      buttons: {
-        advantage: {
-          label: 'Vantagem',
-          callback: (html) => {
-            const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
-            const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
-            const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
-            const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
-            doRoll('advantage', rollMode, secVal, bonusRaw, cdVal);
-          }
-        },
-        normal: {
-          label: 'Normal',
-          callback: (html) => {
-            const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
-            const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
-            const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
-            const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
-            doRoll('normal', rollMode, secVal, bonusRaw, cdVal);
-          }
-        },
-        disadvantage: {
-          label: 'Desvantagem',
-          callback: (html) => {
-            const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
-            const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
-            const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
-            const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
-            doRoll('disadvantage', rollMode, secVal, bonusRaw, cdVal);
-          }
-        },
-        cancel: {
-          label: 'Cancelar',
-          callback: () => { }
+  // ── Dialog nativo (V1 deprecated em V13 mas ainda funciona; look nativo) ─
+  new Dialog({
+    title: test,
+    content: content,
+    buttons: {
+      advantage: {
+        label: 'Vantagem',
+        callback: (html) => {
+          const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
+          const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
+          const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
+          const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
+          doRoll('advantage', rollMode, secVal, bonusRaw, cdVal);
         }
       },
-      default: 'normal',
-    }).render(true);
-  } else {
-    // DialogV2 (Foundry V13+)
-    new foundry.applications.api.DialogV2({
-      window: { title: test },
-      content: content,
-      buttons: [
-        {
-          action: 'advantage',
-          label: 'Vantagem',
-          callback: (event, button, dialog) => {
-            const v = readFormValues(dialog);
-            doRoll('advantage', v.rollMode, v.secVal, v.bonusRaw, v.cdVal);
-          }
-        },
-        {
-          action: 'normal',
-          label: 'Normal',
-          default: true,
-          callback: (event, button, dialog) => {
-            const v = readFormValues(dialog);
-            doRoll('normal', v.rollMode, v.secVal, v.bonusRaw, v.cdVal);
-          }
-        },
-        {
-          action: 'disadvantage',
-          label: 'Desvantagem',
-          callback: (event, button, dialog) => {
-            const v = readFormValues(dialog);
-            doRoll('disadvantage', v.rollMode, v.secVal, v.bonusRaw, v.cdVal);
-          }
-        },
-        {
-          action: 'cancel',
-          label: 'Cancelar',
+      normal: {
+        label: 'Normal',
+        callback: (html) => {
+          const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
+          const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
+          const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
+          const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
+          doRoll('normal', rollMode, secVal, bonusRaw, cdVal);
         }
-      ],
-    }).render({ force: true });
-  }
+      },
+      disadvantage: {
+        label: 'Desvantagem',
+        callback: (html) => {
+          const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
+          const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
+          const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
+          const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
+          doRoll('disadvantage', rollMode, secVal, bonusRaw, cdVal);
+        }
+      },
+      cancel: {
+        label: 'Cancelar',
+        callback: () => { }
+      }
+    },
+    default: 'normal',
+    render: (html) => {
+      const bonusInput = html.find('#na-rm-bonus');
+      const secAttrSelect = html.find('#na-rm-secattr');
+      const formulaDisplay = html.find('#na-rm-formula');
+
+      const updateFormula = () => {
+        const { extra } = parseBonus(bonusInput.val() ?? '');
+        const secVal = Number(secAttrSelect.val()) || 0;
+        formulaDisplay.text(buildFormula('normal', secVal, extra));
+      };
+
+      bonusInput.on('input', updateFormula);
+      secAttrSelect.on('change', updateFormula);
+    }
+  }).render(true);
 })();

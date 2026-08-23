@@ -95,7 +95,7 @@ function npcProps(overrides = {}) {
 }
 
 export function makeSlayerActor(overrides = {}) {
-  return { id: "slayer-test-01", name: "Kwon Jisoo", system: { template: "slayer_template", props: slayerProps(overrides) } };
+  return { id: "slayer-test-01", name: "Kwon Jisoo", system: { template: "Slayer_template_atual", props: slayerProps(overrides) } };
 }
 
 export function makeOniActor(overrides = {}) {

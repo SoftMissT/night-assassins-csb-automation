@@ -453,23 +453,23 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
     ? `<div style="margin-top:6px;">Dano rolado: <strong>${damageRoll.total}</strong> <button class="na-breath-damage-die" style="border:none;background:none;cursor:pointer;color:#28D7FF;font-size:11px;">(ver dados)</button></div>`
     : "";
   const statusLine = selected.status
-    ? `<div class="na-accent">Status: ${selected.status}</div>`
+    ? `<div style="color:#FF9100;">Status: ${selected.status}</div>`
     : "";
   const buffLine = selected.buff
-    ? `<div class="na-success">Buff (self): ${selected.buff}</div>`
+    ? `<div style="color:#2EFF7A;">Buff (self): ${selected.buff}</div>`
     : "";
   const efeitoLine = selected.efeito
-    ? `<div class="na-secondary" style="margin-top:4px;">${selected.efeito}</div>`
+    ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${selected.efeito}</div>`
     : "";
 
   const flavor = `
-    <div class="na-breath-chat">
-      <div>
+    <div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;">
+      <div style="font-size:14px;">
         <strong>${form.nome}</strong>
-        ${form.jp ? `<span class="na-secondary"> ${form.jp}</span>` : ""}
+        ${form.jp ? `<span style="font-size:11px;color:#888;"> ${form.jp}</span>` : ""}
       </div>
-      <div class="na-secondary">${form.respiracao} · ${form.tipo} · Nível ${selected.level}</div>
-      <div style="margin-top:4px;">Custo: <span class="na-cost">${selected.custo} PDR</span></div>
+      <div style="font-size:12px;color:#888;">${form.respiracao} · ${form.tipo} · Nível ${selected.level}</div>
+      <div style="margin-top:4px;">Custo: <strong>${selected.custo} PDR</strong></div>
       ${danoLine}
       ${statusLine}
       ${buffLine}
@@ -549,7 +549,7 @@ export async function attemptSnowRestrictionEscape({ actorUuid } = {}) {
   return outcome;
 }
 
-export async function rollConfirmedBreathDamage({ actor, form, selected, hitResult, rollDamage, rollWeaponItem }) {
+async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem }) {
   const successful = hitResult.attempts.filter((attempt) => attempt.hit);
   const weaponItem = hitResult.weapon?.id ? actor.items?.get?.(hitResult.weapon.id) : null;
   const actionId = foundry.utils.randomID();
@@ -562,16 +562,11 @@ export async function rollConfirmedBreathDamage({ actor, form, selected, hitResu
       return;
     }
   }
-  if (!weaponItem && !selected?.dano) {
-    ui.notifications?.warn?.(
-      `${form.nome}: nenhuma fórmula de dano configurada para o nível selecionado.`
-    );
-  }
   for (const attempt of successful) {
     if (weaponItem) {
       await rollWeaponItem({ actor, item: weaponItem, weaponProfileIndex: hitResult.weapon.profileIndex, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     } else {
-      await rollDamage({ actor, nome: `${form.respiracao} — ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: selected?.dano ?? "", fixo: 0, attrs: [], tiposDano: selected?.tiposDano ?? [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
+      await rollDamage({ actor, nome: `${form.respiracao} — ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     }
   }
 }
@@ -870,7 +865,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       await targetActor.setFlag(MODULE_ID, "snowPenalty", plan.state.pendingTargetEffect);
     }
     if (!(isSnowForm && form.id === "neve_02")) {
-      await rollConfirmedBreathDamage({ actor, form, selected, hitResult, rollDamage, rollWeaponItem });
+      await rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem });
     }
     await clearResolvedTechniqueQueue(actor, form.id);
     await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });
@@ -878,18 +873,9 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   }
 
   const genericFormula = isWaterForm || isFlameForm ? "" : resolveGenericDamageFormula(selected.dano, props);
-  if (genericFormula) {
-    const { rollDamage } = await import("./damage-service.mjs");
-    const damageSpec = { tipoAcao: "ataque", dado: genericFormula, fixo: 0, attrs: [], tiposDano: selected.tiposDano ?? [] };
-    await rollDamage({
-      actor,
-      nome: `${form.respiracao} — ${form.nome}`,
-      entradas: [damageSpec],
-      skipActionConsumption: true,
-      forceAttackDamage: true,
-    });
-  }
-  await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });
+  const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
+  if (damageRoll && game.dice3d?.showForRoll) await game.dice3d.showForRoll(damageRoll, game.user, true);
+  await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
   if (flameHealingRoll) {
     await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Cauterizar</strong> — recuperação de PDV` });
   }

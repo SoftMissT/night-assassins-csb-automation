@@ -4,11 +4,6 @@
   if (!game.user?.isGM) return ui.notifications.error('Somente o GM pode abrir o Controle dos Caçadores.');
 
   const automationModule = game.modules.get('night-assassins-csb-automation');
-  console.log('[NA-GM] module:', automationModule);
-  console.log('[NA-GM] active:', automationModule?.active);
-  console.log('[NA-GM] api:', automationModule?.api);
-  console.log('[NA-GM] openGmDashboard type:', typeof automationModule?.api?.openGmDashboard);
-
   if (!automationModule?.active || typeof automationModule.api?.openGmDashboard !== 'function') {
     return ui.notifications.error('Ative ou atualize o módulo Night Assassins CSB Automation e recarregue o mundo.');
   }

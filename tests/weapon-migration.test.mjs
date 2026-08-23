@@ -52,6 +52,33 @@ describe("weapon-migration", () => {
     assert.equal(weaponRepairChanges({ id: "x", name: "Adaga", system: { props: { inventario_categoria: "arma" } } }), null);
   });
 
+  it("repara inventario_categoria ausente em Item criado direto do template (sem catálogo)", () => {
+    const legacyItem = {
+      id: "legacy1",
+      name: "Espada Sem Nome",
+      system: {
+        template: "NAWeaponTpl00001",
+        props: {
+          // Sem inventario_categoria: reproduz Item criado via "Create Item" na
+          // ficha (fora do fluxo de catálogo/compêndio) — causa raiz do crash
+          // `equalText(item.inventario_categoria, 'arma')` com undefined.
+          arma_nome: "Espada Sem Nome",
+        },
+      },
+    };
+    const changes = weaponRepairChanges(legacyItem);
+    assert.ok(changes);
+    assert.equal(changes._id, "legacy1");
+    assert.equal(changes["system.props.inventario_categoria"], "arma");
+  });
+
+  it("não gera patch de categoria quando inventario_categoria já é 'arma'", () => {
+    assert.equal(
+      weaponRepairChanges({ id: "x", name: "Adaga", system: { props: { inventario_categoria: "arma" } } })?.["system.props.inventario_categoria"],
+      undefined,
+    );
+  });
+
   it("contabiliza Actors corrigidos e itens atualizados", async () => {
     let calls = 0;
     const actors = [{

@@ -373,7 +373,9 @@
           "label": "Nota do Mestre",
           "defaultValue": "",
           "style": "dialog"
-        },
+        }
+      ]
+    },
     "hidden": [
       {
         "name": "inventario_categoria",

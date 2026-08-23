@@ -7,7 +7,6 @@
  */
 
 import { MODULE_ID } from "../constants.mjs";
-import { isSlayerActor } from "../actor-kind.mjs";
 import { escapeHtml, generateLogicalId } from "./phone-chat-domain.mjs";
 import { archiveConversation, commit, loadState } from "./phone-chat-store.mjs";
 import { broadcastFullSync, PHONE_CHAT_TYPES, markRead, requestSync, sendMessage, subscribeSync } from "./phone-chat-relay.mjs";
@@ -38,7 +37,7 @@ export async function openMasterPhone(options = {}) {
 
 export async function openPhoneChat(options = {}) {
   if (!singleton) {
-    singleton = new PhoneChatApp({ actorUuid: options.actorUuid ?? null });
+    singleton = new PhoneChatApp({ actorUuid: options.actorUuid ?? null, master: options.master ?? false });
     await singleton.render({ force: false });
   } else {
     singleton.bringToFront();
@@ -47,36 +46,6 @@ export async function openPhoneChat(options = {}) {
   return singleton;
 }
 
-/**
- * Injeta o botão "Telefone" no cabeçalho das fichas Night Assassins
- * (Specs RF-008 — caminho garantido via hooks públicos de render).
- * @param {Application} app
- * @param {JQuery|HTMLElement} html
- * @returns {void}
- */
-export function attachPhoneChatHeaderButton(app, html) {
-  if (!app?.actor) return;
-  if (!isSlayerActor(app.actor)) return;
-  const root = html?.[0] ?? html;
-  const el = root instanceof HTMLElement ? root : null;
-  const header = el?.querySelector?.(".window-header")
-    ?? app.element?.querySelector?.(".window-header")
-    ?? null;
-  if (!header || header.querySelector(".na-phone-chat-open")) return;
-
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "header-control icon fas fa-comment-dots na-phone-chat-open";
-  button.title = game.i18n.localize("NA.PhoneChat.Title");
-  button.setAttribute("aria-label", button.title);
-  button.dataset.actorUuid = app.actor.uuid ?? "";
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    void openPhoneChat({ actorUuid: app.actor.uuid });
-  });
-  header.appendChild(button);
-}
 
 /**
  * Classe da HUD Telefone/Chat.
@@ -104,7 +73,7 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
 
   /** @override */
   _initializeApplicationOptions(options) {
-    super._initializeApplicationOptions(options);
+    options = super._initializeApplicationOptions(options);
     this._snapshot = { conversations: {}, contacts: {}, settings: {}, unreadByUser: {} };
     this._revision = 0;
     this._activeConversationId = null;
@@ -112,6 +81,7 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
     this._draft = "";
     this._lastThread = game.user?.getFlag(MODULE_ID, FLAG_LAST_THREAD) ?? null;
     this._actorUuid = options.actorUuid ?? null;
+    this._master = options.master ?? false;
     subscribeSync((message) => this._onSync(message));
     Hooks.on("phoneChatStateChanged", () => {
       if (game.user?.isGM && this.rendered) {
@@ -120,6 +90,13 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
         this.render({ force: true });
       }
     });
+    return options;
+  }
+
+  /** @override */
+  _onClose(options) {
+    super._onClose(options);
+    if (singleton === this) singleton = null;
   }
 
   /**
@@ -178,7 +155,7 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
     const admin = game.user.isGM ? this._renderAdmin() : "";
 
     return `
-      <div class="na-phone-chat__body">
+      <div class="na-phone-chat__body ${this._master ? "is-master" : ""}">
         <section class="na-phone-chat__list">${list}</section>
         <section class="na-phone-chat__main">
           ${thread}

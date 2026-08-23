@@ -1115,7 +1115,13 @@
               ]
             }
           ]
-        }
+        },
+        "hidden": [
+          {
+            "name": "inventario_categoria",
+            "value": "respiracao"
+          }
+        ]
       }
     },
     {

@@ -31,18 +31,22 @@ function attributeSummary(profiles, props) {
 export function weaponRepairChanges(item) {
   if (!isWeaponItem(item)) return null;
   const props = item.system?.props ?? {};
-  const profiles = weaponProfilesFromProps(props);
-  if (profiles.length === 0) return null;
-  const next = {
-    arma_perfis_ataque_json: JSON.stringify(profiles),
-    arma_mecanicas_json: JSON.stringify(weaponPropertyMechanics(props)),
-    arma_perfis_resumo: profileSummary(profiles),
-    arma_tipos_dano_resumo: typeSummary(profiles, props),
-    arma_atributos_resumo: attributeSummary(profiles, props),
-  };
   const changes = {};
-  for (const [key, value] of Object.entries(next)) {
-    if (!sameValue(props[key], value)) changes[`system.props.${key}`] = value;
+  if (props.inventario_categoria !== "arma") {
+    changes["system.props.inventario_categoria"] = "arma";
+  }
+  const profiles = weaponProfilesFromProps(props);
+  if (profiles.length > 0) {
+    const next = {
+      arma_perfis_ataque_json: JSON.stringify(profiles),
+      arma_mecanicas_json: JSON.stringify(weaponPropertyMechanics(props)),
+      arma_perfis_resumo: profileSummary(profiles),
+      arma_tipos_dano_resumo: typeSummary(profiles, props),
+      arma_atributos_resumo: attributeSummary(profiles, props),
+    };
+    for (const [key, value] of Object.entries(next)) {
+      if (!sameValue(props[key], value)) changes[`system.props.${key}`] = value;
+    }
   }
   return Object.keys(changes).length > 0 ? { _id: item.id, ...changes } : null;
 }

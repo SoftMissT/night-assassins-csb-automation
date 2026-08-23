@@ -549,7 +549,7 @@ export async function attemptSnowRestrictionEscape({ actorUuid } = {}) {
   return outcome;
 }
 
-async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem }) {
+export async function rollConfirmedBreathDamage({ actor, form, selected, hitResult, rollDamage, rollWeaponItem }) {
   const successful = hitResult.attempts.filter((attempt) => attempt.hit);
   const weaponItem = hitResult.weapon?.id ? actor.items?.get?.(hitResult.weapon.id) : null;
   const actionId = foundry.utils.randomID();
@@ -562,11 +562,16 @@ async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, r
       return;
     }
   }
+  if (!weaponItem && !selected?.dano) {
+    ui.notifications?.warn?.(
+      `${form.nome}: nenhuma fórmula de dano configurada para o nível selecionado.`
+    );
+  }
   for (const attempt of successful) {
     if (weaponItem) {
       await rollWeaponItem({ actor, item: weaponItem, weaponProfileIndex: hitResult.weapon.profileIndex, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     } else {
-      await rollDamage({ actor, nome: `${form.respiracao} — ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
+      await rollDamage({ actor, nome: `${form.respiracao} — ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: selected?.dano ?? "", fixo: 0, attrs: [], tiposDano: selected?.tiposDano ?? [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     }
   }
 }
@@ -865,7 +870,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       await targetActor.setFlag(MODULE_ID, "snowPenalty", plan.state.pendingTargetEffect);
     }
     if (!(isSnowForm && form.id === "neve_02")) {
-      await rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem });
+      await rollConfirmedBreathDamage({ actor, form, selected, hitResult, rollDamage, rollWeaponItem });
     }
     await clearResolvedTechniqueQueue(actor, form.id);
     await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });

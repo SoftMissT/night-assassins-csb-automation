@@ -5,14 +5,15 @@ import { readFileSync } from "node:fs";
 const tpl = JSON.parse(readFileSync(new URL("../src/templates/actors/oni-minion-template.json", import.meta.url), "utf8"));
 
 describe("Oni Minion template - atributos e rolagens", () => {
-  it("tem 7 numberFields e 7 labels de display dentro de oni_minion_attributes", () => {
+  it("tem 7 botoes de rolagem de atributo dentro de oni_minion_attributes", () => {
     const attrPanel = tpl.system.body.contents.find((c) => c.key === "oni_minion_attributes");
     assert.ok(attrPanel, "Painel oni_minion_attributes deve existir");
-    const bases = attrPanel.contents.filter((c) => c.type === "numberField");
-    assert.equal(bases.length, 7, "Devem existir 7 numberFields de atributo");
+    const rollBtns = attrPanel.contents.filter((c) => c.rollMessage && c.rollMessage.includes("NARollMode"));
+    assert.equal(rollBtns.length, 7, "Devem existir 7 botoes de rolagem");
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      const field = bases.find((b) => b.key === `oni_minion_${attr}_base`);
-      assert.ok(field, `Campo oni_minion_${attr}_base deve existir`);
+      const btn = rollBtns.find((b) => b.key === `oni_minion_${attr}_rolar`);
+      assert.ok(btn, `Botao oni_minion_${attr}_rolar deve existir`);
+      assert.match(btn.rollMessage, /actorUuid:entity\.uuid/, `${btn.key} deve passar actorUuid`);
     }
   });
 
@@ -24,9 +25,9 @@ describe("Oni Minion template - atributos e rolagens", () => {
     assert.equal(displays.length, 7, "Devem existir 7 labels de display");
   });
 
-  it("tem flow grid no painel de atributos", () => {
+  it("tem flow grid-7 no painel de atributos", () => {
     const attrPanel = tpl.system.body.contents.find((c) => c.key === "oni_minion_attributes");
-    assert.ok(attrPanel.flow && attrPanel.flow.startsWith("grid-"), `flow deve ser grid, obtido: ${attrPanel.flow}`);
+    assert.equal(attrPanel.flow, "grid-7");
   });
 
   it("preserva dados basicos do template", () => {

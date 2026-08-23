@@ -7,6 +7,7 @@
  */
 
 import { MODULE_ID } from "../constants.mjs";
+import { isSlayerActor } from "../actor-kind.mjs";
 import { escapeHtml, generateLogicalId } from "./phone-chat-domain.mjs";
 import { archiveConversation, commit, loadState } from "./phone-chat-store.mjs";
 import { broadcastFullSync, PHONE_CHAT_TYPES, markRead, requestSync, sendMessage, subscribeSync } from "./phone-chat-relay.mjs";
@@ -55,6 +56,7 @@ export async function openPhoneChat(options = {}) {
  */
 export function attachPhoneChatHeaderButton(app, html) {
   if (!app?.actor) return;
+  if (!isSlayerActor(app.actor)) return;
   const root = html?.[0] ?? html;
   const el = root instanceof HTMLElement ? root : null;
   const header = el?.querySelector?.(".window-header")

@@ -1,7 +1,7 @@
 {
   "name": "npc_template",
   "type": "_template",
-  "img": "systems/custom-system-builder/img/template-logo.svg",
+  "img": "modules/night-assassins-csb-automation/assets/icons/templates/na-npc-template_icon.webp",
   "system": {
     "body": {
       "contents": [
@@ -1046,7 +1046,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "systems/custom-system-builder/img/template-logo.svg",
+      "src": "modules/night-assassins-csb-automation/assets/icons/templates/na-npc-template_icon.webp",
       "anchorX": 0.5,
       "anchorY": 0.5,
       "fit": "contain",

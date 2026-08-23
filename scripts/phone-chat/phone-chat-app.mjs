@@ -165,6 +165,21 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
       </div>`;
   }
 
+  /**
+   * Insere o HTML produzido por `_renderHTML` no conteúdo da janela.
+   *
+   * `ApplicationV2` puro (sem `HandlebarsApplicationMixin`) exige que a classe
+   * implemente `_renderHTML` **e** `_replaceHTML`; sem este método o Foundry
+   * recusa a renderização com "Application class is not renderable".
+   *
+   * @param {string} result HTML retornado por `_renderHTML`.
+   * @param {HTMLElement} content Elemento de conteúdo da janela.
+   * @returns {void}
+   */
+  _replaceHTML(result, content) {
+    content.innerHTML = result;
+  }
+
   /** @override */
   async _onFirstRender(context, options) {
     await this.refresh();

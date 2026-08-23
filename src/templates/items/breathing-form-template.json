@@ -5,7 +5,7 @@
       "id": "NABreathTpl00001",
       "type": "_equippableItemTemplate",
       "name": "NA Respiração - Forma",
-      "img": "icons/items/na-Breathing_Form_icon.webp",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na-Breathing_Form_icon.webp",
       "data": {
         "body": {
           "contents": [

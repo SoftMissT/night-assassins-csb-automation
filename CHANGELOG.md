@@ -1,3 +1,14 @@
+## 0.10.9 — 2026-08-23
+
+### Correções de runtime reportadas no Foundry real
+- **Phone Chat renderizável**: adicionado `_replaceHTML`, que faltava. `ApplicationV2` puro exige `_renderHTML` **e** `_replaceHTML`; sem ele o Foundry recusava abrir a macro com "Application class is not renderable". O teste do PhoneChatApp agora reproduz essa exigência do core (antes o mock aprovava uma classe que o Foundry real rejeitava).
+- **Ícone da Forma de Respiração**: `icons/items/...` apontava para a raiz do Foundry (404). Agora usa `modules/night-assassins-csb-automation/assets/icons/items/...`.
+- **Ícones dos templates de Actor**: `slayer_template`, `oni_template` e `npc_template` usavam o logo genérico do CSB; agora usam a arte própria já presente no módulo. `prototypeToken` (nome e textura) alinhado em todos.
+- **Template do Slayer renomeado**: `Slayer_template_atual` → `slayer_template`, incluindo import, fixtures e testes.
+- **11 armas sem arte**: usavam `icons/svg/sword.svg` do core; agora usam o ícone de arma do próprio módulo.
+- **Kekkijutsu**: `icons/svg/fire.svg` → ícone próprio do módulo.
+- **Anti-regressão de assets** (`tests/asset-paths.test.mjs`): falha se qualquer template/catálogo referenciar imagem inexistente ou arte genérica do core, e trava nome + ícone canônico dos quatro templates de Actor. 915/915 testes.
+
 ## 0.10.8 — 2026-08-23
 
 ### P0 — Phone Chat, dano de Forma, arma legada

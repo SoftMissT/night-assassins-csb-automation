@@ -1,7 +1,7 @@
 {
-  "name": "Slayer_template_atual",
+  "name": "slayer_template",
   "type": "_template",
-  "img": "systems/custom-system-builder/img/template-logo.svg",
+  "img": "modules/night-assassins-csb-automation/assets/icons/templates/na-slayer-template_icon.webp",
   "system": {
     "body": {
       "contents": [
@@ -11740,14 +11740,14 @@
     "templateSystemUniqueVersion": 1747984449
   },
   "prototypeToken": {
-    "name": "Slayer_template_atual",
+    "name": "slayer_template",
     "displayName": 0,
     "actorLink": false,
     "width": 1,
     "height": 1,
     "depth": 1,
     "texture": {
-      "src": "systems/custom-system-builder/img/template-logo.svg",
+      "src": "modules/night-assassins-csb-automation/assets/icons/templates/na-slayer-template_icon.webp",
       "anchorX": 0.5,
       "anchorY": 0.5,
       "fit": "contain",

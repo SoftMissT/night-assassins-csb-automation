@@ -830,7 +830,7 @@
       "_key": "!items!NAWeaponTpl00001",
       "name": "NA Arma - Slayer",
       "type": "_equippableItemTemplate",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "body": {
           "contents": [
@@ -2218,7 +2218,7 @@
       "_key": "!items!76bdf60c5406c7ae",
       "name": "Fuuma Shuriken",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2319,7 +2319,7 @@
       "_key": "!items!e6234826ea47af40",
       "name": "Ioiô de Lâmina",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2417,7 +2417,7 @@
       "_key": "!items!a01173eafd021781",
       "name": "Kama",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -2999,7 +2999,7 @@
       "_key": "!items!074a2ee385fd6031",
       "name": "Nagamaki",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3095,7 +3095,7 @@
       "_key": "!items!1c3bfd49ef07070e",
       "name": "Naginata",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -3193,7 +3193,7 @@
       "_key": "!items!0aa50b610421057b",
       "name": "Ono & Mangual",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4278,7 +4278,7 @@
       "_key": "!items!787c516822404408",
       "name": "Gáe Bolg Espinho do Destino Selado",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4429,7 +4429,7 @@
       "_key": "!items!5e449d42d7921b31",
       "name": "Gilgamesh Yoroi do Sol",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -4986,7 +4986,7 @@
       "_key": "!items!e34dd9b0bfe06d77",
       "name": "Moonfang Runkah",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {
@@ -5776,7 +5776,7 @@
       "_key": "!items!f710269e83730023",
       "name": "Woldo Lua do Exílio",
       "type": "equippableItem",
-      "img": "icons/svg/sword.svg",
+      "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
       "system": {
         "template": "NAWeaponTpl00001",
         "props": {

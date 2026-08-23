@@ -46,6 +46,17 @@ class MockApplicationV2 {
   }
 
   async render() {
+    // Comportamento real do core (foundry.mjs #render): ApplicationV2 puro
+    // recusa a renderização se a subclasse não implementar AMBOS os métodos
+    // abstratos. Sem esta checagem o mock aprovava uma classe que o Foundry
+    // real rejeita com "Application class is not renderable".
+    for (const method of ["_renderHTML", "_replaceHTML"]) {
+      if (typeof this[method] !== "function") {
+        throw new Error(
+          `The ${this.constructor.name} Application class is not renderable because it does not implement the abstract methods _renderHTML and _replaceHTML.`,
+        );
+      }
+    }
     this.rendered = true;
     return this;
   }

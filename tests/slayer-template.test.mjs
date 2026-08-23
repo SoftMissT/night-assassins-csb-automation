@@ -11,9 +11,9 @@ const csbPackagePath = path.join(repoRoot, "src", "imports", "csb-import-slayer-
 
 test("template Slayer usa somente o contrato de recursos namespaced", () => {
   const document = JSON.parse(fs.readFileSync(templatePath, "utf8"));
-  assert.equal(document.name, "Slayer_template_atual");
+  assert.equal(document.name, "slayer_template");
   assert.equal(document.type, "_template");
-  assert.equal(document.prototypeToken.name, "Slayer_template_atual");
+  assert.equal(document.prototypeToken.name, "slayer_template");
   const template = unwrapSlayerTemplate(document);
   assert.deepEqual(validateSlayerTemplate(template), { duplicates: [], forbidden: [] });
   assert.equal(template.system.attributeBar.pdv_slayer_barra.value, "${pdv_slayer_atual_num}$");

@@ -232,11 +232,34 @@ export async function rollHit(options) {
   const snowPenalty = actor.getFlag?.(MODULE_ID, "snowPenalty");
   const stonePenalty = actor.getFlag?.(MODULE_ID, "stoneReflectionPenalty");
   const flameTier = flameWeaponTier(flameState.weaponHeat);
+  // 8ª Forma Ofuscamento (Névoa): a partir do Nível 2, quem tenta acertar o usuário/aliado
+  // ofuscado sofre -2 na rolagem de Acerto. O estado "dazzle" fica salvo em resp_nevoa_estado
+  // do PRÓPRIO usuário da Névoa (com allyUuid apontando o aliado também protegido); então, ao
+  // rolar Acerto contra um alvo, é preciso checar se o alvo é o usuário da névoa (dazzle no
+  // próprio) ou o aliado protegido (dazzle no usuário, allyUuid === alvo). Segue o mesmo padrão
+  // usado para snowPenalty/stoneReflectionPenalty (penalidade lida do alvo e aplicada ao atacante).
+  const targetedActors = [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean);
+  const combatantActors = [...(game.combat?.combatants ?? [])].map((combatant) => combatant.actor).filter(Boolean);
+  const dazzlePenalty = targetedActors.reduce((total, targetActor) => {
+    if (targetActor.uuid === actor.uuid) return total;
+    const targetMist = parseMistBreathingState(targetActor.system?.props?.resp_nevoa_estado);
+    if (targetMist.dazzle?.hitPenalty) return total + (Number(targetMist.dazzle.hitPenalty) || 0);
+    const protector = combatantActors.find((candidate) => {
+      if (!candidate || candidate.uuid === targetActor.uuid) return false;
+      const candidateMist = parseMistBreathingState(candidate.system?.props?.resp_nevoa_estado);
+      return candidateMist.dazzle?.hitPenalty && candidateMist.dazzle.allyUuid === targetActor.uuid;
+    });
+    if (protector) {
+      const protectorMist = parseMistBreathingState(protector.system?.props?.resp_nevoa_estado);
+      return total + (Number(protectorMist.dazzle.hitPenalty) || 0);
+    }
+    return total;
+  }, 0);
   const breathBonus = (Number(breathHit?.bonus) || 0) + (Number(flameHit?.bonus) || 0)
     + (Number(stoneHit?.bonus) || 0) + (Number(mistHit?.bonus) || 0)
     + (Number(snowHit?.bonus) || 0) + (Number(snowState.belowZero?.fdvHitBonus) || 0)
     + (Number(snowState.iceHeart?.hitBonus) || 0) + (Number(mistState.fog?.bonus) || 0) + (Number(mistState.dazzle?.hitBonus) || 0)
-    + (Number(snowPenalty?.hitPenalty) || 0) + (Number(stonePenalty?.value) || 0) + flameTier.hit;
+    + (Number(snowPenalty?.hitPenalty) || 0) + (Number(stonePenalty?.value) || 0) + flameTier.hit + dazzlePenalty;
   if (stonePenalty?.sourceState) {
     const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
     if (canonical !== Number(stonePenalty.value)) ui.notifications?.warn?.("Penalidade da Reflexão da Pedra foi normalizada.");

@@ -11,9 +11,9 @@ const csbPackagePath = path.join(repoRoot, "src", "imports", "csb-import-slayer-
 
 test("template Slayer usa somente o contrato de recursos namespaced", () => {
   const document = JSON.parse(fs.readFileSync(templatePath, "utf8"));
-  assert.equal(document.name, "Slayer_template_atual");
+  assert.equal(document.name, "slayer_template");
   assert.equal(document.type, "_template");
-  assert.equal(document.prototypeToken.name, "Slayer_template_atual");
+  assert.equal(document.prototypeToken.name, "slayer_template");
   const template = unwrapSlayerTemplate(document);
   assert.deepEqual(validateSlayerTemplate(template), { duplicates: [], forbidden: [] });
   assert.equal(template.system.attributeBar.pdv_slayer_barra.value, "${pdv_slayer_atual_num}$");
@@ -147,7 +147,7 @@ test("template Slayer preserva armazenamento de Respiração e expõe automaçã
   assert.match(source, /useBreathForm/);
 });
 
-test("template Slayer separa Condições da aba de Combate", () => {
+test("template Slayer organiza as seis abas canônicas", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -158,19 +158,54 @@ test("template Slayer separa Condições da aba de Combate", () => {
   walk(template.system.body);
   assert.ok(tabbedPanel);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.key), [
-    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "status_slayer_tab", "skills_slayer_tab",
-    "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "configs_tab", "dados_tab",
+    "pericias_tab", "combat_slayer_tab", "skills_slayer_tab",
+    "inventario_slayer_tab", "notas_slayer_tab", "configs_tab",
   ]);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.name), [
-    "Perfil/Bio", "Perícias", "Combate", "Condições", "Skills", "Inventário",
-    "Interlúdios", "Notas/Diário", "Configurações", "Dados",
+    "PERÍCIAS", "COMBATE", "SKILLS", "INVENTÁRIO", "NOTAS", "CONFIG / DADOS",
   ]);
   const combat = tabbedPanel.contents.find((entry) => entry.key === "combat_slayer_tab");
-  const conditions = tabbedPanel.contents.find((entry) => entry.key === "status_slayer_tab");
-  assert.doesNotMatch(JSON.stringify(combat), /status_slayer_(gerenciar|display)|status_slayer_resistencias_display/);
   assert.match(JSON.stringify(combat), /deslocamento_slayer_display/);
-  assert.match(JSON.stringify(conditions), /status_slayer_gerenciar/);
-  assert.match(JSON.stringify(conditions), /resistencia_slayer_gerenciar/);
+  // Condições (Resistências + Status) agora vivem dentro de COMBATE
+  assert.match(JSON.stringify(combat), /status_slayer_gerenciar/);
+  assert.match(JSON.stringify(combat), /resistencia_slayer_gerenciar/);
+  // Painel de Acúmulos das Respirações em COMBATE
+  assert.match(JSON.stringify(combat), /combate_acumulos_slayer_panel/);
+  for (const key of ["resp_agua_estado", "resp_chamas_estado", "resp_pedra_estado", "resp_nevoa_estado", "resp_metal_estado", "resp_neve_estado"]) {
+    assert.match(JSON.stringify(combat), new RegExp(`\\$\{${key}\}\\$`));
+  }
+});
+
+test("NOTAS absorve Perfil/Bio e Interlúdios sem perder nenhuma key", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  let tabbedPanel = null;
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (!tabbedPanel && node.type === "tabbedPanel") tabbedPanel = node;
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  const notas = JSON.stringify(tabbedPanel.contents.find((entry) => entry.key === "notas_slayer_tab"));
+  for (const key of ["perfil_slayer_resumo_panel", "perfil_slayer_nome_social", "perfil_slayer_pronomes", "perfil_slayer_aparencia", "perfil_slayer_personalidade", "perfil_slayer_bio", "interludio_semana_panel", "interludio_cabacas_panel", "interludio_reflexo_panel", "notas_slayer_livres"]) {
+    assert.match(notas, new RegExp(key));
+  }
+  const serialized = JSON.stringify(template.system.body);
+  assert.doesNotMatch(serialized, /"key":"perfil_slayer_tab"|"key":"status_slayer_tab"|"key":"interludios_slayer_tab"|"key":"dados_tab"/);
+});
+
+test("SKILLs concentra poderes e recebe Alma da Lâmina como texto livre", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  let tabbedPanel = null;
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (!tabbedPanel && node.type === "tabbedPanel") tabbedPanel = node;
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  const skills = JSON.stringify(tabbedPanel.contents.find((entry) => entry.key === "skills_slayer_tab"));
+  for (const key of ["skills_slayer_origem_panel", "estados_avancados_slayer_panel", "alma_lamina_slayer_panel", "alma_lamina_slayer_notas"]) {
+    assert.match(skills, new RegExp(key));
+  }
 });
 
 test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB próprios", () => {
@@ -230,7 +265,7 @@ test("inventário filtra cada categoria por template exclusivo", () => {
   assert.deepEqual(containers.get("inventario_slayer_itens")?.templateFilter, ["NAInventoryTpl001"]);
 });
 
-test("armas ficam exclusivamente na aba Inventário", () => {
+test("armas ficam acessíveis exclusivamente na aba COMBATE", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabs = null;
   function walk(node) {
@@ -241,9 +276,9 @@ test("armas ficam exclusivamente na aba Inventário", () => {
   walk(template.system.body);
   const combat = tabs.contents.find((entry) => entry.key === "combat_slayer_tab");
   const inventory = tabs.contents.find((entry) => entry.key === "inventario_slayer_tab");
-  assert.doesNotMatch(JSON.stringify(combat), /inventario_slayer_armas|arma_slayer_rolar/);
-  assert.match(JSON.stringify(inventory), /inventario_slayer_armas/);
-  assert.match(JSON.stringify(inventory), /arma_slayer_rolar/);
+  assert.doesNotMatch(JSON.stringify(inventory), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(combat), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(combat), /arma_slayer_rolar/);
 });
 
 test("template persiste estados das cinco Respirações prioritárias", () => {

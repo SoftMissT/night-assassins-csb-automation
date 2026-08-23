@@ -373,7 +373,12 @@
         }
       ]
     },
-    "hidden": [],
+    "hidden": [
+      {
+        "name": "inventario_categoria",
+        "value": "arma"
+      }
+    ],
     "display": {
       "width": 760,
       "height": 760,

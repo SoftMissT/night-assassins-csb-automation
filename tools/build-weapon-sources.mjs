@@ -14,12 +14,65 @@ const templatePath = path.join(root, "src", "templates", "items", "slayer-weapon
 const weaponTemplate = JSON.parse(await readFile(templatePath, "utf8"));
 weaponTemplate._key = `!items!${weaponTemplate._id}`;
 
+export const RANK_DICE = Object.freeze({
+  D: "1d6",
+  C: "1d8",
+  B: "1d10",
+  A: "1d12",
+  S: "2d6",
+  SS: "2d8",
+});
+
+export function injectRankDice(formula = "", dice = "") {
+  const raw = String(formula ?? "").trim();
+  if (!raw || !dice) return raw;
+
+  const [damagePart, ...typeParts] = raw.split(/\s*\/\s*/u);
+  const typePart = typeParts.join(" / ").trim();
+
+  if (/\b\d+d\d+\b/iu.test(damagePart)) {
+    return typePart ? `${damagePart} / ${typePart}` : damagePart;
+  }
+
+  const evolvedDamage = damagePart.replace(/\s*\+\s*dado\s+evolutivo\s*/giu, " ").replace(/\bdado\s+evolutivo\b/giu, dice).trim();
+  const normalized = evolvedDamage.includes(dice) ? evolvedDamage : `${evolvedDamage} + ${dice}`;
+
+  return typePart ? `${normalized} / ${typePart}` : normalized;
+}
+
+function generatedRankFormulasFromProfiles(profiles = []) {
+  return Object.fromEntries(
+    Object.entries(RANK_DICE).map(([rank, dice]) => [
+      rank,
+      profiles.map((profile) => injectRankDice(profile.formula_texto ?? profile.nome ?? "", dice)),
+    ]),
+  );
+}
+
+export function normalizeRankFormulas(extracted = {}, profiles = []) {
+  const generated = generatedRankFormulasFromProfiles(profiles);
+  const profileCount = profiles.length;
+
+  return Object.fromEntries(
+    Object.keys(RANK_DICE).map((rank) => {
+      const values = Array.isArray(extracted[rank]) ? extracted[rank].filter(Boolean) : [];
+
+      if (values.length >= profileCount) {
+        return [rank, values];
+      }
+
+      return [rank, generated[rank]];
+    }),
+  );
+}
+
 const documents = catalog.documents.map((document) => {
   if (document.type === "_equippableItemTemplate" && document._id === weaponTemplate._id) return weaponTemplate;
   if (document.type !== "equippableItem") return document;
   const props = document.system?.props ?? {};
   const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
-  const formulas = extractWeaponRankFormulas(props.arma_regra_completa);
+  const extractedFormulas = extractWeaponRankFormulas(props.arma_regra_completa);
+  const formulas = normalizeRankFormulas(extractedFormulas, profiles);
   return {
     ...document,
     system: {

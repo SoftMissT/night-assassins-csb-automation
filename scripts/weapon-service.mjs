@@ -3,11 +3,12 @@ import { parseAttributeValue, parseNumber } from "./parsing.mjs";
 export const WEAPON_RANK_LEVELS = Object.freeze({ D: 2, C: 4, B: 6, A: 8, S: 11, SS: 12 });
 
 export function slayerWeaponRank(actorProps = {}) {
-  const text = String(actorProps.rank_atual ?? actorProps.rank_slayer_atual ?? "").toUpperCase();
-  for (const rank of ["SS", "S", "A", "B", "C", "D"]) {
-    if (new RegExp(`(?:RANK\\s*)?${rank}(?:\\b|$)`).test(text)) return rank;
-  }
-  const level = Math.max(0, Math.trunc(parseNumber(actorProps.nvl_num ?? actorProps.nivel_slayer_num ?? actorProps.nivel)));
+  // O Rank mecânico da arma deriva SEMPRE do nível do portador (nvl_num/nvl_pj),
+  // nunca de rank_atual — que é texto narrativo ("Mizunoto", "Hashira Novato")
+  // sem correspondência garantida com D/C/B/A/S/SS.
+  const rawLevel = actorProps.nvl_num ?? actorProps.nivel_slayer_num ?? actorProps.nivel
+    ?? String(actorProps.nvl_pj ?? "").replace(/^nvl_/u, "");
+  const level = Math.max(0, Math.trunc(parseNumber(rawLevel)));
   if (level >= 12) return "SS";
   if (level >= 11) return "S";
   if (level >= 8) return "A";

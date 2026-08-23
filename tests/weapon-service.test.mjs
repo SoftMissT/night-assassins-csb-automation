@@ -11,8 +11,12 @@ describe("weapon-service", () => {
     assert.equal(slayerWeaponRank({ nvl_num: 12 }), "SS");
   });
 
-  it("prioriza um Rank explícito da ficha", () => {
-    assert.equal(slayerWeaponRank({ rank_atual: "Rank B", nvl_num: 12 }), "B");
+  it("deriva o Rank mecânico sempre do nível, ignorando o texto narrativo de rank_atual", () => {
+    assert.equal(slayerWeaponRank({ rank_atual: "Rank B", nvl_num: 12 }), "SS");
+    assert.equal(slayerWeaponRank({ rank_atual: "Hashira Novato", nvl_num: 11 }), "S");
+    assert.equal(slayerWeaponRank({ rank_atual: "Mizunoto" }), "");
+    assert.equal(slayerWeaponRank({ nvl_pj: "nvl_6" }), "B");
+    assert.equal(slayerWeaponRank({ nvl_pj: "nvl_2" }), "D");
   });
 
   it("extrai as seis fórmulas evolutivas da regra da arma", () => {

@@ -873,9 +873,18 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   }
 
   const genericFormula = isWaterForm || isFlameForm ? "" : resolveGenericDamageFormula(selected.dano, props);
-  const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
-  if (damageRoll && game.dice3d?.showForRoll) await game.dice3d.showForRoll(damageRoll, game.user, true);
-  await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
+  if (genericFormula) {
+    const { rollDamage } = await import("./damage-service.mjs");
+    const damageSpec = { tipoAcao: "ataque", dado: genericFormula, fixo: 0, attrs: [], tiposDano: selected.tiposDano ?? [] };
+    await rollDamage({
+      actor,
+      nome: `${form.respiracao} — ${form.nome}`,
+      entradas: [damageSpec],
+      skipActionConsumption: true,
+      forceAttackDamage: true,
+    });
+  }
+  await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });
   if (flameHealingRoll) {
     await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Cauterizar</strong> — recuperação de PDV` });
   }

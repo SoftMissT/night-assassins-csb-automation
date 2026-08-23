@@ -113,11 +113,6 @@ Hooks.once("ready", () => {
 
   if (game.settings.get(MODULE_ID, PHONE_CHAT_SETTINGS.enable)) {
     registerPhoneChatRelay();
-    Hooks.on("renderActorSheet", attachPhoneChatHeaderButton);
-    Hooks.on("renderActorSheetV2", attachPhoneChatHeaderButton);
-    Hooks.on("renderApplicationV2", (app, element) => {
-      if (app?.actor) attachPhoneChatHeaderButton(app, element);
-    });
   }
 
   if (game.user.isGM) {

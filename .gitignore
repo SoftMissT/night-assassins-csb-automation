@@ -33,7 +33,6 @@ node_modules/
 coverage/
 dist/
 build/
-/packs/
 *.log
 module.zip
 slayer_template_atual_agora.json

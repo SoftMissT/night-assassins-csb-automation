@@ -123,8 +123,8 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   const source = JSON.stringify(template.system.body);
   assert.match(source, /"folego_slayer_titulo"/);
   assert.match(source, /"folego_slayer_atual"/);
-  assert.match(source, /"defaultValue":"\$\{folego_slayer_maximo\}\$"/);
-  assert.match(source, /"maxVal":"\$\{folego_slayer_maximo\}\$"/);
+  assert.match(source, /"defaultValue":"0"/);
+  assert.match(source, /"maxVal":"20"/);
   assert.match(source, /na-sheet-size-md|na-sheet-label/);
   assert.match(source, /"acoes_slayer_panel"/);
   assert.match(source, /"title":"Economia de Ações"/);

@@ -1,3 +1,12 @@
+## 0.10.8 — 2026-08-23
+
+### P0 — Phone Chat, dano de Forma, arma legada
+- **Phone Chat**: `attachPhoneChatHeaderButton` removida por completo (nunca deve existir botão em nenhuma ficha — apenas macro/hotbar). Corrigido o crash `Cannot read properties of undefined (reading 'id')` ao abrir: `PhoneChatApp._initializeApplicationOptions` não retornava as opções processadas para o `ApplicationV2` do core. Singleton agora reseta em `_onClose`; `openMasterPhone` propaga `master:true` de fato.
+- **Dano da Forma de Respiração**: corrigido o caminho pós-hit (`rollConfirmedBreathDamage`, usado por Pedra/Névoa/Metal/Neve) que rolava dano com fórmula vazia mesmo quando o ataque acertava. O dano agora vem sempre da Forma usada.
+- **Armas**: `NAWeaponTpl00001` agora sempre nasce com `inventario_categoria: "arma"` — corrige o `TypeError` de `equalText(undefined, 'arma')` que derrubava o container de armas inteiro na ficha quando um Item era criado fora do fluxo de catálogo. Reparo automático (`repairSlayerWeaponItems`) estendido para corrigir Items legados sem o campo.
+- **`kekkijutsu-template.json`**: corrigido JSON inválido presente desde a v0.10.0 (bloco `hidden` mal aninhado).
+- **Testes novos**: anti-regressão para operadores lógicos JS (`&&`/`||`) em fórmulas CSB de todos os templates fonte; pipeline de dano pós-hit; construtor do `PhoneChatApp`. 877/877 testes locais.
+
 ## 0.10.7 — 2026-08-23
 
 ### Packs versionados no repo

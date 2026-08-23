@@ -87,6 +87,22 @@ describe("Respiração da Água", () => {
     assert.equal(parseWaterBreathingState(seventh.patch["system.props.resp_agua_estado"]).block.comboWater6, true);
   });
 
+  it("combo 7ª→6ª Forma: metade do custo de PDR, consumido em um uso (regressão)", () => {
+    const seventh = buildWaterBreathingPlan("agua_07", 3, props);
+    assert.equal(seventh.patch["system.props.resp_agua_estado"] !== undefined, true);
+    const comboProps = { ...props, resp_agua_estado: seventh.patch["system.props.resp_agua_estado"] };
+    assert.equal(parseWaterBreathingState(comboProps.resp_agua_estado).block.comboWater6, true);
+
+    const sixthWithCombo = buildWaterBreathingPlan("agua_06", 4, comboProps);
+    assert.equal(sixthWithCombo.cost, 3, "custo cheio é 6 PDR no nível 4; com o combo deve ser metade (arredondado para cima)");
+
+    // O combo é consumido: usar a 6ª Forma de novo sem reativar a 7ª cobra o custo cheio.
+    const secondUseProps = { ...comboProps, resp_agua_estado: sixthWithCombo.patch["system.props.resp_agua_estado"] };
+    assert.equal(parseWaterBreathingState(secondUseProps.resp_agua_estado).block, undefined);
+    const sixthWithoutCombo = buildWaterBreathingPlan("agua_06", 4, secondUseProps);
+    assert.equal(sixthWithoutCombo.cost, 6);
+  });
+
   it("8ª Forma impõe recarga e a 9ª dura dois turnos", () => {
     const eighth = buildWaterBreathingPlan("agua_08", 4, props);
     assert.equal(eighth.patch["system.props.resp_agua_08_recarga_turno"], 3);

@@ -254,8 +254,13 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
     Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, critical: true, uses: 1, recoverPdrOnKill: level, types: damageTypes } }, { "system.props.resp_efeito_flag": "Água 5: crítico automático" }));
   } else if (formId === "agua_06") {
     const hitBonus = choices.submerged ? 3 : 0;
-    Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, formula: selected.damage, uses: 1, area: true, allyDefenseBonus: dex, types: damageTypes }, nextHit: { bonus: hitBonus, source: formId } }, {
-      "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_bonus_acerto_temp": hitBonus, "system.props.resp_efeito_flag": `Água 6: área; aliados +${dex} Defesa`,
+    // Combo com a 7ª Forma (Nível 3-4): metade do custo de PDR — o combo é
+    // consumido nesta ativação, não persiste para usos futuros.
+    const comboActive = Boolean(state.block?.comboWater6);
+    if (comboActive) base.cost = Math.ceil(base.cost / 2);
+    const nextBlock = comboActive ? undefined : state.block;
+    Object.assign(base.patch, statePatch({ ...state, block: nextBlock, pendingDamage: { source: formId, formula: selected.damage, uses: 1, area: true, allyDefenseBonus: dex, types: damageTypes }, nextHit: { bonus: hitBonus, source: formId } }, {
+      "system.props.resp_bonus_dano_dados": selected.damage, "system.props.resp_bonus_acerto_temp": hitBonus, "system.props.resp_efeito_flag": comboActive ? `Água 6: área (combo Água 7, metade do custo); aliados +${dex} Defesa` : `Água 6: área; aliados +${dex} Defesa`,
     }));
   } else if (formId === "agua_07") {
     Object.assign(base.patch, statePatch({ ...state, block: { bonus: int, comboWater6: level >= 3, source: formId } }, {

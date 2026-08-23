@@ -10,6 +10,7 @@ import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs"
 import { consumeSlayerActions } from "./action-service.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
+import { currentPdv } from "./status-engine.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
 import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
@@ -605,6 +606,17 @@ export async function rollDamage(options = {}) {
           }
           appliedTargets.push({ actor: targetActor, name: targetActor.name, amount, wound });
           ui.notifications?.info?.(`${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ""}.`);
+
+          // Água 5 (Chuva Misericordiosa): finalizar o alvo recupera PDR igual
+          // ao Nível de Respiração do usuário (regra do .md — "Se finalizar").
+          const killRecovery = Math.max(0, Math.trunc(parseNumber(breathingDamage?.recoverPdrOnKill)));
+          if (killRecovery > 0 && targetActor.system?.props && currentPdv(targetActor.system.props) <= 0) {
+            const pdrGastoAtual = parseNumber(props.pdr_slayer_gasto_valor);
+            await actor.update({
+              "system.props.pdr_slayer_gasto_valor": Math.max(0, pdrGastoAtual - killRecovery),
+            }, { naCsbAutomation: true, naBreathing: true });
+            ui.notifications?.info?.(`Chuva Misericordiosa: ${actor.name} recuperou ${killRecovery} PDR ao finalizar ${targetActor.name}.`);
+          }
         }
       }
       continue;

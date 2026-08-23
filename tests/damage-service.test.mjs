@@ -253,4 +253,62 @@ describe("damage-service", () => {
     await rollWeaponItem({ item });
     assert.deepEqual(formulas, ["1d6 + 11"]);
   });
+
+  it("Água 5 (Chuva Misericordiosa): recupera PDR igual ao Nível de Respiração ao finalizar o alvo (regressão)", async () => {
+    game.user.isGM = true;
+    _dialogReturn = { nome: "Golpe", pdrGasto: 0, entradas: [{ dado: "1d8", fixo: 0, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }] };
+    const attacker = makeActor({
+      id: "atk-water5", uuid: "Actor.atk-water5",
+      props: {
+        nome_slayer: "Atacante", pdv_slayer_total_valor: 20,
+        pdr_slayer_gasto_valor: 5,
+        resp_agua_estado: JSON.stringify({ pendingDamage: { source: "agua_05", critical: true, uses: 1, recoverPdrOnKill: 3 } }),
+      },
+    });
+    const target = makeActor({
+      id: "tgt-water5", uuid: "Actor.tgt-water5",
+      props: { nome_slayer: "Alvo", pdv_slayer_total_conta: 8, pdv_slayer_dano_tomado: 0 },
+    });
+    let attackerPdrGasto = null;
+    attacker.update = async (patch) => {
+      if (patch["system.props.pdr_slayer_gasto_valor"] !== undefined) attackerPdrGasto = patch["system.props.pdr_slayer_gasto_valor"];
+    };
+    target.update = async (patch) => {
+      if (patch["system.props.pdv_slayer_dano_tomado"] !== undefined) target.system.props.pdv_slayer_dano_tomado = patch["system.props.pdv_slayer_dano_tomado"];
+    };
+    game.user.targets = new Set([{ actor: target }]);
+    _rollResult = { total: 8, toMessage: async () => {} };
+
+    await rollDamage({ actor: attacker });
+
+    assert.equal(attackerPdrGasto, 2, "5 PDR gastos - 3 de recuperação (recoverPdrOnKill) = 2");
+  });
+
+  it("Água 5: não recupera PDR se o alvo sobreviver ao dano", async () => {
+    game.user.isGM = true;
+    _dialogReturn = { nome: "Golpe", pdrGasto: 0, entradas: [{ dado: "1d8", fixo: 0, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }] };
+    const attacker = makeActor({
+      id: "atk-water5b", uuid: "Actor.atk-water5b",
+      props: {
+        nome_slayer: "Atacante", pdv_slayer_total_valor: 20,
+        pdr_slayer_gasto_valor: 5,
+        resp_agua_estado: JSON.stringify({ pendingDamage: { source: "agua_05", critical: true, uses: 1, recoverPdrOnKill: 3 } }),
+      },
+    });
+    const target = makeActor({
+      id: "tgt-water5b", uuid: "Actor.tgt-water5b",
+      props: { nome_slayer: "Alvo", pdv_slayer_total_conta: 100, pdv_slayer_dano_tomado: 0 },
+    });
+    let attackerUpdateCalled = false;
+    attacker.update = async (patch) => {
+      if (patch["system.props.pdr_slayer_gasto_valor"] !== undefined) attackerUpdateCalled = true;
+    };
+    target.update = async () => {};
+    game.user.targets = new Set([{ actor: target }]);
+    _rollResult = { total: 8, toMessage: async () => {} };
+
+    await rollDamage({ actor: attacker });
+
+    assert.equal(attackerUpdateCalled, false, "alvo com PDV restante não deve disparar recuperação de PDR");
+  });
 });

@@ -27,7 +27,7 @@ function statePatch(state) {
   };
 }
 
-function currentPdv(props = {}) {
+export function currentPdv(props = {}) {
   // Prefere as parcelas numéricas canônicas. Labels do CSB podem conter CSS
   // com outros números (font-size, weight etc.) e não são uma fonte segura.
   const computedTotal = props.pdv_slayer_total_conta;

@@ -242,6 +242,19 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
     this.render({ force: true });
   }
 
+  /**
+   * Check if a conversation has unread messages for the current user.
+   * @param {string} conversationId
+   * @returns {boolean}
+   */
+  _isConversationUnread(conversationId) {
+    const unreadMap = this._snapshot.unreadByUser ?? {};
+    const userUnread = unreadMap[game.user.id];
+    if (Array.isArray(userUnread)) return userUnread.includes(conversationId);
+    if (userUnread && typeof userUnread === "object") return userUnread[conversationId] === true;
+    return false;
+  }
+
   /** @returns {string} */
   _renderConversationList() {
     const conversations = Object.values(this._snapshot.conversations)
@@ -258,12 +271,14 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
       : "";
     return conversations.map((conversation) => {
       const active = conversation.id === this._activeConversationId ? "is-active" : "";
+      const isUnread = this._isConversationUnread(conversation.id);
       const last = conversation.messages[conversation.messages.length - 1];
       const preview = last ? escapeHtml(last.text.slice(0, 48)) : "";
       return `<div class="na-phone-chat__thread-row">
-        <button type="button" class="na-phone-chat__thread ${active}" data-conversation-id="${escapeHtml(conversation.id)}">
+        <button type="button" class="na-phone-chat__thread ${active} ${isUnread ? "is-unread" : ""}" data-conversation-id="${escapeHtml(conversation.id)}">
           <span class="na-phone-chat__thread-name">${escapeHtml(conversation.displayName)}</span>
           <span class="na-phone-chat__thread-preview">${preview}</span>
+          ${isUnread ? '<span class="na-phone-chat__unread-badge"></span>' : ""}
         </button>
         ${gmControls(conversation)}
       </div>`;
@@ -295,7 +310,24 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
         ${moderation}
       </div>`;
     }).join("");
-    return `<div class="na-phone-chat__thread-view ${wallpaper ? "has-wallpaper" : ""}" style="${style}">${bubbles}</div>`;
+    const gmNotesSection = this._renderGmNotesSection(conversation);
+    return `<div class="na-phone-chat__thread-view ${wallpaper ? "has-wallpaper" : ""}" style="${style}">${bubbles}</div>${gmNotesSection}`;
+  }
+
+  /**
+   * Renderiza a seção de notas privadas do GM (somente quando habilitado).
+   * @param {object} conversation
+   * @returns {string}
+   */
+  _renderGmNotesSection(conversation) {
+    if (!game.user.isGM) return "";
+    if (!getPhoneChatSetting(PHONE_CHAT_SETTINGS.allowPrivateGmLogs, false)) return "";
+    const notes = conversation.gmNotes ?? "";
+    return `<div class="na-phone-chat__gm-notes">
+      <label class="na-phone-chat__gm-notes-label">${escapeHtml(game.i18n.localize("NA.PhoneChat.GmNotes") || "Notas do GM (privado)")}</label>
+      <textarea class="na-phone-chat__gm-notes-input" rows="3" maxlength="5000" data-conversation-id="${escapeHtml(conversation.id)}">${escapeHtml(notes)}</textarea>
+      <button type="button" class="na-phone-chat__gm-notes-save" data-action="save-gm-notes" data-conversation-id="${escapeHtml(conversation.id)}">${escapeHtml(game.i18n.localize("NA.PhoneChat.Save") || "Salvar")}</button>
+    </div>`;
   }
 
   /** @returns {string} */
@@ -421,6 +453,33 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
         if (conversationId && dataset.messageId) {
           await confirmDeleteMessage(conversationId, dataset.messageId);
           if (game.user.isGM) this._snapshot = loadState();
+          this.render({ force: true });
+        }
+        break;
+      }
+      case "save-gm-notes": {
+        const convId = dataset.conversationId;
+        if (convId && game.user.isGM) {
+          const textarea = this.element.querySelector(`.na-phone-chat__gm-notes-input[data-conversation-id="${convId}"]`);
+          const gmNotes = textarea?.value ?? "";
+          await broadcastFullSync("gm-notes-updated");
+          await commit((state) => {
+            const conv = state.conversations[convId];
+            if (!conv) return { state, code: "NOT_FOUND" };
+            return {
+              state: {
+                ...state,
+                revision: state.revision + 1,
+                conversations: {
+                  ...state.conversations,
+                  [convId]: { ...conv, gmNotes, updatedAt: Date.now() },
+                },
+              },
+              code: "GM_NOTES_UPDATED",
+            };
+          });
+          Hooks.callAll("phoneChatStateChanged");
+          this._snapshot = loadState();
           this.render({ force: true });
         }
         break;

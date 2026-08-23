@@ -206,6 +206,7 @@ function normalizeConversation(raw, historyLimit) {
     contactIds,
     wallpaper: isValidWallpaper(raw.wallpaper) ? raw.wallpaper : null,
     archived: raw.archived === true,
+    gmNotes: typeof raw.gmNotes === "string" ? raw.gmNotes.slice(0, 5000) : "",
     createdAt: Math.max(0, Math.trunc(Number(raw.createdAt) || 0)),
     updatedAt: Math.max(0, Math.trunc(Number(raw.updatedAt) || 0)),
     messages: pruneMessages(messages, historyLimit),

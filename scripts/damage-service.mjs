@@ -11,7 +11,7 @@ import { consumeSlayerActions } from "./action-service.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
-import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
+import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor, resolveAttackWeaponForActor, setCurrentWeaponForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { consumeStonePending, parseStoneBreathingState, stoneStatePatch } from "./stone-breathing-service.mjs";
@@ -148,6 +148,11 @@ async function chooseMetalHammerSynergy(attacker) {
  * @param {object} options
  * @param {Actor} [options.actor]
  * @param {string} [options.actorUuid]
+ * @param {string} [options.weaponUuid] - UUID explícito da arma (prioridade máxima)
+ * @param {string} [options.slot="main"] - "main" ou "offhand"
+ * @param {number} [options.profileIndex] - Índice do perfil de ataque
+ * @param {boolean} [options.persistSelection=true] - Salvar arma escolhida como atual
+ * @param {boolean} [options.allowDialog=true] - Abrir dialog se arma não resolvida
  * @param {string} [options.nome]
  * @param {Array} [options.entradas]
  * @param {number} [options.pdrCusto]
@@ -176,6 +181,39 @@ export async function rollDamage(options = {}) {
   for (const { key } of ATTRIBUTES) {
     const attributeKey = attackerKind === "oni_minion" ? `oni_minion_${key}_display` : `${key}_display`;
     attrValues[key] = parseAttributeValue(props[attributeKey]);
+  }
+
+  // Fase 3: Resolver arma via contrato único
+  const slot = options.slot ?? "main";
+  const persistSelection = options.persistSelection !== false;
+
+  // Se weaponUuid foi passado explicitamente, resolver via contrato
+  if (options.weaponUuid) {
+    const weaponResolution = await resolveAttackWeaponForActor(actor, {
+      weaponUuid: options.weaponUuid,
+      slot,
+      profileIndex: options.profileIndex,
+      allowDialog: false,
+      persistSelection: false,
+    });
+    if (weaponResolution.weapon) {
+      const itemProps = weaponResolution.weapon.system?.props ?? {};
+      const profiles = weaponProfilesForActor(itemProps, actor.system?.props ?? {});
+      if (profiles.length > 0) {
+        const profileIndex = Math.min(options.profileIndex ?? 0, profiles.length - 1);
+        const selectedProfile = profiles[profileIndex];
+        options = {
+          ...options,
+          nome: options.nome ?? itemProps.arma_nome ?? weaponResolution.weapon.name,
+          weaponProfiles: [selectedProfile],
+          weaponItem: weaponResolution.weapon,
+        };
+        // Salvar arma como atual
+        if (persistSelection) {
+          await setCurrentWeaponForActor(actor, { weaponUuid: options.weaponUuid, slot, profileIndex });
+        }
+      }
+    }
   }
 
   const hasExplicitDamage = Array.isArray(options.entradas) && options.entradas.length > 0

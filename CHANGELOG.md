@@ -1,3 +1,29 @@
+## 0.10.6 — 2026-08-22
+
+### Contrato Único de Arma Atual (Phase 3)
+- **weapon-service.mjs**: 6 funções novas — `setCurrentWeaponForActor`, `clearCurrentWeaponForActor`, `getCurrentWeaponForActor`, `validateCurrentWeaponForActor`, `resolveAttackWeaponForActor`, `slotFlagKeys`.
+- **hit-service.mjs**: Usa `resolveAttackWeaponForActor` + salva seleção via `setCurrentWeaponForActor`.
+- **damage-service.mjs**: Usa contrato de arma via `weaponUuid` + `resolveAttackWeaponForActor`.
+- **main.mjs**: API `api.slayer.setCurrentWeapon/getCurrentWeapon/resolveAttackWeapon/validateCurrentWeapon`.
+- **Tests**: 13 novos testes em `current-weapon-service.test.mjs`.
+
+### Phone Chat — Fase A
+- **Unread badge**: `_isConversationUnread()` + badge visual `.is-unread` no CSS.
+- **`enablePhoneChat` enforcement**: Relay bloqueia `sendMessage()` se setting desativado.
+- **`allowPrivateGmLogs` wiring**: Seção privada de notas do GM em conversas (textarea + botão Salvar), visível somente quando a setting está habilitada e usuário é GM.
+- **`updateGmNotes` reducer**: CRUD de notas privadas por conversa.
+- **CSS**: Estilos `.na-phone-chat__gm-notes*` (label, textarea, botão).
+
+### SPECs Criadas
+- `docs/SPEC-action-hud.md` — HUD de combate por ator (categorias, API, settings, CSS, testes).
+- `docs/SPEC-contacts-relationship.md` — Dossiê vivo de contatos/vínculos (flags, API, visibilidade, integração Phone).
+
+### Infraestrutura
+- **Ícones reorganizados**: `assets/icons/{macros,templates,items,breathing,weapons}/`.
+- **Template icon paths**: Atualizados em slayer-weapon, breathing-form e oni-minion templates.
+- **Build tools**: Atualizados `build-macro-sources.mjs`, `build-asset-sources.mjs`, `build-oni-minion-template.mjs`.
+- **Tests**: 854/854 pass.
+
 ## 0.10.5 — 2026-08-22
 
 ### Correções e Melhorias

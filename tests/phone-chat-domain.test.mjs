@@ -21,6 +21,7 @@ import {
   deleteMessage,
   editMessage,
   markRead,
+  updateGmNotes,
   updateSettings,
   upsertContact,
   upsertConversation,
@@ -213,6 +214,27 @@ describe("phone-chat-store reducers", () => {
     assert.strictEqual(dup.code, "INVALID_PAYLOAD");
     const ok = upsertContact(base, { displayName: "Kokushibo" });
     assert.strictEqual(ok.code, "CONTACT_COMMITTED");
+  });
+
+  it("updateGmNotes atualiza notas privadas do GM", () => {
+    const base = normalizeState({ conversations: { "c-1": conversation() } }).state;
+    const result = updateGmNotes(base, "c-1", "Yuko parece desconfiada.");
+    assert.strictEqual(result.code, "GM_NOTES_UPDATED");
+    assert.strictEqual(result.state.conversations["c-1"].gmNotes, "Yuko parece desconfiada.");
+    assert.strictEqual(result.state.revision, base.revision + 1);
+  });
+
+  it("updateGmNotes trunca para 5000 caracteres", () => {
+    const base = normalizeState({ conversations: { "c-1": conversation() } }).state;
+    const longText = "a".repeat(6000);
+    const result = updateGmNotes(base, "c-1", longText);
+    assert.strictEqual(result.state.conversations["c-1"].gmNotes.length, 5000);
+  });
+
+  it("updateGmNotes retorna NOT_FOUND para conversa inexistente", () => {
+    const base = createEmptyState();
+    const result = updateGmNotes(base, "c-x", "nota");
+    assert.strictEqual(result.code, "NOT_FOUND");
   });
 });
 

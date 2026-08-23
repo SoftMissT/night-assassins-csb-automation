@@ -1,3 +1,4 @@
+import { MODULE_ID } from "./constants.mjs";
 import { parseAttributeValue, parseNumber } from "./parsing.mjs";
 
 export const WEAPON_RANK_LEVELS = Object.freeze({ D: 2, C: 4, B: 6, A: 8, S: 11, SS: 12 });
@@ -327,4 +328,169 @@ export function getWeaponInlineState(itemProps = {}, actorProps = {}) {
     ammoRequired: ammo.required,
     adapterPending: adapter.pending,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Current Weapon Contract (Fase 3)
+// ---------------------------------------------------------------------------
+
+const FLAG_NAMESPACE = MODULE_ID;
+const MAIN_SLOT = "main";
+const OFFHAND_SLOT = "offhand";
+
+/**
+ * Get the flag key for a weapon slot.
+ * @param {string} slot
+ * @returns {{ uuid: string, profileIndex: string }}
+ */
+function slotFlagKeys(slot = MAIN_SLOT) {
+  const prefix = slot === OFFHAND_SLOT ? "offhand" : "current";
+  return {
+    uuid: `${prefix}WeaponUuid`,
+    profileIndex: `${prefix}WeaponProfileIndex`,
+  };
+}
+
+/**
+ * Set the current weapon for an actor.
+ * @param {Actor} actor
+ * @param {object} options
+ * @param {string} options.weaponUuid - UUID of the weapon item
+ * @param {string} [options.slot="main"] - "main" or "offhand"
+ * @param {number} [options.profileIndex=0] - Attack profile index
+ * @returns {Promise<object>} the flag patch applied
+ */
+export async function setCurrentWeaponForActor(actor, { weaponUuid, slot = MAIN_SLOT, profileIndex = 0 } = {}) {
+  if (!actor) throw new Error("setCurrentWeaponForActor: actor is required");
+  if (!weaponUuid) throw new Error("setCurrentWeaponForActor: weaponUuid is required");
+
+  const keys = slotFlagKeys(slot);
+  const patch = {
+    [`flags.${FLAG_NAMESPACE}.${keys.uuid}`]: weaponUuid,
+    [`flags.${FLAG_NAMESPACE}.${keys.profileIndex}`]: Math.max(0, Math.trunc(Number(profileIndex) || 0)),
+  };
+  await actor.update(patch, { [`${FLAG_NAMESPACE}CurrentWeapon`]: true });
+  return patch;
+}
+
+/**
+ * Clear the current weapon for an actor.
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {string} [options.slot="main"]
+ * @returns {Promise<object>} the flag patch applied
+ */
+export async function clearCurrentWeaponForActor(actor, { slot = MAIN_SLOT } = {}) {
+  if (!actor) throw new Error("clearCurrentWeaponForActor: actor is required");
+
+  const keys = slotFlagKeys(slot);
+  const patch = {
+    [`flags.${FLAG_NAMESPACE}.${keys.uuid}`]: null,
+    [`flags.${FLAG_NAMESPACE}.${keys.profileIndex}`]: null,
+  };
+  await actor.update(patch, { [`${FLAG_NAMESPACE}CurrentWeapon`]: true });
+  return patch;
+}
+
+/**
+ * Get the current weapon UUID and profile index from actor flags.
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {string} [options.slot="main"]
+ * @returns {{ weaponUuid: string|null, profileIndex: number }}
+ */
+export function getCurrentWeaponForActor(actor, { slot = MAIN_SLOT } = {}) {
+  if (!actor) return { weaponUuid: null, profileIndex: 0 };
+
+  const keys = slotFlagKeys(slot);
+  const flags = actor.flags?.[FLAG_NAMESPACE] ?? {};
+  const weaponUuid = flags[keys.uuid] || null;
+  const profileIndex = Math.max(0, Math.trunc(Number(flags[keys.profileIndex]) || 0));
+  return { weaponUuid, profileIndex };
+}
+
+/**
+ * Validate that the current weapon still exists and is a valid weapon item.
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {string} [options.slot="main"]
+ * @returns {Promise<{ valid: boolean, weapon?: Item, reason?: string }>}
+ */
+export async function validateCurrentWeaponForActor(actor, { slot = MAIN_SLOT } = {}) {
+  if (!actor) return { valid: false, reason: "No actor" };
+
+  const { weaponUuid, profileIndex } = getCurrentWeaponForActor(actor, { slot });
+  if (!weaponUuid) return { valid: false, reason: "No weapon set" };
+
+  const doc = await fromUuid(weaponUuid);
+  const item = doc?.item ?? doc ?? null;
+
+  if (!item) return { valid: false, reason: "Weapon item not found (deleted?)" };
+  if (item.parent?.uuid !== actor.uuid) return { valid: false, reason: "Weapon does not belong to this actor" };
+
+  const props = item.system?.props ?? {};
+  const isWeapon = item.system?.template === "NAWeaponTpl00001"
+    || props.arma_critico !== undefined
+    || Boolean(props.arma_nome && (props.arma_dano_fixo !== undefined || props.arma_dano_atributo !== undefined));
+  if (!isWeapon) return { valid: false, reason: "Item is not a weapon" };
+
+  return { valid: true, weapon: item, profileIndex };
+}
+
+/**
+ * Resolve the attack weapon from explicit UUID, actor flags, or dialog.
+ * Priority:
+ *   1. weaponUuid passed explicitly
+ *   2. flag currentWeaponUuid/offhandWeaponUuid
+ *   3. open dialog if allowDialog=true
+ *   4. return null with error
+ *
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {string} [options.weaponUuid]
+ * @param {string} [options.slot="main"]
+ * @param {number} [options.profileIndex]
+ * @param {boolean} [options.allowDialog=true]
+ * @param {boolean} [options.persistSelection=true]
+ * @returns {Promise<{ weapon: Item|null, weaponUuid: string|null, profileIndex: number, fromDialog: boolean }>}
+ */
+export async function resolveAttackWeaponForActor(actor, {
+  weaponUuid: explicitUuid,
+  slot = MAIN_SLOT,
+  profileIndex: explicitProfileIndex,
+  allowDialog = true,
+  persistSelection = true,
+} = {}) {
+  if (!actor) return { weapon: null, weaponUuid: null, profileIndex: 0, fromDialog: false };
+
+  // Priority 1: explicit UUID
+  if (explicitUuid) {
+    const doc = await fromUuid(explicitUuid);
+    const item = doc?.item ?? doc ?? null;
+    if (item && item.parent?.uuid === actor.uuid) {
+      if (persistSelection) {
+        await setCurrentWeaponForActor(actor, { weaponUuid: explicitUuid, slot, profileIndex: explicitProfileIndex ?? 0 });
+      }
+      return { weapon: item, weaponUuid: explicitUuid, profileIndex: explicitProfileIndex ?? 0, fromDialog: false };
+    }
+  }
+
+  // Priority 2: flag
+  const { weaponUuid: flagUuid, profileIndex: flagProfileIndex } = getCurrentWeaponForActor(actor, { slot });
+  if (flagUuid) {
+    const validation = await validateCurrentWeaponForActor(actor, { slot });
+    if (validation.valid) {
+      return { weapon: validation.weapon, weaponUuid: flagUuid, profileIndex: explicitProfileIndex ?? flagProfileIndex, fromDialog: false };
+    }
+    // Flag points to deleted/invalid weapon — clear it
+    await clearCurrentWeaponForActor(actor, { slot });
+  }
+
+  // Priority 3: dialog
+  if (allowDialog) {
+    return { weapon: null, weaponUuid: null, profileIndex: 0, fromDialog: true };
+  }
+
+  // Priority 4: no weapon
+  return { weapon: null, weaponUuid: null, profileIndex: 0, fromDialog: false };
 }

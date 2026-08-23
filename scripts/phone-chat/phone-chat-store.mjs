@@ -300,6 +300,30 @@ export function deleteQuickReply(state, contactId, quickReplyId) {
 }
 
 /**
+ * Atualiza as notas privadas do GM para uma conversa.
+ * @param {object} state
+ * @param {string} conversationId
+ * @param {string} gmNotes
+ * @returns {{ state: object, code: string }}
+ */
+export function updateGmNotes(state, conversationId, gmNotes) {
+  const conversation = state.conversations[conversationId];
+  if (!conversation) return { state, code: "NOT_FOUND" };
+  const notes = typeof gmNotes === "string" ? gmNotes.slice(0, 5000) : "";
+  return {
+    state: {
+      ...state,
+      revision: state.revision + 1,
+      conversations: {
+        ...state.conversations,
+        [conversationId]: { ...conversation, gmNotes: notes, updatedAt: Date.now() },
+      },
+    },
+    code: "GM_NOTES_UPDATED",
+  };
+}
+
+/**
  * Atualiza as configurações (limite de histórico, wallpaper global, enabled).
  * @param {object} state
  * @param {object} raw

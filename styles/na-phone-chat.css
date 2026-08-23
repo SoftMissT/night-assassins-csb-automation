@@ -253,6 +253,90 @@
   font-size: 11px;
 }
 
+.na-phone-chat__thread.is-unread {
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.na-phone-chat__thread.is-unread .na-phone-chat__thread-name {
+  color: var(--na-phone-accent, #ffd700);
+  font-weight: 700;
+}
+
+.na-phone-chat__unread-badge {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--na-phone-accent, #ffd700);
+  margin-left: 6px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.na-phone-chat__thread {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.na-phone-chat__thread-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.na-phone-chat__thread-preview {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.na-phone-chat__gm-notes {
+  border-top: 1px solid var(--na-phone-border);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.na-phone-chat__gm-notes-label {
+  font-size: 10px;
+  color: var(--na-phone-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.na-phone-chat__gm-notes-input {
+  width: 100%;
+  background: var(--na-phone-bg-alt);
+  color: var(--na-phone-text);
+  border: 1px solid var(--na-phone-border);
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 11px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.na-phone-chat__gm-notes-save {
+  align-self: flex-end;
+  background: var(--na-phone-bg-alt);
+  color: var(--na-phone-accent);
+  border: 1px solid var(--na-phone-border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.na-phone-chat__gm-notes-save:hover {
+  background: rgba(0, 217, 255, 0.1);
+}
+
 @media (max-width: 480px) {
   .na-phone-chat__body {
     grid-template-columns: 1fr;

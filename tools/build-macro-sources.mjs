@@ -6,26 +6,27 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceDirectory = path.join(root, "macros");
 const outputDirectory = path.join(root, "build", "compendium", "macros");
 
+const ICONS = "modules/night-assassins-csb-automation/assets/icons/macros";
 const macros = [
-  { id: "NARollMode000001", file: "na-roll-mode.js", name: "Night Assassins — Teste de Atributo", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Attributes_By_Level_icon.webp" },
-  { id: "NAHitRoll0000001", file: "na-acerto-roll.js", name: "Night Assassins — Rolagem de Acerto", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Slayer_Weapon_icon.webp" },
-  { id: "NADamageRoll0001", file: "na_roll_damage.js", name: "Night Assassins — Rolagem de Dano", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Slayer_Weapon_icon.webp" },
-  { id: "NAAttrLevel00001", file: "na-attribute-level-snapshot.js", name: "Night Assassins — Atributos por Nível", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Attributes_By_Level_icon.webp" },
-  { id: "NAHunterMark0001", file: "na-marca-cacador.js", name: "Night Assassins — Marca do Caçador", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_GM_Control_icon.webp" },
-  { id: "NAGMControl00001", file: "na-gm-control.js", name: "Night Assassins — Controle GM", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_GM_Control_icon.webp" },
-  { id: "NAResistance0001", file: "na-gerenciar-resistencias.js", name: "Night Assassins — Gerenciar Resistências", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Attributes_By_Level_icon.webp" },
-  { id: "NAStatusManage01", file: "na-gerenciar-status.js", name: "Night Assassins — Gerenciar Status", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Gerenciar_Acoes_icon.webp" },
-  { id: "NAActionManage01", file: "na-gerenciar-acoes.js", name: "Night Assassins — Gerenciar Ações", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Gerenciar_Acoes_icon.webp" },
-  { id: "NARestManage0001", file: "na-gerenciar-descanso.js", name: "Night Assassins — Gerenciar Descanso", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Gerenciar_Acoes_icon.webp" },
-  { id: "NARespFormUse001", file: "na-resp-usar-forma.js", name: "Night Assassins — Usar Forma de Respiração", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Breathing_Form_icon.webp" },
-  { id: "NALifeDeath00001", file: "na-gerenciar-vida-morte.js", name: "Night Assassins — Vida e Morte", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Gerenciar_Acoes_icon.webp" },
-  { id: "NAAdvStates00001", file: "na-gerenciar-estados-avancados.js", name: "Night Assassins — Estados Avançados", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Gerenciar_Acoes_icon.webp" },
-  { id: "NAInterlude00001", file: "na-gerenciar-interludio.js", name: "Night Assassins — Gerenciar Interludio", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Gerenciar_Acoes_icon.webp" },
-  { id: "NAWeaponRepair01", file: "na-corrigir-armas.js", name: "Night Assassins — Corrigir Armas dos Caçadores", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Slayer_Weapon_icon.webp" },
-  { id: "NABreathRepair01", file: "na-corrigir-respiracoes.js", name: "Night Assassins — Corrigir Respirações dos Caçadores", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Breathing_Form_icon.webp" },
-  { id: "NAPhoneChat00001", file: "na-telefone.js", name: "Night Assassins — Telefone", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_GM_Control_icon.webp" },
-  { id: "NAKekkUse0000001", file: "na-usar-kekki.js", name: "Night Assassins — Usar Kekkijutsu", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_Breathing_Form_icon.webp" },
-  { id: "NABloodGift00001", file: "na-oni-blood-gift.js", name: "Night Assassins — Dom do Sangue", icon: "modules/night-assassins-csb-automation/assets/icons/Night_Assassins_GM_Control_icon.webp" },
+  { id: "NARollMode000001", file: "na-roll-mode.js", name: "Night Assassins — Teste de Atributo", icon: `${ICONS}/na-roll-mode_icon.webp` },
+  { id: "NAHitRoll0000001", file: "na-acerto-roll.js", name: "Night Assassins — Rolagem de Acerto", icon: `${ICONS}/na-acerto-roll_icon.webp` },
+  { id: "NADamageRoll0001", file: "na_roll_damage.js", name: "Night Assassins — Rolagem de Dano", icon: `${ICONS}/na_roll_damage_icon.webp` },
+  { id: "NAAttrLevel00001", file: "na-attribute-level-snapshot.js", name: "Night Assassins — Atributos por Nível", icon: `${ICONS}/na-attribute-level-snapshot_icon.webp` },
+  { id: "NAHunterMark0001", file: "na-marca-cacador.js", name: "Night Assassins — Marca do Caçador", icon: `${ICONS}/na-marca-cacador_icon.webp` },
+  { id: "NAGMControl00001", file: "na-gm-control.js", name: "Night Assassins — Controle GM", icon: `${ICONS}/na-gm-control_icon.webp` },
+  { id: "NAResistance0001", file: "na-gerenciar-resistencias.js", name: "Night Assassins — Gerenciar Resistências", icon: `${ICONS}/na-gerenciar-resistencias_icon.webp` },
+  { id: "NAStatusManage01", file: "na-gerenciar-status.js", name: "Night Assassins — Gerenciar Status", icon: `${ICONS}/na-gerenciar-status_icon.webp` },
+  { id: "NAActionManage01", file: "na-gerenciar-acoes.js", name: "Night Assassins — Gerenciar Ações", icon: `${ICONS}/na-gerenciar-acoes_icon.webp` },
+  { id: "NARestManage0001", file: "na-gerenciar-descanso.js", name: "Night Assassins — Gerenciar Descanso", icon: `${ICONS}/na-gerenciar-descanso_icon.webp` },
+  { id: "NARespFormUse001", file: "na-resp-usar-forma.js", name: "Night Assassins — Usar Forma de Respiração", icon: `${ICONS}/na-resp-usar-forma_icon.webp` },
+  { id: "NALifeDeath00001", file: "na-gerenciar-vida-morte.js", name: "Night Assassins — Vida e Morte", icon: `${ICONS}/na-gerenciar-vida-morte_icon.webp` },
+  { id: "NAAdvStates00001", file: "na-gerenciar-estados-avancados.js", name: "Night Assassins — Estados Avançados", icon: `${ICONS}/na-gerenciar-estados-avancados_icon.webp` },
+  { id: "NAInterlude00001", file: "na-gerenciar-interludio.js", name: "Night Assassins — Gerenciar Interludio", icon: `${ICONS}/na-gerenciar-interludio_icon.webp` },
+  { id: "NAWeaponRepair01", file: "na-corrigir-armas.js", name: "Night Assassins — Corrigir Armas dos Caçadores", icon: `${ICONS}/na-corrigir-armas_icon.webp` },
+  { id: "NABreathRepair01", file: "na-corrigir-respiracoes.js", name: "Night Assassins — Corrigir Respirações dos Caçadores", icon: `${ICONS}/na-corrigir-respiracoes_icon.webp` },
+  { id: "NAPhoneChat00001", file: "na-telefone.js", name: "Night Assassins — Telefone", icon: `${ICONS}/na-telefone_icon.webp` },
+  { id: "NAKekkUse0000001", file: "na-usar-kekki.js", name: "Night Assassins — Usar Kekkijutsu", icon: `${ICONS}/na-usar-kekki_icon.webp` },
+  { id: "NABloodGift00001", file: "na-oni-blood-gift.js", name: "Night Assassins — Dom do Sangue", icon: `${ICONS}/na-oni-blood-gift_icon.webp` },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

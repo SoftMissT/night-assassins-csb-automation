@@ -9,12 +9,14 @@
 import { MODULE_ID } from "../constants.mjs";
 import { SCHEMA_VERSION, generateLogicalId, isValidId, normalizeText } from "./phone-chat-domain.mjs";
 import { canSendAsNpc, canSendAsUser } from "./phone-chat-permissions.mjs";
+import { getPhoneChatSetting, PHONE_CHAT_SETTINGS } from "./phone-chat-settings.mjs";
 import {
   PHONE_CHAT_STATE_KEY,
   appendMessage,
   commit,
   deleteMessage,
   loadState,
+  updateGmNotes,
   updateSettings,
   upsertContact,
   upsertConversation,
@@ -283,6 +285,7 @@ const ADMIN_ACTIONS = Object.freeze({
   "quick-reply-delete": (state, payload) => deleteQuickReply(state, payload.contactId, payload.quickReplyId),
   "message-delete": (state, payload) => deleteMessage(state, payload.conversationId, payload.messageId),
   "settings-update": (state, payload) => updateSettings(state, payload),
+  "gm-notes-update": (state, payload) => updateGmNotes(state, payload.conversationId, payload.gmNotes),
 });
 
 /**
@@ -435,6 +438,10 @@ function activePrimaryGm() {
  */
 export async function sendMessage(params) {
   const { conversationId, text, senderKind = "user", contactId = null } = params;
+
+  if (!getPhoneChatSetting(PHONE_CHAT_SETTINGS.enable, true)) {
+    return { ok: false, code: "FORBIDDEN", message: "Phone Chat está desativado." };
+  }
 
   if (game.user.isGM) {
     const conversation = loadState().conversations[conversationId];

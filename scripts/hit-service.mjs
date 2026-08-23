@@ -16,6 +16,7 @@ import { metalStatePatch, parseMetalBreathingState, registerMetalBattleHit } fro
 import { consumeSnowPending, parseSnowBreathingState, resolveSnowFreezeGain, snowRestrictionFlag, snowStatePatch, spendFreezeForRestriction } from "./snow-breathing-service.mjs";
 import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
 import { actorKind } from "./actor-kind.mjs";
+import { resolveAttackWeaponForActor, setCurrentWeaponForActor } from "./weapon-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -161,6 +162,11 @@ async function resolveActor(options) {
  * @param {object} options
  * @param {Actor} [options.actor]
  * @param {string} [options.actorUuid]
+ * @param {string} [options.weaponUuid] - UUID explícito da arma (prioridade máxima)
+ * @param {string} [options.slot="main"] - "main" ou "offhand"
+ * @param {number} [options.profileIndex] - Índice do perfil de ataque
+ * @param {boolean} [options.persistSelection=true] - Salvar arma escolhida como atual
+ * @param {boolean} [options.allowDialog=true] - Abrir dialog se arma não resolvida
  * @returns {Promise<void>}
  */
 export async function rollHit(options) {
@@ -219,8 +225,57 @@ export async function rollHit(options) {
     ...weapon,
     effectiveCritical: effectiveWeaponCritical({ base: weapon.critical, state: passiveState, weaponId: weapon.id, strength }),
   }));
-  const dialogResult = await openHitDialog({ attrName, attrVal, color, weapons });
-  if (!dialogResult) return;
+
+  // Fase 3: Resolve arma via contrato único
+  const slot = options.slot ?? "main";
+  const persistSelection = options.persistSelection !== false;
+  const allowDialog = options.allowDialog !== false;
+
+  const weaponResolution = await resolveAttackWeaponForActor(actor, {
+    weaponUuid: options.weaponUuid,
+    slot,
+    profileIndex: options.profileIndex,
+    allowDialog,
+    persistSelection: false, // Não salva aqui, salvamos após dialog
+  });
+
+  let dialogResult;
+  if (weaponResolution.fromDialog) {
+    // Abrir dialog para jogador escolher arma
+    dialogResult = await openHitDialog({ attrName, attrVal, color, weapons });
+    if (!dialogResult) return;
+  } else if (weaponResolution.weapon) {
+    // Arma já resolvida pelo contrato
+    const resolvedWeapon = weapons.find((w) => w.id === weaponResolution.weapon.id && w.profileIndex === weaponResolution.profileIndex)
+      ?? weapons.find((w) => w.id === weaponResolution.weapon.id)
+      ?? null;
+    dialogResult = {
+      weaponId: weaponResolution.weapon.id,
+      weaponProfileIndex: weaponResolution.profileIndex,
+      weaponAttribute: attrName,
+      bonusRaw: "",
+      mode: "normal",
+      rollMode: game.user?.rollMode ?? "roll",
+      cdVal: 0,
+      rollCount: 1,
+      actionType: "ataque",
+    };
+  } else {
+    ui.notifications?.warn?.("Nenhuma arma disponível. Selecione uma arma no inventário.");
+    return;
+  }
+
+  // Salvar arma escolhida como atual (se aplicável)
+  if (persistSelection && dialogResult?.weaponId) {
+    const selectedWeapon = weapons.find((w) => w.id === dialogResult.weaponId);
+    if (selectedWeapon) {
+      await setCurrentWeaponForActor(actor, {
+        weaponUuid: selectedWeapon.uuid,
+        slot,
+        profileIndex: Number(dialogResult.weaponProfileIndex ?? 0),
+      });
+    }
+  }
 
   const breathingState = parseWaterBreathingState(props.resp_agua_estado);
   const breathHit = breathingState.nextHit;

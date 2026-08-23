@@ -3025,7 +3025,7 @@
                       "editRole": 0,
                       "permission": 0,
                       "tooltip": "",
-                      "visibilityFormula": "arma_adapter_necessario == 1 && arma_adapter_instalado == 0",
+                      "visibilityFormula": "(arma_adapter_necessario == 1) and (arma_adapter_instalado == 0)",
                       "editableFormula": "",
                       "escapeHTML": false,
                       "type": "label",

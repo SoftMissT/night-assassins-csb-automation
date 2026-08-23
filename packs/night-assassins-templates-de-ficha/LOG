@@ -1,5 +1,5 @@
-2026/08/23-01:37:51.612 cf7c Delete type=3 #1
-2026/08/23-01:37:51.661 a6d4 Level-0 table #5: started
-2026/08/23-01:37:51.710 a6d4 Level-0 table #5: 62949 bytes OK
-2026/08/23-01:37:51.806 a6d4 Delete type=0 #3
-2026/08/23-01:37:51.807 a6d4 Manual compaction at level-0 from '!actors!NANpcTemplate001' @ 72057594037927935 : 1 .. '!actors!NASlayerTpl00001' @ 0 : 0; will stop at (end)
+2026/08/23-01:46:59.082 9664 Delete type=3 #1
+2026/08/23-01:46:59.131 9e88 Level-0 table #5: started
+2026/08/23-01:46:59.170 9e88 Level-0 table #5: 62106 bytes OK
+2026/08/23-01:46:59.255 9e88 Delete type=0 #3
+2026/08/23-01:46:59.256 9e88 Manual compaction at level-0 from '!actors!NANpcTemplate001' @ 72057594037927935 : 1 .. '!actors!NASlayerTpl00001' @ 0 : 0; will stop at (end)

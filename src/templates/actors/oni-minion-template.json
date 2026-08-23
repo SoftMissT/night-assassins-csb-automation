@@ -28,7 +28,7 @@
           "altRollMessage": "",
           "rollMessageToChat": false,
           "altRollMessageToChat": false,
-          "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">ONI MINION</span>"
+          "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">ONI MINION</span></div>"
         },
         {
           "key": "oni_minion_identity",
@@ -258,30 +258,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_vit_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-vit\">VIT</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE VITALIDADE',attr:'VIT',color:'#36D67A'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_vit_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -304,7 +280,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">VIT: ${oni_minion_vit_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#2ED36F;text-transform:uppercase;letter-spacing:.12em;\">VIT: ${oni_minion_vit_display}$</span></div>"
             },
             {
               "key": "oni_minion_dex_base",
@@ -330,30 +306,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_dex_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-dex\">DEX</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE DESTREZA',attr:'DEX',color:'#28D7FF'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_dex_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -376,7 +328,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">DEX: ${oni_minion_dex_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">DEX: ${oni_minion_dex_display}$</span></div>"
             },
             {
               "key": "oni_minion_for_base",
@@ -402,30 +354,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_for_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-for\">FOR</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE FORCA',attr:'FOR',color:'#C1000C'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_for_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -448,7 +376,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">FOR: ${oni_minion_for_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">FOR: ${oni_minion_for_display}$</span></div>"
             },
             {
               "key": "oni_minion_car_base",
@@ -474,30 +402,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_car_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-car\">CAR</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE CARISMA',attr:'CAR',color:'#FF9100'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_car_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -520,7 +424,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-car\">CAR: ${oni_minion_car_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF9100;text-transform:uppercase;letter-spacing:.12em;\">CAR: ${oni_minion_car_display}$</span></div>"
             },
             {
               "key": "oni_minion_fdv_base",
@@ -546,30 +450,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_fdv_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-fdv\">FDV</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE FORCA DE VONTADE',attr:'FDV',color:'#BB97F9'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_fdv_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -592,7 +472,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">FDV: ${oni_minion_fdv_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#BB97F9;text-transform:uppercase;letter-spacing:.12em;\">FDV: ${oni_minion_fdv_display}$</span></div>"
             },
             {
               "key": "oni_minion_int_base",
@@ -618,30 +498,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_int_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-int\">INT</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE INTELIGENCIA',attr:'INT',color:'#F8EB4D'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_int_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -664,7 +520,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-int\">INT: ${oni_minion_int_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#F8EB4D;text-transform:uppercase;letter-spacing:.12em;\">INT: ${oni_minion_int_display}$</span></div>"
             },
             {
               "key": "oni_minion_sab_base",
@@ -690,30 +546,6 @@
               "controlsStyle": "hover"
             },
             {
-              "key": "oni_minion_sab_rolar",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-btn na-sheet-role-sab\">SAB</span>",
-              "prefix": "",
-              "suffix": "",
-              "rollMessage": "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARollMode000001'))?.execute({actorUuid:entity.uuid,test:'TESTE DE SABEDORIA',attr:'SAB',color:'#D45CA4'}); return '';}%",
-              "altRollMessage": "",
-              "rollMessageToChat": true,
-              "altRollMessageToChat": false,
-              "style": "label"
-            },
-            {
               "key": "oni_minion_sab_display_label",
               "colSpan": 1,
               "rowSpan": 1,
@@ -736,10 +568,10 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-sab\">SAB: ${oni_minion_sab_display}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#D45CA4;text-transform:uppercase;letter-spacing:.12em;\">SAB: ${oni_minion_sab_display}$</span></div>"
             }
           ],
-          "flow": "grid-7",
+          "flow": "grid-4",
           "align": "center",
           "verticalAlign": "top",
           "collapsible": true,
@@ -809,7 +641,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$</span></div>"
             },
             {
               "key": "oni_minion_pdv_dano",
@@ -903,7 +735,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$</span></div>"
             },
             {
               "key": "oni_minion_pdk_gasto",
@@ -964,7 +796,7 @@
           "key": "oni_minion_combat",
           "colSpan": 1,
           "rowSpan": 1,
-          "cssClass": "na-sheet--oni-minion",
+          "cssClass": "",
           "role": 0,
           "editRole": 0,
           "permission": 0,
@@ -999,7 +831,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ACERTO</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">ACERTO</span></div>"
             },
             {
               "key": "oni_minion_dano",
@@ -1024,7 +856,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">DANO</span>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">DANO</span></div>"
             }
           ],
           "flow": "grid-2",
@@ -1033,153 +865,6 @@
           "collapsible": true,
           "defaultCollapsed": false,
           "title": "Combate",
-          "titleStyle": "default"
-        },
-        {
-          "key": "oni_minion_kekkijutsu",
-          "colSpan": 1,
-          "rowSpan": 1,
-          "cssClass": "",
-          "role": 0,
-          "editRole": 0,
-          "permission": 0,
-          "tooltip": "",
-          "visibilityFormula": "",
-          "editableFormula": "",
-          "escapeHTML": false,
-          "type": "panel",
-          "contents": [
-            {
-              "key": "",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "label",
-              "size": "full-size",
-              "label": "",
-              "icon": "",
-              "prefix": "",
-              "suffix": "",
-              "style": "title",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">KEKKIJUTSU</span>"
-            },
-            {
-              "key": "oni_minion_kekki_nome",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "textField",
-              "size": "full-size",
-              "label": "Técnica",
-              "defaultValue": "",
-              "allowedCharacters": "",
-              "maxLength": ""
-            },
-            {
-              "key": "oni_minion_kekki_pdk_custo",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "numberField",
-              "size": "medium",
-              "label": "Custo PDK",
-              "defaultValue": "0",
-              "allowDecimal": false,
-              "minVal": "0",
-              "maxVal": "999",
-              "allowRelative": false,
-              "showControls": true,
-              "controlsStyle": "hover",
-              "inputStyle": "text"
-            },
-            {
-              "key": "oni_minion_kekki_acao",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "dropdown",
-              "size": "medium",
-              "label": "Tipo de Ação",
-              "defaultValue": "especial",
-              "options": "ataque;especial;movimento;reacao;completa;unica;lendaria"
-            },
-            {
-              "key": "oni_minion_kekki_dano",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "textField",
-              "size": "medium",
-              "label": "Dano",
-              "defaultValue": "",
-              "allowedCharacters": "",
-              "maxLength": ""
-            },
-            {
-              "key": "oni_minion_kekki_alcance",
-              "colSpan": 1,
-              "rowSpan": 1,
-              "cssClass": "",
-              "role": 0,
-              "editRole": 0,
-              "permission": 0,
-              "tooltip": "",
-              "visibilityFormula": "",
-              "editableFormula": "",
-              "escapeHTML": false,
-              "type": "textField",
-              "size": "medium",
-              "label": "Alcance",
-              "defaultValue": "",
-              "allowedCharacters": "",
-              "maxLength": ""
-            }
-          ],
-          "flow": "grid-2",
-          "align": "left",
-          "verticalAlign": "top",
-          "collapsible": true,
-          "defaultCollapsed": true,
-          "title": "",
           "titleStyle": "default"
         },
         {

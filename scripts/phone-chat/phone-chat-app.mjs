@@ -37,7 +37,7 @@ export async function openMasterPhone(options = {}) {
 
 export async function openPhoneChat(options = {}) {
   if (!singleton) {
-    singleton = new PhoneChatApp();
+    singleton = new PhoneChatApp({ actorUuid: options.actorUuid ?? null });
     await singleton.render({ force: false });
   } else {
     singleton.bringToFront();
@@ -108,10 +108,11 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
     this._activeConversationId = null;
     this._status = "loading";
     this._draft = "";
-    this._lastThread = game.user.getFlag(MODULE_ID, FLAG_LAST_THREAD) ?? null;
+    this._lastThread = game.user?.getFlag(MODULE_ID, FLAG_LAST_THREAD) ?? null;
+    this._actorUuid = options.actorUuid ?? null;
     subscribeSync((message) => this._onSync(message));
     Hooks.on("phoneChatStateChanged", () => {
-      if (game.user.isGM && this.rendered) {
+      if (game.user?.isGM && this.rendered) {
         this._snapshot = loadState();
         this._revision = this._snapshot.revision;
         this.render({ force: true });

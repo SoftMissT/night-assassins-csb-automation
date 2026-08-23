@@ -10,8 +10,8 @@ describe("macro-sync", () => {
     const created = [];
     const updated = [];
     const docs = [
-      { name: "Night Assassins — Rolagem de Dano", uuid: "Compendium.na.damage", toObject: () => ({ name: "Night Assassins — Rolagem de Dano", command: "damage" }) },
-      { name: "Night Assassins — Controle GM", uuid: "Compendium.na.gm", toObject: () => ({ name: "Night Assassins — Controle GM", command: "gm" }) },
+      { name: "Night Assassins Rolagem de Dano", uuid: "Compendium.na.damage", toObject: () => ({ name: "Night Assassins Rolagem de Dano", command: "damage" }) },
+      { name: "Night Assassins Controle GM", uuid: "Compendium.na.gm", toObject: () => ({ name: "Night Assassins Controle GM", command: "gm" }) },
     ];
 
     globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, OBSERVER: 2 } };
@@ -29,7 +29,7 @@ describe("macro-sync", () => {
 
     assert.deepEqual(result, { created: 1, updated: 1, skipped: 0, folderId: "folder-na" });
     assert.equal(created.length, 1);
-    assert.equal(created[0].name, "Night Assassins — Controle GM");
+    assert.equal(created[0].name, "Night Assassins Controle GM");
     assert.equal(created[0].folder, "folder-na");
     assert.deepEqual(created[0].ownership, { default: 0 });
     assert.equal(updated.length, 1);

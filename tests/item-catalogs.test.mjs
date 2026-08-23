@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { access, readdir, readFile } from "node:fs/promises";
+import path from "node:path";
 import { describe, it } from "node:test";
 import { BREATHING_CATALOG, BREATHING_FOLDER_NAMES } from "../tools/build-breathing-sources.mjs";
 import { BREATHING_ICONS } from "../scripts/breathing-icons.mjs";
@@ -73,7 +75,13 @@ describe("catálogo de Respirações", () => {
     for (const [breathing, file] of Object.entries(BREATHING_ICONS)) {
       const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
       assert.ok(forms.length > 0, `a Respiração ${breathing} deve possuir Formas catalogadas`);
-      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/${file}`));
+      assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/breathing/${file}`));
+    }
+    const { fileURLToPath } = await import("node:url");
+    const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+    for (const item of items) {
+      const relative = String(item.img ?? "").replace("modules/night-assassins-csb-automation/", "");
+      assert.ok(relative.startsWith("assets/") && existsSync(path.join(repoRoot, relative)), `img inexistente no disco: ${item.img}`);
     }
   });
 });

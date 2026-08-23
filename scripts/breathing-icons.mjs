@@ -14,5 +14,5 @@ export const BREATHING_ICONS = Object.freeze({
 
 export function breathingIconPath(breathing) {
   const file = BREATHING_ICONS[breathing];
-  return file ? `modules/night-assassins-csb-automation/assets/icons/${file}` : null;
+  return file ? `modules/night-assassins-csb-automation/assets/icons/breathing/${file}` : null;
 }

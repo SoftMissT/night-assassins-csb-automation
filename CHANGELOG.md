@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0 - 2026-08-23
+
+- **REVERT TOTAL ao estado funcional da v0.10.0** (commit 48a232e): a ficha Slayer e todo o projeto voltaram ao baseline da última versão confirmada funcional no Foundry v14, conforme decisão do operador.
+- Removidos os acréscimos pós-v0.10.0: contrato de arma Phase 3, Phone Chat (scripts/CSS/macro), Kekkijutsu engine/template, Doação de Sangue, Concentração Total, Marca do Caçador como service, Respiração da Recuperação, packs LevelDB versionados, 20 suites de teste novas e tools auxiliares (276 arquivos).
+- module.json com version 0.11.0 e URLs apontando para a release v0.11.0; workflow validou version=tag, rodou a suíte e publicou module.json + module.zip (run 32656102692).
+- Validação local: node --test com 581/581 testes aprovados (suíte da v0.10.0); node --check scripts/main.mjs OK.
+- Histórico das versões v0.10.1–v0.10.9 preservado nas tags — nada foi deletado; retomadas futuras podem cherry-pickar features dessas tags.
+
 ## 0.10.0 — 2026-08-20
 
 - Adiciona o catálogo canônico de **Origens Oni** (`catalogs/oni-origins.json`, 21 origens) com PDV/PDK iniciais, bônus de atributo, `fallen_slayer` (Exterminador Corrompido) e os resolvedores `scripts/oni/origin-resolver.mjs` e `scripts/oni/attribute-resolver.mjs`.

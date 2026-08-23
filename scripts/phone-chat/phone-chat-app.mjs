@@ -9,7 +9,8 @@
 import { MODULE_ID } from "../constants.mjs";
 import { escapeHtml, generateLogicalId } from "./phone-chat-domain.mjs";
 import { archiveConversation, commit, loadState } from "./phone-chat-store.mjs";
-import { broadcastFullSync, PHONE_CHAT_TYPES, requestSync, sendMessage, subscribeSync } from "./phone-chat-relay.mjs";
+import { broadcastFullSync, PHONE_CHAT_TYPES, markRead, requestSync, sendMessage, subscribeSync } from "./phone-chat-relay.mjs";
+import { getPhoneChatSetting, PHONE_CHAT_SETTINGS } from "./phone-chat-settings.mjs";
 import {
   confirmDeleteMessage,
   promptContactManager,
@@ -26,6 +27,14 @@ let singleton = null;
  * @param {{actorUuid?: string, threadId?: string}} [options]
  * @returns {Promise<object>}
  */
+export async function openMasterPhone(options = {}) {
+  if (!game.user.isGM) {
+    ui.notifications.warn("Somente o GM pode abrir o Master Phone.");
+    return null;
+  }
+  return openPhoneChat({ ...options, master: true });
+}
+
 export async function openPhoneChat(options = {}) {
   if (!singleton) {
     singleton = new PhoneChatApp();
@@ -94,7 +103,7 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
   /** @override */
   _initializeApplicationOptions(options) {
     super._initializeApplicationOptions(options);
-    this._snapshot = { conversations: {}, contacts: {}, settings: {} };
+    this._snapshot = { conversations: {}, contacts: {}, settings: {}, unreadByUser: {} };
     this._revision = 0;
     this._activeConversationId = null;
     this._status = "loading";
@@ -125,6 +134,17 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
     this._snapshot.contacts = { ...(changes.contacts ?? {}) };
     if (changes.settings) {
       this._snapshot.settings = { ...this._snapshot.settings, ...changes.settings };
+    }
+    if (changes.unreadByUser) {
+      this._snapshot.unreadByUser = { ...(this._snapshot.unreadByUser ?? {}), ...changes.unreadByUser };
+    }
+    if (message.reason === "message-created" && message.senderId !== game.user.id) {
+      const showToast = getPhoneChatSetting(PHONE_CHAT_SETTINGS.showToast, true);
+      const sound = getPhoneChatSetting(PHONE_CHAT_SETTINGS.notificationSound, "");
+      if (showToast) ui.notifications.info(game.i18n.localize("NA.PhoneChat.NewMessage"));
+      if (sound && typeof AudioHelper !== "undefined" && typeof AudioHelper.play === "function") {
+        void AudioHelper.play({ src: sound, volume: 0.8, loop: false }, false);
+      }
     }
     this._status = "ready";
     if (!this._activeConversationId) this._restoreLastThread();
@@ -218,6 +238,7 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
   activateConversation(conversationId) {
     this._activeConversationId = conversationId;
     void game.user.setFlag(MODULE_ID, FLAG_LAST_THREAD, conversationId);
+    void markRead(conversationId, true);
     this.render({ force: true });
   }
 
@@ -255,7 +276,10 @@ export class PhoneChatApp extends foundry.applications.api.ApplicationV2 {
     if (!conversation) {
       return `<div class="na-phone-chat__thread-view na-phone-chat__placeholder">${escapeHtml(game.i18n.localize("NA.PhoneChat.SelectThread"))}</div>`;
     }
-    const wallpaper = conversation.wallpaper ?? this._snapshot.settings?.globalWallpaper ?? null;
+    const wallpaper = conversation.wallpaper
+      ?? this._snapshot.settings?.globalWallpaper
+      ?? getPhoneChatSetting(PHONE_CHAT_SETTINGS.defaultWallpaper, "")
+      ?? null;
     const style = wallpaper ? `background-image:url('${escapeHtml(wallpaper)}');background-size:cover;background-position:center;` : "";
     const contacts = this._snapshot.contacts;
     const bubbles = conversation.messages.map((message) => {

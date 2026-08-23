@@ -49,12 +49,18 @@ export function appendMessage(state, message) {
     messages: pruneMessages([...conversation.messages, message], state.settings.historyLimit),
     updatedAt: message.createdAt,
   };
+  const unreadByUser = { ...(state.unreadByUser ?? {}) };
+  for (const userId of conversation.participantUserIds ?? []) {
+    if (userId === message.senderId && message.senderKind === "user") continue;
+    unreadByUser[userId] = [...new Set([...(unreadByUser[userId] ?? []), conversation.id])];
+  }
 
   return {
     state: {
       ...state,
       revision: state.revision + 1,
       conversations: { ...state.conversations, [conversation.id]: nextConversation },
+      unreadByUser,
     },
     code: "MESSAGE_COMMITTED",
     message,
@@ -68,6 +74,35 @@ export function appendMessage(state, message) {
  * @param {string} messageId
  * @returns {{ state: object, code: string }}
  */
+export function markRead(state, userId, conversationId, read = true) {
+  if (typeof userId !== "string" || !userId || !state.conversations[conversationId]) {
+    return { state, code: "NOT_FOUND" };
+  }
+  const unreadByUser = { ...(state.unreadByUser ?? {}) };
+  const current = new Set(unreadByUser[userId] ?? []);
+  if (read) current.delete(conversationId);
+  else current.add(conversationId);
+  unreadByUser[userId] = [...current];
+  return {
+    state: { ...state, revision: state.revision + 1, unreadByUser },
+    code: "UNREAD_UPDATED",
+  };
+}
+
+export function editMessage(state, conversationId, messageId, text) {
+  const conversation = state.conversations[conversationId];
+  const normalized = normalizeText(text);
+  if (!conversation || !normalized) return { state, code: "INVALID_PAYLOAD" };
+  const index = conversation.messages.findIndex((message) => message.id === messageId);
+  if (index < 0) return { state, code: "NOT_FOUND" };
+  const messages = conversation.messages.slice();
+  messages[index] = { ...messages[index], text: normalized, editedAt: Date.now() };
+  return {
+    state: { ...state, revision: state.revision + 1, conversations: { ...state.conversations, [conversationId]: { ...conversation, messages, updatedAt: Date.now() } } },
+    code: "MESSAGE_EDITED",
+  };
+}
+
 export function deleteMessage(state, conversationId, messageId) {
   const conversation = state.conversations[conversationId];
   if (!conversation) return { state, code: "NOT_FOUND" };
@@ -287,7 +322,13 @@ export function updateSettings(state, raw = {}) {
   }
 
   return {
-    state: { ...state, revision: state.revision + 1, settings, conversations },
+    state: {
+      ...state,
+      revision: state.revision + 1,
+      settings,
+      conversations,
+      unreadByUser: state.unreadByUser ?? {},
+    },
     code: "SETTINGS_UPDATED",
   };
 }

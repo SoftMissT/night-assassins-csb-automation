@@ -22,6 +22,8 @@ import {
   archiveConversation,
   upsertQuickReply,
   deleteQuickReply,
+  markRead as markReadState,
+  editMessage as editMessageState,
 } from "./phone-chat-store.mjs";
 
 export const PHONE_CHAT_SOCKET = `module.${MODULE_ID}`;
@@ -31,6 +33,7 @@ export const PHONE_CHAT_TYPES = Object.freeze({
   MESSAGE_REQUEST: "phone-chat-message-request",
   ADMIN_REQUEST: "phone-chat-admin-request",
   SYNC_REQUEST: "phone-chat-sync-request",
+  READ_REQUEST: "phone-chat-read-request",
   RESPONSE: "phone-chat-response",
   SYNC: "phone-chat-sync",
 });
@@ -72,7 +75,7 @@ export function electPrimaryGm(users) {
  * @returns {{ state: object, code: string, message?: object }}
  */
 export function applyMessage(state, params) {
-  const { conversationId, senderKind, contactId, requester, text, operationId, now } = params;
+  const { conversationId, senderKind, contactId, requester, text, operationId, now, createdAt = now } = params;
   if (!isValidId(operationId)) return { state, code: "INVALID_PAYLOAD" };
 
   const conversation = state.conversations[conversationId];
@@ -103,7 +106,7 @@ export function applyMessage(state, params) {
     senderId,
     representedByUserId,
     text: normalized,
-    createdAt: now,
+    createdAt,
     status: "confirmed",
   };
 
@@ -120,7 +123,7 @@ export function applyMessage(state, params) {
  * @returns {{ conversations: object, contacts: object }}
  */
 export function buildFilteredSnapshot(state, userId, isGM) {
-  if (isGM) return { conversations: state.conversations, contacts: state.contacts };
+  if (isGM) return { conversations: state.conversations, contacts: state.contacts, unreadByUser: state.unreadByUser ?? {} };
 
   const conversations = {};
   const allowedContactIds = new Set();
@@ -136,7 +139,7 @@ export function buildFilteredSnapshot(state, userId, isGM) {
     if (state.contacts[contactId]) contacts[contactId] = state.contacts[contactId];
   }
 
-  return { conversations, contacts };
+  return { conversations, contacts, unreadByUser: { [userId]: state.unreadByUser?.[userId] ?? [] } };
 }
 
 /**
@@ -172,6 +175,7 @@ function codeToMessage(code) {
     QUICK_REPLY_DELETED: "Resposta rápida removida.",
     MESSAGE_DELETED: "Mensagem removida.",
     SETTINGS_UPDATED: "Configurações atualizadas.",
+    UNREAD_UPDATED: "Leitura atualizada.",
     FORBIDDEN: "Você não tem permissão para esta ação.",
     INVALID_PAYLOAD: "Conteúdo inválido.",
     NOT_FOUND: "Recurso não encontrado.",
@@ -193,7 +197,8 @@ function respond(recipientId, requestId, operationId, code, extra = {}) {
     operationId,
     ok: code === "MESSAGE_COMMITTED" || code === "CONVERSATION_COMMITTED" || code === "CONVERSATION_ARCHIVED"
       || code === "CONTACT_COMMITTED" || code === "CONTACT_ARCHIVED" || code === "QUICK_REPLY_COMMITTED"
-      || code === "QUICK_REPLY_DELETED" || code === "MESSAGE_DELETED" || code === "SETTINGS_UPDATED",
+      || code === "QUICK_REPLY_DELETED" || code === "MESSAGE_DELETED" || code === "SETTINGS_UPDATED"
+      || code === "UNREAD_UPDATED",
     code,
     message: codeToMessage(code),
     ...extra,
@@ -323,6 +328,22 @@ export async function handleAdminRequest(message) {
  * @param {object} message
  * @returns {Promise<void>}
  */
+export async function handleReadRequest(message) {
+  if (!game.user.isGM || message.gmId !== game.user.id) return;
+  const result = await commit((state) => markReadState(state, message.requesterId, message.conversationId, message.read !== false));
+  respond(message.requesterId, message.requestId, message.operationId, result.code);
+  if (result.code === "UNREAD_UPDATED") {
+    const snapshot = buildFilteredSnapshot(result.state, message.requesterId, false);
+    emitSync([message.requesterId], result.state.revision, "read-updated", {
+      conversations: snapshot.conversations,
+      contacts: snapshot.contacts,
+      unreadByUser: { [message.requesterId]: result.state.unreadByUser[message.requesterId] ?? [] },
+      removedConversationIds: [],
+      removedMessageIds: [],
+    });
+  }
+}
+
 export async function handleSyncRequest(message) {
   if (!game.user.isGM || message.gmId !== game.user.id) return;
   const requester = game.users.get(message.requesterId);
@@ -365,6 +386,9 @@ export function routeSocketMessage(message = {}) {
       return;
     case PHONE_CHAT_TYPES.SYNC_REQUEST:
       void handleSyncRequest(message);
+      return;
+    case PHONE_CHAT_TYPES.READ_REQUEST:
+      void handleReadRequest(message);
       return;
     case PHONE_CHAT_TYPES.RESPONSE:
       handleResponse(message);
@@ -424,6 +448,7 @@ export async function sendMessage(params) {
         text,
         operationId: params.operationId ?? generateLogicalId(),
         now: Date.now(),
+        createdAt: params.createdAt ?? Date.now(),
       }),
     );
     const recipients = syncRecipients(conversation, currentUsers());
@@ -431,6 +456,7 @@ export async function sendMessage(params) {
       emitSync(recipients, result.state.revision, "message-created", {
         conversations: { [conversation.id]: result.state.conversations[conversation.id] },
         contacts: {},
+        unreadByUser: Object.fromEntries(recipients.map((id) => [id, result.state.unreadByUser?.[id] ?? []])),
         removedConversationIds: [],
         removedMessageIds: [],
       });
@@ -463,6 +489,38 @@ export async function sendMessage(params) {
  * assíncrona via evento `phone-chat-sync`; o GM lê o estado diretamente.
  * @returns {Promise<{ok: boolean, code: string, message: string}>}
  */
+export async function markRead(conversationId, read = true) {
+  if (!conversationId) return { ok: false, code: "INVALID_PAYLOAD", message: codeToMessage("INVALID_PAYLOAD") };
+  if (game.user.isGM) {
+    const result = await commit((state) => markReadState(state, game.user.id, conversationId, read));
+    return { ok: result.code === "UNREAD_UPDATED", code: result.code, message: codeToMessage(result.code) };
+  }
+  const gm = activePrimaryGm();
+  if (!gm) return { ok: false, code: "NO_GM", message: codeToMessage("NO_GM") };
+  return requestWithTimeout((requestId) => emit({
+    type: PHONE_CHAT_TYPES.READ_REQUEST,
+    requestId,
+    operationId: generateLogicalId(),
+    requesterId: game.user.id,
+    gmId: gm.id,
+    clientSchemaVersion: SCHEMA_VERSION,
+    conversationId,
+    read,
+  }));
+}
+
+export async function editMessage(conversationId, messageId, text) {
+  if (!game.user.isGM) return { ok: false, code: "FORBIDDEN", message: codeToMessage("FORBIDDEN") };
+  const result = await commit((state) => editMessageState(state, conversationId, messageId, text));
+  if (result.code === "MESSAGE_EDITED") broadcastFullSync("message-edited");
+  return { ok: result.code === "MESSAGE_EDITED", code: result.code, message: codeToMessage(result.code) };
+}
+
+export async function insertMessage(params) {
+  if (!game.user.isGM) return { ok: false, code: "FORBIDDEN", message: codeToMessage("FORBIDDEN") };
+  return sendMessage(params);
+}
+
 export async function requestSync() {
   if (game.user.isGM) return { ok: true, code: "LOCAL", message: "" };
   const gm = activePrimaryGm();
@@ -498,6 +556,7 @@ export function broadcastFullSync(reason) {
     emitSync([user.id], state.revision, reason, {
       conversations: snapshot.conversations,
       contacts: snapshot.contacts,
+      unreadByUser: snapshot.unreadByUser,
       removedConversationIds: [],
       removedMessageIds: [],
     });

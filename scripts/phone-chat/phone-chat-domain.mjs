@@ -111,6 +111,7 @@ export function createEmptyState() {
     },
     contacts: {},
     conversations: {},
+    unreadByUser: {},
   };
 }
 
@@ -247,6 +248,13 @@ export function normalizeState(raw) {
   }
 
   const revision = Math.max(0, Math.trunc(Number(raw.revision) || 0));
+  const unreadByUser = {};
+  if (raw.unreadByUser && typeof raw.unreadByUser === "object") {
+    for (const [userId, conversationIds] of Object.entries(raw.unreadByUser)) {
+      if (typeof userId !== "string" || !Array.isArray(conversationIds)) continue;
+      unreadByUser[userId] = [...new Set(conversationIds.filter((id) => isValidId(id)))];
+    }
+  }
 
   return {
     state: {
@@ -256,6 +264,7 @@ export function normalizeState(raw) {
       settings,
       contacts,
       conversations,
+      unreadByUser,
     },
     migrated: schemaVersion < SCHEMA_VERSION,
   };

@@ -19,6 +19,8 @@ import {
 import {
   appendMessage,
   deleteMessage,
+  editMessage,
+  markRead,
   updateSettings,
   upsertContact,
   upsertConversation,
@@ -176,6 +178,24 @@ describe("phone-chat-store reducers", () => {
     const base = normalizeState({ conversations }).state;
     const result = upsertConversation(base, { kind: "direct", displayName: "Extra", participantUserIds: ["x", "gm"] });
     assert.strictEqual(result.code, "STORE_LIMIT");
+  });
+
+  it("mensagem nova marca unread e markRead limpa por usuário", () => {
+    const base = normalizeState({ conversations: { "c-1": conversation() } }).state;
+    const committed = appendMessage(base, message());
+    assert.deepEqual(committed.state.unreadByUser.user_002, ["c-1"]);
+    const read = markRead(committed.state, "user_002", "c-1", true);
+    assert.deepEqual(read.state.unreadByUser.user_002, []);
+    const unread = markRead(read.state, "user_002", "c-1", false);
+    assert.deepEqual(unread.state.unreadByUser.user_002, ["c-1"]);
+  });
+
+  it("GM pode editar texto de mensagem sem alterar o ID", () => {
+    const base = normalizeState({ conversations: { "c-1": conversation({ messages: [message()] }) } }).state;
+    const result = editMessage(base, "c-1", "m-1", "Texto corrigido");
+    assert.strictEqual(result.code, "MESSAGE_EDITED");
+    assert.strictEqual(result.state.conversations["c-1"].messages[0].id, "m-1");
+    assert.strictEqual(result.state.conversations["c-1"].messages[0].text, "Texto corrigido");
   });
 
   it("moderação remove mensagem sem apagar o restante", () => {

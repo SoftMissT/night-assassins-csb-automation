@@ -42,8 +42,8 @@ import { awakenMark, activateMark, finishMark, markStatus, maxActivationPower, a
 import * as oniProgression from "./oni/progression-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
 import { registerPhoneChatSettings, PHONE_CHAT_SETTINGS } from "./phone-chat/phone-chat-settings.mjs";
-import { registerPhoneChatRelay, sendMessage, requestSync } from "./phone-chat/phone-chat-relay.mjs";
-import { attachPhoneChatHeaderButton, openPhoneChat } from "./phone-chat/phone-chat-app.mjs";
+import { editMessage, insertMessage, markRead, registerPhoneChatRelay, sendMessage, requestSync } from "./phone-chat/phone-chat-relay.mjs";
+import { attachPhoneChatHeaderButton, openMasterPhone, openPhoneChat } from "./phone-chat/phone-chat-app.mjs";
 import { promptContactManager, promptConversationManager, promptGlobalSettings } from "./phone-chat/phone-chat-admin.mjs";
 
 Hooks.once("init", () => {
@@ -252,9 +252,24 @@ reloadWeaponItem,
         },
       },
       openPhoneChat,
+      openMasterPhone,
+      phone: {
+        markRead,
+        openMasterPhone,
+        createConversation: promptConversationManager,
+        sendMessage,
+        editMessage,
+        insertMessage,
+        send: sendMessage,
+      },
       phoneChat: {
         send: sendMessage,
+        sendMessage,
+        markRead,
+        editMessage,
+        insertMessage,
         requestSync,
+        openMasterPhone,
         openSettings: promptGlobalSettings,
         newContact: promptContactManager,
         newConversation: promptConversationManager,

@@ -1,3 +1,13 @@
+## 0.10.5 — 2026-08-22
+
+### Correções e Melhorias
+- **Icone Oni**: Adicionado `assets/icons/oni.webp` (placeholder) para corrigir 404 no Foundry.
+- **Breathing icons expandidos**: 5 novos ícones (eclipse, estrelas, lua, macaco, vagalume) em `assets/icons/breathing/`.
+- **Phone Chat melhorias**: Atualizações nos módulos relay, settings, store, app e domain para robustez e funcionalidade.
+- **Build tool**: `tools/build-macro-sources.mjs` refinado.
+- **Traduções**: Atualizado `lang/pt-BR.json` com novas chaves.
+- **Tests**: 838/838 pass.
+
 ## 0.10.4 — 2026-08-22
 
 ### P0 — Restauração do Módulo

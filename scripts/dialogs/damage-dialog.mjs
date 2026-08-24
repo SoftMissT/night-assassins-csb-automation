@@ -27,7 +27,7 @@ function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
 }
 
 function makeAcaoOpts(sel) {
-  return `<option value="">— Nenhuma —</option>
+  return `<option value="">Nenhuma —</option>
     ${TIPOS_ACAO.filter((t) => t.damage && t.key !== "epica").map((t) => `<option value="${t.key}" ${sel === t.key ? "selected" : ""}>${t.label}</option>`).join("")}`;
 }
 
@@ -151,19 +151,19 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto, resour
 
   const preEntradas = Array.isArray(entradas) && entradas.length > 0
     ? entradas.map((e) => ({
-        tipoAcao: e.tipoAcao ?? "",
-        dado: e.dado ?? "",
-        fixo: Number.isFinite(Number(e.fixo)) ? Number(e.fixo) : 0,
-        attrs: Array.isArray(e.attrs) ? e.attrs : e.attr ? [e.attr] : [],
-        tiposDano: Array.isArray(e.tiposDano) ? e.tiposDano : e.tipoDano ? [e.tipoDano] : [],
-      }))
+      tipoAcao: e.tipoAcao ?? "",
+      dado: e.dado ?? "",
+      fixo: Number.isFinite(Number(e.fixo)) ? Number(e.fixo) : 0,
+      attrs: Array.isArray(e.attrs) ? e.attrs : e.attr ? [e.attr] : [],
+      tiposDano: Array.isArray(e.tiposDano) ? e.tiposDano : e.tipoDano ? [e.tipoDano] : [],
+    }))
     : [{
-        tipoAcao: "",
-        dado: "",
-        fixo: 0,
-        attrs: [],
-        tiposDano: [],
-      }];
+      tipoAcao: "",
+      dado: "",
+      fixo: 0,
+      attrs: [],
+      tiposDano: [],
+    }];
 
   const entradasIniciais = preEntradas.map((e, i) => makeEntradaHtml(e, i, attrValues)).join("");
 
@@ -198,41 +198,41 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto, resour
   let result;
   try {
     result = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Rolar Dano — Night Assassins" },
-    content,
-    modal: true,
-    rejectClose: false,
-    buttons: [
-      {
-        action: "rolar",
-        label: "Rolar",
-        callback: (event, button) => {
-          const form = button.form;
-          const container = form.querySelector("#na-entradas-container");
-          const entries = [];
-          container.querySelectorAll(".na-entrada").forEach((el) => {
-            const idx = el.dataset.idx;
-            const dado = el.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() || "";
-            const fixo = Number(el.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
-            const tipoAcao = el.querySelector(`.na-acao-sel[data-idx="${idx}"]`)?.value || "";
-            const selTiposDano = [];
-            el.querySelectorAll(`.na-dano-chk[data-idx="${idx}"]:checked`).forEach((cb) => selTiposDano.push(cb.value));
-            const selAttrs = [];
-            el.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`).forEach((cb) => {
-              if (ATTRIBUTES.some((a) => a.key === cb.value)) selAttrs.push(cb.value);
+      window: { title: "Rolar Dano Night Assassins" },
+      content,
+      modal: true,
+      rejectClose: false,
+      buttons: [
+        {
+          action: "rolar",
+          label: "Rolar",
+          callback: (event, button) => {
+            const form = button.form;
+            const container = form.querySelector("#na-entradas-container");
+            const entries = [];
+            container.querySelectorAll(".na-entrada").forEach((el) => {
+              const idx = el.dataset.idx;
+              const dado = el.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() || "";
+              const fixo = Number(el.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
+              const tipoAcao = el.querySelector(`.na-acao-sel[data-idx="${idx}"]`)?.value || "";
+              const selTiposDano = [];
+              el.querySelectorAll(`.na-dano-chk[data-idx="${idx}"]:checked`).forEach((cb) => selTiposDano.push(cb.value));
+              const selAttrs = [];
+              el.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`).forEach((cb) => {
+                if (ATTRIBUTES.some((a) => a.key === cb.value)) selAttrs.push(cb.value);
+              });
+              entries.push({ dado, fixo, tipoAcao, selTiposDano, selAttrs });
             });
-            entries.push({ dado, fixo, tipoAcao, selTiposDano, selAttrs });
-          });
-          return {
-            nome: form.querySelector("#na-dmg-nome")?.value?.trim() || "Dano",
-            pdrGasto: Math.max(0, Number(form.querySelector("#na-dmg-pdr")?.value) || 0),
-            critical: Boolean(form.querySelector("#na-dmg-critical")?.checked),
-            entradas: entries,
-          };
+            return {
+              nome: form.querySelector("#na-dmg-nome")?.value?.trim() || "Dano",
+              pdrGasto: Math.max(0, Number(form.querySelector("#na-dmg-pdr")?.value) || 0),
+              critical: Boolean(form.querySelector("#na-dmg-critical")?.checked),
+              entradas: entries,
+            };
+          },
         },
-      },
-      { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
-    ],
+        { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
+      ],
     });
   } finally {
     if (renderHook !== undefined) hookApi?.off?.("renderDialogV2", renderHook);

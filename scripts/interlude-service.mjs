@@ -61,7 +61,7 @@ export async function executeInterludeActivity(actor, activityKey) {
   await actor.update(result.patch, { naCsbAutomation: true, naInterlude: true });
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
-    content: `<div class="na-interlude-card"><strong>${escapeHtml(activity.label)}</strong><p>${success ? "Sucesso" : "Falha"} — progresso ${result.progress}/3.</p>${result.complete ? "<p><strong>Treino concluido e beneficio desbloqueado.</strong></p>" : ""}</div>`,
+    content: `<div class="na-interlude-card"><strong>${escapeHtml(activity.label)}</strong><p>${success ? "Sucesso" : "Falha"} progresso ${result.progress}/3.</p>${result.complete ? "<p><strong>Treino concluido e beneficio desbloqueado.</strong></p>" : ""}</div>`,
   });
   return { success, ...result };
 }
@@ -73,10 +73,10 @@ export async function openInterludeManager({ actorUuid } = {}) {
   const options = Object.entries(INTERLUDE_ACTIVITIES).map(([key, activity]) => {
     const progress = Math.min(3, Math.max(0, Math.trunc(parseNumber(props[activity.progress]))));
     const complete = parseNumber(props[activity.complete]) > 0;
-    return `<option value="${key}" ${complete ? "disabled" : ""}>${escapeHtml(activity.label)} — ${complete ? "CONCLUIDO" : `${progress}/3`}</option>`;
+    return `<option value="${key}" ${complete ? "disabled" : ""}>${escapeHtml(activity.label)} ${complete ? "CONCLUIDO" : `${progress}/3`}</option>`;
   }).join("");
   const choice = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Interludio — ${actor.name}` },
+    window: { title: `Interludio ${actor.name}` },
     position: { width: 560, height: "auto" },
     modal: true,
     rejectClose: false,

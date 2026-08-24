@@ -49,13 +49,13 @@ function oniUnarmedDefinitions(actor) {
     const [base] = profile.formula.split("+");
     const die = /d/iu.test(base) ? base : "";
     return ({
-    id: `oni-unarmed:${id}:level-${level}`, name, ownerKind: "oni",
-    costs: { actions: [{ type: "ataque", amount: 1 }], resources: [] },
-    damage: [{ id, label: name, formula: die, fixed: die ? 0 : Number(base), attributeTerms: [{ key: profile.attribute, multiplier: 1, rounding: "floor" }], types }],
+      id: `oni-unarmed:${id}:level-${level}`, name, ownerKind: "oni",
+      costs: { actions: [{ type: "ataque", amount: 1 }], resources: [] },
+      damage: [{ id, label: name, formula: die, fixed: die ? 0 : Number(base), attributeTerms: [{ key: profile.attribute, multiplier: 1, rounding: "floor" }], types }],
     });
   };
   return [make("martial", "Ataque Marcial", "martial", ["concussao"]), make("claw", "Garras", "claw", ["cortante"]), make("bite", "Mordida", "bite", ["perfurante"])]
-    .map((definition) => ({ key: definition.id, label: `${definition.name} — Nível ${level}`, definition }));
+    .map((definition) => ({ key: definition.id, label: `${definition.name} Nível ${level}`, definition }));
 }
 
 function roundedTerm(term, values) {
@@ -91,7 +91,7 @@ export function definitionDamageEntries(definition, actor) {
     const secondaryComponent = secondaryAttack ? { ...component, attributeTerms: [] } : component;
     return {
       sourceId: definition.id,
-      sourceLabel: `${component.label || definition.name}${attackCount > 1 ? ` — Golpe ${attackIndex + 1}` : ""}`,
+      sourceLabel: `${component.label || definition.name}${attackCount > 1 ? ` Golpe ${attackIndex + 1}` : ""}`,
       tipoAcao: action,
       dado: resolvedFormula(component.formula, values),
       fixo: componentFixed(secondaryComponent, values),
@@ -120,7 +120,7 @@ export function createAttackBuilderModel(actor) {
           key: `${item.uuid ?? item.id ?? item.name}::${profileIndex}`,
           item,
           profileIndex,
-          label: `${props.arma_nome || item.name} — ${profile.nome || `Perfil ${profileIndex + 1}`}`,
+          label: `${props.arma_nome || item.name} ${profile.nome || `Perfil ${profileIndex + 1}`}`,
           definition: normalized.definition,
         });
       });
@@ -132,7 +132,7 @@ export function createAttackBuilderModel(actor) {
       breathing.push({
         key: item.uuid ?? item.id ?? item.name,
         item,
-        label: `${props.respiracao_nome} — ${props.nome_forma || item.name} (Nível ${breathingLevel})`,
+        label: `${props.respiracao_nome} ${props.nome_forma || item.name} (Nível ${breathingLevel})`,
         definition: normalized.definition,
       });
     }
@@ -171,21 +171,23 @@ export async function openAttackBuilder(actor) {
   if (model.weapons.length === 0 && model.breathing.length === 0 && model.innate.length === 0) return buildAttackSelection(model, { manual: true });
 
   const result = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Montar Ataque — Night Assassins" },
+    window: { title: "Montar Ataque Night Assassins" },
     modal: true,
     rejectClose: false,
     content: `<div class="na-attack-builder">
       <p>Escolha as fontes do ataque. As parcelas permanecem separadas para crítico, resistência e Ferida.</p>
       <label>Arma / Perfil</label>
-      <select name="weaponKey">${optionsHtml(model.weapons, "— Sem arma —")}</select>
-      ${model.ownerKind === "oni" ? `<label>Ataque Demoníaco</label><select name="innateKey">${optionsHtml(model.innate, "— Sem ataque desarmado —")}</select>` : `<label>Forma de Respiração</label><select name="breathingKey">${optionsHtml(model.breathing, "— Sem Respiração —")}</select>`}
+      <select name="weaponKey">${optionsHtml(model.weapons, "Sem arma —")}</select>
+      ${model.ownerKind === "oni" ? `<label>Ataque Demoníaco</label><select name="innateKey">${optionsHtml(model.innate, "Sem ataque desarmado —")}</select>` : `<label>Forma de Respiração</label><select name="breathingKey">${optionsHtml(model.breathing, "Sem Respiração —")}</select>`}
     </div>`,
     buttons: [
-      { action: "continue", label: "Continuar", callback: (_event, button) => buildAttackSelection(model, {
-        weaponKey: button.form.elements.weaponKey.value,
-        breathingKey: button.form.elements.breathingKey?.value ?? "",
-        innateKey: button.form.elements.innateKey?.value ?? "",
-      }) },
+      {
+        action: "continue", label: "Continuar", callback: (_event, button) => buildAttackSelection(model, {
+          weaponKey: button.form.elements.weaponKey.value,
+          breathingKey: button.form.elements.breathingKey?.value ?? "",
+          innateKey: button.form.elements.innateKey?.value ?? "",
+        })
+      },
       { action: "manual", label: "Dano Manual", callback: () => buildAttackSelection(model, { manual: true }) },
       { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
     ],

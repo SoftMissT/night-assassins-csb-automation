@@ -1,0 +1,321 @@
+{
+    "titulo": "Respiração das Chamas",
+    "aliases": ["Flame Breathing", "Honoo no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "estilo": 3,
+            "nome_pt": "Esquentar",
+            "nome_romaji": "San no Kata Hitoappu",
+            "tipo_manobra": "Passiva",
+            "observacao": "Leia antes das demais técnicas",
+            "descricao": "O sistema de Pontos de Esquentar é o núcleo da Respiração das Chamas. Existem duas fontes independentes.",
+            "sistema_pontos": {
+                "brasas_ardentes": {
+                    "alvo": "Inimigo",
+                    "regra_base": "A cada ataque ou técnica que acertar o inimigo, ele recebe 1 ponto de Esquentar (além dos pontos descritos nas próprias técnicas).",
+                    "tabela_efeitos": [
+                        { "pontos": 5, "efeito": "+1 Ponto de Exaustão" },
+                        { "pontos": 10, "efeito": "5 de dano" },
+                        { "pontos": 20, "efeito": "+1 Ponto de Exaustão" },
+                        { "pontos": 30, "efeito": "5 de dano" },
+                        { "pontos": 40, "efeito": "+1 Ponto de Exaustão" },
+                        { "pontos": 50, "efeito": "Atordoamento por 2 turnos" },
+                        {
+                            "pontos": 60,
+                            "efeito": "Inimigos atingidos pelo 9º Estilo Rengoku sofrem FDV × FOR de Dano Bônus"
+                        }
+                    ]
+                },
+                "fogo_fatuo": {
+                    "alvo": "Arma do usuário",
+                    "regra_base": "A cada técnica utilizada, a arma recebe os pontos de Esquentar descritos na técnica. O bônus seguinte substitui o anterior, não acumula.",
+                    "tabela_efeitos": [
+                        {
+                            "pontos": 5,
+                            "bonus_acerto": "+1",
+                            "bonus_dano_arma": "+1",
+                            "efeito_extra": null
+                        },
+                        {
+                            "pontos": 10,
+                            "bonus_acerto": "+1",
+                            "bonus_dano_arma": "+2",
+                            "efeito_extra": null
+                        },
+                        {
+                            "pontos": 20,
+                            "bonus_acerto": "+2",
+                            "bonus_dano_arma": "+2",
+                            "efeito_extra": null
+                        },
+                        {
+                            "pontos": 30,
+                            "bonus_acerto": "+2",
+                            "bonus_dano_arma": "+2",
+                            "efeito_extra": "Técnicas com dano ganham +1d6 extra"
+                        },
+                        {
+                            "pontos": 40,
+                            "bonus_acerto": "+2",
+                            "bonus_dano_arma": "+3",
+                            "efeito_extra": "Técnicas com dano ganham +1d6 extra"
+                        },
+                        {
+                            "pontos": 50,
+                            "bonus_acerto": "+3",
+                            "bonus_dano_arma": "+3",
+                            "efeito_extra": "Técnicas com dano ganham +1d6 extra"
+                        },
+                        {
+                            "pontos": 60,
+                            "bonus_acerto": "+3",
+                            "bonus_dano_arma": "+3",
+                            "efeito_extra": "A arma passa a infligir 2 de Dano Concussivo por turno no próprio usuário, mas todos os danos de técnicas ou acertos padrão causam +50% de dano bônus após todos os cálculos"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "estilo": 1,
+            "nome_pt": "Fogo Desconhecido / Tempestade Ígnea",
+            "nome_romaji": "Ichi no Kata Shiranui",
+            "tipo_manobra": "Especial",
+            "descricao": "Imbui a arma ou projétil com uma chama viva que queima consideravelmente o inimigo ao acertar.",
+            "ganho_pontos_arma": "+2 Pontos de Esquentar na arma só por utilizar a técnica",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "+2d4 de dano extra no próximo ataque padrão ou técnica bem-sucedida neste turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao anterior + ataque padrão adicional neste turno",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + o ataque adicional ganha +1d4 de dano extra",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + ambos os ataques têm +2d4 de dano extra",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Céu em Chamas Ascendentes",
+            "nome_romaji": "Ni no Kata Nobori en Ten",
+            "tipo_manobra": "Ataque",
+            "descricao": "Um ataque de baixo para cima carregando chamas escaldantes.",
+            "ganho_pontos_arma": "+3 Pontos de Esquentar na arma",
+            "ganho_pontos_inimigo": "+2 Pontos de Esquentar se for acertado",
+            "bonus_condicional": {
+                "nome": "Bônus de Arma Quente",
+                "condicao": "Se a arma tiver pelo menos 10 Pontos de Esquentar (Fogo Fátuo)",
+                "efeito": "+2 na rolagem de acerto desta técnica"
+            },
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Só pode realizar um único ataque neste turno se acertar, é automaticamente crítico",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao anterior + diminui o bloqueio do inimigo em −2 durante os 2 próximos turnos dele",
+                    "custo": "3 PDR"
+                },
+                { "nivel": 3, "efeito": "Igual ao anterior + +1 no acerto", "custo": "3 PDR" },
+                { "nivel": 4, "efeito": "Igual ao anterior + +2 no acerto", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Ondulação da Chama Fluorescente",
+            "nome_romaji": "Shi no Kata Sei en no Uneri",
+            "tipo_manobra": "Reação",
+            "descricao": "Gira a arma ou dispara um projétil em forma circular para proteger de ataques inimigos.",
+            "ganho_pontos_arma": "+2 Pontos de Esquentar na arma só por utilizar a técnica",
+            "niveis": [
+                { "nivel": 1, "bonus_teste_bloqueio_alvo_unico": "+1", "custo": "1 PDR" },
+                { "nivel": 2, "bonus_teste_bloqueio_alvo_unico": "+2", "custo": "1 PDR" },
+                { "nivel": 3, "bonus_teste_bloqueio_alvo_unico": "+3", "custo": "2 PDR" },
+                { "nivel": 4, "bonus_teste_bloqueio_alvo_unico": "+4", "custo": "3 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Com 30+ Pontos de Esquentar (Fogo Fátuo)",
+                "efeito": "Pode se colocar como alvo de um ataque declarado a um aliado a até 3m de distância, rolando em seguida o teste de bloqueio com os bônus desta técnica"
+            }
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Tigre Ardente",
+            "nome_romaji": "Go no Kata Enko",
+            "tipo_manobra": "Ataque",
+            "descricao": "Uma série de ataques que tomam a forma de um tigre em chamas. Para acertar, rola-se uma única rolagem de acerto.",
+            "ganho_pontos_arma": "+3 Pontos de Esquentar na arma",
+            "ganho_pontos_inimigo": "+3 Pontos de Esquentar se for acertado",
+            "bonus_condicional": {
+                "nome": "Com 30+ Pontos de Esquentar (Fogo Fátuo)",
+                "efeito": "A rolagem de acerto tem vantagem"
+            },
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "ataques": 3,
+                    "dano_total": "4d10",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "ataques": 4,
+                    "dano_total": "5d10",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "ataques": 5,
+                    "dano_total": "6d10",
+                    "efeito_adicional": null,
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "ataques": 5,
+                    "dano_total": "6d10",
+                    "efeito_adicional": "Se causar mais de 30 de dano, o inimigo recebe 1 Ponto de Exaustão",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Tormenta de Chamas",
+            "nome_romaji": "Roku no Kata Hono Arashi",
+            "tipo_manobra": "Ataque",
+            "descricao": "Cria uma tempestade de fogo incontrolável e caótica que acaba atingindo tanto aliados quanto inimigos, uma medida drástica para um momento de desespero.",
+            "ganho_pontos_arma": "+4 Pontos de Esquentar na arma",
+            "ganho_pontos_inimigo": "+4 Pontos de Esquentar para inimigos acertados",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 3,
+                    "efeito": "Onda horizontal em furacão de chamas. Todos em raio de 10m testam esquiva (C.D. 16+): sucesso → metade do dano. Dano: 8d8",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + os atingidos tomam 8d8 + 1d8 por Ponto de Esquentar que tiverem sobre si (Brasas Ardentes)",
+                    "custo": "8 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Cauterizar",
+            "nome_romaji": "Shichi no Kata Yaki Suru",
+            "tipo_manobra": "Especial",
+            "descricao": "Passa a arma quente sobre as próprias feridas, cauterizando e estancando sangramentos.",
+            "requisito": "Ter pelo menos 5 Pontos de Esquentar na arma",
+            "niveis": [
+                { "nivel": 1, "cura": "1d6 de PDV", "efeito_adicional": null, "custo": "2 PDR" },
+                { "nivel": 2, "cura": "2d6 de PDV", "efeito_adicional": null, "custo": "3 PDR" },
+                {
+                    "nivel": 3,
+                    "cura": "3d6 de PDV",
+                    "efeito_adicional": "Cura status de sangramento",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "cura": "4d6 de PDV",
+                    "efeito_adicional": "Cura status de sangramento",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 8,
+            "nome_pt": "Ignição",
+            "nome_romaji": "Hachi no Kata Tenka",
+            "tipo_manobra": "Especial",
+            "descricao": "Cria uma chama ardente que consome o próprio corpo, machucando o usuário com o tempo, mas tornando-o mais forte e brutal.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_por_turno_3_turnos": "Não é possível usar!",
+                    "dano_bonus_por_acerto": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_por_turno_3_turnos": "Não é possível usar!",
+                    "dano_bonus_por_acerto": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 3,
+                    "dano_por_turno_3_turnos": "5 de dano",
+                    "dano_bonus_por_acerto": "+5",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_por_turno_3_turnos": "5 de dano",
+                    "dano_bonus_por_acerto": "+8",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 9,
+            "nome_pt": "Rengoku",
+            "nome_romaji": "Ku no Kata Rengoku",
+            "tipo_manobra": "Ataque",
+            "descricao": "Um golpe devastador iniciado a partir de uma postura elevada. A técnica esculpe uma profunda impressão no chão formando uma linha de chamas.",
+            "ganho_pontos_arma": "+4 Pontos de Esquentar na arma",
+            "ganho_pontos_inimigo": "+4 Pontos de Esquentar para inimigos acertados",
+            "bonus_especial": {
+                "nome": "Bônus Especial por Esquentar",
+                "efeito": "Em qualquer nível de respiração, se o ataque acertar um inimigo vulnerável, causa +1 de dano para cada Ponto de Esquentar da arma"
+            },
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "O alvo testa FDV (C.D. 10 + CAR); falha: fica vulnerável ao ataque que se segue. O ataque tem +4 no acerto mesmo que passe no teste, o ataque ainda ocorre (sem vulnerabilidade)",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + C.D. do teste passa para 12 + CAR",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + se acertar o inimigo, aplica 1 Ponto de Exaustão",
+                    "custo": "5 PDR"
+                }
+            ],
+            "sinergia_aliados": {
+                "descricao": "Quando o usuário anunciar esta técnica, aliados de respirações com sinergia podem gastar 2 PDR para fortalecê-la. Para cada aliado que contribuir, o ataque causa +5 de dano bônus se bem-sucedido.",
+                "respiracoes_com_sinergia": [
+                    "Respiração do Amor",
+                    "Respiração do Vento",
+                    "Respiração do Magma",
+                    "Respiração do Sol"
+                ]
+            }
+        }
+    ]
+}

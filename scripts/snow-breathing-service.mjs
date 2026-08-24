@@ -123,7 +123,10 @@ export function spendFreezeForRestriction(rawState, targetUuid, car) {
   const state = parseSnowBreathingState(rawState);
   const uuid = String(targetUuid ?? "").trim();
   if (!uuid || snowFreezeCount(state, uuid) < 5) return { ok: false, state, reason: "O alvo precisa ter 5 acúmulos de Congelar." };
-  state.freezeByTarget = { ...state.freezeByTarget, [uuid]: 0 };
+  if (state.restrictedTarget?.uuid === uuid) return { ok: false, state, reason: "O alvo já está restringido pelo Congelar." };
+  // A regra manda gastar a Ação Única, não os acúmulos de Congelar — os
+  // stacks permanecem após restringir, e o usuário pode restringir de novo
+  // (gastando outra Ação Única) assim que o alvo tiver 5+ Congelar de novo.
   state.restrictedTarget = { uuid, escapeDc: 8 + Math.trunc(parseNumber(car)), breakOnDamage: true, escapeAction: "ataque", escapeAttribute: "FOR" };
   return { ok: true, state, action: "unica", restriction: state.restrictedTarget };
 }
@@ -223,8 +226,14 @@ export function tickSnowBreathing(raw) {
   }) };
 }
 
-export function clearSnowBreathingState() {
-  return snowStatePatch(EMPTY_STATE(), {
+/**
+ * Limpa os efeitos de combate da Neve (recargas, formas ativas, restrição)
+ * ao fim do combate, mas preserva `freezeByTarget`: a regra oficial não
+ * define duração para Congelar, então ele não deve desaparecer sozinho.
+ */
+export function clearSnowBreathingState(rawState) {
+  const previous = parseSnowBreathingState(rawState);
+  return snowStatePatch({ ...EMPTY_STATE(), freezeByTarget: previous.freezeByTarget }, {
     "system.props.resp_neve_resumo": "Neve · sem efeito ativo",
     "system.props.resp_efeito_duracao": 0,
     "system.props.resp_bonus_acerto_temp": 0,

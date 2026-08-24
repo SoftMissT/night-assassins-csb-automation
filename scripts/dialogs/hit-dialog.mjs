@@ -22,9 +22,9 @@ function parseBonus(raw) {
 export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) {
   const weaponOptions = weapons.map((weapon) => {
     const attributes = Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes.join("/") : "";
-    const profileLabel = weapon.profileName ? ` — ${weapon.profileName}` : "";
+    const profileLabel = weapon.profileName ? ` ${weapon.profileName}` : "";
     const value = `${weapon.id}|${Number.isInteger(weapon.profileIndex) ? weapon.profileIndex : 0}`;
-    return `<option value="${value}" data-critical="${weapon.effectiveCritical}" data-attributes="${attributes}">${weapon.name}${profileLabel} — ${attributes || "atributo do Actor"} — crítico ${weapon.effectiveCritical}+</option>`;
+    return `<option value="${value}" data-critical="${weapon.effectiveCritical}" data-attributes="${attributes}">${weapon.name}${profileLabel} ${attributes || "atributo do Actor"} crítico ${weapon.effectiveCritical}+</option>`;
   }).join("");
   const weaponAttributeOptions = [...new Set(weapons.flatMap((weapon) => Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes : []))]
     .map((attribute) => `<option value="${attribute}" ${attribute === attrName ? "selected" : ""}>${attribute}</option>`)
@@ -54,7 +54,7 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
       <label class="na-hit-field">
         <span>Tipo de ação</span>
         <select id="na-ac-action">
-          <option value="">— Não informar —</option>
+          <option value="">Não informar —</option>
           ${TIPOS_ACAO.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join("")}
         </select>
         <small>Identifica a técnica no chat. A rolagem de Acerto não gasta a ação.</small>
@@ -62,7 +62,7 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
       <label class="na-hit-field">
         <span>Arma usada / crítico</span>
         <select id="na-ac-weapon">
-          <option value="">Sem arma — crítico 20</option>
+          <option value="">Sem arma crítico 20</option>
           ${weaponOptions}
         </select>
         <small>O crítico vem da arma. Quebra da Respiração da Pedra reduz este número.</small>

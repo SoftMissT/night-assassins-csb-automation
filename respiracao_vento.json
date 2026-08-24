@@ -1,0 +1,258 @@
+{
+    "titulo": "Respiração do Vento",
+    "aliases": ["Wind Breathing", "Kaze no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva_especial": {
+        "nome": "Sangue Especial",
+        "nome_romaji": "Tokubetsuna Chi",
+        "descricao": "Quando usuário da Respiração do Vento, alguns tipos de dano recebidos têm efeitos permanentes após um descanso longo, aplicados após a última batalha.",
+        "fontes": [
+            {
+                "nome": "Dano Cortante e Perfurante (Cicatrizes)",
+                "regra": "A cada 30 de dano Cortante ou Perfurante recebido na última batalha, ganha 1 cicatriz. Cada cicatriz concede +1 em testes de CAR.",
+                "maximo": "+4 por esta fonte"
+            },
+            {
+                "nome": "Hemorragia ou Infecção (Resistência Vital)",
+                "regra": "A cada 25 de dano de Sangramento ou Infecção recebido na última batalha, ganha +1 em testes de VIT.",
+                "maximo": "+4 por esta fonte"
+            }
+        ]
+    },
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Redemoinho de Poeira",
+            "nome_romaji": "Ichi no Kata Jin Senpū Sogi",
+            "tipo_manobra": "Ataque",
+            "descricao": "Esta técnica possui duas variações.",
+            "variacoes": [
+                {
+                    "nome": "Redemoinho Escalável",
+                    "descricao": "Cria um redemoinho cortante cujo dano escala com o PDR investido. Deve ser usada a pelo menos 5m de distância do alvo.",
+                    "limite_pdr": "O número máximo de PDR que pode ser investido é igual a 2× DEX do usuário",
+                    "niveis": [
+                        { "nivel": "Níveis 1–3", "dano_por_pdr_gasto": "1d6 por PDR" },
+                        { "nivel": "Nível 4", "dano_por_pdr_gasto": "2d6 por PDR" }
+                    ]
+                },
+                {
+                    "nome": "Ciclone Penetrante",
+                    "descricao": "O ataque ou projétil avança em um ciclone de acertos por uma área de 2m de diâmetro, podendo atingir até 3 alvos. Se um alvo for atingido e outro indivíduo estiver a até 2m dele, esse segundo também é afetado. Cada alvo testa Esquiva contra uma rolagem de acerto padrão do usuário.",
+                    "tabela_resultado_esquiva": [
+                        { "resultado": "Sucesso", "dano": "Metade do dano" },
+                        { "resultado": "Falha", "dano": "5d6 Cortante" }
+                    ],
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Garras do Vento Puro",
+            "nome_romaji": "Ni no Kata Sōsō Shinato Kaze",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário levanta a arma acima da cabeça e realiza um corte (ou disparo) vertical, criando quatro lâminas de vento que golpeiam o inimigo como garras.",
+            "passiva_condicional": {
+                "nome": "A partir do Nível 3 de Respiração",
+                "efeito": "Os ataques básicos e os desta técnica deixam de sofrer atrito do vento e passam a ter vantagem uma vez por turno (ainda requer rolagem de acerto)."
+            },
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "No primeiro ataque após conjurar, causa o dano da arma triplicado",
+                    "custo": "4 PDR"
+                },
+                { "nivel": 3, "efeito": "Dano da arma quadruplicado", "custo": "4 PDR" },
+                {
+                    "nivel": 4,
+                    "efeito": "Acrescenta DEX ao dano da arma antes de multiplicar (ex.: arma 5 + DEX 2 = 7 × 4 = 28)",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Árvore Balançando ao Vapor da Montanha",
+            "nome_romaji": "San no Kata Kokufū Enran",
+            "tipo_manobra": "1º Uso = Ataque / 2º Uso = Reação",
+            "descricao": "Gira o braço ao redor de si mesmo, criando um redemoinho que tritura tudo ao redor. Ambos os usos requerem rolagem de acerto padrão.",
+            "usos": [
+                { "uso": "1º", "efeito": "Único ataque causando 3d10 de dano", "custo": "3 PDR" },
+                {
+                    "uso": "2º",
+                    "efeito": "Contra-ataque simultâneo ao ataque recebido (não o anula). Níveis 1–2: 2d8; Níveis 3–4: 2d12 de dano",
+                    "custo": "2 PDR"
+                }
+            ],
+            "sinergia": {
+                "nome": "Crítico no 2º Uso",
+                "descricao": "Acerto crítico ao usar a Reação recupera 1 PDV para cada aliado com respiração de sinergia presente no campo.",
+                "respiracoes_com_sinergia": [
+                    "Respiração dos Insetos",
+                    "Respiração da Névoa",
+                    "Respiração da Grama",
+                    "Respiração da Areia"
+                ]
+            }
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Tempestade Crescente de Poeira",
+            "nome_romaji": "Shi no Kata Shōjō Sajinran",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário balança a lâmina para baixo em várias direções (ou dispara em direções baixas, se à distância).",
+            "niveis": [
+                {
+                    "nivel": "Níveis 1–2",
+                    "efeito": "+1 ataque adicional no turno. Se acertar qualquer ataque, o inimigo fica impossibilitado de realizar ações ou usar itens de cura de PDV até o início do próximo turno do usuário",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": "Níveis 3–4",
+                    "efeito": "Igual ao anterior + o inimigo sob impossibilidade de cura também gasta +2 PDR além do custo padrão de cada Kekkijutsu que tentar realizar",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Vendaval de Inverno",
+            "nome_romaji": "Go no Kata Kogarashi Oroshi",
+            "tipo_manobra": "Única + Ataque",
+            "requisito": "Estar acima do inimigo (pode usar a Ação de Movimento do turno para isso sem necessidade de teste)",
+            "descricao": "O usuário golpeia de cima em uma chuva de golpes arqueados enquanto cai (atacantes à distância atiram de cima sem cair). Todos os ataques ignoram resistências do inimigo.",
+            "penalidade_condicional": {
+                "nome": "A partir do Nível 3 de Respiração",
+                "efeito": "O uso desta técnica neste nível ou superior causa 1 ponto de Exaustão em si mesmo."
+            },
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "ataques": 3,
+                    "dano_por_acerto": "2d4 + FDV",
+                    "bonus_acerto": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "ataques": 3,
+                    "dano_por_acerto": "2d6 + FDV",
+                    "bonus_acerto": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "ataques": 3,
+                    "dano_por_acerto": "2d8 + FDV",
+                    "bonus_acerto": "+1",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "ataques": 3,
+                    "dano_por_acerto": "2d8 + FDV + DEX",
+                    "bonus_acerto": "+2",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Tempestade da Fumaça Escurecedora",
+            "nome_romaji": "Roku no Kata Seiran Fuju",
+            "tipo_manobra": "Ataque",
+            "descricao": "O usuário ataca de lado girando o corpo em um uppercut que cria um tornado cortante. Para atacantes à distância, o projétil sai com um impulso uivante de vento. Se o inimigo usar Bloqueio, tem −2 na defesa (Esquiva não sofre esse debuff).",
+            "niveis": [
+                { "nivel": 1, "dano": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano": "8d6 Cortante", "custo": "5 PDR" },
+                { "nivel": 3, "dano": "8d6 Cortante + 2d6 Perfurante", "custo": "5 PDR" },
+                { "nivel": 4, "dano": "8d6 Cortante + 4d6 Perfurante", "custo": "5 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Acerto Crítico",
+                "efeito": "O inimigo fica impossibilitado de usar habilidades ou técnicas de regeneração de vida por 1 turno."
+            }
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Ventania Rajadas Repentinas",
+            "nome_romaji": "Shichi no Kata Keifū · Tengu Kaze",
+            "tipo_manobra": "Especial",
+            "descricao": "Balança a lâmina gerando um vendaval que fortalece todos os ataques realizados neste turno. Para atacantes à distância, os projéteis são seguidos de um vácuo de impacto de vento. Todos os inimigos atacados neste turno testam VIT contra a C.D. indicada.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "cd_teste_vit": "9 + DEX",
+                    "dano_extra_por_queda": "2d6 Concussão",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "cd_teste_vit": "10 + DEX",
+                    "dano_extra_por_queda": "2d6 Concussão",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "cd_teste_vit": "10 + DEX",
+                    "dano_extra_por_queda": "3d6 Concussão",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "cd_teste_vit": "12 + DEX",
+                    "dano_extra_por_queda": "3d6 Concussão",
+                    "custo": "5 PDR"
+                }
+            ],
+            "observacao": "Inimigos que falharem no teste são jogados no chão e precisam gastar a Ação Especial do próximo turno para se levantar."
+        },
+        {
+            "estilo": 8,
+            "nome_pt": "Corte da Primeira Ventania",
+            "nome_romaji": "Hachi no Kata Sho Rekkaza Kiri",
+            "tipo_manobra": "Completa",
+            "descricao": "Pula no ar e balança arma e corpo gerando correntes circulares de vento. O dano escala com as cicatrizes acumuladas pela passiva Sangue Especial.",
+            "minimo_garantido": "Mesmo sem nenhuma cicatriz, o dano mínimo é equivalente a 1 cicatriz (4d12 ou 6d12 conforme o nível)",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_por_cicatriz": "Não é possível usar!",
+                    "alvo": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_por_cicatriz": "Não é possível usar!",
+                    "alvo": null,
+                    "custo": null
+                },
+                { "nivel": 3, "dano_por_cicatriz": "4d12", "alvo": "Até 18m", "custo": "6 PDR" },
+                {
+                    "nivel": 4,
+                    "dano_por_cicatriz": "6d12",
+                    "alvo": "Até 18m",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 9,
+            "nome_pt": "Tufão Idaten",
+            "nome_romaji": "Ku no Kata Idaten Taifu",
+            "tipo_manobra": "Completa",
+            "requisitos": ["DEX 4 ou mais", "Disponível apenas no Nível 4 de Respiração"],
+            "descricao": "Como Ação Especial, faça um teste de DEX (C.D. 17). Se passar, pula e usa a Ação Completa para girar como um ciclone vertical, cortando em linha reta giratória um inimigo escolhido.",
+            "dano": "10d10 + 2d10 por cicatriz + 2d10 por ponto de DEX",
+            "efeito_adicional": "O inimigo atingido testa VIT (C.D. 12 + FOR do usuário); se falhar, recebe sangramento = FOR do usuário por 3 turnos.",
+            "custo": "8 PDR + 1 ponto de Exaustão após o uso",
+            "bonus_condicional": {
+                "nome": "Recuperação por Dano Alto",
+                "efeito": "Se causar um dano mínimo de pelo menos 10% da vida máxima do inimigo, o usuário se cura em 5 PDV."
+            }
+        }
+    ]
+}

@@ -34,7 +34,7 @@ export function weaponRepairChanges(item) {
   const changes = {};
   // equalText(item.inventario_categoria, 'arma') lança TypeError quando o
   // campo é undefined, derrubando o ItemContainer.filterItems inteiro (não
-  // só o item problemático) — corrigir sempre, mesmo sem perfil de ataque.
+  // só o item problemático) corrigir sempre, mesmo sem perfil de ataque.
   if (props.inventario_categoria !== "arma") {
     changes["system.props.inventario_categoria"] = "arma";
   }

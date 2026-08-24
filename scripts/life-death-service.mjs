@@ -151,15 +151,17 @@ async function finalDetermination(actor, state, reason) {
   if (state.finalDeterminationUsed) return markDead(actor, state, `${reason}<br>Determinação Final já utilizada neste combate.`);
   const bondDisabled = state.bondHelpUsed ? " disabled" : "";
   const decision = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Determinação Final — ${actor.name}` }, modal: true, rejectClose: false,
-    content: `<div class="na-csb-automation" style="display:grid;gap:9px"><p><strong>${reason}</strong></p><label>Motivo Forte<textarea name="motive" rows="3"></textarea></label><label>CD<select name="dc"><option value="15">15 — perigo comum</option><option value="18" selected>18 — Oni importante/crítico</option><option value="20">20 — chefe/morte dramática</option><option value="custom">Customizada pelo Mestre</option></select></label><label>CD personalizada<input type="number" name="customDc" min="1" max="99" placeholder="CD do Mestre"></label><label><input type="checkbox" name="bond"${bondDisabled}> Ajuda de Vínculo (+2)${state.bondHelpUsed ? " · já utilizada neste combate" : ""}</label></div>`,
+    window: { title: `Determinação Final ${actor.name}` }, modal: true, rejectClose: false,
+    content: `<div class="na-csb-automation" style="display:grid;gap:9px"><p><strong>${reason}</strong></p><label>Motivo Forte<textarea name="motive" rows="3"></textarea></label><label>CD<select name="dc"><option value="15">15 perigo comum</option><option value="18" selected>18 Oni importante/crítico</option><option value="20">20 chefe/morte dramática</option><option value="custom">Customizada pelo Mestre</option></select></label><label>CD personalizada<input type="number" name="customDc" min="1" max="99" placeholder="CD do Mestre"></label><label><input type="checkbox" name="bond"${bondDisabled}> Ajuda de Vínculo (+2)${state.bondHelpUsed ? " · já utilizada neste combate" : ""}</label></div>`,
     buttons: [
-      { action: "roll", label: "Tentar Determinação", callback: (_event, _button, dialog) => {
-        const dcSelect = String(dialog.element.querySelector('[name="dc"]')?.value ?? "18");
-        const customDc = Number(dialog.element.querySelector('[name="customDc"]')?.value || 0);
-        const dc = dcSelect === "custom" ? (customDc >= 1 ? customDc : 18) : Number(dcSelect);
-        return { motive: String(dialog.element.querySelector('[name="motive"]')?.value ?? "").trim(), dc, bond: Boolean(dialog.element.querySelector('[name="bond"]')?.checked) };
-      } },
+      {
+        action: "roll", label: "Tentar Determinação", callback: (_event, _button, dialog) => {
+          const dcSelect = String(dialog.element.querySelector('[name="dc"]')?.value ?? "18");
+          const customDc = Number(dialog.element.querySelector('[name="customDc"]')?.value || 0);
+          const dc = dcSelect === "custom" ? (customDc >= 1 ? customDc : 18) : Number(dcSelect);
+          return { motive: String(dialog.element.querySelector('[name="motive"]')?.value ?? "").trim(), dc, bond: Boolean(dialog.element.querySelector('[name="bond"]')?.checked) };
+        }
+      },
       { action: "die", label: "Aceitar a morte", callback: () => null },
     ],
   });
@@ -170,7 +172,7 @@ async function finalDetermination(actor, state, reason) {
   const bonus = decision.bond && !state.bondHelpUsed ? 2 : 0;
   if (bonus) state.bondHelpUsed = true;
   const roll = await Roll.create(`1d20 + ${fdv} + ${bonus}`).evaluate();
-  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Determinação Final</strong> — FDV contra CD ${decision.dc}<br>${decision.motive}` });
+  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Determinação Final</strong> FDV contra CD ${decision.dc}<br>${decision.motive}` });
   const natural = roll.dice?.[0]?.results?.[0]?.result;
   if (natural === 1) return markDead(actor, state, "1 natural: o corpo não responde.");
   if (natural === 20) {
@@ -186,11 +188,11 @@ export async function processDeathTest(actor, { force = false } = {}) {
   const state = parseLifeDeathState(actor.system.props.vida_morte_slayer_dados);
   if (!state.dying || state.stabilized || state.dead) return { processed: false };
   const roll = await Roll.create("1d20").evaluate();
-  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Teste de Morte — ${actor.name}</strong>` });
+  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Teste de Morte ${actor.name}</strong>` });
   const natural = roll.dice?.[0]?.results?.[0]?.result ?? roll.total;
   if (natural === 1) {
     const recovery = await Roll.create("1d4").evaluate();
-    await recovery.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "Corpo resiste — recuperação" });
+    await recovery.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "Corpo resiste recuperação" });
     await revive(actor, state, Math.max(1, recovery.total + parseNumber(actor.system.props.vit_display)), { exhaustion: 1, status: null, reason: "1 natural no Teste de Morte." });
   } else if (natural === 20) {
     await finalDetermination(actor, state, "20 natural no Teste de Morte.");
@@ -206,8 +208,8 @@ export async function processDeathTest(actor, { force = false } = {}) {
 
 async function confirmDirectDeath(actor, state, reason) {
   const decision = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Morte sem Teste — ${actor.name}` }, modal: true, rejectClose: false,
-    content: `<div class="na-csb-automation" style="display:grid;gap:9px"><p><strong>${escapeHtml(reason)}</strong></p><p>Regra 11 — Mortes sem Teste. O Mestre decide se existe corpo, alma e cena para a Determinação Final.</p></div>`,
+    window: { title: `Morte sem Teste ${actor.name}` }, modal: true, rejectClose: false,
+    content: `<div class="na-csb-automation" style="display:grid;gap:9px"><p><strong>${escapeHtml(reason)}</strong></p><p>Regra 11 Mortes sem Teste. O Mestre decide se existe corpo, alma e cena para a Determinação Final.</p></div>`,
     buttons: [
       { action: "die", label: "Declarar morte", callback: () => ({ action: "die", reason }) },
       { action: "determination", label: "Permitir Determinação Final", callback: () => ({ action: "determination", reason }) },
@@ -228,7 +230,7 @@ export async function reconcileActor(actor, options = {}) {
   resolving.add(actor.id);
   try {
     if (!state.dead && parseNumber(props.status_slayer_exaustao) >= 8) {
-      await markDead(actor, state, "Exaustão Nível 8 — morte sem Teste.");
+      await markDead(actor, state, "Exaustão Nível 8 morte sem Teste.");
     } else if (pdv <= 0 && !state.dying && !state.dead) {
       const decision = maximum <= 0
         ? await confirmDirectDeath(actor, state, "Dano de Ferida reduziu o PDV máximo a 0.")
@@ -291,8 +293,8 @@ export async function openLifeDeathManager({ actorUuid } = {}) {
   });
   const targetOptions = dyingTargets.map((target) => `<option value="${target.uuid}">${target.name}</option>`).join("");
   const result = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Vida e Morte — ${actor.name}` }, modal: true, rejectClose: false,
-    content: `<div class="na-csb-automation" style="display:grid;gap:8px"><h3>${formatLifeDeathSummary(state)}</h3><div>PDV atual: <strong>${slayerCurrentPdv(actor.system.props)}</strong></div><div>Quedas no combate: <strong>${state.fallsThisCombat}</strong></div>${state.finalDeterminationUsed ? "<p>Determinação Final já utilizada neste combate.</p>" : ""}${state.bondHelpUsed ? "<p>Ajuda de Vínculo já utilizada neste combate.</p>" : ""}<p>O Teste de Morte acontece automaticamente no início do turno.</p>${dyingTargets.length ? `<fieldset><legend>Estabilizar aliado — Ação Única</legend><select name="target">${targetOptions}</select><select name="attr"><option value="INT">INT</option><option value="SAB">SAB</option></select></fieldset>` : ""}</div>`,
+    window: { title: `Vida e Morte ${actor.name}` }, modal: true, rejectClose: false,
+    content: `<div class="na-csb-automation" style="display:grid;gap:8px"><h3>${formatLifeDeathSummary(state)}</h3><div>PDV atual: <strong>${slayerCurrentPdv(actor.system.props)}</strong></div><div>Quedas no combate: <strong>${state.fallsThisCombat}</strong></div>${state.finalDeterminationUsed ? "<p>Determinação Final já utilizada neste combate.</p>" : ""}${state.bondHelpUsed ? "<p>Ajuda de Vínculo já utilizada neste combate.</p>" : ""}<p>O Teste de Morte acontece automaticamente no início do turno.</p>${dyingTargets.length ? `<fieldset><legend>Estabilizar aliado Ação Única</legend><select name="target">${targetOptions}</select><select name="attr"><option value="INT">INT</option><option value="SAB">SAB</option></select></fieldset>` : ""}</div>`,
     buttons: [
       ...(canRoll ? [{ action: "roll", label: "Rolar Teste agora", callback: () => "roll" }] : []),
       ...(dyingTargets.length ? [{ action: "stabilize", label: "Estabilizar aliado", callback: (_event, _button, dialog) => ({ action: "stabilize", targetUuid: String(dialog.element.querySelector('[name="target"]')?.value ?? ""), attr: String(dialog.element.querySelector('[name="attr"]')?.value ?? "INT") }) }] : []),
@@ -316,8 +318,8 @@ export async function openLifeDeathManager({ actorUuid } = {}) {
 async function openDirectDeath(actor, state) {
   if (!game.user.isGM) return;
   const result = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Morte direta — ${actor.name}` }, modal: true, rejectClose: false,
-    content: `<div class="na-csb-automation" style="display:grid;gap:9px"><p>Regra 11 — Mortes sem Teste: decapitação completa, corpo destruído, coração arrancado, Dano de Ferida que zere o PDV máximo, Exaustão Nível 8, Maldição Final da Marca do Caçador ou regra específica.</p><label>Causa / cena<textarea name="reason" rows="3" placeholder="Decapitação, execução, corpo destruído..."></textarea></label><label><input type="checkbox" name="allowDf"> Permitir Determinação Final (Mestre considera que existe corpo, alma e cena)</label></div>`,
+    window: { title: `Morte direta ${actor.name}` }, modal: true, rejectClose: false,
+    content: `<div class="na-csb-automation" style="display:grid;gap:9px"><p>Regra 11 Mortes sem Teste: decapitação completa, corpo destruído, coração arrancado, Dano de Ferida que zere o PDV máximo, Exaustão Nível 8, Maldição Final da Marca do Caçador ou regra específica.</p><label>Causa / cena<textarea name="reason" rows="3" placeholder="Decapitação, execução, corpo destruído..."></textarea></label><label><input type="checkbox" name="allowDf"> Permitir Determinação Final (Mestre considera que existe corpo, alma e cena)</label></div>`,
     buttons: [
       { action: "die", label: "Declarar morte", default: true, callback: (_event, _button, dialog) => ({ allowDf: Boolean(dialog.element.querySelector('[name="allowDf"]')?.checked), reason: String(dialog.element.querySelector('[name="reason"]')?.value ?? "").trim() }) },
       { action: "cancel", label: "Cancelar", callback: () => null },
@@ -341,7 +343,7 @@ export async function stabilizeSlayer(helper, target, attr = "INT", { force = fa
   const attribute = String(attr).toUpperCase() === "SAB" ? "SAB" : "INT";
   const bonus = parseNumber(helper.system.props[`${attribute.toLowerCase()}_display`]);
   const roll = await Roll.create(`1d20 + ${bonus}`).evaluate();
-  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: helper }), flavor: `<strong>Estabilizar ${target.name}</strong> — ${attribute} CD 12` });
+  await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: helper }), flavor: `<strong>Estabilizar ${target.name}</strong> ${attribute} CD 12` });
   const natural = roll.dice?.[0]?.results?.[0]?.result;
   if (natural === 1) targetState.deathMarks = Math.min(3, targetState.deathMarks + 1);
   const success = natural === 20 || roll.total >= 12;

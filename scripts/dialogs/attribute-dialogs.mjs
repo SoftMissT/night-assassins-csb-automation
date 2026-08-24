@@ -11,7 +11,7 @@ import { parseNumber, poolMatches } from "../parsing.mjs";
  */
 export async function chooseCreationMethod() {
   return foundry.applications.api.DialogV2.wait({
-    window: { title: "Criar atributos — Nível 1" },
+    window: { title: "Criar atributos Nível 1" },
     content: `
       <div class="na-csb-automation" style="padding:5px 0;">
         <p>Escolha como gerar os sete atributos.</p>
@@ -38,7 +38,7 @@ export async function chooseCreationMethod() {
 export async function rollPool(actor, attempt) {
   const roll = await Roll.create("7d4").evaluate();
   await roll.toMessage({
-    flavor: `Atributos — ${attempt}ª rolagem de 7d4`,
+    flavor: `Atributos ${attempt}ª rolagem de 7d4`,
     speaker: ChatMessage.getSpeaker({ actor }),
   });
   return roll.dice[0].results.filter((r) => r.active !== false).map((r) => Number(r.result));
@@ -52,7 +52,7 @@ export async function rollPool(actor, attempt) {
  */
 export async function chooseRolledPool(actor, first) {
   const afterFirst = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Atributos — 1ª rolagem" },
+    window: { title: "Atributos 1ª rolagem" },
     content: `<div class="na-csb-automation"><p>Resultado: <strong>${first.join(" · ")}</strong></p><p>Você pode usar esta rolagem ou tentar novamente.</p></div>`,
     modal: true,
     rejectClose: false,
@@ -67,7 +67,7 @@ export async function chooseRolledPool(actor, first) {
 
   const second = await rollPool(actor, 2);
   const afterSecond = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Atributos — escolha entre as rolagens" },
+    window: { title: "Atributos escolha entre as rolagens" },
     content: `<div class="na-csb-automation"><p>1ª: <strong>${first.join(" · ")}</strong></p><p>2ª: <strong>${second.join(" · ")}</strong></p><p>Se fizer a terceira rolagem, será obrigado a usá-la.</p></div>`,
     modal: true,
     rejectClose: false,
@@ -84,7 +84,7 @@ export async function chooseRolledPool(actor, first) {
 
   const third = await rollPool(actor, 3);
   await foundry.applications.api.DialogV2.wait({
-    window: { title: "Atributos — 3ª rolagem obrigatória" },
+    window: { title: "Atributos 3ª rolagem obrigatória" },
     content: `<div class="na-csb-automation"><p>Resultado obrigatório: <strong>${third.join(" · ")}</strong></p></div>`,
     modal: true,
     rejectClose: true,
@@ -102,7 +102,7 @@ export async function chooseRolledPool(actor, first) {
 export async function readDiscordPool() {
   while (true) {
     const result = await foundry.applications.api.DialogV2.wait({
-      window: { title: "Atributos — resultados do Discord" },
+      window: { title: "Atributos resultados do Discord" },
       content: `
         <div class="na-csb-automation" style="padding:6px 0;">
           <p>Digite os sete resultados separados por vírgula.</p>
@@ -137,7 +137,7 @@ export async function distributePool(pool, level, currentValues) {
   while (true) {
     const fields = ATTRIBUTES.map((attribute, attributeIndex) => {
       const options = pool.map((value, poolIndex) =>
-        `<option value="${poolIndex}:${value}" ${poolIndex === attributeIndex ? "selected" : ""}>${value} — resultado ${poolIndex + 1}</option>`
+        `<option value="${poolIndex}:${value}" ${poolIndex === attributeIndex ? "selected" : ""}>${value} resultado ${poolIndex + 1}</option>`
       ).join("");
       return `
         <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#171411;border-left:3px solid ${attribute.color};padding:7px 9px;">
@@ -150,7 +150,7 @@ export async function distributePool(pool, level, currentValues) {
     }).join("");
 
     const selected = await foundry.applications.api.DialogV2.wait({
-      window: { title: `Distribuir atributos — Nível ${level}` },
+      window: { title: `Distribuir atributos Nível ${level}` },
       content: `<div class="na-csb-automation" style="display:grid;gap:5px;padding:4px 0;"><p style="margin:0 0 5px;">Use cada resultado exatamente uma vez.</p>${fields}</div>`,
       modal: true,
       rejectClose: false,
@@ -194,7 +194,7 @@ export async function applyAttributeGain(values, level) {
   ).join("");
 
   const chosen = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Nível ${level} — aumento de atributo` },
+    window: { title: `Nível ${level} aumento de atributo` },
     content: `
       <div class="na-csb-automation" style="display:grid;gap:8px;padding:4px 0;">
         <p style="margin:0;">Neste nível, escolha <strong>um atributo base</strong> para receber <strong>+1 permanente</strong>.</p>
@@ -236,7 +236,7 @@ export async function confirmSnapshot(values, currentValues, level) {
     </div>`).join("");
 
   return foundry.applications.api.DialogV2.wait({
-    window: { title: `Confirmar atributos — Nível ${level}` },
+    window: { title: `Confirmar atributos Nível ${level}` },
     content: `<div class="na-csb-automation"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">${cards}</div><p>Confirme para atualizar os atributos da ficha.</p></div>`,
     modal: true,
     rejectClose: false,
@@ -259,7 +259,7 @@ export async function chooseMarkedAttribute(values, bonus) {
   ).join("");
 
   const chosen = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Marca do Destino — atributo marcado" },
+    window: { title: "Marca do Destino atributo marcado" },
     content: `
       <div class="na-csb-automation" style="display:grid;gap:8px;padding:4px 0;">
         <p style="margin:0;">Escolha o atributo que receberá <strong>+${bonus} permanente</strong>.</p>

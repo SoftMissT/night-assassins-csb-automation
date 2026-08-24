@@ -1,0 +1,184 @@
+{
+    "titulo": "Respiração da Névoa",
+    "aliases": ["Mist Breathing", "Kasumi no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Céu Suspenso",
+            "nome_romaji": "Ichi no Kata Suiten Togasumi",
+            "tipo_manobra": "Especial",
+            "descricao": "Um ataque com a leveza da névoa misturada ao ambiente. Impulso direto com precisão e calma que buffa o próximo ataque padrão que acertar. É considerado efeito de contato, portanto aplicado apenas uma vez por ação.",
+            "niveis": [
+                { "nivel": 1, "dano_adicional": "SAB", "custo": "1 PDR" },
+                { "nivel": 2, "dano_adicional": "SAB + 1", "custo": "1 PDR" },
+                { "nivel": 3, "dano_adicional": "SAB + 2", "custo": "2 PDR" },
+                { "nivel": 4, "dano_adicional": "SAB + 3", "custo": "2 PDR" }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Névoa de Oito Camadas",
+            "nome_romaji": "Ni no Kata Yaekasumi",
+            "tipo_manobra": "Ataque",
+            "descricao": "Desfere múltiplos ataques, um após o outro em grande velocidade. No total são 5 ataques, com 5 rolagens de acerto com +2 de bônus cada.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "ate_2_acertos": "Dano de arma por ataque",
+                    "3_ou_mais_acertos": "5d6",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "ate_2_acertos": "Dano de arma por ataque",
+                    "3_ou_mais_acertos": "6d6",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "ate_2_acertos": "Dano de arma por ataque",
+                    "3_ou_mais_acertos": "8d6",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "ate_2_acertos": "Dano de arma por ataque",
+                    "3_ou_mais_acertos": "10d6",
+                    "custo": "3 PDR"
+                }
+            ],
+            "padrao_da_nevoa": {
+                "nome": "Ciclone da Névoa",
+                "condicao": "Se o usuário conseguir desferir com sucesso todos os 5 ataques",
+                "efeito": "Recebe o status \"Ciclone da Névoa\": durante qualquer momento de seu próximo turno, pode conjurar qualquer técnica da Névoa sem gastar PDR. Este status permanece mesmo após aplicar o efeito, pois pode se acumular com os outros Padrões da Névoa para ativar a passiva especial da 6ª Forma."
+            }
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Expansão de Névoa",
+            "nome_romaji": "San no Kata Kasan no Shibuki",
+            "tipo_manobra": "Reação",
+            "custo_fixo": "3 PDR",
+            "descricao": "Consegue aparar ataques realizados à distância contra você, sejam eles conjurados por armas ou Kekkijutsus.",
+            "mecanica": {
+                "rolagem": "1d6 + Nível de Exterminador",
+                "resultado_maior_que_dano": "O ataque é desviado, negando todo o dano",
+                "resultado_menor_que_dano": "Subtrai o resultado do dano original; esse será o dano final recebido"
+            },
+            "bonus_niveis_3_e_4": "Soma SAB à rolagem desta técnica",
+            "padrao_da_nevoa": {
+                "nome": "Estigma da Névoa",
+                "condicao": "Utilizar esta técnica para diminuir ou anular com sucesso o dano de um Kekkijutsu",
+                "efeito": "Concede o status \"Estigma da Névoa\": durante qualquer momento de seu próximo turno, pode atordoar o inimigo por 1 turno caso acerte qualquer ataque. Este status permanece mesmo após aplicar o efeito, pois pode se acumular com os outros Padrões da Névoa para ativar a passiva especial da 6ª Forma."
+            }
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Corte de Advecção / Fecha Neblinada",
+            "nome_romaji": "Shi no Kata Iryukir",
+            "tipo_manobra": "Especial",
+            "requisito": "Deve partir de uma rolagem de acerto de ataque padrão ou técnica de ataque com vantagem",
+            "descricao": "Um golpe rápido e horizontal saindo direto da bainha (ou um tiro rápido e inesperado para atacantes à distância).",
+            "substituicao_de_dano": "Este dano não é bônus somado ao ataque, ele substitui o dano do primeiro acerto bem-sucedido, seja ele padrão ou de uma técnica, desde que seja um acerto com vantagem.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d6", "custo": "2 PDR" },
+                { "nivel": 2, "dano": "4d6", "custo": "2 PDR" },
+                { "nivel": 3, "dano": "5d6", "custo": "3 PDR" },
+                { "nivel": 4, "dano": "6d6", "custo": "3 PDR" }
+            ],
+            "sinergia": {
+                "nome": "Anulação de Resistências",
+                "descricao": "Se houver ao menos um usuário de uma respiração com sinergia presente, pode pagar +1 PDR além do custo. Sendo bem-sucedido no ataque, além do dano aplica também Anulação de Resistências: qualquer resistência a dano do inimigo deixa de fazer efeito durante um número de turnos igual à sua DEX ou FOR (à sua escolha).",
+                "respiracoes_com_sinergia": [
+                    "Respiração da Água",
+                    "Respiração do Vento",
+                    "Respiração dos Sonhos"
+                ]
+            }
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Mar de Nuvens Neblinadas",
+            "nome_romaji": "Go no Kata Kaun no Umi",
+            "tipo_manobra": "Reação",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Quando for alvejado por um ataque inimigo, investe contra ele em alta velocidade trazendo consigo uma grande quantidade de neblina. O inimigo deve fazer um teste de SAB; você sempre ganha vantagem no próximo ataque contra ele, independente do resultado.",
+            "tabela_resultado_teste_inimigo": [
+                { "resultado": "Falhou", "consequencia": "O ataque causa metade do dano" },
+                { "resultado": "Passou", "consequencia": "O ataque causa dano normal" }
+            ],
+            "niveis": [
+                { "nivel": 1, "cd_teste": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "cd_teste": "9 + SAB do usuário da Névoa", "custo": "2 PDR" },
+                { "nivel": 3, "cd_teste": "10 + SAB do usuário da Névoa", "custo": "2 PDR" },
+                { "nivel": 4, "cd_teste": "12 + SAB do usuário da Névoa", "custo": "3 PDR" }
+            ],
+            "padrao_da_nevoa": {
+                "nome": "Reflexão da Névoa",
+                "condicao": "Se utilizar esta técnica gastando o dobro do PDR requerido",
+                "efeito": "Recebe o status \"Reflexão da Névoa\": durante qualquer momento de seu próximo turno, pode usar uma Respiração da Recuperação com vantagem mesmo que já tenha utilizado uma neste combate. Este status permanece mesmo após aplicar o efeito, pois pode se acumular com os outros Padrões da Névoa para ativar a passiva especial da 6ª Forma."
+            }
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Névoa sob o Luar",
+            "nome_romaji": "Roku no Kata Tsuki no Kashō",
+            "tipo_manobra": "Completa",
+            "descricao": "Ao declarar esta técnica, realize um teste de DEX com dificuldade 12; se passar, pode realizá-la. Pula no ar e inicia uma série de incontáveis ataques. Todos os ataques feitos neste turno após declarar esta técnica somam SAB nas rolagens de acerto. Apenas por declarar o uso, gasta 2 PDR.",
+            "mecanica_ataques_extras": "Ao acertar o primeiro ataque padrão, pode gastar 1 PDR para dar outro ataque. Acertando novamente, pode gastar +1 PDR para mais um ataque e assim por diante, até decidir encerrar, ficar sem PDR ou errar um ataque.",
+            "custo_declaracao": "2 PDR",
+            "passiva_especial": {
+                "nome": "Colapso da Névoa",
+                "condicao": "Se ao utilizar esta forma o usuário tiver acumulado os 3 Padrões da Névoa (\"Ciclone da Névoa\", \"Estigma da Névoa\" e \"Reflexão da Névoa\")",
+                "efeito": "Além do bônus de SAB nas rolagens de acerto, também aplica SAB em cada dano infligido por acerto.",
+                "efeito_critico": "Além disso, a cada acerto crítico, os bônus de rolagem e dano passam a somar também a Força de Vontade em ambos, exclusivamente nos ataques em que o crítico foi rolado."
+            }
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Neblina",
+            "nome_romaji": "Shichi no Kata Oboro",
+            "tipo_manobra": "Especial",
+            "descricao": "Muda o tempo do movimento, confundindo os sentidos do inimigo enquanto uma forte neblina surge no campo de batalha.",
+            "duracao": "3 turnos ou o valor de CAR do usuário, o que for maior",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Teste de SAB vs. SAB do inimigo (com vantagem). Se passar: +2 de Acerto, Dano, Esquiva e Bloqueio",
+                    "custo": "4 PDR"
+                },
+                { "nivel": 3, "efeito": "Bônus passa a ser +3", "custo": "5 PDR" },
+                { "nivel": 4, "efeito": "Bônus passa a ser +4", "custo": "6 PDR" }
+            ],
+            "observacao": "Efeitos duram enquanto a neblina persistir"
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Ofuscamento",
+            "nome_romaji": "Hachi no Kata Nandoku-ka",
+            "tipo_manobra": "Única",
+            "descricao": "Causa um ofuscamento extremo da visão de um inimigo, protegendo o usuário e um aliado.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Você e um aliado escolhido: todos os ataques contra vocês têm −2 nas rolagens de acerto + imunidade a status de exaustão por 5 turnos",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + ataques de vocês têm +2 na rolagem de acerto contra o alvo",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + você e o aliado escolhido não podem receber danos críticos (acertos críticos contra vocês são normalizados)",
+                    "custo": "7 PDR"
+                }
+            ]
+        }
+    ]
+}

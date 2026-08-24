@@ -105,6 +105,23 @@ describe("hit-service", () => {
     assert.equal(actorUpdates, 0);
   });
 
+  it("Reflexão da Pedra: penaliza a próxima rolagem de Acerto e consome a penalidade em uso único (regressão)", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0 };
+    let called = false;
+    _rollResult = { total: 14, toMessage: async () => { called = true; }, dice: [{ results: [{ result: 1, active: true }] }] };
+    let unsetCalls = 0;
+    const actor = makeActor({ props: { acerto_label: "acerto_label_for", for_display: "6" } });
+    actor.getFlag = (moduleId, key) => (key === "stoneReflectionPenalty" ? { value: -9, turns: 1 } : undefined);
+    actor.unsetFlag = async (moduleId, key) => { if (key === "stoneReflectionPenalty") unsetCalls += 1; };
+    await rollHit({ actor });
+    assert.strictEqual(called, true);
+    // −9 da Reflexão aplicada à rolagem (bônus total: 6 (FOR) − 9)
+    assert.match(_formula, /\+ 6 \+ -9$/);
+    // uso único: a penalidade é consumida (unsetFlag) assim que aplicada a UMA rolagem —
+    // não deve permanecer disponível para rolagens seguintes do mesmo inimigo.
+    assert.equal(unsetCalls, 1);
+  });
+
   it("permite encerrar a sequência antes do limite", async () => {
     _dialogReturn = [
       { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 5 },
@@ -140,5 +157,57 @@ describe("hit-service", () => {
     actor.update = async (patch) => { actor.system.props.folego_slayer_atual = patch["system.props.folego_slayer_atual"]; };
     await rollHit({ actor });
     assert.equal(actor.system.props.folego_slayer_atual, 3);
+  });
+
+  it("Inverno Sombrio (Neve, Área): Congelar crítico é aplicado a TODOS os inimigos marcados, não só ao primeiro", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "especial" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 24, toMessage: async () => ({ id: "crit" }), dice: [{ results: [{ result: 20, active: true }] }] };
+    const snowState = { version: 1, freezeByTarget: {}, cooldowns: {}, nextHit: { source: "neve_02", opposedBy: "esquiva", criticalFreeze: 1 } };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      resp_neve_estado: JSON.stringify(snowState),
+    } });
+    let lastPatch = {};
+    actor.update = async (patch) => { lastPatch = { ...lastPatch, ...patch }; Object.assign(actor.system.props, patch); };
+    const enemyA = { uuid: "Actor.EnemyA", name: "Oni A" };
+    const enemyB = { uuid: "Actor.EnemyB", name: "Oni B" };
+    game.user.targets = new Set([{ actor: enemyA }, { actor: enemyB }]);
+    try {
+      await rollHit({ actor });
+      const finalState = JSON.parse(lastPatch["system.props.resp_neve_estado"]);
+      assert.equal(finalState.freezeByTarget["Actor.EnemyA"], 1);
+      assert.equal(finalState.freezeByTarget["Actor.EnemyB"], 1);
+    } finally {
+      game.user.targets = new Set();
+    }
+  });
+
+  it("Fluxo de Neve (alvo único): Congelar só é aplicado ao primeiro alvo marcado, mesmo com múltiplos alvos selecionados", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "especial" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 14, toMessage: async () => ({ id: "hit" }), dice: [{ results: [{ result: 8, active: true }] }] };
+    const snowState = { version: 1, freezeByTarget: {}, cooldowns: {}, pendingDamage: { source: "neve_01", formula: "2d4", uses: 1, range: 5, freezeOnHit: 1 }, nextHit: { source: "neve_01" } };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      resp_neve_estado: JSON.stringify(snowState),
+    } });
+    let lastPatch = {};
+    actor.update = async (patch) => { lastPatch = { ...lastPatch, ...patch }; Object.assign(actor.system.props, patch); };
+    const enemyA = { uuid: "Actor.EnemyA", name: "Oni A" };
+    const enemyB = { uuid: "Actor.EnemyB", name: "Oni B" };
+    game.user.targets = new Set([{ actor: enemyA }, { actor: enemyB }]);
+    try {
+      await rollHit({ actor });
+      const finalState = JSON.parse(lastPatch["system.props.resp_neve_estado"]);
+      assert.equal(finalState.freezeByTarget["Actor.EnemyA"], 1);
+      assert.equal(finalState.freezeByTarget["Actor.EnemyB"], undefined);
+    } finally {
+      game.user.targets = new Set();
+    }
   });
 });

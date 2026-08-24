@@ -76,7 +76,7 @@ const condicoesAntiga = byKey("status_slayer_tab");
 const interludiosAntigo = byKey("interludios_slayer_tab");
 const dadosAntiga = byKey("dados_tab");
 
-// 4. Mover componentes (referências movidas, nunca copiadas — keys preservadas)
+// 4. Mover componentes (referências movidas, nunca copiadas keys preservadas)
 // 4a. COMBATE recebe Resistências + Status (da aba Condições)
 combate.contents.push(...condicoesAntiga.contents.filter((c) => c.key !== "status_slayer_titulo"));
 
@@ -91,7 +91,7 @@ const perfilPanel = findComponentByKey(perfilAntigo, "perfil_slayer_resumo_panel
 if (!perfilPanel) throw new Error("painel perfil_slayer_resumo_panel não encontrado");
 notas.contents.push(perfilPanel);
 
-// 4c'. O campo Biografia fica fora do resumo_panel — mover também
+// 4c'. O campo Biografia fica fora do resumo_panel mover também
 const bioField = findTextAreaByKey(perfilAntigo, "perfil_slayer_bio");
 if (!bioField) throw new Error("campo perfil_slayer_bio não encontrado");
 perfilAntigo.contents = perfilAntigo.contents.filter((entry) => entry !== bioField);

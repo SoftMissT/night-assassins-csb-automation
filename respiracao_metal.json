@@ -1,0 +1,150 @@
+{
+    "titulo": "Respiração do Metal",
+    "aliases": ["Metal Breathing", "Kinzoku no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "poema": {
+        "titulo": "O Ferreiro",
+        "estrofes": [
+            "No calor da forja, onde o fogo flameja alto,\nO ferreiro esculpe com mão firme e ávida,\nCada golpe ecoa como um brado ao assalto,\nNum corpo que o esforço lapidou sem medida.",
+            "Seu próprio ser, como o ferro na bigorna,\nEle treinou com suor e determinação,\nMas onde o músculo falhou, a natureza o adorna,\nCom um fluxo sanguíneo que se torna uma lição.",
+            "Pois cada gota que corre em suas veias,\nÉ como o ferro sendo temperado pela chama,\nSeu corpo enrijece, assim como as arestas de suas peças,\nNuma fusão de homem e metal que aclama.",
+            "E assim, no crepitar das chamas ardentes,\nO ferreiro se torna uma extensão de sua arte,\nSeu corpo, agora, uma obra-prima reluzente,\nForjado pelo fogo, pela dor e pela arte.",
+            "Como o aço que ele molda com tanto esmero,\nEle mesmo se tornou um monumento de resistência,\nNuma simbiose perfeita, entre o homem e o ferro,\nOnde sua fortaleza transcende qualquer ciência.",
+            "E quando o tempo enfim encerrar seu canto,\nE a forja da vida finalmente se apagar,\nEle se fundirá ao mundo, como aço em pranto,\nDeixando para trás uma história para contar."
+        ]
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Metalizado",
+            "nome_romaji": "Ichi no Kata Metaraizu",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário cobre o próprio corpo com fósforo de metal, aumentando seu Bloqueio.",
+            "restricao": "Não pode ser ativada enquanto o efeito de uma ativação anterior ainda estiver vigente.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_bloqueio": "Metade da VIT (arredonda para cima se ímpar)",
+                    "duracao": "2 turnos",
+                    "custo": "2 PDR"
+                },
+                { "nivel": 2, "bonus_bloqueio": "VIT", "duracao": "2 turnos", "custo": "3 PDR" },
+                { "nivel": 3, "bonus_bloqueio": "VIT", "duracao": "3 turnos", "custo": "3 PDR" },
+                { "nivel": 4, "bonus_bloqueio": "VIT", "duracao": "4 turnos", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Inabalável",
+            "nome_romaji": "Ni no Kata Yuruginai",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "2 PDR",
+            "descricao": "Uma aura de metal encobre o usuário, concedendo resistência a dano Cortante e Perfurante durante 2 turnos: recebe metade do dano dessas fontes.",
+            "restricao": "Não pode ser ativada enquanto o efeito de uma ativação anterior ainda estiver vigente.",
+            "bonus_condicional": {
+                "nome": "Erro Crítico do Inimigo",
+                "efeito": "Se um inimigo obtiver um erro crítico ao tentar acertar o usuário, além do ataque de oportunidade padrão das regras do sistema, esse ataque de oportunidade recebe +1d4 de dano de Concussão bônus por Nível de Respiração do personagem (se bem-sucedido)."
+            }
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Reação em Cadeia",
+            "nome_romaji": "San no Kata Rensa Han'nō",
+            "tipo_manobra": "Especial",
+            "descricao": "Metaliza a Nichirin, fortalecendo ataques cortantes ou perfurantes durante um número de turnos igual à FDV do usuário. É considerado efeito de contato aplicável uma vez por ação.",
+            "restricao": "Não pode ser ativada enquanto o efeito de uma ativação anterior ainda estiver vigente.",
+            "niveis": [
+                { "nivel": 1, "dano_bonus_por_acerto": "+2", "custo": "2 PDR" },
+                { "nivel": 2, "dano_bonus_por_acerto": "+4", "custo": "3 PDR" },
+                { "nivel": 3, "dano_bonus_por_acerto": "+6", "custo": "3 PDR" },
+                { "nivel": 4, "dano_bonus_por_acerto": "+8", "custo": "4 PDR" }
+            ],
+            "passiva": {
+                "nome": "O Dobro ou Nada",
+                "descricao": "Enquanto Reação em Cadeia estiver ativa, ao tirar um resultado menor que 10 na rolagem de acerto (dado + característica), pode escolher rerolar o ataque. Se a nova rolagem também não superar a defesa do inimigo (esquiva, bloqueio ou reação), recebe 1 ponto de Exaustão."
+            }
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Duro como Aço",
+            "nome_romaji": "Shi no Kata Hagane no Yō ni Katai",
+            "tipo_manobra": "Completa",
+            "descricao": "O espírito de batalha do usuário encontra-se no ápice. Usa uma Ação Completa para ganhar poderosos bônus contra o próximo ataque inimigo que o tiver como alvo.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Vantagem na rolagem de defesa (esquiva ou bloqueio) contra o próximo ataque inimigo",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Anula completamente o próximo ataque inimigo",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Anula completamente + ganha um contra-ataque padrão contra o alvo após anulá-lo",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Forjado na Batalha",
+            "nome_romaji": "Go no Kata Tatakai de Kitaerareta",
+            "tipo_manobra": "Ataque",
+            "custo_fixo_ativacao": "4 PDR",
+            "descricao": "Ao executar durante um ataque padrão, a Nichirin acumula Status de Metal e concede modificadores crescentes a cada golpe atingido no inimigo, tornando-se cada vez mais forte.",
+            "duracao": "8 turnos após a ativação",
+            "observacao": "O bônus seguinte substitui o anterior.",
+            "tabela_status_de_metal": [
+                {
+                    "acertos_acumulados": 1,
+                    "estagio": "Duro como Ferro",
+                    "bonus_for": "+1",
+                    "bonus_fdv": null
+                },
+                {
+                    "acertos_acumulados": 2,
+                    "estagio": "Versátil como Chumbo",
+                    "bonus_for": "+1",
+                    "bonus_fdv": "+1"
+                },
+                {
+                    "acertos_acumulados": 3,
+                    "estagio": "Precioso como Titânio",
+                    "bonus_for": "+2",
+                    "bonus_fdv": "+1"
+                },
+                {
+                    "acertos_acumulados": 4,
+                    "estagio": "Banhado a Ouro",
+                    "bonus_for": "+2",
+                    "bonus_fdv": "+2"
+                }
+            ],
+            "passiva": {
+                "nome": "Magnetismo",
+                "condicao": "Enquanto estiver com VIT ou FOR igual ou superior a 6",
+                "efeito": "O usuário recebe o status de Magnetismo: até 1 inimigo à sua escolha é forçado a usar sua Ação de Ataque do turno contra o usuário, seja Kekkijutsu, Técnica de Ataque, Habilidade ou Ataque padrão.",
+                "regra_multiplos_alvos": "Se a ação ofensiva puder declarar múltiplos alvos, o inimigo ainda deve escolher o usuário do Metal como pelo menos um dos alvos; os demais são de livre escolha dele."
+            }
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Martelo do Julgamento",
+        "disponibilidade": "Disponível desde o Nível 1 de Respiração",
+        "descricao": "Toda vez que realizar um acerto crítico padrão, após aplicar o dano, pode dar um ataque adicional na mesma ação com rolagem de acerto padrão, causando metade do dano que causaria normalmente (arredonda para cima). Esse ataque adicional ignora resistências.",
+        "sinergia": {
+            "nome": "Dano Total por Aliado",
+            "descricao": "Se houver um aliado com sinergia presente, acertar um ataque de Martelo do Julgamento permite a um aliado à sua escolha gastar 1 PDR para que o dano seja aplicado de forma total (não pela metade). Aplicável apenas a um aliado com sinergia por ativação.",
+            "respiracoes_com_sinergia": [
+                "Respiração da Chamas",
+                "Respiração da Pedra",
+                "Respiração do Magma"
+            ]
+        }
+    }
+}

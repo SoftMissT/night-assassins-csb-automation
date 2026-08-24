@@ -59,6 +59,13 @@ describe("action-service", () => {
     assert.equal(slayerMovementMeters({ dex_display: 4, status_slayer_dados: JSON.stringify({ version: 2, active: ["fratura"], exhaustion: 0, effects: {} }) }), 5.5);
   });
 
+  it("Avalanche Negativa (Neve): penalidade extra de deslocamento reduz o total sem alterar o deslocamento base", () => {
+    assert.equal(slayerMovementMeters({ dex_display: 4 }, { extraPenaltyMeters: 3 }), 8);
+    assert.equal(slayerMovementMeters({ dex_display: 4 }, { extraPenaltyMeters: 0 }), 11);
+    // Nunca fica negativo mesmo com penalidade maior que o deslocamento total.
+    assert.equal(slayerMovementMeters({ dex_display: 4 }, { extraPenaltyMeters: 99 }), 0);
+  });
+
   it("calcula Fôlego máximo como 2 + FDV final", () => {
     assert.equal(slayerFolegoMaximum({ fdv_display: 4 }), 6);
     assert.equal(slayerFolegoMaximum({ fdv_display: "<span>7</span>" }), 9);

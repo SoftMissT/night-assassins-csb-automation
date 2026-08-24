@@ -4,7 +4,13 @@ import { stoneFormById } from "./stone-breathing-data.mjs";
 export const STONE_STATE_KEY = "resp_pedra_estado";
 
 export function parseStoneBreathingState(raw) {
-  if (raw && typeof raw === "object") return { version: 1, ...raw };
+  // structuredClone evita que objetos aninhados (resilience/bleeding/reflection/
+  // pendingDamage/serpentine) fiquem compartilhados por referência entre o
+  // estado de origem e a cópia retornada aqui — sem isso, tickStoneBreathing/
+  // consumeStonePending mutariam o objeto original do chamador "por trás",
+  // mesmo quando ele não passou por serialização JSON (mesmo padrão de
+  // anti-aliasing usado em parseSnowBreathingState).
+  if (raw && typeof raw === "object") return { version: 1, ...structuredClone(raw) };
   try {
     const parsed = JSON.parse(String(raw || "{}"));
     return parsed && typeof parsed === "object" ? { version: 1, ...parsed } : { version: 1 };

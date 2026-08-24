@@ -89,4 +89,31 @@ describe("Respiração da Pedra", () => {
     const plan = buildStoneBreathingPlan("pedra_05", 4, { resp_pedra_estado: JSON.stringify({}) }, { markReactivation: true });
     assert.equal(plan.ok, false, "sem uso prévio nesta luta, não há o que 'reativar' — a regra exige uso anterior no combate");
   });
+
+  it("estados simultâneos: Sangramento (Quebra Superior) e Resiliência coexistem sem mutação por referência compartilhada", () => {
+    const bleedPlan = buildStoneBreathingPlan("pedra_02", 3, {});
+    assert.equal(bleedPlan.state.bleeding.amount, 6);
+    const resiliencePlan = buildStoneBreathingPlan("pedra_05", 2, { resp_pedra_estado: JSON.stringify(bleedPlan.state) });
+    assert.equal(resiliencePlan.state.bleeding.amount, 6, "o Sangramento herdado do estado anterior não deve ser apagado por outra Forma");
+    assert.equal(resiliencePlan.state.pendingDamage.formula, "4d10", "o dano pendente da Quebra Superior deve sobreviver à ativação da Resiliência");
+    assert.equal(resiliencePlan.state.resilience.multiplier, 0.5);
+
+    // Tick de turno: a Resiliência perde 1 turno, o Sangramento (que não tem
+    // campo `turns` gerenciado por tickStoneBreathing) permanece intocado por
+    // referência — a mutação de um não pode vazar para o outro.
+    const ticked = tickStoneBreathing(resiliencePlan.state);
+    assert.equal(ticked.state.resilience.turns, 2);
+    assert.equal(ticked.state.bleeding.amount, 6);
+    assert.equal(ticked.state.bleeding.turns, 2);
+    // Original permanece intocado: tickStoneBreathing não deve mutar o estado recebido por referência.
+    assert.equal(resiliencePlan.state.resilience.turns, 3);
+  });
+
+  it("Riólito: Recuperação por Crítico é limitada aos 2 PDR do dado curado, não hardcoded no chamador", () => {
+    assert.equal(stoneFormById("pedra_04").levels[2].recoverPdrOnCritical, 2);
+    assert.equal(stoneFormById("pedra_04").levels[3].recoverPdrOnCritical, 2);
+    const plan = buildStoneBreathingPlan("pedra_04", 3, {});
+    assert.equal(plan.selected.recoverPdrOnCritical, 2);
+    assert.equal(plan.state.pendingDamage.recoverPdrMaximum, 2);
+  });
 });

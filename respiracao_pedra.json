@@ -1,0 +1,143 @@
+{
+    "titulo": "Respiração da Pedra",
+    "aliases": ["Stone Breathing", "Iwa no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Serpentino Duplo",
+            "nome_romaji": "Ichi no Kata Jamongan Sōkyoku",
+            "tipo_manobra": "Única",
+            "descricao": "Uma técnica que esmera seu oponente com ataques pesados visando esmagar e pulverizá-lo sem piedade. Quando tiver desferido e acertado um ataque, pode dar um ataque adicional sem necessidade de rolagem de acerto, porém o inimigo atingido pelo primeiro ataque deve realizar um teste de VIT com C.D. 10 + FOR do usuário da Pedra. A C.D. aumenta em +1 para cada 10 de dano causado pelo ataque originário. O dano do segundo ataque só é causado se o inimigo não passar no teste de VIT.",
+            "niveis": [
+                { "nivel": 1, "dano_segundo_ataque": "1d4 de Dano de Ferida", "custo": "1 PDR" },
+                { "nivel": 2, "dano_segundo_ataque": "1d6 de Dano de Ferida", "custo": "2 PDR" },
+                { "nivel": 3, "dano_segundo_ataque": "2d4 de Dano de Ferida", "custo": "2 PDR" },
+                {
+                    "nivel": 4,
+                    "dano_segundo_ataque": "2d4 de Dano de Ferida + FOR de Dano de Concussão",
+                    "custo": "3 PDR"
+                }
+            ],
+            "exemplo_de_funcionamento": "Você desfere um ataque causando 12 de dano. Em seguida ativa Ichi no Kata sem rolagem de acerto, mas forçando o teste de VIT. O inimigo falha, e você está no Nível 2: ele recebe 1d6 de Dano de Ferida. Total: 12 de dano da arma + 1d6 de dano de ferida. O Dano de Ferida se aplica apenas ao dano bônus da técnica, não ao ataque desferido anteriormente.",
+            "passiva": {
+                "nome": "Status de Quebra",
+                "descricao": "Cada vez que um dano de Concussão for causado (ao menos um acerto bem-sucedido por ação), o usuário acumula um Status de Quebra. Cada acúmulo reduz em 1 o número natural necessário para um acerto crítico com a arma utilizada. O máximo de acúmulos é igual ao valor da característica de FOR do usuário."
+            }
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Quebra Superior / Esmagamento da Superfície / Pedregulho Gigante",
+            "nome_romaji": "Ni no Kata Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki",
+            "tipo_manobra": "Ataque",
+            "descricao": "Esta técnica conta com três variações visuais conforme o tipo de arma utilizada.",
+            "variacoes_visuais": [
+                {
+                    "nome": "Quebra Superior",
+                    "restricao_arma": "Exclusiva para Chicotes",
+                    "descricao": "Mira na cintura do inimigo investindo com um ataque potente e pesado que desestabiliza seu equilíbrio."
+                },
+                {
+                    "nome": "Esmagamento de Superfície",
+                    "restricao_arma": "Exclusiva para Armas Corpo a Corpo",
+                    "descricao": "Um golpe esmagador feito de cima para baixo contra o crânio do oponente, a fim de dilacerar seu cérebro."
+                },
+                {
+                    "nome": "Pedregulho Gigante",
+                    "restricao_arma": "Exclusiva para Armas à Distância",
+                    "descricao": "Um grande pedregulho de quase 4m de diâmetro é disparado junto com o projétil, acumulando detritos de pedras no ar até se tornar uma pedra gigante lançada contra o oponente. Para armas de fogo, é como se o cano da arma aumentasse de tamanho."
+                }
+            ],
+            "observacao": "Independente da variação visual, o ataque causa os mesmos efeitos",
+            "niveis": [
+                { "nivel": 1, "dano": "3d10", "sangramento": "4 por 2 turnos", "custo": "3 PDR" },
+                { "nivel": 2, "dano": "3d10", "sangramento": "5 por 2 turnos", "custo": "3 PDR" },
+                { "nivel": 3, "dano": "4d10", "sangramento": "6 por 2 turnos", "custo": "4 PDR" },
+                { "nivel": 4, "dano": "5d10", "sangramento": "7 por 2 turnos", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Reflexão Ígnea / Flechas de Pedra",
+            "nome_romaji": "San no Kata Ganku no Hadae / Sutōn'arō",
+            "tipo_manobra": "Reação",
+            "variacoes_visuais": [
+                {
+                    "nome": "Reflexão Ígnea",
+                    "restricao_arma": "Exclusiva para Chicotes e Armas Corpo a Corpo",
+                    "descricao": "O usuário gira a arma em forma helicoidal ou desencadeia uma série de golpes desviando os ataques realizados contra si ou um aliado."
+                },
+                {
+                    "nome": "Flecha de Pedra",
+                    "restricao_arma": "Exclusiva para Armas à Distância",
+                    "descricao": "Faz um disparo que parte em direção ao ataque realizado contra si ou um aliado."
+                }
+            ],
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Diminui em 1 + FOR (Chicotes/C.a.C.) ou 1 + DEX (Distância) a próxima rolagem de acerto do inimigo alvo desta reação",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Diminui em 2 + FOR (Chicotes/C.a.C.) ou 2 + DEX (Distância) a próxima rolagem de acerto do inimigo alvo desta reação",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + +1 em testes de bloqueio contra o inimigo alvo por 2 turnos",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + contra-ataque padrão contra o alvo, caso ele erre o ataque que sofreu os debuffs desta técnica",
+                    "custo": "4 PDR"
+                }
+            ],
+            "sinergia": {
+                "nome": "Recuperação de PDR para Aliados",
+                "descricao": "Se o aliado protegido por esta reação for usuário de uma respiração com sinergia, além da proteção ele também terá direito a um teste de FDV com dificuldade 16 − CAR do usuário da Pedra. Se passar imediatamente após a proteção, recupera PDR igual à metade da CAR do usuário da Pedra (arredonda para cima).",
+                "respiracoes_com_sinergia": [
+                    "Respiração do Metal",
+                    "Respiração do Cristal",
+                    "Respiração da Madeira"
+                ]
+            }
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Riólito, Subjugação Rápida / Ravina",
+            "nome_romaji": "Shi no Kata Ryūmongan, Sokusei / Keikoku",
+            "tipo_manobra": "Ataque + Especial",
+            "descricao": "Uma poderosa barragem de ataques contra o inimigo: dois ataques fortes e rápidos, um com a ação de ataque e outro com a ação especial.",
+            "niveis": [
+                { "nivel": 1, "dano_por_ataque_concussao": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano_por_ataque_concussao": "Não é possível usar!", "custo": null },
+                { "nivel": 3, "dano_por_ataque_concussao": "6d6", "custo": "6 PDR" },
+                { "nivel": 4, "dano_por_ataque_concussao": "8d6", "custo": "6 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Recuperação por Crítico",
+                "efeito": "Se obtiver um acerto crítico com qualquer um dos dois ataques, recupera 2 PDR do custo da técnica. O máximo recuperável é 2 PDR por uso; esta passiva é considerada efeito de contato não duplicável, mesmo utilizando duas ações diferentes."
+            }
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Resiliência",
+            "nome_romaji": "Go no Kata Kaifuku-ryoku",
+            "tipo_manobra": "Ataque",
+            "restricao_uso": "Só pode ser usada uma vez por combate",
+            "descricao": "Sua pele se torna tão dura quanto pedra e você recebe benefícios durante 3 turnos.",
+            "efeito": "Resistência a danos de Concussão, Cortante e Perfurante: recebe metade do dano dessas 3 fontes",
+            "duracao": "3 turnos",
+            "custo": "5 PDR",
+            "sinergia": {
+                "nome": "Sinergia com a Marca do Exterminador",
+                "descricao": "Se o usuário da Respiração da Pedra ativar a Marca do Exterminador durante uma luta em que já utilizou esta técnica, ele poderá conjurá-la novamente automaticamente junto com a ativação da marca, desta vez com os benefícios durando até o final do combate."
+            },
+            "nota_do_sistema": "A skill original \"Arcos da Justiça\" foi substituída por esta técnica personalizada, pois sua descrição visual e prática já pode ser encontrada em outras habilidades da Respiração da Pedra. Dessa forma há mais diversidade para o jogador que aderir a esta respiração."
+        }
+    ]
+}

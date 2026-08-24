@@ -59,7 +59,7 @@ export function normalizeWeaponTechnique(item, { profileIndex = 0, ownerKind = "
   const propertyMechanics = weaponPropertyMechanics(props);
   const definition = normalizeTechniqueDefinition({
     id: `weapon:${text(props.arma_nome, item?.name || "unnamed")}:${profileIndex}`,
-    name: `${text(props.arma_nome, item?.name || "Arma")} — ${text(profile.nome, "Ataque Base")}`,
+    name: `${text(props.arma_nome, item?.name || "Arma")} ${text(profile.nome, "Ataque Base")}`,
     sourceFamily: "weapon",
     sourceItemUuid: sourceItemUuid ?? item?.uuid ?? "",
     ownerKind,
@@ -101,7 +101,7 @@ export function normalizeBreathingTechnique(item, { level = 1, ownerKind = "slay
   const passive = number(props.forma_passiva) === 1 || action === "" && /passiva/iu.test(text(props.tipo_manobra));
   const definition = normalizeTechniqueDefinition({
     id: `breathing:${text(props.forma_id, item?.id || "unnamed")}:level-${selectedLevel}`,
-    name: `${text(props.respiracao_nome, "Respiração")} — ${text(props.nome_forma, item?.name || "Forma")}`,
+    name: `${text(props.respiracao_nome, "Respiração")} ${text(props.nome_forma, item?.name || "Forma")}`,
     sourceFamily: "breathing",
     sourceItemUuid: sourceItemUuid ?? item?.uuid ?? "",
     ownerKind,

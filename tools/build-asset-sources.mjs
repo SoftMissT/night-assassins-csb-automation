@@ -10,15 +10,15 @@ const outputDirectory = path.join(root, "build", "compendium", "artes");
 const MODULE_ID = "night-assassins-csb-automation";
 
 const labels = Object.freeze({
-  resp_agua: "Ícone — Respiração da Água",
-  resp_amor: "Ícone — Respiração do Amor",
-  resp_flor: "Ícone — Respiração da Flor",
-  resp_raposa: "Ícone — Respiração da Raposa",
-  resp_serpente: "Ícone — Respiração da Serpente",
-  resp_metal: "Ícone — Respiração do Metal",
-  resp_madeira: "Ícone — Respiração da Madeira",
-  resp_chamas: "Ícone — Respiração das Chamas",
-  resp_sombras: "Ícone — Respiração das Sombras",
+  resp_agua: "Ícone Respiração da Água",
+  resp_amor: "Ícone Respiração do Amor",
+  resp_flor: "Ícone Respiração da Flor",
+  resp_raposa: "Ícone Respiração da Raposa",
+  resp_serpente: "Ícone Respiração da Serpente",
+  resp_metal: "Ícone Respiração do Metal",
+  resp_madeira: "Ícone Respiração da Madeira",
+  resp_chamas: "Ícone Respiração das Chamas",
+  resp_sombras: "Ícone Respiração das Sombras",
 });
 
 function toArtId(file) {
@@ -30,7 +30,7 @@ function artDocument(relativeFile, index) {
   const id = toArtId(relativeFile);
   if (id.length !== 16) throw new Error(`ID de arte inválido (${id.length}): ${id}`);
   const base = path.parse(relativeFile).name;
-  const label = labels[base] || `Ícone — ${base}`;
+  const label = labels[base] || `Ícone ${base}`;
   return {
     _id: id,
     _key: `!items!${id}`,

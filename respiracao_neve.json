@@ -1,0 +1,164 @@
+{
+    "titulo": "Respiração da Neve",
+    "aliases": ["Snow Breathing"],
+    "tags": ["respiração", "técnicas", "neve"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] [ Efeito Aplicado ] [ Custo de PDR ]",
+    "narrativa": "Em Hokkaido, o inverno não convida, ele impõe. Takeshi Sato aprendeu a Respiração da Neve não como uma técnica de ataque, mas como um modo de existir num frio que não passa. Cada expiração deixa uma nuvem de vapor; cada inspiração corta. Quem pratica essa respiração aprende que o gelo não é inerte, ele se move, comprime, cede de formas imprevisíveis. Takeshi aprendeu isso. E aprendeu, mais devagar, que a solidão funciona da mesma forma.",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Fluxo de Neve",
+            "nome_romaji": "Ichi no Kata: Yuki no Nagare",
+            "tipo_manobra": "Especial",
+            "descricao": "Dispara uma rajada de neve da arma que corta o inimigo onde atingir. Pode ser conjurada corpo a corpo ou a até 5m do alvo.",
+            "niveis": [
+                { "nivel": 1, "dano": "2d4", "custo": "1 PDR" },
+                { "nivel": 2, "dano": "2d6", "custo": "1 PDR" },
+                { "nivel": 3, "dano": "2d8", "custo": "2 PDR" },
+                { "nivel": 4, "dano": "2d10", "custo": "2 PDR" }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Inverno Sombrio",
+            "nome_romaji": "Ni no Kata: Yūtsuna Fuyu",
+            "tipo_manobra": "Especial",
+            "descricao": "Flocos de neve começam a cair ao redor do usuário em um raio de 5 metros. Inimigos dentro do alcance devem fazer um teste de Esquiva contra um teste de Acerto do usuário da Neve; caso falhem, terão seus movimentos prejudicados pela neve.",
+            "tempo_de_recarga": "Não pode ser usada novamente durante 3 turnos.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "−1 em rolagens de Acerto e Dano por 2 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "−2 em rolagens de Acerto e Dano por 2 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "−4 em rolagens de Acerto e Dano por 2 turnos",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Efeitos anteriores + inimigo fica vulnerável a Dano Cortante e Perfurante por 2 turnos",
+                    "custo": "3 PDR"
+                }
+            ],
+            "bonus_condicional": {
+                "nome": "Bônus Crítico",
+                "efeito": "Se o teste de Acerto de Inverno Sombrio for uma rolagem crítica, também aplica 1 acúmulo de Congelar contra o inimigo atingido."
+            }
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Nevasca",
+            "nome_romaji": "San no Kata: Burizado",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário desencadeia uma nevasca que cobre o campo de batalha e dura um número de turnos igual ao valor de CAR do usuário da Neve. Durante esses turnos, uma vez por rodada, o usuário pode conceder furtividade a um aliado, não podendo escolher a si mesmo. A furtividade deve ser concedida durante o turno do usuário.",
+            "custo_fixo": "3 PDR",
+            "sinergia": {
+                "descricao": "Se o aliado beneficiado por essa técnica for usuário de uma Respiração com sinergia com a Neve, além da furtividade ele recupera 2 PDR ao receber o status concedido pela Nevasca.",
+                "respiracoes_com_sinergia": ["Água", "Vento", "Cristal"]
+            }
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Coração de Gelo",
+            "nome_romaji": "Shi no Kata: Aisu Hāto",
+            "tipo_manobra": "Ataque",
+            "descricao": "O usuário resfria o próprio sangue, permitindo maior controle da respiração já que o sangue não bombeia tão rápido. Todas as habilidades usadas nos próximos 2 turnos podem ser ativadas com as características de 1 nível a mais de respiração do que o atual. Após o término dos dois turnos, o usuário recebe 1 ponto de Exaustão.",
+            "condicao_nivel_maximo": "Se já estiver no nível 4 de respiração, ao invés do bônus padrão (inaplicável por já estar no nível máximo), você ganha +2 em testes de Esquiva, Bloqueio, Acerto e em quaisquer testes contra CD.",
+            "custo_fixo": "3 PDR"
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Avalanche Negativa",
+            "nome_romaji": "Go no Kata: Fu no Nadare",
+            "tipo_manobra": "Ataque",
+            "descricao": "Faz um movimento horizontal com a arma desferindo um ataque à distância que arremessa uma avalanche contra o inimigo. Requer um teste padrão de Acerto.",
+            "niveis": [
+                { "nivel": 1, "bonus_acerto": "+1", "dano": "2d6", "custo": "2 PDR" },
+                { "nivel": 2, "bonus_acerto": "+1", "dano": "4d8", "custo": "2 PDR" },
+                { "nivel": 3, "bonus_acerto": "+2", "dano": "6d10", "custo": "3 PDR" },
+                { "nivel": 4, "bonus_acerto": "+2", "dano": "8d10", "custo": "3 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Bônus Crítico e Sinergia com Nevasca",
+                "efeito_critico": "Se for uma rolagem de Acerto crítica, Avalanche Negativa também aplica 1 acúmulo de Congelar.",
+                "efeito_sinergia": "Além disso, se um aliado estiver furtivo pelo efeito de Nevasca e conseguir qualquer acerto (técnica ou ataque padrão) contra um alvo já alvejado com sucesso por Avalanche Negativa, esse aliado causa 1d4 de dano bônus e reduz o deslocamento máximo do inimigo pelo mesmo valor da rolagem de 1d4 por dois turnos."
+            }
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Abaixo de Zero",
+            "nome_romaji": "Roku no Kata: Zero Ika",
+            "tipo_manobra": "Especial",
+            "descricao": "Cobre sua Nichirin de gelo verdadeiro, reduzindo a temperatura da lâmina ou dos projéteis abaixo de zero e aumentando o poder de corte e perfuração durante os 3 próximos turnos.",
+            "observacao": "Esse buff pode ser acumulado consigo mesmo, intensificando os efeitos, mas sem estendê-la.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Aplica FDV como bônus nas rolagens de Acerto",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Aplica FDV como bônus nas rolagens de Acerto e como dano extra por ataque",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Efeitos anteriores + cada aplicação bem-sucedida de Congelar enquanto essa técnica estiver ativa recupera 2 PDV ou 1 PDR do usuário, à sua escolha",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Efeitos anteriores + se o inimigo atingir 5 acúmulos de Congelar enquanto essa técnica estiver ativa, uma explosão de gelo causa 6d4 de dano de concussão automaticamente, sem rolagem de Acerto",
+                    "custo": null
+                }
+            ]
+        },
+        {
+            "forma": 7,
+            "nome_pt": "A Canção de um Dia Frio",
+            "nome_romaji": "Shichi no Kata: Samui Hi no Uta",
+            "tipo_manobra": "Reação",
+            "descricao": "Conjurada no momento da declaração de um Kekkijutsu contra o usuário, ele pode dar um giro criando um pequeno redemoinho protetor de gelo e neve.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Anula os efeitos negativos do Kekkijutsu, exceto os efeitos de dano",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Anula os efeitos negativos e reduz os efeitos de dano em 50%",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Efeitos anteriores + pode proteger um aliado ao invés de si mesmo, caso o Kekkijutsu seja lançado em área ou diretamente contra ele",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Efeitos anteriores + aplica 1 acúmulo de Congelar no inimigo",
+                    "custo": "6 PDR"
+                }
+            ],
+            "sinergia": {
+                "nome": "Sinergia a partir do Nível 3 de Respiração",
+                "descricao": "Ao usar essa técnica para proteger um aliado, se esse aliado for usuário de uma Respiração com sinergia com a Neve, ele ganha um ataque padrão imediato contra o inimigo que conjurou o Kekkijutsu. Para todos os efeitos, esse ataque é considerado um Ataque de Oportunidade.",
+                "respiracoes_com_sinergia": ["Água", "Vento", "Cristal"]
+            }
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Congelar",
+        "descricao": "Toda vez que você acertar a 1ª Forma contra um inimigo, você recebe 1 acúmulo de Congelar. Com 5 acúmulos, você pode gastar uma Ação Única para causar restrição de movimentos ao alvo.",
+        "escape": "O alvo consegue escapar dessa restrição se gastar uma Ação de Ataque e passar em um teste de FOR contra CD 8 + CAR do usuário da Neve. Se o alvo receber qualquer dano enquanto estiver com esse status, o enraizamento também se desfaz."
+    }
+}

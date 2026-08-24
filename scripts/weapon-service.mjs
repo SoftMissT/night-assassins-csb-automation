@@ -4,7 +4,7 @@ export const WEAPON_RANK_LEVELS = Object.freeze({ D: 2, C: 4, B: 6, A: 8, S: 11,
 
 export function slayerWeaponRank(actorProps = {}) {
   // O Rank mecânico da arma deriva SEMPRE do nível do portador (nvl_num/nvl_pj),
-  // nunca de rank_atual — que é texto narrativo ("Mizunoto", "Hashira Novato")
+  // nunca de rank_atual que é texto narrativo ("Mizunoto", "Hashira Novato")
   // sem correspondência garantida com D/C/B/A/S/SS.
   const rawLevel = actorProps.nvl_num ?? actorProps.nivel_slayer_num ?? actorProps.nivel
     ?? String(actorProps.nvl_pj ?? "").replace(/^nvl_/u, "");

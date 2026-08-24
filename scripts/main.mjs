@@ -20,7 +20,7 @@ import { getRollStatusEffects, getDamageStatusEffects, getStatusCapabilities, me
 import { applySlayerDamage, movementBlocked, processActorStatusTiming, reconcileSlayerExhaustion, registerStatusEngine, resolveSlayerHealing } from "./status-engine.mjs";
 import { consumeSlayerActions, openActionManager, parseActionState, recoverSlayerFolego, registerActionEngine, resetSlayerActions, slayerMovementMeters } from "./action-service.mjs";
 import { openRestManager, registerRestEngine, resolveRestTier, restEligibleStatuses } from "./rest-service.mjs";
-import { attemptSnowRestrictionEscape, registerBreathingEngine, useBreathForm } from "./breath-service.mjs";
+import { attemptSnowRestrictionEscape, registerBreathingEngine, triggerSnowOpportunityAttack, useBreathForm } from "./breath-service.mjs";
 import { openLifeDeathManager, parseLifeDeathState, processDeathTest, registerLifeDeathEngine, slayerCurrentPdv, slayerMaxPdv, stabilizeSlayer } from "./life-death-service.mjs";
 import { openAdvancedStatesManager, registerAdvancedStatesEngine } from "./slayer/advanced-states.mjs";
 import { executeInterludeActivity, openInterludeManager } from "./interlude-service.mjs";
@@ -146,6 +146,7 @@ reloadWeaponItem,
       restEligibleStatuses,
       useBreathForm,
       attemptSnowRestrictionEscape,
+      triggerSnowOpportunityAttack,
       openLifeDeathManager,
       parseLifeDeathState,
       processDeathTest,

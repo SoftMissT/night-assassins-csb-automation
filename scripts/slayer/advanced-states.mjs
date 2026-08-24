@@ -394,7 +394,7 @@ export function alvoLido(state, alvoUuid) {
  * @param {string} options.alvoUuid UUID do Alvo Lido.
  * @param {string} [options.alvoNome] Nome para exibição.
  * @param {number} options.grau Grau atual.
- * @returns {object} `{state, ok, reason, extraDc}` — `extraDc` presente quando um
+ * @returns {object} `{state, ok, reason, extraDc}` `extraDc` presente quando um
  * uso extra precisa de teste 1d20+FDV.
  */
 export function ativarFoco(state, { alvoUuid, alvoNome = "", grau = 0 } = {}) {
@@ -429,7 +429,7 @@ export function ativarFoco(state, { alvoUuid, alvoNome = "", grau = 0 } = {}) {
  * @param {object} options
  * @param {boolean} options.sucesso Se o teste 1d20+FDV passou na CD.
  * @param {number} [options.margemFalha] Margem da falha (10+ = falha crítica).
- * @returns {object} `{state, ativou}` — ativou quando o uso extra foi concedido.
+ * @returns {object} `{state, ativou}` ativou quando o uso extra foi concedido.
  */
 export function focoUsoExtra(state, { sucesso, margemFalha = 0 } = {}) {
   const s = parseAdvancedStates(state);
@@ -458,7 +458,7 @@ export function focoUsoExtra(state, { sucesso, margemFalha = 0 } = {}) {
  * @param {boolean} options.cenaOk Marca ativa, PDV abaixo de 25% ou cena extrema aprovada.
  * @param {number} options.pdr PDR disponível.
  * @param {number} options.level Nível do personagem.
- * @returns {object} `{state, ok, reason, teste}` — `teste` presente no método
+ * @returns {object} `{state, ok, reason, teste}` `teste` presente no método
  * Pressão (VIT CD 16). `falhou` marca pressão travada no combate.
  */
 export function ativarLamina(state, { method, cenaOk = false, pdr = 0, level = 0 } = {}) {
@@ -492,7 +492,7 @@ export function ativarLamina(state, { method, cenaOk = false, pdr = 0, level = 0
  * Aplica o resultado do teste VIT CD 16 da Ignição por Pressão.
  * @param {object} state
  * @param {boolean} sucesso
- * @returns {object} `{state, ativou, danoSolarInterno}` — em falha, aplica 1d6 de
+ * @returns {object} `{state, ativou, danoSolarInterno}` em falha, aplica 1d6 de
  * Dano Solar interno e trava Pressão no combate.
  */
 export function laminaPressaoResultado(state, { sucesso } = {}) {
@@ -525,7 +525,7 @@ export function apagarLamina(state) {
 }
 
 /**
- * Estado Altruísta — tenta ativar em combate.
+ * Estado Altruísta tenta ativar em combate.
  * @param {object} state
  * @param {number} pdr PDR disponível.
  * @returns {object} `{state, ok, reason}`
@@ -548,7 +548,7 @@ export function ativarAltruista(state, { pdr = 0 } = {}) {
  * Aplica o Corte Sem Ego (uma vez por personagem).
  * @param {object} state
  * @param {number} pdr PDR disponível.
- * @returns {object} `{state, ok, reason}` — em sucesso, marca como usado e devolve
+ * @returns {object} `{state, ok, reason}` em sucesso, marca como usado e devolve
  * o estado pós-uso (PDR 0, +2 Exaustão, estado encerrado e travado).
  */
 export function corteSemEgo(state, { pdr = 0 } = {}) {
@@ -672,7 +672,7 @@ export async function processAdvancedStatesTiming(actor, timing = "start") {
   if (messages.length) {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<strong>Estados avançados — ${actor.name}</strong><br>${messages.join("<br>")}`,
+      content: `<strong>Estados avançados ${actor.name}</strong><br>${messages.join("<br>")}`,
     });
   }
   return { processed: true, messages };
@@ -779,7 +779,7 @@ async function commitAdvancedState(actor, nextState, { pdrCost = 0, pdvFormula =
   if (pdvFormula) {
     const roll = await new Roll(pdvFormula).evaluate();
     patch["system.props.pdv_slayer_dano_tomado"] = parseNumber(props.pdv_slayer_dano_tomado) + Math.max(0, Math.trunc(roll.total || 0));
-    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Custo de PDV — ${actor.name}</strong>` });
+    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Custo de PDV ${actor.name}</strong>` });
   }
   const normalized = parseAdvancedStates(nextState);
   patch[`system.props.${CONTRACT.data}`] = JSON.stringify(normalized);
@@ -803,8 +803,8 @@ export async function openAdvancedStatesManager({ actorUuid } = {}) {
     const level = slayerLevel(actor.system?.props);
     const { pdrCurrent } = slayerPdrInfo(actor.system?.props);
     const result = await foundry.applications.api.DialogV2.wait({
-      window: { title: `Estados Avançados — ${actor.name}` }, modal: true, rejectClose: false,
-      content: `<div class="na-csb-automation" style="display:grid;gap:8px"><h3>${formatStatesSummary(state)}</h3><div>PDR disponível: <strong>${pdrCurrent}</strong></div>${level < 7 ? "<p>Requer Exterminador nível 7 para Mundo Transparente e nível 10 para Lâmina Carmesim.</p>" : ""}${state.mundo.despertado && level >= 7 ? `<fieldset><legend>Mundo Transparente</legend>${state.mundo.focoAtivo ? `<p>Foco ativo: <strong>${state.mundo.focoAlvoNome || state.mundo.focoAlvoUuid}</strong></p>` : `<label>Alvo Lido<select name="alvo"><option value="">— selecione —</option>${alvoLidoOptions(state)}</select></label>`}<label>Novo Alvo Lido (combate)<select name="novoAlvo"><option value="">— selecione um alvo do combate —</option>${combatTargetOptions(actor)}</select></label></fieldset>` : ""}${state.lamina.ativa ? `<fieldset><legend>Lâmina Carmesim</legend><p>Rastro <strong>${state.lamina.rastro}</strong> · Estresse <strong>${state.lamina.estresse}/${LAMINA_ESTRESSE_MAX}</strong></p></fieldset>` : (level >= 10 && !state.lamina.colapso && !state.lamina.superaquecida ? `<fieldset><legend>Lâmina Carmesim</legend><label>Ignição<select name="metodo"><option value="sangue">Sangue — 1d4 PDV</option><option value="atrito">Atrito — 3 PDR</option><option value="pressao">Pressão — 5 PDR + VIT CD 16</option></select></label></fieldset>` : "")}${state.altruista.ativo ? `<fieldset><legend>Estado Altruísta</legend><p>Rodadas restantes: <strong>${state.altruista.rodadasRestantes}</strong></p></fieldset>` : ""}</div>`,
+      window: { title: `Estados Avançados ${actor.name}` }, modal: true, rejectClose: false,
+      content: `<div class="na-csb-automation" style="display:grid;gap:8px"><h3>${formatStatesSummary(state)}</h3><div>PDR disponível: <strong>${pdrCurrent}</strong></div>${level < 7 ? "<p>Requer Exterminador nível 7 para Mundo Transparente e nível 10 para Lâmina Carmesim.</p>" : ""}${state.mundo.despertado && level >= 7 ? `<fieldset><legend>Mundo Transparente</legend>${state.mundo.focoAtivo ? `<p>Foco ativo: <strong>${state.mundo.focoAlvoNome || state.mundo.focoAlvoUuid}</strong></p>` : `<label>Alvo Lido<select name="alvo"><option value="">selecione —</option>${alvoLidoOptions(state)}</select></label>`}<label>Novo Alvo Lido (combate)<select name="novoAlvo"><option value="">selecione um alvo do combate —</option>${combatTargetOptions(actor)}</select></label></fieldset>` : ""}${state.lamina.ativa ? `<fieldset><legend>Lâmina Carmesim</legend><p>Rastro <strong>${state.lamina.rastro}</strong> · Estresse <strong>${state.lamina.estresse}/${LAMINA_ESTRESSE_MAX}</strong></p></fieldset>` : (level >= 10 && !state.lamina.colapso && !state.lamina.superaquecida ? `<fieldset><legend>Lâmina Carmesim</legend><label>Ignição<select name="metodo"><option value="sangue">Sangue 1d4 PDV</option><option value="atrito">Atrito 3 PDR</option><option value="pressao">Pressão 5 PDR + VIT CD 16</option></select></label></fieldset>` : "")}${state.altruista.ativo ? `<fieldset><legend>Estado Altruísta</legend><p>Rodadas restantes: <strong>${state.altruista.rodadasRestantes}</strong></p></fieldset>` : ""}</div>`,
       buttons: [
         ...(state.mundo.despertado && !state.mundo.focoAtivo ? [{ action: "foco", label: "Ativar Foco (3 PDR)", callback: (_event, _button, dialog) => ({ action: "foco", value: String(dialog.element.querySelector('[name="alvo"]')?.value ?? "") }) }] : []),
         ...(state.mundo.focoAtivo ? [{ action: "encerrar-foco", label: "Encerrar Foco", callback: () => ({ action: "encerrar-foco" }) }] : []),
@@ -846,7 +846,7 @@ export async function openAdvancedStatesManager({ actorUuid } = {}) {
       if (ativado.extraDc !== undefined) {
         const fdv = parseNumber(actor.system?.props?.fdv_display);
         const roll = await new Roll(`1d20 + ${fdv}`).evaluate();
-        await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Foco Transparente — uso extra</strong> — FDV contra CD ${ativado.extraDc}` });
+        await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Foco Transparente uso extra</strong> FDV contra CD ${ativado.extraDc}` });
         const natural = roll.dice?.[0]?.results?.[0]?.result;
         const sucesso = natural === 20 || roll.total >= ativado.extraDc;
         const resultado = focoUsoExtra(ativado.state, { sucesso, margemFalha: Math.max(0, ativado.extraDc - roll.total) });
@@ -871,7 +871,7 @@ export async function openAdvancedStatesManager({ actorUuid } = {}) {
       if (profile?.teste) {
         const vit = parseNumber(actor.system?.props?.vit_display);
         const roll = await new Roll(`1d20 + ${vit}`).evaluate();
-        await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Ignição por Pressão</strong> — VIT contra CD ${profile.teste.cd}` });
+        await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Ignição por Pressão</strong> VIT contra CD ${profile.teste.cd}` });
         const natural = roll.dice?.[0]?.results?.[0]?.result;
         const sucesso = natural === 20 || roll.total >= profile.teste.cd;
         const resultado = laminaPressaoResultado(state, { sucesso });
@@ -917,7 +917,7 @@ export async function openAdvancedStatesManager({ actorUuid } = {}) {
       await commitAdvancedState(actor, corte.state, { consumeAction: false, extraPatch: patch });
       const status = parseStatusState(props.status_slayer_dados);
       await saveSlayerStatuses(actor, status.active, Math.min(8, status.exhaustion + 2), status.effects, status.exhaustionMilestones);
-      await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>Corte Sem Ego</strong> — ${actor.name} zerou o PDR, ganhou 2 de Exaustão e o Estado Altruísta encerrou.` });
+      await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>Corte Sem Ego</strong> ${actor.name} zerou o PDR, ganhou 2 de Exaustão e o Estado Altruísta encerrou.` });
       state = corte.state;
       continue;
     }

@@ -49,11 +49,12 @@ export function actionMaximums(props = {}) {
   };
 }
 
-export function slayerMovementMeters(props = {}) {
+export function slayerMovementMeters(props = {}, { extraPenaltyMeters = 0 } = {}) {
   const capabilities = getStatusCapabilities(props);
   if (!capabilities.movementAllowed) return 0;
   const dex = parseNumber(props.dex_display);
-  return Math.max(0, (7 + dex) * capabilities.movementMultiplier - capabilities.movementPenaltyMeters);
+  const penalty = capabilities.movementPenaltyMeters + Math.max(0, Math.trunc(parseNumber(extraPenaltyMeters)));
+  return Math.max(0, (7 + dex) * capabilities.movementMultiplier - penalty);
 }
 
 export function slayerFolegoMaximum(props = {}) {
@@ -225,9 +226,13 @@ export async function openActionManager(options = {}) {
   const optionsHtml = keys.map((key) => `<option value="${key}">${TIPOS_ACAO.find((entry) => entry.key === key)?.label ?? key}</option>`).join("");
   const informational = TIPOS_ACAO.filter((entry) => ["free", "special"].includes(entry.scope))
     .map((entry) => `<div class="na-action-note"><strong>${entry.label}</strong><span>${entry.desc}</span></div>`).join("");
+  // Avalanche Negativa (Neve) + sinergia com Nevasca: reduz o deslocamento
+  // máximo do alvo pelo mesmo valor da rolagem de 1d4, por 2 turnos.
+  const snowMovementPenalty = actor.getFlag?.(MODULE_ID, "snowMovementPenalty");
+  const movementPenaltyMeters = Number(snowMovementPenalty?.turns) > 0 ? Number(snowMovementPenalty.value) || 0 : 0;
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: `Ações ${actor.name}` },
-    content: `<div class="na-action-manager"><p><strong>Fôlego:</strong> ${Math.max(0, parseNumber(props.folego_slayer_atual))} / ${slayerFolegoMaximum(props)} · <strong>Deslocamento:</strong> ${slayerMovementMeters(props)}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p><div class="na-action-reference">${informational}</div></div>`,
+    content: `<div class="na-action-manager"><p><strong>Fôlego:</strong> ${Math.max(0, parseNumber(props.folego_slayer_atual))} / ${slayerFolegoMaximum(props)} · <strong>Deslocamento:</strong> ${slayerMovementMeters(props, { extraPenaltyMeters: movementPenaltyMeters })}m${movementPenaltyMeters > 0 ? ` (−${movementPenaltyMeters}m Avalanche Negativa)` : ""}</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p><div class="na-action-reference">${informational}</div></div>`,
     buttons: [
       { action: "use", label: "Usar ação", callback: (_event, _button, dialog) => `use:${dialog.element.querySelector('[name="na-action-use"]')?.value ?? ""}` },
       { action: "reset-turn", label: "Restaurar turno", callback: () => "turn" },

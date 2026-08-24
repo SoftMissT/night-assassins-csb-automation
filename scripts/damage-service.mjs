@@ -273,7 +273,8 @@ export async function rollDamage(options = {}) {
   const breathingDamage = breathingState.pendingDamage;
   const hasAttackDamage = options.forceAttackDamage === true
     || entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
-  if (breathingDamage?.formula && hasAttackDamage) {
+  const injectBreathing = options.skipBreathingInjection !== true;
+  if (injectBreathing && breathingDamage?.formula && hasAttackDamage) {
     const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) => String(attrValues[key.toLowerCase()] ?? 0));
     const types = Array.isArray(breathingDamage.types) ? breathingDamage.types : [];
     specs.push({ label: "Respiração da Água", types, formula, breathing: true });
@@ -285,7 +286,8 @@ export async function rollDamage(options = {}) {
   const flameTier = flameWeaponTier(flameState.weaponHeat);
   const flameTechnique = Boolean(flameDamage?.technique && hasAttackDamage);
   if (flameDamage?.critical === true && hasAttackDamage) critical = true;
-  if (flameDamage?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas", types: ["cortante"], formula: flameDamage.formula, flame: true });
+  if (injectBreathing && flameDamage?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas", types: ["cortante"], formula: flameDamage.formula, flame: true });
+  if (injectBreathing && flameDamage?.comboRider?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas (1ª Forma)", types: ["cortante"], formula: String(flameDamage.comboRider.formula), flame: true });
   if (flameTechnique && flameTier.techniqueDie) specs.push({ label: "Fogo Fátuo", types: ["fogo"], formula: flameTier.techniqueDie, flame: true });
   if (flameState.ignition?.damageBonus && hasAttackDamage) specs.push({ label: "Ignição", types: ["fogo"], formula: String(flameState.ignition.damageBonus), flame: true });
   const rengokuAllies = Math.max(0, Math.trunc(Number(flameDamage?.rengokuAllies) || 0));
@@ -295,13 +297,13 @@ export async function rollDamage(options = {}) {
   if (flameTier.weaponDamage > 0 && hasAttackDamage) specs.push({ label: "Fogo Fátuo Arma", types: [], formula: String(flameTier.weaponDamage), flame: true });
   const stoneState = parseStoneBreathingState(attackerKind === "slayer" ? props.resp_pedra_estado : "");
   const stoneDamage = stoneState.pendingDamage;
-  if (stoneDamage?.formula && hasAttackDamage) {
+  if (injectBreathing && stoneDamage?.formula && hasAttackDamage) {
     const formula = String(stoneDamage.formula).replace(/@for\b/giu, String(attrValues.for ?? 0));
     specs.push({ label: "Respiração da Pedra", types: stoneDamage.types ?? ["concussao"], formula, stone: true });
   }
   const mistState = parseMistBreathingState(attackerKind === "slayer" ? props.resp_nevoa_estado : "");
   const mistDamage = mistState.pendingDamage;
-  if (mistDamage?.formula && hasAttackDamage) {
+  if (injectBreathing && mistDamage?.formula && hasAttackDamage) {
     if (mistDamage.replaceWeaponDamage) specs = specs.filter((spec) => spec.breathing || spec.flame || spec.stone);
     specs.push({ label: "Respiração da Névoa", types: ["cortante"], formula: resolveMistFormula(mistDamage.formula, props), mist: true });
     if (critical && mistDamage.criticalFormula) specs.push({ label: "Colapso da Névoa crítico", types: ["cortante"], formula: resolveMistFormula(mistDamage.criticalFormula, props), mist: true });
@@ -315,7 +317,7 @@ export async function rollDamage(options = {}) {
   }
   const snowState = parseSnowBreathingState(attackerKind === "slayer" ? props.resp_neve_estado : "");
   const snowDamage = snowState.pendingDamage;
-  if (snowDamage?.formula && hasAttackDamage) {
+  if (injectBreathing && snowDamage?.formula && hasAttackDamage) {
     specs.push({ label: "Respiração da Neve", types: ["congelante"], formula: String(snowDamage.formula), snow: true });
   }
   if (snowState.belowZero?.fdvDamageBonus && hasAttackDamage) {
@@ -338,7 +340,7 @@ export async function rollDamage(options = {}) {
       garrasApplied = true;
     }
   }
-  if (windDamage?.formula && hasAttackDamage) {
+  if (injectBreathing && windDamage?.formula && hasAttackDamage) {
     specs.push({ label: "Respiração do Vento", types: Array.isArray(windDamage.types) ? windDamage.types : [], formula: String(windDamage.formula).replace(/@(dex|fdv|for)\b/giu, (_m, key) => String(attrValues[String(key).toLowerCase()] ?? 0)), wind: true });
   }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
@@ -655,18 +657,22 @@ export async function rollDamage(options = {}) {
     ...damageRequests.map(async ({ actor: targetActor, amount, components: targetComponents, patch: targetPatch, negated, critical: targetCritical }) => {
       if (Object.keys(targetPatch ?? {}).length) await targetActor.update(targetPatch, { naCsbAutomation: true, naBreathing: true });
       if (amount <= 0) return { ok: true, appliedDamage: 0, woundDamage: 0, negated };
+      // Normalização no boundary: pendingDamage ausente (ataque padrão sem
+      // técnica armada) NÃO pode crashar — contrato neutro = zeros.
       const flameContext = hasFlameBreathing && hasAttackDamage ? {
         sourceId: actor.id,
         heat: 1 + Math.max(0, Number(flameState.activeForm?.enemyHeat) || 0),
-        blockPenalty: Number(flameDamage.blockPenalty) || 0,
-        blockPenaltyTurns: Number(flameDamage.blockPenaltyTurns) || 0,
-        exhaustionOnHit: Number(flameDamage.exhaustionOnHit) || 0,
-        exhaustionOverDamage: Number(flameDamage.exhaustionOverDamage) || 0,
+        blockPenalty: Number(flameDamage?.blockPenalty) || 0,
+        blockPenaltyTurns: Number(flameDamage?.blockPenaltyTurns) || 0,
+        exhaustionOnHit: Number(flameDamage?.exhaustionOnHit) || 0,
+        exhaustionOverDamage: Number(flameDamage?.exhaustionOverDamage) || 0,
       } : null;
       const targetKind = actorKind(targetActor);
       if (targetKind === "slayer") return applySlayerDamageAuto(targetActor, amount, { isAttack: true, attackName: nome, critical: targetCritical, damageTypes, components: targetComponents, flame: flameContext });
-      if (targetKind === "oni") return applyOniDamage(targetActor, amount, { attackName: nome, critical: targetCritical, rolledTotal: amount, damageTypes, components: targetComponents, requireApproval: true, flame: flameContext });
-      return Promise.reject(new Error("Alvo sem identidade Slayer/Oni."));
+      // Oni completo, Oni Minion e NPC compartilham o mesmo relay de dano
+      // (chaves distintas resolvidas dentro do relay por tipo de ator).
+      if (targetKind === "oni" || targetKind === "oni_minion" || targetKind === "npc") return applyOniDamage(targetActor, amount, { attackName: nome, critical: targetCritical, rolledTotal: amount, damageTypes, components: targetComponents, requireApproval: true, flame: flameContext });
+      return Promise.reject(new Error(`Alvo sem identidade Slayer/Oni (${targetKind ?? "desconhecido"}): ${targetActor?.name ?? ""}.`));
     }),
   ]);
 

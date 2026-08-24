@@ -2,9 +2,14 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+const MODULE_ID = "night-assassins-csb-automation";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const sourceDirectory = path.join(root, "macros");
 const outputDirectory = path.join(root, "build", "compendium", "macros");
+
+function macroIconPath(file) {
+  return `modules/${MODULE_ID}/assets/icons/macros/${path.basename(file, ".js")}_icon.webp`;
+}
 
 const macros = [
   { id: "NARollMode000001", file: "na-roll-mode.js", name: "Night Assassins Teste de Atributo" },
@@ -38,7 +43,7 @@ for (const [index, macro] of macros.entries()) {
     name: macro.name,
     type: "script",
     author: null,
-    img: "icons/svg/dice-target.svg",
+    img: macroIconPath(macro.file),
     scope: "global",
     command,
     folder: null,

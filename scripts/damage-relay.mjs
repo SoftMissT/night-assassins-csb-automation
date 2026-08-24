@@ -3,7 +3,7 @@ import { parseNumber } from "./parsing.mjs";
 import { applySlayerDamage } from "./status-engine.mjs";
 import { addFlameEnemyHeat, FLAME_HEAT_FLAG } from "./flame-breathing-service.mjs";
 import { parseStatusState } from "./status-service.mjs";
-import { isSlayerActor } from "./actor-kind.mjs";
+import { actorKind, isSlayerActor } from "./actor-kind.mjs";
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const DAMAGE_KEY = "pdv_oni_dano_tomado";
@@ -112,13 +112,27 @@ function splitDamage(amount, context, selectedTypes, resisted) {
   };
 }
 
+// Chave de dano por tipo de alvo: Oni completo usa as chaves históricas da
+// ficha Oni; Oni Minion usa as chaves do próprio template de minion.
+function damageKeysFor(actor) {
+  const kind = actorKind(actor);
+  if (kind === "oni_minion") {
+    return { damage: "oni_minion_pdv_dano", wound: "oni_minion_pdv_dano" };
+  }
+  if (kind === "npc") {
+    return { damage: "npc_pdv_dano", wound: "npc_pdv_dano" };
+  }
+  return { damage: DAMAGE_KEY, wound: WOUND_KEY };
+}
+
 async function updateOniDamage(actor, normalDamage, woundDamage = 0) {
-  const current = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
-  const currentWounds = parseNumber(actor.system?.props?.[WOUND_KEY]);
+  const keys = damageKeysFor(actor);
+  const current = parseNumber(actor.system?.props?.[keys.damage]);
+  const currentWounds = parseNumber(actor.system?.props?.[keys.wound]);
   const total = current + normalDamage;
   const woundTotal = currentWounds + woundDamage;
-  const patch = { [`system.props.${DAMAGE_KEY}`]: total };
-  if (woundDamage > 0) patch[`system.props.${WOUND_KEY}`] = woundTotal;
+  const patch = { [`system.props.${keys.damage}`]: total };
+  if (woundDamage > 0) patch[`system.props.${keys.wound}`] = woundTotal;
   await actor.update(patch, { naCsbAutomation: true });
   return { total, woundTotal };
 }
@@ -235,7 +249,7 @@ async function handleDamageRequest(message) {
   }
 
   try {
-    const currentDamage = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
+    const currentDamage = parseNumber(actor.system?.props?.[damageKeysFor(actor).damage]);
     const context = normalizeDamageContext(message.context);
     const approval = await requestDamageApproval(actor, requester, amount, currentDamage, context);
     if (!approval?.approved) {
@@ -349,7 +363,7 @@ export async function applyOniDamage(actor, amount, rawContext = {}) {
     let appliedDamage = breakdown.normalDamage + breakdown.woundDamage;
     let resolution = { resisted: false, damageTypes: context.damageTypes };
     if (context.requireApproval && game.user.isGM) {
-      const currentDamage = parseNumber(actor.system?.props?.[DAMAGE_KEY]);
+      const currentDamage = parseNumber(actor.system?.props?.[damageKeysFor(actor).damage]);
       const approval = await requestDamageApproval(actor, game.user, damage, currentDamage, context);
       if (!approval?.approved) throw new Error(`O dano em ${actor.name} foi cancelado.`);
       appliedDamage = approval.appliedDamage;

@@ -5,6 +5,14 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "src", "templates", "actors", "oni-minion-template.json");
 
+const MACRO = (id) => `Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.${id}`;
+const ROLL = (id, args) => `%{return await (await fromUuid('${MACRO(id)}'))?.execute({actorUuid:entity.uuid${args ? "," + args : ""}});}%`;
+const ATTR_TEST_ROLL = (attr, test, color) => ROLL("NARollMode000001", `test:'${test}',attr:'${attr}',color:'${color}'`);
+const HIT_ROLL = ROLL("NAHitRoll0000001", "");
+const DAMAGE_ROLL = ROLL("NADamageRoll0001", "");
+const BLOCK_ROLL = ATTR_TEST_ROLL("FOR", "Bloqueio", "#C1000C");
+const DODGE_ROLL = ATTR_TEST_ROLL("DEX", "Esquiva", "#28D7FF");
+
 function base(type, key, label) {
   return {
     key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
@@ -29,11 +37,26 @@ function textArea(key, label) {
   return { ...base("textArea", key, label), rowSpan: 3, defaultValue: "", style: "sheet" };
 }
 
-function label(key, value, color = "#FF2B4A") {
+function label(key, value, color = "#FF2B4A", rollMessage = "") {
   return {
     ...base("label", key, ""), icon: "", prefix: "", suffix: "", style: "label",
-    rollMessage: "", altRollMessage: "", rollMessageToChat: false, altRollMessageToChat: false,
+    rollMessage, altRollMessage: "", rollMessageToChat: false, altRollMessageToChat: false,
     value: `<div class="custom-orbitron-wrapper"><span style="font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.12em;">${value}</span></div>`,
+  };
+}
+
+function rollButton(key, text, color, rollMessage) {
+  return {
+    ...base("label", key, ""), icon: "", prefix: "", suffix: "", style: "button",
+    rollMessage, altRollMessage: "", rollMessageToChat: false, altRollMessageToChat: false,
+    value: `<span class="na-sheet-text na-sheet-label na-sheet-size-lg">${text}</span>`,
+  };
+}
+
+function select(key, label, options) {
+  return {
+    ...base("select", key, label), size: "m-large", defaultValue: "", selectedOptionType: "custom",
+    options: options.map(([optKey, optValue]) => ({ key: optKey, value: optValue })),
   };
 }
 
@@ -44,22 +67,28 @@ function panel(key, title, contents, flow = "grid-2") {
   };
 }
 
-const attributes = [
-  ["vit", "VIT", "#2ED36F"], ["dex", "DEX", "#28D7FF"], ["for", "FOR", "#FF2B4A"],
-  ["car", "CAR", "#FF9100"], ["fdv", "FDV", "#BB97F9"], ["int", "INT", "#F8EB4D"],
-  ["sab", "SAB", "#D45CA4"],
+const ATTRS = [
+  ["vit", "VIT", "#2ED36F", "TESTE DE VITALIDADE", "#36D67A"],
+  ["dex", "DEX", "#28D7FF", "TESTE DE DESTREZA", "#28D7FF"],
+  ["for", "FOR", "#FF2B4A", "TESTE DE FORÇA", "#C1000C"],
+  ["car", "CAR", "#FF9100", "TESTE DE CARISMA", "#FF9100"],
+  ["fdv", "FDV", "#BB97F9", "TESTE DE FORÇA DE VONTADE", "#BB97F9"],
+  ["int", "INT", "#F8EB4D", "TESTE DE INTELIGÊNCIA", "#F8EB4D"],
+  ["sab", "SAB", "#D45CA4", "TESTE DE SABEDORIA", "#D45CA4"],
 ];
 
-const attributeFields = attributes.flatMap(([key, title, color]) => [
+const attributeFields = ATTRS.flatMap(([key, title, color, test, rollColor]) => [
   numberField(`oni_minion_${key}_base`, `${title} base`, 0, 0, 20),
-  label(`oni_minion_${key}_display_label`, `${title}: \${oni_minion_${key}_display}$`, color),
+  label(`oni_minion_${key}_display_label`, `${title}: \${oni_minion_${key}_display}$`, color, ATTR_TEST_ROLL(title, test, rollColor)),
 ]);
 
-const hidden = attributes.map(([key]) => ({
+const hidden = ATTRS.map(([key]) => ({
   name: `oni_minion_${key}_display`,
   value: `\${fallback(oni_minion_${key}_base,0)+fallback(oni_minion_${key}_temp,0)}$`,
 }));
-for (const [key] of attributes) hidden.push({ name: `oni_minion_${key}_temp`, value: "0" });
+for (const [key] of ATTRS) hidden.push({ name: `oni_minion_${key}_temp`, value: "0" });
+// Alias canônicos (vit_display, for_display, ...) exigidos pelas macros de rolagem.
+for (const [key] of ATTRS) hidden.push({ name: `${key}_display`, value: `\${oni_minion_${key}_display}$` });
 hidden.push(
   { name: "oni_minion_pdv_total", value: "${fallback(oni_minion_pdv_base,0)+fallback(oni_minion_nivel,1)+fallback(oni_minion_vit_display,0)}$" },
   { name: "oni_minion_pdk_total", value: "${fallback(oni_minion_pdk_base,0)+fallback(oni_minion_fdv_display,0)}$" },
@@ -70,7 +99,7 @@ hidden.push(
 const template = {
   name: "oni_minion_template",
   type: "_template",
-  img: "modules/night-assassins-csb-automation/assets/icons/oni.webp",
+  img: "modules/night-assassins-csb-automation/assets/icons/templates/na-oni-minion-template_icon.webp",
   system: {
     body: {
       contents: [
@@ -82,6 +111,15 @@ const template = {
           textField("oni_minion_fraqueza", "Fraqueza"), textField("oni_minion_comportamento", "Comportamento"),
         ]),
         panel("oni_minion_attributes", "Atributos", attributeFields, "grid-4"),
+        panel("oni_minion_combat", "Combate", [
+          rollButton("oni_minion_roll_acerto", "Acerto", "#FF2B4A", HIT_ROLL),
+          rollButton("oni_minion_roll_dano", "Dano", "#FF2B4A", DAMAGE_ROLL),
+          rollButton("oni_minion_roll_bloqueio", "Bloqueio", "#FF2B4A", BLOCK_ROLL),
+          rollButton("oni_minion_roll_esquiva", "Esquiva", "#FF2B4A", DODGE_ROLL),
+          select("acerto_label", "Escolha como Acerta", [
+            ["acerto_label_escolha", "Escolha"], ["acerto_label_dex", "DEX"], ["acerto_label_for", "FOR"],
+          ]),
+        ]),
         panel("oni_minion_resources", "Recursos", [
           numberField("oni_minion_pdv_base", "PDV base", 8, 0),
           label("oni_minion_pdv_total_label", "PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$", "#FF2B4A"),

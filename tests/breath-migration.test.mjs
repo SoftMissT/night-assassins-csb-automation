@@ -4,8 +4,9 @@ import { breathingItemPatch, buildCanonicalBreathMap, repairBreathingItems } fro
 
 const canonicalForm = {
   type: "equippableItem",
-  name: "Chamas — 2º Estilo Céu em Chamas Ascendentes",
+  name: "Chamas - 2º Estilo Céu em Chamas Ascendentes",
   img: "icons/magic/fire/flame-burning-yellow.webp",
+  ownership: { default: 2 },
   system: {
     template: "NABreathTpl00001",
     props: {

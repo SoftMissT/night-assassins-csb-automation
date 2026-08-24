@@ -134,7 +134,7 @@ describe("catálogo de armas Slayer", () => {
     const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
     const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
     assert.equal(illustrated.length, 0);
-    assert.equal(customIcons.length, 33);
+    assert.equal(customIcons.length, 39);
     for (const item of customIcons) {
       const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");
       await access(new URL(relativePath, import.meta.url));

@@ -40,7 +40,6 @@
 
   const ATTR_KEYS = ['vit', 'for', 'dex', 'fdv', 'car', 'int', 'sab'];
   const ATTR_NAMES = { vit: 'VIT', for: 'FOR', dex: 'DEX', fdv: 'FDV', car: 'CAR', int: 'INT', sab: 'SAB' };
-  const ATTR_COLORS = { vit: '#36D67A', for: '#C1000C', dex: '#28D7FF', fdv: '#BB97F9', car: '#FF9100', int: '#F8EB4D', sab: '#D45CA4' };
 
   function readDisplayAttribute(key) {
     const propKey = `${key}_display`;
@@ -110,7 +109,7 @@
     }
 
     const modeLabel = getModeLabel(mode);
-    const attrLine = attr ? `${attr} = ${val}` : '';
+    const attrLine = attr ? `${ATTR_NAMES[primaryKey] ?? attr} = ${val}` : '';
     const secLine = secVal ? ` + ${ATTR_NAMES[secondaryOptions.find(o => o.val === secVal)?.key] || '?'} = ${secVal}` : '';
     const bonusLine = display ? ` | Bônus: ${display}` : '';
     const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(', ')}` : '';
@@ -125,7 +124,7 @@
     await roll.toMessage({
       flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
       speaker: ChatMessage.getSpeaker(),
-      rollMode: rollMode,
+      rollMode,
     });
   }
 
@@ -164,60 +163,75 @@
     </div>
   `;
 
-  // ── Dialog nativo (V1 deprecated em V13 mas ainda funciona; look nativo) ─
-  new Dialog({
-    title: test,
-    content: content,
-    buttons: {
-      advantage: {
-        label: 'Vantagem',
-        callback: (html) => {
-          const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
-          const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
-          const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
-          const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
-          doRoll('advantage', rollMode, secVal, bonusRaw, cdVal);
-        }
-      },
-      normal: {
-        label: 'Normal',
-        callback: (html) => {
-          const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
-          const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
-          const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
-          const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
-          doRoll('normal', rollMode, secVal, bonusRaw, cdVal);
-        }
-      },
-      disadvantage: {
-        label: 'Desvantagem',
-        callback: (html) => {
-          const bonusRaw = html.find('#na-rm-bonus').val() ?? '';
-          const rollMode = html.find('#na-rm-rollmode').val() ?? 'publicroll';
-          const secVal = Number(html.find('#na-rm-secattr').val()) || 0;
-          const cdVal = Number(html.find('#na-rm-cd').val()) || 0;
-          doRoll('disadvantage', rollMode, secVal, bonusRaw, cdVal);
-        }
-      },
-      cancel: {
-        label: 'Cancelar',
-        callback: () => { }
-      }
-    },
-    default: 'normal',
-    render: (html) => {
-      const bonusInput = html.find('#na-rm-bonus');
-      const secAttrSelect = html.find('#na-rm-secattr');
-      const formulaDisplay = html.find('#na-rm-formula');
+  // ── DialogV2 (ApplicationV2) ────────────────────────────────────────────
+  const hookApi = globalThis.Hooks;
+  const renderHook = hookApi?.on?.('renderDialogV2', (_dialog, element) => {
+    const root = element?.querySelector ? element : element?.[0];
+    if (!root?.querySelector?.('#na-rm-formula')) return;
 
-      const updateFormula = () => {
-        const { extra } = parseBonus(bonusInput.val() ?? '');
-        const secVal = Number(secAttrSelect.val()) || 0;
-        formulaDisplay.text(buildFormula('normal', secVal, extra));
-      };
+    const bonusInput = root.querySelector('#na-rm-bonus');
+    const secAttrSelect = root.querySelector('#na-rm-secattr');
+    const formulaDisplay = root.querySelector('#na-rm-formula');
 
-      bonusInput.on('input', updateFormula);
-      secAttrSelect.on('change', updateFormula);
-    }
-  }).render(true);
+    const updateFormula = () => {
+      const { extra } = parseBonus(bonusInput?.value ?? '');
+      const secVal = Number(secAttrSelect?.value) || 0;
+      if (formulaDisplay) formulaDisplay.textContent = buildFormula('normal', secVal, extra);
+    };
+
+    bonusInput?.addEventListener('input', updateFormula);
+    secAttrSelect?.addEventListener('change', updateFormula);
+  });
+
+  const readInputs = (button) => {
+    const form = button.form;
+    return {
+      bonusRaw: form?.querySelector('#na-rm-bonus')?.value ?? '',
+      rollMode: form?.querySelector('#na-rm-rollmode')?.value ?? 'publicroll',
+      secVal: Number(form?.querySelector('#na-rm-secattr')?.value) || 0,
+      cdVal: Number(form?.querySelector('#na-rm-cd')?.value) || 0,
+    };
+  };
+
+  try {
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: test },
+      content,
+      modal: true,
+      rejectClose: false,
+      buttons: [
+        {
+          action: 'advantage',
+          label: 'Vantagem',
+          callback: async (_event, button) => {
+            const i = readInputs(button);
+            await doRoll('advantage', i.rollMode, i.secVal, i.bonusRaw, i.cdVal);
+            return i;
+          },
+        },
+        {
+          action: 'normal',
+          label: 'Normal',
+          default: true,
+          callback: async (_event, button) => {
+            const i = readInputs(button);
+            await doRoll('normal', i.rollMode, i.secVal, i.bonusRaw, i.cdVal);
+            return i;
+          },
+        },
+        {
+          action: 'disadvantage',
+          label: 'Desvantagem',
+          callback: async (_event, button) => {
+            const i = readInputs(button);
+            await doRoll('disadvantage', i.rollMode, i.secVal, i.bonusRaw, i.cdVal);
+            return i;
+          },
+        },
+        { action: 'cancel', label: 'Cancelar', callback: () => null },
+      ],
+    });
+  } finally {
+    if (renderHook !== undefined) hookApi?.off?.('renderDialogV2', renderHook);
+  }
 })();

@@ -39,10 +39,41 @@ function isBreathingLike(props) {
     || Boolean(props.respiracao_nome);
 }
 
+/**
+ * Remove o spam de descrição no chat: labels cujo valor renderiza a
+ * descrição completa da Forma não devem ter rollMessageToChat ligado.
+ * Cirúrgico e idempotente — só desliga o flag, não altera mais nada.
+ */
+function stripDescriptionChatFlag(body) {
+  if (!body || typeof body !== "object") return false;
+  let changed = false;
+  const walk = (node) => {
+    if (!node || typeof node !== "object") return;
+    if (Array.isArray(node)) { node.forEach(walk); return; }
+    if (node.rollMessageToChat === true && String(node.value ?? "").includes("${descricao}$")) {
+      node.rollMessageToChat = false;
+      changed = true;
+    }
+    for (const key of Object.keys(node)) walk(node[key]);
+  };
+  walk(body);
+  return changed;
+}
+
 export function breathingItemPatch(item, canonical) {
   if (!item) return null;
   const props = item?.system?.props ?? {};
-  const alreadyCanonical = item.system?.template === BREATH_TEMPLATE_ID
+  const chatSpam = stripDescriptionChatFlag(item.system?.body);
+  // Ownership NONE herdado de templates antigos impede o dono da ficha de
+  // abrir a Forma; Observer é o mínimo para ver e executar os botões.
+  const ownershipLevel = Number(item.ownership?.default ?? 0);
+  const ownershipFix = ownershipLevel < 2 ? { ...(item.ownership ?? {}), default: 2 } : null;
+  // Repair de Respiração só toca em itens relacionados — itens comuns (Erva,
+  // loot etc.) não recebem ownership nem body por este caminho.
+  const related = Boolean(canonical) || isBreathingLike(props) || chatSpam;
+  if (!related) return null;
+  const alreadyCanonical = !chatSpam && !ownershipFix
+    && item.system?.template === BREATH_TEMPLATE_ID
     && props.inventario_categoria === "respiracao"
     && Boolean(props.forma_id)
     && Boolean(props.respiracao_nome)
@@ -56,6 +87,7 @@ export function breathingItemPatch(item, canonical) {
     for (const [key, value] of Object.entries(props)) {
       if (!(key in mergedProps)) mergedProps[key] = value;
     }
+    stripDescriptionChatFlag(canonical.system?.body);
     return {
       _id: item.id ?? item._id,
       name: canonical.name,
@@ -63,7 +95,9 @@ export function breathingItemPatch(item, canonical) {
       system: {
         template: canonical.system?.template ?? BREATH_TEMPLATE_ID,
         props: mergedProps,
+        ...(chatSpam ? { body: item.system?.body } : {}),
       },
+      ...(ownershipFix ? { ownership: ownershipFix } : {}),
       flags: {
         ...(item.flags ?? {}),
         [MODULE_ID]: {
@@ -74,11 +108,14 @@ export function breathingItemPatch(item, canonical) {
     };
   }
 
-  if (isBreathingLike(props) && props.inventario_categoria !== "respiracao") {
-    return {
-      _id: item.id ?? item._id,
-      "system.props.inventario_categoria": "respiracao",
-    };
+  if (chatSpam || ownershipFix || (isBreathingLike(props) && props.inventario_categoria !== "respiracao")) {
+    const update = { _id: item.id ?? item._id };
+    if (chatSpam) update["system.body"] = item.system?.body;
+    if (ownershipFix) update.ownership = ownershipFix;
+    if (isBreathingLike(props) && props.inventario_categoria !== "respiracao") {
+      update["system.props.inventario_categoria"] = "respiracao";
+    }
+    return update;
   }
 
   return null;

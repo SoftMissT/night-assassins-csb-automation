@@ -38,6 +38,12 @@ export function weaponRepairChanges(item) {
   if (props.inventario_categoria !== "arma") {
     changes["system.props.inventario_categoria"] = "arma";
   }
+  // Ownership NONE herdado do template antigo impede o dono da ficha de abrir
+  // a ficha do item; Observer é o mínimo para ver/usar os botões.
+  const ownershipLevel = Number(item.ownership?.default ?? 0);
+  if (ownershipLevel < 2) {
+    changes.ownership = { ...(item.ownership ?? {}), default: 2 };
+  }
   const profiles = weaponProfilesFromProps(props);
   if (profiles.length > 0) {
     const next = {

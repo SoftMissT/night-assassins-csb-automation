@@ -33,7 +33,12 @@ export function actorKind(actor) {
     || props.pdv_slayer_total_conta !== undefined
     || props.pdv_slayer_total_valor !== undefined
     || markers.some((value) => value.includes("slayer_template") || SLAYER_TEMPLATE_IDS.has(value));
-  return explicitSlayer ? "slayer" : null;
+  if (explicitSlayer) return "slayer";
+
+  const explicitNpc = props.npc_nome !== undefined
+    || props.npc_pdv_base !== undefined
+    || markers.some((value) => value === "npc_template" || value.includes("npc_template"));
+  return explicitNpc ? "npc" : null;
 }
 
 export const isOniMinionActor = (actor) => actorKind(actor) === "oni_minion";

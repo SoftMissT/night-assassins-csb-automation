@@ -37,8 +37,8 @@ import { metalFormById } from "./metal-breathing-data.mjs";
 import { snowFormById } from "./snow-breathing-data.mjs";
 import { windFormById, WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
 import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, parseFlameBreathingState, resolveFlameRengokuAllies, FLAME_SYNERGY_DAMAGE_PER_ALLY, FLAME_SYNERGY_PDR_COST, tickFlameBreathing } from "./flame-breathing-service.mjs";
-import { buildStoneBreathingPlan, clearStoneBreathingState, stoneStatePatch, tickStoneBreathing } from "./stone-breathing-service.mjs";
-import { buildMistBreathingPlan, clearMistBreathingState, mistStatePatch, parseMistBreathingState, resolveEightLayersResult, tickMistBreathing } from "./mist-breathing-service.mjs";
+import { buildStoneBreathingPlan, clearStoneBreathingState, parseStoneBreathingState, stoneStatePatch, tickStoneBreathing } from "./stone-breathing-service.mjs";
+import { buildMistBreathingPlan, clearMistBreathingState, mistStatePatch, parseMistBreathingState, resolveEightLayersResult, resolveMistFormula, tickMistBreathing } from "./mist-breathing-service.mjs";
 import { buildMetalBreathingPlan, clearMetalBreathingState, resolveMetalMagnetism, tickMetalBreathing } from "./metal-breathing-service.mjs";
 import { buildSnowBreathingPlan, clearSnowBreathingState, grantBlizzardStealth, parseSnowBreathingState, resolveSnowRestrictionEscape, snowEffectiveBreathLevel, snowStatePatch, snowTickPatchWithExhaustion } from "./snow-breathing-service.mjs";
 import { buildWindBreathingPlan, clearWindBreathingState, parseWindBreathingState, tickWindBreathing, windStatePatch } from "./wind-breathing-service.mjs";
@@ -674,10 +674,38 @@ export async function triggerSnowOpportunityAttack({ actorUuid } = {}) {
   return rollHit({ actor, actorUuid: actor.uuid });
 }
 
+/**
+ * Extrai as fórmulas de dano das técnicas armadas (pendingDamage das sete
+ * Respirações) como entradas editáveis para pré-popular o modal de dano.
+ */
+function breathingTechniqueEntradas(actor) {
+  const props = actor?.system?.props ?? {};
+  const entradas = [];
+  const push = (formula, types) => {
+    if (!formula) return;
+    entradas.push({ tipoAcao: "ataque", dado: String(formula), fixo: 0, attrs: [], tiposDano: Array.isArray(types) ? types : [] });
+  };
+  const water = parseWaterBreathingState(props.resp_agua_estado).pendingDamage;
+  if (water?.formula) push(water.formula, water.types);
+  const flame = parseFlameBreathingState(props.resp_chamas_estado).pendingDamage;
+  if (flame?.formula) push(flame.formula, ["cortante"]);
+  if (flame?.comboRider?.formula) push(flame.comboRider.formula, ["cortante"]);
+  const stone = parseStoneBreathingState(props.resp_pedra_estado).pendingDamage;
+  if (stone?.formula) push(String(stone.formula).replace(/@for\b/giu, String(props.for_display ?? 0)), stone.types ?? ["concussao"]);
+  const mist = parseMistBreathingState(props.resp_nevoa_estado).pendingDamage;
+  if (mist?.formula) push(resolveMistFormula(mist.formula, props), ["cortante"]);
+  const snow = parseSnowBreathingState(props.resp_neve_estado).pendingDamage;
+  if (snow?.formula) push(snow.formula, ["congelante"]);
+  const wind = parseWindBreathingState(props.resp_vento_estado).pendingDamage;
+  if (wind?.formula) push(String(wind.formula).replace(/@(dex|fdv|for)\b/giu, (_m, key) => String(props[`${key.toLowerCase()}_display`] ?? 0)), wind.types);
+  return entradas;
+}
+
 async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem }) {
   const successful = hitResult.attempts.filter((attempt) => attempt.hit);
   const weaponItem = hitResult.weapon?.id ? actor.items?.get?.(hitResult.weapon.id) : null;
   const actionId = foundry.utils.randomID();
+  const techniqueEntradas = breathingTechniqueEntradas(actor);
   if (form.id === "nevoa_02") {
     const mistState = parseMistBreathingState(actor.system?.props?.resp_nevoa_estado);
     const resolved = resolveEightLayersResult(mistState, successful.length);
@@ -691,7 +719,10 @@ async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, r
     if (weaponItem) {
       await rollWeaponItem({ actor, item: weaponItem, weaponProfileIndex: hitResult.weapon.profileIndex, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     } else {
-      await rollDamage({ actor, nome: `${form.respiracao} ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
+      const entradas = techniqueEntradas.length > 0
+        ? techniqueEntradas
+        : [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }];
+      await rollDamage({ actor, nome: `${form.respiracao} ${form.nome}`, entradas, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true, skipBreathingInjection: techniqueEntradas.length > 0 });
     }
   }
 }

@@ -1870,3 +1870,23 @@
         transform: none;
     }
 }
+
+/* ── P0 estabilização: contraste da ficha escura ─────────────────────
+   Texto principal quase-branco dentro da raiz da ficha apenas.
+   Não afeta DialogV2, chat nem sidebar (fora de .custom-system-actor). */
+.custom-system-actor p,
+.custom-system-actor li {
+    color: #f2f2f2;
+}
+
+.custom-system-actor div[style*="color:#888"],
+.custom-system-actor span[style*="color:#888"],
+.custom-system-actor em[style*="color:#888"],
+.custom-system-actor div[style*="color: #888"],
+.custom-system-actor span[style*="color: #888"],
+.custom-system-actor div[style*="color:#aaa"],
+.custom-system-actor span[style*="color:#aaa"],
+.custom-system-actor div[style*="color: #aaa"],
+.custom-system-actor span[style*="color: #aaa"] {
+    color: #beb6aa;
+}

@@ -74,8 +74,8 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
         pendingEffects.push({
           id,
           kind: id === FLAME_EFFECT_MAIN ? "rider_damage" : "extra_standard_attack",
-          source: "chamas_01",
-          formula: selected.damage,
+          source: "chamas_02",
+          ...(id === FLAME_EFFECT_MAIN ? { formula: selected.damage } : {}),
           damageBonus: selected.extraAttackDamage ?? "",
           expires: "endOfTurn",
         });

@@ -4952,15 +4952,15 @@
       },
       {
         "name": "pdk_oni_conta_atual",
-        "value": "${pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor}$"
+        "value": "${pdk_oni_total_conta+fallback(pdk_oni_curado,0)+fallback(pdk_oni_extra,0)-fallback(pdk_oni_gasto_valor,0)}$"
       },
       {
         "name": "pdv_oni_conta_atual",
-        "value": "${pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_curado+pdv_oni_extra-pdv_oni_dano_tomado}$"
+        "value": "${pdv_oni_total_conta-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_curado,0)+fallback(pdv_oni_extra,0)-fallback(pdv_oni_dano_tomado,0)}$"
       },
       {
         "name": "pdv_oni_total_conta",
-        "value": "${origem_oni_pdv_inicial+(nvl_num>=2?pdv_oni_ganho_nvl2:0)+(nvl_num>=3?pdv_oni_ganho_nvl3:0)+(nvl_num>=4?pdv_oni_ganho_nvl4:0)+(nvl_num>=5?pdv_oni_ganho_nvl5:0)+(nvl_num>=6?pdv_oni_ganho_nvl6:0)+(nvl_num>=7?pdv_oni_ganho_nvl7:0)+(nvl_num>=8?pdv_oni_ganho_nvl8:0)+(nvl_num>=9?pdv_oni_ganho_nvl9:0)+(nvl_num>=10?pdv_oni_ganho_nvl10:0)+(nvl_num>=11?pdv_oni_ganho_nvl11:0)+(nvl_num>=12?pdv_oni_ganho_nvl12:0)+(nvl_num>=13?(30+vit_display):0)+(nvl_num>=14?(30+vit_display):0)+(nvl_num>=15?(30+vit_display):0)+(nvl_num>=16?(40+vit_display):0)+(nvl_num>=17?(40+vit_display):0)+(nvl_num>=18?(40+vit_display):0)+(nvl_num>=19?(40+vit_display):0)+(nvl_num>=20?(50+(vit_display*5)):0)}$"
+        "value": "${origem_oni_pdv_inicial+(nvl_num>=2?fallback(pdv_oni_ganho_nvl2,0):0)+(nvl_num>=3?fallback(pdv_oni_ganho_nvl3,0):0)+(nvl_num>=4?fallback(pdv_oni_ganho_nvl4,0):0)+(nvl_num>=5?fallback(pdv_oni_ganho_nvl5,0):0)+(nvl_num>=6?fallback(pdv_oni_ganho_nvl6,0):0)+(nvl_num>=7?fallback(pdv_oni_ganho_nvl7,0):0)+(nvl_num>=8?fallback(pdv_oni_ganho_nvl8,0):0)+(nvl_num>=9?fallback(pdv_oni_ganho_nvl9,0):0)+(nvl_num>=10?fallback(pdv_oni_ganho_nvl10,0):0)+(nvl_num>=11?fallback(pdv_oni_ganho_nvl11,0):0)+(nvl_num>=12?fallback(pdv_oni_ganho_nvl12,0):0)+(nvl_num>=13?(30+vit_display):0)+(nvl_num>=14?(30+vit_display):0)+(nvl_num>=15?(30+vit_display):0)+(nvl_num>=16?(40+vit_display):0)+(nvl_num>=17?(40+vit_display):0)+(nvl_num>=18?(40+vit_display):0)+(nvl_num>=19?(40+vit_display):0)+(nvl_num>=20?(50+(vit_display*5)):0)}$"
       },
       {
         "name": "pdk_oni_total_conta",
@@ -5020,19 +5020,19 @@
       },
       {
         "name": "pdv_oni_maximo_num",
-        "value": "${max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_extra)}$"
+        "value": "${max(0,pdv_oni_total_conta-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_extra,0))}$"
       },
       {
         "name": "pdv_oni_atual_num",
-        "value": "${min(pdv_oni_maximo_num,max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_curado+pdv_oni_extra-pdv_oni_dano_tomado))}$"
+        "value": "${min(pdv_oni_maximo_num,max(0,pdv_oni_total_conta-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_curado,0)+fallback(pdv_oni_extra,0)-fallback(pdv_oni_dano_tomado,0)))}$"
       },
       {
         "name": "pdk_oni_maximo_num",
-        "value": "${max(0,pdk_oni_total_conta+pdk_oni_extra)}$"
+        "value": "${max(0,pdk_oni_total_conta+fallback(pdk_oni_extra,0))}$"
       },
       {
         "name": "pdk_oni_atual_num",
-        "value": "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor))}$"
+        "value": "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+fallback(pdk_oni_curado,0)+fallback(pdk_oni_extra,0)-fallback(pdk_oni_gasto_valor,0)))}$"
       }
     ],
     "attributeBar": {

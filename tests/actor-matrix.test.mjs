@@ -29,8 +29,8 @@ describe("Matriz de Actors — classificacao e contratos", () => {
       assert.equal(actorKind(minion), "oni_minion");
     });
 
-    it("NPC nao classifica (null)", () => {
-      assert.equal(actorKind(npc), null);
+    it("NPC classifica como npc (P0: NPC agora tem PDV e recebe dano via relay)", () => {
+      assert.equal(actorKind(npc), "npc");
     });
   });
 

@@ -5,6 +5,7 @@ import { repairSlayerWeaponItems, weaponRepairChanges } from "../scripts/weapon-
 const armedItem = {
   id: "abc123",
   name: "Gilgamesh Yoroi do Sol",
+  ownership: { default: 2 },
   system: {
     template: "NAWeaponTpl00001",
     props: {
@@ -48,8 +49,11 @@ describe("weapon-migration", () => {
     assert.equal(weaponRepairChanges({ id: "x", name: "Erva", system: { props: { inventario_categoria: "item" } } }), null);
   });
 
-  it("ignora armas sem perfil de ataque", () => {
-    assert.equal(weaponRepairChanges({ id: "x", name: "Adaga", system: { props: { inventario_categoria: "arma" } } }), null);
+  it("arma sem perfil de ataque ainda recebe correção de ownership (P0: player abre item)", () => {
+    assert.deepEqual(
+      weaponRepairChanges({ id: "x", name: "Adaga", system: { props: { inventario_categoria: "arma" } } }),
+      { _id: "x", ownership: { default: 2 } },
+    );
   });
 
   it("contabiliza Actors corrigidos e itens atualizados", async () => {

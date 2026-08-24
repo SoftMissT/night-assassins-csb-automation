@@ -1872,23 +1872,23 @@
 }
 
 /* ── P0 estabilização: contraste da ficha escura ─────────────────────
-   Texto principal quase-branco dentro da raiz da ficha apenas.
-   Não afeta DialogV2, chat nem sidebar (fora de .custom-system-actor). */
-.custom-system-actor p,
-.custom-system-actor li {
+   Escopado a `.na-sheet`: sem isso, `.custom-system-actor` sozinho atinge
+   QUALQUER ficha CSB do mundo, inclusive de outros sistemas/módulos. */
+.na-sheet .custom-system-actor p,
+.na-sheet .custom-system-actor li {
     color: #f2f2f2;
 }
 
-.custom-system-actor div[style*="color:#888"],
-.custom-system-actor span[style*="color:#888"],
-.custom-system-actor em[style*="color:#888"],
-.custom-system-actor div[style*="color: #888"],
-.custom-system-actor span[style*="color: #888"],
-.custom-system-actor div[style*="color:#aaa"],
-.custom-system-actor span[style*="color:#aaa"],
-.custom-system-actor div[style*="color: #aaa"],
-.custom-system-actor span[style*="color: #aaa"] {
-    color: #beb6aa;
+.na-sheet .custom-system-actor div[style*="color:#888"],
+.na-sheet .custom-system-actor span[style*="color:#888"],
+.na-sheet .custom-system-actor em[style*="color:#888"],
+.na-sheet .custom-system-actor div[style*="color: #888"],
+.na-sheet .custom-system-actor span[style*="color: #888"],
+.na-sheet .custom-system-actor div[style*="color:#aaa"],
+.na-sheet .custom-system-actor span[style*="color:#aaa"],
+.na-sheet .custom-system-actor div[style*="color: #aaa"],
+.na-sheet .custom-system-actor span[style*="color: #aaa"] {
+    color: #f2f2f2;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -2244,3 +2244,48 @@
 .na-oni-sheet ::-webkit-scrollbar-thumb:hover {
     background: var(--oni-red);
 }
+
+/* ==========================================================================
+   Paleta por espécie de ficha + tipografia Orbitron (pedido do Operador)
+   - Oni / Oni Minion: fundo vermelho vinho
+   - Slayer / NPC:     fundo azul marinho escuro
+   - Texto de label:   branco (antes cinza via --na-muted)
+   - Orbitron em toda a ficha, não só nos títulos
+   ========================================================================== */
+
+/* Tudo abaixo fica restrito a `.window-content`: é o corpo da ficha. A classe
+   `.na-sheet` também é aplicada ao elemento externo da janela, então estilizar
+   `.na-sheet` direto vazaria para cabeçalho, tooltips e menus do Foundry. */
+
+.na-sheet .window-content,
+.na-sheet .window-content :is(button, input, select, textarea, label, span, td, th, a, p, div) {
+    font-family: var(--na-font-display);
+}
+
+/* Labels deixam de ser cinza: branco legível em qualquer um dos dois fundos. */
+.na-sheet .window-content {
+    --na-muted: #ffffff;
+    --color-text-secondary: #ffffff;
+}
+
+.na-sheet .window-content .na-sheet-label,
+.na-sheet .window-content label {
+    color: #ffffff;
+}
+
+/* --- Slayer e NPC: azul marinho escuro --- */
+.na-slayer-sheet .window-content,
+.na-npc-sheet .window-content {
+    background:
+        radial-gradient(ellipse 70% 45% at 100% 0%, rgba(40, 215, 255, 0.06), transparent 52%),
+        linear-gradient(165deg, #0d1b33 0%, #091327 55%, #060d1c 100%);
+}
+
+/* --- Oni e Oni Minion: vermelho vinho --- */
+.na-oni-sheet .window-content,
+.na-oni-minion-sheet .window-content {
+    background:
+        radial-gradient(ellipse 70% 45% at 100% 0%, rgba(255, 38, 56, 0.07), transparent 52%),
+        linear-gradient(165deg, #3a0d18 0%, #2a0912 55%, #1c060c 100%);
+}
+

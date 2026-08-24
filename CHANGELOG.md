@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.11.12 - 2026-08-24
+
+- **Ficha Slayer volta a renderizar**: três componentes `table` da aba de Combate tinham `contents` como lista plana de células em vez de lista de linhas, o que fazia o parser do CSB lançar `TypeError: row.entries is not a function` e abortar a montagem de toda a árvore de componentes — a ficha exibia apenas o cabeçalho. Estrutura restaurada para linhas × células.
+- **Atributos do Oni deixam de exibir "ERROR"**: campos numéricos mutáveis eram referenciados sem `fallback()` dentro de `switchCase()`; como o mathjs avalia todos os ramos, um campo ainda não preenchido contaminava o grafo inteiro de fórmulas (7 atributos, PDV, PDK e deslocamento de uma vez). Guardas aplicadas em toda a cadeia.
+- **Oni Minion ganha a aba de Combate**: painéis de Recursos e Combate movidos para um `tabbedPanel` com Combate e Configurações, espelhando a ficha Oni.
+- **NPC ganha PDR**: recurso completo (base, gasto, recuperado, extra, total e atual) no bloco de Recursos, seguindo o mesmo contrato do PDV do próprio NPC.
+- **Tipografia e paleta por espécie de ficha**: Orbitron aplicada ao corpo das fichas; fundo vermelho vinho em Oni e Oni Minion, azul marinho escuro em Slayer e NPC.
+- **Texto branco no lugar do cinza**: os labels usavam a cor "muted"; agora usam branco.
+- **CSS deixa de vazar para fora do módulo**: dois blocos usavam `.custom-system-actor` sem escopo, atingindo qualquer ficha CSB do mundo. Todo o stylesheet passa a ser escopado por `.na-sheet`, e os estilos ficam restritos a `.window-content` (o corpo da ficha), sem pintar o cabeçalho da janela do Foundry.
+- **Todas as quatro fichas recebem a classe de tema**: antes só Slayer e Oni eram detectados, deixando NPC e Oni Minion sem estilo algum; a detecção passa a usar `actorKind()`, cobrindo as quatro espécies.
+- **68 labels legados limpos**: rótulos que embutiam `<style>@import ...</style>` inline (padrão `custom-orbitron-wrapper`) — causa do texto minúsculo e desalinhado — convertidos para classes semânticas, preservando as cores por atributo.
+- **Nomenclatura das Respirações**: Chamas, Pedra, Metal e Névoa passam a exibir romaji + português (`Honoo no Kokyu (Chamas)`, `Iwa no Kokyu (Pedra)`, `Kinzoku no Kokyu (Metal)`, `Kasumi no Kokyu (Névoa)`), usando o romaji canônico do catálogo. Corrigidos também "Respiração da Amor" → "do Amor" e o espaço sobrando em "Respiração do Sangue".
+- Validação: `node --test` com **844/844** testes aprovados.
+
 ## 0.11.11 - 2026-08-24
 
 - **Revert de v0.11.8/v0.11.9/v0.11.10**: o tema mínimo (`na-sheet-theme.css`) e as mudanças de estrutura de fichas dessas versões quebraram a renderização real no Foundry — cores sumidas, fontes minúsculas, abas desorganizadas (Respiração dentro de Skills, Descanso/Deslocamento fora do lugar), Arma voltando para o container errado do inventário. Os testes automatizados dessas versões nunca cobriam essa classe de regressão visual. Restaura a estrutura de templates e o CSS (`na-csb-automation.css`) da v0.11.7, última baseline confirmada funcional.

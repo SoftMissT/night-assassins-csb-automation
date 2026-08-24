@@ -226,7 +226,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-vit\">${vit_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-vit\">${fallback(vit_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -250,7 +250,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-dex\">${dex_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-dex\">${fallback(dex_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -274,7 +274,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-for\">${for_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-for\">${fallback(for_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -298,7 +298,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-car\">${car_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-car\">${fallback(car_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -322,7 +322,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-fdv\">${fdv_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-fdv\">${fallback(fdv_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -346,7 +346,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-int\">${int_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-int\">${fallback(int_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -370,7 +370,7 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-sab\">${sab_display}$</span>",
+              "value": "<span class=\"na-sheet-text na-sheet-stat na-sheet-size-xl na-sheet-role-sab\">${fallback(sab_display,0)}$</span>",
               "prefix": "",
               "suffix": "",
               "rollMessage": "",
@@ -864,7 +864,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#C1000C;text-transform:uppercase;letter-spacing:.12em;\">${pdv_oni_maximo_num}$</span></div>",
+                      "value": "<span class=\"na-sheet-text na-sheet-role-for na-sheet-size-lg\">${fallback(pdv_oni_maximo_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -912,7 +912,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#C1000C;text-transform:uppercase;letter-spacing:.12em;\">${pdv_oni_atual_num}$</span></div>",
+                      "value": "<span class=\"na-sheet-text na-sheet-role-for na-sheet-size-lg\">${fallback(pdv_oni_atual_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -1029,7 +1029,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#B36CFF;text-transform:uppercase;letter-spacing:.12em;\">${pdk_oni_maximo_num}$</span></div>",
+                      "value": "<span class=\"na-sheet-text na-sheet-size-lg\" style=\"color:#b36cff\">${fallback(pdk_oni_maximo_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -1077,7 +1077,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#B36CFF;text-transform:uppercase;letter-spacing:.12em;\">${pdk_oni_atual_num}$</span></div>",
+                      "value": "<span class=\"na-sheet-text na-sheet-size-lg\" style=\"color:#b36cff\">${fallback(pdk_oni_atual_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -1232,7 +1232,7 @@
                           "type": "label",
                           "size": "full-size",
                           "icon": "",
-                          "value": "<div class=\"custom-orbitron-wrapper na-oni-resource-pdv\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;\">${pdv_oni_atual_num}$ / ${pdv_oni_maximo_num}$</span></div>",
+                          "value": "<span class=\"na-sheet-text na-sheet-size-lg\">${fallback(pdv_oni_atual_num,0)}$ / ${fallback(pdv_oni_maximo_num,0)}$</span>",
                           "prefix": "",
                           "suffix": "",
                           "rollMessage": "",
@@ -1299,7 +1299,7 @@
                           "type": "label",
                           "size": "full-size",
                           "icon": "",
-                          "value": "<div class=\"custom-orbitron-wrapper na-oni-resource-pdk\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;\">${pdk_oni_atual_num}$ / ${pdk_oni_maximo_num}$</span></div>",
+                          "value": "<span class=\"na-sheet-text na-sheet-size-lg\">${fallback(pdk_oni_atual_num,0)}$ / ${fallback(pdk_oni_maximo_num,0)}$</span>",
                           "prefix": "",
                           "suffix": "",
                           "rollMessage": "",
@@ -2350,7 +2350,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDV inicial da Origem: ${origem_oni_pdv_inicial}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDV inicial da Origem: ${fallback(origem_oni_pdv_inicial,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -2374,7 +2374,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDK inicial da Origem: ${origem_oni_pdk_inicial}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDK inicial da Origem: ${fallback(origem_oni_pdk_inicial,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -2419,7 +2419,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">Nível: ${nvl_num}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">Nível: ${fallback(nvl_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -2443,7 +2443,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">Patente: ${rank_atual}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">Patente: ${fallback(rank_atual,'')}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -2467,7 +2467,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDV Máximo: ${pdv_oni_maximo_num}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDV Máximo: ${fallback(pdv_oni_maximo_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -2491,7 +2491,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDK Máximo: ${pdk_oni_maximo_num}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-md\">PDK Máximo: ${fallback(pdk_oni_maximo_num,0)}$</span>",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",
@@ -4944,7 +4944,7 @@
                 "type": "label",
                 "size": "m-large",
                 "icon": "",
-                "value": "Rank: ${rank_atual}$",
+                "value": "Rank: ${fallback(rank_atual,'')}$",
                 "prefix": "",
                 "suffix": "",
                 "rollMessage": "",
@@ -5138,7 +5138,7 @@
                 "type": "label",
                 "size": "full-size",
                 "icon": "fas fa-person-running",
-                "value": "DESLOCAMENTO ${deslocamento_oni}$m",
+                "value": "DESLOCAMENTO ${fallback(deslocamento_oni,0)}$m",
                 "prefix": "",
                 "suffix": "",
                 "rollMessage": "",
@@ -5198,7 +5198,7 @@
       },
       {
         "name": "nvl_num",
-        "value": "${replace(nvl_pj, 'nvl_', '') * 1}$"
+        "value": "${replace(fallback(nvl_pj,'nvl_0'), 'nvl_', '') * 1}$"
       },
       {
         "name": "vit_display",
@@ -5230,31 +5230,31 @@
       },
       {
         "name": "pdk_oni_conta_atual",
-        "value": "${pdk_oni_total_conta+fallback(pdk_oni_curado,0)+fallback(pdk_oni_extra,0)-fallback(pdk_oni_gasto_valor,0)}$"
+        "value": "${fallback(pdk_oni_total_conta,0)+fallback(pdk_oni_curado,0)+fallback(pdk_oni_extra,0)-fallback(pdk_oni_gasto_valor,0)}$"
       },
       {
         "name": "pdv_oni_conta_atual",
-        "value": "${pdv_oni_total_conta-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_curado,0)+fallback(pdv_oni_extra,0)-fallback(pdv_oni_dano_tomado,0)}$"
+        "value": "${fallback(pdv_oni_total_conta,0)-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_curado,0)+fallback(pdv_oni_extra,0)-fallback(pdv_oni_dano_tomado,0)}$"
       },
       {
         "name": "pdv_oni_total_conta",
-        "value": "${origem_oni_pdv_inicial+(nvl_num>=2?fallback(pdv_oni_ganho_nvl2,0):0)+(nvl_num>=3?fallback(pdv_oni_ganho_nvl3,0):0)+(nvl_num>=4?fallback(pdv_oni_ganho_nvl4,0):0)+(nvl_num>=5?fallback(pdv_oni_ganho_nvl5,0):0)+(nvl_num>=6?fallback(pdv_oni_ganho_nvl6,0):0)+(nvl_num>=7?fallback(pdv_oni_ganho_nvl7,0):0)+(nvl_num>=8?fallback(pdv_oni_ganho_nvl8,0):0)+(nvl_num>=9?fallback(pdv_oni_ganho_nvl9,0):0)+(nvl_num>=10?fallback(pdv_oni_ganho_nvl10,0):0)+(nvl_num>=11?fallback(pdv_oni_ganho_nvl11,0):0)+(nvl_num>=12?fallback(pdv_oni_ganho_nvl12,0):0)+(nvl_num>=13?(30+vit_display):0)+(nvl_num>=14?(30+vit_display):0)+(nvl_num>=15?(30+vit_display):0)+(nvl_num>=16?(40+vit_display):0)+(nvl_num>=17?(40+vit_display):0)+(nvl_num>=18?(40+vit_display):0)+(nvl_num>=19?(40+vit_display):0)+(nvl_num>=20?(50+(vit_display*5)):0)}$"
+        "value": "${fallback(origem_oni_pdv_inicial,0)+(nvl_num>=2?fallback(pdv_oni_ganho_nvl2,0):0)+(nvl_num>=3?fallback(pdv_oni_ganho_nvl3,0):0)+(nvl_num>=4?fallback(pdv_oni_ganho_nvl4,0):0)+(nvl_num>=5?fallback(pdv_oni_ganho_nvl5,0):0)+(nvl_num>=6?fallback(pdv_oni_ganho_nvl6,0):0)+(nvl_num>=7?fallback(pdv_oni_ganho_nvl7,0):0)+(nvl_num>=8?fallback(pdv_oni_ganho_nvl8,0):0)+(nvl_num>=9?fallback(pdv_oni_ganho_nvl9,0):0)+(nvl_num>=10?fallback(pdv_oni_ganho_nvl10,0):0)+(nvl_num>=11?fallback(pdv_oni_ganho_nvl11,0):0)+(nvl_num>=12?fallback(pdv_oni_ganho_nvl12,0):0)+(nvl_num>=13?(30+fallback(vit_display,0)):0)+(nvl_num>=14?(30+fallback(vit_display,0)):0)+(nvl_num>=15?(30+fallback(vit_display,0)):0)+(nvl_num>=16?(40+fallback(vit_display,0)):0)+(nvl_num>=17?(40+fallback(vit_display,0)):0)+(nvl_num>=18?(40+fallback(vit_display,0)):0)+(nvl_num>=19?(40+fallback(vit_display,0)):0)+(nvl_num>=20?(50+(fallback(vit_display,0)*5)):0)}$"
       },
       {
         "name": "pdk_oni_total_conta",
-        "value": "${origem_oni_pdk_inicial+(nvl_num>=2?4:0)+(nvl_num>=3?4:0)+(nvl_num>=4?6:0)+(nvl_num>=5?6:0)+(nvl_num>=6?6:0)+(nvl_num>=7?8:0)+(nvl_num>=8?8:0)+(nvl_num>=9?20:0)+(nvl_num>=10?10:0)+(nvl_num>=11?10:0)+(nvl_num>=12?12:0)+(nvl_num>=13?12:0)+(nvl_num>=14?14:0)+(nvl_num>=15?14:0)+(nvl_num>=16?16:0)+(nvl_num>=17?16:0)+(nvl_num>=18?18:0)+(nvl_num>=19?20:0)+(nvl_num>=20?50:0)}$"
+        "value": "${fallback(origem_oni_pdk_inicial,0)+(nvl_num>=2?4:0)+(nvl_num>=3?4:0)+(nvl_num>=4?6:0)+(nvl_num>=5?6:0)+(nvl_num>=6?6:0)+(nvl_num>=7?8:0)+(nvl_num>=8?8:0)+(nvl_num>=9?20:0)+(nvl_num>=10?10:0)+(nvl_num>=11?10:0)+(nvl_num>=12?12:0)+(nvl_num>=13?12:0)+(nvl_num>=14?14:0)+(nvl_num>=15?14:0)+(nvl_num>=16?16:0)+(nvl_num>=17?16:0)+(nvl_num>=18?18:0)+(nvl_num>=19?20:0)+(nvl_num>=20?50:0)}$"
       },
       {
         "name": "deslocamento_oni",
-        "value": "${7+dex_display}$"
+        "value": "${7+fallback(dex_display,0)}$"
       },
       {
         "name": "origem_oni_pdv_inicial",
-        "value": "${switchCase(origem_dropdown,\n  'origem_oni_passado_triste',\n  22+vit_nvl1,\n  'origem_oni_personalidade_maligna',\n  16+vit_nvl1,\n  'origem_oni_rastreador_de_sangue',\n  20+vit_nvl1,\n  'origem_oni_genio_do_mal',\n  20+vit_nvl1,\n  'origem_oni_adepto_das_trevas',\n  19+vit_nvl1,\n  'origem_oni_comum',\n  18+vit_nvl1,\n  'origem_oni_corte_palida',\n  22+vit_nvl1,\n  'origem_oni_mare_negra',\n  28+vit_nvl1,\n  'origem_oni_raiz_podre',\n  30+vit_nvl1,\n  'origem_oni_realidade_distorcida',\n  28+vit_nvl1,\n  'origem_oni_tela_do_submundo',\n  30+vit_nvl1,\n  'origem_oni_oni_de_outras_terras',\n  20+vit_nvl1,\n  'origem_oni_transfigurado',\n  28+vit_nvl1,\n  'origem_oni_eco_eterno',\n  26+vit_nvl1,\n  'origem_oni_chama_negra',\n  32+vit_nvl1,\n  'origem_oni_demonio_de_linhagem_infernal',\n  21+vit_nvl1,\n  'origem_oni_espirito_ceifador',\n  20+vit_nvl1,\n  'origem_oni_monarca_demoniaco',\n  22+vit_nvl1,\n  'origem_oni_vampiro_de_linhagem',\n  19+vit_nvl1,\n  'origem_oni_exterminador_corrompido',\n  30+(vit_nvl1*3)+(10*oni_nivel_na_queda),\n  0\n)}$"
+        "value": "${switchCase(origem_dropdown,\n  'origem_oni_passado_triste',\n  22+fallback(vit_nvl1,0),\n  'origem_oni_personalidade_maligna',\n  16+fallback(vit_nvl1,0),\n  'origem_oni_rastreador_de_sangue',\n  20+fallback(vit_nvl1,0),\n  'origem_oni_genio_do_mal',\n  20+fallback(vit_nvl1,0),\n  'origem_oni_adepto_das_trevas',\n  19+fallback(vit_nvl1,0),\n  'origem_oni_comum',\n  18+fallback(vit_nvl1,0),\n  'origem_oni_corte_palida',\n  22+fallback(vit_nvl1,0),\n  'origem_oni_mare_negra',\n  28+fallback(vit_nvl1,0),\n  'origem_oni_raiz_podre',\n  30+fallback(vit_nvl1,0),\n  'origem_oni_realidade_distorcida',\n  28+fallback(vit_nvl1,0),\n  'origem_oni_tela_do_submundo',\n  30+fallback(vit_nvl1,0),\n  'origem_oni_oni_de_outras_terras',\n  20+fallback(vit_nvl1,0),\n  'origem_oni_transfigurado',\n  28+fallback(vit_nvl1,0),\n  'origem_oni_eco_eterno',\n  26+fallback(vit_nvl1,0),\n  'origem_oni_chama_negra',\n  32+fallback(vit_nvl1,0),\n  'origem_oni_demonio_de_linhagem_infernal',\n  21+fallback(vit_nvl1,0),\n  'origem_oni_espirito_ceifador',\n  20+fallback(vit_nvl1,0),\n  'origem_oni_monarca_demoniaco',\n  22+fallback(vit_nvl1,0),\n  'origem_oni_vampiro_de_linhagem',\n  19+fallback(vit_nvl1,0),\n  'origem_oni_exterminador_corrompido',\n  30+(fallback(vit_nvl1,0)*3)+(10*fallback(oni_nivel_na_queda,0)),\n  0\n)}$"
       },
       {
         "name": "origem_oni_pdk_inicial",
-        "value": "${switchCase(origem_dropdown,\n  'origem_oni_passado_triste',\n  2+(fdv_nvl1*4),\n  'origem_oni_personalidade_maligna',\n  3+(fdv_nvl1*4),\n  'origem_oni_rastreador_de_sangue',\n  1+(fdv_nvl1*4),\n  'origem_oni_genio_do_mal',\n  2+(fdv_nvl1*4),\n  'origem_oni_adepto_das_trevas',\n  4+(fdv_nvl1*4),\n  'origem_oni_comum',\n  8+(fdv_nvl1*3),\n  'origem_oni_corte_palida',\n  18+(fdv_nvl1*3),\n  'origem_oni_mare_negra',\n  18+(fdv_nvl1*3),\n  'origem_oni_raiz_podre',\n  14+(fdv_nvl1*3),\n  'origem_oni_realidade_distorcida',\n  20+(fdv_nvl1*3),\n  'origem_oni_tela_do_submundo',\n  24+(fdv_nvl1*3),\n  'origem_oni_oni_de_outras_terras',\n  16+(fdv_nvl1*3),\n  'origem_oni_transfigurado',\n  14+(fdv_nvl1*3),\n  'origem_oni_eco_eterno',\n  22+(fdv_nvl1*3),\n  'origem_oni_chama_negra',\n  20+(fdv_nvl1*3),\n  'origem_oni_demonio_de_linhagem_infernal',\n  20+(fdv_nvl1*3),\n  'origem_oni_espirito_ceifador',\n  18+(fdv_nvl1*3),\n  'origem_oni_monarca_demoniaco',\n  20+(fdv_nvl1*3),\n  'origem_oni_vampiro_de_linhagem',\n  20+(fdv_nvl1*3),\n  'origem_oni_exterminador_corrompido',\n  oni_recurso_slayer_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3),\n  0\n)}$"
+        "value": "${switchCase(origem_dropdown,\n  'origem_oni_passado_triste',\n  2+(fallback(fdv_nvl1,0)*4),\n  'origem_oni_personalidade_maligna',\n  3+(fallback(fdv_nvl1,0)*4),\n  'origem_oni_rastreador_de_sangue',\n  1+(fallback(fdv_nvl1,0)*4),\n  'origem_oni_genio_do_mal',\n  2+(fallback(fdv_nvl1,0)*4),\n  'origem_oni_adepto_das_trevas',\n  4+(fallback(fdv_nvl1,0)*4),\n  'origem_oni_comum',\n  8+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_corte_palida',\n  18+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_mare_negra',\n  18+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_raiz_podre',\n  14+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_realidade_distorcida',\n  20+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_tela_do_submundo',\n  24+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_oni_de_outras_terras',\n  16+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_transfigurado',\n  14+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_eco_eterno',\n  22+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_chama_negra',\n  20+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_demonio_de_linhagem_infernal',\n  20+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_espirito_ceifador',\n  18+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_monarca_demoniaco',\n  20+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_vampiro_de_linhagem',\n  20+(fallback(fdv_nvl1,0)*3),\n  'origem_oni_exterminador_corrompido',\n  fallback(oni_recurso_slayer_antes_queda,0)+(fallback(oni_nivel_na_queda,0)*2)+(fallback(fdv_nvl1,0)*3),\n  0\n)}$"
       },
       {
         "name": "origem_oni_bonus_vit",
@@ -5286,19 +5286,19 @@
       },
       {
         "name": "pdv_oni_maximo_num",
-        "value": "${max(0,pdv_oni_total_conta-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_extra,0))}$"
+        "value": "${max(0,fallback(pdv_oni_total_conta,0)-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_extra,0))}$"
       },
       {
         "name": "pdv_oni_atual_num",
-        "value": "${min(pdv_oni_maximo_num,max(0,pdv_oni_total_conta-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_curado,0)+fallback(pdv_oni_extra,0)-fallback(pdv_oni_dano_tomado,0)))}$"
+        "value": "${min(fallback(pdv_oni_maximo_num,0),max(0,fallback(pdv_oni_total_conta,0)-fallback(pdv_oni_dano_ferida,0)+fallback(pdv_oni_curado,0)+fallback(pdv_oni_extra,0)-fallback(pdv_oni_dano_tomado,0)))}$"
       },
       {
         "name": "pdk_oni_maximo_num",
-        "value": "${max(0,pdk_oni_total_conta+fallback(pdk_oni_extra,0))}$"
+        "value": "${max(0,fallback(pdk_oni_total_conta,0)+fallback(pdk_oni_extra,0))}$"
       },
       {
         "name": "pdk_oni_atual_num",
-        "value": "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+fallback(pdk_oni_curado,0)+fallback(pdk_oni_extra,0)-fallback(pdk_oni_gasto_valor,0)))}$"
+        "value": "${min(fallback(pdk_oni_maximo_num,0),max(0,fallback(pdk_oni_total_conta,0)+fallback(pdk_oni_curado,0)+fallback(pdk_oni_extra,0)-fallback(pdk_oni_gasto_valor,0)))}$"
       },
       {
         "name": "rank_especializacao_oni",

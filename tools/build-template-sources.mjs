@@ -1,7 +1,6 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { useNativeCsbPresentation } from "./native-csb-style.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const templates = [
@@ -30,7 +29,6 @@ await mkdir(outputDirectory, { recursive: true });
 for (const template of templates) {
   if (template.id.length !== 16) throw new Error(`ID inválido para ${template.file}: ${template.id}`);
   const source = JSON.parse(await readFile(path.join(root, template.file), "utf8"));
-  useNativeCsbPresentation(source);
   source._id = template.id;
   source._key = `!actors!${template.id}`;
   source.folder = null;

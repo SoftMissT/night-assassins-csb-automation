@@ -15,20 +15,10 @@ export function parseWindBreathingState(raw) {
   }
 }
 
-export function windSummary(state = {}) {
-  const battle = state.battleDamage ?? {};
-  const scars = Math.max(0, Math.trunc(parseNumber(state.scars)));
-  const vitBonus = Math.max(0, Math.trunc(parseNumber(state.vitBonus)));
-  const cutPierce = Math.max(0, Math.trunc(parseNumber(battle.cutPierce)));
-  const bleedInfection = Math.max(0, Math.trunc(parseNumber(battle.bleedInfection)));
-  return `Cicatrizes ${scars}/4 · VIT +${vitBonus} · Batalha C/P ${cutPierce} · Sang./Inf. ${bleedInfection}`;
-}
-
 export function windStatePatch(state, overrides = {}) {
   return {
     [`system.props.${WIND_STATE_KEY}`]: JSON.stringify({ version: 1, ...state }),
     "system.props.resp_vento_cicatrizes": Math.max(0, Math.trunc(parseNumber(state.scars))),
-    "system.props.resp_vento_resumo": windSummary(state),
     ...overrides,
   };
 }

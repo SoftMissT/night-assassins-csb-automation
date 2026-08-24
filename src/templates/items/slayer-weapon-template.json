@@ -60,6 +60,14 @@
           "defaultValue": ""
         },
         {
+          "key": "arma_imagem_vertical",
+          "type": "textField",
+          "size": "full-size",
+          "label": "Arte vertical da arma (9:16)",
+          "defaultValue": "",
+          "tooltip": "Caminho da ilustração expandida. Ex.: modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp"
+        },
+        {
           "key": "arma_requisito",
           "type": "textField",
           "size": "full-size",
@@ -78,18 +86,62 @@
         {
           "key": "arma_contexto",
           "type": "panel",
-          "flow": "vertical",
+          "flow": "grid-4",
           "align": "center",
           "verticalAlign": "center",
-          "title": "ROLAGEM DA ARMA",
+          "title": "DANO DO PORTADOR",
           "titleStyle": "bold",
           "contents": [
             {
               "key": "",
               "type": "label",
               "size": "full-size",
+              "value": "Rank: ${fetchFromParent('rank_atual', {fallback: 'Sem portador', top: true})}$",
+              "rollMessage": "",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "style": "bold"
+            },
+            {
+              "key": "",
+              "type": "label",
+              "size": "full-size",
+              "value": "FOR: ${fetchFromParent('for_display', {fallback: 0, top: true})}$",
+              "rollMessage": "",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "style": "bold"
+            },
+            {
+              "key": "",
+              "type": "label",
+              "size": "full-size",
+              "value": "DEX: ${fetchFromParent('dex_display', {fallback: 0, top: true})}$",
+              "rollMessage": "",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "style": "bold"
+            },
+            {
+              "key": "",
+              "type": "label",
+              "size": "full-size",
+              "value": "FDV: ${fetchFromParent('fdv_display', {fallback: 0, top: true})}$",
+              "rollMessage": "",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "style": "bold"
+            },
+            {
+              "key": "",
+              "type": "label",
+              "size": "full-size",
               "icon": "",
-              "value": "ROLAR DANO DA ARMA",
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR DANO DA ARMA</span>",
               "tooltip": "Calcula o perfil, o Rank e os atributos finais do Caçador portador.",
               "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid});}%",
               "altRollMessage": "",

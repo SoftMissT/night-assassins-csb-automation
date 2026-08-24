@@ -53,16 +53,8 @@ const ONI_FORBIDDEN_UI_KEYS = new Set([
   "vida_morte_oni_sucessos", "vida_morte_oni_falhas",
   "descanso_oni_gerenciar", "descanso_oni_dados",
   "inventario_oni_armas",
-  "oni_pdr_maximo_antes_queda",
 ]);
 const ONI_LEDGER_KEYS = new Set([...ADMIN_LEDGER_KEYS, ...LEGACY_DISPLAY_KEYS]);
-const ONI_CONFIG_JUNK_KEYS = new Set([
-  "perfil_oni_resumo_panel", "perfil_oni_bio",
-  "inventario_oni_moedas_panel", "inventario_oni_titulo",
-  "inventario_oni_equipamentos", "inventario_oni_itens",
-  "notas_oni_titulo", "notas_oni_diario", "notas_oni_anotacoes",
-  "recursos_oni_admin_panel", "progressao_oni_recursos_panel",
-]);
 
 function clone(value) {
   return structuredClone(value);
@@ -202,17 +194,7 @@ function repairCurrentOniTemplate(t, tabbedPanel) {
   if (!combatTab || !configsTab) throw new Error("Abas Oni Combate/Configurações não encontradas.");
   combatTab.name = "COMBATE";
   configsTab.name = "CONFIGURAÇÕES";
-  configsTab.contents = pruneByKeys(configsTab.contents ?? [], ONI_CONFIG_JUNK_KEYS)
-    .filter((node) => {
-      if (node?.type !== "label") return true;
-      const text = String(node.value ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-      return text !== "IDENTIDADE & INVENTÁRIO"
-        && text !== "INVENTÁRIO"
-        && text !== "NOTAS & DIÁRIO"
-        && text !== "Configurações Atributos Geral";
-    });
   ensureOniCombatLedger(t, combatTab);
-  tabbedPanel.contents = [combatTab, configsTab];
   t.system.templateSystemUniqueVersion = Math.max(1, Number(t.system.templateSystemUniqueVersion) || 0) + 1;
   return t;
 }
@@ -436,14 +418,23 @@ export function cleanOniTemplate(source) {
     ], { title: "Progressão", flow: "vertical" }),
   ];
 
-  // ── 8. CONFIG / DADOS: somente progressão e configuração mecânica Oni ──
+  // ── 8. Seção IDENTIDADE & INVENTÁRIO (mescla perfil/bio + inventario + notas, dentro de CONFIG) ──
+  const identidadeInventarioSection = [
+    label("IDENTIDADE & INVENTÁRIO", { size: "na-sheet-size-xl", role: "car" }),
+    ...(perfil.contents ?? []),
+    ...pruneByKeys(clone(inventario.contents ?? []), new Set(["inventario_oni_armas"])),
+    ...(notas.contents ?? []),
+  ];
+
+  // ── 9. CONFIG / DADOS: seções movidas + campos administrativos (config renomeado) ──
   configs.contents = [
     ...especializacaoSection,
     ...origemProgressaoSection,
+    ...identidadeInventarioSection,
     ...configs.contents,
   ];
 
-  // ── 9. Recompor tabbedPanel na ordem final (2 abas) ──
+  // ── 10. Recompor tabbedPanel na ordem final (2 abas) ──
   tabbedPanel.contents = [
     tab("combate_oni_tab", combat.contents),
     tab("configs_tab", configs.contents),

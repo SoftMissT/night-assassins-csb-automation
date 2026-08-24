@@ -1,7 +1,7 @@
 ---
 title: "Compêndios completos de Respirações e Armas Slayer"
 created: "2026-08-13"
-last_updated: "2026-08-24"
+last_updated: "2026-08-13"
 status: active
 type: spec
 tags:
@@ -34,8 +34,8 @@ Os arquivos editoriais permanecem na base de conhecimento `MACRO-NA-FOUNDRY`. O 
 - Template `_equippableItemTemplate`: `NA Arma - Slayer`.
 - Uma pasta para as armas básicas de `Armas.md` e outra para as armas especiais descritas nos arquivos individuais de `Mecânicas para fazer na ficha/Armas/`.
 - Um Item por entrada numerada de `Armas.md` e um Item por arma especial individual.
-- Props obrigatórias: `inventario_categoria=arma`, dano fixo, dados, atributos, tipos de dano, crítico, alcance, propriedades, requisito e descrição integral.
-- `img` é a única imagem do Item e deve apontar para o ícone da arma em `assets/icons/weapons/`; o campo legado `arma_imagem_vertical` não faz parte do contrato do template.
+- Props obrigatórias: `inventario_categoria=arma`, dano fixo, dados, atributos, tipos de dano, crítico, alcance, propriedades, requisito, `arma_imagem_vertical` e descrição integral.
+- `img` guarda a miniatura quadrada 1:1; `arma_imagem_vertical` guarda a arte expandida 9:16 em `assets/weapons/vertical/`.
 - O template editável da arma fica em `src/templates/items/slayer-weapon-template.json`; somente o Compêndio compilado em `packs/` entra no pacote do Foundry.
 - O Item Displayer existente na ficha Slayer chama a macro canônica de dano usando essas props.
 - Armas especiais não podem ser reduzidas ao ataque-base: devem preservar entidade, demônio, lado dominante, gatilho, reação, estados de despertar, dano por Rank, técnicas, ritual, vínculo e regras de crítico.

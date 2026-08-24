@@ -40,26 +40,14 @@ describe("reconstrução do template Oni (estrutura de domínio aprovada)", () =
     ]) {
       assert.doesNotMatch(serialized, new RegExp(term), `contaminação encontrada: ${term}`);
     }
-    assert.doesNotMatch(serialized, /PDR|oni_pdr_maximo_antes_queda/);
-  });
-
-  it("mantém somente Combate e Configurações, sem inventário, perfil ou notas", () => {
-    const tabs = collect(source.system.body, (entry) => entry.type === "tab");
-    assert.deepEqual(tabs.map(({ key, name }) => [key, name]), [
-      ["combate_oni_tab", "COMBATE"],
-      ["configs_tab", "CONFIGURAÇÕES"],
-    ]);
-    const configs = tabs.find(({ key }) => key === "configs_tab");
-    const serialized = JSON.stringify(configs);
-    for (const junk of ["perfil_oni_", "inventario_oni_", "notas_oni_", "IDENTIDADE & INVENTÁRIO", "recursos_oni_admin_panel", "progressao_oni_recursos_panel"]) {
-      assert.doesNotMatch(serialized, new RegExp(junk), `configuração Oni contém bloco inútil: ${junk}`);
-    }
-  });
-
-  it("não possui keys de componente duplicadas", () => {
-    const keys = collect(source.system.body, (entry) => typeof entry.type === "string" && typeof entry.key === "string" && entry.key).map(({ key }) => key);
-    const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
-    assert.deepEqual([...new Set(duplicates)], []);
+    // "PDR" é mecanicamente legítimo aqui: a Origem "Exterminador Corrompido"
+    // (fonte: Onis/Origens/Exterminador Corrompido.md) define PDK = "PDR Máximo
+    // anterior + ...", referência textual ao antigo recurso de Caçador do
+    // personagem antes da Queda. Só o label explicativo pode citar PDR; nenhum
+    // outro resíduo de Slayer (Fôlego, Marca, Metal) pode aparecer.
+    const pdrMatches = [...serialized.matchAll(/PDR/g)];
+    assert.equal(pdrMatches.length, 1, `esperado exatamente 1 ocorrência de PDR (label da Origem Exterminador Corrompido), encontrado ${pdrMatches.length}`);
+    assert.match(serialized, /PDR m.ximo antes da Queda/, "a única ocorrência de PDR deve ser o label da Origem Exterminador Corrompido");
   });
 
   it("não usa mais a key/placeholder de Classe do Slayer — usa Especialização Oni", () => {

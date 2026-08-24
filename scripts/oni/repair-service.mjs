@@ -14,15 +14,7 @@
 import { MODULE_ID } from "../constants.mjs";
 import { actorKind } from "../actor-kind.mjs";
 
-export const ONI_REPAIR_VERSION = 2;
-
-const NUMERIC_PROP_PATTERNS = Object.freeze([
-  /^atr_(?:vit|dex|for|car|fdv|int|sab)_valor_config$/,
-  /^bonus_atr_(?:vit|dex|for|car|fdv|int|sab)_valor_temp$/,
-  /^pdv_oni_ganho_nvl\d+$/,
-  /^(?:pdv_oni_(?:dano_tomado|dano_ferida|curado|extra)|pdk_oni_(?:gasto_valor|curado|extra))$/,
-  /^oni_(?:nivel_na_queda|recurso_slayer_antes_queda)$/,
-]);
+export const ONI_REPAIR_VERSION = 1;
 
 /** Mapa key antiga (dropdown "Classe") -> key nova (dropdown "Especialização"). */
 const LEGACY_CLASS_TO_SPECIALIZATION = Object.freeze({
@@ -40,36 +32,8 @@ const LEGACY_CLASS_TO_SPECIALIZATION = Object.freeze({
 });
 
 function integer(value) {
-  const n = primitiveNumber(value);
+  const n = Number(value);
   return Number.isFinite(n) ? Math.trunc(n) : null;
-}
-
-/**
- * Converte valores legados de NumberField que o CSB persistiu como wrappers
- * (`{value: 4}` etc.) sem transformar dropdowns e textos em números.
- * @param {unknown} value
- * @returns {number}
- */
-export function primitiveNumber(value) {
-  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
-  if (value && typeof value === "object") {
-    for (const key of ["value", "current", "total", "number"]) {
-      if (Object.hasOwn(value, key)) return primitiveNumber(value[key]);
-    }
-    const primitive = value.valueOf?.();
-    if (primitive !== value) return primitiveNumber(primitive);
-    return 0;
-  }
-  const cleaned = String(value ?? "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(",", ".")
-    .trim();
-  const n = Number(cleaned);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function isNumericOniProp(key) {
-  return NUMERIC_PROP_PATTERNS.some((pattern) => pattern.test(key));
 }
 
 /**
@@ -95,15 +59,7 @@ export function planOniRepair(actorLike) {
     }
   }
 
-  // 2. NumberFields antigos podem ter sido persistidos como Object durante
-  // importações/reloads do CSB. `fallback()` não converte tipo: um Object
-  // chega ao MathJS e quebra toda a cadeia de atributos, PDV e PDK.
-  for (const [key, value] of Object.entries(props)) {
-    if (!isNumericOniProp(key) || (typeof value !== "object" && Number.isFinite(Number(value)))) continue;
-    patch[`system.props.${key}`] = primitiveNumber(value);
-  }
-
-  // 3. PDV/PDK atual: NUNCA restaurar para o máximo. O ledger de dano
+  // 2. PDV/PDK atual: NUNCA restaurar para o máximo. O ledger de dano
   // (pdv_oni_dano_tomado / pdv_oni_curado / pdv_oni_extra e os equivalentes
   // de PDK) permanece com as MESMAS keys no template novo — não é
   // renomeado — então o valor atual computado (pdv_oni_atual_num /
@@ -115,7 +71,7 @@ export function planOniRepair(actorLike) {
   if (pdvAtual !== null) preserved.pdvAtual = pdvAtual;
   if (pdkAtual !== null) preserved.pdkAtual = pdkAtual;
 
-  // 4. Progressão: nível, Origem, atributos, ledger de PDV, notas, Items —
+  // 3. Progressão: nível, Origem, atributos, ledger de PDV, notas, Items —
   // todos permanecem nas MESMAS keys (nvl_pj, origem_dropdown,
   // atr_*_valor_config, pdv_oni_ganho_nvlN, notas_oni_diario, Items do
   // Actor). Nada a migrar; preservados por construção.

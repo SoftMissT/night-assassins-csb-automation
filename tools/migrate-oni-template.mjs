@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { useNativeCsbPresentation } from "./native-csb-style.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const defaultSource = path.join(root, "oni.json");
@@ -139,29 +138,29 @@ function configureOniOrigins(template) {
   }
 
   const pdvBase = {
-    passado_triste: "22+vit_display", personalidade_maligna: "16+vit_display",
-    rastreador_de_sangue: "20+vit_display", genio_do_mal: "20+vit_display",
-    adepto_das_trevas: "19+vit_display", comum: "18+vit_display",
-    corte_palida: "22+vit_display", mare_negra: "28+vit_display", raiz_podre: "30+vit_display",
-    realidade_distorcida: "28+vit_display", tela_do_submundo: "30+vit_display",
-    oni_de_outras_terras: "20+vit_display", transfigurado: "28+vit_display",
-    eco_eterno: "26+vit_display", chama_negra: "32+vit_display",
-    demonio_de_linhagem_infernal: "21+vit_display", espirito_ceifador: "20+vit_display",
-    monarca_demoniaco: "22+vit_display", vampiro_de_linhagem: "19+vit_display",
-    exterminador_corrompido: "30+(vit_display*3)+(10*oni_nivel_na_queda)",
+    passado_triste: "22+vit_nvl1", personalidade_maligna: "16+vit_nvl1",
+    rastreador_de_sangue: "20+vit_nvl1", genio_do_mal: "20+vit_nvl1",
+    adepto_das_trevas: "19+vit_nvl1", comum: "18+vit_nvl1",
+    corte_palida: "22+vit_nvl1", mare_negra: "28+vit_nvl1", raiz_podre: "30+vit_nvl1",
+    realidade_distorcida: "28+vit_nvl1", tela_do_submundo: "30+vit_nvl1",
+    oni_de_outras_terras: "20+vit_nvl1", transfigurado: "28+vit_nvl1",
+    eco_eterno: "26+vit_nvl1", chama_negra: "32+vit_nvl1",
+    demonio_de_linhagem_infernal: "21+vit_nvl1", espirito_ceifador: "20+vit_nvl1",
+    monarca_demoniaco: "22+vit_nvl1", vampiro_de_linhagem: "19+vit_nvl1",
+    exterminador_corrompido: "30+(vit_nvl1*3)+(10*oni_nivel_na_queda)",
   };
   const pdkBase = {
-    passado_triste: "2+(fdv_display*4)", personalidade_maligna: "3+(fdv_display*4)",
-    rastreador_de_sangue: "1+(fdv_display*4)", genio_do_mal: "2+(fdv_display*4)",
-    adepto_das_trevas: "4+(fdv_display*4)", comum: "8+(fdv_display*3)",
-    corte_palida: "18+(fdv_display*3)", mare_negra: "18+(fdv_display*3)",
-    raiz_podre: "14+(fdv_display*3)", realidade_distorcida: "20+(fdv_display*3)",
-    tela_do_submundo: "24+(fdv_display*3)", oni_de_outras_terras: "16+(fdv_display*3)",
-    transfigurado: "14+(fdv_display*3)", eco_eterno: "22+(fdv_display*3)",
-    chama_negra: "20+(fdv_display*3)", demonio_de_linhagem_infernal: "20+(fdv_display*3)",
-    espirito_ceifador: "18+(fdv_display*3)", monarca_demoniaco: "20+(fdv_display*3)",
-    vampiro_de_linhagem: "20+(fdv_display*3)",
-    exterminador_corrompido: "oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_display*3)",
+    passado_triste: "2+(fdv_nvl1*4)", personalidade_maligna: "3+(fdv_nvl1*4)",
+    rastreador_de_sangue: "1+(fdv_nvl1*4)", genio_do_mal: "2+(fdv_nvl1*4)",
+    adepto_das_trevas: "4+(fdv_nvl1*4)", comum: "8+(fdv_nvl1*3)",
+    corte_palida: "18+(fdv_nvl1*3)", mare_negra: "18+(fdv_nvl1*3)",
+    raiz_podre: "14+(fdv_nvl1*3)", realidade_distorcida: "20+(fdv_nvl1*3)",
+    tela_do_submundo: "24+(fdv_nvl1*3)", oni_de_outras_terras: "16+(fdv_nvl1*3)",
+    transfigurado: "14+(fdv_nvl1*3)", eco_eterno: "22+(fdv_nvl1*3)",
+    chama_negra: "20+(fdv_nvl1*3)", demonio_de_linhagem_infernal: "20+(fdv_nvl1*3)",
+    espirito_ceifador: "18+(fdv_nvl1*3)", monarca_demoniaco: "20+(fdv_nvl1*3)",
+    vampiro_de_linhagem: "20+(fdv_nvl1*3)",
+    exterminador_corrompido: "oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3)",
   };
   const switchFormula = (table) => {
     const args = Object.entries(table).flatMap(([key, formula]) => [`'origem_oni_${key}'`, formula]).join(",\n  ");
@@ -247,21 +246,15 @@ function configureOniProgressionFields(template) {
   const dataTab = findByKey(template, "dados_tab") ?? findByKey(template, "configs_tab");
   if (!dataTab || !Array.isArray(dataTab.contents)) return;
   dataTab.contents = dataTab.contents.filter((node) => node.key !== "progressao_oni_recursos_panel");
-  const existingKeys = collectKeys(template);
-  const fields = Object.entries(PDV_DICE_LEVELS)
-    .filter(([level]) => !existingKeys.has(`pdv_oni_ganho_nvl${level}`))
-    .map(([level, dice]) => makeNumberField(
-      `pdv_oni_ganho_nvl${level}`,
-      `PDV ganho Nv. ${level} (${dice})`,
-      `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
-    ));
-  if (!existingKeys.has("oni_nivel_na_queda")) {
-    fields.push(makeNumberField("oni_nivel_na_queda", "Nível na Queda", "Somente Exterminador Corrompido."));
-  }
-  if (!existingKeys.has("oni_recurso_slayer_antes_queda")) {
-    fields.push(makeNumberField("oni_recurso_slayer_antes_queda", "Recurso do Slayer antes da Queda", "Somente Exterminador Corrompido."));
-  }
-  if (!fields.length) return;
+  const fields = Object.entries(PDV_DICE_LEVELS).map(([level, dice]) => makeNumberField(
+    `pdv_oni_ganho_nvl${level}`,
+    `PDV ganho Nv. ${level} (${dice})`,
+    `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
+  ));
+  fields.push(
+    makeNumberField("oni_nivel_na_queda", "Nível na Queda", "Somente Exterminador Corrompido."),
+    makeNumberField("oni_pdr_maximo_antes_queda", "PDR máximo antes da Queda", "Somente Exterminador Corrompido."),
+  );
   dataTab.contents.push(makePanel("progressao_oni_recursos_panel", [
     { ...makePanel("progressao_oni_titulo_panel", [], ""), type: "label", value: orbitron("PROGRESSÃO DE RECURSOS ONI", "#C1000C", 14), style: "label", size: "full-size" },
     ...fields,
@@ -303,8 +296,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const sourcePath = path.resolve(process.argv[2] ?? defaultSource);
   const targetPath = path.resolve(process.argv[3] ?? defaultTarget);
   const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
-  const migrated = migrateOniTemplate(source);
-  useNativeCsbPresentation(migrated);
-  fs.writeFileSync(targetPath, `${JSON.stringify(migrated, null, 2)}\n`, "utf8");
+  fs.writeFileSync(targetPath, `${JSON.stringify(migrateOniTemplate(source), null, 2)}\n`, "utf8");
   console.log(`Export de Actor ONI: ${targetPath}`);
 }

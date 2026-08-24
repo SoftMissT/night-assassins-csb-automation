@@ -3,7 +3,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractWeaponRankFormulas } from "../scripts/weapon-service.mjs";
 import { markdownToFoundryHtml } from "./compendium-catalog-utils.mjs";
-import { useNativeCsbPresentation } from "./native-csb-style.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogPath = path.join(root, "catalogs", "slayer-weapons.json");
@@ -13,7 +12,6 @@ if (catalog.format !== 1 || !Array.isArray(catalog.documents)) throw new Error("
 
 const templatePath = path.join(root, "src", "templates", "items", "slayer-weapon-template.json");
 const weaponTemplate = JSON.parse(await readFile(templatePath, "utf8"));
-useNativeCsbPresentation(weaponTemplate);
 weaponTemplate._key = `!items!${weaponTemplate._id}`;
 
 export const RANK_DICE = Object.freeze({

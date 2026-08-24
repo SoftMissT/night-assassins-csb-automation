@@ -1,35 +1,5 @@
 # Changelog
 
-## 0.11.10 - 2026-08-24
-
-- Corrige os quatro templates canônicos de Actor sem substituir suas estruturas: Slayer mantém oito abas, Oni e Oni Minion mantêm somente `Combate` e `Configurações`, e NPC permanece sem abas artificiais.
-- Adiciona sincronização automática, executada uma vez por versão pelo GM primário, entre o Compendium `night-assassins-templates-de-ficha` e os documentos `_template` existentes no Mundo.
-- Normaliza Number Fields legados da ficha Oni que haviam sido persistidos como objetos pelo CSB, restaurando atributos, PDV, PDK e deslocamento sem curar nem sobrescrever recursos atuais.
-- Remove wrappers HTML e imports repetidos da fonte Orbitron dos templates; o tema passa a usar um único import e classes semânticas leves.
-- Restaura as cores oficiais: atributos individuais; PDV vermelho; PDR ciano em Slayer/NPC; PDK violeta em Oni/Oni Minion; fundos azul-marinho e vinho conforme o tipo de ficha.
-- Preserva as tabelas, botões, Formas de Respiração e containers de Items existentes durante a limpeza visual.
-- Validação local: `node --test` com **853/853** testes aprovados, incluindo sincronização de templates e reparo dos valores legados.
-
-## 0.11.9 - 2026-08-24
-
-- Restaura nos templates Slayer e Oni os sete rótulos oficiais de atributo em Orbitron, com as cores individuais de VIT, DEX, FOR, CAR, FDV, INT e SAB.
-- Consolida a ficha Oni em somente duas abas funcionais, `Combate` e `Configurações`, removendo a segunda configuração e os painéis indevidos de Perfil, Notas, dinheiro e inventário.
-- Corrige células nulas de `Table` que o Custom System Builder interpretava como componentes sem tipo e preserva Formas de Respiração em Combate e armas no Inventário do Slayer.
-- Simplifica o template de arma para usar apenas o ícone `img`, removendo o campo legado de arte vertical 9:16 e os rótulos quebrados baseados em `fetchFromParent`.
-- Mantém o tema mínimo: textos legíveis, PDV vermelho, PDR ciano e PDK violeta, sem reintroduzir a skin pesada removida na versão anterior.
-- Adiciona um reparador determinístico das fontes canônicas de Slayer, Oni, Oni Minion e NPC para impedir divergência entre os JSONs-fonte e os documentos compilados.
-- Validação local: `node --test` com **847/847** testes aprovados; packs de templates, armas e Respirações reconstruídos antes da publicação.
-
-## 0.11.8 - 2026-08-24
-
-- Corrige a estrutura das `Table` do template Slayer para a matriz bidimensional exigida pelo Custom System Builder, eliminando `Unknown component type: undefined` nos Acúmulos de Respiração.
-- Move a lista de Formas e os resumos legíveis das seis Respirações publicadas para a aba Combate; o estado persistente permanece oculto e separado da apresentação.
-- Padroniza as técnicas publicadas com os prefixos `Honoo no Kokyu`, `Iwa no Kokyu`, `Kinzoku no Kokyu`, `Yuki no Kokyu`, `Kasumi no Kokyu` e `Kaze no Kokyu`.
-- Restaura a aba Combate nos templates Oni e Oni Minion, corrige os atributos atuais usados no cálculo inicial do Oni e adiciona PDV/PDR operacionais e barras ao NPC.
-- Remove a skin CSS global e os wrappers decorativos embutidos das fichas de Actor e Item; a apresentação volta ao padrão nativo do Foundry/Custom System Builder para reduzir peso e evitar que o layout seja quebrado pelo tema.
-- Adiciona apenas o tema mínimo solicitado: fonte Orbitron via Google Fonts, fundo vinho sólido para Oni/Oni Minion e azul-marinho escuro sólido para Slayer/NPC.
-- Validação local: packs reconstruídos e `node --test` com **845/845** testes aprovados após a migração para o visual nativo e o tema mínimo.
-
 ## 0.11.7 - 2026-08-24
 
 - **Chamas e Pedra por arma sincronizada**: Esquentar (Chamas) e Quebra/Sangramento/Reflexão (Pedra) agora rastreiam estado por arma equipada em vez de globalmente no Actor; piso mundial de crítico configurável pelo GM (Iwa no Kokyū); dois ataques sequenciais da Pedra com recuperação única de PDR; Kaifuku reativável pela Marca sem bloquear a ativação.

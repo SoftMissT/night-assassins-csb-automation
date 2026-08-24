@@ -37,7 +37,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem|useBreathForm)/);
-    assert.ok(String(button.value).trim().length > 0);
+    assert.match(String(button.value), /na-sheet-text|custom-orbitron-wrapper/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
   const source = buttons.map((button) => button.rollMessage).join("\n");
@@ -118,7 +118,7 @@ test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
   assert.match(source, /"folego_slayer_atual"/);
   assert.match(source, /"defaultValue":"\$\{folego_slayer_maximo\}\$"/);
   assert.match(source, /"maxVal":"\$\{folego_slayer_maximo\}\$"/);
-  assert.match(source, /Fôlego/);
+  assert.match(source, /na-sheet-size-md|na-sheet-label/);
   assert.match(source, /"acoes_slayer_panel"/);
   assert.match(source, /"title":"Economia de Ações"/);
 });
@@ -174,28 +174,9 @@ test("template Slayer organiza as abas canônicas sem aba Condições separada",
   assert.match(JSON.stringify(combat), /resistencia_slayer_gerenciar/);
   // Painel de Acúmulos das Respirações em COMBATE
   assert.match(JSON.stringify(combat), /combate_acumulos_slayer_panel/);
-  for (const key of ["resp_chamas_resumo", "resp_pedra_resumo", "resp_nevoa_resumo", "resp_metal_resumo", "resp_neve_resumo", "resp_vento_resumo"]) {
+  for (const key of ["resp_agua_estado", "resp_chamas_estado", "resp_pedra_estado", "resp_nevoa_estado", "resp_metal_estado", "resp_neve_estado"]) {
     assert.match(JSON.stringify(combat), new RegExp(`\\$\{${key}\}\\$`));
   }
-  assert.match(JSON.stringify(combat), /skills_slayer_respiracoes/);
-  assert.doesNotMatch(JSON.stringify(combat), /resp_(?:agua|chamas|pedra|nevoa|metal|neve|vento)_estado\}\$/);
-});
-
-test("template Slayer publica Table em matriz e nenhum container comum contém componente inválido", () => {
-  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
-  function assertValidContents(node) {
-    if (!node || typeof node !== "object") return;
-    if (Array.isArray(node.contents)) {
-      if (node.type === "table") {
-        assert.equal(node.contents.length, node.rows);
-        assert.ok(node.contents.every((row) => Array.isArray(row) && row.length === node.cols));
-      } else {
-        for (const entry of node.contents) assert.ok(entry && typeof entry === "object" && !Array.isArray(entry));
-      }
-    }
-    Object.values(node).forEach(assertValidContents);
-  }
-  assertValidContents(template.system.body);
 });
 
 test("Perfil/Bio, Interlúdios e Notas ficam separados sem perder keys", () => {
@@ -232,7 +213,6 @@ test("SKILLs concentra poderes e recebe Alma da Lâmina como texto livre", () =>
   for (const key of ["skills_slayer_origem_panel", "estados_avancados_slayer_panel", "alma_lamina_slayer_panel", "alma_lamina_slayer_notas"]) {
     assert.match(skills, new RegExp(key));
   }
-  assert.doesNotMatch(skills, /skills_slayer_respiracoes/);
 });
 
 test("Inventário, Skills, Vida e Morte e áreas narrativas usam componentes CSB próprios", () => {
@@ -292,7 +272,7 @@ test("inventário filtra cada categoria por template exclusivo", () => {
   assert.deepEqual(containers.get("inventario_slayer_itens")?.templateFilter, ["NAInventoryTpl001"]);
 });
 
-test("armas ficam no INVENTÁRIO e Formas de Respiração ficam no COMBATE", () => {
+test("armas ficam acessíveis exclusivamente na aba COMBATE", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabs = null;
   function walk(node) {
@@ -303,16 +283,15 @@ test("armas ficam no INVENTÁRIO e Formas de Respiração ficam no COMBATE", () 
   walk(template.system.body);
   const combat = tabs.contents.find((entry) => entry.key === "combat_slayer_tab");
   const inventory = tabs.contents.find((entry) => entry.key === "inventario_slayer_tab");
-  assert.match(JSON.stringify(inventory), /inventario_slayer_armas/);
-  assert.match(JSON.stringify(inventory), /arma_slayer_rolar/);
-  assert.doesNotMatch(JSON.stringify(combat), /inventario_slayer_armas/);
-  assert.match(JSON.stringify(combat), /skills_slayer_respiracoes/);
+  assert.doesNotMatch(JSON.stringify(inventory), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(combat), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(combat), /arma_slayer_rolar/);
 });
 
-test("template persiste estados das seis Respirações publicadas", () => {
+test("template persiste estados das cinco Respirações prioritárias", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const source = JSON.stringify(template.system);
-  for (const key of ["resp_chamas_estado", "resp_pedra_estado", "resp_metal_estado", "resp_neve_estado", "resp_nevoa_estado", "resp_vento_estado"]) {
+  for (const key of ["resp_chamas_estado", "resp_pedra_estado", "resp_metal_estado", "resp_neve_estado", "resp_nevoa_estado"]) {
     assert.match(source, new RegExp(`"key":"${key}"`));
   }
   for (const key of ["resp_metal_bloqueio_bonus", "resp_metal_for_temp", "resp_metal_fdv_temp"]) {

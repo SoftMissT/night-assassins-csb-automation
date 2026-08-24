@@ -14,6 +14,7 @@ test("template Slayer usa somente o contrato de recursos namespaced", () => {
   assert.equal(document.name, "slayer_template");
   assert.equal(document.type, "_template");
   assert.equal(document.prototypeToken.name, "slayer_template");
+  assert.match(document.prototypeToken.texture.src, /na-slayer-template_icon\.webp$/);
   const template = unwrapSlayerTemplate(document);
   assert.deepEqual(validateSlayerTemplate(template), { duplicates: [], forbidden: [] });
   assert.equal(template.system.attributeBar.pdv_slayer_barra.value, "${pdv_slayer_atual_num}$");

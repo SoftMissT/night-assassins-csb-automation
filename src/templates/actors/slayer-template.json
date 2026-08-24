@@ -11668,7 +11668,7 @@
     "height": 1,
     "depth": 1,
     "texture": {
-      "src": "modules/night-assassins-csb-automation/assets/icons/templates/na-oni-template_icon.webp",
+      "src": "modules/night-assassins-csb-automation/assets/icons/templates/na-slayer-template_icon.webp",
       "anchorX": 0.5,
       "anchorY": 0.5,
       "fit": "contain",

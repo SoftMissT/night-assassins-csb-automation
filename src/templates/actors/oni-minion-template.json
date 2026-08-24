@@ -1099,6 +1099,16 @@
     "displayName": 20,
     "displayBars": 20,
     "actorLink": false,
+    "texture": {
+      "src": "modules/night-assassins-csb-automation/assets/icons/templates/na-oni-minion-template_icon.webp",
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "tint": "#ffffff",
+      "alphaThreshold": 0.75
+    },
     "bar1": {
       "attribute": "oni_minion_pdv_barra"
     },

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.11 - 2026-08-24
+
+- **Revert de v0.11.8/v0.11.9/v0.11.10**: o tema mínimo (`na-sheet-theme.css`) e as mudanças de estrutura de fichas dessas versões quebraram a renderização real no Foundry — cores sumidas, fontes minúsculas, abas desorganizadas (Respiração dentro de Skills, Descanso/Deslocamento fora do lugar), Arma voltando para o container errado do inventário. Os testes automatizados dessas versões nunca cobriam essa classe de regressão visual. Restaura a estrutura de templates e o CSS (`na-csb-automation.css`) da v0.11.7, última baseline confirmada funcional.
+- **Corrige o ícone de token do Slayer**: `prototypeToken.texture.src` apontava para o ícone do Oni desde a v0.11.6, em vez do próprio ícone do Slayer.
+- **Corrige o ícone de token ausente do Oni Minion**: `prototypeToken` não definia `texture.src` nenhum, podendo cair no ícone genérico do sistema em vez do ícone customizado do módulo.
+- Validação: `node --test` com **844/844** testes aprovados.
+
 ## 0.11.7 - 2026-08-24
 
 - **Chamas e Pedra por arma sincronizada**: Esquentar (Chamas) e Quebra/Sangramento/Reflexão (Pedra) agora rastreiam estado por arma equipada em vez de globalmente no Actor; piso mundial de crítico configurável pelo GM (Iwa no Kokyū); dois ataques sequenciais da Pedra com recuperação única de PDR; Kaifuku reativável pela Marca sem bloquear a ativação.

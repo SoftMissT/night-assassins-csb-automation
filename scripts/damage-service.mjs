@@ -649,6 +649,24 @@ export async function rollDamage(options = {}) {
     }
   }
 
+  // Dano-ou-Cura: apenas quando um Slayer é quem rola o Dano (é a ficha
+  // Slayer que carrega Formas de Respiração com efeitos de cura) e a
+  // chamada é o gatilho direto do jogador (promptHealOrDamage !== false).
+  // Fluxos automáticos/encadeados (Formas, dano de queda, Martelo, etc.)
+  // passam promptHealOrDamage:false explicitamente e nunca são
+  // interrompidos por um diálogo — o fallback seguro é sempre "Dano".
+  const offerHealChoice = attackerKind === "slayer" && options.promptHealOrDamage === true;
+  let healChoices = null;
+  if (offerHealChoice && damageRequests.some((request) => request.amount > 0)) {
+    const { openDamageOrHealDialog } = await import("./dialogs/damage-heal-dialog.mjs");
+    healChoices = new Map();
+    for (const request of damageRequests) {
+      if (!(request.amount > 0)) continue;
+      const choice = await openDamageOrHealDialog({ targetName: request.actor?.name, amount: request.amount });
+      healChoices.set(request.actor, choice);
+    }
+  }
+
   const pending = [...updatesByActor.values()];
   const results = await Promise.allSettled([
     ...pending.map(async (up) => {
@@ -657,6 +675,13 @@ export async function rollDamage(options = {}) {
     ...damageRequests.map(async ({ actor: targetActor, amount, components: targetComponents, patch: targetPatch, negated, critical: targetCritical }) => {
       if (Object.keys(targetPatch ?? {}).length) await targetActor.update(targetPatch, { naCsbAutomation: true, naBreathing: true });
       if (amount <= 0) return { ok: true, appliedDamage: 0, woundDamage: 0, negated };
+      // Nunca assumir Cura silenciosamente: só desvia para o relay de cura
+      // quando o jogador escolheu "cura" explicitamente no diálogo.
+      if (healChoices?.get(targetActor) === "cura") {
+        const { healActor } = await import("./heal-relay.mjs");
+        const healed = await healActor(targetActor, amount, { attackName: nome, source: actor.uuid });
+        return { ok: true, appliedDamage: 0, woundDamage: 0, negated, healed: healed.appliedHeal, healTotal: healed.total };
+      }
       // Normalização no boundary: pendingDamage ausente (ataque padrão sem
       // técnica armada) NÃO pode crashar — contrato neutro = zeros.
       const flameContext = hasFlameBreathing && hasAttackDamage ? {
@@ -812,7 +837,9 @@ export async function rollDamage(options = {}) {
           throw error;
         }
         const { rollHit } = await import("./hit-service.mjs");
-        const hit = await rollHit({ actor, actorUuid: actor.uuid });
+        // autoDamage:false — o dano deste ataque extra é resolvido manualmente
+        // logo abaixo (dano fixo do Martelo, não o dano padrão da arma).
+        const hit = await rollHit({ actor, actorUuid: actor.uuid, autoDamage: false });
         if (hit?.hits > 0) {
           const targetActor = appliedTargets[0].actor;
           const context = {
@@ -875,6 +902,7 @@ export async function rollWeaponItem(options = {}) {
     actionId: options.actionId,
     skipActionConsumption: options.skipActionConsumption === true,
     forceAttackDamage: options.forceAttackDamage === true,
+    promptHealOrDamage: options.promptHealOrDamage === true,
   });
 }
 

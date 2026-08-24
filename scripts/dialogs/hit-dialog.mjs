@@ -155,6 +155,43 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
 }
 
 /**
+ * Pergunta se o jogador quer encadear outra Forma de Respiração antes de
+ * rolar o dano do Acerto que acabou de ser confirmado. "Não rolar dano"
+ * nunca fica indisponível — mesmo sem Formas para encadear ou com o
+ * diálogo fechado, o chamador segue para a rolagem de dano normal.
+ * @param {object} options
+ * @param {{uuid:string,label:string}[]} [options.chainable]
+ * @returns {Promise<{chain:boolean,itemUuid?:string}>}
+ */
+export async function openChainFormDialog({ chainable = [] } = {}) {
+  const hasOptions = chainable.length > 0;
+  const optionsHtml = chainable.map((entry) => `<option value="${entry.uuid}">${entry.label}</option>`).join("");
+  const content = `
+    <div class="na-csb-automation na-hit-chain">
+      <p>Acerto confirmado. Deseja usar <strong>outra Forma de Respiração</strong> encadeada agora, antes de rolar o dano?</p>
+      ${hasOptions
+        ? `<label class="na-hit-field"><span>Próxima Forma</span><select id="na-chain-form">${optionsHtml}</select></label>`
+        : "<p><em>Nenhuma outra Forma disponível para encadear.</em></p>"}
+    </div>
+  `;
+  const result = await foundry.applications.api.DialogV2.wait({
+    window: { title: "Encadear Forma?" },
+    content,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      ...(hasOptions ? [{
+        action: "chain",
+        label: "Sim, encadear",
+        callback: (event, button) => ({ chain: true, itemUuid: button.form.elements["na-chain-form"]?.value ?? "" }),
+      }] : []),
+      { action: "damage", label: "Não, rolar dano", default: true, callback: () => ({ chain: false }) },
+    ],
+  });
+  return result ?? { chain: false };
+}
+
+/**
  * Confirma o resultado de uma tentativa antes de liberar a próxima.
  * @returns {Promise<{hit:boolean,continue:boolean}|null>}
  */

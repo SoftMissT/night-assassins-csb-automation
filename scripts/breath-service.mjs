@@ -701,30 +701,32 @@ function breathingTechniqueEntradas(actor) {
   return entradas;
 }
 
+/**
+ * Resolve o dano de uma Forma já confirmada no Acerto.
+ *
+ * A maioria das Formas segue o caminho genérico compartilhado com ataques
+ * de arma "crus" (`resolveAutoDamage` em attack-follow-up.mjs, que também
+ * cobre o fallback de arma quando a técnica não tem dado de dano próprio —
+ * ex.: Céu em Chamas Ascendentes, 2ª Forma das Chamas). `nevoa_02` (Oito
+ * Camadas) é a única com uma resolução de dano própria (fórmula fixa
+ * derivada da contagem de acertos), então continua tratada aqui antes do
+ * caminho genérico.
+ */
 async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem }) {
   const successful = hitResult.attempts.filter((attempt) => attempt.hit);
-  const weaponItem = hitResult.weapon?.id ? actor.items?.get?.(hitResult.weapon.id) : null;
-  const actionId = foundry.utils.randomID();
-  const techniqueEntradas = breathingTechniqueEntradas(actor);
-  if (form.id === "nevoa_02") {
+  const nome = form ? `${form.respiracao} ${form.nome}` : "Ataque";
+  if (form?.id === "nevoa_02") {
     const mistState = parseMistBreathingState(actor.system?.props?.resp_nevoa_estado);
     const resolved = resolveEightLayersResult(mistState, successful.length);
     await actor.update(mistStatePatch(resolved.state), { naCsbAutomation: true, naBreathing: true });
     if (resolved.mode === "fixed" && resolved.formula) {
-      await rollDamage({ actor, nome: `${form.respiracao} ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: resolved.formula, fixo: 0, attrs: [], tiposDano: ["cortante"] }], actionId, skipActionConsumption: true, forceAttackDamage: true });
+      const actionId = foundry.utils.randomID();
+      await rollDamage({ actor, nome, entradas: [{ tipoAcao: "ataque", dado: resolved.formula, fixo: 0, attrs: [], tiposDano: ["cortante"] }], actionId, skipActionConsumption: true, forceAttackDamage: true });
       return;
     }
   }
-  for (const attempt of successful) {
-    if (weaponItem) {
-      await rollWeaponItem({ actor, item: weaponItem, weaponProfileIndex: hitResult.weapon.profileIndex, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
-    } else {
-      const entradas = techniqueEntradas.length > 0
-        ? techniqueEntradas
-        : [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }];
-      await rollDamage({ actor, nome: `${form.respiracao} ${form.nome}`, entradas, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true, skipBreathingInjection: techniqueEntradas.length > 0 });
-    }
-  }
+  const { resolveAutoDamage } = await import("./attack-follow-up.mjs");
+  await resolveAutoDamage({ actor, hitResult, techniqueLabel: nome, techniqueEntradas: breathingTechniqueEntradas(actor) });
 }
 
 async function clearResolvedTechniqueQueue(actor, formId) {
@@ -1060,7 +1062,10 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       return;
     }
 
-    const hitResult = await rollHit({ actor, actorUuid: actor.uuid });
+    // autoDamage:false — este fluxo de Forma resolve seu próprio dano
+    // abaixo (encadeamento opcional + resolução específica da técnica), o
+    // rollHit padrão NÃO deve disparar o dano sozinho aqui.
+    const hitResult = await rollHit({ actor, actorUuid: actor.uuid, autoDamage: false });
     if (!hitResult?.attempts?.length) {
       if (rollbackPatch && Object.keys(rollbackPatch).length > 0) {
         await actor.update(rollbackPatch, { naCsbAutomation: true, naBreathRollback: true });
@@ -1101,7 +1106,12 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       }
     }
     if (!(isSnowForm && form.id === "neve_02")) {
-      await rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem });
+      // Ponto de decisão pós-Acerto: pergunta se o jogador quer encadear
+      // outra Forma antes do dano (nunca trava — "Não"/diálogo fechado
+      // segue direto para o dano desta técnica).
+      const { confirmChainedForma } = await import("./attack-follow-up.mjs");
+      const chained = await confirmChainedForma(actor, { excludeItemUuid: item.uuid });
+      if (!chained) await rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem });
     }
     await clearResolvedTechniqueQueue(actor, form.id);
     await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });

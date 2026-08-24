@@ -10,7 +10,9 @@ import {
   oniRandomPdvRequirements,
   missingOniPdvGains,
   calculateOniResources,
+  ensureOniProgression,
 } from "../scripts/oni/progression-service.mjs";
+import { handleActorUpdate } from "../scripts/trigger-router.mjs";
 
 describe("Progressão Oni 1–20", () => {
   describe("Rank da Especialização — decisão do Operador (modelo 1B)", () => {
@@ -162,5 +164,93 @@ describe("Progressão Oni 1–20", () => {
       assert.equal(oniKekkijutsuRank(12), "A");
       assert.equal(oniKekkijutsuRank(18), "SS");
     });
+  });
+});
+
+describe("Automação da vida do Oni (ledger runtime)", () => {
+  function fakeActor(props = {}) {
+    const patches = [];
+    return {
+      props,
+      patches,
+      name: "Oni Teste",
+      uuid: "Actor.test",
+      isOwner: true,
+      system: { props },
+      update(patch) { patches.push(patch); Object.assign(props, Object.fromEntries(Object.entries(patch).map(([k, v]) => [k.replace(/^system\.props\./, ""), v]))); return Promise.resolve(); },
+    };
+  }
+  function mockRoll(total) {
+    globalThis.Roll = { create: () => ({ evaluate: async () => ({ total }) }) };
+  }
+  function unmockRoll() { delete globalThis.Roll; }
+
+  it("N1 não precisa de ledger", async () => {
+    const actor = fakeActor({ nvl_num: 1 });
+    mockRoll(3);
+    try {
+      const result = await ensureOniProgression(actor);
+      assert.equal(result.needed, false);
+      assert.equal(result.complete, true);
+      assert.equal(actor.patches.length, 0);
+    } finally { unmockRoll(); }
+  });
+
+  it("criado direto em N5: rola exatamente os ganhos 2..5 uma única vez", async () => {
+    const actor = fakeActor({ nvl_num: 5, pdv_oni_total_conta: 1 });
+    mockRoll(4);
+    try {
+      const first = await ensureOniProgression(actor);
+      assert.equal(first.needed, true);
+      assert.deepEqual(first.rolled.map((entry) => entry.level), [2, 3, 4, 5]);
+      assert.equal(first.total, 16);
+      const keys = Object.keys(actor.props).filter((key) => key.startsWith("pdv_oni_ganho"));
+      assert.equal(keys.length, 4);
+      // Segunda chamada: nada rola de novo
+      const second = await ensureOniProgression(actor);
+      assert.equal(second.needed, false);
+      assert.equal(actor.patches.length, 1); // nenhum patch novo
+    } finally { unmockRoll(); }
+  });
+
+  it("reduzir para N3 depois de N5 preserva histórico e não rerrola", async () => {
+    const props = { nvl_num: 5 };
+    for (let level = 2; level <= 5; level += 1) props[`pdv_oni_ganho_nvl${level}`] = 2;
+    const actor = fakeActor(props);
+    mockRoll(9);
+    try {
+      const result = await ensureOniProgression(actor, { level: 3 });
+      assert.equal(result.needed, false); // 2..3 já existem
+      assert.equal(props.pdv_oni_ganho_nvl4, 2); // histórico intacto
+      assert.equal(props.pdv_oni_ganho_nvl5, 2);
+      assert.equal(actor.patches.length, 0);
+    } finally { unmockRoll(); }
+  });
+
+  it("updateActor de Oni roteia para a automação sem rodar triggers Slayer", async () => {
+    const calls = { update: 0 };
+    const props = { pdv_oni_total_conta: 1, nvl_pj: "nvl_2" };
+    const actor = {
+      name: "Oni Roteado", uuid: "Actor.oni", isOwner: true,
+      system: { template: "oni_template", props },
+      update(patch) { calls.update += 1; Object.assign(props, Object.fromEntries(Object.entries(patch).map(([k, v]) => [k.replace(/^system\.props\./, ""), v]))); },
+    };
+    globalThis.game = { user: { id: "gm1" }, actors: { contents: [] } };
+    globalThis.Roll = { create: () => ({ evaluate: async () => ({ total: 3 }) }) };
+    try {
+      await handleActorUpdate(actor, { system: { props: { nvl_pj: "nvl_4" } } }, {}, "gm1");
+      assert.equal(props["pdv_oni_ganho_nvl2"], 3);
+      assert.equal(props["pdv_oni_ganho_nvl3"], 3);
+      assert.equal(props["pdv_oni_ganho_nvl4"], 3);
+      assert.equal(calls.update, 1); // um único patch atômico
+      // Nenhum campo Slayer contaminou o Oni
+      for (const key of Object.keys(props)) assert.doesNotMatch(key, /slayer|marca|hab_escolhida/i);
+      // Update de outra pessoa não roda nada
+      await handleActorUpdate(actor, { system: { props: { nvl_pj: "nvl_9" } } }, {}, "outro");
+      assert.equal(props["pdv_oni_ganho_nvl9"], undefined);
+    } finally {
+      delete globalThis.game;
+      delete globalThis.Roll;
+    }
   });
 });

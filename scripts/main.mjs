@@ -10,6 +10,7 @@ import { reloadWeaponItem, rollDamage, rollWeaponItem } from "./damage-service.m
 import { createLevelOneValues, processLevelGain } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
 import { applyOniDamage, registerDamageRelay } from "./damage-relay.mjs";
+import { healActor, registerHealRelay } from "./heal-relay.mjs";
 import { parseNumber, currentConfigValues, latestValues, changedProp, isDestinyMark, normalizeAbilityKey } from "./parsing.mjs";
 import { registerSettings, SETTINGS } from "./settings.mjs";
 import { openGmDashboard } from "./gm-dashboard.mjs";
@@ -35,6 +36,26 @@ import * as slayerOrigins from "./slayer/origin-contracts.mjs";
 import * as slayerClasses from "./slayer/class-contracts.mjs";
 import * as slayerAdvancedStates from "./slayer/advanced-states.mjs";
 import * as oniProgression from "./oni/progression-service.mjs";
+import { actorKind } from "./actor-kind.mjs";
+import { repairOniActors } from "./oni/repair-service.mjs";
+import { useKekkijutsuItem } from "./oni/kekkijutsu-use-service.mjs";
+
+/**
+ * Wrapper público de rollDamage exposto em module.api — ponto de entrada
+ * real do botão "Dano" da ficha. Só aqui o diálogo "Dano ou Cura?" é
+ * oferecido por padrão (promptHealOrDamage:true); chamadas internas
+ * (Formas de Respiração, encadeamento pós-Acerto, dano de queda, Martelo
+ * do Julgamento) continuam importando rollDamage/rollWeaponItem
+ * diretamente de damage-service.mjs, sem o diálogo, preservando o
+ * fallback seguro "Dano" nos fluxos 100% automáticos.
+ */
+async function rollDamagePublic(options = {}) {
+  return rollDamage({ promptHealOrDamage: true, ...options });
+}
+
+async function rollWeaponItemPublic(options = {}) {
+  return rollWeaponItem({ promptHealOrDamage: true, ...options });
+}
 
 Hooks.once("init", () => {
   registerSettings();
@@ -65,9 +86,18 @@ function tagNightAssassinsSheet(app, html) {
   const appEl = app?.element instanceof HTMLElement ? app.element : el?.closest?.(".app, .application") ?? el;
   appEl?.classList?.add("na-sheet");
   el?.classList?.add("na-sheet");
+
+  // Skin própria do Oni: detecção robusta via actorKind() (template id/flags),
+  // nunca por nome do Actor — evita que uma ficha Oni chamada "Slayer X" (ou
+  // vice-versa) receba a paleta errada.
+  const kind = actorKind(actor);
+  if (kind === "oni") {
+    appEl?.classList?.add("na-oni-sheet");
+    el?.classList?.add("na-oni-sheet");
+  }
 }
 
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
   if (game.system.id !== "custom-system-builder") {
     console.warn?.(`[${MODULE_ID}] Sistema incompatível: ${game.system.id}. Módulo desativado.`);
     return;
@@ -78,6 +108,36 @@ Hooks.once("ready", () => {
   registerBreathingEngine();
   registerLifeDeathEngine();
   registerAdvancedStatesEngine();
+
+  // Repair de Actors Oni legados (P0): só o GM primário aplica a migração
+  // estrutural — idempotente, preserva dados do personagem, nunca reverte
+  // PDV/PDK atual para o máximo. Roda ANTES do ledger de progressão porque
+  // pode reescrever a forma como os campos legados são lidos.
+  if (game.user?.isGM && game.users?.filter((u) => u.active && u.isGM).sort((a, b) => String(a.id).localeCompare(String(b.id)))[0]?.id === game.user.id) {
+    for (const actor of game.actors?.contents ?? []) {
+      if (actorKind(actor) !== "oni") continue;
+      try {
+        await repairOniActors(actor);
+      } catch (error) {
+        console.warn?.(`[${MODULE_ID}] Falha ao reparar Actor Oni ${actor.name}:`, error);
+      }
+    }
+  }
+
+  // Vida do Oni 100% automática: completa o ledger de ganhos de PDV de Onis
+  // existentes na carga do mundo. Idempotente — só faltantes, nunca rerrola.
+  for (const actor of game.actors?.contents ?? []) {
+    const props = actor?.system?.props ?? {};
+    const templateName = String(actor?.system?.template ?? "").toLowerCase();
+    const isFullOni = (props.pdv_oni_total_conta !== undefined || props.nome_oni !== undefined)
+      && !templateName.includes("oni_minion");
+    if (!isFullOni) continue;
+    try {
+      await oniProgression.ensureOniProgression(actor);
+    } catch (error) {
+      console.warn?.(`[${MODULE_ID}] Falha ao completar progressão Oni de ${actor.name}:`, error);
+    }
+  }
   Hooks.on("renderActorSheet", tagNightAssassinsSheet);
   Hooks.on("renderActorSheetV2", tagNightAssassinsSheet);
   Hooks.on("renderApplicationV2", (app, element) => {
@@ -90,6 +150,7 @@ Hooks.once("ready", () => {
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableDamageRelay)) {
     registerDamageRelay();
+    registerHealRelay();
   }
 
   if (game.user.isGM) {
@@ -117,11 +178,13 @@ Hooks.once("ready", () => {
     module.api = {
       rollTest,
       rollHit,
-      rollDamage,
-      rollWeaponItem,
+      rollDamage: rollDamagePublic,
+      rollWeaponItem: rollWeaponItemPublic,
+      useKekkijutsuItem,
 reloadWeaponItem,
       repairBreathingItems,
       applyOniDamage,
+      healActor,
       openGmDashboard,
       openResistanceManager,
       openStatusManager,
@@ -176,6 +239,9 @@ reloadWeaponItem,
       },
       oni: {
         progression: oniProgression,
+        ensureProgression: oniProgression.ensureOniProgression,
+        rollPdvGain: oniProgression.rollOniPdvGain,
+        repairActor: repairOniActors,
       },
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,

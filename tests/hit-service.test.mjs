@@ -185,6 +185,48 @@ describe("hit-service", () => {
     }
   });
 
+  it("Problema 1 (regressão) — Acerto confirmado com arma dispara o dano automaticamente, sem exigir clique manual na arma", async () => {
+    game.user = { ...game.user, targets: new Set() };
+    const item = {
+      id: "w1", uuid: "Item.w1", name: "Nichirin",
+      system: { props: {
+        arma_nome: "Nichirin",
+        arma_critico: 20,
+        arma_perfis_ataque: [{ nome: "Ataque Base", dano_fixo: 4, dano_dados: "1d6", atributos: [], tipos_dano: ["cortante"] }],
+      } },
+    };
+    const actor = makeActor({ props: { acerto_label: "acerto_label_dex", dex_display: "5" } });
+    actor.documentName = "Actor";
+    actor.items = {
+      [Symbol.iterator]: [item][Symbol.iterator].bind([item]),
+      get: (id) => (id === "w1" ? item : null),
+    };
+    actor.update = async (patch) => { Object.assign(actor.system.props, patch); };
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque", weaponId: "w1", weaponProfileIndex: 0 }, // openHitDialog
+      { hit: true, continue: false }, // openHitConfirmationDialog
+      { chain: false }, // openChainFormDialog (encadear outra Forma? não)
+      { nome: "Nichirin", pdrGasto: 0, entradas: [{ dado: "1d6", fixo: 4, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }] }, // openDamageDialog
+    ];
+    let damageFlavor = "";
+    ChatMessage.create = async (data) => { if (data?.flavor && /Nichirin/.test(data.flavor)) damageFlavor = data.flavor; return data; };
+    await rollHit({ actor });
+    assert.match(damageFlavor, /Nichirin/, "o dano da arma deveria ter sido rolado automaticamente após o Acerto confirmado");
+  });
+
+  it("autoDamage:false suprime a continuação automática (usada por useBreathForm / Martelo do Julgamento para não rolar dano em duplicidade)", async () => {
+    game.user = { ...game.user, targets: new Set() };
+    const actor = makeActor({ props: { acerto_label: "acerto_label_dex", dex_display: "5" } });
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    let damageRolled = false;
+    ChatMessage.create = async (data) => { if (data?.flavor && /Dano/.test(data?.flavor ?? "")) damageRolled = true; return data; };
+    await rollHit({ actor, autoDamage: false });
+    assert.strictEqual(damageRolled, false);
+  });
+
   it("Fluxo de Neve (alvo único): Congelar só é aplicado ao primeiro alvo marcado, mesmo com múltiplos alvos selecionados", async () => {
     _dialogReturn = [
       { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "especial" },

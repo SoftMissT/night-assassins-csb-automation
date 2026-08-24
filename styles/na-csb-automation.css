@@ -1890,3 +1890,357 @@
 .custom-system-actor span[style*="color: #aaa"] {
     color: #beb6aa;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   FICHA ONI — skin própria (P0 reconstrução).
+   Escopado inteiramente dentro de `.na-oni-sheet` (nunca em `:root`
+   global) para que o Slayer não herde nenhuma destas regras. A classe é
+   aplicada via `tagNightAssassinsSheet()` (scripts/main.mjs) com base em
+   `actorKind(actor) === "oni"` — detecção por template/flags, nunca por
+   nome do Actor.
+   ═══════════════════════════════════════════════════════════════════ */
+.na-oni-sheet {
+    --oni-bg: #090709;
+    --oni-panel: #151015;
+    --oni-panel-2: #1c1216;
+    --oni-red: #ff2638;
+    --oni-red-dark: #8b0814;
+    --oni-blood: #c20b1e;
+    --oni-pdk: #7a1030;
+    --oni-pdk-glow: rgba(194, 11, 100, 0.35);
+    --oni-text: #f7f7f7;
+    --oni-text-secondary: #d7d2d2;
+    --oni-muted: #aaa3a5;
+    --oni-line: #45252b;
+
+    /* Reaproveita apenas infraestrutura NEUTRA (fontes/spacing) do sistema
+       compartilhado — cor/superfície são sobrescritas abaixo. */
+    --color-text-primary: var(--oni-text);
+    --color-text-secondary: var(--oni-text-secondary);
+    --color-border-light-primary: var(--oni-line);
+    --color-border-dark: #1a0d10;
+    --color-shadow-primary: rgba(255, 38, 56, 0.45);
+}
+
+.na-oni-sheet .window-header {
+    border-bottom: 1px solid var(--oni-line);
+    background:
+        linear-gradient(90deg, rgba(255, 38, 56, 0.14), transparent 46%),
+        linear-gradient(180deg, #170a0d, #0c0608);
+}
+
+.na-oni-sheet .window-header .window-title {
+    font-family: var(--na-font-display);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--oni-red);
+    text-shadow: 0 0 12px rgba(255, 38, 56, 0.35);
+}
+
+.na-oni-sheet .window-content {
+    background:
+        radial-gradient(ellipse 80% 50% at 100% 0%, rgba(194, 11, 30, 0.12), transparent 50%),
+        radial-gradient(ellipse 60% 40% at 0% 100%, rgba(122, 16, 48, 0.14), transparent 45%),
+        linear-gradient(165deg, var(--oni-panel-2) 0%, var(--oni-bg) 55%, #050405 100%);
+    color: var(--oni-text);
+    font-family: var(--na-font-body);
+}
+
+.na-oni-sheet .custom-system-entity,
+.na-oni-sheet p,
+.na-oni-sheet li,
+.na-oni-sheet label,
+.na-oni-sheet .na-sheet-text {
+    color: var(--oni-text);
+}
+
+/* ── Abas: COMBATE / KEKKIJUTSU / ESPECIALIZAÇÃO / ORIGEM & PROGRESSÃO /
+   INVENTÁRIO & NOTAS / CONFIG — identidade vermelho-sangue, não dourada. */
+.na-oni-sheet nav.custom-tabs,
+.na-oni-sheet .custom-tabs {
+    margin: 6px 0 10px !important;
+    padding: 6px 4px !important;
+    border-top: 1px solid var(--oni-line) !important;
+    border-bottom: 1px solid var(--oni-line) !important;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 0;
+    gap: 4px;
+}
+
+.na-oni-sheet nav.custom-tabs a.item,
+.na-oni-sheet .custom-tabs a.item {
+    font-family: var(--na-font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--oni-muted) !important;
+    padding: 6px 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, text-shadow 0.15s ease;
+}
+
+.na-oni-sheet nav.custom-tabs a.item:hover,
+.na-oni-sheet .custom-tabs a.item:hover {
+    color: var(--oni-text) !important;
+    border-color: rgba(255, 38, 56, 0.35);
+    background: rgba(255, 38, 56, 0.08);
+}
+
+.na-oni-sheet nav.custom-tabs a.item.active,
+.na-oni-sheet .custom-tabs a.item.active,
+.na-oni-sheet .tabs .active {
+    color: var(--oni-red) !important;
+    border-color: rgba(255, 38, 56, 0.55);
+    background: linear-gradient(180deg, rgba(255, 38, 56, 0.16), rgba(255, 38, 56, 0.03));
+    text-shadow: 0 0 10px rgba(255, 38, 56, 0.5) !important;
+}
+
+/* ── Painéis/cards ── */
+.na-oni-sheet .custom-system-panel {
+    margin: 6px 4px;
+    border: 1px solid var(--oni-line);
+    border-radius: 8px;
+    background: linear-gradient(145deg, rgba(28, 18, 22, 0.92), rgba(12, 8, 10, 0.95));
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.na-oni-sheet .custom-system-panel > summary,
+.na-oni-sheet .custom-system-panel-title {
+    font-family: var(--na-font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--oni-text-secondary);
+    background: linear-gradient(90deg, rgba(255, 38, 56, 0.12), transparent 55%);
+    border-bottom: 1px solid rgba(69, 37, 43, 0.85);
+    padding: 8px 12px 8px 1.4rem;
+}
+
+.na-oni-sheet .custom-system-panel[open] > summary {
+    color: var(--oni-red);
+}
+
+/* ── Kekkijutsu cards ── */
+.na-oni-sheet .na-kekki-card {
+    border: 1px solid var(--oni-line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 6px 4px;
+    background: linear-gradient(155deg, rgba(122, 16, 48, 0.14), rgba(9, 7, 9, 0.9));
+}
+
+.na-oni-sheet .na-kekki-badge-pdk {
+    display: inline-block;
+    font-family: var(--na-font-display);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--oni-text);
+    background: linear-gradient(180deg, var(--oni-pdk), #430a1c);
+    border: 1px solid rgba(194, 11, 100, 0.6);
+    border-radius: 999px;
+    padding: 2px 8px;
+    box-shadow: 0 0 8px var(--oni-pdk-glow);
+}
+
+.na-oni-sheet .na-kekki-badge-rank {
+    display: inline-block;
+    font-family: var(--na-font-display);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--oni-bg);
+    background: var(--oni-red);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+/* ── Campos/inputs ── */
+.na-oni-sheet .custom-system-field > label,
+.na-oni-sheet .custom-system-label {
+    font-family: var(--na-font-body);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--oni-text-secondary);
+}
+
+.na-oni-sheet input[type='text'],
+.na-oni-sheet input[type='number'],
+.na-oni-sheet input[type='search'],
+.na-oni-sheet select,
+.na-oni-sheet textarea {
+    background: #17101299 !important;
+    color: var(--oni-text) !important;
+    border: 1px solid #4a2a30 !important;
+    border-radius: 4px !important;
+    font-family: var(--na-font-body);
+    font-size: 13px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.na-oni-sheet input:focus,
+.na-oni-sheet select:focus,
+.na-oni-sheet textarea:focus {
+    border-color: var(--oni-red) !important;
+    box-shadow: 0 0 0 1px rgba(255, 38, 56, 0.3);
+    outline: none;
+}
+
+.na-oni-sheet button,
+.na-oni-sheet .custom-system-sheet-button,
+.na-oni-sheet button.custom-system-label-root {
+    font-family: var(--na-font-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--oni-text);
+    background: linear-gradient(180deg, #2a161a, #170b0d);
+    border: 1px solid #4a2a30;
+    border-radius: 5px;
+    transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.na-oni-sheet button:hover,
+.na-oni-sheet .custom-system-sheet-button:hover,
+.na-oni-sheet button.custom-system-label-root:hover {
+    border-color: var(--oni-red);
+    color: var(--oni-red);
+    box-shadow: 0 0 12px rgba(255, 38, 56, 0.3);
+}
+
+/* ── Barras de recurso PDV/PDK (sempre visíveis, cabeçalho + Combate) ──
+   PDV = vermelho sangue; PDK = vinho/magenta demoníaco — identidade
+   própria, nunca reaproveita a cor do PDR do Slayer. */
+.na-oni-sheet .na-oni-resource-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.na-oni-sheet .na-oni-resource-pdv {
+    color: var(--oni-red);
+    text-shadow: 0 0 8px rgba(255, 38, 56, 0.4);
+}
+
+.na-oni-sheet .na-oni-resource-pdk {
+    color: var(--oni-pdk);
+    text-shadow: 0 0 8px var(--oni-pdk-glow);
+}
+
+/* ── Meter fills (barra nativa do CSB, quando usada) — PDV vermelho,
+   PDK vinho/magenta, nunca o ciano do PDR Slayer. ── */
+.na-oni-sheet .custom-system-meter {
+    background: var(--oni-bg) !important;
+    border: 1px solid #2a1216;
+    border-radius: 50vh !important;
+    min-height: 16px;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.na-oni-sheet .custom-system-meter-fill,
+.na-oni-sheet .hp-bar .custom-system-meter-fill,
+.na-oni-sheet [class*='pdv'] .custom-system-meter-fill {
+    background: linear-gradient(90deg, var(--oni-red-dark), var(--oni-red)) !important;
+    border-radius: 50vh !important;
+}
+
+.na-oni-sheet [class*='pdk'] .custom-system-meter-fill {
+    background: linear-gradient(90deg, #430a1c, var(--oni-pdk)) !important;
+    border-radius: 50vh !important;
+}
+
+.na-oni-sheet .custom-system-meter-content {
+    font-family: var(--na-font-display);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--oni-text) !important;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* ── Kekkijutsu — badges e lista restantes (ação/origem/container) ── */
+.na-oni-sheet .na-kekki-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.na-oni-sheet .na-kekki-badge-action {
+    display: inline-block;
+    font-family: var(--na-font-display);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--oni-text-secondary);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--oni-line);
+    border-radius: 4px;
+    padding: 2px 6px;
+}
+
+.na-oni-sheet .na-kekki-origin {
+    font-family: var(--na-font-body);
+    font-size: 11px;
+    color: var(--oni-muted);
+    font-style: italic;
+}
+
+/* ── Retrato + campos de identidade (cabeçalho) ── */
+.na-oni-sheet .profile-img-container {
+    border: 1px solid var(--oni-line) !important;
+    border-radius: 8px !important;
+    background: var(--oni-bg);
+    box-shadow: 0 0 0 1px rgba(255, 38, 56, 0.12), 0 10px 24px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+
+.na-oni-sheet header.sheet-header h1 input {
+    font-family: var(--na-font-display) !important;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--oni-text) !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+}
+
+.na-oni-sheet header.sheet-header h1 input:focus {
+    border-color: rgba(255, 38, 56, 0.4) !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.na-oni-sheet .custom-system-item-container,
+.na-oni-sheet .custom-system-dynamic-table,
+.na-oni-sheet table {
+    border-color: var(--oni-line);
+}
+
+.na-oni-sheet .custom-system-dynamic-table th,
+.na-oni-sheet table th {
+    font-family: var(--na-font-display);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--oni-text-secondary);
+    background: rgba(255, 38, 56, 0.08);
+    border-color: var(--oni-line);
+}
+
+.na-oni-sheet .custom-system-dynamic-table td,
+.na-oni-sheet table td {
+    border-color: rgba(69, 37, 43, 0.7);
+    color: var(--oni-text);
+}
+
+.na-oni-sheet ::-webkit-scrollbar-thumb {
+    background: #4a2a30;
+}
+.na-oni-sheet ::-webkit-scrollbar-thumb:hover {
+    background: var(--oni-red);
+}

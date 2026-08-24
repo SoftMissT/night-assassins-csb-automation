@@ -6,6 +6,8 @@ import { ATTRIBUTES, PROP_KEYS } from "./constants.mjs";
 import { changedProp, parseLevel, isDestinyMark, parseNumber } from "./parsing.mjs";
 import { createLevelOneValues, processLevelGain } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
+import { actorKind } from "./actor-kind.mjs";
+import { ensureOniProgression } from "./oni/progression-service.mjs";
 
 /** @type {Map<string, Promise<void>>} */
 const actorLocks = new Map();
@@ -55,6 +57,17 @@ export async function handleActorUpdate(actor, changes, options, userId) {
   if (options?.naCsbAutomation === true) return;
   if (userId !== game?.user?.id) return;
   if (!actor?.isOwner) return;
+
+  // Domínio Oni: NENHUM trigger Slayer roda aqui (sem snapshot, sem Marca).
+  // Mudança de nível apenas garante o ledger de PDV — ganhos aleatórios são
+  // rolados uma única vez e persistidos; reabrir/recalcular nunca rerrola.
+  if (actorKind(actor) === "oni") {
+    const rawOniLevel = changes?.system?.props?.nvl_pj;
+    if (rawOniLevel !== undefined) {
+      await ensureOniProgression(actor, { level: parseNumber(String(rawOniLevel).replace(/^nvl_/, "")) });
+    }
+    return;
+  }
 
   const changedLevel = changedProp(changes, PROP_KEYS.level);
   const changedAbility = changedProp(changes, PROP_KEYS.ability);

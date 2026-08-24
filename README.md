@@ -4,35 +4,34 @@
 
 ## Estado das fichas
 
-| Ficha | Versão | Estado |
-| --- | ---: | --- |
-| **Caçador humano** | **2.0** | Versão principal em uso |
-| **Oni completo** | **0.10.6** | Progressão, Origens, Regeneração, Kekkijutsus, Classes, Especializações e Painel GM completos |
-| **Oni Minion** | **0.10.6** | Template e construtor distribuídos com 3 tipos, 6 pacotes, 4 ataques, 14 traços e 10 fraquezas |
+| Ficha | Estado |
+| --- | --- |
+| **Caçador (Slayer)** | 6 abas (Perícias, Combate, Skills, Inventário, Notas, Configurações). Combate expõe armas (Item) e Formas de Respiração; Skills restrita a Mundo Transparente, Estado Altruísta, Marca do Caçador e Lâmina Carmesim. |
+| **Oni completo** | 2 abas (Combate; Configurações/Dados). Combate: Acerto/Bloqueio/Esquiva/Dano, Perícias, Ações, Status/Resistências, Vida e Morte, e o itemContainer de Kekkijutsu. Config: Especialização, Origem/Progressão, Identidade/Inventário e os dados administrativos de GM (ledger de PDV por nível, PDK, atributos). |
+| **Oni Minion** | Acerto/Dano/Bloqueio/Esquiva já operacionais; recebe dano automaticamente do relay genérico quando alvo de um ataque. |
+| **NPC** | Acerto/Dano/Bloqueio/Esquiva e as 7 rolagens de atributo puro (VIT/DEX/FOR/CAR/FDV/INT/SAB), mesmo padrão do Slayer; recebe dano automaticamente do relay genérico. |
 
 ## Estado mecânico atual
 
-O módulo está na versão **0.10.6**. Funcionalidades implementadas:
-
-- **Oni completo:** atributos Oni (7), progressão 1–20, Origens (21), Regeneração, Mordida/PDK, Kekkijutsus (29 técnicas), Classes (5 ranks), Especializações (10 × 20 graus), Painel GM.
+- **Respirações com service dedicado:** Água, Chamas, Pedra, Névoa, Metal, Neve e Vento (9 Estilos, Sangue Especial) — cada uma com dados curados (`scripts/*-breathing-data.mjs`), lógica de estado e testes próprios.
+- **Dano e cura entre atores:** o relay de dano (`damage-relay.mjs`) já é genérico entre Slayer/Oni/Oni Minion/NPC — qualquer ataque contra qualquer um desses tipos aplica dano automaticamente (com aprovação de GM quando quem ataca não é dono do alvo). Um relay de cura equivalente (`heal-relay.mjs`) foi adicionado; o botão de Dano do Slayer sempre abre um modal "Dano ou Cura?" antes de resolver contra o alvo.
+- **Pipeline de Acerto → Dano:** rolar Acerto já dispara automaticamente a rolagem de Dano usando a arma correta (sem precisar clicar na arma manualmente), e o sistema oferece encadear a próxima Forma de Respiração após um acerto confirmado.
+- **Oni:** progressão 1–20, Origens (21, incluindo Exterminador Corrompido com conversão PDR→PDK), Regeneração, Kekkijutsus, Classes, Especializações e Painel GM. Ledger de ganho de PDV por nível (`pdv_oni_ganho_nvl2..12`) é preenchido automaticamente (roll-once, nunca rerrola) ao carregar o mundo e reativamente por mudança de nível.
 - **Oni Minion:** ficha separada com 3 tipos, 6 pacotes de atributos, 4 ataques, 14 traços, 10 fraquezas e escala por cena.
-- **Slayer:** 9 abas (Perfil/Bio, Perícias, Combate, Skills, Inventário, Interlúdios, Notas/Diário, Configurações, Dados), Respirações (prioritárias Chamas/Pedra/Névoa/Metal/Neve), Estados Avançados (Mundo Transparente, Lâmina Carmesim, Estado Altruísta), Marca do Caçador, Vida e Morte, Descanso, Ações.
-- **Arma Atual:** contrato único de arma por Caçador seleção persistida, rolagem automática de ataque/dano usando a arma vinculada.
-- **Phone Chat:** sistema de mensagens in-game com badge de não lido, notas privadas do GM, relay de dano e controle por settings. **Abre exclusivamente pela macro "Night Assassins Telefone" na hotbar** não existe (e não deve ser reintroduzido) nenhum botão de Phone Chat em nenhuma ficha (Slayer/Oni/NPC/Oni Minion).
-- **Macros:** 19 wrappers limpos para API do módulo (Controle GM, Gerenciar Status, Gerenciar Ações, Descanso, Respiração, Kekkijutsu, Dom do Sangue, Marca do Caçador, Telefone/Chat).
+- **Macros:** wrappers para API do módulo (Controle GM, Gerenciar Status, Gerenciar Ações, Descanso, Respiração, Kekkijutsu, Marca do Caçador, correção de Respirações/Armas legadas).
 
 Uma funcionalidade só será marcada como concluída quando tiver comportamento executável, persistência, testes e validação no Foundry.
 
 ## Conteúdo do módulo
 
-- Compendium **Macros Night Assassins** com 19 macros canônicas.
-- Compendium **Night Assassin's Respirações** com 300 Items em 44 pastas de Respirações (45 estilos de Água, 13 Formas de Lua, etc).
-- Compendium **Night Assassin's Armas dos Caçadores** com 26 armas básicas e 17 armas especiais como Items CSB.
-- Compendium **Night Assassin's Arte** com 104 ícones de compêndio.
+- Compendium **Macros Night Assassins** com as macros canônicas (Controle GM, Gerenciar Status/Ações, Descanso, Kekkijutsu, Marca do Caçador, correção de Respirações/Armas legadas, entre outras).
+- Compendium **Night Assassin's Respirações** com os Items de Forma das 7 Respirações com service dedicado (Água, Chamas, Pedra, Névoa, Metal, Neve, Vento).
+- Compendium **Night Assassin's Armas dos Caçadores** com armas básicas e especiais como Items CSB.
+- Compendium **Night Assassin's Arte** com os ícones de compêndio.
 - Compendium **Night Assassins Templates de Ficha** com 4 templates (Slayer, Oni, Oni Minion, NPC).
 - Automação de atributos e progressão da ficha do Custom System Builder.
-- Relay de dano do GM para atualizar `pdv_oni_dano_tomado` com segurança.
-- Configurações de mundo para ativar ou desativar a automação e o relay.
+- Relay de dano e cura genéricos entre Slayer/Oni/Oni Minion/NPC, com aprovação de GM quando aplicável.
+- Configurações de mundo para ativar ou desativar a automação e os relays.
 - As Formas usam automaticamente os ícones locais disponíveis em `assets/icons/`.
 
 Os geradores usam somente os catálogos mecânicos versionados em `catalogs/`.

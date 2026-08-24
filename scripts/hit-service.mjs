@@ -430,5 +430,22 @@ export async function rollHit(options) {
     for (let index = 0; index < result.hits; index += 1) nextMetal = registerMetalBattleHit(nextMetal).state;
     await actor.update(metalStatePatch(nextMetal), { naCsbAutomation: true, naBreathing: true });
   }
-  return result ? { ...result, weapon } : result;
+  const finalResult = result ? { ...result, weapon } : result;
+
+  // Continuação automática pós-Acerto: dispara o dano sem exigir clique
+  // manual na arma. Chamadores que já fazem sua própria resolução de dano
+  // (ex.: useBreathForm, o ataque extra do Martelo do Julgamento) passam
+  // `autoDamage: false` para não rolar dano em duplicidade. Reaproveita o
+  // mesmo diálogo de encadeamento de Forma usado por useBreathForm — o
+  // jogador vê a mesma pergunta/UX depois de QUALQUER Acerto confirmado,
+  // com arma pura ou com Forma.
+  if (finalResult?.hits > 0 && options.autoDamage !== false) {
+    const { confirmChainedForma, resolveAutoDamage } = await import("./attack-follow-up.mjs");
+    const chained = await confirmChainedForma(actor);
+    if (!chained) {
+      const actionLabel = TIPOS_ACAO.find((entry) => entry.key === dialogResult.actionType)?.label;
+      await resolveAutoDamage({ actor, hitResult: finalResult, techniqueLabel: actionLabel || "Ataque" });
+    }
+  }
+  return finalResult;
 }

@@ -142,7 +142,7 @@ export function missingOniPdvGains(level, persisted = {}) {
 export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) {
   if (!actor?.update) throw new Error("Actor inválido para rolar ganhos de PDV Oni.");
   const props = actor.system?.props ?? {};
-  const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? 1);
+  const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? props.nvl_num ?? String(props.nvl_pj ?? "").replace(/^nvl_/, ""));
   const plan = onlyMissing
     ? missingOniPdvGains(normalized, props)
     : oniRandomPdvRequirements(normalized, {}).required;
@@ -156,7 +156,7 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
       rollTotal = Number(roll.total) || 0;
       value = Math.max(0, Math.trunc(rollTotal));
     } catch (error) {
-      ui.notifications?.error?.(`Falha ao rolar ganho do nível ${entry.level}: ${error.message}`);
+      globalThis.ui?.notifications?.error?.(`Falha ao rolar ganho do nível ${entry.level}: ${error.message}`);
       continue;
     }
     patch[`system.props.${entry.key}`] = value;
@@ -168,8 +168,28 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
   return { results, total, complete: remaining.length === 0 };
 }
 
-function fixedPdvGain(level, vitality) {
-  if (level === 20) return 50 + (vitality * 5);
+/**
+ * Automação da vida do Oni: garante que TODOS os ganhos aleatórios de PDV
+ * (níveis 2–12) até o nível atual existam no ledger do Actor.
+ * Idempotente — ganhos já persistidos NUNCA são rerrolados; só preenche
+ * faltantes (ex.: criação direta em nível alto ou subida de nível).
+ * @param {Actor} actor
+ * @param {object} [options]
+ * @param {number} [options.level] Nível explícito; senão deriva das props.
+ * @returns {Promise<{needed: boolean, rolled: object[], total: number, complete: boolean}>}
+ */
+export async function ensureOniProgression(actor, { level } = {}) {
+  if (!actor?.update) throw new Error("Actor inválido para progressão Oni.");
+  const props = actor.system?.props ?? {};
+  const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? props.nvl_num ?? String(props.nvl_pj ?? "").replace(/^nvl_/, ""));
+  if (!missingOniPdvGains(normalized, props).length) {
+    return { needed: false, rolled: [], total: 0, complete: true };
+  }
+  const result = await rollOniPdvGain(actor, { level: normalized });
+  return { needed: true, rolled: result.results, total: result.total, complete: result.complete };
+}
+
+function fixedPdvGain(level, vitality) {  if (level === 20) return 50 + (vitality * 5);
   if (level >= 16) return 40 + vitality;
   if (level >= 13) return 30 + vitality;
   return 0;

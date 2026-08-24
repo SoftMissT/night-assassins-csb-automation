@@ -26,6 +26,8 @@ export function normalizeKekkijutsu(item) {
   const id = props.kekki_id ?? props.kekkijutsu_id ?? null;
   const catalog = id ? getKekkijutsu(id) : null;
   if (catalog) return catalog;
+  const damage = [];
+  if (props.kekki_dmg_dice) damage.push({ dice: props.kekki_dmg_dice, type: props.kekki_dmg_type ?? "cortante" });
   return Object.freeze({
     id: id ?? "unknown",
     name: props.kekki_nome ?? props.name ?? item?.name ?? "Kekkijutsu",
@@ -39,7 +41,7 @@ export function normalizeKekkijutsu(item) {
     testType: props.kekki_teste_tipo ?? "none",
     testFormula: props.kekki_teste_formula ?? "",
     cdFormula: props.kekki_cd_formula ?? "",
-    damage: [],
+    damage,
     status: [],
     duration: integer(props.kekki_duracao, 0),
     limit: props.kekki_limite ?? "1x/turno",

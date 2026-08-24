@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.5 - 2026-08-24
+
+- **Ficha Oni consolidada de 6 para 2 abas** (Combate; Configurações/Dados): Kekkijutsu movido para o itemContainer de Combate (uso já funcional via `useKekkijutsuItem`); Especialização, Origem/Progressão e Inventário/Notas consolidados dentro de Configurações. Todas as keys funcionais preservadas (ledger de PDV por nível, trio "antes da Queda" da Origem Exterminador Corrompido).
+- **Cura cross-actor**: novo `heal-relay.mjs` espelhando o `damage-relay.mjs` existente — resolve o campo `*_curado` correto por tipo de ator (Slayer/Oni/Oni Minion/NPC), aplica direto se dono/GM ou pede aprovação via o mesmo canal de socket do relay de dano. O botão de Dano da ficha Slayer agora sempre abre um modal "Dano ou Cura?" antes de resolver contra o alvo; fluxos automáticos (Respirações, dano em cadeia) não são afetados.
+- Corrigido falso-positivo no teste de contaminação da ficha Oni (`doesNotMatch /PDR/`) — a única ocorrência de "PDR" no template é o label legítimo da Origem Exterminador Corrompido, não resíduo de Slayer.
+- Corrigido `img` do template de Item de Kekkijutsu, que apontava para um ícone inexistente.
+- Reorganizados os 6 dumps de referência de Respirações (`respiracao_*.json`, soltos na raiz do repo) para `data/catalog-source/respiracoes/`.
+- Validação local: `node --test` com **820/820** testes aprovados.
+
 ## 0.11.0 - 2026-08-23
 
 - **REVERT TOTAL ao estado funcional da v0.10.0** (commit 48a232e): a ficha Slayer e todo o projeto voltaram ao baseline da última versão confirmada funcional no Foundry v14, conforme decisão do operador.

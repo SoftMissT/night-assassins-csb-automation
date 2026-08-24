@@ -86,15 +86,35 @@ describe("module distribution", () => {
       assert.match(oniHidden.get(`${attr}_display`), /fallback/);
       assert.match(minionHidden.get(`oni_minion_${attr}_display`), /fallback/);
     }
+    const oniTabs = JSON.stringify(oni.system.body);
+    const minionTabs = JSON.stringify(minion.system.body);
+    assert.match(oniTabs, /"key":"combate_oni_tab"/);
+    assert.match(minionTabs, /"key":"combate_oni_minion_tab"/);
+    for (const key of ["oni_minion_roll_acerto", "oni_minion_roll_dano", "oni_minion_pdv_dano", "oni_minion_pdk_gasto"]) {
+      assert.match(minionTabs, new RegExp(`\\"key\\":\\"${key}\\"`));
+    }
   });
 
-  it("mantém o NPC narrativo sem recursos de combate", async () => {
+  it("marca cada tipo de Actor com sua classe visual sem depender do nome", async () => {
+    const source = await readFile(new URL("../scripts/main.mjs", import.meta.url), "utf8");
+    assert.match(source, /actorKind\(actor\)/);
+    assert.match(source, /kind\.replaceAll\("_", "-"\)/);
+    assert.match(source, /classList\?\.add\(kindClass\)/);
+  });
+
+  it("mantém o NPC narrativo e oferece PDV/PDR operacionais", async () => {
     const actor = JSON.parse(await readFile(new URL("../src/templates/actors/npc-template.json", import.meta.url), "utf8"));
     const serialized = JSON.stringify(actor.system);
     for (const key of ["npc_nome", "npc_personalidade", "npc_tom", "npc_aparencia", "npc_contexto", "npc_notas_gm"]) {
       assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
     }
-    assert.deepEqual(actor.system.attributeBar, {});
+    assert.deepEqual(actor.system.attributeBar, {
+      npc_pdv_barra: { value: "${npc_pdv_atual}$", max: "${npc_pdv_total}$", editable: false, cssClass: "na-resource-pdv" },
+      npc_pdr_barra: { value: "${npc_pdr_atual}$", max: "${npc_pdr_total}$", editable: false, cssClass: "na-resource-pdr" },
+    });
+    for (const key of ["npc_pdr_base", "npc_pdr_gasto", "npc_pdr_recuperado", "npc_pdr_extra", "npc_pdr_total", "npc_pdr_atual"]) {
+      assert.match(serialized, new RegExp(key));
+    }
     assert.deepEqual(actor.items, []);
     assert.deepEqual(actor.effects, []);
   });

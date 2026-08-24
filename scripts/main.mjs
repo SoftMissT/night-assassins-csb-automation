@@ -62,7 +62,7 @@ Hooks.once("init", () => {
 });
 
 /**
- * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
+ * Marca fichas Night Assassins para o tema mínimo de fonte e fundo.
  * @param {Application} app
  * @param {JQuery|HTMLElement} html
  * @returns {void}
@@ -70,31 +70,17 @@ Hooks.once("init", () => {
 function tagNightAssassinsSheet(app, html) {
   const actor = app?.actor;
   if (!actor?.system?.props) return;
-  const props = actor.system.props;
-  const isNa =
-    props.nome_slayer !== undefined ||
-    props.nome_oni !== undefined ||
-    props.nvl_pj !== undefined ||
-    props.pdv_slayer_total_conta !== undefined ||
-    props.pdv_oni_total_conta !== undefined ||
-    props.estados_slayer_dados !== undefined ||
-    props.vida_morte_slayer_dados !== undefined;
-  if (!isNa) return;
+  const kind = actorKind(actor);
+  if (!kind) return;
 
   const root = html?.[0] ?? html;
   const el = root instanceof HTMLElement ? root : null;
   const appEl = app?.element instanceof HTMLElement ? app.element : el?.closest?.(".app, .application") ?? el;
   appEl?.classList?.add("na-sheet");
   el?.classList?.add("na-sheet");
-
-  // Skin própria do Oni: detecção robusta via actorKind() (template id/flags),
-  // nunca por nome do Actor — evita que uma ficha Oni chamada "Slayer X" (ou
-  // vice-versa) receba a paleta errada.
-  const kind = actorKind(actor);
-  if (kind === "oni") {
-    appEl?.classList?.add("na-oni-sheet");
-    el?.classList?.add("na-oni-sheet");
-  }
+  const kindClass = `na-${kind.replaceAll("_", "-")}-sheet`;
+  appEl?.classList?.add(kindClass);
+  el?.classList?.add(kindClass);
 }
 
 Hooks.once("ready", async () => {

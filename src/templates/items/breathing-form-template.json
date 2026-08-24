@@ -1101,7 +1101,7 @@
                       "type": "label",
                       "size": "full-size",
                       "icon": "",
-                      "value": "<div style=\"font-size:13px;color:#888;line-height:1.6;margin-top:12px;\"><strong>${nome_forma}$</strong><br><em>${nome_jp}$</em><br>${respiracao_nome}$ · ${tipo_manobra}$ · Nível Req: ${nivel_req}$<br><br>${descricao}$</div>",
+                      "value": "${nome_forma}$ ${nome_jp}$ ${respiracao_nome}$ · ${tipo_manobra}$ · Nível Req: ${nivel_req}$ ${descricao}$",
                       "prefix": "",
                       "suffix": "",
                       "rollMessage": "",

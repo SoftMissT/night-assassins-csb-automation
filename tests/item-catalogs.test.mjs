@@ -52,7 +52,7 @@ describe("catálogo de Respirações", () => {
     assert.equal(storm.system.props.nvl3_dano, "8d8");
   });
 
-  it("publica as cinco Respirações prioritárias como Items mecânicos", async () => {
+  it("publica as seis Respirações prioritárias como Items mecânicos e nomenclatura canônica", async () => {
     const documents = await sourceDocuments("../build/compendium/respiracoes/");
     const items = documents.filter((document) => document.type === "equippableItem");
     const expected = new Map([
@@ -61,6 +61,7 @@ describe("catálogo de Respirações", () => {
       ["Metal", { count: 6, passive: "metal_05" }],
       ["Neve", { count: 8, passive: "neve_08" }],
       ["Névoa", { count: 8, passive: null }],
+      ["Vento", { count: 10, passive: "vento_01" }],
     ]);
 
     for (const [breathing, contract] of expected) {
@@ -72,8 +73,16 @@ describe("catálogo de Respirações", () => {
       assert.deepEqual(passives.map((item) => item.system.props.forma_id), contract.passive ? [contract.passive] : []);
       assert.ok(forms.filter((item) => item.system.props.forma_passiva !== 1).every((item) => Number(item.system.props.nvl1_custo) >= 0));
     }
+    const prefixes = new Map([
+      ["Chamas", "Honoo no Kokyu — "], ["Pedra", "Iwa no Kokyu — "],
+      ["Metal", "Kinzoku no Kokyu — "], ["Neve", "Yuki no Kokyu — "],
+      ["Névoa", "Kasumi no Kokyu — "], ["Vento", "Kaze no Kokyu — "],
+    ]);
+    for (const [breathing, prefix] of prefixes) {
+      const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
+      assert.ok(forms.every((item) => item.name.startsWith(prefix)), `${breathing} deve usar o prefixo ${prefix}`);
+    }
     const stone = items.filter((item) => item.system?.props?.respiracao_nome === "Pedra");
-    assert.ok(stone.every((item) => item.name.startsWith("Iwa no Kokyū — ")));
     assert.ok(stone.some((item) => item.system.props.nome_forma.includes("Tenmen Kudaki")));
   });
 
@@ -124,7 +133,8 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /rollWeaponItem/);
     assert.match(serialized, /linkedEntity/);
     assert.doesNotMatch(serialized, /itemUuid:entity\.uuid/);
-    assert.match(serialized, /na-sheet-text/);
+    assert.match(serialized, /ROLAR DANO DA ARMA/);
+    assert.doesNotMatch(serialized, /na-sheet-text|custom-orbitron-wrapper|<style|style=/i);
     assert.match(serialized, /arma_perfis_resumo/);
     assert.match(serialized, /arma_rank_ss_formula/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);

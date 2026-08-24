@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.8 - 2026-08-24
+
+- Corrige a estrutura das `Table` do template Slayer para a matriz bidimensional exigida pelo Custom System Builder, eliminando `Unknown component type: undefined` nos Acúmulos de Respiração.
+- Move a lista de Formas e os resumos legíveis das seis Respirações publicadas para a aba Combate; o estado persistente permanece oculto e separado da apresentação.
+- Padroniza as técnicas publicadas com os prefixos `Honoo no Kokyu`, `Iwa no Kokyu`, `Kinzoku no Kokyu`, `Yuki no Kokyu`, `Kasumi no Kokyu` e `Kaze no Kokyu`.
+- Restaura a aba Combate nos templates Oni e Oni Minion, corrige os atributos atuais usados no cálculo inicial do Oni e adiciona PDV/PDR operacionais e barras ao NPC.
+- Remove a skin CSS global e os wrappers decorativos embutidos das fichas de Actor e Item; a apresentação volta ao padrão nativo do Foundry/Custom System Builder para reduzir peso e evitar que o layout seja quebrado pelo tema.
+- Adiciona apenas o tema mínimo solicitado: fonte Orbitron via Google Fonts, fundo vinho sólido para Oni/Oni Minion e azul-marinho escuro sólido para Slayer/NPC.
+- Validação local: packs reconstruídos e `node --test` com **845/845** testes aprovados após a migração para o visual nativo e o tema mínimo.
+
 ## 0.11.7 - 2026-08-24
 
 - **Chamas e Pedra por arma sincronizada**: Esquentar (Chamas) e Quebra/Sangramento/Reflexão (Pedra) agora rastreiam estado por arma equipada em vez de globalmente no Actor; piso mundial de crítico configurável pelo GM (Iwa no Kokyū); dois ataques sequenciais da Pedra com recuperação única de PDR; Kaifuku reativável pela Marca sem bloquear a ativação.

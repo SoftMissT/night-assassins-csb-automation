@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
+
+.na-sheet,
+.na-sheet :is(button, input, select, textarea) {
+  font-family: "Orbitron", sans-serif;
+}
+
+.na-oni-sheet .window-content,
+.na-oni-minion-sheet .window-content {
+  background: #220b13;
+}
+
+.na-slayer-sheet .window-content,
+.na-npc-sheet .window-content {
+  background: #071321;
+}
+
+.na-sheet .na-resource-pdv,
+.na-sheet .na-resource-pdv :is(label, input, span, select, textarea) {
+  color: #ff3347 !important;
+}
+
+.na-slayer-sheet .na-resource-pdr,
+.na-slayer-sheet .na-resource-pdr :is(label, input, span, select, textarea),
+.na-npc-sheet .na-resource-pdr,
+.na-npc-sheet .na-resource-pdr :is(label, input, span, select, textarea) {
+  color: #28d7ff !important;
+}
+
+.na-oni-sheet .na-resource-pdk,
+.na-oni-sheet .na-resource-pdk :is(label, input, span, select, textarea),
+.na-oni-minion-sheet .na-resource-pdk,
+.na-oni-minion-sheet .na-resource-pdk :is(label, input, span, select, textarea) {
+  color: #b868ff !important;
+}

@@ -6,14 +6,14 @@ export const SNOW_FORMS = Object.freeze([
   { id: "neve_01", order: 1, name: "Ichi no Kata: Yuki no Nagare", ptName: "Fluxo de Neve", action: "especial", levels: [
     { cost: 1, damage: "2d4" }, { cost: 1, damage: "2d6" }, { cost: 2, damage: "2d8" }, { cost: 2, damage: "2d10" },
   ] },
-  { id: "neve_02", order: 2, name: "Ni no Kata: Yutsuna Fuyu", ptName: "Inverno Sombrio", action: "especial", cooldown: 3, levels: [
+  { id: "neve_02", order: 2, name: "Ni no Kata: Yūtsuna Fuyu", ptName: "Inverno Sombrio", action: "especial", cooldown: 3, levels: [
     { cost: 2, penalty: -1 }, { cost: 2, penalty: -2 }, { cost: 3, penalty: -4 },
     { cost: 3, penalty: -4, vulnerabilities: ["cortante", "perfurante"] },
   ] },
   { id: "neve_03", order: 3, name: "San no Kata: Burizado", ptName: "Nevasca", action: "unica", levels: [
     { cost: 3 }, { cost: 3 }, { cost: 3 }, { cost: 3 },
   ] },
-  { id: "neve_04", order: 4, name: "Shi no Kata: Aisu Hato", ptName: "Coração de Gelo", action: "ataque", levels: [
+  { id: "neve_04", order: 4, name: "Shi no Kata: Aisu Hāto", ptName: "Coração de Gelo", action: "ataque", levels: [
     { cost: 3 }, { cost: 3 }, { cost: 3 }, { cost: 3 },
   ] },
   { id: "neve_05", order: 5, name: "Go no Kata: Fu no Nadare", ptName: "Avalanche Negativa", action: "ataque", levels: [

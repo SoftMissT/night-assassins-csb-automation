@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { useNativeCsbPresentation } from "./native-csb-style.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const defaultTemplate = path.join(repoRoot, "src", "templates", "actors", "slayer-template.json");
@@ -727,12 +728,14 @@ function fixBreathingState(template) {
     ["resp_nevoa_estado", "Estado mecânico da Respiração da Névoa", '{"version":1,"patterns":{}}'],
     ["resp_metal_estado", "Estado mecânico da Respiração do Metal", '{"version":1}'],
     ["resp_neve_estado", "Estado mecânico da Respiração da Neve", '{"version":1}'],
+    ["resp_vento_estado", "Estado mecânico da Respiração do Vento", '{"version":1,"scars":0,"vitBonus":0,"battleDamage":{"cutPierce":0,"bleedInfection":0}}'],
     ["resp_chamas_bonus_dado", "Chamas dado adicional de técnica", ""],
     ["resp_chamas_resumo", "Chamas resumo", "Fogo Fátuo 0/60"],
     ["resp_pedra_resumo", "Pedra resumo", "Pedra · sem efeito ativo"],
     ["resp_nevoa_resumo", "Névoa resumo", "Padrões 0/3"],
     ["resp_metal_resumo", "Metal resumo", "Metal · sem efeito ativo"],
     ["resp_neve_resumo", "Neve resumo", "Neve · sem efeito ativo"],
+    ["resp_vento_resumo", "Vento resumo", "Cicatrizes 0/4 · VIT +0"],
     ["resp_bonus_dano_dados", "Dados adicionais", ""],
     ["resp_efeito_flag", "Efeito ativo", ""],
     ["resp_combo_origem", "Origem do combo", ""],
@@ -1041,9 +1044,60 @@ function organizeSlayerCombatLayout(template) {
 
 function flattenNestedPanelContents(template) {
   walk(template.system?.body, (node) => {
+    if (node.type === "table") return;
     if (!Array.isArray(node.contents?.[0])) return;
     if (node.contents.every((entry) => Array.isArray(entry))) node.contents = node.contents.flat();
   });
+}
+
+function normalizeEmptyComponents(template) {
+  walk(template.system?.body, (node) => {
+    if (!Array.isArray(node.contents)) return;
+    if (node.type !== "table") node.contents = node.contents.filter(Boolean);
+  });
+}
+
+function repairTableContents(template) {
+  const isBlankLabel = (entry) => entry?.type === "label"
+    && !entry.key && !entry.value && !entry.rollMessage && !entry.altRollMessage;
+  walk(template.system?.body, (node) => {
+    if (node.type !== "table" || !Array.isArray(node.contents)) return;
+    const rows = Math.max(1, Number(node.rows) || 1);
+    const cols = Math.max(1, Number(node.cols) || 1);
+    const flat = Array.isArray(node.contents[0]) ? node.contents.flat() : [...node.contents];
+    const normalized = flat.map((entry) => isBlankLabel(entry) ? null : entry);
+    while (normalized.length < rows * cols) normalized.push(null);
+    normalized.length = rows * cols;
+    node.contents = Array.from({ length: rows }, (_, row) => normalized.slice(row * cols, (row + 1) * cols));
+  });
+}
+
+function organizeBreathingCombatSection(template) {
+  let combatTab = null;
+  let breathingContainer = null;
+  walk(template.system?.body, (node) => {
+    if (node.key === "combat_slayer_tab" && node.type === "tab") combatTab = node;
+    if (node.key === "skills_slayer_respiracoes" && node.type === "itemContainer" && !breathingContainer) {
+      breathingContainer = structuredClone(node);
+    }
+  });
+  if (!combatTab) throw new Error("Aba Combate do Slayer não encontrada para as Respirações.");
+
+  removeComponentsByKey(template.system, new Set(["skills_slayer_respiracoes", "combate_acumulos_slayer_panel"]));
+  breathingContainer ??= breathingItemContainer();
+  breathingContainer.title = orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF", 16);
+
+  const accumulationPanel = panel("combate_acumulos_slayer_panel", "Acúmulos de Respiração", [
+    displayLabel("resp_chamas_resumo_display", "Honoo no Kokyu · ${resp_chamas_resumo}$"),
+    displayLabel("resp_pedra_resumo_display", "Iwa no Kokyu · ${resp_pedra_resumo}$"),
+    displayLabel("resp_metal_resumo_display", "Kinzoku no Kokyu · ${resp_metal_resumo}$"),
+    displayLabel("resp_neve_resumo_display", "Yuki no Kokyu · ${resp_neve_resumo}$"),
+    displayLabel("resp_nevoa_resumo_display", "Kasumi no Kokyu · ${resp_nevoa_resumo}$"),
+    displayLabel("resp_vento_resumo_display", "Kaze no Kokyu · ${resp_vento_resumo}$"),
+  ], "grid-2");
+
+  combatTab.contents ??= [];
+  combatTab.contents.push(breathingContainer, accumulationPanel);
 }
 
 export function migrateSlayerTemplate(template) {
@@ -1063,7 +1117,10 @@ export function migrateSlayerTemplate(template) {
   organizeSlayerCombatLayout(migrated);
   fixBreathingState(migrated);
   organizeSlayerTabs(migrated);
+  organizeBreathingCombatSection(migrated);
   flattenNestedPanelContents(migrated);
+  normalizeEmptyComponents(migrated);
+  repairTableContents(migrated);
   fixLifeDeathStorage(migrated);
   fixRollButtonTypography(migrated);
   fixTextVisibilityFormulas(migrated);
@@ -1163,6 +1220,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
   const template = unwrapSlayerTemplate(source);
   const migrated = migrateSlayerTemplate(template);
+  useNativeCsbPresentation(migrated);
   const validation = validateSlayerTemplate(migrated);
   if (validation.duplicates.length || validation.forbidden.length) {
     throw new Error(`Migração inválida: ${JSON.stringify(validation)}`);

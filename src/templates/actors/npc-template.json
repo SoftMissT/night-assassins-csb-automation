@@ -20,7 +20,7 @@
           "type": "label",
           "size": "full-size",
           "icon": "",
-          "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-car\">Perfil do NPC</span>",
+          "value": "Perfil do NPC",
           "prefix": "",
           "suffix": "",
           "rollMessage": "",
@@ -236,7 +236,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#2ED36F;text-transform:uppercase;letter-spacing:.12em;\">VIT: ${npc_vit_display}$</span></div>"
+              "value": "VIT: ${npc_vit_display}$"
             },
             {
               "key": "npc_dex_base",
@@ -284,7 +284,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">DEX: ${npc_dex_display}$</span></div>"
+              "value": "DEX: ${npc_dex_display}$"
             },
             {
               "key": "npc_for_base",
@@ -332,7 +332,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">FOR: ${npc_for_display}$</span></div>"
+              "value": "FOR: ${npc_for_display}$"
             },
             {
               "key": "npc_car_base",
@@ -380,7 +380,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF9100;text-transform:uppercase;letter-spacing:.12em;\">CAR: ${npc_car_display}$</span></div>"
+              "value": "CAR: ${npc_car_display}$"
             },
             {
               "key": "npc_fdv_base",
@@ -428,7 +428,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#BB97F9;text-transform:uppercase;letter-spacing:.12em;\">FDV: ${npc_fdv_display}$</span></div>"
+              "value": "FDV: ${npc_fdv_display}$"
             },
             {
               "key": "npc_int_base",
@@ -476,7 +476,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#F8EB4D;text-transform:uppercase;letter-spacing:.12em;\">INT: ${npc_int_display}$</span></div>"
+              "value": "INT: ${npc_int_display}$"
             },
             {
               "key": "npc_sab_base",
@@ -524,7 +524,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#D45CA4;text-transform:uppercase;letter-spacing:.12em;\">SAB: ${npc_sab_display}$</span></div>"
+              "value": "SAB: ${npc_sab_display}$"
             }
           ],
           "flow": "grid-2",
@@ -574,7 +574,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg\">Acerto</span>"
+              "value": "Acerto"
             },
             {
               "key": "npc_roll_dano",
@@ -599,7 +599,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg\">Dano</span>"
+              "value": "Dano"
             },
             {
               "key": "npc_roll_bloqueio",
@@ -624,7 +624,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg\">Bloqueio</span>"
+              "value": "Bloqueio"
             },
             {
               "key": "npc_roll_esquiva",
@@ -649,7 +649,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg\">Esquiva</span>"
+              "value": "Esquiva"
             },
             {
               "key": "acerto_label",
@@ -712,7 +712,7 @@
               "key": "npc_pdv_base",
               "colSpan": 1,
               "rowSpan": 1,
-              "cssClass": "",
+              "cssClass": "na-resource-pdv",
               "role": 0,
               "editRole": 0,
               "permission": 0,
@@ -735,7 +735,7 @@
               "key": "npc_pdv_total_label",
               "colSpan": 1,
               "rowSpan": 1,
-              "cssClass": "",
+              "cssClass": "na-resource-pdv",
               "role": 0,
               "editRole": 0,
               "permission": 0,
@@ -754,13 +754,13 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#FF2B4A;text-transform:uppercase;letter-spacing:.12em;\">PDV: ${npc_pdv_atual}$ / ${npc_pdv_total}$</span></div>"
+              "value": "PDV: ${npc_pdv_atual}$ / ${npc_pdv_total}$"
             },
             {
               "key": "npc_pdv_dano",
               "colSpan": 1,
               "rowSpan": 1,
-              "cssClass": "",
+              "cssClass": "na-resource-pdv",
               "role": 0,
               "editRole": 0,
               "permission": 0,
@@ -783,7 +783,7 @@
               "key": "npc_pdv_curado",
               "colSpan": 1,
               "rowSpan": 1,
-              "cssClass": "",
+              "cssClass": "na-resource-pdv",
               "role": 0,
               "editRole": 0,
               "permission": 0,
@@ -794,6 +794,123 @@
               "type": "numberField",
               "size": "full-size",
               "label": "Curado",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            },
+            {
+              "key": "npc_pdr_base",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "na-resource-pdr",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "PDR base",
+              "defaultValue": "5",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            },
+            {
+              "key": "npc_pdr_total_label",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "na-resource-pdr",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "label",
+              "size": "full-size",
+              "label": "",
+              "icon": "",
+              "prefix": "",
+              "suffix": "",
+              "style": "label",
+              "rollMessage": "",
+              "altRollMessage": "",
+              "rollMessageToChat": false,
+              "altRollMessageToChat": false,
+              "value": "PDR: ${npc_pdr_atual}$ / ${npc_pdr_total}$"
+            },
+            {
+              "key": "npc_pdr_gasto",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "na-resource-pdr",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "PDR gasto",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            },
+            {
+              "key": "npc_pdr_recuperado",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "na-resource-pdr",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "PDR recuperado",
+              "defaultValue": "0",
+              "allowDecimal": false,
+              "minVal": "0",
+              "maxVal": "",
+              "allowRelative": false,
+              "showControls": true,
+              "controlsStyle": "hover"
+            },
+            {
+              "key": "npc_pdr_extra",
+              "colSpan": 1,
+              "rowSpan": 1,
+              "cssClass": "na-resource-pdr",
+              "role": 0,
+              "editRole": 0,
+              "permission": 0,
+              "tooltip": "",
+              "visibilityFormula": "",
+              "editableFormula": "",
+              "escapeHTML": false,
+              "type": "numberField",
+              "size": "full-size",
+              "label": "PDR extra",
               "defaultValue": "0",
               "allowDecimal": false,
               "minVal": "0",
@@ -997,14 +1114,39 @@
       },
       {
         "name": "npc_pdv_total",
-        "value": "${max(1,fallback(npc_pdv_base,10))}$"
+        "value": "${max(1,fallback(npc_pdv_base,10))}$",
+        "cssClass": "na-resource-pdv"
       },
       {
         "name": "npc_pdv_atual",
-        "value": "${max(0,npc_pdv_total-fallback(npc_pdv_dano,0)+fallback(npc_pdv_curado,0))}$"
+        "value": "${max(0,npc_pdv_total-fallback(npc_pdv_dano,0)+fallback(npc_pdv_curado,0))}$",
+        "cssClass": "na-resource-pdv"
+      },
+      {
+        "name": "npc_pdr_total",
+        "value": "${max(0,fallback(npc_pdr_base,0)+fallback(npc_pdr_extra,0))}$",
+        "cssClass": "na-resource-pdr"
+      },
+      {
+        "name": "npc_pdr_atual",
+        "value": "${min(npc_pdr_total,max(0,npc_pdr_total-fallback(npc_pdr_gasto,0)+fallback(npc_pdr_recuperado,0)))}$",
+        "cssClass": "na-resource-pdr"
       }
     ],
-    "attributeBar": {},
+    "attributeBar": {
+      "npc_pdv_barra": {
+        "value": "${npc_pdv_atual}$",
+        "max": "${npc_pdv_total}$",
+        "editable": false,
+        "cssClass": "na-resource-pdv"
+      },
+      "npc_pdr_barra": {
+        "value": "${npc_pdr_atual}$",
+        "max": "${npc_pdr_total}$",
+        "editable": false,
+        "cssClass": "na-resource-pdr"
+      }
+    },
     "templateSystemUniqueVersion": 1
   },
   "prototypeToken": {
@@ -1026,10 +1168,10 @@
     "disposition": 0,
     "displayBars": 0,
     "bar1": {
-      "attribute": null
+      "attribute": "npc_pdv_barra"
     },
     "bar2": {
-      "attribute": null
+      "attribute": "npc_pdr_barra"
     },
     "flags": {},
     "randomImg": false,

@@ -19,7 +19,14 @@ export function resolveBreathingDefense({ amount = 0, components = [], damageTyp
 
   if (steel.consumed) Object.assign(patches, steel.patch);
   if (steel.effect?.negateAttack) {
-    return { amount: 0, components: normalizedComponents(components).map((entry) => ({ ...entry, subtotal: 0 })), resisted: false, negated: true, patches };
+    return {
+      amount: 0,
+      components: normalizedComponents(components).map((entry) => ({ ...entry, subtotal: 0 })),
+      resisted: false,
+      negated: true,
+      counterAttackAvailable: steel.effect.counterAttack === true,
+      patches,
+    };
   }
 
   const resistances = new Set(suppressResistances ? [] : [

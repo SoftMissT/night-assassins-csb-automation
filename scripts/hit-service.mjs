@@ -2,14 +2,14 @@
  * @fileoverview Serviço de rolagem de acerto.
  */
 
-import { parseAttributeValue } from "./parsing.mjs";
+import { parseAttributeValue, parseNumber } from "./parsing.mjs";
 import { openHitConfirmationDialog, openHitDialog } from "./dialogs/hit-dialog.mjs";
 import { getRollStatusEffects, mergeRollMode } from "./status-effects.mjs";
 import { MODULE_ID, TIPOS_ACAO } from "./constants.mjs";
 import { consumeSlayerActions, recoverSlayerFolego } from "./action-service.mjs";
 import { parseWaterBreathingState } from "./breath-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
-import { consumeFlamePending, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { consumeFlamePending, flameStatePatch, flameWeaponHeat, parseFlameBreathingState, synchronizeFlameWeapon } from "./flame-breathing-service.mjs";
 import { consumeStonePending, parseStoneBreathingState, stoneReflectionPenalty, stoneStatePatch } from "./stone-breathing-service.mjs";
 import { consumeMistPending, mistStatePatch, parseMistBreathingState } from "./mist-breathing-service.mjs";
 import { metalStatePatch, parseMetalBreathingState, registerMetalBattleHit, resolveMetalMagnetism } from "./metal-breathing-service.mjs";
@@ -17,6 +17,7 @@ import { consumeWindPending, parseWindBreathingState, windStatePatch } from "./w
 import { WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
 import { consumeSnowPending, parseSnowBreathingState, resolveSnowFreezeGain, snowRestrictionFlag, snowStatePatch, spendFreezeForRestriction } from "./snow-breathing-service.mjs";
 import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
+import { SETTINGS } from "./settings.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -36,7 +37,7 @@ function getModeLabel(mode) {
 
 async function chooseSnowRecovery() {
   return foundry.applications.api.DialogV2.wait({
-    window: { title: "Abaixo de Zero" },
+    window: { title: "Roku no Kata: Zero Ika" },
     content: "<p>Uma aplicação de Congelar foi bem-sucedida. Escolha a recuperação.</p>",
     buttons: [
       { action: "pdv", label: "Recuperar 2 PDV", default: true, callback: () => "pdv" },
@@ -217,17 +218,33 @@ export async function rollHit(options) {
   if (statusEffects.autoFail) return ui.notifications?.warn?.("Paralisia: falha automática neste Acerto.");
 
   const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
+  const flameState = parseFlameBreathingState(props.resp_chamas_estado);
   const strength = parseAttributeValue(props.for_display);
-  const weapons = actorWeapons(actor).map((weapon) => ({
+  const stoneCriticalFloor = game.settings?.get?.(MODULE_ID, SETTINGS.stoneCriticalFloor) ?? 1;
+  const allWeapons = actorWeapons(actor).map((weapon) => ({
     ...weapon,
-    effectiveCritical: effectiveWeaponCritical({ base: weapon.critical, state: passiveState, weaponId: weapon.id, strength }),
+    effectiveCritical: effectiveWeaponCritical({
+      base: weapon.critical,
+      state: passiveState,
+      weaponId: weapon.id,
+      strength,
+      floor: stoneCriticalFloor,
+    }),
   }));
-  const dialogResult = await openHitDialog({ attrName, attrVal, color, weapons });
+  const pendingFlameWeaponId = flameState.nextHit?.source?.startsWith?.("chamas_")
+    ? String(flameState.synchronizedWeapon?.id ?? "")
+    : "";
+  const requiredWeaponId = String(options.requiredWeaponId ?? pendingFlameWeaponId);
+  const weapons = requiredWeaponId ? allWeapons.filter((weapon) => weapon.id === requiredWeaponId) : allWeapons;
+  if (requiredWeaponId && weapons.length === 0) {
+    ui.notifications?.warn?.("A arma sincronizada não está mais no inventário do personagem.");
+    return;
+  }
+  const dialogResult = await openHitDialog({ attrName, attrVal, color, weapons, requiredWeapon: Boolean(requiredWeaponId) });
   if (!dialogResult) return;
 
   const breathingState = parseWaterBreathingState(props.resp_agua_estado);
   const breathHit = breathingState.nextHit;
-  const flameState = parseFlameBreathingState(props.resp_chamas_estado);
   const flameHit = flameState.nextHit;
   const stoneState = parseStoneBreathingState(props.resp_pedra_estado);
   const stoneHit = stoneState.nextHit;
@@ -240,7 +257,7 @@ export async function rollHit(options) {
   const windHit = windState.nextHit;
   const snowPenalty = actor.getFlag?.(MODULE_ID, "snowPenalty");
   const stonePenalty = actor.getFlag?.(MODULE_ID, "stoneReflectionPenalty");
-  const flameTier = flameWeaponTier(flameState.weaponHeat);
+  const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
   // 8ª Forma Ofuscamento (Névoa): a partir do Nível 2, quem tenta acertar o usuário/aliado
   // ofuscado sofre -2 na rolagem de Acerto. O estado "dazzle" fica salvo em resp_nevoa_estado
   // do PRÓPRIO usuário da Névoa (com allyUuid apontando o aliado também protegido); então, ao
@@ -249,6 +266,11 @@ export async function rollHit(options) {
   // usado para snowPenalty/stoneReflectionPenalty (penalidade lida do alvo e aplicada ao atacante).
   const targetedActors = [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean);
   const combatantActors = [...(game.combat?.combatants ?? [])].map((combatant) => combatant.actor).filter(Boolean);
+  // 7ª Forma Neblina: teste de SAB-vs-SAB é POR ALVO. O bônus registrado em
+  // `mistState.fog` só se aplica quando o alvo atual da rolagem é o mesmo
+  // inimigo (`enemyUuid`) que fez o teste oposto e falhou.
+  const fogAppliesToTarget = targetedActors.some((targetActor) => targetActor.uuid === mistState.fog?.enemyUuid);
+  const fogBonus = fogAppliesToTarget ? Number(mistState.fog?.bonus) || 0 : 0;
   const dazzlePenalty = targetedActors.reduce((total, targetActor) => {
     if (targetActor.uuid === actor.uuid) return total;
     const targetMist = parseMistBreathingState(targetActor.system?.props?.resp_nevoa_estado);
@@ -268,14 +290,26 @@ export async function rollHit(options) {
     + (Number(stoneHit?.bonus) || 0) + (Number(mistHit?.bonus) || 0)
     + (Number(snowHit?.bonus) || 0) + (Number(snowState.belowZero?.fdvHitBonus) || 0)
     + (Number(windHit?.bonus) || 0)
-    + (Number(snowState.iceHeart?.hitBonus) || 0) + (Number(mistState.fog?.bonus) || 0) + (Number(mistState.dazzle?.hitBonus) || 0)
+    + (Number(snowState.iceHeart?.hitBonus) || 0) + fogBonus + (Number(mistState.dazzle?.hitBonus) || 0)
     + (Number(snowPenalty?.hitPenalty) || 0) + (Number(stonePenalty?.value) || 0) + flameTier.hit + dazzlePenalty;
   if (stonePenalty?.sourceState) {
     const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
     if (canonical !== Number(stonePenalty.value)) ui.notifications?.warn?.("Penalidade da Reflexão da Pedra foi normalizada.");
   }
   const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
-  const requestedMode = breathHit?.advantage || flameHit?.advantage || mistHit?.advantage
+  // Ni no Kata Sōsō Shinato Kaze — passiva a partir do Nível 3 de Respiração:
+  // ataques básicos e desta técnica deixam de sofrer atrito do vento e têm
+  // Vantagem uma vez por turno (não depende de ativar a técnica em si).
+  const windLevel = Math.trunc(parseNumber(props.nvl_respiracao_num ?? props.respiracao_nivel ?? props.nivel_respiracao ?? props.nvl_respiracao));
+  const knowsWind = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Vento");
+  const windAdvantageEligible = knowsWind && windLevel >= 3;
+  const windAdvantageKey = "windGarrasAdvantage";
+  const windAdvantageState = actor.getFlag?.(MODULE_ID, windAdvantageKey);
+  const currentRound = game.combat?.round ?? 0;
+  const currentTurn = game.combat?.turn ?? 0;
+  const windAdvantageUsed = windAdvantageState?.round === currentRound && windAdvantageState?.turn === currentTurn;
+  const windAdvantageAvailable = windAdvantageEligible && !windAdvantageUsed;
+  const requestedMode = breathHit?.advantage || flameHit?.advantage || mistHit?.advantage || windAdvantageAvailable
     ? mergeRollMode(dialogResult.mode, "advantage") : dialogResult.mode;
   const weapon = weapons.find((entry) => entry.id === dialogResult.weaponId && entry.profileIndex === Number(dialogResult.weaponProfileIndex ?? 0))
     ?? weapons.find((entry) => entry.id === dialogResult.weaponId)
@@ -308,6 +342,9 @@ export async function rollHit(options) {
     metalReroll: metalState.chainReaction?.turns > 0,
     stopOnMiss: mistHit?.stopOnMiss === true,
   });
+  if (windAdvantageAvailable) {
+    await actor.setFlag(MODULE_ID, windAdvantageKey, { round: currentRound, turn: currentTurn });
+  }
   const confirmedCritical = result?.attempts?.find((attempt) => attempt.critical);
   const knowsMetal = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Metal");
   if (result?.attempts?.length && weapon) {
@@ -318,7 +355,11 @@ export async function rollHit(options) {
       natural: confirmedCritical.natural,
       threshold: confirmedCritical.criticalThreshold,
     });
-    await actor.update(passiveStatePatch(nextPassiveState), { naCsbAutomation: true, naBreathing: true });
+    const weaponPatch = passiveStatePatch(nextPassiveState);
+    if ([...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Chamas")) {
+      Object.assign(weaponPatch, flameStatePatch(synchronizeFlameWeapon(flameState, weapon, 0)));
+    }
+    await actor.update(weaponPatch, { naCsbAutomation: true, naBreathing: true });
     if (confirmedCritical && knowsMetal) ui.notifications?.info?.("Martelo do Julgamento disponível: ataque adicional liberado pelo crítico.");
   }
   if (result?.attempts?.length && windHit) {
@@ -334,7 +375,7 @@ export async function rollHit(options) {
     if (allies.length > 0) {
       const healed = Math.min(parseNumber(props.pdv_slayer_maximo_num), parseNumber(props.pdv_slayer_curado) + allies.length);
       await actor.update({ "system.props.pdv_slayer_curado": healed }, { naCsbAutomation: true, naBreathing: true });
-      ui.notifications?.info?.(`Árvore Balançando: crítico com ${allies.length} aliado(s) compatível(is) — +${allies.length} PDV.`);
+      ui.notifications?.info?.(`San no Kata Kokufū Enran: crítico com ${allies.length} aliado(s) compatível(is) — +${allies.length} PDV.`);
     }
   }
   if (result?.attempts?.length && breathHit) {

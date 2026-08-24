@@ -13,7 +13,27 @@
 
 ## Estado mecânico atual
 
-- **Respirações com service dedicado:** Água, Chamas, Pedra, Névoa, Metal, Neve e Vento (9 Estilos, Sangue Especial) — cada uma com dados curados (`scripts/*-breathing-data.mjs`), lógica de estado e testes próprios.
+### Respirações publicadas (motor de estado dedicado + auditoria forma-por-forma contra a fonte oficial)
+
+Só as Respirações abaixo têm `scripts/*-breathing-service.mjs` próprio (estado persistente, combos, testes dedicados) **e** foram auditadas técnica por técnica contra a fonte oficial em `MACRO-NA-FOUNDRY/Versao-Oficial-Night-Assassins-V25.1/Respirações/`. São as únicas publicadas no Compendium **Night Assassin's Respirações** — o builder (`tools/build-breathing-sources.mjs`, constante `PUBLISHED_BREATHINGS`) filtra qualquer outra Respiração do catálogo bruto para fora do pack final.
+
+| Respiração | Estilos/Formas | Auditoria |
+| --- | --- | --- |
+| **Chamas** (Honō no Kokyū) | 9 Estilos + Esquentar (Brasas Ardentes/Fogo Fátuo) | ✅ auditada, zero divergências da fonte |
+| **Pedra** (Iwa no Kokyū) | 5 Estilos | ✅ auditada em profundidade |
+| **Névoa** (Kasumi no Kokyū) | 8 Formas + 3 Padrões (Ciclone/Estigma/Reflexão) | ✅ auditada — 5 decisões do Operador fechadas nesta rodada |
+| **Metal** (Kinzoku no Kokyū) | 5 Formas + Martelo do Julgamento | ✅ auditada — 2 bugs reais corrigidos (contra-ataque N4 do Duro como Aço, Vantagem N2 não consumida) |
+| **Neve** (Snow Breathing) | 7 Formas + Congelar | ✅ auditada — 1 bug real corrigido (bônus de teste do Coração de Gelo N4) |
+| **Vento** (Kaze no Kokyū) | 9 Estilos + Sangue Especial | ✅ auditada — 1 bug real corrigido (Vantagem passiva do 2º Estilo nunca disparava) |
+
+Nomenclatura: todas usam o nome japonês (romaji) como nome primário do Item/técnica, com o nome em português como campo secundário (`ptName`/`nome_jp`), inclusive nas mensagens de chat e diálogos.
+
+### Respirações fora do pack (catálogo de dados existe, sem motor real ainda)
+
+O catálogo mecânico (`catalogs/breathing.json`) tem dados de 44 Respirações do sistema (incluindo Água), mas as que não estão na tabela acima não têm `service.mjs` dedicado nem passaram por auditoria — não são publicadas no módulo até receberem o mesmo tratamento.
+
+### Demais sistemas
+
 - **Dano e cura entre atores:** o relay de dano (`damage-relay.mjs`) já é genérico entre Slayer/Oni/Oni Minion/NPC — qualquer ataque contra qualquer um desses tipos aplica dano automaticamente (com aprovação de GM quando quem ataca não é dono do alvo). Um relay de cura equivalente (`heal-relay.mjs`) foi adicionado; o botão de Dano do Slayer sempre abre um modal "Dano ou Cura?" antes de resolver contra o alvo.
 - **Pipeline de Acerto → Dano:** rolar Acerto já dispara automaticamente a rolagem de Dano usando a arma correta (sem precisar clicar na arma manualmente), e o sistema oferece encadear a próxima Forma de Respiração após um acerto confirmado.
 - **Oni:** progressão 1–20, Origens (21, incluindo Exterminador Corrompido com conversão PDR→PDK), Regeneração, Kekkijutsus, Classes, Especializações e Painel GM. Ledger de ganho de PDV por nível (`pdv_oni_ganho_nvl2..12`) é preenchido automaticamente (roll-once, nunca rerrola) ao carregar o mundo e reativamente por mudança de nível.
@@ -25,7 +45,7 @@ Uma funcionalidade só será marcada como concluída quando tiver comportamento 
 ## Conteúdo do módulo
 
 - Compendium **Macros Night Assassins** com as macros canônicas (Controle GM, Gerenciar Status/Ações, Descanso, Kekkijutsu, Marca do Caçador, correção de Respirações/Armas legadas, entre outras).
-- Compendium **Night Assassin's Respirações** com os Items de Forma das 7 Respirações com service dedicado (Água, Chamas, Pedra, Névoa, Metal, Neve, Vento).
+- Compendium **Night Assassin's Respirações** com os Items de Forma das 6 Respirações publicadas (Chamas, Pedra, Névoa, Metal, Neve, Vento — ver tabela acima).
 - Compendium **Night Assassin's Armas dos Caçadores** com armas básicas e especiais como Items CSB.
 - Compendium **Night Assassin's Arte** com os ícones de compêndio.
 - Compendium **Night Assassins Templates de Ficha** com 4 templates (Slayer, Oni, Oni Minion, NPC).
@@ -77,6 +97,10 @@ Documentos (Actors/Items) criados em mundos com versões antigas do módulo pode
 - **Respirações**: `repairBreathingItems` sincroniza Formas de Respiração dos Actors com o Compendium canônico.
 
 Ambos são idempotentes rodar de novo em um documento já corrigido não gera nenhuma mudança. Se precisar forçar manualmente, use as macros **Corrigir Armas dos Caçadores** e **Corrigir Respirações dos Caçadores** no Diretório de Macros.
+
+## Roadmap — próximo trabalho planejado
+
+**HUD Telefone/Chat (Projeto Telefone).** SDD completo já aprovado em `MACRO-NA-FOUNDRY/docs/PROJETO TELEFONE/` (Constitution → Requirements → PDR → Research → Blueprint → Specs → Analyze, todos os gates confirmados por Nelson em 2026-08-21). Foi implementado uma vez (626/626 testes) sobre a v0.10.x, mas removido no revert total para a baseline v0.10.0 (release v0.11.0). Reimplementação futura deve reconstruir sobre a v0.11.6 atual seguindo o SDD já aprovado sem reabrir as fases de especificação e sem reintroduzir nenhum hook de render de ficha (ver linha de Troubleshooting sobre a regressão proibida abaixo).
 
 ## Troubleshooting
 

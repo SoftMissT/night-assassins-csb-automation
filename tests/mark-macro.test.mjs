@@ -20,3 +20,13 @@ test("Marca escreve os sete temporários e cada display consome seu temporário"
     assert.match(templateSource, new RegExp(`"name":"${key}_display","value":"[^"]*${key}_marca_temp`));
   }
 });
+
+test("Marca integra a reativação opcional da Resiliência em um único update", () => {
+  const activationSource = macro.slice(macro.indexOf("async function activate"), macro.indexOf("async function finish"));
+  assert.match(macro, /buildStoneMarkReactivation/);
+  assert.match(macro, /game\.combat/);
+  assert.match(macro, /forma_id/);
+  assert.match(activationSource, /stoneReactivation\?\.patch/);
+  assert.equal((activationSource.match(/await actor\.update/g) ?? []).length, 1);
+  assert.doesNotMatch(activationSource, /consumeSlayerActions/);
+});

@@ -159,6 +159,45 @@ describe("hit-service", () => {
     assert.equal(actor.system.props.folego_slayer_atual, 3);
   });
 
+  it("aplica o piso global de crítico da Iwa no Kokyū à arma selecionada", async () => {
+    const previousSettings = game.settings;
+    game.settings = {
+      get: (namespace, key) => namespace === "night-assassins-csb-automation" && key === "stoneCriticalFloor" ? 15 : undefined,
+    };
+    const item = {
+      id: "w1", uuid: "Item.w1", name: "Nichirin",
+      system: { props: {
+        arma_nome: "Nichirin",
+        arma_critico: 19,
+        arma_perfis_ataque: [{ nome: "Ataque Base", critico: 19, dano_fixo: 4, dano_dados: "1d6", atributos: [], tipos_dano: ["cortante"] }],
+      } },
+    };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_for",
+      for_display: "8",
+      resp_passivas_estado: JSON.stringify({ version: 1, stone: { breakByWeapon: { w1: 8 } } }),
+    } });
+    actor.items = {
+      [Symbol.iterator]: [item][Symbol.iterator].bind([item]),
+      get: (id) => id === "w1" ? item : null,
+    };
+    actor.update = async () => {};
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque", weaponId: "w1", weaponProfileIndex: 0 },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 22, toMessage: async () => ({ id: "stone-floor" }), dice: [{ results: [{ result: 14, active: true }] }] };
+
+    try {
+      const result = await rollHit({ actor, autoDamage: false });
+      assert.equal(result.weapon.effectiveCritical, 15);
+      assert.equal(result.attempts[0].criticalThreshold, 15);
+      assert.equal(result.attempts[0].critical, false);
+    } finally {
+      game.settings = previousSettings;
+    }
+  });
+
   it("Inverno Sombrio (Neve, Área): Congelar crítico é aplicado a TODOS os inimigos marcados, não só ao primeiro", async () => {
     _dialogReturn = [
       { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "especial" },
@@ -248,6 +287,117 @@ describe("hit-service", () => {
       const finalState = JSON.parse(lastPatch["system.props.resp_neve_estado"]);
       assert.equal(finalState.freezeByTarget["Actor.EnemyA"], 1);
       assert.equal(finalState.freezeByTarget["Actor.EnemyB"], undefined);
+    } finally {
+      game.user.targets = new Set();
+    }
+  });
+
+  it("Ni no Kata Sōsō Shinato Kaze (Vento N3+): Vantagem passiva uma vez por turno em qualquer ataque, sem ativar a técnica", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 14, toMessage: async () => ({ id: "wind-advantage" }), dice: [{ results: [{ result: 8, active: true }] }] };
+    const windItem = { system: { props: { respiracao_nome: "Vento" } } };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      nvl_respiracao_num: 3,
+    } });
+    actor.items = { [Symbol.iterator]: [windItem][Symbol.iterator].bind([windItem]) };
+    actor.update = async () => {};
+    let flagSet = null;
+    actor.getFlag = () => undefined;
+    actor.setFlag = async (moduleId, key, value) => { flagSet = { key, value }; };
+    game.combat = { round: 2, turn: 1 };
+    try {
+      await rollHit({ actor, autoDamage: false });
+      assert.match(_formula, /^2d20kh1\b/, "primeiro ataque do turno deve ter Vantagem automática");
+      assert.deepEqual(flagSet, { key: "windGarrasAdvantage", value: { round: 2, turn: 1 } });
+    } finally {
+      game.combat = undefined;
+    }
+  });
+
+  it("Ni no Kata Sōsō Shinato Kaze (Vento N3+): NÃO repete Vantagem no mesmo turno depois de já ter sido usada", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 10, toMessage: async () => ({ id: "wind-no-advantage" }), dice: [{ results: [{ result: 6, active: true }] }] };
+    const windItem = { system: { props: { respiracao_nome: "Vento" } } };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      nvl_respiracao_num: 3,
+    } });
+    actor.items = { [Symbol.iterator]: [windItem][Symbol.iterator].bind([windItem]) };
+    actor.update = async () => {};
+    actor.getFlag = () => ({ round: 2, turn: 1 });
+    let flagSetAgain = false;
+    actor.setFlag = async () => { flagSetAgain = true; };
+    game.combat = { round: 2, turn: 1 };
+    try {
+      await rollHit({ actor, autoDamage: false });
+      assert.doesNotMatch(_formula, /^2d20kh1\b/, "Vantagem já usada neste turno não deve reaparecer");
+      assert.equal(flagSetAgain, false);
+    } finally {
+      game.combat = undefined;
+    }
+  });
+
+  it("Ni no Kata Sōsō Shinato Kaze: sem a Respiração do Vento ou abaixo do Nível 3, nunca concede Vantagem automática", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 10, toMessage: async () => ({ id: "wind-ineligible" }), dice: [{ results: [{ result: 6, active: true }] }] };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      nvl_respiracao_num: 2,
+    } });
+    actor.update = async () => {};
+    actor.getFlag = () => undefined;
+    let flagSetIneligible = false;
+    actor.setFlag = async () => { flagSetIneligible = true; };
+    game.combat = { round: 1, turn: 0 };
+    try {
+      await rollHit({ actor, autoDamage: false });
+      assert.doesNotMatch(_formula, /^2d20kh1\b/, "Nível 2 não é elegível para a passiva do 2º Estilo");
+      assert.equal(flagSetIneligible, false);
+    } finally {
+      game.combat = undefined;
+    }
+  });
+
+  it("7ª Forma Neblina (Névoa): bônus de Acerto só se aplica contra o inimigo que testou SAB-vs-SAB e falhou (por alvo, não global)", async () => {
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    _rollResult = { total: 14, toMessage: async () => ({ id: "fog" }), dice: [{ results: [{ result: 8, active: true }] }] };
+    const mistState = { version: 1, patterns: {}, fog: { source: "nevoa_07", turns: 3, bonus: 3, enemyUuid: "Actor.EnemyA" } };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      resp_nevoa_estado: JSON.stringify(mistState),
+    } });
+    actor.update = async () => {};
+    const enemyA = { uuid: "Actor.EnemyA", name: "Alvo testado" };
+    const enemyB = { uuid: "Actor.EnemyB", name: "Outro inimigo" };
+    game.user.targets = new Set([{ actor: enemyB }]);
+    try {
+      await rollHit({ actor, autoDamage: false });
+      assert.doesNotMatch(_formula, /\+\s*3\b/, "bônus da Neblina não deve somar contra alvo que não testou SAB");
+    } finally {
+      game.user.targets = new Set();
+    }
+
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque" },
+      { hit: true, continue: false },
+    ];
+    game.user.targets = new Set([{ actor: enemyA }]);
+    try {
+      await rollHit({ actor, autoDamage: false });
+      assert.match(_formula, /\+\s*3\b/, "bônus da Neblina deve somar contra o alvo que testou SAB e falhou");
     } finally {
       game.user.targets = new Set();
     }

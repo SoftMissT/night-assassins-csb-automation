@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { FLAME_FORMS, flameFormById, flameWeaponTier } from "../scripts/flame-breathing-data.mjs";
-import { addFlameEnemyHeat, buildFlameBreathingPlan, buildFlameInterception, consumeFlameInterception, consumeFlamePending, FLAME_SYNERGY_BREATHINGS, parseFlameBreathingState, resolveFlameRengokuAllies, tickFlameBreathing } from "../scripts/flame-breathing-service.mjs";
+import { addFlameEnemyHeat, buildFlameBreathingPlan, buildFlameInterception, clearFlameBreathingState, consumeFlameInterception, consumeFlamePending, flameWeaponHeat, FLAME_SYNERGY_BREATHINGS, parseFlameBreathingState, resolveFlameRengokuAllies, synchronizeFlameWeapon, tickFlameBreathing } from "../scripts/flame-breathing-service.mjs";
 
 describe("Respiração das Chamas", () => {
   it("possui uma passiva e oito formas ativas", () => {
@@ -93,8 +93,32 @@ describe("Respiração das Chamas", () => {
   });
 
   it("expõe as formas pelo ID canônico", () => {
-    assert.equal(flameFormById("chamas_05")?.name, "Tigre Ardente");
+    assert.equal(flameFormById("chamas_05")?.name, "Go no Kata Enko");
+    assert.equal(flameFormById("chamas_05")?.ptName, "Tigre Ardente");
     assert.equal(flameFormById("inexistente"), null);
+  });
+
+  it("mantém Esquentar separado por arma sincronizada", () => {
+    let state = synchronizeFlameWeapon({}, { id: "katana", name: "Katana" }, 12);
+    state = synchronizeFlameWeapon(state, { id: "arco", name: "Arco" }, 3);
+    assert.equal(flameWeaponHeat(state, "katana"), 12);
+    assert.equal(flameWeaponHeat(state, "arco"), 3);
+    state = synchronizeFlameWeapon(state, { id: "katana", name: "Katana" }, 0);
+    assert.equal(state.weaponHeat, 12);
+    assert.equal(state.synchronizedWeapon.id, "katana");
+  });
+
+  it("a Forma soma Esquentar somente na arma sincronizada e o fim do combate limpa todas", () => {
+    let state = synchronizeFlameWeapon({}, { id: "katana", name: "Katana" }, 9);
+    state = synchronizeFlameWeapon(state, { id: "arco", name: "Arco" }, 4);
+    const plan = buildFlameBreathingPlan("chamas_03", 1, { resp_chamas_estado: JSON.stringify(state) }, {
+      synchronizedWeapon: { id: "katana", name: "Katana" },
+    });
+    assert.equal(flameWeaponHeat(plan.state, "katana"), 12);
+    assert.equal(flameWeaponHeat(plan.state, "arco"), 4);
+    const cleared = parseFlameBreathingState(JSON.parse(clearFlameBreathingState()["system.props.resp_chamas_estado"]));
+    assert.deepEqual(cleared.weaponHeatById, {});
+    assert.equal(cleared.weaponHeat, 0);
   });
 });
 
@@ -167,7 +191,7 @@ describe("Respiração das Chamas — combos e regras da missão", () => {
     ];
     const eligible = resolveFlameRengokuAllies(candidates, "Actor.Eu");
     assert.deepEqual(eligible.map((ally) => ally.uuid), ["Actor.Amor", "Actor.Magma"]);
-    assert.ok(FLAME_SYNERGY_BREATHINGS.includes("Magma"));
+    assert.ok(FLAME_SYNERGY_BREATHINGS.includes("yogan"));
   });
 
   it("Brasas são independentes por alvo/atacante (mapa por UUID)", () => {

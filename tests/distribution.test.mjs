@@ -128,7 +128,7 @@ describe("module distribution", () => {
 });
 
 describe("module settings", () => {
-  it("registra automação da ficha e relay de dano", () => {
+  it("registra automação da ficha, relay de dano e piso global de crítico", () => {
     const registrations = [];
     globalThis.game = {
       settings: {
@@ -141,7 +141,13 @@ describe("module settings", () => {
     assert.deepEqual(registrations.map(({ key }) => key), [
       SETTINGS.enableSheetAutomation,
       SETTINGS.enableDamageRelay,
+      SETTINGS.stoneCriticalFloor,
     ]);
     assert.ok(registrations.every(({ config }) => config.config && config.scope === "world"));
+    const criticalFloor = registrations.find(({ key }) => key === SETTINGS.stoneCriticalFloor)?.config;
+    assert.equal(criticalFloor.type, Number);
+    assert.equal(criticalFloor.default, 1);
+    assert.deepEqual(criticalFloor.range, { min: 1, max: 20, step: 1 });
+    assert.equal(criticalFloor.requiresReload, false);
   });
 });

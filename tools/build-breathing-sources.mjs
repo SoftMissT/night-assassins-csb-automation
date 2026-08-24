@@ -32,8 +32,28 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
   "Respiração do Veneno", "Respiração do Vento",
 ]);
 
+/**
+ * Respirações com motor de estado/combate real (service dedicado, testes,
+ * auditoria forma-por-forma contra a fonte oficial). O catálogo mecânico
+ * (`catalogs/breathing.json`) contém dados de todas as Respirações do jogo,
+ * mas só estas são publicadas no pack Foundry distribuído — as demais não
+ * têm mecânica implementada (não passam de descrição), então não vão para
+ * o build até receberem o mesmo tratamento.
+ */
+export const PUBLISHED_BREATHINGS = Object.freeze(["Chamas", "Metal", "Neve", "Névoa", "Pedra", "Vento"]);
+
 const catalog = JSON.parse(await readFile(catalogPath, "utf8"));
 if (catalog.format !== 1 || !Array.isArray(catalog.documents)) throw new Error("Catálogo mecânico de Respirações inválido.");
+{
+  const publishedItems = catalog.documents.filter((document) => document.type === "equippableItem"
+    && PUBLISHED_BREATHINGS.includes(document.system?.props?.respiracao_nome ?? ""));
+  const publishedFolderIds = new Set(publishedItems.map((item) => item.folder).filter(Boolean));
+  catalog.documents = catalog.documents.filter((document) => {
+    if (document.type === "equippableItem") return PUBLISHED_BREATHINGS.includes(document.system?.props?.respiracao_nome ?? "");
+    if (document.type === "Item") return publishedFolderIds.has(document._id);
+    return true;
+  });
+}
 const templateExport = JSON.parse(await readFile(templatePath, "utf8"));
 const breathingTemplate = templateExport.items?.find((item) => item.type === "_equippableItemTemplate" && item.id === "NABreathTpl00001");
 if (!breathingTemplate) throw new Error("Template de Forma de Respiração inválido.");
@@ -52,21 +72,28 @@ for (const document of catalog.documents) {
   const props = document.system.props;
   props.forma_passiva = flame?.passive || ["metal_05", "neve_08"].includes(String(props.forma_id ?? ""))
     || /passiva/iu.test(String(props.tipo_manobra ?? "")) ? 1 : 0;
-  const richTextKeys = ["descricao", "requisito_texto", "gatilho_texto", "combo_texto", "notas_texto", "sinergias_texto", "nvl1_efeito", "nvl2_efeito", "nvl3_efeito", "nvl4_efeito"];
-  for (const key of richTextKeys) {
-    if (typeof props[key] === "string" && props[key].trim()) props[key] = markdownToFoundryHtml(props[key]);
-  }
   if (flame) {
+    document.name = `Honō no Kokyū — ${flame.name}`;
+    document.system.props.nome_forma = flame.name;
+    document.system.props.nome_jp = flame.ptName ?? "";
     document.system.props.tipo_manobra = flame.passive ? "Passiva" : ({ ataque: "Ação de Ataque", especial: "Ação Especial", reacao: "Reação" }[flame.action] ?? flame.action);
     for (let level = 1; level <= 4; level += 1) {
       const mechanics = flame.levels[level - 1];
       document.system.props[`tem_nvl${level}`] = mechanics ? 1 : 0;
       document.system.props[`nvl${level}_custo`] = mechanics?.cost ?? 0;
-      if (mechanics?.damage) document.system.props[`nvl${level}_dano`] = mechanics.damage;
+      document.system.props[`nvl${level}_dano`] = mechanics?.damage ?? "";
+      document.system.props[`nvl${level}_tipos_dano`] = Array.isArray(flame.damageTypes) ? flame.damageTypes.join(",") : "";
+      document.system.props[`nvl${level}_status`] = "";
+      document.system.props[`nvl${level}_buff`] = "";
     }
   }
   const curated = stone ?? mist ?? metal ?? snow;
   if (curated) {
+    if (stone) {
+      document.name = `Iwa no Kokyū — ${stone.name}`;
+      document.system.props.nome_forma = stone.name;
+      document.system.props.nome_jp = stone.ptName ?? "";
+    }
     const action = curated.action ?? curated.actions?.join(" + ") ?? "";
     document.system.props.tipo_manobra = ({ ataque: "Ação de Ataque", especial: "Ação Especial", reacao: "Reação", unica: "Ação Única", completa: "Ação Completa" }[action] ?? action);
     for (let level = 1; level <= 4; level += 1) {
@@ -76,6 +103,10 @@ for (const document of catalog.documents) {
       document.system.props[`nvl${level}_dano`] = mechanics?.damage ?? mechanics?.bonus ?? "";
       document.system.props[`nvl${level}_tipos_dano`] = Array.isArray(mechanics?.damageTypes) ? mechanics.damageTypes.join(",") : "";
     }
+  }
+  const richTextKeys = ["descricao", "requisito_texto", "gatilho_texto", "combo_texto", "notas_texto", "sinergias_texto", "nvl1_efeito", "nvl2_efeito", "nvl3_efeito", "nvl4_efeito"];
+  for (const key of richTextKeys) {
+    if (typeof props[key] === "string" && props[key].trim()) props[key] = markdownToFoundryHtml(props[key]);
   }
 }
 

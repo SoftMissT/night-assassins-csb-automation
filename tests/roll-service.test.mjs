@@ -91,6 +91,36 @@ describe("roll-service", () => {
     assert.equal(updated, false);
   });
 
+  it("Shi no Kata: Aisu Hato N4: +2 em teste com CD que não é Bloqueio/Esquiva", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 15 };
+    const actor = makeActor({ props: {
+      sab_display: "4",
+      resp_neve_estado: JSON.stringify({ iceHeart: { turns: 2, testBonus: 2, hitBonus: 2, dodgeBonus: 2, blockBonus: 2 } }),
+    } });
+    await rollTest({ actor, test: "Percepção", attr: "SAB" });
+    assert.match(_formula, /\+ 4 \+ 2$/, "bônus de +2 do Coração de Gelo N4 deve somar em teste com CD");
+  });
+
+  it("Shi no Kata: Aisu Hato N4: NÃO soma em Bloqueio/Esquiva (já cobertos por blockBonus/dodgeBonus específicos)", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 15 };
+    const actor = makeActor({ props: {
+      for_display: "4",
+      resp_neve_estado: JSON.stringify({ iceHeart: { turns: 2, testBonus: 2, hitBonus: 2, dodgeBonus: 2, blockBonus: 2 } }),
+    } });
+    await rollTest({ actor, test: "Bloqueio", attr: "FOR" });
+    assert.match(_formula, /\+ 4 \+ 2$/, "Bloqueio já soma blockBonus=2 pelo caminho específico, não deve duplicar via testBonus");
+  });
+
+  it("Shi no Kata: Aisu Hato N4: não soma sem CD definido (teste livre, sem dificuldade)", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    const actor = makeActor({ props: {
+      sab_display: "4",
+      resp_neve_estado: JSON.stringify({ iceHeart: { turns: 2, testBonus: 2 } }),
+    } });
+    await rollTest({ actor, test: "Percepção", attr: "SAB" });
+    assert.match(_formula, /\+ 4$/, "sem CD (cdVal=0) o bônus 'contra CD' não deve se aplicar");
+  });
+
   it("pede confirmação quando a Defesa não possui CD", async () => {
     _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
     _rollResult = { total: 18, toMessage: async () => {}, dice: [{ results: [{ result: 14, active: true }] }] };

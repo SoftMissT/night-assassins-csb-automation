@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import { STONE_FORMS, stoneFormById } from "../scripts/stone-breathing-data.mjs";
 import {
   buildStoneBreathingPlan,
+  buildStoneMarkReactivation,
   clearStoneBreathingState,
   consumeStoneCounterAttack,
   consumeStonePending,
@@ -17,6 +18,8 @@ describe("Respiração da Pedra", () => {
     assert.equal(stoneFormById("pedra_01").action, "unica");
     assert.equal(stoneFormById("pedra_03").action, "reacao");
     assert.deepEqual(stoneFormById("pedra_04").actions, ["ataque", "especial"]);
+    assert.equal(stoneFormById("pedra_02").name, "Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki");
+    assert.equal(stoneFormById("pedra_05").name, "Kaifuku-ryoku");
   });
 
   it("Serpentino escala Ferida e calcula CD pelo dano originário", () => {
@@ -40,11 +43,12 @@ describe("Respiração da Pedra", () => {
 
   it("Reflexão escolhe FOR no corpo a corpo e DEX à distância", () => {
     const melee = buildStoneBreathingPlan("pedra_03", 3, { for_display: 5, dex_display: 2 }, { weaponRange: "corpo" });
-    const ranged = buildStoneBreathingPlan("pedra_03", 4, { for_display: 5, dex_display: 2 }, { weaponRange: "distancia" });
+    const ranged = buildStoneBreathingPlan("pedra_03", 4, { for_display: 5, dex_display: 2 }, { weaponRange: "distancia", protectedUuid: "Actor.ally" });
     assert.equal(melee.state.reflection.attackPenalty, 7);
     assert.equal(melee.state.reflection.blockTurns, 2);
     assert.equal(ranged.state.reflection.attackPenalty, 4);
     assert.equal(ranged.state.reflection.counterAttack, true);
+    assert.equal(ranged.state.reflection.allyTarget, "Actor.ally");
     assert.equal(stoneReflectionPenalty(ranged.state), -4);
     const consumed = consumeStoneCounterAttack(ranged.state);
     assert.equal(consumed.available, true);
@@ -77,17 +81,53 @@ describe("Respiração da Pedra", () => {
     assert.equal(parseStoneBreathingState(cleared).resilienceUsed, undefined);
   });
 
-  it("reativação pela Marca dura até o final do combate", () => {
-    const previous = { resilienceUsed: true };
-    const plan = buildStoneBreathingPlan("pedra_05", 4, { resp_pedra_estado: JSON.stringify(previous) }, { markReactivation: true });
+  it("reativação pela Marca dura até o final do combate e cobra exatamente 5 PDR", () => {
+    const previous = { resilienceUsed: true, bleeding: { amount: 4, turns: 2 } };
+    const plan = buildStoneMarkReactivation({
+      resp_pedra_estado: JSON.stringify(previous),
+      pdr_slayer_total_conta: 12,
+      pdr_slayer_gasto_valor: 3,
+    });
+    assert.equal(plan.eligible, true);
     assert.equal(plan.ok, true);
     assert.equal(plan.state.resilience.untilCombatEnd, true);
     assert.equal(plan.state.resilience.turns, null);
+    assert.deepEqual(plan.state.bleeding, previous.bleeding);
+    assert.equal(plan.patch["system.props.pdr_slayer_gasto_valor"], 8);
+    assert.equal(Object.keys(plan.patch).some((key) => key.includes("acao")), false);
   });
 
-  it("reativação pela Marca falha se Resiliência nunca foi usada neste combate (regressão)", () => {
-    const plan = buildStoneBreathingPlan("pedra_05", 4, { resp_pedra_estado: JSON.stringify({}) }, { markReactivation: true });
-    assert.equal(plan.ok, false, "sem uso prévio nesta luta, não há o que 'reativar' — a regra exige uso anterior no combate");
+  it("reativação pela Marca exige uso prévio e não repete efeito já estendido", () => {
+    const neverUsed = buildStoneMarkReactivation({ resp_pedra_estado: JSON.stringify({}) });
+    const alreadyExtended = buildStoneMarkReactivation({
+      resp_pedra_estado: JSON.stringify({ resilienceUsed: true, resilience: { untilCombatEnd: true } }),
+    });
+    assert.equal(neverUsed.eligible, false);
+    assert.equal(alreadyExtended.eligible, false);
+  });
+
+  it("reativação pela Marca não gera patch quando faltam PDR", () => {
+    const plan = buildStoneMarkReactivation({
+      resp_pedra_estado: JSON.stringify({ resilienceUsed: true }),
+      pdr_slayer_total_conta: 7,
+      pdr_slayer_gasto_valor: 4,
+    });
+    assert.equal(plan.eligible, true);
+    assert.equal(plan.ok, false);
+    assert.equal(plan.cost, 5);
+    assert.equal(plan.pdrCurrent, 3);
+    assert.equal(plan.patch, undefined);
+  });
+
+  it("o botão manual não transforma Resiliência em reativação da Marca", () => {
+    const firstUse = buildStoneBreathingPlan("pedra_05", 4, {}, { markReactivation: true });
+    assert.equal(firstUse.ok, true);
+    assert.equal(firstUse.state.resilience.turns, 3);
+    assert.equal(firstUse.state.resilience.untilCombatEnd, false);
+    const secondUse = buildStoneBreathingPlan("pedra_05", 4, {
+      resp_pedra_estado: JSON.stringify(firstUse.state),
+    }, { markReactivation: true });
+    assert.equal(secondUse.ok, false);
   });
 
   it("estados simultâneos: Sangramento (Quebra Superior) e Resiliência coexistem sem mutação por referência compartilhada", () => {

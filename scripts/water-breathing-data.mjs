@@ -21,7 +21,7 @@ export function resolveWaterDamageTypes(form = {}, selected = {}) {
 export const WATER_BREATHING_FORMS = Object.freeze([
   {
     id: "agua_01", documentId: "NAWaterFrm000001", order: 1,
-    name: "Barra de Superfície da Água", jp: "Ichi no Kata Minamo Giri", action: "unica", minLevel: 1,
+    name: "Ichi no Kata Minamo Giri", ptName: "Barra de Superfície da Água", action: "unica", minLevel: 1,
     description: "Concentra um corte de água sem contato e fortalece o próximo ataque bem-sucedido.",
     requirement: "O bônus é consumido somente ao rolar o dano do próximo ataque bem-sucedido.",
     levels: [
@@ -33,7 +33,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_02", documentId: "NAWaterFrm000002", order: 2,
-    name: "Roda D'Água", jp: "Ni no Kata Mizu Guruma", action: "ataque_especial", minLevel: 1,
+    name: "Ni no Kata Mizu Guruma", ptName: "Roda D'Água", action: "ataque_especial", minLevel: 1,
     description: "Salta e gira em um ataque circular. Exige DEX 12; a falha não gasta PDR.",
     requirement: "Teste de DEX CD 12. Pode ser Especial após a 1ª Forma ou pagando +1 PDR.",
     levels: [
@@ -45,7 +45,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_03", documentId: "NAWaterFrm000003", order: 3,
-    name: "Dança da Corrente Rápida", jp: "San no Kata Ryuryu Mai", action: "completa", minLevel: 1,
+    name: "San no Kata Ryuryu Mai", ptName: "Dança da Corrente Rápida", action: "completa", minLevel: 1,
     description: "Executa até três ataques contra alvos diferentes em local aberto.",
     requirement: "Local aberto; máximo de três alvos distintos. Em combo com a 9ª Forma usa Ação de Ataque.",
     levels: [
@@ -57,21 +57,21 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_04", documentId: "NAWaterFrm000004", order: 4,
-    name: "Maré Impressionante", jp: "Shi no Kata Uchisio", action: "especial", minLevel: 1,
+    name: "Shi no Kata Uchisio", ptName: "Maré Impressionante", action: "especial", minLevel: 1,
     description: "Após finalizar um inimigo ou obter crítico, realiza outro ataque padrão contra inimigo próximo.",
     requirement: "Confirmar finalização ou crítico; alvo dentro do deslocamento. Pode repetir pagando o custo.",
     levels: Array.from({ length: 4 }, () => ({ cost: 1, damage: "", effect: "Ataque padrão imediato em outro inimigo" })),
   },
   {
     id: "agua_05", documentId: "NAWaterFrm000005", order: 5,
-    name: "Chuva Misericordiosa de um Dia Seco", jp: "Go no Kata Kanten no Jiu", action: "especial", minLevel: 2,
+    name: "Go no Kata Kanten no Jiu", ptName: "Chuva Misericordiosa de um Dia Seco", action: "especial", minLevel: 2,
     description: "Ataque automaticamente crítico contra alvo rendido ou atordoado.",
     requirement: "Alvo rendido ou atordoado. Se finalizar, recupera PDR igual ao Nível de Respiração.",
     levels: [null, { cost: 0, damage: "", effect: "Crítico automático; recuperação ao finalizar" }, { cost: 0, damage: "", effect: "Crítico automático; recuperação ao finalizar" }, { cost: 0, damage: "", effect: "Crítico automático; recuperação ao finalizar" }],
   },
   {
     id: "agua_06", documentId: "NAWaterFrm000006", order: 6,
-    name: "Torção de Hidromassagem", jp: "Roku no Kata Nejire Uzu", action: "ataque", minLevel: 1,
+    name: "Roku no Kata Nejire Uzu", ptName: "Torção de Hidromassagem", action: "ataque", minLevel: 1,
     description: "Redemoinho em área que pode atingir inimigos e aliados próximos.",
     requirement: "Um Acerto para todos os alvos; submerso concede +3. Aliados ganham DEX do usuário na Defesa.",
     levels: [
@@ -83,7 +83,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_07", documentId: "NAWaterFrm000007", order: 7,
-    name: "Gota de Chuva Penetrante", jp: "Shichi no Kata Shizuku wa Mondzuki", action: "reacao", minLevel: 1,
+    name: "Shichi no Kata Shizuku wa Mondzuki", ptName: "Gota de Chuva Penetrante", action: "reacao", minLevel: 1,
     description: "Bloqueio de reação com bônus de INT contra todos os ataques da ação declarada.",
     requirement: "Declarar antes do Acerto inimigo. Nos níveis 3–4 habilita a 6ª Forma por metade do PDR após Bloqueio.",
     levels: [
@@ -95,7 +95,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_08", documentId: "NAWaterFrm000008", order: 8,
-    name: "Força da Cascata", jp: "Hachi no Kata Takitsubo", action: "completa", minLevel: 1,
+    name: "Hachi no Kata Takitsubo", ptName: "Força da Cascata", action: "completa", minLevel: 1,
     description: "Golpe vertical que suprime resistências por dois turnos e entra em recarga por três turnos.",
     requirement: "Não pode ser usada durante a recarga. Níveis 2–4 exigem teste de VIT do alvo contra o Acerto.",
     levels: [
@@ -107,7 +107,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_09", documentId: "NAWaterFrm000009", order: 9,
-    name: "Respingos de Água", jp: "Ku no Kata Suiryu Shibuki", action: "unica", minLevel: 1,
+    name: "Ku no Kata Suiryu Shibuki", ptName: "Respingos de Água", action: "unica", minLevel: 1,
     description: "Movimentação fluida por dois turnos, com Esquiva e deslocamento adicionais.",
     requirement: "Enquanto ativo, garante o pulo da 2ª Forma e pode habilitar técnica Especial de aliado por 1 PDR.",
     levels: [
@@ -119,7 +119,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_10", documentId: "NAWaterFrm000010", order: 10,
-    name: "O Dragão da Mudança", jp: "Ju no Kata Seisei Ruten", action: "completa", minLevel: 2,
+    name: "Ju no Kata Seisei Ruten", ptName: "O Dragão da Mudança", action: "completa", minLevel: 2,
     description: "Carrega poder por turnos antes de liberar um ataque crescente.",
     requirement: "Mínimo de um turno carregado. Mais de um turno concede 2 Exaustão ao liberar.",
     levels: [null,
@@ -130,7 +130,7 @@ export const WATER_BREATHING_FORMS = Object.freeze([
   },
   {
     id: "agua_11", documentId: "NAWaterFrm000011", order: 11,
-    name: "Calmaria", jp: "Ju Ichi no Kata Nagi", action: "reacao", minLevel: 2,
+    name: "Ju Ichi no Kata Nagi", ptName: "Calmaria", action: "reacao", minLevel: 2,
     description: "Anula completamente um ataque recebido, com usos diários limitados.",
     requirement: "Nível 2: 1/dia; Nível 3: 2/dia; Nível 4: 3/dia.",
     levels: [null,

@@ -192,6 +192,63 @@
     });
   }
 
+  function knowsStoneBreathing() {
+    return [...(actor.items ?? [])].some((item) => {
+      const itemProps = item.system?.props ?? {};
+      const breathing = String(itemProps.respiracao_nome ?? itemProps.respiracao_id ?? "")
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      return breathing === "pedra" || String(itemProps.forma_id ?? "").startsWith("pedra_");
+    });
+  }
+
+  function actorIsInActiveCombat() {
+    const combat = game.combat;
+    if (!combat?.started) return false;
+    return [...(combat.combatants ?? [])].some((combatant) =>
+      combatant.actor?.uuid === actor.uuid || combatant.actorId === actor.id);
+  }
+
+  async function prepareStoneMarkReactivation(props) {
+    if (!knowsStoneBreathing() || !actorIsInActiveCombat()) return null;
+
+    let buildStoneMarkReactivation;
+    try {
+      ({ buildStoneMarkReactivation } = await import(
+        "/modules/night-assassins-csb-automation/scripts/stone-breathing-service.mjs"
+      ));
+    } catch (error) {
+      console.error("[Night Assassins] Falha ao carregar a integração Pedra/Marca.", error);
+      ui.notifications.warn("A Marca será ativada sem reativar Resiliência.");
+      return null;
+    }
+
+    const plan = buildStoneMarkReactivation(props);
+    if (!plan.eligible) return null;
+    const accepted = await DialogV2.wait({
+      window: { title: "Kaifuku-ryoku · Resiliência" },
+      position: DIALOG_POSITION,
+      content: panel(`
+        <p style="margin:0">Reativar <strong>Resiliência</strong> junto da Marca até o fim do combate?</p>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+          <div style="padding:10px;border:1px solid var(--color-border-light-primary);border-radius:6px"><small>CUSTO</small><br><strong>${plan.cost} PDR</strong></div>
+          <div style="padding:10px;border:1px solid var(--color-border-light-primary);border-radius:6px"><small>PDR ATUAL</small><br><strong>${plan.pdrCurrent}</strong></div>
+        </div>
+        <p style="margin:0"><small>Esta reativação não consome uma Ação adicional.</small></p>`),
+      modal: true,
+      rejectClose: false,
+      buttons: [
+        { action: "reativar", label: "Pagar 5 PDR e reativar", callback: () => true },
+        { action: "ignorar", label: "Ativar somente a Marca", callback: () => false },
+      ],
+    });
+    if (accepted !== true) return null;
+    if (!plan.ok) {
+      ui.notifications.warn(plan.reason ?? "PDR insuficiente para reativar Resiliência.");
+      return null;
+    }
+    return plan;
+  }
+
   async function activate() {
     const props = actor.system.props ?? {};
     if (number(props.marca_despertada) !== 1) return awaken();
@@ -202,6 +259,8 @@
     if (!power) return ui.notifications.warn("Não há potência válida para ativar a Marca.");
     const scar = String(props.marca_atributo_cicatriz ?? props.hab_marca_destino_atributo ?? "").toLowerCase();
     if (!ATTRIBUTES.some(({ key }) => key === scar)) return ui.notifications.error("Atributo da Cicatriz inválido.");
+
+    const stoneReactivation = await prepareStoneMarkReactivation(props);
 
     await actor.update({
       "system.props.marca_ativa": 1,
@@ -216,8 +275,9 @@
       "system.props.marca_corte_impossivel_usado": 0,
       "system.props.marca_resistencia_usada": 0,
       ...activeBonuses(bornMarked, scar),
+      ...(stoneReactivation?.patch ?? {}),
     });
-    ui.notifications.info(`Marca ativa: +${power}d${bornMarked ? 20 : 12} de Dano de Ferida.`);
+    ui.notifications.info(`Marca ativa: +${power}d${bornMarked ? 20 : 12} de Dano de Ferida.${stoneReactivation ? " Resiliência reativada até o fim do combate." : ""}`);
   }
 
   async function finish() {

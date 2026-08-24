@@ -9,21 +9,21 @@ import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";
-import { applyBreathingStatus, parseWaterBreathingState } from "./breath-service.mjs";
+import { applyBreathingStatus, applyStackingBreathingStatus, parseWaterBreathingState } from "./breath-service.mjs";
 import { currentPdv } from "./status-engine.mjs";
 import { parseStatusState } from "./status-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
 import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
-import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
+import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, flameWeaponHeat, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { consumeStonePending, parseStoneBreathingState, stoneStatePatch } from "./stone-breathing-service.mjs";
 import { consumeMistPending, mistStatePatch, parseMistBreathingState, resolveMistFormula, resolveMistStigmaStunOnHit } from "./mist-breathing-service.mjs";
-import { canApplyMetalChain, consumeMetalHammerPending, metalStatePatch, parseMetalBreathingState, registerMetalChainApplication } from "./metal-breathing-service.mjs";
+import { canApplyMetalChain, consumeMetalHammerPending, consumeMetalSteelDefense, metalStatePatch, parseMetalBreathingState, registerMetalChainApplication } from "./metal-breathing-service.mjs";
 import { breakSnowRestrictionOnDamage, consumeSnowPending, parseSnowBreathingState, resolveSnowAvalancheSynergy, resolveSnowFreezeGain, resolveSnowKekkijutsuGuard, snowStatePatch } from "./snow-breathing-service.mjs";
 import { resolveBreathingDefense } from "./breathing-defense.mjs";
 import { consumeWindPending, parseWindBreathingState, windStatePatch } from "./wind-breathing-service.mjs";
 import { WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
-import { addStoneBreak, parseBreathPassiveState, passiveStatePatch } from "./breath-passives.mjs";
+import { addStoneBreakForAction, parseBreathPassiveState, passiveStatePatch, registerStoneConfirmedDamage } from "./breath-passives.mjs";
 import { openAttackBuilder } from "./items/attack-builder.mjs";
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from "./metal-runtime.mjs";
 
@@ -283,7 +283,7 @@ export async function rollDamage(options = {}) {
   const flameState = parseFlameBreathingState(attackerKind === "slayer" ? props.resp_chamas_estado : "");
   const hasFlameBreathing = Boolean(props.resp_chamas_estado) || [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Chamas");
   const flameDamage = flameState.pendingDamage;
-  const flameTier = flameWeaponTier(flameState.weaponHeat);
+  const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
   const flameTechnique = Boolean(flameDamage?.technique && hasAttackDamage);
   if (flameDamage?.critical === true && hasAttackDamage) critical = true;
   if (injectBreathing && flameDamage?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas", types: ["cortante"], formula: flameDamage.formula, flame: true });
@@ -455,8 +455,16 @@ export async function rollDamage(options = {}) {
   let windSuppressResistances = false;
   const windVentaniaTargets = new Set();
   let windTufaoHealPending = false;
+  const attackerToken = actor.getActiveTokens?.()[0] ?? canvas?.tokens?.controlled?.find((token) => token.actor?.uuid === actor.uuid) ?? null;
   if (targets && targets.size > 0 && finalDamage > 0) {
     for (const targetToken of targets) {
+      if (flameDamage?.areaMeters && attackerToken && canvas?.grid?.measurePath) {
+        const distance = Number(canvas.grid.measurePath([attackerToken.center, targetToken.center])?.distance) || 0;
+        if (distance > Number(flameDamage.areaMeters)) {
+          ui.notifications?.warn?.(`${targetToken.name} está fora dos ${flameDamage.areaMeters}m de Roku no Kata Hono Arashi.`);
+          continue;
+        }
+      }
       const protectedActor = targetToken.actor;
       if (!protectedActor) continue;
       const interceptionFlag = protectedActor.getFlag?.(MODULE_ID, "flameInterception");
@@ -523,23 +531,23 @@ export async function rollDamage(options = {}) {
       }
       if (flameDamage?.damagePerEnemyHeat && heatBefore > 0) {
         const heatRoll = await Roll.create(`${heatBefore}d8`).evaluate();
-        await heatRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Tormenta de Chamas</strong> ${heatBefore}d8 pelas Brasas do alvo` });
+        await heatRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Roku no Kata Hono Arashi</strong> ${heatBefore}d8 pelas Brasas do alvo` });
         amount += Math.max(0, Math.trunc(Number(heatRoll.total) || 0));
       }
       if (flameDamage?.evasionDc) {
         const dex = parseAttributeValue(targetActor.system?.props?.dex_display);
         const save = await Roll.create(`1d20 + ${dex}`).evaluate();
-        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Tormenta de Chamas</strong> Esquiva CD ${flameDamage.evasionDc}` });
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Roku no Kata Hono Arashi</strong> Esquiva CD ${flameDamage.evasionDc}` });
         if (save.total >= flameDamage.evasionDc) amount = Math.floor(amount / 2);
       }
       if (flameDamage?.rengoku && flameDamage.saveDc) {
         const fdv = parseAttributeValue(targetActor.system?.props?.fdv_display);
         const save = await Roll.create(`1d20 + ${fdv}`).evaluate();
-        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Rengoku</strong> FDV CD ${flameDamage.saveDc}` });
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Ku no Kata Rengoku</strong> FDV CD ${flameDamage.saveDc}` });
         if (save.total < flameDamage.saveDc) {
           // Vulnerável ao Rengoku: +1 dano por ponto de Fogo Fátuo da arma;
           // com 60+ Brasas Ardentes NAQUELE alvo, acrescenta FDV × FOR.
-          rengokuBonus = Math.max(0, Number(flameState.weaponHeat) || 0)
+          rengokuBonus = flameWeaponHeat(flameState)
             + (heatBefore >= 60 ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for)) : 0);
           amount += rengokuBonus;
         }
@@ -563,22 +571,22 @@ export async function rollDamage(options = {}) {
           kekkijutsuSurcharge: Number(windDamage.kekkijutsuSurcharge) || 0,
           untilRound: (game.combat?.round ?? 0) + 1,
         });
-        ui.notifications?.info?.(`Tempestade Crescente: ${targetActor.name} não pode curar PDV até o próximo turno do usuário.`);
+        ui.notifications?.info?.(`Shi no Kata Shōjō Sajinran: ${targetActor.name} não pode curar PDV até o próximo turno do usuário.`);
       }
       if (windDamage?.critBlocksRegenerationTurns && effectiveCritical && hasAttackDamage) {
         await targetActor.setFlag(MODULE_ID, "windRegenBlock", {
           turns: windDamage.critBlocksRegenerationTurns,
-          sourceName: "Fumaça Escurecedora",
+          sourceName: "Roku no Kata Seiran Fuju",
         });
       }
       if (windDamage?.tufao && hasAttackDamage && amount > 0) {
         const vit = parseAttributeValue(targetActor.system?.props?.vit_display);
         const bleedSave = await Roll.create(`1d20 + ${vit}`).evaluate();
-        await bleedSave.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Tufão Idaten</strong> Sangramento VIT CD ${windDamage.tufao.bleedSaveDc}` });
+        await bleedSave.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Ku no Kata Idaten Taifu</strong> Sangramento VIT CD ${windDamage.tufao.bleedSaveDc}` });
         if (bleedSave.total < windDamage.tufao.bleedSaveDc) {
           await applyBreathingStatus(targetActor, "sangramento", {
             damageFormula: String(parseNumber(props.for_display)), remainingTurns: 3,
-            sourceName: "Tufão Idaten", tick: "start", stacks: 1,
+            sourceName: "Ku no Kata Idaten Taifu", tick: "start", stacks: 1,
           });
         }
       }
@@ -615,7 +623,7 @@ export async function rollDamage(options = {}) {
         const dc = dcParts.map(Number).reduce((total, value) => total + value, 0);
         const sab = parseAttributeValue(actor.system?.props?.sab_display);
         const save = await Roll.create(`1d20 + ${sab}`).evaluate();
-        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Mar de Nuvens</strong> SAB contra CD ${dc}` });
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Go no Kata Kaun no Umi</strong> SAB contra CD ${dc}` });
         if (save.total < dc) amount = Math.floor(amount / 2);
         delete targetMist.incomingHalfOnFailedSave;
         Object.assign(targetPatch, mistStatePatch(targetMist));
@@ -633,19 +641,7 @@ export async function rollDamage(options = {}) {
           await applyBreathingStatus(targetActor, "atordoamento", stunResult.effect);
         }
       }
-      damageRequests.push({ actor: targetActor, protectedActor, intercepted, amount, rengokuBonus, heatBefore, components: targetComponents, patch: targetPatch, negated: defense.negated, critical: effectiveCritical });
-    }
-  }
-
-  const knowsStone = attackerKind === "slayer" && [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Pedra");
-  if (knowsStone && hasAttackDamage && finalDamage > 0 && damageTypes.includes("concussao")) {
-    const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
-    const weaponId = passiveState.lastWeapon?.id ?? "";
-    if (weaponId) {
-      const nextPassiveState = addStoneBreak(passiveState, weaponId, attrValues.for);
-      const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
-      Object.assign(existing.changes, passiveStatePatch(nextPassiveState));
-      updatesByActor.set(actor.uuid, existing);
+      damageRequests.push({ actor: targetActor, protectedActor, intercepted, amount, rengokuBonus, heatBefore, components: targetComponents, patch: targetPatch, negated: defense.negated, counterAttackAvailable: defense.counterAttackAvailable === true, critical: effectiveCritical });
     }
   }
 
@@ -725,7 +721,7 @@ export async function rollDamage(options = {}) {
     const dcTotal = (await Roll.create(windDamage.ventania.dcFormula).evaluate()).total;
     const vit = parseAttributeValue(targetActor.system?.props?.vit_display);
     const save = await Roll.create(`1d20 + ${vit}`).evaluate();
-    await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Ventania Rajadas Repentinas</strong> VIT CD ${dcTotal}` });
+    await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Shichi no Kata Keifū · Tengu Kaze</strong> VIT CD ${dcTotal}` });
     await targetActor.setFlag(MODULE_ID, saveKey, { ...saves, [`${round}:${turn}`]: true });
     if (save.total < dcTotal) {
       const fallRoll = await Roll.create(windDamage.ventania.fallDamage).evaluate();
@@ -743,7 +739,26 @@ export async function rollDamage(options = {}) {
   if (windTufaoHealPending && Number(windDamage?.healOnBigHit ?? 0) > 0 && attackerKind === "slayer") {
     const healed = parseNumber(props.pdv_slayer_curado) + Number(windDamage.healOnBigHit);
     await actor.update({ "system.props.pdv_slayer_curado": healed }, { naCsbAutomation: true, naBreathing: true });
-    ui.notifications?.info?.(`Tufão Idaten: você recupera ${windDamage.healOnBigHit} PDV.`);
+    ui.notifications?.info?.(`Ku no Kata Idaten Taifu: você recupera ${windDamage.healOnBigHit} PDV.`);
+  }
+
+  // ─── Respiração do Metal — Duro como Aço N4: contra-ataque pós-anulação ──
+  // O ataque inimigo já foi anulado (defense.negated) em resolveBreathingDefense;
+  // steelDefense.counterAttack foi consumido ali junto (não sobrevive no
+  // targetPatch), então o sinal chega aqui só por counterAttackAvailable.
+  for (const request of damageRequests) {
+    if (!request.negated || !request.counterAttackAvailable) continue;
+    const useMetalCounter = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Shi no Kata Hagane no Yō ni Katai — Contra-ataque" },
+      content: `<p>${request.actor?.name ?? "O defensor"} anulou completamente o ataque. Realizar agora o ataque padrão de contra-ataque?</p>`,
+      yes: { label: "Contra-atacar" },
+      no: { label: "Recusar" },
+      rejectClose: false,
+    });
+    if (useMetalCounter) {
+      const { rollHit } = await import("./hit-service.mjs");
+      await rollHit({ actor: request.actor, actorUuid: request.actor.uuid, autoDamage: true });
+    }
   }
 
   const appliedTargets = [];
@@ -777,6 +792,20 @@ export async function rollDamage(options = {}) {
           appliedTargets.push({ actor: targetActor, name: targetActor.name, amount, wound });
           ui.notifications?.info?.(`${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ""}.`);
 
+          // Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki: Sangramento é uma
+          // parcela distinta da Concussão. Aplica após a defesa quando o
+          // ataque não foi completamente anulado, mesmo se a Concussão foi
+          // reduzida a zero. Reaplicar a mesma fonte soma o dano e renova 2 turnos.
+          if (stoneDamage?.source === "pedra_02" && stoneState.bleeding && request.negated !== true) {
+            await applyStackingBreathingStatus(targetActor, "sangramento", {
+              damageFormula: String(stoneState.bleeding.amount),
+              remainingTurns: 2,
+              sourceName: `${actor.name} · Tenmen Kudaki`,
+              tick: "start",
+              stacks: 1,
+            });
+          }
+
           // Água 5 (Chuva Misericordiosa): finalizar o alvo recupera PDR igual
           // ao Nível de Respiração do usuário (regra do .md "Se finalizar").
           const killRecovery = Math.max(0, Math.trunc(parseNumber(breathingDamage?.recoverPdrOnKill)));
@@ -796,6 +825,31 @@ export async function rollDamage(options = {}) {
       : damageRequests[index - pending.length]?.actor?.name ?? "alvo";
     console.warn?.(`[${MODULE_ID}] Falha ao atualizar ${targetName}`, result.reason);
     ui.notifications?.warn?.(`Não foi possível atualizar ${targetName}.`);
+  }
+
+  // Registra a origem automática de Jamongan Sōkyoku e concede no máximo
+  // uma Quebra por ação, mesmo quando a ação contém dois ataques ou vários alvos.
+  const knowsStone = attackerKind === "slayer" && [...(actor.items ?? [])]
+    .some((item) => ["Pedra", "Iwa no Kokyū"].includes(item.system?.props?.respiracao_nome));
+  if (knowsStone && hasAttackDamage) {
+    let nextPassiveState = parseBreathPassiveState(actor.system?.props?.resp_passivas_estado);
+    const weaponId = String(nextPassiveState.lastWeapon?.id ?? "");
+    for (const target of appliedTargets) {
+      if (target.amount + target.wound <= 0) continue;
+      nextPassiveState = registerStoneConfirmedDamage(nextPassiveState, {
+        targetUuid: target.actor.uuid,
+        damage: target.amount + target.wound,
+        actionId,
+        combatId: game.combat?.uuid ?? "",
+        round: game.combat?.round ?? 0,
+        turn: game.combat?.turn ?? 0,
+        weaponId,
+      });
+    }
+    const quebraApplies = damageRequests.some((request) => request.negated !== true
+      && (request.components ?? []).some((component) => component.types?.includes("concussao")));
+    if (quebraApplies && weaponId) nextPassiveState = addStoneBreakForAction(nextPassiveState, weaponId, attrValues.for, actionId);
+    await actor.update(passiveStatePatch(nextPassiveState), { naCsbAutomation: true, naBreathing: true });
   }
 
   if (finalDamage > 0 && (!targets || targets.size === 0)) ui.notifications?.warn?.("Nenhum alvo marcado. O dano foi rolado, mas nenhuma ficha foi atualizada.");

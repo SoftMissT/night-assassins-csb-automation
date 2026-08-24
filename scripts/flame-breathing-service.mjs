@@ -4,21 +4,54 @@ import { flameFormById, flameWeaponTier } from "./flame-breathing-data.mjs";
 export const FLAME_STATE_KEY = "resp_chamas_estado";
 export const FLAME_HEAT_FLAG = "flameHeat";
 
+function normalizeWeaponRef(weapon = null) {
+  const id = String(weapon?.id ?? weapon?.weaponId ?? "");
+  if (!id) return null;
+  return {
+    id,
+    uuid: String(weapon?.uuid ?? weapon?.weaponUuid ?? ""),
+    name: String(weapon?.name ?? weapon?.weaponName ?? "Arma"),
+  };
+}
+
+export function flameWeaponHeat(stateOrRaw, weaponId = "") {
+  const state = parseFlameBreathingState(stateOrRaw);
+  const id = String(weaponId || state.synchronizedWeapon?.id || "");
+  if (id && Object.hasOwn(state.weaponHeatById ?? {}, id)) {
+    return Math.max(0, Math.min(60, Math.trunc(Number(state.weaponHeatById[id]) || 0)));
+  }
+  if (id && Object.keys(state.weaponHeatById ?? {}).length > 0) return 0;
+  return Math.max(0, Math.min(60, Math.trunc(Number(state.weaponHeat) || 0)));
+}
+
+export function synchronizeFlameWeapon(stateOrRaw, weapon, heatDelta = 0) {
+  const state = parseFlameBreathingState(stateOrRaw);
+  const synchronizedWeapon = normalizeWeaponRef(weapon);
+  if (!synchronizedWeapon) return state;
+  const weaponHeatById = { ...(state.weaponHeatById ?? {}) };
+  const previous = flameWeaponHeat(state, synchronizedWeapon.id);
+  const heat = Math.max(0, Math.min(60, previous + Math.trunc(Number(heatDelta) || 0)));
+  weaponHeatById[synchronizedWeapon.id] = heat;
+  return { ...state, synchronizedWeapon, weaponHeatById, weaponHeat: heat };
+}
+
 export function parseFlameBreathingState(raw) {
-  if (raw && typeof raw === "object") return { version: 1, weaponHeat: 0, ...raw };
+  if (raw && typeof raw === "object") return { version: 2, weaponHeat: 0, weaponHeatById: {}, ...raw };
   try {
     const parsed = JSON.parse(String(raw || "{}"));
-    return parsed && typeof parsed === "object" ? { version: 1, weaponHeat: 0, ...parsed } : { version: 1, weaponHeat: 0 };
+    return parsed && typeof parsed === "object" ? { version: 2, weaponHeat: 0, weaponHeatById: {}, ...parsed } : { version: 2, weaponHeat: 0, weaponHeatById: {} };
   } catch (_) {
-    return { version: 1, weaponHeat: 0 };
+    return { version: 2, weaponHeat: 0, weaponHeatById: {} };
   }
 }
 
 export function flameStatePatch(state, overrides = {}) {
-  const tier = flameWeaponTier(state.weaponHeat);
-  const summary = `Fogo Fátuo ${tier.heat}/60 · Acerto +${tier.hit} · Dano +${tier.weaponDamage}${tier.techniqueDie ? ` · Técnicas +${tier.techniqueDie}` : ""}${tier.multiplier > 1 ? " · Dano ×1,5" : ""}`;
+  const heat = flameWeaponHeat(state);
+  const tier = flameWeaponTier(heat);
+  const weaponLabel = state.synchronizedWeapon?.name ? ` · ${state.synchronizedWeapon.name}` : "";
+  const summary = `Fogo Fátuo ${tier.heat}/60${weaponLabel} · Acerto +${tier.hit} · Dano +${tier.weaponDamage}${tier.techniqueDie ? ` · Técnicas +${tier.techniqueDie}` : ""}${tier.multiplier > 1 ? " · Dano ×1,5" : ""}`;
   return {
-    [`system.props.${FLAME_STATE_KEY}`]: JSON.stringify({ version: 1, ...state, weaponHeat: tier.heat }),
+    [`system.props.${FLAME_STATE_KEY}`]: JSON.stringify({ version: 2, ...state, weaponHeat: tier.heat }),
     "system.props.resp_chamas_calor_arma": tier.heat,
     "system.props.resp_chamas_bonus_acerto": tier.hit,
     "system.props.resp_chamas_bonus_dano": tier.weaponDamage,
@@ -35,8 +68,12 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
   if (form.passive) return { ok: false, noCost: true, reason: "Esquentar é uma passiva e não consome ação ou PDR." };
   if (!selected) return { ok: false, noCost: true, reason: `Esta forma não pode ser usada no Nível de Respiração ${level}.` };
 
-  const state = parseFlameBreathingState(props[FLAME_STATE_KEY]);
-  const currentHeat = Math.max(state.weaponHeat, parseNumber(props.resp_chamas_calor_arma));
+  let state = parseFlameBreathingState(props[FLAME_STATE_KEY]);
+  const synchronizedWeapon = normalizeWeaponRef(choices.synchronizedWeapon ?? state.synchronizedWeapon);
+  if (synchronizedWeapon) state = synchronizeFlameWeapon(state, synchronizedWeapon, 0);
+  const currentHeat = synchronizedWeapon
+    ? flameWeaponHeat(state, synchronizedWeapon.id)
+    : Math.max(state.weaponHeat, parseNumber(props.resp_chamas_calor_arma));
   if (currentHeat < (form.minimumWeaponHeat ?? 0)) {
     return { ok: false, noCost: true, reason: `Cauterizar exige ao menos ${form.minimumWeaponHeat} Pontos de Esquentar na arma.` };
   }
@@ -57,14 +94,17 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
     : null;
   const weaponHeat = Math.min(60, currentHeat + (form.weaponHeat ?? 0));
   const tier = flameWeaponTier(weaponHeat);
-  const next = { ...state, weaponHeat, activeForm: { id: form.id, level, enemyHeat: form.enemyHeat ?? 0 }, pendingEffects };
+  const next = synchronizedWeapon
+    ? synchronizeFlameWeapon(state, synchronizedWeapon, form.weaponHeat ?? 0)
+    : { ...state, weaponHeat };
+  Object.assign(next, { activeForm: { id: form.id, level, enemyHeat: form.enemyHeat ?? 0 }, pendingEffects });
   const pendingHit = {};
   const pendingDamage = {};
 
   if (form.id === "chamas_02") {
     const formulas = [selected.damage];
     if (selected.extraAttackDamage) formulas.push(selected.extraAttackDamage);
-    Object.assign(pendingDamage, { source: form.id, formula: formulas[0], formulas, uses: formulas.length, technique: true });
+    Object.assign(pendingDamage, { source: form.id, formula: formulas[0], formulas, uses: formulas.length, technique: true, types: form.damageTypes ?? [] });
     Object.assign(pendingHit, { source: form.id, count: 1 + (selected.extraAttacks ?? 0) });
     // Renova as entradas da fila para esta ativação da 1ª Forma
     for (const [index, id] of [FLAME_EFFECT_MAIN, FLAME_EFFECT_EXTRA_ATTACK].entries()) {
@@ -90,23 +130,23 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
   if (form.id === "chamas_04") next.block = { source: form.id, bonus: selected.blockBonus, intercept: weaponHeat >= 30 };
   if (form.id === "chamas_05") {
     Object.assign(pendingHit, { source: form.id, count: 1, advantage: weaponHeat >= 30 });
-    Object.assign(pendingDamage, { source: form.id, formula: selected.damage, uses: 1, technique: true, exhaustionOverDamage: selected.exhaustionOverDamage ?? 0 });
+    Object.assign(pendingDamage, { source: form.id, formula: selected.damage, uses: 1, technique: true, types: form.damageTypes ?? [], exhaustionOverDamage: selected.exhaustionOverDamage ?? 0 });
   }
   if (form.id === "chamas_06") {
     Object.assign(pendingHit, { source: form.id, count: 1, area: true });
-    Object.assign(pendingDamage, { source: form.id, formula: selected.damage, uses: 1, technique: true, areaMeters: selected.areaMeters, evasionDc: selected.evasionDc, halfOnSave: true, damagePerEnemyHeat: selected.damagePerEnemyHeat ?? "" });
+    Object.assign(pendingDamage, { source: form.id, formula: selected.damage, uses: 1, technique: true, types: form.damageTypes ?? [], areaMeters: selected.areaMeters, evasionDc: selected.evasionDc, halfOnSave: true, damagePerEnemyHeat: selected.damagePerEnemyHeat ?? "" });
   }
   if (form.id === "chamas_07") next.healing = { source: form.id, formula: selected.healing, removeBleeding: selected.removeBleeding === true };
   if (form.id === "chamas_08") next.ignition = { source: form.id, turns: selected.turns, damageBonus: selected.damageBonus, selfDamage: selected.selfDamage };
   if (form.id === "chamas_09") {
     Object.assign(pendingHit, { source: form.id, bonus: selected.hitBonus, count: 1 });
     const rengokuAllies = Array.isArray(choices.rengokuAllies) ? choices.rengokuAllies : [];
-    Object.assign(pendingDamage, { source: form.id, uses: 1, technique: true, rengoku: true, saveDc: selected.saveBaseDc + parseNumber(props.car_display), vulnerableOnFail: true, exhaustionOnHit: selected.exhaustionOnHit ?? 0, rengokuAllies: rengokuAllies.length });
+    Object.assign(pendingDamage, { source: form.id, uses: 1, technique: true, types: form.damageTypes ?? [], rengoku: true, saveDc: selected.saveBaseDc + parseNumber(props.car_display), vulnerableOnFail: true, exhaustionOnHit: selected.exhaustionOnHit ?? 0, rengokuAllies: rengokuAllies.length });
     next.rengokuAllies = alliesUuids(rengokuAllies);
   }
 
   if (preparedRider && Object.keys(pendingDamage).length > 0) {
-    pendingDamage.comboRider = { formula: preparedRider.formula, level: mainEffect?.level ?? 1 };
+    pendingDamage.comboRider = { formula: preparedRider.formula, types: preparedRider.types ?? ["fogo"], level: mainEffect?.level ?? 1 };
   }
   // Espelho de compatibilidade do ataque adicional da 1ª Forma
   if (formId !== "chamas_02" && extraEffect && !extraEffect.used) {
@@ -230,7 +270,7 @@ export function tickFlameBreathing(rawState) {
     state.ignition = { ...state.ignition, turns: state.ignition.turns - 1 };
     if (state.ignition.turns <= 0) delete state.ignition;
   }
-  const tier = flameWeaponTier(state.weaponHeat);
+  const tier = flameWeaponTier(flameWeaponHeat(state));
   if (tier.selfDamage > 0) events.push({ type: "selfDamage", amount: tier.selfDamage, damageType: "concussao", source: "Fogo Fátuo 60" });
   delete state.activeForm;
   delete state.block;
@@ -245,10 +285,10 @@ export function tickFlameBreathing(rawState) {
 }
 
 export function clearFlameBreathingState() {
-  return flameStatePatch({ version: 1, weaponHeat: 0 });
+  return flameStatePatch({ version: 2, weaponHeat: 0, weaponHeatById: {}, synchronizedWeapon: null });
 }
 
-export const FLAME_SYNERGY_BREATHINGS = Object.freeze(["Amor", "Vento", "Magma", "Sol"]);
+export const FLAME_SYNERGY_BREATHINGS = Object.freeze(["koi", "kaze", "yogan", "hi"]);
 export const FLAME_SYNERGY_PDR_COST = 2;
 export const FLAME_SYNERGY_DAMAGE_PER_ALLY = 5;
 
@@ -257,6 +297,14 @@ export const FLAME_SYNERGY_DAMAGE_PER_ALLY = 5;
  * Puro — testável fora do Foundry. `candidates`: [{ uuid, name, respiracoes: string[], pdrAvailable }] .
  */
 export function resolveFlameRengokuAllies(candidates = [], actorUuid = "") {
+  const canonicalBreathing = (value) => {
+    const normalized = String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (["amor", "respiracao do amor", "koi", "koi no kokyu"].includes(normalized)) return "koi";
+    if (["vento", "respiracao do vento", "kaze", "kaze no kokyu"].includes(normalized)) return "kaze";
+    if (["magma", "respiracao do magma", "yogan", "yogan no kokyu"].includes(normalized)) return "yogan";
+    if (["sol", "respiracao do sol", "hi", "hi no kokyu"].includes(normalized)) return "hi";
+    return normalized;
+  };
   return (Array.isArray(candidates) ? candidates : [])
     .map((candidate) => ({
       uuid: String(candidate?.uuid ?? ""),
@@ -266,7 +314,7 @@ export function resolveFlameRengokuAllies(candidates = [], actorUuid = "") {
     }))
     .filter((candidate) => candidate.uuid
       && candidate.uuid !== String(actorUuid ?? "")
-      && candidate.respiracoes.some((breathing) => FLAME_SYNERGY_BREATHINGS.includes(breathing))
+      && candidate.respiracoes.some((breathing) => FLAME_SYNERGY_BREATHINGS.includes(canonicalBreathing(breathing)))
       && candidate.pdrAvailable >= FLAME_SYNERGY_PDR_COST);
 }
 

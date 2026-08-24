@@ -190,6 +190,85 @@ describe("damage-service", () => {
     assert.equal(criticalOption, false);
   });
 
+  it("Shi no Kata Hagane no Yō ni Katai N4 (Duro como Aço): anula o dano e oferece contra-ataque real ao defensor", async () => {
+    game.user.isGM = true;
+    // A fila serve, em ordem: 1) openDamageDialog do ataque original; depois
+    // que rollHit (contra-ataque) roda, ele consome mais 2 entradas próprias
+    // (openHitDialog + openHitConfirmationDialog) — DialogV2.wait é
+    // compartilhado por todos esses fluxos, então a fila precisa cobrir tudo.
+    _dialogReturn = [
+      { nome: "Golpe", pdrGasto: 0, entradas: [{ dado: "1d8", fixo: 4, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }] },
+      { cancelled: true },
+    ];
+    const attacker = makeActor({ id: "atk-steel", uuid: "Actor.atk-steel", props: { nome_slayer: "Atacante", pdv_slayer_total_valor: 20 } });
+    const target = makeActor({ id: "tgt-steel", uuid: "Actor.tgt-steel", props: {
+      nome_slayer: "Defensor de Aço",
+      pdv_slayer_total_valor: 20,
+      pdv_slayer_dano_tomado: 0,
+      acerto_label: "acerto_label_dex", dex_display: "4",
+      resp_metal_estado: JSON.stringify({ steelDefense: { negateAttack: true, counterAttack: true, uses: 1 } }),
+    } });
+    let appliedDamage = null;
+    let steelStateAfter = null;
+    target.update = async (patch) => {
+      if (patch["system.props.pdv_slayer_dano_tomado"] !== undefined) appliedDamage = patch["system.props.pdv_slayer_dano_tomado"];
+      if (patch["system.props.resp_metal_estado"] !== undefined) steelStateAfter = JSON.parse(patch["system.props.resp_metal_estado"]);
+    };
+    game.user.targets = new Set([{ actor: target }]);
+    _rollResult = { total: 12, toMessage: async () => {}, dice: [{ results: [{ result: 8, active: true }] }] };
+
+    let confirmCalled = false;
+    const previousConfirm = foundry.applications.api.DialogV2.confirm;
+    foundry.applications.api.DialogV2.confirm = async ({ window }) => {
+      confirmCalled = true;
+      assert.match(window.title, /Hagane/);
+      return true;
+    };
+    try {
+      await rollDamage({ actor: attacker });
+    } finally {
+      foundry.applications.api.DialogV2.confirm = previousConfirm;
+    }
+
+    assert.equal(appliedDamage, null, "dano não deve ter sido aplicado ao Defensor de Aço");
+    assert.equal(steelStateAfter?.steelDefense, undefined, "steelDefense é consumido em uso único");
+    assert.equal(confirmCalled, true, "deve perguntar se o defensor quer contra-atacar");
+  });
+
+  it("Duro como Aço sem counterAttack (N3): anula o dano mas nunca oferece contra-ataque", async () => {
+    game.user.isGM = true;
+    _dialogReturn = {
+      nome: "Golpe",
+      pdrGasto: 0,
+      entradas: [{ dado: "1d8", fixo: 4, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }],
+    };
+    const attacker = makeActor({ id: "atk-steel-n3", uuid: "Actor.atk-steel-n3", props: { nome_slayer: "Atacante", pdv_slayer_total_valor: 20 } });
+    const target = makeActor({ id: "tgt-steel-n3", uuid: "Actor.tgt-steel-n3", props: {
+      nome_slayer: "Defensor N3",
+      pdv_slayer_total_valor: 20,
+      pdv_slayer_dano_tomado: 0,
+      resp_metal_estado: JSON.stringify({ steelDefense: { negateAttack: true, counterAttack: false, uses: 1 } }),
+    } });
+    let appliedDamage = null;
+    target.update = async (patch) => {
+      if (patch["system.props.pdv_slayer_dano_tomado"] !== undefined) appliedDamage = patch["system.props.pdv_slayer_dano_tomado"];
+    };
+    game.user.targets = new Set([{ actor: target }]);
+    _rollResult = { total: 12, toMessage: async () => {}, dice: [] };
+
+    let confirmCalled = false;
+    const previousConfirm = foundry.applications.api.DialogV2.confirm;
+    foundry.applications.api.DialogV2.confirm = async () => { confirmCalled = true; return true; };
+    try {
+      await rollDamage({ actor: attacker });
+    } finally {
+      foundry.applications.api.DialogV2.confirm = previousConfirm;
+    }
+
+    assert.equal(appliedDamage, null, "dano ainda deve ser anulado");
+    assert.equal(confirmCalled, false, "N3 não tem contra-ataque; nunca deve perguntar");
+  });
+
   it("seleciona um perfil de arma e aplica metade do atributo para baixo", async () => {
     game.user.targets = new Set();
     _dialogReturn = [

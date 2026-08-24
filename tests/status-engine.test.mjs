@@ -16,6 +16,7 @@ import {
   applySlayerDamage,
   movementBlocked,
   processActorStatusTiming,
+  reapplyFiniteStatusEffect,
   reconcileSlayerExhaustion,
   resolveIncomingDamage,
   resolveSlayerHealing,
@@ -89,6 +90,82 @@ test("Sangramento mantém e reduz a quantidade de turnos", async () => {
   assert.equal(actor.system.props.pdv_slayer_dano_tomado, 2);
   assert.equal(state.effects.sangramento.remainingTurns, 2);
   assert.ok(state.active.includes("sangramento"));
+});
+
+test("Sangramento de Oni usa status_oni_dados e causa dano no início do turno", async () => {
+  rollTotal = 5;
+  const actor = actorWith({
+    nome_oni: "Akuma",
+    pdv_oni_dano_tomado: 1,
+    status_oni_exaustao: 0,
+    status_oni_dados: JSON.stringify({
+      version: 2,
+      active: ["sangramento"],
+      exhaustion: 0,
+      effects: { sangramento: { damageFormula: "1d6", remainingTurns: 2, sourceName: "Pedra", stacks: 1, tick: "start" } },
+      exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "start");
+  const state = JSON.parse(actor.system.props.status_oni_dados);
+  assert.equal(actor.system.props.pdv_oni_dano_tomado, 6);
+  assert.equal(state.effects.sangramento.remainingTurns, 1);
+  assert.equal(actor.system.props.status_slayer_dados, undefined);
+});
+
+test("Sangramento de Oni não rola no fim do turno", async () => {
+  rollTotal = 9;
+  const actor = actorWith({
+    nome_oni: "Akuma",
+    pdv_oni_dano_tomado: 0,
+    status_oni_dados: JSON.stringify({
+      version: 2, active: ["sangramento"], exhaustion: 0,
+      effects: { sangramento: { damageFormula: "1d10", remainingTurns: 2, sourceName: "Pedra", stacks: 1, tick: "start" } },
+      exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "end");
+  assert.equal(actor.system.props.pdv_oni_dano_tomado, 0);
+  assert.equal(JSON.parse(actor.system.props.status_oni_dados).effects.sangramento.remainingTurns, 2);
+});
+
+test("danos contínuos de Oni acumulam no mesmo início de turno", async () => {
+  rollTotal = 3;
+  const actor = actorWith({
+    nome_oni: "Akuma",
+    pdv_oni_dano_tomado: 2,
+    status_oni_dados: JSON.stringify({
+      version: 2, active: ["sangramento", "envenenamento"], exhaustion: 0,
+      effects: {
+        sangramento: { damageFormula: "1d4", remainingTurns: 2, sourceName: "Pedra", stacks: 1, tick: "start" },
+        envenenamento: { damageFormula: "1d6", remainingTurns: 2, sourceName: "Veneno", stacks: 1, tick: "start" },
+      },
+      exhaustionMilestones: [],
+    }),
+  });
+  await processActorStatusTiming(actor, "start");
+  assert.equal(actor.system.props.pdv_oni_dano_tomado, 8);
+});
+
+test("reaplicar Sangramento da mesma fonte soma o dano e renova para dois turnos", () => {
+  const effect = reapplyFiniteStatusEffect(
+    { damageFormula: "1d4", remainingTurns: 1, sourceName: "Martelo", tick: "start" },
+    { damageFormula: "1d6", remainingTurns: 3, sourceName: "Martelo", tick: "end" },
+  );
+  assert.equal(effect.damageFormula, "(1d4) + (1d6)");
+  assert.equal(effect.remainingTurns, 2);
+  assert.equal(effect.sourceName, "Martelo");
+  assert.equal(effect.tick, "start");
+});
+
+test("reaplicar Sangramento de fonte diferente preserva nomes e danos no contrato plano", () => {
+  const effect = reapplyFiniteStatusEffect(
+    { damageFormula: "2", remainingTurns: 1, sourceName: "Pedra" },
+    { damageFormula: "1d4", remainingTurns: 3, sourceName: "Veneno" },
+  );
+  assert.equal(effect.damageFormula, "(2) + (1d4)");
+  assert.equal(effect.remainingTurns, 3);
+  assert.equal(effect.sourceName, "Pedra + Veneno");
 });
 
 test("Sangramento incompleto não causa dano nem perde duração", async () => {

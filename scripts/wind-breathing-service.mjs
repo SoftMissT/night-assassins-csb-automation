@@ -67,7 +67,7 @@ function resolveFormula(formula, props = {}) {
 export function buildWindBreathingPlan(formId, level, props = {}, choices = {}) {
   const form = windFormById(formId);
   if (!form) return { ok: false, noCost: true, reason: "Forma do Vento desconhecida." };
-  if (form.passive) return { ok: false, noCost: true, reason: "Sangue Especial é uma passiva automática e não gasta ação ou PDR." };
+  if (form.passive) return { ok: false, noCost: true, reason: "Tokubetsuna Chi é uma passiva automática e não gasta ação ou PDR." };
   const selected = form.levels?.[level - 1] ?? null;
   if (!selected) return { ok: false, noCost: true, reason: `Esta forma não pode ser usada no Nível de Respiração ${level}.` };
   if (form.minDex && parseNumber(props.dex_display) < form.minDex) {

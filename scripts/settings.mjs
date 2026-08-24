@@ -3,6 +3,7 @@ import { MODULE_ID } from "./constants.mjs";
 export const SETTINGS = Object.freeze({
   enableSheetAutomation: "enableSheetAutomation",
   enableDamageRelay: "enableDamageRelay",
+  stoneCriticalFloor: "stoneCriticalFloor",
 });
 
 export function registerSettings() {
@@ -24,5 +25,16 @@ export function registerSettings() {
     type: Boolean,
     default: true,
     requiresReload: true,
+  });
+
+  game.settings.register(MODULE_ID, SETTINGS.stoneCriticalFloor, {
+    name: "NA.Settings.StoneCriticalFloor.Name",
+    hint: "NA.Settings.StoneCriticalFloor.Hint",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 1,
+    range: { min: 1, max: 20, step: 1 },
+    requiresReload: false,
   });
 }

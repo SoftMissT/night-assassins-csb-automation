@@ -19,7 +19,7 @@ function parseBonus(raw) {
  * @param {string} options.color
  * @returns {Promise<{mode:string,rollMode:string,bonusRaw:string,cdVal:number,rollCount:number}|null>}
  */
-export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) {
+export async function openHitDialog({ attrName, attrVal, color, weapons = [], requiredWeapon = false }) {
   const weaponOptions = weapons.map((weapon) => {
     const attributes = Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes.join("/") : "";
     const profileLabel = weapon.profileName ? ` ${weapon.profileName}` : "";
@@ -62,10 +62,10 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [] }) 
       <label class="na-hit-field">
         <span>Arma usada / crítico</span>
         <select id="na-ac-weapon">
-          <option value="">Sem arma crítico 20</option>
+          ${requiredWeapon ? "" : '<option value="">Sem arma crítico 20</option>'}
           ${weaponOptions}
         </select>
-        <small>O crítico vem da arma. Quebra da Respiração da Pedra reduz este número.</small>
+        <small>${requiredWeapon ? "A técnica está sincronizada com esta arma." : "O crítico vem da arma. Quebra da Respiração da Pedra reduz este número."}</small>
       </label>
       <label class="na-hit-field">
         <span>Atributo do acerto</span>

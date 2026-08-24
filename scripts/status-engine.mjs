@@ -3,6 +3,7 @@
  */
 
 import { MODULE_ID, STATUS_SLAYER_DANO_CONTINUO } from "./constants.mjs";
+import { actorKind } from "./actor-kind.mjs";
 import { parseNumber } from "./parsing.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
 import { parseWindBreathingState, registerWindBattleDamage, windStatePatch, WIND_STATE_KEY } from "./wind-breathing-service.mjs";
@@ -10,6 +11,65 @@ import { parseWindBreathingState, registerWindBattleDamage, windStatePatch, WIND
 const TURN_FLAG = "lastStatusTurn";
 const resolvingExhaustion = new Set();
 const FINITE_SOURCE_DAMAGE = new Set(["sangramento", "hemorragia", "envenenamento"]);
+
+function statusContract(actor) {
+  const props = actor?.system?.props ?? {};
+  const kind = actorKind(actor);
+  const oni = kind === "oni" || kind === "oni_minion"
+    || (props.status_oni_dados !== undefined && props.status_slayer_dados === undefined);
+  return oni
+    ? {
+      kind: "oni",
+      data: "status_oni_dados",
+      summary: "status_oni_resumo",
+      exhaustion: "status_oni_exaustao",
+      damage: "pdv_oni_dano_tomado",
+    }
+    : {
+      kind: "slayer",
+      data: "status_slayer_dados",
+      summary: "status_slayer_resumo",
+      exhaustion: "status_slayer_exaustao",
+      damage: "pdv_slayer_dano_tomado",
+    };
+}
+
+function actorStatusPatch(actor, state) {
+  const contract = statusContract(actor);
+  return {
+    [`system.props.${contract.data}`]: JSON.stringify(state),
+    [`system.props.${contract.summary}`]: formatStatusSummary(state.active, state.exhaustion),
+    [`system.props.${contract.exhaustion}`]: state.exhaustion,
+  };
+}
+
+function joinedDamageFormula(left, right) {
+  const formulas = [left, right].map((value) => String(value ?? "").trim()).filter(Boolean);
+  return formulas.length > 1 ? formulas.map((formula) => `(${formula})`).join(" + ") : formulas[0] ?? "";
+}
+
+/**
+ * Reaplica um dano finito no contrato plano atual do CSB.
+ * A mesma fonte acumula o dano e renova para dois turnos. Fontes distintas
+ * continuam identificadas no nome e têm suas fórmulas preservadas na soma.
+ */
+export function reapplyFiniteStatusEffect(existing = {}, incoming = {}) {
+  const currentSource = String(existing.sourceName ?? "").trim();
+  const incomingSource = String(incoming.sourceName ?? "").trim();
+  const sameSource = Boolean(currentSource && incomingSource && currentSource === incomingSource);
+  const sourceNames = [...new Set([currentSource, incomingSource].filter(Boolean))];
+  return {
+    ...existing,
+    ...incoming,
+    damageFormula: joinedDamageFormula(existing.damageFormula, incoming.damageFormula),
+    remainingTurns: sameSource
+      ? 2
+      : Math.max(1, Number.parseInt(existing.remainingTurns, 10) || 0, Number.parseInt(incoming.remainingTurns, 10) || 0),
+    sourceName: sourceNames.join(" + "),
+    stacks: 1,
+    tick: "start",
+  };
+}
 
 function primaryActiveGm() {
   return game.users?.filter((user) => user.active && user.isGM)
@@ -165,10 +225,12 @@ function decrementEffect(state, key) {
 export async function processActorStatusTiming(actor, timing = "start") {
   if (!actor?.update) return { processed: false, reason: "actor-invalid" };
   const props = actor.system?.props ?? {};
-  const state = parseStatusState(props.status_slayer_dados);
-  state.exhaustion = Math.max(state.exhaustion, Number.parseInt(props.status_slayer_exaustao, 10) || 0);
+  const contract = statusContract(actor);
+  const state = parseStatusState(props[contract.data]);
+  state.exhaustion = Math.max(state.exhaustion, Number.parseInt(props[contract.exhaustion], 10) || 0);
   const active = new Set(state.active);
   const messages = [];
+  let statusDamageTotal = parseNumber(props[contract.damage]);
 
   if (timing === "start") {
     if (active.has("distraido")) {
@@ -203,7 +265,15 @@ export async function processActorStatusTiming(actor, timing = "start") {
       }
       try {
         const { roll, total } = await rollFormula(key === "corroido" ? repeatedFormula(formula, effect?.stacks) : formula);
-        if (total > 0) await applySlayerDamage(actor, total, { isAttack: false, source: key });
+        if (total > 0 && contract.kind === "slayer") {
+          await applySlayerDamage(actor, total, { isAttack: false, source: key });
+        } else if (total > 0) {
+          const resolution = resolveIncomingDamage(state, total, { isAttack: false });
+          statusDamageTotal += resolution.damage;
+          await actor.update({
+            [`system.props.${contract.damage}`]: statusDamageTotal,
+          }, { naCsbAutomation: true, naStatusDamage: true });
+        }
         if (total > 0) {
           for (const removedKey of ["confuso", "distraido", "sonhando"]) {
             state.active = state.active.filter((entry) => entry !== removedKey);
@@ -227,7 +297,7 @@ export async function processActorStatusTiming(actor, timing = "start") {
     if (decrementEffect(state, key)) messages.push(`${key} expirou`);
   }
 
-  await actor.update(statePatch(state), { naCsbAutomation: true, naStatusTurn: true });
+  await actor.update(actorStatusPatch(actor, state), { naCsbAutomation: true, naStatusTurn: true });
   if (messages.length) {
     await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: `<strong>Status — ${actor.name}</strong><br>${messages.join("<br>")}` });
   }
@@ -277,15 +347,19 @@ async function processCurrentTurn(combat) {
   if (!isPrimaryGm() || !combat?.started) return;
   const combatant = combat.combatant;
   const actor = combatant?.actor;
-  if (!actor?.system?.props?.status_slayer_dados) return;
+  if (!actor) return;
   const key = `${combat.id}:${combat.round}:${combat.turn}:${combatant.id}`;
   const previousKey = combat.getFlag(MODULE_ID, TURN_FLAG);
   if (previousKey === key) return;
   const previousCombatantId = String(previousKey ?? "").split(":").at(-1);
   const previousActor = previousCombatantId ? combat.combatants.get(previousCombatantId)?.actor : null;
-  if (previousActor?.system?.props?.status_slayer_dados) await processActorStatusTiming(previousActor, "end");
+  const previousContract = previousActor ? statusContract(previousActor) : null;
+  if (previousContract && previousActor.system?.props?.[previousContract.data] !== undefined) {
+    await processActorStatusTiming(previousActor, "end");
+  }
   await combat.setFlag(MODULE_ID, TURN_FLAG, key);
-  await processActorStatusTiming(actor, "start");
+  const actorContract = statusContract(actor);
+  if (actor.system?.props?.[actorContract.data] !== undefined) await processActorStatusTiming(actor, "start");
 }
 
 export function movementBlocked(props = {}) {

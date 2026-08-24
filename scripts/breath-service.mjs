@@ -36,16 +36,16 @@ import { mistFormById } from "./mist-breathing-data.mjs";
 import { metalFormById } from "./metal-breathing-data.mjs";
 import { snowFormById } from "./snow-breathing-data.mjs";
 import { windFormById, WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
-import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, parseFlameBreathingState, resolveFlameRengokuAllies, FLAME_SYNERGY_DAMAGE_PER_ALLY, FLAME_SYNERGY_PDR_COST, tickFlameBreathing } from "./flame-breathing-service.mjs";
+import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, parseFlameBreathingState, resolveFlameRengokuAllies, FLAME_HEAT_FLAG, FLAME_SYNERGY_DAMAGE_PER_ALLY, FLAME_SYNERGY_PDR_COST, tickFlameBreathing } from "./flame-breathing-service.mjs";
 import { buildStoneBreathingPlan, clearStoneBreathingState, parseStoneBreathingState, stoneStatePatch, tickStoneBreathing } from "./stone-breathing-service.mjs";
 import { buildMistBreathingPlan, clearMistBreathingState, mistStatePatch, parseMistBreathingState, resolveEightLayersResult, resolveMistFormula, tickMistBreathing } from "./mist-breathing-service.mjs";
 import { buildMetalBreathingPlan, clearMetalBreathingState, resolveMetalMagnetism, tickMetalBreathing } from "./metal-breathing-service.mjs";
 import { buildSnowBreathingPlan, clearSnowBreathingState, grantBlizzardStealth, parseSnowBreathingState, resolveSnowRestrictionEscape, snowEffectiveBreathLevel, snowStatePatch, snowTickPatchWithExhaustion } from "./snow-breathing-service.mjs";
 import { buildWindBreathingPlan, clearWindBreathingState, parseWindBreathingState, tickWindBreathing, windStatePatch } from "./wind-breathing-service.mjs";
-import { applySlayerDamage } from "./status-engine.mjs";
+import { applySlayerDamage, reapplyFiniteStatusEffect } from "./status-engine.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
-import { isPassiveItem } from "./breath-passives.mjs";
+import { actorWeapons, clearStonePassiveState, isPassiveItem, parseBreathPassiveState, passiveStatePatch, stoneConfirmedDamageForTarget } from "./breath-passives.mjs";
 
 const MANOBRA_MAP = {
   "unica": "unica",
@@ -104,8 +104,8 @@ function getFormData(item) {
   }
   return {
     id: String(props.forma_id ?? catalog?.id ?? ""),
-    nome: String(props.nome_forma ?? item?.name ?? "Forma"),
-    jp: String(props.nome_jp ?? ""),
+    nome: String(catalog?.name ?? props.nome_jp ?? props.nome_forma ?? item?.name ?? "Forma"),
+    jp: String(catalog?.ptName ?? props.nome_forma ?? ""),
     respiracao: String(props.respiracao_nome ?? ""),
     tipo: String(catalog?.action ?? catalog?.actions?.[0] ?? props.tipo_manobra ?? ""),
     nivelReq: parseNumber(props.nivel_req),
@@ -146,7 +146,30 @@ function slayerPdrInfo(props = {}) {
  * @returns {Promise<object>} `{ rengokuAllies: [{uuid, name}] }` ou `{}` .
  */
 async function collectFlameChoices(actor, form, props = {}) {
-  if (form.id !== "chamas_09") return {};
+  const distinctWeapons = [...new Map(actorWeapons(actor).map((weapon) => [weapon.id, weapon])).values()];
+  if (distinctWeapons.length === 0) {
+    return { cancelled: true, reason: "A Respiração das Chamas exige uma arma sincronizada no inventário." };
+  }
+  const flameState = parseFlameBreathingState(props.resp_chamas_estado);
+  const currentId = String(flameState.synchronizedWeapon?.id ?? "");
+  let synchronizedWeapon = distinctWeapons.find((weapon) => weapon.id === currentId) ?? distinctWeapons[0];
+  if (distinctWeapons.length > 1) {
+    const options = distinctWeapons.map((weapon) => `<option value="${weapon.id}" ${weapon.id === synchronizedWeapon.id ? "selected" : ""}>${weapon.name}</option>`).join("");
+    const selectedId = await foundry.applications.api.DialogV2.wait({
+      window: { title: "Honō no Kokyū — arma sincronizada" },
+      content: `<div class="na-csb-automation"><p>Esquentar e o crítico pertencem à arma sincronizada.</p><label>Arma</label><select name="weaponId">${options}</select></div>`,
+      modal: true,
+      rejectClose: false,
+      buttons: [
+        { action: "confirmar", label: "Sincronizar", default: true, callback: (_event, button) => button.form.elements.weaponId.value },
+        { action: "cancelar", label: "Cancelar", callback: () => "" },
+      ],
+    });
+    if (!selectedId) return { cancelled: true };
+    synchronizedWeapon = distinctWeapons.find((weapon) => weapon.id === selectedId) ?? synchronizedWeapon;
+  }
+  const baseChoices = { synchronizedWeapon };
+  if (form.id !== "chamas_09") return baseChoices;
   const candidates = [];
   const seen = new Set([actor.uuid]);
   const combatants = [
@@ -164,15 +187,15 @@ async function collectFlameChoices(actor, form, props = {}) {
     candidates.push({ uuid: doc.uuid, name: doc.name ?? "", respiracoes, pdrAvailable: pdrCurrent });
   }
   const eligible = resolveFlameRengokuAllies(candidates, actor.uuid);
-  if (!eligible.length) return { rengokuAllies: [] };
+  if (!eligible.length) return { ...baseChoices, rengokuAllies: [] };
   const checkboxes = eligible.map((ally, index) => `
     <label style="display:flex;gap:6px;align-items:center">
       <input type="checkbox" data-index="${index}">
       <span>${ally.name} — PDR disponível: ${ally.pdrAvailable} (custa ${FLAME_SYNERGY_PDR_COST})</span>
     </label>`).join("");
   const chosenIndexes = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Rengoku — Sinergia de Aliados" },
-    content: `<div class="na-csb-automation"><p>Aliados com Amor, Vento, Magma ou Sol podem gastar ${FLAME_SYNERGY_PDR_COST} PDR para somar +${FLAME_SYNERGY_DAMAGE_PER_ALLY} de dano ao Rengoku (somente se o ataque acertar).</p>${checkboxes}</div>`,
+    window: { title: "Ku no Kata Rengoku — Sinergia" },
+    content: `<div class="na-csb-automation"><p>Aliados de Koi no Kokyū, Kaze no Kokyū, Yōgan no Kokyū ou Hi no Kokyū podem gastar ${FLAME_SYNERGY_PDR_COST} PDR para somar +${FLAME_SYNERGY_DAMAGE_PER_ALLY} de dano ao Rengoku (somente se o ataque acertar).</p>${checkboxes}</div>`,
     modal: true,
     rejectClose: false,
     buttons: [
@@ -180,7 +203,7 @@ async function collectFlameChoices(actor, form, props = {}) {
       { action: "sem_sinergia", label: "Sem sinergia", callback: () => [] },
     ],
   });
-  return { rengokuAllies: (Array.isArray(chosenIndexes) ? chosenIndexes : []).map((index) => eligible[index]).filter(Boolean) };
+  return { ...baseChoices, rengokuAllies: (Array.isArray(chosenIndexes) ? chosenIndexes : []).map((index) => eligible[index]).filter(Boolean) };
 }
 
 export function getBreathLevel(props = {}) {
@@ -455,11 +478,11 @@ async function collectWindChoices(actor, form, level, props) {
   if (form.id === "vento_02") {
     const dex = parseNumber(props.dex_display);
     const maxPdr = Math.trunc(2 * dex);
-    const pdrInvested = await askNumber("Redemoinho de Poeira", "PDR a investir (dano escala junto)", { min: 1, max: Math.max(1, maxPdr) });
+    const pdrInvested = await askNumber("Ichi no Kata Jin Senpū Sogi", "PDR a investir (dano escala junto)", { min: 1, max: Math.max(1, maxPdr) });
     return pdrInvested === null ? { cancelled: true } : { pdrInvested };
   }
   if (form.id === "vento_04") {
-    const secondUse = await confirmRule("Árvore Balançando ao Vapor da Montanha", "Este é o 2º uso (Reação/contra-ataque)?");
+    const secondUse = await confirmRule("San no Kata Kokufū Enran", "Este é o 2º uso (Reação/contra-ataque)?");
     return { secondUse };
   }
   return {};
@@ -479,12 +502,23 @@ async function collectCuratedChoices(actor, form, level, props) {
   }
   if (form.id === "pedra_01") {
     if (!targetActor) return { cancelled: true, reason: "Marque o inimigo atingido pelo ataque originário." };
-    const originDamage = await askNumber("Serpentino Duplo", "Dano causado pelo ataque originário", { max: 100000 });
-    return originDamage === null ? { cancelled: true } : { originDamage, targetUuid: targetActor.uuid };
+    const record = stoneConfirmedDamageForTarget(parseBreathPassiveState(props.resp_passivas_estado), targetActor.uuid, {
+      combatId: game.combat?.uuid ?? "",
+      round: game.combat?.round ?? 0,
+      turn: game.combat?.turn ?? 0,
+    });
+    if (!record) return { cancelled: true, reason: "Jamongan Sōkyoku exige dano confirmado neste mesmo alvo e turno." };
+    return { originDamage: record.damage, targetUuid: targetActor.uuid, originActionId: record.actionId };
   }
   if (form.id === "pedra_03") {
     if (!targetActor) return { cancelled: true, reason: "Marque o inimigo alvo da reação." };
-    const ranged = await confirmRule("Reflexão da Pedra", "A arma usada é de distância?");
+    const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
+    const weaponId = String(passiveState.lastWeapon?.id ?? "");
+    const weaponItem = weaponId ? actor.items?.get?.(weaponId) : null;
+    const rangeRaw = String(weaponItem?.system?.props?.arma_alcance ?? "").toLocaleLowerCase("pt-BR");
+    const rangeMeters = Number.parseFloat(rangeRaw.replace(",", "."));
+    const ranged = (Number.isFinite(rangeMeters) && rangeMeters > 2)
+      || /dist[aâ]ncia|ranged|longo|proj[eé]til|arremesso/u.test(rangeRaw);
     const protectingAlly = await confirmRule("Reflexão da Pedra", "Você está protegendo um aliado (em vez de si mesmo)?");
     let protectedUuid = actor.uuid;
     if (protectingAlly) {
@@ -613,7 +647,7 @@ async function grantActiveSnowBlizzard(actor, targetActor) {
   });
   if (!granted.ok) return granted;
   await actor.update(snowStatePatch(granted.state), { naCsbAutomation: true, naBreathing: true });
-  await applyBreathingStatus(targetActor, "invisivel_inalvejavel", { remainingTurns: 1, sourceName: "Nevasca", tick: "start", stacks: 1 });
+  await applyBreathingStatus(targetActor, "invisivel_inalvejavel", { remainingTurns: 1, sourceName: "San no Kata: Burizado", tick: "start", stacks: 1 });
   await targetActor.setFlag(MODULE_ID, "snowBlizzardStealth", { sourceActorUuid: actor.uuid, round: game.combat?.round ?? 0 });
   if (granted.pdrRecovery > 0 && actorKind(targetActor) === "slayer") {
     const spent = parseNumber(targetActor.system?.props?.pdr_slayer_gasto_valor);
@@ -688,8 +722,8 @@ function breathingTechniqueEntradas(actor) {
   const water = parseWaterBreathingState(props.resp_agua_estado).pendingDamage;
   if (water?.formula) push(water.formula, water.types);
   const flame = parseFlameBreathingState(props.resp_chamas_estado).pendingDamage;
-  if (flame?.formula) push(flame.formula, ["cortante"]);
-  if (flame?.comboRider?.formula) push(flame.comboRider.formula, ["cortante"]);
+  if (flame?.formula) push(flame.formula, flame.types ?? ["fogo"]);
+  if (flame?.comboRider?.formula) push(flame.comboRider.formula, flame.comboRider.types ?? ["fogo"]);
   const stone = parseStoneBreathingState(props.resp_pedra_estado).pendingDamage;
   if (stone?.formula) push(String(stone.formula).replace(/@for\b/giu, String(props.for_display ?? 0)), stone.types ?? ["concussao"]);
   const mist = parseMistBreathingState(props.resp_nevoa_estado).pendingDamage;
@@ -1026,7 +1060,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     if (!targetActor) return ui.notifications?.warn?.("Alvo do Serpentino Duplo não encontrado.");
     const vit = parseNumber(targetActor.system?.props?.vit_display);
     const save = await Roll.create(`1d20 + ${vit}`).evaluate();
-    const message = await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Serpentino Duplo</strong> VIT CD ${plan.state.serpentine.saveDc}` });
+    const message = await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Jamongan Sōkyoku</strong> VIT CD ${plan.state.serpentine.saveDc}` });
     await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
     if (save.total < plan.state.serpentine.saveDc) {
       const { rollDamage } = await import("./damage-service.mjs");
@@ -1050,22 +1084,15 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       import("./hit-service.mjs"),
       import("./damage-service.mjs"),
     ]);
-    if (form.id === "chamas_06") {
-      await rollDamage({
-        actor,
-        nome: `${form.respiracao} ${form.nome}`,
-        entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }],
-        skipActionConsumption: true,
-        forceAttackDamage: true,
-      });
-      await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });
-      return;
-    }
-
     // autoDamage:false — este fluxo de Forma resolve seu próprio dano
     // abaixo (encadeamento opcional + resolução específica da técnica), o
     // rollHit padrão NÃO deve disparar o dano sozinho aqui.
-    const hitResult = await rollHit({ actor, actorUuid: actor.uuid, autoDamage: false });
+    const hitResult = await rollHit({
+      actor,
+      actorUuid: actor.uuid,
+      autoDamage: false,
+      requiredWeaponId: isFlameForm ? plan.state?.synchronizedWeapon?.id : "",
+    });
     if (!hitResult?.attempts?.length) {
       if (rollbackPatch && Object.keys(rollbackPatch).length > 0) {
         await actor.update(rollbackPatch, { naCsbAutomation: true, naBreathRollback: true });
@@ -1089,13 +1116,6 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
       }
     }
 
-    const targetActor = [...(game.user?.targets ?? [])][0]?.actor ?? null;
-    if (isStoneForm && form.id === "pedra_02" && targetActor && plan.state?.bleeding) {
-      await applyBreathingStatus(targetActor, "sangramento", {
-        damageFormula: String(plan.state.bleeding.amount), remainingTurns: plan.state.bleeding.turns,
-        sourceName: form.nome, tick: "start", stacks: 1,
-      });
-    }
     if (isSnowForm && form.id === "neve_02" && plan.state?.pendingTargetEffect) {
       // Inverno Sombrio é uma Forma em Área (raio 5m): todo inimigo marcado
       // como alvo do usuário recebe a mesma penalidade de Nível, não apenas
@@ -1123,7 +1143,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   if (damageRoll && game.dice3d?.showForRoll) await game.dice3d.showForRoll(damageRoll, game.user, true);
   await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
   if (flameHealingRoll) {
-    await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Cauterizar</strong> recuperação de PDV` });
+    await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Shichi no Kata Yaki Suru</strong> recuperação de PDV` });
   }
 }
 
@@ -1132,18 +1152,24 @@ function primaryActiveGm() {
 }
 
 export function registerBreathingEngine() {
-  const clearCombatFlames = (combat) => {
+  const clearCombatFlames = async (combat) => {
     if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id) return;
+    const tasks = [];
     for (const combatant of combat.combatants ?? []) {
       const actor = combatant.actor;
-      if (actor?.system?.props?.resp_chamas_estado) void actor.update(clearFlameBreathingState(), { naCsbAutomation: true, naBreathing: true });
-      if (actor?.system?.props?.resp_pedra_estado) void actor.update(clearStoneBreathingState(actor.system.props.resp_pedra_estado), { naCsbAutomation: true, naBreathing: true });
-      if (actor?.system?.props?.resp_nevoa_estado) void actor.update(clearMistBreathingState(actor.system.props.resp_nevoa_estado), { naCsbAutomation: true, naBreathing: true });
-      if (actor?.system?.props?.resp_metal_estado) void actor.update(clearMetalBreathingState(actor.system.props.resp_metal_estado), { naCsbAutomation: true, naBreathing: true });
-      if (actor?.system?.props?.resp_neve_estado) void actor.update(clearSnowBreathingState(actor.system.props.resp_neve_estado), { naCsbAutomation: true, naBreathing: true });
-      if (actor?.getFlag?.(MODULE_ID, "flameHeat")) void actor.unsetFlag(MODULE_ID, "flameHeat");
-      if (actor?.getFlag?.(MODULE_ID, "flameBlockPenalty")) void actor.unsetFlag(MODULE_ID, "flameBlockPenalty");
+      if (actor?.system?.props?.resp_chamas_estado) tasks.push(actor.update(clearFlameBreathingState(), { naCsbAutomation: true, naBreathing: true }));
+      const stonePassive = parseBreathPassiveState(actor?.system?.props?.resp_passivas_estado);
+      if (actor?.system?.props?.resp_pedra_estado || stonePassive.stone) tasks.push(actor.update({
+        ...(actor?.system?.props?.resp_pedra_estado ? clearStoneBreathingState(actor.system.props.resp_pedra_estado) : {}),
+        ...passiveStatePatch(clearStonePassiveState(stonePassive)),
+      }, { naCsbAutomation: true, naBreathing: true }));
+      if (actor?.system?.props?.resp_nevoa_estado) tasks.push(actor.update(clearMistBreathingState(actor.system.props.resp_nevoa_estado), { naCsbAutomation: true, naBreathing: true }));
+      if (actor?.system?.props?.resp_metal_estado) tasks.push(actor.update(clearMetalBreathingState(actor.system.props.resp_metal_estado), { naCsbAutomation: true, naBreathing: true }));
+      if (actor?.system?.props?.resp_neve_estado) tasks.push(actor.update(clearSnowBreathingState(actor.system.props.resp_neve_estado), { naCsbAutomation: true, naBreathing: true }));
+      if (actor?.getFlag?.(MODULE_ID, "flameHeat")) tasks.push(actor.unsetFlag(MODULE_ID, "flameHeat"));
+      if (actor?.getFlag?.(MODULE_ID, "flameBlockPenalty")) tasks.push(actor.unsetFlag(MODULE_ID, "flameBlockPenalty"));
     }
+    await Promise.allSettled(tasks);
   };
   Hooks.on("updateCombat", (combat, changes) => {
     if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id || !Object.hasOwn(changes, "turn")) return;
@@ -1197,4 +1223,33 @@ export function registerBreathingEngine() {
   });
   Hooks.on("combatEnd", clearCombatFlames);
   Hooks.on("deleteCombat", clearCombatFlames);
+  Hooks.on("updateActor", (actor) => {
+    if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id || !actor?.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG)) return;
+    const props = actor.system?.props ?? {};
+    const rawCurrent = props.pdv_slayer_conta_atual ?? props.pdv_slayer_atual_valor_display
+      ?? props.pdv_oni_conta_atual ?? props.pdv_oni_atual_valor_display;
+    if (rawCurrent === undefined || rawCurrent === null || rawCurrent === "") return;
+    const current = parseNumber(rawCurrent);
+    if (current <= 0) void actor.unsetFlag(MODULE_ID, FLAME_HEAT_FLAG);
+  });
+}
+
+export async function applyStackingBreathingStatus(targetActor, key, effect) {
+  const kind = actorKind(targetActor);
+  if (!kind) return;
+  const statusKind = kind === "oni" || kind === "oni_minion" ? "oni" : "slayer";
+  const dataKey = `status_${statusKind}_dados`;
+  const summaryKey = `status_${statusKind}_resumo`;
+  const exhaustionKey = `status_${statusKind}_exaustao`;
+  const props = targetActor.system?.props ?? {};
+  const state = parseStatusState(props[dataKey]);
+  if (!state.active.includes(key)) state.active.push(key);
+  state.effects[key] = state.effects[key]
+    ? reapplyFiniteStatusEffect(state.effects[key], effect)
+    : effect;
+  await targetActor.update({
+    [`system.props.${dataKey}`]: JSON.stringify(state),
+    [`system.props.${summaryKey}`]: formatStatusSummary(state.active, state.exhaustion),
+    [`system.props.${exhaustionKey}`]: state.exhaustion,
+  }, { naCsbAutomation: true, naBreathing: true });
 }

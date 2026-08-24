@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, it } from "node:test";
-import { BREATHING_CATALOG, BREATHING_FOLDER_NAMES } from "../tools/build-breathing-sources.mjs";
+import { BREATHING_CATALOG, BREATHING_FOLDER_NAMES, PUBLISHED_BREATHINGS } from "../tools/build-breathing-sources.mjs";
 import { BREATHING_ICONS } from "../scripts/breathing-icons.mjs";
 import "../tools/build-weapon-sources.mjs";
 
@@ -13,24 +13,24 @@ async function sourceDocuments(directory) {
 }
 
 describe("catálogo de Respirações", () => {
-  it("cria as 44 pastas solicitadas e cataloga todas as fontes existentes", async () => {
+  it("o catálogo de fonte conhece as 44 Respirações do sistema, mas só publica as 6 com motor real", async () => {
     const documents = await sourceDocuments("../build/compendium/respiracoes/");
     const folders = documents.filter((document) => String(document._key).startsWith("!folders!"));
     const items = documents.filter((document) => document.type === "equippableItem");
-    assert.equal(BREATHING_CATALOG.length, 44);
-    assert.equal(folders.length, 44);
-    assert.equal(new Set(folders.map((folder) => folder.name)).size, 44);
-    assert.deepEqual(folders.map((folder) => folder.name).sort(), [...BREATHING_FOLDER_NAMES].sort());
-    assert.ok(items.length >= 300, "todas as técnicas oficiais disponíveis devem virar Items");
+    assert.equal(BREATHING_CATALOG.length, 44, "catálogo de fonte continua completo, mesmo sem publicar tudo");
+    assert.equal(BREATHING_FOLDER_NAMES.length, 44);
+    assert.equal(PUBLISHED_BREATHINGS.length, 6, "só Chamas/Metal/Neve/Névoa/Pedra/Vento têm motor de estado/combate real");
+    assert.equal(folders.length, PUBLISHED_BREATHINGS.length, "build final publica só as Respirações com motor real");
+    assert.deepEqual(folders.map((folder) => folder.name.replace(/^Respiração d[ao]s? /u, "")).sort(), [...PUBLISHED_BREATHINGS].sort());
+    assert.ok(items.every((item) => PUBLISHED_BREATHINGS.includes(item.system?.props?.respiracao_nome ?? "")), "nenhuma Respiração sem motor real deve vazar para o pack");
     assert.ok(items.every((item) => item.folder && item.system?.props?.inventario_categoria === "respiracao"));
     assert.ok(items.every((item) => /^<(?:p|h[1-6]|ul|ol|blockquote|table|hr)/u.test(item.system.props.descricao)), "descrições publicadas devem ser HTML do Foundry");
   });
 
-  it("preserva as onze Formas mecânicas de Água", async () => {
+  it("Água não é publicada no pack Foundry (sem motor de estado dedicado ainda)", async () => {
     const documents = await sourceDocuments("../build/compendium/respiracoes/");
     const water = documents.filter((document) => document.type === "equippableItem" && document.system?.props?.respiracao_nome === "Água");
-    assert.equal(water.length, 11);
-    assert.ok(water.every((item) => item.system.props.tipo_dano_base === "cortante"));
+    assert.equal(water.length, 0, "Água fica de fora até receber o mesmo tratamento de auditoria/motor das 6 publicadas");
   });
 
   it("publica Chamas com ações e níveis mecânicos canônicos", async () => {
@@ -38,10 +38,15 @@ describe("catálogo de Respirações", () => {
     const flames = documents.filter((document) => document.type === "equippableItem" && document.system?.props?.respiracao_nome === "Chamas");
     assert.equal(flames.length, 9);
     assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_01").system.props.tipo_manobra, "Passiva");
-    assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_01").system.props.forma_passiva, 1);
+    const passive = flames.find((item) => item.system.props.forma_id === "chamas_01");
+    assert.equal(passive.system.props.forma_passiva, 1);
+    assert.equal(passive.system.props.nvl1_dano, "", "Esquentar não pode herdar 1d6 falso do catálogo legado");
+    assert.equal(passive.system.props.nvl1_tipos_dano, "");
     assert.ok(flames.filter((item) => item.system.props.forma_id !== "chamas_01").every((item) => item.system.props.forma_passiva === 0));
     assert.equal(flames.find((item) => item.system.props.forma_id === "chamas_04").system.props.tipo_manobra, "Reação");
     const storm = flames.find((item) => item.system.props.forma_id === "chamas_06");
+    assert.equal(storm.system.props.nome_forma, "Roku no Kata Hono Arashi");
+    assert.equal(storm.system.props.nome_jp, "Tormenta de Chamas");
     assert.equal(storm.system.props.tem_nvl2, 0);
     assert.equal(storm.system.props.tem_nvl3, 1);
     assert.equal(storm.system.props.nvl3_dano, "8d8");
@@ -67,12 +72,16 @@ describe("catálogo de Respirações", () => {
       assert.deepEqual(passives.map((item) => item.system.props.forma_id), contract.passive ? [contract.passive] : []);
       assert.ok(forms.filter((item) => item.system.props.forma_passiva !== 1).every((item) => Number(item.system.props.nvl1_custo) >= 0));
     }
+    const stone = items.filter((item) => item.system?.props?.respiracao_nome === "Pedra");
+    assert.ok(stone.every((item) => item.name.startsWith("Iwa no Kokyū — ")));
+    assert.ok(stone.some((item) => item.system.props.nome_forma.includes("Tenmen Kudaki")));
   });
 
   it("usa os ícones locais disponíveis sem fabricar assets ausentes", async () => {
     const documents = await sourceDocuments("../build/compendium/respiracoes/");
     const items = documents.filter((document) => document.type === "equippableItem");
     for (const [breathing, file] of Object.entries(BREATHING_ICONS)) {
+      if (!PUBLISHED_BREATHINGS.includes(breathing)) continue;
       const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
       assert.ok(forms.length > 0, `a Respiração ${breathing} deve possuir Formas catalogadas`);
       assert.ok(forms.every((item) => item.img === `modules/night-assassins-csb-automation/assets/icons/breathing/${file}`));

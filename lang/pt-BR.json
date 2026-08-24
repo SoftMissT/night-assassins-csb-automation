@@ -3,6 +3,8 @@
   "NA.Settings.EnableSheetAutomation.Hint": "Monitora nível e Habilidade Especial para aplicar snapshots e progressões automáticas na ficha do Custom System Builder.",
   "NA.Settings.EnableDamageRelay.Name": "Ativar relay de dano do GM",
   "NA.Settings.EnableDamageRelay.Hint": "Permite que jogadores solicitem ao GM conectado a atualização de pdv_oni_dano_tomado nos inimigos.",
+  "NA.Settings.StoneCriticalFloor.Name": "Iwa no Kokyū — limite mínimo do crítico",
+  "NA.Settings.StoneCriticalFloor.Hint": "Menor resultado natural ao qual os acúmulos de Quebra podem reduzir o crítico de uma arma. Os acúmulos continuam limitados pela FOR e separados por arma.",
   "night-assassins-csb-automation": {
     "system-incompatible": "Sistema incompatível. Ative o Custom System Builder.",
     "actor-not-found": "Nenhum Actor encontrado.",

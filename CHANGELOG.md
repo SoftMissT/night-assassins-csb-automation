@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.11.7 - 2026-08-24
+
+- **Chamas e Pedra por arma sincronizada**: Esquentar (Chamas) e Quebra/Sangramento/Reflexão (Pedra) agora rastreiam estado por arma equipada em vez de globalmente no Actor; piso mundial de crítico configurável pelo GM (Iwa no Kokyū); dois ataques sequenciais da Pedra com recuperação única de PDR; Kaifuku reativável pela Marca sem bloquear a ativação.
+- **Auditoria completa das Respirações publicadas (Chamas, Pedra, Névoa, Metal, Neve, Vento)** contra a fonte oficial, técnica por técnica:
+  - Névoa: 5 decisões fechadas — empate na Expansão de Névoa nega o dano (defesa vence em empate); o Colapso da 6ª Forma não consome os 3 Padrões (Ciclone/Estigma/Reflexão), só os lê; o bônus de Acerto da Neblina passa a valer só contra o inimigo que testou SAB e falhou (antes era global); os 3 Padrões resetam ao fim do combate.
+  - Metal: corrigido o contra-ataque do Duro como Aço nível 4, que nunca disparava; corrigida a Vantagem do nível 2, que ficava ativa indefinidamente em vez de valer só para o próximo ataque inimigo.
+  - Neve: corrigido o bônus "+2 em quaisquer testes contra CD" do Coração de Gelo nível 4, que nunca era aplicado fora de Bloqueio/Esquiva.
+  - Vento: corrigida a passiva do 2º Estilo (Garras do Vento Puro) — Vantagem automática uma vez por turno a partir do Nível 3 de Respiração, que nunca havia sido implementada.
+  - Chamas: auditada integralmente, nenhuma divergência encontrada.
+- **Nomenclatura em japonês**: todas as Respirações publicadas usam o nome romaji como identificador primário da técnica (nas mensagens de chat, diálogos e catálogo), com o nome em português como referência secundária.
+- **Somente as Respirações com motor de estado dedicado e auditadas são publicadas no Compendium** (Chamas, Metal, Neve, Névoa, Pedra, Vento). Água e as demais Respirações do catálogo de fonte deixam de ser empacotadas até receberem o mesmo tratamento.
+- Validação: `node --test` com **844/844** testes aprovados.
+
 ## 0.11.6 - 2026-08-24
 
 - Corrige a ficha Oni para manter apenas as áreas próprias, remover Vida e Morte, Descanso, Fôlego e armas Slayer, e restaurar o ledger operacional completo de PDV/PDK na aba Combate.
@@ -682,6 +695,11 @@
 
 ## Unreleased
 
+- Respiração das Chamas passa a manter Esquentar por arma sincronizada, crítico e perfil coerentes, Brasas por alvo e limpeza ao fim do combate.
+- Respiração da Pedra recebe setting mundial de piso positivo do crítico, Quebra por arma/ação, técnicas com nomes japoneses e registro de dano confirmado por alvo/turno.
+- `Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki` aplica Sangramento apenas após ataque não anulado; mesma fonte soma o dano e renova para dois turnos.
+- `Ryūmongan, Sokusei / Keikoku` limita a recuperação crítica a 2 PDR por uso; `Kaifuku-ryoku` integra-se opcionalmente à Marca sem bloqueá-la.
+- Validação local: `node --test` com 835/835 testes; validação multicliente no Foundry v14 pendente.
 - Adicionado relay de GM para jogadores acumularem dano em `system.props.pdv_oni_dano_tomado` sem ownership do Actor inimigo.
 - O relay passa a iniciar automaticamente no hook `ready`; a macro standalone do GM não é mais necessária.
 - `na_roll_damage.js` consome a API pública `applyOniDamage` do módulo.

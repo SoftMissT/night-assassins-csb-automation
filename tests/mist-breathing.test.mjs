@@ -163,8 +163,9 @@ describe("3ª Forma — Expansão de Névoa", () => {
     assert.equal(resolveMistReduction(10, 11).finalDamage, 0);
   });
 
-  it("empate (resultado == dano): sem regra oficial explícita — mantém dano final 0 (documentado como decisão pendente)", () => {
+  it("empate (resultado == dano): defesa ganha de ataque — nega todo o dano, igual a 'maior' (decisão do Operador)", () => {
     const tie = resolveMistReduction(10, 10);
+    assert.equal(tie.negated, true);
     assert.equal(tie.finalDamage, 0);
   });
 
@@ -410,11 +411,11 @@ describe("Estados simultâneos — sem shallow-copy/aliasing entre Formas", () =
 });
 
 describe("clearMistBreathingState — combate encerrado", () => {
-  it("limpa efeitos de combate mas preserva os Padrões conquistados (decisão pendente, comportamento conservador)", () => {
+  it("limpa efeitos de combate e reseta os Padrões conquistados (decisão do Operador)", () => {
     const state = threePatterns();
     const patch = clearMistBreathingState(state);
     const cleared = parseMistBreathingState(patch["system.props.resp_nevoa_estado"]);
-    assert.equal(mistPatternCount(cleared), 3, "Padrões sobrevivem ao fim do combate");
+    assert.equal(mistPatternCount(cleared), 0, "Padrões resetam ao fim do combate, mesmo padrão de Quebra/Esquentar");
     assert.equal(cleared.fog, null);
     assert.equal(cleared.obfuscation, null);
   });

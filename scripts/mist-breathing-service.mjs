@@ -153,18 +153,16 @@ export function resolveEightLayersResult(state, hits) {
 /**
  * Resolve a redução de dano da 3ª Forma (Expansão de Névoa).
  *
- * DECISÃO PENDENTE DO OPERADOR — EXPANSÃO: RESULTADO IGUAL AO DANO. A fonte
- * oficial só define "maior → anula" e "menor → subtrai"; não fala do empate.
- * Matematicamente, `incoming - reduction` já resulta em 0 quando os valores
- * são iguais, então o efeito prático de um empate já é "dano final 0" mesmo
- * sem marcar `negated = true`. Não inventamos uma regra nova: mantivemos o
- * comportamento que o runtime anterior já produzia (herdado desta função) e
- * documentamos a ambiguidade em vez de decidir por conta própria.
+ * DECISÃO DO OPERADOR — EMPATE: a fonte só define "maior → anula" e
+ * "menor → subtrai"; a regra geral de Críticos do sistema estabelece que
+ * defesa sempre ganha de ataque em empate. Empate (`reduction === incoming`)
+ * é tratado como sucesso total (mesmo resultado de "maior"): nega o dano.
  */
 export function resolveMistReduction(incomingDamage, rolledReduction) {
   const incoming = Math.max(0, Math.trunc(parseNumber(incomingDamage)));
   const reduction = Math.max(0, Math.trunc(parseNumber(rolledReduction)));
-  return { incoming, reduction, negated: reduction > incoming, finalDamage: reduction > incoming ? 0 : Math.max(0, incoming - reduction) };
+  const negated = reduction >= incoming;
+  return { incoming, reduction, negated, finalDamage: negated ? 0 : Math.max(0, incoming - reduction) };
 }
 
 /** Constrói o flag de Anulação de Resistências (Sinergia da 4ª Forma). Não apaga resistências, só as suprime por N turnos. */
@@ -268,11 +266,9 @@ export function buildMistBreathingPlan(formId, level, props = {}, choices = {}) 
         ? { source: formId, formula: "@sab", uses: 1 + extraAttacks, criticalFormula: "@fdv" }
         : undefined;
       state.collapse = collapseEligible;
-      // DECISÃO PENDENTE DO OPERADOR — COLAPSO CONSOME OS PADRÕES? A fonte
-      // diz que os status "permanecem mesmo após aplicar o efeito" para
-      // poderem se acumular e ativar o Colapso, mas não diz que o próprio
-      // Colapso os consome. Optamos por NÃO consumir (mantemos os 3
-      // `earned` intactos) até uma decisão explícita do Operador.
+      // DECISÃO DO OPERADOR — COLAPSO NÃO CONSOME OS PADRÕES: o Colapso só
+      // lê os 3 Padrões `earned` para escalar seu próprio efeito (SAB no
+      // dano + FDV em crítico); os Padrões continuam disponíveis depois.
     }
   } else if (formId === "nevoa_07") {
     if (choices.opposedPassed === false) return { ok: false, noCost: false, reason: "O teste oposto de SAB falhou." };
@@ -326,7 +322,7 @@ export function buildMistBreathingPlan(formId, level, props = {}, choices = {}) 
 export function resolveMistStigmaStunOnHit(rawState) {
   const state = normalizeMistBreathingState(rawState);
   if (!state.patterns.stigma.benefitAvailable) return { applied: false, state };
-  return { applied: true, state: consumeMistPatternBenefit(state, "stigma"), effect: { remainingTurns: 1, tick: "start", sourceName: "Estigma da Névoa" } };
+  return { applied: true, state: consumeMistPatternBenefit(state, "stigma"), effect: { remainingTurns: 1, tick: "start", sourceName: "San no Kata Kasan no Shibuki" } };
 }
 
 /** Consome o benefício de Reflexão da Névoa (Recuperação com Vantagem no próximo turno). */
@@ -367,16 +363,13 @@ export function tickMistBreathing(raw) {
 /**
  * Limpa os efeitos de combate da Névoa ao fim do combate.
  *
- * DECISÃO PENDENTE DO OPERADOR — PADRÕES AO FIM DO COMBATE: a fonte não
- * define duração dos Padrões fora do combate. Preservamos `patterns`
- * (Ciclone/Estigma/Reflexão `earned`) através do fim de combate, no mesmo
- * espírito de `freezeByTarget` da Neve — nada na regra manda apagá-los, e
- * apagar silenciosamente romperia "este status permanece mesmo após aplicar
- * o efeito".
+ * DECISÃO DO OPERADOR — PADRÕES AO FIM DO COMBATE: os 3 Padrões
+ * (Ciclone/Estigma/Reflexão) resetam em `combatEnd`, mesmo padrão de
+ * Quebra (Pedra) e Esquentar (Chamas) nenhum acúmulo de combate sobrevive
+ * ao fim do combate.
  */
 export function clearMistBreathingState(rawState) {
-  const previous = normalizeMistBreathingState(rawState);
-  const next = { ...emptyState(), patterns: previous.patterns };
+  const next = emptyState();
   return mistStatePatch(next, {
     "system.props.resp_nevoa_resumo": `Padrões ${mistPatternCount(next)}/3`,
     "system.props.resp_efeito_duracao": 0,

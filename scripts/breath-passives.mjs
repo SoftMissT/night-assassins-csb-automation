@@ -52,10 +52,13 @@ export function stoneBreakStacks(state, weaponId) {
   return Math.max(0, Math.trunc(parseNumber(state?.stone?.breakByWeapon?.[weaponId])));
 }
 
-export function effectiveWeaponCritical({ base = 20, state = {}, weaponId = "", strength = 0 } = {}) {
+export function effectiveWeaponCritical({ base = 20, state = {}, weaponId = "", strength = 0, floor = 1 } = {}) {
+  const baseCritical = Math.min(20, Math.max(1, Math.trunc(parseNumber(base) || 20)));
+  const configuredFloor = Math.min(20, Math.max(1, Math.trunc(parseNumber(floor) || 1)));
+  const minimum = Math.min(baseCritical, configuredFloor);
   const maximum = Math.max(0, Math.trunc(parseAttributeValue(strength)));
   const stacks = Math.min(maximum, stoneBreakStacks(state, weaponId));
-  return Math.max(1, Math.min(20, Math.trunc(parseNumber(base) || 20) - stacks));
+  return Math.max(minimum, baseCritical - stacks);
 }
 
 export function addStoneBreak(state, weaponId, strength) {
@@ -69,6 +72,65 @@ export function addStoneBreak(state, weaponId, strength) {
       breakByWeapon: { ...(state.stone?.breakByWeapon ?? {}), [weaponId]: Math.min(maximum, current + 1) },
     },
   };
+}
+
+export function addStoneBreakForAction(state, weaponId, strength, actionId = "") {
+  const normalizedActionId = String(actionId ?? "");
+  if (!weaponId || (normalizedActionId && state?.stone?.lastBreakActionId === normalizedActionId)) return state;
+  const next = addStoneBreak(state, weaponId, strength);
+  return {
+    ...next,
+    stone: {
+      ...(next.stone ?? {}),
+      ...(normalizedActionId ? { lastBreakActionId: normalizedActionId } : {}),
+    },
+  };
+}
+
+export function registerStoneConfirmedDamage(state, {
+  targetUuid = "", damage = 0, actionId = "", combatId = "",
+  round = 0, turn = 0, weaponId = "",
+} = {}) {
+  const target = String(targetUuid ?? "");
+  const total = Math.max(0, Math.trunc(parseNumber(damage)));
+  if (!target || total <= 0) return state;
+  const record = {
+    targetUuid: target,
+    damage: total,
+    actionId: String(actionId ?? ""),
+    combatId: String(combatId ?? ""),
+    round: Math.max(0, Math.trunc(parseNumber(round))),
+    turn: Math.max(0, Math.trunc(parseNumber(turn))),
+    weaponId: String(weaponId ?? ""),
+  };
+  return {
+    ...state,
+    stone: {
+      ...(state.stone ?? {}),
+      lastConfirmedDamageByTarget: {
+        ...(state.stone?.lastConfirmedDamageByTarget ?? {}),
+        [target]: record,
+      },
+    },
+  };
+}
+
+export function stoneConfirmedDamageForTarget(state, targetUuid, { combatId = "", round = 0, turn = 0 } = {}) {
+  const record = state?.stone?.lastConfirmedDamageByTarget?.[String(targetUuid ?? "")];
+  if (!record || !(parseNumber(record.damage) > 0)) return null;
+  const activeCombatId = String(combatId ?? "");
+  if (activeCombatId) {
+    if (String(record.combatId ?? "") !== activeCombatId) return null;
+    if (Math.trunc(parseNumber(record.round)) !== Math.trunc(parseNumber(round))) return null;
+    if (Math.trunc(parseNumber(record.turn)) !== Math.trunc(parseNumber(turn))) return null;
+  }
+  return { ...record, damage: Math.max(0, Math.trunc(parseNumber(record.damage))) };
+}
+
+export function clearStonePassiveState(state) {
+  const next = { ...parseBreathPassiveState(state) };
+  delete next.stone;
+  return next;
 }
 
 export function registerConfirmedCritical(state, { weaponId = "", weaponName = "", natural = 0, threshold = 20 } = {}) {

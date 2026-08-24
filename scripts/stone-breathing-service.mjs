@@ -39,13 +39,7 @@ export function buildStoneBreathingPlan(formId, level, props = {}, choices = {})
   if (!form) return { ok: false, noCost: true, reason: "Forma da Pedra desconhecida." };
   if (!selected) return { ok: false, noCost: true, reason: `Esta forma não pode ser usada no Nível de Respiração ${level}.` };
   const state = parseStoneBreathingState(props[STONE_STATE_KEY]);
-  if (form.oncePerCombat && choices.markReactivation && !state.resilienceUsed) {
-    // Regra: a reativação automática pela Marca do Exterminador só existe
-    // "durante uma luta em que já utilizou esta técnica" — sem uso prévio
-    // neste combate não há o que reativar.
-    return { ok: false, noCost: true, reason: "Resiliência ainda não foi usada neste combate; não há reativação a fazer." };
-  }
-  if (form.oncePerCombat && state.resilienceUsed && !choices.markReactivation) {
+  if (form.oncePerCombat && state.resilienceUsed) {
     return { ok: false, noCost: true, reason: "Resiliência já foi usada neste combate." };
   }
   const strength = parseNumber(props.for_display);
@@ -66,7 +60,7 @@ export function buildStoneBreathingPlan(formId, level, props = {}, choices = {})
       attackPenalty: selected.attackPenaltyBase + (ranged ? dexterity : strength),
       attribute: ranged ? "DEX" : "FOR", blockBonus: selected.blockBonus ?? 0,
       blockTurns: selected.blockTurns ?? 0, counterAttack: selected.counterAttack === true,
-      target: choices.targetUuid ?? "", allyTarget: choices.allyUuid ?? "",
+      target: choices.targetUuid ?? "", allyTarget: choices.protectedUuid ?? choices.allyUuid ?? "",
     };
   } else if (form.id === "pedra_04") {
     next.nextHit = { source: form.id, count: selected.attacks };
@@ -78,8 +72,8 @@ export function buildStoneBreathingPlan(formId, level, props = {}, choices = {})
   } else if (form.id === "pedra_05") {
     next.resilienceUsed = true;
     next.resilience = {
-      turns: choices.markReactivation ? null : selected.turns,
-      untilCombatEnd: choices.markReactivation === true,
+      turns: selected.turns,
+      untilCombatEnd: false,
       resistances: selected.resistances,
       multiplier: 0.5,
     };
@@ -87,6 +81,56 @@ export function buildStoneBreathingPlan(formId, level, props = {}, choices = {})
   return {
     ok: true, form, selected, action: form.action ?? null, actions: form.actions ?? (form.action ? [form.action] : []),
     cost: selected.cost, state: next, patch: stoneStatePatch(next),
+  };
+}
+
+export function buildStoneMarkReactivation(props = {}) {
+  const state = parseStoneBreathingState(props[STONE_STATE_KEY]);
+  if (!state.resilienceUsed || state.resilience?.untilCombatEnd === true) {
+    return { eligible: false, ok: false, noCost: true };
+  }
+
+  const form = stoneFormById("pedra_05");
+  const selected = form?.levels?.[0] ?? null;
+  const cost = Math.max(0, parseNumber(selected?.cost));
+  const maximum = Math.max(0,
+    parseNumber(props.pdr_slayer_total_conta)
+      + parseNumber(props.metal_slayer_pdr_bonus)
+      + parseNumber(props.pdr_slayer_extra));
+  const spent = Math.max(0, parseNumber(props.pdr_slayer_gasto_valor));
+  const current = Math.max(0, Math.min(maximum,
+    maximum + parseNumber(props.pdr_slayer_curado) - spent));
+
+  if (current < cost) {
+    return {
+      eligible: true,
+      ok: false,
+      noCost: true,
+      cost,
+      pdrCurrent: current,
+      reason: `PDR insuficiente para reativar Resiliência (${current}/${cost}).`,
+    };
+  }
+
+  const next = {
+    ...state,
+    resilienceUsed: true,
+    resilience: {
+      turns: null,
+      untilCombatEnd: true,
+      resistances: selected?.resistances ?? ["concussao", "cortante", "perfurante"],
+      multiplier: 0.5,
+    },
+  };
+  return {
+    eligible: true,
+    ok: true,
+    cost,
+    pdrCurrent: current,
+    state: next,
+    patch: stoneStatePatch(next, {
+      "system.props.pdr_slayer_gasto_valor": spent + cost,
+    }),
   };
 }
 

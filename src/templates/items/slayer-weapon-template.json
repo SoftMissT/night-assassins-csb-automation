@@ -60,14 +60,6 @@
           "defaultValue": ""
         },
         {
-          "key": "arma_imagem_vertical",
-          "type": "textField",
-          "size": "full-size",
-          "label": "Arte vertical da arma (9:16)",
-          "defaultValue": "",
-          "tooltip": "Caminho da ilustração expandida. Ex.: modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp"
-        },
-        {
           "key": "arma_requisito",
           "type": "textField",
           "size": "full-size",
@@ -86,56 +78,12 @@
         {
           "key": "arma_contexto",
           "type": "panel",
-          "flow": "grid-4",
+          "flow": "vertical",
           "align": "center",
           "verticalAlign": "center",
-          "title": "DANO DO PORTADOR",
+          "title": "ROLAGEM DA ARMA",
           "titleStyle": "bold",
           "contents": [
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "Rank: ${fetchFromParent('rank_atual', {fallback: 'Sem portador', top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "FOR: ${fetchFromParent('for_display', {fallback: 0, top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "DEX: ${fetchFromParent('dex_display', {fallback: 0, top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "FDV: ${fetchFromParent('fdv_display', {fallback: 0, top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
             {
               "key": "",
               "type": "label",

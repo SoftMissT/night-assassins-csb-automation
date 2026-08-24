@@ -247,15 +247,21 @@ function configureOniProgressionFields(template) {
   const dataTab = findByKey(template, "dados_tab") ?? findByKey(template, "configs_tab");
   if (!dataTab || !Array.isArray(dataTab.contents)) return;
   dataTab.contents = dataTab.contents.filter((node) => node.key !== "progressao_oni_recursos_panel");
-  const fields = Object.entries(PDV_DICE_LEVELS).map(([level, dice]) => makeNumberField(
-    `pdv_oni_ganho_nvl${level}`,
-    `PDV ganho Nv. ${level} (${dice})`,
-    `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
-  ));
-  fields.push(
-    makeNumberField("oni_nivel_na_queda", "Nível na Queda", "Somente Exterminador Corrompido."),
-    makeNumberField("oni_pdr_maximo_antes_queda", "PDR máximo antes da Queda", "Somente Exterminador Corrompido."),
-  );
+  const existingKeys = collectKeys(template);
+  const fields = Object.entries(PDV_DICE_LEVELS)
+    .filter(([level]) => !existingKeys.has(`pdv_oni_ganho_nvl${level}`))
+    .map(([level, dice]) => makeNumberField(
+      `pdv_oni_ganho_nvl${level}`,
+      `PDV ganho Nv. ${level} (${dice})`,
+      `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
+    ));
+  if (!existingKeys.has("oni_nivel_na_queda")) {
+    fields.push(makeNumberField("oni_nivel_na_queda", "Nível na Queda", "Somente Exterminador Corrompido."));
+  }
+  if (!existingKeys.has("oni_recurso_slayer_antes_queda")) {
+    fields.push(makeNumberField("oni_recurso_slayer_antes_queda", "Recurso do Slayer antes da Queda", "Somente Exterminador Corrompido."));
+  }
+  if (!fields.length) return;
   dataTab.contents.push(makePanel("progressao_oni_recursos_panel", [
     { ...makePanel("progressao_oni_titulo_panel", [], ""), type: "label", value: orbitron("PROGRESSÃO DE RECURSOS ONI", "#C1000C", 14), style: "label", size: "full-size" },
     ...fields,

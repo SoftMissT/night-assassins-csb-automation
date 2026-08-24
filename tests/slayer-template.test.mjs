@@ -38,7 +38,6 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem|useBreathForm)/);
     assert.ok(String(button.value).trim().length > 0);
-    assert.doesNotMatch(String(button.value), /<style|style=|custom-orbitron-wrapper|na-sheet-text/i);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
   const source = buttons.map((button) => button.rollMessage).join("\n");
@@ -293,7 +292,7 @@ test("inventário filtra cada categoria por template exclusivo", () => {
   assert.deepEqual(containers.get("inventario_slayer_itens")?.templateFilter, ["NAInventoryTpl001"]);
 });
 
-test("armas ficam acessíveis exclusivamente na aba COMBATE", () => {
+test("armas ficam no INVENTÁRIO e Formas de Respiração ficam no COMBATE", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabs = null;
   function walk(node) {
@@ -304,9 +303,10 @@ test("armas ficam acessíveis exclusivamente na aba COMBATE", () => {
   walk(template.system.body);
   const combat = tabs.contents.find((entry) => entry.key === "combat_slayer_tab");
   const inventory = tabs.contents.find((entry) => entry.key === "inventario_slayer_tab");
-  assert.doesNotMatch(JSON.stringify(inventory), /inventario_slayer_armas/);
-  assert.match(JSON.stringify(combat), /inventario_slayer_armas/);
-  assert.match(JSON.stringify(combat), /arma_slayer_rolar/);
+  assert.match(JSON.stringify(inventory), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(inventory), /arma_slayer_rolar/);
+  assert.doesNotMatch(JSON.stringify(combat), /inventario_slayer_armas/);
+  assert.match(JSON.stringify(combat), /skills_slayer_respiracoes/);
 });
 
 test("template persiste estados das seis Respirações publicadas", () => {

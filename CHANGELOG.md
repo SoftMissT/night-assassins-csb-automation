@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.9 - 2026-08-24
+
+- Restaura nos templates Slayer e Oni os sete rótulos oficiais de atributo em Orbitron, com as cores individuais de VIT, DEX, FOR, CAR, FDV, INT e SAB.
+- Consolida a ficha Oni em somente duas abas funcionais, `Combate` e `Configurações`, removendo a segunda configuração e os painéis indevidos de Perfil, Notas, dinheiro e inventário.
+- Corrige células nulas de `Table` que o Custom System Builder interpretava como componentes sem tipo e preserva Formas de Respiração em Combate e armas no Inventário do Slayer.
+- Simplifica o template de arma para usar apenas o ícone `img`, removendo o campo legado de arte vertical 9:16 e os rótulos quebrados baseados em `fetchFromParent`.
+- Mantém o tema mínimo: textos legíveis, PDV vermelho, PDR ciano e PDK violeta, sem reintroduzir a skin pesada removida na versão anterior.
+- Adiciona um reparador determinístico das fontes canônicas de Slayer, Oni, Oni Minion e NPC para impedir divergência entre os JSONs-fonte e os documentos compilados.
+- Validação local: `node --test` com **847/847** testes aprovados; packs de templates, armas e Respirações reconstruídos antes da publicação.
+
 ## 0.11.8 - 2026-08-24
 
 - Corrige a estrutura das `Table` do template Slayer para a matriz bidimensional exigida pelo Custom System Builder, eliminando `Unknown component type: undefined` nos Acúmulos de Respiração.

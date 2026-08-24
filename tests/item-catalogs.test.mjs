@@ -137,6 +137,7 @@ describe("catálogo de armas Slayer", () => {
     assert.doesNotMatch(serialized, /na-sheet-text|custom-orbitron-wrapper|<style|style=/i);
     assert.match(serialized, /arma_perfis_resumo/);
     assert.match(serialized, /arma_rank_ss_formula/);
+    assert.doesNotMatch(serialized, /arma_imagem_vertical|fetchFromParent/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
   });
 
@@ -147,12 +148,12 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
   });
 
-  it("publica ícones de compêndio e artes verticais existentes", async () => {
+  it("publica ícones de compêndio sem o campo vertical legado", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
     const weapons = documents.filter((document) => document.type === "equippableItem");
-    const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
+    const legacyVerticalArtwork = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
     const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
-    assert.equal(illustrated.length, 0);
+    assert.equal(legacyVerticalArtwork.length, 0);
     assert.equal(customIcons.length, 39);
     for (const item of customIcons) {
       const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");

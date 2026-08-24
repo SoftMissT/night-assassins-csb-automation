@@ -34,22 +34,41 @@ function resourceCssClass(node) {
   return "";
 }
 
+export const ATTRIBUTE_LABELS = Object.freeze({
+  VIT: "#36D67A",
+  DEX: "#28D7FF",
+  FOR: "#C1000C",
+  CAR: "#FF9100",
+  FDV: "#BB97F9",
+  INT: "#F8EB4D",
+  SAB: "#D45CA4",
+});
+
+export function orbitronAttributeLabel(attribute) {
+  const name = String(attribute ?? "").trim().toUpperCase();
+  const color = ATTRIBUTE_LABELS[name];
+  if (!color) return "";
+  return `<div class="custom-orbitron-wrapper"><style>@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');</style><span style="font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:${color}; text-transform: uppercase; letter-spacing: .12em;">${name}</span></div>`;
+}
+
 export function useNativeCsbPresentation(document) {
   let convertedLabels = 0;
   function walk(node) {
     if (!node || typeof node !== "object") return;
     const cssClass = resourceCssClass(node);
     if (cssClass) appendCssClass(node, cssClass);
-    if (node.type === "label" && typeof node.value === "string" && /<[a-z!/]/i.test(node.value)) {
-      const plain = labelHtmlToPlainText(node.value);
-      if (plain) {
-        node.value = plain;
+    if (node.type === "label"
+      && node.style === "button"
+      && typeof node.rollMessage === "string"
+      && node.rollMessage
+      && typeof node.value === "string") {
+      const plain = labelHtmlToPlainText(node.value).toUpperCase();
+      const decorated = orbitronAttributeLabel(plain);
+      const attrMatch = node.rollMessage.match(/attr\s*:\s*['"](VIT|DEX|FOR|CAR|FDV|INT|SAB)['"]/i);
+      if (decorated && attrMatch?.[1]?.toUpperCase() === plain && node.value !== decorated) {
+        node.value = decorated;
         convertedLabels += 1;
       }
-    }
-    if (typeof node.title === "string" && /<[a-z!/]/i.test(node.title)) {
-      const plain = labelHtmlToPlainText(node.title);
-      if (plain) node.title = plain;
     }
     for (const value of Object.values(node)) walk(value);
   }

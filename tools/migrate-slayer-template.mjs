@@ -1058,15 +1058,16 @@ function normalizeEmptyComponents(template) {
 }
 
 function repairTableContents(template) {
-  const isBlankLabel = (entry) => entry?.type === "label"
-    && !entry.key && !entry.value && !entry.rollMessage && !entry.altRollMessage;
+  const normalizeCell = (entry) => entry && typeof entry === "object" && typeof entry.type === "string"
+    ? entry
+    : displayLabel("", "");
   walk(template.system?.body, (node) => {
     if (node.type !== "table" || !Array.isArray(node.contents)) return;
     const rows = Math.max(1, Number(node.rows) || 1);
     const cols = Math.max(1, Number(node.cols) || 1);
     const flat = Array.isArray(node.contents[0]) ? node.contents.flat() : [...node.contents];
-    const normalized = flat.map((entry) => isBlankLabel(entry) ? null : entry);
-    while (normalized.length < rows * cols) normalized.push(null);
+    const normalized = flat.map(normalizeCell);
+    while (normalized.length < rows * cols) normalized.push(displayLabel("", ""));
     normalized.length = rows * cols;
     node.contents = Array.from({ length: rows }, (_, row) => normalized.slice(row * cols, (row + 1) * cols));
   });
@@ -1074,18 +1075,28 @@ function repairTableContents(template) {
 
 function organizeBreathingCombatSection(template) {
   let combatTab = null;
+  let inventoryTab = null;
   let breathingContainer = null;
+  let weaponContainer = null;
   walk(template.system?.body, (node) => {
     if (node.key === "combat_slayer_tab" && node.type === "tab") combatTab = node;
+    if (node.key === "inventario_slayer_tab" && node.type === "tab") inventoryTab = node;
     if (node.key === "skills_slayer_respiracoes" && node.type === "itemContainer" && !breathingContainer) {
       breathingContainer = structuredClone(node);
     }
+    if (node.key === "inventario_slayer_armas" && node.type === "itemContainer" && !weaponContainer) {
+      weaponContainer = structuredClone(node);
+    }
   });
-  if (!combatTab) throw new Error("Aba Combate do Slayer não encontrada para as Respirações.");
+  if (!combatTab || !inventoryTab) throw new Error("Abas Combate/Inventário do Slayer não encontradas.");
 
-  removeComponentsByKey(template.system, new Set(["skills_slayer_respiracoes", "combate_acumulos_slayer_panel"]));
+  removeComponentsByKey(template.system, new Set([
+    "skills_slayer_respiracoes", "inventario_slayer_armas", "combate_acumulos_slayer_panel",
+  ]));
   breathingContainer ??= breathingItemContainer();
+  weaponContainer ??= weaponItemContainer();
   breathingContainer.title = orbitron("FORMAS DE RESPIRAÇÃO", "#28D7FF", 16);
+  weaponContainer.title = orbitron("ARMAS", "#C1000C", 16);
 
   const accumulationPanel = panel("combate_acumulos_slayer_panel", "Acúmulos de Respiração", [
     displayLabel("resp_chamas_resumo_display", "Honoo no Kokyu · ${resp_chamas_resumo}$"),
@@ -1098,6 +1109,8 @@ function organizeBreathingCombatSection(template) {
 
   combatTab.contents ??= [];
   combatTab.contents.push(breathingContainer, accumulationPanel);
+  inventoryTab.contents ??= [];
+  inventoryTab.contents.push(weaponContainer);
 }
 
 export function migrateSlayerTemplate(template) {

@@ -37,7 +37,7 @@ test("todos os botões do Slayer usam macros estáveis e o Actor da própria fic
   for (const button of buttons) {
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.night-assassins-macros\.Macro\.|api\?\.(rollWeaponItem|reloadWeaponItem|useBreathForm)/);
-    assert.match(String(button.value), /na-sheet-text/);
+    assert.match(String(button.value), /na-sheet-text|custom-orbitron-wrapper/);
     assert.doesNotMatch(button.rollMessage, /game\.macros\.get\('|atr_(vit|dex|for|car|fdv|int|sab)_valor|val:/);
   }
   const source = buttons.map((button) => button.rollMessage).join("\n");
@@ -106,7 +106,7 @@ test("template Slayer mostra deslocamento e bonus da Concentracao Total Constant
   assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
   const source = JSON.stringify(template.system.body);
   assert.match(source, /"deslocamento_slayer_display"/);
-  assert.match(source, /\$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
+  assert.match(source, /Deslocamento: \$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
 });
 
 test("template Slayer possui Fôlego de Combate calculado por FDV", () => {
@@ -147,7 +147,7 @@ test("template Slayer preserva armazenamento de Respiração e expõe automaçã
   assert.match(source, /useBreathForm/);
 });
 
-test("template Slayer organiza as seis abas canônicas", () => {
+test("template Slayer organiza as abas canônicas sem aba Condições separada", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -158,14 +158,17 @@ test("template Slayer organiza as seis abas canônicas", () => {
   walk(template.system.body);
   assert.ok(tabbedPanel);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.key), [
-    "pericias_tab", "combat_slayer_tab", "skills_slayer_tab",
-    "inventario_slayer_tab", "notas_slayer_tab", "configs_tab",
+    "perfil_slayer_tab", "pericias_tab", "combat_slayer_tab", "skills_slayer_tab",
+    "inventario_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "configs_tab",
   ]);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.name), [
-    "PERÍCIAS", "COMBATE", "SKILLS", "INVENTÁRIO", "NOTAS", "CONFIG / DADOS",
+    "Perfil/Bio", "Perícias", "Combate", "Skills", "Inventário", "Interlúdios", "Notas/Diário", "Config / Dados",
   ]);
   const combat = tabbedPanel.contents.find((entry) => entry.key === "combat_slayer_tab");
-  assert.match(JSON.stringify(combat), /deslocamento_slayer_display/);
+  const perfil = tabbedPanel.contents.find((entry) => entry.key === "perfil_slayer_tab");
+  assert.doesNotMatch(JSON.stringify(combat), /deslocamento_slayer_display|descanso_slayer_gerenciar/);
+  assert.match(JSON.stringify(perfil), /Deslocamento: \$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
+  assert.match(JSON.stringify(perfil), /descanso_slayer_gerenciar/);
   // Condições (Resistências + Status) agora vivem dentro de COMBATE
   assert.match(JSON.stringify(combat), /status_slayer_gerenciar/);
   assert.match(JSON.stringify(combat), /resistencia_slayer_gerenciar/);
@@ -176,7 +179,7 @@ test("template Slayer organiza as seis abas canônicas", () => {
   }
 });
 
-test("NOTAS absorve Perfil/Bio e Interlúdios sem perder nenhuma key", () => {
+test("Perfil/Bio, Interlúdios e Notas ficam separados sem perder keys", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -185,12 +188,16 @@ test("NOTAS absorve Perfil/Bio e Interlúdios sem perder nenhuma key", () => {
     Object.values(node).forEach(walk);
   }
   walk(template.system.body);
+  const perfil = JSON.stringify(tabbedPanel.contents.find((entry) => entry.key === "perfil_slayer_tab"));
+  const interludios = JSON.stringify(tabbedPanel.contents.find((entry) => entry.key === "interludios_slayer_tab"));
   const notas = JSON.stringify(tabbedPanel.contents.find((entry) => entry.key === "notas_slayer_tab"));
-  for (const key of ["perfil_slayer_resumo_panel", "perfil_slayer_nome_social", "perfil_slayer_pronomes", "perfil_slayer_aparencia", "perfil_slayer_personalidade", "perfil_slayer_bio", "interludio_semana_panel", "interludio_cabacas_panel", "interludio_reflexo_panel", "notas_slayer_livres"]) {
-    assert.match(notas, new RegExp(key));
+  for (const key of ["perfil_slayer_resumo_panel", "perfil_slayer_nome_social", "perfil_slayer_pronomes", "perfil_slayer_aparencia", "perfil_slayer_personalidade", "perfil_slayer_bio"]) {
+    assert.match(perfil, new RegExp(key));
   }
+  for (const key of ["interludio_semana_panel", "interludio_cabacas_panel", "interludio_reflexo_panel"]) assert.match(interludios, new RegExp(key));
+  assert.match(notas, /notas_slayer_livres|notas_slayer_diario/);
   const serialized = JSON.stringify(template.system.body);
-  assert.doesNotMatch(serialized, /"key":"perfil_slayer_tab"|"key":"status_slayer_tab"|"key":"interludios_slayer_tab"|"key":"dados_tab"/);
+  assert.doesNotMatch(serialized, /"key":"status_slayer_tab"|"key":"dados_tab"/);
 });
 
 test("SKILLs concentra poderes e recebe Alma da Lâmina como texto livre", () => {

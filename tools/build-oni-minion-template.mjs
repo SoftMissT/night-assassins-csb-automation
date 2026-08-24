@@ -125,7 +125,7 @@ const template = {
           label("oni_minion_pdv_total_label", "PDV: ${oni_minion_pdv_atual}$ / ${oni_minion_pdv_total}$", "#FF2B4A"),
           numberField("oni_minion_pdv_dano", "Dano tomado", 0, 0), numberField("oni_minion_pdv_curado", "Curado", 0, 0),
           numberField("oni_minion_pdk_base", "PDK base", 2, 0),
-          label("oni_minion_pdk_total_label", "PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$", "#28D7FF"),
+          label("oni_minion_pdk_total_label", "PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$", "#B36CFF"),
           numberField("oni_minion_pdk_gasto", "PDK gasto", 0, 0), numberField("oni_minion_pdk_recuperado", "PDK recuperado", 0, 0),
         ]),
         textArea("oni_minion_resumo", "Resumo e observações"),

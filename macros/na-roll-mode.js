@@ -136,7 +136,7 @@
   const content = `
     <div style="margin-bottom:12px;">
       ${attr ? `<div style="font-size:13px;color:${color || '#666'};margin-bottom:4px;font-weight:600;">${attr} = ${val}</div>` : ''}
-      <div id="na-rm-formula" style="font-family:monospace;font-size:14px;background:#f5f5f5;padding:6px 8px;border-radius:3px;border:1px solid #ddd;">1d20 + ${val}</div>
+      <div id="na-rm-formula" style="font-family:monospace;font-size:14px;background:#120f14;color:#f7f7f7;padding:6px 8px;border-radius:3px;border:1px solid #4a3a2a;">1d20 + ${val}</div>
     </div>
     <div style="margin-bottom:12px;">
       <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Atributo Secundário (até 1)</label>

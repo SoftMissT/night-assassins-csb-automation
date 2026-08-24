@@ -892,7 +892,7 @@
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
-              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#28D7FF;text-transform:uppercase;letter-spacing:.12em;\">PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$</span></div>"
+              "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:16px;font-weight:700;color:#B36CFF;text-transform:uppercase;letter-spacing:.12em;\">PDK: ${oni_minion_pdk_atual}$ / ${oni_minion_pdk_total}$</span></div>"
             },
             {
               "key": "oni_minion_pdk_gasto",

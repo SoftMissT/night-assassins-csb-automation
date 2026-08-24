@@ -10,18 +10,17 @@ const defaultPath = path.join(root, "src", "templates", "actors", "oni-template.
 //
 // Substitui o layout genérico herdado do Slayer (Biografia / Perícias /
 // Combate / Inventário / Notas / Configurações + Fôlego + Marca) pela
-// estrutura de domínio Oni aprovada pelo Operador — reduzida a 2 abas
-// físicas (2026-08-24, redundância de 6 abas confirmada pelo Operador):
-//   1. COMBATE (recursos, testes, ações, status/resistências, perícias,
-//      vida e morte, Kekkijutsu)
+// estrutura de domínio Oni aprovada pelo Operador:
+//   1. COMBATE (ledger PDV/PDK, testes, ações, status/resistências,
+//      perícias, Kekkijutsu)
 //   2. CONFIGURAÇÕES/DADOS (Especialização, Origem & Progressão,
-//      Identidade & Inventário, dados de combate e recursos administrativos)
+//      Identidade & Notas, dados técnicos)
 //
 // Regra de segurança: nenhuma key computacional usada por runtime
 // (damage-relay.mjs, hit-service.mjs, migrate-oni-template.mjs,
 // progression-service.mjs) é removida — apenas Fôlego, Marca Slayer e a
 // aba antiga são eliminados; campos administrativos (dano tomado, curado,
-// extra, gasto) são realocados para CONFIG em vez de apagados.
+// extra, gasto) ficam visíveis em COMBATE para uso real de mesa.
 // ─────────────────────────────────────────────────────────────────────────
 
 const FOLEGO_KEYS = new Set(["folego_oni_titulo", "folego_oni_atual", "folego_oni_maximo"]);
@@ -47,6 +46,15 @@ const LEGACY_DISPLAY_KEYS = new Set([
   "pdv_oni_total_valor", "pdv_oni_atual_valor_display",
   "pdk_oni_total_valor", "pdk_oni_atual_valor_display",
 ]);
+const ONI_FORBIDDEN_UI_KEYS = new Set([
+  ...FOLEGO_KEYS,
+  ...MARCA_TEMP_KEYS,
+  "vida_morte_oni_panel", "vida_morte_oni_titulo", "vida_morte_oni_estado",
+  "vida_morte_oni_sucessos", "vida_morte_oni_falhas",
+  "descanso_oni_gerenciar", "descanso_oni_dados",
+  "inventario_oni_armas",
+]);
+const ONI_LEDGER_KEYS = new Set([...ADMIN_LEDGER_KEYS, ...LEGACY_DISPLAY_KEYS]);
 
 function clone(value) {
   return structuredClone(value);
@@ -97,6 +105,98 @@ function panel(key, contents, { title = "", flow = "row", cssClass = "" } = {}) 
     ...(title ? { title, titleStyle: "bold" } : {}),
     contents,
   };
+}
+
+function removeAndCollectByKeys(value, keys, out = []) {
+  if (Array.isArray(value)) {
+    for (let index = value.length - 1; index >= 0; index -= 1) {
+      const entry = value[index];
+      if (entry && typeof entry === "object" && typeof entry.key === "string" && keys.has(entry.key)) {
+        out.push(entry);
+        value.splice(index, 1);
+        continue;
+      }
+      removeAndCollectByKeys(entry, keys, out);
+    }
+    return out;
+  }
+  if (!value || typeof value !== "object") return out;
+  for (const child of Object.values(value)) removeAndCollectByKeys(child, keys, out);
+  return out;
+}
+
+function ensureNodeByKey(existingByKey, key, fallbackNode) {
+  return existingByKey.get(key) ?? fallbackNode;
+}
+
+function ledgerNumberField(key, labelText) {
+  return numberField(key, labelText, "Campo operacional do Oni.");
+}
+
+function ledgerDisplayField(key, formula, color) {
+  return {
+    key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0, permission: 0,
+    tooltip: "", visibilityFormula: "", editableFormula: "", escapeHTML: false,
+    type: "label", size: "full-size", icon: "",
+    value: `<div class="custom-orbitron-wrapper"><span style="font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.12em;">${formula}</span></div>`,
+    prefix: "", suffix: "", rollMessage: "", altRollMessage: "",
+    rollMessageToChat: false, altRollMessageToChat: false, style: "label",
+  };
+}
+
+function normalizeOniLedgerNode(node) {
+  node.visibilityFormula = "";
+  if (node.key === "pdv_oni_total_valor") Object.assign(node, ledgerDisplayField(node.key, "${pdv_oni_maximo_num}$", "#C1000C"));
+  if (node.key === "pdv_oni_atual_valor_display") Object.assign(node, ledgerDisplayField(node.key, "${pdv_oni_atual_num}$", "#C1000C"));
+  if (node.key === "pdk_oni_total_valor") Object.assign(node, ledgerDisplayField(node.key, "${pdk_oni_maximo_num}$", "#B36CFF"));
+  if (node.key === "pdk_oni_atual_valor_display") Object.assign(node, ledgerDisplayField(node.key, "${pdk_oni_atual_num}$", "#B36CFF"));
+  const labels = {
+    pdv_oni_dano_tomado: "Dano Tomado",
+    pdv_oni_curado: "Curado",
+    pdv_oni_extra: "PDV Extra",
+    pdk_oni_gasto_valor: "PDK Gasto",
+    pdk_oni_curado: "Recuperado",
+    pdk_oni_extra: "PDK Extra",
+  };
+  if (labels[node.key]) node.label = labels[node.key];
+  return node;
+}
+
+function ensureOniCombatLedger(t, combatTab) {
+  removeAndCollectByKeys(combatTab.contents, new Set(["recursos_oni_admin_panel"]));
+  const extracted = removeAndCollectByKeys(t.system, ONI_LEDGER_KEYS);
+  const existingByKey = new Map(extracted.reverse().map((node) => [node.key, node]));
+  const ordered = [
+    label("PDV TOTAL", { size: "na-sheet-size-md", role: "vit" }),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_total_valor", ledgerDisplayField("pdv_oni_total_valor", "${pdv_oni_maximo_num}$", "#C1000C"))),
+    label("PDV ATUAL", { size: "na-sheet-size-md", role: "vit" }),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_atual_valor_display", ledgerDisplayField("pdv_oni_atual_valor_display", "${pdv_oni_atual_num}$", "#C1000C"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_dano_tomado", ledgerNumberField("pdv_oni_dano_tomado", "Dano Tomado"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_curado", ledgerNumberField("pdv_oni_curado", "Curado"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_extra", ledgerNumberField("pdv_oni_extra", "PDV Extra"))),
+    label("PDK TOTAL", { size: "na-sheet-size-md", role: "fdv" }),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_total_valor", ledgerDisplayField("pdk_oni_total_valor", "${pdk_oni_maximo_num}$", "#B36CFF"))),
+    label("PDK ATUAL", { size: "na-sheet-size-md", role: "fdv" }),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_atual_valor_display", ledgerDisplayField("pdk_oni_atual_valor_display", "${pdk_oni_atual_num}$", "#B36CFF"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_gasto_valor", ledgerNumberField("pdk_oni_gasto_valor", "PDK Gasto"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_curado", ledgerNumberField("pdk_oni_curado", "Recuperado"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_extra", ledgerNumberField("pdk_oni_extra", "PDK Extra"))),
+  ];
+  combatTab.contents.unshift(panel("recursos_oni_admin_panel", ordered, {
+    title: "PDV / PDK", flow: "grid-5", cssClass: "na-oni-ledger-panel",
+  }));
+}
+
+function repairCurrentOniTemplate(t, tabbedPanel) {
+  pruneByKeys(t.system, ONI_FORBIDDEN_UI_KEYS);
+  const combatTab = tabbedPanel.contents.find((entry) => entry.key === "combate_oni_tab");
+  const configsTab = tabbedPanel.contents.find((entry) => entry.key === "configs_tab");
+  if (!combatTab || !configsTab) throw new Error("Abas Oni Combate/Configurações não encontradas.");
+  combatTab.name = "COMBATE";
+  configsTab.name = "CONFIGURAÇÕES";
+  ensureOniCombatLedger(t, combatTab);
+  t.system.templateSystemUniqueVersion = Math.max(1, Number(t.system.templateSystemUniqueVersion) || 0) + 1;
+  return t;
 }
 
 function tab(key, contents) {
@@ -239,8 +339,7 @@ export function cleanOniTemplate(source) {
   // corromper um template já reconstruído em re-execuções/testes).
   const currentTabKeys = tabbedPanel.contents.map((tb) => tb.key);
   if (NEW_TAB_KEYS.every((key) => currentTabKeys.includes(key))) {
-    t.system.templateSystemUniqueVersion = Math.max(1, Number(t.system.templateSystemUniqueVersion) || 0) + 1;
-    return t;
+    return repairCurrentOniTemplate(t, tabbedPanel);
   }
 
   const oldTabs = Object.fromEntries(tabbedPanel.contents.map((tb) => [tb.key, tb]));
@@ -269,7 +368,7 @@ export function cleanOniTemplate(source) {
       resourceValueLabel("${pdv_oni_atual_num}$ / ${pdv_oni_maximo_num}$", "pdv"),
     ], { flow: "grid-2" }),
     panel("pdk_oni_barra_row", [
-      label("PDK", { size: "na-sheet-size-md", role: "car" }),
+      label("PDK", { size: "na-sheet-size-md", role: "fdv" }),
       resourceValueLabel("${pdk_oni_atual_num}$ / ${pdk_oni_maximo_num}$", "pdk"),
     ], { flow: "grid-2" }),
   ], { title: "Recursos", flow: "vertical", cssClass: "na-oni-resource-bars" });
@@ -277,9 +376,7 @@ export function cleanOniTemplate(source) {
 
   // ── 3. Perícias: mover do próprio tab para dentro de COMBATE (seção compacta) ──
   const periciasPanel = findOne(pericias, (n) => n.type === "panel" && n.title === "Pericias");
-  const vidaMortePanel = findOne(pericias, (n) => n.key === "vida_morte_oni_panel");
   if (periciasPanel) combat.contents.push(periciasPanel);
-  if (vidaMortePanel) combat.contents.push(vidaMortePanel);
 
   // ── 4. Renomear Classe -> Especialização (dropdown do header) ──
   const classField = findOne(t.system.header, (n) => n.key === "classe_escolhida");
@@ -325,7 +422,7 @@ export function cleanOniTemplate(source) {
   const identidadeInventarioSection = [
     label("IDENTIDADE & INVENTÁRIO", { size: "na-sheet-size-xl", role: "car" }),
     ...(perfil.contents ?? []),
-    ...(inventario.contents ?? []),
+    ...pruneByKeys(clone(inventario.contents ?? []), new Set(["inventario_oni_armas"])),
     ...(notas.contents ?? []),
   ];
 
@@ -335,9 +432,6 @@ export function cleanOniTemplate(source) {
     ...origemProgressaoSection,
     ...identidadeInventarioSection,
     ...configs.contents,
-    panel("recursos_oni_admin_panel", [...adminFields, ...legacyDisplayLabels], {
-      title: "Recursos Administrativos (GM)", flow: "grid-3",
-    }),
   ];
 
   // ── 10. Recompor tabbedPanel na ordem final (2 abas) ──
@@ -345,6 +439,7 @@ export function cleanOniTemplate(source) {
     tab("combate_oni_tab", combat.contents),
     tab("configs_tab", configs.contents),
   ];
+  repairCurrentOniTemplate(t, tabbedPanel);
 
   // (limpeza de system.hidden já aplicada incondicionalmente no topo da função)
   t.system.templateSystemUniqueVersion = Math.max(1, Number(t.system.templateSystemUniqueVersion) || 0) + 1;

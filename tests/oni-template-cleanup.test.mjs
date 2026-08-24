@@ -65,13 +65,16 @@ describe("reconstrução do template Oni (estrutura de domínio aprovada)", () =
     assert.equal(kekki.itemFilterFormula, "equalText(item.inventario_categoria, 'kekkijutsu')");
   });
 
-  it("PDV/PDK aparecem como recurso simples (atual/máximo), não como 5 colunas administrativas no topo", () => {
+  it("PDV/PDK aparecem como barra e ledger operacional visível no Combate", () => {
     const barPanel = collect(source.system.body, (entry) => entry.key === "recursos_oni_barra_panel")[0];
     assert.ok(barPanel, "recursos_oni_barra_panel deve existir na aba Combate");
     const serializedBar = JSON.stringify(barPanel);
     assert.match(serializedBar, /pdv_oni_atual_num.*pdv_oni_maximo_num|PDV/);
+    const ledgerPanel = collect(source.system.body, (entry) => entry.key === "recursos_oni_admin_panel")[0];
+    assert.ok(ledgerPanel, "recursos_oni_admin_panel deve existir na aba Combate");
+    const serializedLedger = JSON.stringify(ledgerPanel);
     for (const adminKey of ["pdv_oni_dano_tomado", "pdv_oni_curado", "pdv_oni_extra", "pdk_oni_gasto_valor", "pdk_oni_curado", "pdk_oni_extra"]) {
-      assert.doesNotMatch(serializedBar, new RegExp(adminKey), `campo administrativo ${adminKey} não deve estar na barra principal`);
+      assert.match(serializedLedger, new RegExp(adminKey), `campo operacional ${adminKey} deve estar visível`);
     }
   });
 

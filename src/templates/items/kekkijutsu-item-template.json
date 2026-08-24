@@ -142,7 +142,7 @@
           "defaultValue": "", "style": "dialog"
         },
         {
-          "key": "kekki_usar_botao", "type": "label", "size": "full-size", "icon": "fa-solid fa-dice-d20",
+          "key": "kekki_usar_botao", "type": "label", "size": "full-size", "icon": "",
           "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-oni-kekki-use-label\">USAR KEKKIJUTSU</span>",
           "tooltip": "Valida nível/PDK/ação, rola o teste (se houver) e o dano, e consome PDK.",
           "rollMessage": "%{const item=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const owner=item?.parent?.documentName==='Actor'?item.parent:null;return await game.modules.get('night-assassins-csb-automation')?.api?.useKekkijutsuItem?.({item,actor:owner,actorUuid:owner?.uuid});}%",

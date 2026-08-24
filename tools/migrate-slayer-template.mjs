@@ -83,6 +83,24 @@ function removeComponentsByKey(node, keys) {
   for (const value of Object.values(node)) removeComponentsByKey(value, keys);
 }
 
+function extractComponentsByKey(node, keys, out = []) {
+  if (!node || typeof node !== "object") return out;
+  if (Array.isArray(node)) {
+    for (let index = node.length - 1; index >= 0; index -= 1) {
+      const entry = node[index];
+      if (entry && typeof entry === "object" && keys.has(entry.key)) {
+        out.push(entry);
+        node.splice(index, 1);
+      } else {
+        extractComponentsByKey(entry, keys, out);
+      }
+    }
+    return out;
+  }
+  for (const value of Object.values(node)) extractComponentsByKey(value, keys, out);
+  return out;
+}
+
 function fixCurrentPdvLabel(template) {
   let title = null;
   let numeric = null;
@@ -487,6 +505,58 @@ function organizeSlayerTabs(template) {
   const combate = byKey.get("combat_slayer_tab");
   const configuracoes = byKey.get("configs_tab");
   const dados = byKey.get("dados_tab");
+  const currentSkills = byKey.get("skills_slayer_tab");
+  const currentInventario = byKey.get("inventario_slayer_tab");
+  const currentNotas = byKey.get("notas_slayer_tab");
+  const currentPerfil = byKey.get("perfil_slayer_tab");
+  const currentInterludios = byKey.get("interludios_slayer_tab");
+  if (!dados && pericias && combate && configuracoes && currentSkills && currentInventario && currentNotas) {
+    const profileRuntime = extractComponentsByKey(combate.contents, new Set(["descanso_slayer_gerenciar", "deslocamento_slayer_titulo", "deslocamento_slayer_display"])).reverse()
+      .filter((entry) => entry.key !== "deslocamento_slayer_titulo");
+    for (const entry of profileRuntime) {
+      if (entry.key === "deslocamento_slayer_display") entry.value = "Deslocamento: ${deslocamento_slayer}$m (7m + DEX)";
+    }
+    const profilePieces = extractComponentsByKey(currentNotas.contents, new Set(["perfil_slayer_resumo_panel", "perfil_slayer_bio"])).reverse();
+    const interludePieces = extractComponentsByKey(currentNotas.contents, new Set(["interludio_semana_panel", "interludio_cabacas_panel", "interludio_reflexo_panel"])).reverse();
+    const perfil = currentPerfil ?? tab("perfil_slayer_tab", "Perfil/Bio", []);
+    perfil.name = "Perfil/Bio";
+    perfil.contents ??= [];
+    extractComponentsByKey(perfil.contents, new Set(["perfil_slayer_recursos_runtime_panel", "deslocamento_slayer_titulo", "deslocamento_slayer_display", "descanso_slayer_gerenciar"]));
+    if (!JSON.stringify(perfil).includes("perfil_slayer_titulo")) {
+      perfil.contents.unshift(displayLabel("perfil_slayer_titulo", orbitron("PERFIL DO CAÇADOR", "#D45CA4", 18)));
+    }
+    if (profilePieces.length && !JSON.stringify(perfil).includes("perfil_slayer_resumo_panel")) {
+      perfil.contents.push(...profilePieces);
+    }
+    if (profileRuntime.length) {
+      const insertAt = Math.min(1, perfil.contents.length);
+      perfil.contents.splice(insertAt, 0, panel("perfil_slayer_recursos_runtime_panel", "Mesa", profileRuntime, "grid-2"));
+    }
+    const interludios = currentInterludios ?? tab("interludios_slayer_tab", "Interlúdios", []);
+    interludios.name = "Interlúdios";
+    interludios.contents ??= [];
+    if (!JSON.stringify(interludios).includes("interludios_slayer_titulo")) {
+      interludios.contents.unshift(displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIO, TREINO & REABILITAÇÃO", "#28D7FF", 18)));
+    }
+    if (interludePieces.length && !JSON.stringify(interludios).includes("interludio_semana_panel")) {
+      interludios.contents.push(...interludePieces);
+    }
+    const accum = [];
+    walk(combate, (node) => {
+      if (node.key === "combate_acumulos_slayer_panel") accum.push(node);
+    });
+    for (const node of accum) {
+      if (Array.isArray(node.contents?.[0])) node.contents = node.contents.flat();
+    }
+    pericias.name = "Perícias";
+    combate.name = "Combate";
+    currentSkills.name = "Skills";
+    currentInventario.name = "Inventário";
+    currentNotas.name = "Notas/Diário";
+    configuracoes.name = "Config / Dados";
+    tabs.contents = [perfil, pericias, combate, currentSkills, currentInventario, interludios, currentNotas, configuracoes];
+    return;
+  }
   if (!pericias || !combate || !configuracoes || !dados) {
     throw new Error("Abas canônicas Perícias/Combate/Configurações/Dados não encontradas.");
   }
@@ -523,7 +593,7 @@ function organizeSlayerTabs(template) {
     displayLabel("vida_morte_slayer_quedas_display", "Quedas neste combate: ${vida_morte_slayer_quedas}$"),
     Object.assign(displayLabel("vida_morte_slayer_gerenciar", orbitron("GERENCIAR VIDA E MORTE", "#C1000C", 16)), {
       style: "button",
-      icon: "fa-solid fa-heart-pulse",
+      icon: "",
       rollMessage: "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NALifeDeath00001'))?.execute({actorUuid:entity.uuid}); return '';}%",
     }),
   ], "grid-2"));
@@ -572,7 +642,7 @@ function organizeSlayerTabs(template) {
     itemContainer("inventario_slayer_itens", "Itens", "item", "NAInventoryTpl001"),
   ]);
 
-  const condicoes = tab("status_slayer_tab", "Condições", [
+  combat.contents.push(panel("status_resistencias_slayer_panel", "Status e Resistências", [
     displayLabel("status_slayer_titulo", orbitron("STATUS E RESISTÊNCIAS", "#D45CA4", 18)),
     panel("resistencias_slayer_panel", "Resistências", [
       resistanceButton ?? displayLabel("resistencia_slayer_indisponivel", "Gerenciador de Resistências indisponível"),
@@ -582,7 +652,7 @@ function organizeSlayerTabs(template) {
       statusButton ?? displayLabel("status_slayer_indisponivel", "Gerenciador de Status indisponível"),
       statusDisplay ?? displayLabel("status_slayer_display", "${status_slayer_resumo}$"),
     ], "grid-2"),
-  ]);
+  ], "vertical"));
 
   const interludios = tab("interludios_slayer_tab", "Interlúdios", [
     displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIO, TREINO & REABILITAÇÃO", "#28D7FF", 18)),
@@ -597,7 +667,12 @@ function organizeSlayerTabs(template) {
   combate.name = "Combate";
   configuracoes.name = "Configurações";
   dados.name = "Dados";
-  tabs.contents = [perfil, pericias, combate, condicoes, skills, inventario, interludios, notas, configuracoes, dados];
+  const profileRuntimeKeys = new Set(["descanso_slayer_gerenciar", "deslocamento_slayer_titulo", "deslocamento_slayer_display"]);
+  const profileRuntime = extractComponentsByKey(combat.contents, profileRuntimeKeys).reverse();
+  if (profileRuntime.length > 0) {
+    perfil.contents.splice(2, 0, panel("perfil_slayer_recursos_runtime_panel", "Mesa", profileRuntime, "grid-2"));
+  }
+  tabs.contents = [perfil, pericias, combate, skills, inventario, interludios, notas, configuracoes, dados];
 }
 
 function fixBreathingState(template) {
@@ -640,6 +715,9 @@ function fixBreathingState(template) {
     ["resp_chamas_calor_arma", "Chamas Fogo Fátuo", 0],
     ["resp_chamas_bonus_acerto", "Chamas bônus de Acerto", 0],
     ["resp_chamas_bonus_dano", "Chamas bônus de dano da arma", 0],
+    ["resp_metal_bloqueio_bonus", "Metal bônus de Bloqueio", 0],
+    ["resp_metal_for_temp", "Metal FOR temporário", 0],
+    ["resp_metal_fdv_temp", "Metal FDV temporário", 0],
     ...attributes.map((attribute) => [`${attribute}_resp_bonus_temp_slayer`, `${attribute.toUpperCase()} temporário de Respiração`, 0]),
   ];
   const textFields = [
@@ -647,10 +725,14 @@ function fixBreathingState(template) {
     ["resp_chamas_estado", "Estado mecânico da Respiração das Chamas", '{"version":1,"weaponHeat":0}'],
     ["resp_pedra_estado", "Estado mecânico da Respiração da Pedra", '{"version":1}'],
     ["resp_nevoa_estado", "Estado mecânico da Respiração da Névoa", '{"version":1,"patterns":{}}'],
+    ["resp_metal_estado", "Estado mecânico da Respiração do Metal", '{"version":1}'],
+    ["resp_neve_estado", "Estado mecânico da Respiração da Neve", '{"version":1}'],
     ["resp_chamas_bonus_dado", "Chamas dado adicional de técnica", ""],
     ["resp_chamas_resumo", "Chamas resumo", "Fogo Fátuo 0/60"],
     ["resp_pedra_resumo", "Pedra resumo", "Pedra · sem efeito ativo"],
     ["resp_nevoa_resumo", "Névoa resumo", "Padrões 0/3"],
+    ["resp_metal_resumo", "Metal resumo", "Metal · sem efeito ativo"],
+    ["resp_neve_resumo", "Neve resumo", "Neve · sem efeito ativo"],
     ["resp_bonus_dano_dados", "Dados adicionais", ""],
     ["resp_efeito_flag", "Efeito ativo", ""],
     ["resp_combo_origem", "Origem do combo", ""],
@@ -748,7 +830,7 @@ function fixResistanceAndWoundContract(template) {
   const restButton = structuredClone(statusButton);
   restButton.key = "descanso_slayer_gerenciar";
   restButton.value = "DESCANSO";
-  restButton.icon = "fas fa-campground";
+  restButton.icon = "";
   restButton.tooltip = "Solicitar Descanso de Campo, Descanso Completo ou Recuperação Profunda ao GM.";
   restButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARestManage0001'))?.execute({actorUuid:entity.uuid}); return '';}%";
   if (combatTable.type === "table") {
@@ -837,7 +919,7 @@ function fixMovementDisplay(template) {
       escapeHTML: false,
       type: "label",
       size: "full-size",
-      icon: "fas fa-person-running",
+      icon: "",
       value: orbitron("DESLOCAMENTO", "#28D7FF"),
       prefix: "",
       suffix: "",
@@ -862,7 +944,7 @@ function fixMovementDisplay(template) {
       type: "label",
       size: "full-size",
       icon: "",
-      value: "${deslocamento_slayer}$m (7m + DEX)",
+      value: "Deslocamento: ${deslocamento_slayer}$m (7m + DEX)",
       prefix: "",
       suffix: "",
       rollMessage: "",
@@ -891,26 +973,36 @@ function fixFolegoDisplay(template) {
 
   let attributeTable = null;
   walk(template.system?.body, (node) => {
-    if (node.type !== "table" || attributeTable) return;
+    if (!["table", "panel"].includes(node.type) || attributeTable) return;
     const source = JSON.stringify(node.contents ?? []);
     if (source.includes("folego_slayer_titulo") || source.includes(">Fôlego</span>")) attributeTable = node;
   });
   if (!attributeTable) throw new Error("Tabela principal de atributos do Slayer não encontrada.");
 
-  const titleRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "folego_slayer_titulo" || entry?.value?.includes?.(">Fôlego</span>")));
-  if (!titleRow) throw new Error("Título de Fôlego não encontrado.");
-  const title = titleRow.find((entry) => entry?.key === "folego_slayer_titulo" || entry?.value?.includes?.(">Fôlego</span>"));
+  const flatContents = attributeTable.contents.flat?.() ?? attributeTable.contents;
+  let title = null;
+  walk(attributeTable, (node) => {
+    if (title || node.type !== "label") return;
+    if (node.key === "folego_slayer_titulo" || node.value?.includes?.(">Fôlego</span>") || node.value?.includes?.(">FÔLEGO</span>")) title = node;
+  });
+  if (!title) throw new Error("Título de Fôlego não encontrado.");
   title.key = "folego_slayer_titulo";
   title.value = orbitron("FÔLEGO", "#D45CA4");
   title.tooltip = "Fôlego de Combate máximo: 2 + FDV atual.";
 
   let valueRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "folego_slayer_atual"));
-  if (!valueRow) {
+  let current = valueRow?.find?.((entry) => entry?.key === "folego_slayer_atual") ?? flatContents.find((entry) => entry?.key === "folego_slayer_atual");
+  if (!current) {
+    walk(attributeTable, (node) => {
+      if (!current && node.key === "folego_slayer_atual") current = node;
+    });
+  }
+  if (!current) {
     valueRow = attributeTable.contents.find((row) => row?.some?.((entry) => entry?.key === "bonus_atr_sab_valor_temp"));
     if (!valueRow) throw new Error("Linha de recursos dos atributos não encontrada.");
-    valueRow.push(numberField("folego_slayer_atual", "", "${folego_slayer_maximo}$", 0));
+    current = numberField("folego_slayer_atual", "", "${folego_slayer_maximo}$", 0);
+    valueRow.push(current);
   }
-  const current = valueRow.find((entry) => entry?.key === "folego_slayer_atual");
   current.defaultValue = "${folego_slayer_maximo}$";
   current.minVal = "0";
   current.maxVal = "${folego_slayer_maximo}$";
@@ -947,6 +1039,13 @@ function organizeSlayerCombatLayout(template) {
   });
 }
 
+function flattenNestedPanelContents(template) {
+  walk(template.system?.body, (node) => {
+    if (!Array.isArray(node.contents?.[0])) return;
+    if (node.contents.every((entry) => Array.isArray(entry))) node.contents = node.contents.flat();
+  });
+}
+
 export function migrateSlayerTemplate(template) {
   const migrated = visit(structuredClone(template));
   if (migrated.flags?.["custom-system-builder"]) {
@@ -964,6 +1063,7 @@ export function migrateSlayerTemplate(template) {
   organizeSlayerCombatLayout(migrated);
   fixBreathingState(migrated);
   organizeSlayerTabs(migrated);
+  flattenNestedPanelContents(migrated);
   fixLifeDeathStorage(migrated);
   fixRollButtonTypography(migrated);
   fixTextVisibilityFormulas(migrated);

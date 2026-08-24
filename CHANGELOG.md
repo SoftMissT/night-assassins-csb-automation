@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.6 - 2026-08-24
+
+- Corrige a ficha Oni para manter apenas as áreas próprias, remover Vida e Morte, Descanso, Fôlego e armas Slayer, e restaurar o ledger operacional completo de PDV/PDK na aba Combate.
+- Restaura as cores de recurso da ficha Oni: PDV em vermelho e PDK em roxo; o Oni Minion passa a usar o mesmo padrão visual de PDK.
+- Reorganiza a ficha Slayer: Descanso e o único indicador de deslocamento ficam em Perfil/Bio; Status e Resistências permanecem em Combate; as abas Perfil/Bio, Interlúdios e Notas/Diário preservam suas responsabilidades.
+- Corrige o armazenamento técnico das Respirações de Metal e Neve, a estrutura aninhada inválida dos painéis e os botões sem ícones legados de dado.
+- Remove o fundo branco das fórmulas nos diálogos de teste e mantém contraste adequado ao tema escuro.
+- Atualiza os templates importáveis e os testes estruturais de Oni e Slayer.
+
 ## 0.11.5 - 2026-08-24
 
 - **Ficha Oni consolidada de 6 para 2 abas** (Combate; Configurações/Dados): Kekkijutsu movido para o itemContainer de Combate (uso já funcional via `useKekkijutsuItem`); Especialização, Origem/Progressão e Inventário/Notas consolidados dentro de Configurações. Todas as keys funcionais preservadas (ledger de PDV por nível, trio "antes da Queda" da Origem Exterminador Corrompido).

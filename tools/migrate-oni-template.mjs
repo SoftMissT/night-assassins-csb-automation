@@ -237,8 +237,8 @@ function configureOniBarsAndLabels(template) {
     if (node.type !== "label") return;
     if (node.key === "pdv_oni_total_valor") node.value = orbitron("${pdv_oni_maximo_num}$", "#C1000C", 18);
     if (node.key === "pdv_oni_atual_valor_display") node.value = orbitron("${pdv_oni_atual_num}$", "#C1000C", 18);
-    if (node.key === "pdk_oni_total_valor") node.value = orbitron("${pdk_oni_maximo_num}$", "#0EF5FF", 18);
-    if (node.key === "pdk_oni_atual_valor_display") node.value = orbitron("${pdk_oni_atual_num}$", "#0EF5FF", 18);
+    if (node.key === "pdk_oni_total_valor") node.value = orbitron("${pdk_oni_maximo_num}$", "#B36CFF", 18);
+    if (node.key === "pdk_oni_atual_valor_display") node.value = orbitron("${pdk_oni_atual_num}$", "#B36CFF", 18);
   });
 }
 

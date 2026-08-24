@@ -117,7 +117,7 @@ const novoPanel = (key, title, children) => ({
   ...structuredClone(perfilPanel),
   key,
   title,
-  contents: [[children]],
+  contents: children,
 });
 
 // 5a. Painel de Acúmulos em COMBATE (exibe estados já persistidos pelos serviços)

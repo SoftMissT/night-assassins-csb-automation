@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.10 - 2026-08-24
+
+- Corrige os quatro templates canônicos de Actor sem substituir suas estruturas: Slayer mantém oito abas, Oni e Oni Minion mantêm somente `Combate` e `Configurações`, e NPC permanece sem abas artificiais.
+- Adiciona sincronização automática, executada uma vez por versão pelo GM primário, entre o Compendium `night-assassins-templates-de-ficha` e os documentos `_template` existentes no Mundo.
+- Normaliza Number Fields legados da ficha Oni que haviam sido persistidos como objetos pelo CSB, restaurando atributos, PDV, PDK e deslocamento sem curar nem sobrescrever recursos atuais.
+- Remove wrappers HTML e imports repetidos da fonte Orbitron dos templates; o tema passa a usar um único import e classes semânticas leves.
+- Restaura as cores oficiais: atributos individuais; PDV vermelho; PDR ciano em Slayer/NPC; PDK violeta em Oni/Oni Minion; fundos azul-marinho e vinho conforme o tipo de ficha.
+- Preserva as tabelas, botões, Formas de Respiração e containers de Items existentes durante a limpeza visual.
+- Validação local: `node --test` com **853/853** testes aprovados, incluindo sincronização de templates e reparo dos valores legados.
+
 ## 0.11.9 - 2026-08-24
 
 - Restaura nos templates Slayer e Oni os sete rótulos oficiais de atributo em Orbitron, com as cores individuais de VIT, DEX, FOR, CAR, FDV, INT e SAB.

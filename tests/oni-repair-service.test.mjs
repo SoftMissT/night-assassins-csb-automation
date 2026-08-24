@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { planOniRepair, repairOniActors, ONI_REPAIR_VERSION } from "../scripts/oni/repair-service.mjs";
+import { planOniRepair, primitiveNumber, repairOniActors, ONI_REPAIR_VERSION } from "../scripts/oni/repair-service.mjs";
 
 /** Fixture: Actor Oni criado sob o template ANTIGO (Fôlego + Marca + Classe). */
 function legacyOniActorFixture() {
@@ -47,6 +47,23 @@ function legacyOniActorFixture() {
 }
 
 describe("repairOniActors — migração de Actors Oni legados (P0)", () => {
+  it("converte wrappers legados de NumberField para número primitivo", () => {
+    assert.equal(primitiveNumber({ value: 4 }), 4);
+    assert.equal(primitiveNumber({ current: { value: "3" } }), 3);
+    assert.equal(primitiveNumber("<span>2</span>"), 2);
+    assert.equal(primitiveNumber({ quebrado: true }), 0);
+  });
+
+  it("normaliza atributos e ledger Oni persistidos como Object", () => {
+    const actor = legacyOniActorFixture();
+    actor._props.atr_vit_valor_config = { value: 5 };
+    actor._props.bonus_atr_vit_valor_temp = { current: 2 };
+    actor._props.pdv_oni_dano_tomado = { value: 35 };
+    const { patch } = planOniRepair(actor);
+    assert.equal(patch["system.props.atr_vit_valor_config"], 5);
+    assert.equal(patch["system.props.bonus_atr_vit_valor_temp"], 2);
+    assert.equal(patch["system.props.pdv_oni_dano_tomado"], 35);
+  });
   it("planOniRepair migra classe_escolhida (Slayer-shaped) para oni_especializacao_id", () => {
     const actor = legacyOniActorFixture();
     const { needsRepair, patch, preserved } = planOniRepair(actor);

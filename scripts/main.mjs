@@ -39,6 +39,7 @@ import * as oniProgression from "./oni/progression-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
 import { repairOniActors } from "./oni/repair-service.mjs";
 import { useKekkijutsuItem } from "./oni/kekkijutsu-use-service.mjs";
+import { syncCanonicalActorTemplates } from "./template-sync.mjs";
 
 /**
  * Wrapper público de rollDamage exposto em module.api — ponto de entrada
@@ -95,11 +96,14 @@ Hooks.once("ready", async () => {
   registerLifeDeathEngine();
   registerAdvancedStatesEngine();
 
+  const primaryGm = game.user?.isGM
+    && game.users?.filter((user) => user.active && user.isGM).sort((a, b) => String(a.id).localeCompare(String(b.id)))[0]?.id === game.user.id;
+
   // Repair de Actors Oni legados (P0): só o GM primário aplica a migração
   // estrutural — idempotente, preserva dados do personagem, nunca reverte
   // PDV/PDK atual para o máximo. Roda ANTES do ledger de progressão porque
   // pode reescrever a forma como os campos legados são lidos.
-  if (game.user?.isGM && game.users?.filter((u) => u.active && u.isGM).sort((a, b) => String(a.id).localeCompare(String(b.id)))[0]?.id === game.user.id) {
+  if (primaryGm) {
     for (const actor of game.actors?.contents ?? []) {
       if (actorKind(actor) !== "oni") continue;
       try {
@@ -107,6 +111,19 @@ Hooks.once("ready", async () => {
       } catch (error) {
         console.warn?.(`[${MODULE_ID}] Falha ao reparar Actor Oni ${actor.name}:`, error);
       }
+    }
+
+    // O Foundry não atualiza documentos `_template` já importados quando o
+    // módulo muda. Sincroniza uma vez por versão DEPOIS de normalizar os
+    // NumberFields dos Actors, evitando que o reload avalie Objects no MathJS.
+    try {
+      const result = await syncCanonicalActorTemplates();
+      if (result.created || result.updated) {
+        ui.notifications.info(`Templates Night Assassins sincronizados: ${result.created} criado(s), ${result.updated} atualizado(s).`);
+      }
+    } catch (error) {
+      console.warn?.(`[${MODULE_ID}] Falha ao sincronizar templates canônicos:`, error);
+      ui.notifications.warn(`Falha ao sincronizar templates Night Assassins: ${error.message}`);
     }
   }
 
@@ -229,6 +246,7 @@ reloadWeaponItem,
         rollPdvGain: oniProgression.rollOniPdvGain,
         repairActor: repairOniActors,
       },
+      syncTemplates: syncCanonicalActorTemplates,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

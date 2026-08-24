@@ -34,30 +34,25 @@ test("templates classificam PDV, PDR e PDK para o tema mínimo", async () => {
   assert.match(minion, /na-resource-pdk/);
 });
 
-test("Slayer e Oni usam os sete rótulos Orbitron oficiais nos botões de atributo", async () => {
-  const colors = { VIT: "#36D67A", DEX: "#28D7FF", FOR: "#C1000C", CAR: "#FF9100", FDV: "#BB97F9", INT: "#F8EB4D", SAB: "#D45CA4" };
-  for (const file of ["slayer-template.json", "oni-template.json"]) {
+test("as quatro fichas usam classes semânticas para os sete atributos", async () => {
+  for (const file of actorTemplates) {
     const document = JSON.parse(await readFile(new URL(`../src/templates/actors/${file}`, import.meta.url), "utf8"));
-    const buttons = [];
+    const attributes = new Set();
     const walk = (node) => {
       if (!node || typeof node !== "object") return;
-      if (node.type === "label"
-        && node.style === "button"
-        && /custom-orbitron-wrapper/.test(node.value ?? "")
-        && />(?:VIT|DEX|FOR|CAR|FDV|INT|SAB)<\/span>/i.test(node.value ?? "")
-        && /attr\s*:\s*['"](?:VIT|DEX|FOR|CAR|FDV|INT|SAB)['"]/i.test(node.rollMessage ?? "")) buttons.push(node);
+      const match = String(node.cssClass ?? "").match(/na-attribute-(vit|dex|for|car|fdv|int|sab)/i);
+      if (match) attributes.add(match[1].toUpperCase());
       Object.values(node).forEach(walk);
     };
     walk(document.system);
-    assert.equal(buttons.length, 7, `${file} deve ter exatamente sete botões de atributo`);
-    for (const [attribute, color] of Object.entries(colors)) {
-      const button = buttons.find((entry) => entry.rollMessage.match(/attr\s*:\s*['"]([^'"]+)/i)?.[1]?.toUpperCase() === attribute);
-      assert.ok(button, `${file}: botão ${attribute} ausente`);
-      assert.match(button.value, /custom-orbitron-wrapper/);
-      assert.match(button.value, /fonts\.googleapis\.com\/css2\?family=Orbitron:wght@700/);
-      assert.match(button.value, new RegExp(`color:${color}`, "i"));
-      assert.match(button.value, new RegExp(`>${attribute}<\\/span>`));
-    }
+    assert.deepEqual([...attributes].sort(), ["CAR", "DEX", "FDV", "FOR", "INT", "SAB", "VIT"], file);
+  }
+});
+
+test("templates de Actor não espalham CSS/Google Fonts dentro de Labels", async () => {
+  for (const file of actorTemplates) {
+    const source = await readFile(new URL(`../src/templates/actors/${file}`, import.meta.url), "utf8");
+    assert.doesNotMatch(source, /<style|style=|fonts\.googleapis\.com|custom-orbitron-wrapper|na-sheet-text/i, file);
   }
 });
 

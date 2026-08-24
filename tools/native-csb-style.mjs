@@ -25,12 +25,12 @@ function appendCssClass(node, cssClass) {
 }
 
 function resourceCssClass(node) {
-  const searchable = [node.key, node.value, node.label, node.title]
+  const searchable = [node.key, node.name, node.value, node.label, node.title]
     .filter((value) => typeof value === "string")
     .join(" ");
+  if (/(?:^|\W|_)pdk(?:$|\W|_)/i.test(searchable)) return "na-resource-pdk";
   if (/(?:^|\W|_)pdv(?:$|\W|_)/i.test(searchable)) return "na-resource-pdv";
   if (/(?:^|\W|_)pdr(?:$|\W|_)/i.test(searchable)) return "na-resource-pdr";
-  if (/(?:^|\W|_)pdk(?:$|\W|_)/i.test(searchable)) return "na-resource-pdk";
   return "";
 }
 
@@ -46,9 +46,16 @@ export const ATTRIBUTE_LABELS = Object.freeze({
 
 export function orbitronAttributeLabel(attribute) {
   const name = String(attribute ?? "").trim().toUpperCase();
-  const color = ATTRIBUTE_LABELS[name];
-  if (!color) return "";
-  return `<div class="custom-orbitron-wrapper"><style>@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');</style><span style="font-family: 'Orbitron', 'Times New Roman', serif; font-size: 16px; font-weight: 700; color:${color}; text-transform: uppercase; letter-spacing: .12em;">${name}</span></div>`;
+  return ATTRIBUTE_LABELS[name] ? name : "";
+}
+
+function attributeName(node) {
+  const rollAttribute = String(node.rollMessage ?? "").match(/attr\s*:\s*['"](VIT|DEX|FOR|CAR|FDV|INT|SAB)['"]/i)?.[1];
+  if (rollAttribute) return rollAttribute.toUpperCase();
+
+  const plain = labelHtmlToPlainText(node.value ?? node.label ?? "");
+  const leading = plain.match(/^\s*(VIT|DEX|FOR|CAR|FDV|INT|SAB)(?:\b|\s*:)/i)?.[1];
+  return leading?.toUpperCase() ?? "";
 }
 
 export function useNativeCsbPresentation(document) {
@@ -57,17 +64,19 @@ export function useNativeCsbPresentation(document) {
     if (!node || typeof node !== "object") return;
     const cssClass = resourceCssClass(node);
     if (cssClass) appendCssClass(node, cssClass);
-    if (node.type === "label"
-      && node.style === "button"
-      && typeof node.rollMessage === "string"
-      && node.rollMessage
-      && typeof node.value === "string") {
-      const plain = labelHtmlToPlainText(node.value).toUpperCase();
-      const decorated = orbitronAttributeLabel(plain);
-      const attrMatch = node.rollMessage.match(/attr\s*:\s*['"](VIT|DEX|FOR|CAR|FDV|INT|SAB)['"]/i);
-      if (decorated && attrMatch?.[1]?.toUpperCase() === plain && node.value !== decorated) {
-        node.value = decorated;
+    if (typeof node.title === "string" && /custom-orbitron-wrapper|na-sheet-text|<style\b|style\s*=/i.test(node.title)) {
+      node.title = labelHtmlToPlainText(node.title);
+      convertedLabels += 1;
+    }
+    if (node.type === "label" && typeof node.value === "string") {
+      if (/custom-orbitron-wrapper|na-sheet-text|<style\b|style\s*=/i.test(node.value)) {
+        node.value = labelHtmlToPlainText(node.value);
         convertedLabels += 1;
+      }
+      const attribute = attributeName(node);
+      if (attribute) {
+        appendCssClass(node, "na-attribute-label");
+        appendCssClass(node, `na-attribute-${attribute.toLowerCase()}`);
       }
     }
     for (const value of Object.values(node)) walk(value);

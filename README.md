@@ -100,7 +100,7 @@ Ambos são idempotentes rodar de novo em um documento já corrigido não gera ne
 
 ## Roadmap — próximo trabalho planejado
 
-**HUD Telefone/Chat (Projeto Telefone).** SDD completo já aprovado em `MACRO-NA-FOUNDRY/docs/PROJETO TELEFONE/` (Constitution → Requirements → PDR → Research → Blueprint → Specs → Analyze, todos os gates confirmados por Nelson em 2026-08-21). Foi implementado uma vez (626/626 testes) sobre a v0.10.x, mas removido no revert total para a baseline v0.10.0 (release v0.11.0). Reimplementação futura deve reconstruir sobre a v0.11.6 atual seguindo o SDD já aprovado sem reabrir as fases de especificação e sem reintroduzir nenhum hook de render de ficha (ver linha de Troubleshooting sobre a regressão proibida abaixo).
+**HUD Telefone/Chat (Projeto Telefone).** SDD completo já aprovado em `MACRO-NA-FOUNDRY/docs/PROJETO TELEFONE/` (Constitution → Requirements → PDR → Research → Blueprint → Specs → Analyze, todos os gates confirmados por Nelson em 2026-08-21). Foi implementado uma vez (626/626 testes) sobre a v0.10.x, mas removido no revert total para a baseline v0.10.0 (release v0.11.0). Reimplementação futura deve reconstruir sobre a baseline atual seguindo o SDD já aprovado sem reabrir as fases de especificação e sem reintroduzir nenhum hook de render de ficha (ver linha de Troubleshooting sobre a regressão proibida abaixo).
 
 ## Troubleshooting
 

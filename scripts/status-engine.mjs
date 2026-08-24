@@ -5,6 +5,7 @@
 import { MODULE_ID, STATUS_SLAYER_DANO_CONTINUO } from "./constants.mjs";
 import { parseNumber } from "./parsing.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
+import { parseWindBreathingState, registerWindBattleDamage, windStatePatch, WIND_STATE_KEY } from "./wind-breathing-service.mjs";
 
 const TURN_FLAG = "lastStatusTurn";
 const resolvingExhaustion = new Set();
@@ -56,6 +57,26 @@ export function currentPdv(props = {}) {
   return Math.max(0, total - wound + healed + extra - damage);
 }
 
+/**
+ * Passiva Sangue Especial (Respiração do Vento): acumula dano Cortante/
+ * Perfurante e Sangramento/Infecção recebidos na batalha atual para
+ * consolidar em cicatrizes/bônus de VIT no Descanso Longo (ver
+ * `consolidateWindScars` em wind-breathing-service.mjs).
+ */
+function buildWindBattleDamagePatch(actor, props, context) {
+  const knowsWind = [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === "Vento");
+  if (!knowsWind) return {};
+  const components = Array.isArray(context.components) ? context.components : [];
+  const cutPierce = components.filter((c) => Array.isArray(c.types) && (c.types.includes("cortante") || c.types.includes("perfurante")))
+    .reduce((total, c) => total + Math.max(0, Math.trunc(Number(c.subtotal) || 0)), 0);
+  const bleedInfection = components.filter((c) => Array.isArray(c.types) && (c.types.includes("sangramento") || c.types.includes("infeccao")))
+    .reduce((total, c) => total + Math.max(0, Math.trunc(Number(c.subtotal) || 0)), 0);
+  if (cutPierce <= 0 && bleedInfection <= 0) return {};
+  const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
+  const nextWindState = registerWindBattleDamage(windState, { cutPierce, bleedInfection });
+  return windStatePatch(nextWindState);
+}
+
 export function resolveIncomingDamage(state, amount, { isAttack = true } = {}) {
   const base = Math.max(0, Math.trunc(Number(amount) || 0));
   const vulnerable = isAttack && ((state.active ?? []).includes("vulneravel") || state.exhaustion >= 6);
@@ -89,10 +110,13 @@ export async function applySlayerDamage(actor, amount, context = {}) {
     state.active = state.active.filter((key) => !removable.has(key));
     for (const key of removed) delete state.effects[key];
   }
+  const windUpdate = buildWindBattleDamagePatch(actor, props, context);
+
   await actor.update({
     "system.props.pdv_slayer_dano_tomado": currentDamage + resolution.damage,
     "system.props.pdv_slayer_dano_ferida": currentWounds + resolution.woundDamage,
     ...statePatch(state),
+    ...windUpdate,
   }, { naCsbAutomation: true, naStatusDamage: true, naCritical: context.critical === true });
   return {
     ...resolution,

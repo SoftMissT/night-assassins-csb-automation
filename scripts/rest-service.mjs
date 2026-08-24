@@ -5,6 +5,7 @@
 import { MODULE_ID, STATUS_SLAYER } from "./constants.mjs";
 import { parseNumber } from "./parsing.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
+import { consolidateWindScars, parseWindBreathingState, windStatePatch, WIND_STATE_KEY } from "./wind-breathing-service.mjs";
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const REQUEST_TYPE = "requestSlayerRest";
@@ -116,6 +117,14 @@ export function buildRestPatch(props = {}, resolution = {}) {
     "system.props.descanso_slayer_dados": JSON.stringify(resolution.record),
   };
   if (woundHealing > 0) patch["system.props.pdv_slayer_dano_ferida"] = parseNumber(props.pdv_slayer_dano_ferida) - woundHealing;
+  // Passiva Sangue Especial (Respiração do Vento): cicatrizes/bônus de VIT
+  // acumulados na batalha só se consolidam permanentemente no Descanso
+  // Longo ("Recuperação Profunda"), conforme o .md ("após um descanso
+  // longo, aplicados após a última batalha").
+  if (tier === "deep" && props[WIND_STATE_KEY]) {
+    const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
+    Object.assign(patch, windStatePatch(consolidateWindScars(windState)));
+  }
   let pdvRecovered = 0;
   let pdrRecovered = 0;
   if (tier === "field") {

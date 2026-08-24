@@ -6,9 +6,9 @@
 - Removidos os acréscimos pós-v0.10.0: contrato de arma Phase 3, Phone Chat (scripts/CSS/macro), Kekkijutsu engine/template, Doação de Sangue, Concentração Total, Marca do Caçador como service, Respiração da Recuperação, packs LevelDB versionados, 20 suites de teste novas e tools auxiliares (276 arquivos).
 - module.json com version 0.11.0 e URLs apontando para a release v0.11.0; workflow validou version=tag, rodou a suíte e publicou module.json + module.zip (run 32656102692).
 - Validação local: node --test com 581/581 testes aprovados (suíte da v0.10.0); node --check scripts/main.mjs OK.
-- Histórico das versões v0.10.1–v0.10.9 preservado nas tags — nada foi deletado; retomadas futuras podem cherry-pickar features dessas tags.
+- Histórico das versões v0.10.1–v0.10.9 preservado nas tags nada foi deletado; retomadas futuras podem cherry-pickar features dessas tags.
 
-## 0.10.0 — 2026-08-20
+## 0.10.0 2026-08-20
 
 - Adiciona o catálogo canônico de **Origens Oni** (`catalogs/oni-origins.json`, 21 origens) com PDV/PDK iniciais, bônus de atributo, `fallen_slayer` (Exterminador Corrompido) e os resolvedores `scripts/oni/origin-resolver.mjs` e `scripts/oni/attribute-resolver.mjs`.
 - Atualiza o template Oni com os campos ocultos de bônus de Origem (`origem_oni_bonus_*`), displays que somam os bônus e remove os campos `metal_oni_pdr_bonus` e `origem_oni_pdv_val/pdr_val`; `tools/migrate-oni-template.mjs` ganha `configureOniOriginBonuses`.
@@ -20,7 +20,7 @@
 - Adiciona o **serviço de dados do painel GM** (`scripts/oni/gm-panel-data.mjs`): classifica Slayer/Oni/Minion/NPC, extrai PDV/PDR/PDK, detecta bloqueadores de regeneração e ações lendárias.
 - Validação local: `node --test` com **581/581** testes aprovados.
 
-## 0.9.13 — 2026-08-20
+## 0.9.13 2026-08-20
 
 - Remove da ficha Oni os blocos herdados do Slayer: Respiração, Marca do Caçador, Metal, Skills, Interlúdios e a aba técnica Dados.
 - Reduz a navegação Oni às áreas próprias: Biografia, Perícias, Combate, Inventário, Notas/Diário e Configurações.
@@ -30,7 +30,7 @@
 - Atualiza o painel GM para exibir os recursos próprios do Minion.
 - Validação local: `node --test` com **387/387** testes aprovados.
 
-## 0.9.12 — 2026-08-20
+## 0.9.12 2026-08-20
 
 - Torna as Respirações prioritárias **Chamas, Pedra, Névoa, Metal e Neve** executáveis pelo Item, com custos, ações, acerto, dano, estados persistentes, passivas e resolução por turno.
 - Integra múltiplas parcelas de dano, defesa das Respirações, resistências e efeitos confirmados ao fluxo canônico de dano/acerto.
@@ -40,42 +40,42 @@
 - Higieniza o repositório: arquivos de contexto local, exports de referência e grafo gerado permanecem locais e fora do versionamento.
 - Validação local: `node --test` com **382/382** testes aprovados.
 
-## 0.9.11 — 2026-08-19
+## 0.9.11 2026-08-19
 
 - **Design Manhwa Dark nas fichas:** skin `.na-sheet` (fundo, tabs, painéis, inputs, botões, meters, tipografia Orbitron/Rajdhani) aplicada automaticamente às fichas Night Assassins.
 - Remove **~270** blocos inline/`@import` Orbitron dos templates Slayer, Oni e arma; labels usam classes semânticas (`.na-sheet-text`, `.na-sheet-role-vit|dex|for|…`, `.na-sheet-stat`).
 - Hook `tagNightAssassinsSheet` em `renderActorSheet` / V2 marca o Application com `.na-sheet` quando detecta props NA.
 - Validação: `node --test` 314/314.
 
-## 0.9.10 — 2026-08-19
+## 0.9.10 2026-08-19
 
 - **Hotfix crítico:** o hook `ready` crashava com `ReferenceError: registerAdvancedStatesEngine is not defined`, impedindo a ativação completa do módulo (API, engines, repair de armas/respirações e sync de macros não rodavam).
 - Causa: `scripts/main.mjs` chamava `registerAdvancedStatesEngine()` sem importar a função de `scripts/slayer/advanced-states.mjs`.
 - Validação: `node --check scripts/main.mjs`; `node --test` 314/314.
 
-## 0.9.9 — 2026-08-19
+## 0.9.9 2026-08-19
 
 - Adiciona o painel **Estados Avançados** na ficha Slayer (tab Skills) com o botão **GERENCIAR ESTADOS AVANÇADOS** e armazenamento de `estados_slayer_dados`/`estados_slayer_resumo` em Configurações.
 - Implementa o gerenciador `openAdvancedStatesManager` (DialogV2) com as ações: **Ler Alvo**, **Foco Transparente** (inclui o teste automático de uso extra `1d20 + FDV` contra CD 13+, com falha aplicando -1 de acerto), **Ignição da Lâmina** por Sangue (1d4 PDV), Atrito (3 PDR) e Pressão (5 PDR + VIT CD 16 com 1d6 de Dano Solar interno em falha), **Apagar Lâmina**, **Estado Altruísta** e **Corte Sem Ego** (zera o PDR, soma 2 de Exaustão e encerra o estado).
 - Corrige o bug latente em `scripts/slayer/advanced-states.mjs`: `MODULE_ID` agora é importado de `scripts/constants.mjs`.
-- Expõe `slayer.openAdvancedStatesManager` na API do módulo e registra a macro **Night Assassins — Estados Avançados** (`NAAdvStates00001`).
+- Expõe `slayer.openAdvancedStatesManager` na API do módulo e registra a macro **Night Assassins Estados Avançados** (`NAAdvStates00001`).
 - Validação: `node --test` com a suíte completa aprovada (314/314).
 
-## 0.9.8 — 2026-08-19
+## 0.9.8 2026-08-19
 
 - Corrige as Formas de Respiração existentes nos Caçadores: itens legados sem `inventario_categoria` quebravam o filtro do container `skills_slayer_respiracoes` (`equalText(item.inventario_categoria, 'respiracao')`), impedindo a seção e o botão **USAR** de renderizar.
 - Adiciona a migração idempotente `repairBreathingItems`, que sincroniza os itens legados com o Compendium canônico `night-assassins-respiracoes` (por `forma_id` ou nome normalizado) e roda automaticamente no GM ready, junto ao reparo de armas.
-- Adiciona a macro **Night Assassins — Corrigir Respirações dos Caçadores** (`NABreathRepair01`), que executa a migração sob demanda e reporta no chat.
+- Adiciona a macro **Night Assassins Corrigir Respirações dos Caçadores** (`NABreathRepair01`), que executa a migração sob demanda e reporta no chat.
 - Cobre a migração com testes unitários: mapa canônico, patch completo, idempotência, formas sem correspondência e contabilização de Actors.
 - Validação: `node --test` com a suíte completa aprovada (273/273).
 
-## 0.9.7 — 2026-08-19
+## 0.9.7 2026-08-19
 
-- Adiciona a macro **Night Assassins — Corrigir Armas dos Caçadores**, que executa sob demanda a migração idempotente `repairSlayerWeaponItems` em todos os Caçadores do mundo e reporta no chat quantos itens foram atualizados.
+- Adiciona a macro **Night Assassins Corrigir Armas dos Caçadores**, que executa sob demanda a migração idempotente `repairSlayerWeaponItems` em todos os Caçadores do mundo e reporta no chat quantos itens foram atualizados.
 - Cobre a migração com testes unitários: geração do patch de resumos, idempotência, itens não-armas e contabilização de Actors.
 - Validação: `node --test` com a suíte completa aprovada.
 
-## 0.9.6 — 2026-08-16
+## 0.9.6 2026-08-16
 
 - Corrige a perda de perfis de ataque de armas quando o CSB serializa Arrays como JSON textual ou descarta campos não declarados no template.
 - Adiciona migração idempotente para Items de armas já existentes nos Actors, reconstruindo perfil, fórmula, tipo de dano, atributos e mecânicas.
@@ -86,7 +86,7 @@
 - Validação: 260 testes aprovados, 0 falhas; sintaxe e diff check aprovados.
 - O arquivo `06 - Guia de Arcos Longos.md` não faz parte deste release.
 
-## 0.9.5 — 2026-08-16
+## 0.9.5 2026-08-16
 
 - Corrige a leitura de perfis de armas Slayer em Items antigos ou serializados como JSON pelo CSB.
 - Reconstrói o perfil Ataque Base a partir dos campos legados de dano quando `arma_perfis_ataque` não está disponível como Array.
@@ -94,18 +94,18 @@
 - Adiciona suporte a proficiência, atributos por propriedade, perfis Nitoryu/Ryōtō, munição e recarga no fluxo de armas.
 - Validação: 257 testes aprovados, 0 falhas; 43 Items de armas reconstruídos.
 
-## 0.9.4 — 2026-08-16
+## 0.9.4 2026-08-16
 
 - Corrige vulnerabilidade de XSS (Cross-Site Scripting) no módulo de Vida e Morte dos Slayers.
 - Sanitiza o nome do Actor e o motivo de morte/reviver com escape de entidades HTML antes da publicação no chat via `ChatMessage.create`.
 
-## 0.9.3 — 2026-08-14
+## 0.9.3 2026-08-14
 
-- Unifica os templates Slayer e Oni no Compêndio `Night Assassins — Templates de Ficha`.
+- Unifica os templates Slayer e Oni no Compêndio `Night Assassins Templates de Ficha`.
 - Adiciona o template narrativo NPC com foto do Actor e informações básicas.
 - Preserva os IDs internos de Slayer e Oni; UUIDs completos antigos mudam por causa do novo nome do pack.
 
-## 0.9.2 — 2026-08-14
+## 0.9.2 2026-08-14
 
 - Integra Onis ao Montador de Ataque sem reutilizar as chaves de recurso do Slayer.
 - Adiciona Ataque Marcial, Garras e Mordida com progressão natural dos níveis 1–20 e atributos finais `*_display`.
@@ -119,7 +119,7 @@
 - `node --test`: 246 testes aprovados, 0 falhas.
 - Testes focados do builder, dano e ações Oni: 14 aprovados, 0 falhas.
 
-## 0.9.1 — 2026-08-14
+## 0.9.1 2026-08-14
 
 - Conecta o botão geral de dano aos Items de arma e Formas de Respiração portados pelo Slayer.
 - Monta parcelas independentes para arma e Respiração usando Rank, nível de Respiração e atributos finais `*_display`.
@@ -132,7 +132,7 @@
 - `node --test`: 243 testes aprovados, 0 falhas.
 - GitNexus: impacto final classificado como MEDIUM em quatro fluxos existentes de `rollWeaponItem`.
 
-## 0.9.0 — 2026-08-14
+## 0.9.0 2026-08-14
 
 - Introduz o contrato canônico `TechniqueDefinition` para armas, Respirações, Kekkijutsu e equipamentos.
 - Adiciona contexto de combate e transações que consolidam custos e efeitos em uma escrita por Actor.
@@ -148,34 +148,34 @@
 - GitNexus reindexado com PDG: 8.578 nós, 19.044 relações, 86 clusters e 300 fluxos.
 - Alterações centrais de acerto/dano/Respiração classificadas como CRITICAL pelo conjunto de fluxos afetados e cobertas por testes focados e regressivos.
 
-## 0.8.4 — 2026-08-14
+## 0.8.4 2026-08-14
 
 - Adiciona o gerenciador funcional de Interlúdio para Cabaças e Copo de Chá Medicinal.
 - Persiste sucessos, zera sequências de Cabaça em falha e desbloqueia benefícios no terceiro sucesso.
 - Integra Cabaça Pequena ao PDV máximo e Concentração Total Constante a VIT e movimento.
 - Remove da aba os treinamentos e estados avançados que ainda não possuem motor completo, evitando controles decorativos.
-- Atualiza o Compêndio com a macro `Night Assassins — Gerenciar Interlúdio`.
+- Atualiza o Compêndio com a macro `Night Assassins Gerenciar Interlúdio`.
 
 ### Validação
 
 - `node --test`: 208 testes aprovados, 0 falhas.
 - GitNexus reindexado com PDG: 7.552 nós, 16.951 relações, 70 clusters e 291 fluxos.
 
-## 0.8.3 — 2026-08-14
+## 0.8.3 2026-08-14
 
 - Converte Markdown dos catálogos de Respirações e armas em HTML enriquecível pelo Foundry VTT durante o build.
 - Impede que a mesma arma apareça novamente em Equipamentos e Itens usando filtros exclusivos por template CSB.
 - Marca formas passivas explicitamente e oculta sua aba de ativação manual; `Esquentar` permanece automática, sem custo de ação ou PDR.
 - Adiciona testes de conversão, isolamento dos contêineres e publicação de passivas.
 
-## 0.8.2 — 2026-08-14
+## 0.8.2 2026-08-14
 
 - Corrige a resolução do Item de arma no CSB: a ficha passa `linkedEntity` ao motor em vez de confundir o Actor com a arma.
 - Faz o botão da linha do Inventário e o botão do Item aberto usarem o mesmo `rollWeaponItem` especializado.
 - Impede que um Actor recebido como `itemUuid` produza falsamente “Esta arma não possui perfil de ataque configurado”.
 - Padroniza “Rolar Dano da Arma” com o wrapper Orbitron da ficha.
 
-## 0.8.1 — 2026-08-14
+## 0.8.1 2026-08-14
 
 - Implementa Vida e Morte Slayer: À Beira da Morte, Marcas, Queda Repetida, Teste de Morte, Determinação Final, cura em 0 PDV e estabilização por INT/SAB.
 - Bloqueia ataques, defesas, dano, Respiração, movimento e Reação enquanto o Slayer está À Beira da Morte ou morto.
@@ -350,7 +350,7 @@
 
 ### Adicionado
 
-- Botão `DESCANSO` no template Slayer e macro canônica `Night Assassins — Gerenciar Descanso` no Compendium.
+- Botão `DESCANSO` no template Slayer e macro canônica `Night Assassins Gerenciar Descanso` no Compendium.
 - Descanso de Campo, Descanso Completo e Recuperação Profunda com rebaixamento automático quando o repouso é interrompido.
 - Confirmação obrigatória do GM e registro `descanso_slayer_dados` para aplicar a regra antiabuso.
 - Atualização atômica de PDV, PDR, Fôlego, Exaustão e status autorizados.
@@ -533,7 +533,7 @@
 
 ### Limites conhecidos
 
-- Regras dependentes de geometria ou contexto do ataque — adjacência, corpo a corpo, fonte exata do medo e deslocamento em metros — exigem metadados da futura camada de ataque/posicionamento; o motor não inventa essas informações.
+- Regras dependentes de geometria ou contexto do ataque adjacência, corpo a corpo, fonte exata do medo e deslocamento em metros exigem metadados da futura camada de ataque/posicionamento; o motor não inventa essas informações.
 - Ações de tratamento, água, calor, meditação, ajuda de aliado e Sono Completo permanecem remoções explícitas pelo gerenciador até o sistema de descanso ser implementado.
 
 ## [0.3.1] - 2026-08-07
@@ -638,7 +638,7 @@
 
 - Adicionada confirmação manual de crítico à macro de dano; o total final é dobrado antes da resistência.
 - Ampliado o relay GM com autorização, resistência e os 18 tipos de dano oficiais.
-- Adicionada a macro **Night Assassins — Controle GM** ao Compendium, com barras de PDV/PDR e resumo dos Caçadores.
+- Adicionada a macro **Night Assassins Controle GM** ao Compendium, com barras de PDV/PDR e resumo dos Caçadores.
 - Mantido o Dice So Nice sobre a rolagem original; o chat destaca o total pós-crítico.
 
 ## [0.1.2] - 2026-08-06
@@ -655,12 +655,13 @@
 - Adicionado pipeline reproduzível para gerar o pack ClassicLevel na Release.
 - Corrigida a distribuição que anteriormente publicava apenas o motor do módulo.
 
-## 0.1.0 — 2026-08-04
+## 0.1.0 - 2026-08-04
 
 - Migração das macros `na-roll-mode.js`, `na-acerto-roll.js`, `na_roll_damage.js` e `na-attribute-level-snapshot.js` para módulo ESM.
 - Automação da Marca do Destino integrada ao `updateActor`.
 - Suporte a DialogV2, ApplicationV2 e persistência em `actor.system.props`.
 - Testes unitários com `node:test`.
+
 ## Unreleased
 
 - Adicionado relay de GM para jogadores acumularem dano em `system.props.pdv_oni_dano_tomado` sem ownership do Actor inimigo.

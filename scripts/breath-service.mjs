@@ -35,11 +35,13 @@ import { stoneFormById } from "./stone-breathing-data.mjs";
 import { mistFormById } from "./mist-breathing-data.mjs";
 import { metalFormById } from "./metal-breathing-data.mjs";
 import { snowFormById } from "./snow-breathing-data.mjs";
-import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, parseFlameBreathingState, tickFlameBreathing } from "./flame-breathing-service.mjs";
+import { windFormById, WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
+import { buildFlameBreathingPlan, clearFlameBreathingState, flameStatePatch, parseFlameBreathingState, resolveFlameRengokuAllies, FLAME_SYNERGY_DAMAGE_PER_ALLY, FLAME_SYNERGY_PDR_COST, tickFlameBreathing } from "./flame-breathing-service.mjs";
 import { buildStoneBreathingPlan, clearStoneBreathingState, stoneStatePatch, tickStoneBreathing } from "./stone-breathing-service.mjs";
 import { buildMistBreathingPlan, clearMistBreathingState, mistStatePatch, parseMistBreathingState, resolveEightLayersResult, tickMistBreathing } from "./mist-breathing-service.mjs";
-import { buildMetalBreathingPlan, clearMetalBreathingState, tickMetalBreathing } from "./metal-breathing-service.mjs";
+import { buildMetalBreathingPlan, clearMetalBreathingState, resolveMetalMagnetism, tickMetalBreathing } from "./metal-breathing-service.mjs";
 import { buildSnowBreathingPlan, clearSnowBreathingState, grantBlizzardStealth, parseSnowBreathingState, resolveSnowRestrictionEscape, snowEffectiveBreathLevel, snowStatePatch, snowTickPatchWithExhaustion } from "./snow-breathing-service.mjs";
+import { buildWindBreathingPlan, clearWindBreathingState, parseWindBreathingState, tickWindBreathing, windStatePatch } from "./wind-breathing-service.mjs";
 import { applySlayerDamage } from "./status-engine.mjs";
 import { formatStatusSummary, parseStatusState } from "./status-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
@@ -133,6 +135,52 @@ function slayerPdrInfo(props = {}) {
     pdrMax + parseNumber(props.pdr_slayer_curado) - parseNumber(props.pdr_slayer_gasto_valor)
   ));
   return { pdrMax, pdrCurrent };
+}
+
+/**
+ * Coleta aliados dispostos a contribuir com a sinergia do Rengoku
+ * (Amor/Vento/Magma/Sol: 2 PDR cada → +5 de dano por contribuição).
+ * @param {Actor} actor Usuário da Respiração das Chamas.
+ * @param {{id: string}} form Forma sendo usada.
+ * @param {object} props Props atuais do ator.
+ * @returns {Promise<object>} `{ rengokuAllies: [{uuid, name}] }` ou `{}` .
+ */
+async function collectFlameChoices(actor, form, props = {}) {
+  if (form.id !== "chamas_09") return {};
+  const candidates = [];
+  const seen = new Set([actor.uuid]);
+  const combatants = [
+    ...(((game.combat?.combatants)?.contents) ?? (game.combat?.combatants) ?? []),
+  ];
+  for (const combatant of combatants) {
+    const doc = combatant?.actor;
+    if (!doc || seen.has(doc.uuid)) continue;
+    seen.add(doc.uuid);
+    if (actorKind(doc) !== "slayer") continue;
+    const respiracoes = [...(doc.items ?? [])]
+      .map((item) => String(item.system?.props?.respiracao_nome ?? ""))
+      .filter(Boolean);
+    const { pdrCurrent } = slayerPdrInfo(doc.system?.props ?? {});
+    candidates.push({ uuid: doc.uuid, name: doc.name ?? "", respiracoes, pdrAvailable: pdrCurrent });
+  }
+  const eligible = resolveFlameRengokuAllies(candidates, actor.uuid);
+  if (!eligible.length) return { rengokuAllies: [] };
+  const checkboxes = eligible.map((ally, index) => `
+    <label style="display:flex;gap:6px;align-items:center">
+      <input type="checkbox" data-index="${index}">
+      <span>${ally.name} — PDR disponível: ${ally.pdrAvailable} (custa ${FLAME_SYNERGY_PDR_COST})</span>
+    </label>`).join("");
+  const chosenIndexes = await foundry.applications.api.DialogV2.wait({
+    window: { title: "Rengoku — Sinergia de Aliados" },
+    content: `<div class="na-csb-automation"><p>Aliados com Amor, Vento, Magma ou Sol podem gastar ${FLAME_SYNERGY_PDR_COST} PDR para somar +${FLAME_SYNERGY_DAMAGE_PER_ALLY} de dano ao Rengoku (somente se o ataque acertar).</p>${checkboxes}</div>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      { action: "confirmar", label: "Confirmar", callback: (_event, _button, dialog) => [...dialog.element.querySelectorAll("input[data-index]:checked")].map((input) => Number(input.dataset.index)) },
+      { action: "sem_sinergia", label: "Sem sinergia", callback: () => [] },
+    ],
+  });
+  return { rengokuAllies: (Array.isArray(chosenIndexes) ? chosenIndexes : []).map((index) => eligible[index]).filter(Boolean) };
 }
 
 export function getBreathLevel(props = {}) {
@@ -254,7 +302,7 @@ export function buildWaterBreathingPlan(formId, level, props = {}, choices = {})
     Object.assign(base.patch, statePatch({ ...state, pendingDamage: { source: formId, critical: true, uses: 1, recoverPdrOnKill: level, types: damageTypes } }, { "system.props.resp_efeito_flag": "Água 5: crítico automático" }));
   } else if (formId === "agua_06") {
     const hitBonus = choices.submerged ? 3 : 0;
-    // Combo com a 7ª Forma (Nível 3-4): metade do custo de PDR — o combo é
+    // Combo com a 7ª Forma (Nível 3-4): metade do custo de PDR o combo é
     // consumido nesta ativação, não persiste para usos futuros.
     const comboActive = Boolean(state.block?.comboWater6);
     if (comboActive) base.cost = Math.ceil(base.cost / 2);
@@ -403,8 +451,32 @@ async function askNumber(title, label, { value = 0, min = 0, max = 99 } = {}) {
   });
 }
 
+async function collectWindChoices(actor, form, level, props) {
+  if (form.id === "vento_02") {
+    const dex = parseNumber(props.dex_display);
+    const maxPdr = Math.trunc(2 * dex);
+    const pdrInvested = await askNumber("Redemoinho de Poeira", "PDR a investir (dano escala junto)", { min: 1, max: Math.max(1, maxPdr) });
+    return pdrInvested === null ? { cancelled: true } : { pdrInvested };
+  }
+  if (form.id === "vento_04") {
+    const secondUse = await confirmRule("Árvore Balançando ao Vapor da Montanha", "Este é o 2º uso (Reação/contra-ataque)?");
+    return { secondUse };
+  }
+  return {};
+}
+
 async function collectCuratedChoices(actor, form, level, props) {
   const targetActor = [...(game.user?.targets ?? [])][0]?.actor ?? null;
+  // Ciclone da Névoa: "durante qualquer momento de seu próximo turno, pode
+  // conjurar qualquer técnica da Névoa sem gastar PDR". Pergunta-se uma vez,
+  // para qualquer Forma da Névoa, se o benefício ainda estiver disponível.
+  let mistCyclone = {};
+  if (mistFormById(form.id)) {
+    const mistState = parseMistBreathingState(props.resp_nevoa_estado);
+    if (mistState.patterns.cyclone.benefitAvailable) {
+      mistCyclone = { useCycloneFree: await confirmRule("Ciclone da Névoa", "Usar o benefício gratuito do Ciclone (isenta o custo BASE desta técnica)?") };
+    }
+  }
   if (form.id === "pedra_01") {
     if (!targetActor) return { cancelled: true, reason: "Marque o inimigo atingido pelo ataque originário." };
     const originDamage = await askNumber("Serpentino Duplo", "Dano causado pelo ataque originário", { max: 100000 });
@@ -423,34 +495,49 @@ async function collectCuratedChoices(actor, form, level, props) {
     return { targetUuid: targetActor.uuid, weaponRange: ranged ? "distancia" : "corpo-a-corpo", protectedUuid };
   }
   if (form.id === "pedra_05") return { markReactivation: Boolean(props.marca_ativa && parseNumber(props.marca_ativa) > 0) };
-  if (form.id === "nevoa_04") {
-    const advantageAttack = await confirmRule("Corte de Advecção", "Este uso parte de uma rolagem de Acerto com Vantagem?");
-    if (!advantageAttack) return { advantageAttack: false };
-    const suppressResistance = await confirmRule("Corte de Advecção", "Pagar +1 PDR para Anular Resistências do alvo?");
-    return { advantageAttack, suppressResistance, suppressAttribute: Math.max(parseNumber(props.dex_display), parseNumber(props.for_display)) };
+  if (form.id === "nevoa_03") {
+    return { ...mistCyclone, kekkijutsuReduced: await confirmRule("Expansão de Névoa", "Este uso diminuiu ou anulou com sucesso o dano de um Kekkijutsu?") };
   }
-  if (form.id === "nevoa_05") return { doubleCost: await confirmRule("Mar de Nuvens", "Pagar o dobro do PDR para obter Reflexão da Névoa?") };
+  if (form.id === "nevoa_04") {
+    const advantageAttack = await confirmRule("Corte de Advecção", "Este uso parte de uma rolagem de Acerto que JÁ tem Vantagem (não é a Forma quem concede a Vantagem)?");
+    if (!advantageAttack) return { ...mistCyclone, advantageAttack: false };
+    const suppressResistance = await confirmRule("Corte de Advecção", "Pagar +1 PDR extra para aplicar Anulação de Resistências no alvo (Sinergia Água/Vento/Sonhos)?");
+    const suppressAttribute = suppressResistance && await confirmRule("Corte de Advecção", "Usar DEX para definir a duração? (Cancelar usa FOR)")
+      ? "dex" : "for";
+    return { ...mistCyclone, advantageAttack, suppressResistance, suppressAttribute };
+  }
+  if (form.id === "nevoa_05") {
+    return { ...mistCyclone, doubleCost: await confirmRule("Mar de Nuvens", "Pagar o dobro do PDR total para obter Reflexão da Névoa?"), targetUuid: targetActor?.uuid ?? "" };
+  }
   if (form.id === "nevoa_06") {
     const dex = parseNumber(props.dex_display);
     const check = await Roll.create(`1d20 + ${dex}`).evaluate();
-    const message = await check.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Névoa sob o Luar</strong> — DEX CD 12" });
+    const message = await check.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Névoa sob o Luar</strong> DEX CD 12" });
     await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
-    if (check.total < 12) return { dexCheckPassed: false, extraAttacks: 0 };
+    // Nota: os 2 PDR de declaração são cobrados pelo chamador independente
+    // do resultado deste teste (custo por DECLARAÇÃO, não por sucesso).
+    if (check.total < 12) return { ...mistCyclone, dexCheckPassed: false, extraAttacks: 0 };
     const available = Math.max(0, Math.min(19, Math.floor(slayerPdrInfo(props).pdrCurrent) - 2));
     const extraAttacks = await askNumber("Névoa sob o Luar", "Máximo de ataques adicionais (+1 PDR cada)", { max: available });
-    return extraAttacks === null ? { cancelled: true } : { dexCheckPassed: true, extraAttacks };
+    return extraAttacks === null ? { cancelled: true } : { ...mistCyclone, dexCheckPassed: true, extraAttacks };
   }
   if (form.id === "nevoa_07") {
     if (!targetActor) return { cancelled: true, reason: "Marque o inimigo do teste oposto de SAB." };
     const ownSab = parseNumber(props.sab_display);
     const enemySab = parseNumber(targetActor.system?.props?.sab_display);
     const [own, enemy] = await Promise.all([Roll.create(`2d20kh1 + ${ownSab}`).evaluate(), Roll.create(`1d20 + ${enemySab}`).evaluate()]);
-    await Promise.all([own.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Neblina</strong> — SAB com Vantagem" }), enemy.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: "<strong>Neblina</strong> — SAB do alvo" })]);
-    return { opposedPassed: own.total > enemy.total };
+    await Promise.all([own.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Neblina</strong> SAB com Vantagem" }), enemy.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: "<strong>Neblina</strong> SAB do alvo" })]);
+    return { ...mistCyclone, opposedPassed: own.total > enemy.total, targetUuid: targetActor.uuid };
   }
-  if (form.id === "nevoa_08") return { allyUuid: targetActor?.uuid ?? "" };
+  if (form.id === "nevoa_08") {
+    if (!targetActor) return { cancelled: true, reason: "Marque o inimigo que será ofuscado." };
+    const allyToken = [...(game.user?.targets ?? [])].find((token) => token.actor?.uuid !== targetActor.uuid)
+      ?? canvas?.tokens?.controlled?.find((token) => token.actor?.uuid !== actor.uuid);
+    return { ...mistCyclone, targetUuid: targetActor.uuid, allyUuid: allyToken?.actor?.uuid ?? actor.uuid };
+  }
+  if (mistFormById(form.id)) return { ...mistCyclone };
   if (form.id === "metal_06") {
-    const magnetismEligible = parseNumber(props.vit_display) >= 6 || parseNumber(props.for_display) >= 6;
+    const magnetismEligible = resolveMetalMagnetism(props).eligible;
     if (magnetismEligible && !targetActor) return { cancelled: true, reason: "Marque o inimigo afetado por Magnetismo." };
     return { targetUuid: magnetismEligible ? targetActor.uuid : "" };
   }
@@ -500,7 +587,7 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
   await ChatMessage.create(chatData);
 }
 
-async function applyBreathingStatus(targetActor, key, effect) {
+export async function applyBreathingStatus(targetActor, key, effect) {
   const kind = actorKind(targetActor);
   if (!kind) return;
   const dataKey = `status_${kind}_dados`;
@@ -544,7 +631,7 @@ export async function attemptSnowRestrictionEscape({ actorUuid } = {}) {
   const action = await consumeSlayerActions(actor, ["ataque"], { update: false });
   if (!action.ok) return ui.notifications?.warn?.(action.reason);
   const roll = await Roll.create(`1d20 + ${parseNumber(actor.system?.props?.for_display)}`).evaluate();
-  const message = await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Congelar</strong> — FOR contra CD ${flag.escapeDc}` });
+  const message = await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Congelar</strong> FOR contra CD ${flag.escapeDc}` });
   await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
   const outcome = resolveSnowRestrictionEscape(flag, roll.total);
   await actor.update(action.patch, { naCsbAutomation: true, naBreathing: true });
@@ -561,6 +648,32 @@ export async function attemptSnowRestrictionEscape({ actorUuid } = {}) {
   return outcome;
 }
 
+/**
+ * A Canção de um Dia Frio (Nível 3+): quando protege um aliado com Água/Vento/
+ * Cristal, esse aliado ganha um Ataque de Oportunidade real contra o inimigo
+ * que conjurou o Kekkijutsu (não é dano automático — o aliado precisa rolar
+ * Acerto normalmente pelo pipeline padrão, sem consumir a economia de ações
+ * porque é um ataque concedido, não uma Ação de Ataque comum).
+ */
+export async function triggerSnowOpportunityAttack({ actorUuid } = {}) {
+  const document = actorUuid ? await fromUuid(actorUuid) : null;
+  const actor = document?.actor ?? document ?? canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character;
+  if (!actor) return ui.notifications?.warn?.("Nenhum Actor encontrado para o Ataque de Oportunidade.");
+  const flag = actor.getFlag?.(MODULE_ID, "snowOpportunityAttack");
+  if (!flag?.available) {
+    ui.notifications?.info?.("Nenhum Ataque de Oportunidade da Canção de um Dia Frio disponível.");
+    return { ok: false, reason: "Nenhum Ataque de Oportunidade disponível." };
+  }
+  await actor.unsetFlag(MODULE_ID, "snowOpportunityAttack");
+  const enemyDocument = flag.enemyUuid ? await fromUuid(flag.enemyUuid) : null;
+  const enemyActor = enemyDocument?.actor ?? enemyDocument;
+  const enemyToken = enemyActor?.getActiveTokens?.()[0];
+  if (enemyToken) enemyToken.setTarget(true, { user: game.user, releaseOthers: true });
+  ui.notifications?.info?.(`${actor.name} ganhou um Ataque de Oportunidade (Canção de um Dia Frio) contra ${enemyActor?.name ?? "o conjurador do Kekkijutsu"}. Role o Acerto normalmente; este ataque não consome a economia de ações.`);
+  const { rollHit } = await import("./hit-service.mjs");
+  return rollHit({ actor, actorUuid: actor.uuid });
+}
+
 async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem }) {
   const successful = hitResult.attempts.filter((attempt) => attempt.hit);
   const weaponItem = hitResult.weapon?.id ? actor.items?.get?.(hitResult.weapon.id) : null;
@@ -570,7 +683,7 @@ async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, r
     const resolved = resolveEightLayersResult(mistState, successful.length);
     await actor.update(mistStatePatch(resolved.state), { naCsbAutomation: true, naBreathing: true });
     if (resolved.mode === "fixed" && resolved.formula) {
-      await rollDamage({ actor, nome: `${form.respiracao} — ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: resolved.formula, fixo: 0, attrs: [], tiposDano: ["cortante"] }], actionId, skipActionConsumption: true, forceAttackDamage: true });
+      await rollDamage({ actor, nome: `${form.respiracao} ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: resolved.formula, fixo: 0, attrs: [], tiposDano: ["cortante"] }], actionId, skipActionConsumption: true, forceAttackDamage: true });
       return;
     }
   }
@@ -578,7 +691,7 @@ async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, r
     if (weaponItem) {
       await rollWeaponItem({ actor, item: weaponItem, weaponProfileIndex: hitResult.weapon.profileIndex, critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     } else {
-      await rollDamage({ actor, nome: `${form.respiracao} — ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
+      await rollDamage({ actor, nome: `${form.respiracao} ${form.nome}`, entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }], critical: attempt.critical, actionId, skipActionConsumption: true, forceAttackDamage: true });
     }
   }
 }
@@ -698,7 +811,14 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   const isMistForm = Boolean(mistFormById(form.id));
   const isMetalForm = Boolean(metalFormById(form.id));
   const isSnowForm = Boolean(snowFormById(form.id));
-  const choices = isWaterForm ? await collectWaterChoices(actor, form, selected.level, props) : await collectCuratedChoices(actor, form, selected.level, props);
+  const isWindForm = Boolean(windFormById(form.id));
+  const choices = isWaterForm
+    ? await collectWaterChoices(actor, form, selected.level, props)
+    : isFlameForm
+      ? await collectFlameChoices(actor, form, props)
+      : isWindForm
+        ? await collectWindChoices(actor, form, selected.level, props)
+        : await collectCuratedChoices(actor, form, selected.level, props);
   if (choices?.cancelled) {
     if (choices.reason) ui.notifications?.warn?.(choices.reason);
     return;
@@ -706,7 +826,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   const plan = isWaterForm
     ? buildWaterBreathingPlan(form.id, selected.level, props, choices)
     : isFlameForm
-      ? buildFlameBreathingPlan(form.id, selected.level, props)
+      ? buildFlameBreathingPlan(form.id, selected.level, props, choices)
       : isStoneForm
         ? buildStoneBreathingPlan(form.id, selected.level, props, choices)
         : isMistForm
@@ -715,7 +835,9 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             ? buildMetalBreathingPlan(form.id, selected.level, props, choices)
             : isSnowForm
               ? buildSnowBreathingPlan(form.id, selected.level, props, choices)
-      : buildGenericBreathingPlan(form, selected);
+              : isWindForm
+                ? buildWindBreathingPlan(form.id, selected.level, props, choices)
+                : buildGenericBreathingPlan(form, selected);
   if (!plan.ok) {
     ui.notifications?.warn?.(plan.reason);
     return;
@@ -773,6 +895,20 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     rollbackPatch = snapshotActorPatch(actor, patch);
     await actor.update(patch, { naCsbAutomation: true, naBreathForm: true });
   }
+  if (isFlameForm && form.id === "chamas_09" && Array.isArray(plan.state?.rengokuAllies) && plan.state.rengokuAllies.length) {
+    for (const allyUuid of plan.state.rengokuAllies) {
+      const allyDocument = await fromUuid(allyUuid);
+      const allyActor = allyDocument?.actor ?? allyDocument;
+      if (!allyActor?.system?.props) continue;
+      const gasto = parseNumber(allyActor.system.props.pdr_slayer_gasto_valor);
+      await allyActor.update({ "system.props.pdr_slayer_gasto_valor": gasto + FLAME_SYNERGY_PDR_COST }, { naCsbAutomation: true });
+    }
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: "<strong>Rengoku — Sinergia de Aliados</strong>",
+      content: `${plan.state.rengokuAllies.length} aliado(s) gastaram ${FLAME_SYNERGY_PDR_COST} PDR cada: +${plan.state.rengokuAllies.length * FLAME_SYNERGY_DAMAGE_PER_ALLY} de dano se o ataque acertar.`,
+    });
+  }
   if (isSnowForm && form.id === "neve_03" && choices.allyUuid) {
     const allyDocument = await fromUuid(choices.allyUuid);
     const allyActor = allyDocument?.actor ?? allyDocument;
@@ -789,7 +925,13 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     const targetActor = reflected?.actor ?? reflected;
     if (targetActor?.setFlag) await targetActor.setFlag(MODULE_ID, "stoneReflectionPenalty", {
       value: -Math.max(0, Number(plan.state.reflection.attackPenalty) || 0),
-      turns: Math.max(1, Number(plan.state.reflection.blockTurns) || 1),
+      // Regra: "diminui... a próxima rolagem de acerto do inimigo" é um
+      // efeito de USO ÚNICO (a próxima rolagem, singular) — independente da
+      // duração do bônus de Bloqueio (que dura 2 turnos nos Níveis 3/4). O
+      // campo `turns` aqui é só uma expiração de segurança (1 turno) caso o
+      // alvo nunca chegue a atacar; o consumo real acontece em hit-service.mjs
+      // assim que a penalidade é aplicada a uma rolagem de Acerto.
+      turns: 1,
       sourceActorUuid: actor.uuid,
       sourceState: plan.state,
     });
@@ -811,7 +953,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         const synergyRoll = await Roll.create(`1d20 + ${fdv}`).evaluate();
         await synergyRoll.toMessage({
           speaker: ChatMessage.getSpeaker({ actor: protectedActor }),
-          flavor: `<strong>Sinergia da Pedra</strong> — FDV CD ${synergyDc}`,
+          flavor: `<strong>Sinergia da Pedra</strong> FDV CD ${synergyDc}`,
         });
         if (synergyRoll.total >= synergyDc) {
           const recovery = Math.ceil(car / 2);
@@ -837,17 +979,26 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     }
   }
 
+  if (isMistForm && form.id === "nevoa_06" && plan.state?.dexFailed) {
+    // Névoa sob o Luar: o custo de DECLARAÇÃO (2 PDR) já foi cobrado acima,
+    // mesmo com o teste de DEX falho. A Forma não entra em funcionamento —
+    // sem SAB nos ataques, sem cadeia, sem Colapso — e nenhum dano é criado.
+    await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll: null });
+    ui.notifications?.info?.("Névoa sob o Luar: falhou no teste de DEX CD 12. O custo de declaração já foi pago, mas a técnica não teve efeito.");
+    return;
+  }
+
   if (isStoneForm && form.id === "pedra_01") {
     const targetActor = choices.targetUuid ? await fromUuid(choices.targetUuid) : null;
     if (!targetActor) return ui.notifications?.warn?.("Alvo do Serpentino Duplo não encontrado.");
     const vit = parseNumber(targetActor.system?.props?.vit_display);
     const save = await Roll.create(`1d20 + ${vit}`).evaluate();
-    const message = await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Serpentino Duplo</strong> — VIT CD ${plan.state.serpentine.saveDc}` });
+    const message = await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Serpentino Duplo</strong> VIT CD ${plan.state.serpentine.saveDc}` });
     await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
     if (save.total < plan.state.serpentine.saveDc) {
       const { rollDamage } = await import("./damage-service.mjs");
       await rollDamage({
-        actor, nome: `${form.respiracao} — ${form.nome}`,
+        actor, nome: `${form.respiracao} ${form.nome}`,
         entradas: plan.state.serpentine.damageComponents.map((component) => ({ tipoAcao: "unica", dado: component.formula, fixo: 0, attrs: [], tiposDano: component.types })),
         skipActionConsumption: true, forceAttackDamage: true,
       });
@@ -869,7 +1020,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     if (form.id === "chamas_06") {
       await rollDamage({
         actor,
-        nome: `${form.respiracao} — ${form.nome}`,
+        nome: `${form.respiracao} ${form.nome}`,
         entradas: [{ tipoAcao: "ataque", dado: "", fixo: 0, attrs: [], tiposDano: [] }],
         skipActionConsumption: true,
         forceAttackDamage: true,
@@ -892,8 +1043,14 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     }
 
     if (isStoneForm && form.id === "pedra_04" && hitResult.criticals > 0) {
-      const currentSpent = parseNumber(actor.system?.props?.pdr_slayer_gasto_valor);
-      await actor.update({ "system.props.pdr_slayer_gasto_valor": Math.max(0, currentSpent - 2) }, { naCsbAutomation: true, naBreathing: true });
+      // Recuperação por Crítico: até `recoverPdrOnCritical` PDR (2, hoje) por
+      // uso — "efeito de contato não duplicável": mesmo se os dois ataques
+      // (ação de Ataque + ação Especial) forem críticos, recupera só uma vez.
+      const recovery = Math.max(0, Math.trunc(parseNumber(selected.recoverPdrOnCritical)));
+      if (recovery > 0) {
+        const currentSpent = parseNumber(actor.system?.props?.pdr_slayer_gasto_valor);
+        await actor.update({ "system.props.pdr_slayer_gasto_valor": Math.max(0, currentSpent - recovery) }, { naCsbAutomation: true, naBreathing: true });
+      }
     }
 
     const targetActor = [...(game.user?.targets ?? [])][0]?.actor ?? null;
@@ -903,8 +1060,14 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         sourceName: form.nome, tick: "start", stacks: 1,
       });
     }
-    if (isSnowForm && form.id === "neve_02" && targetActor && plan.state?.pendingTargetEffect) {
-      await targetActor.setFlag(MODULE_ID, "snowPenalty", plan.state.pendingTargetEffect);
+    if (isSnowForm && form.id === "neve_02" && plan.state?.pendingTargetEffect) {
+      // Inverno Sombrio é uma Forma em Área (raio 5m): todo inimigo marcado
+      // como alvo do usuário recebe a mesma penalidade de Nível, não apenas
+      // o primeiro alvo selecionado.
+      const areaTargets = [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean);
+      for (const enemyActor of areaTargets) {
+        await enemyActor.setFlag(MODULE_ID, "snowPenalty", plan.state.pendingTargetEffect);
+      }
     }
     if (!(isSnowForm && form.id === "neve_02")) {
       await rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem });
@@ -919,7 +1082,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
   if (damageRoll && game.dice3d?.showForRoll) await game.dice3d.showForRoll(damageRoll, game.user, true);
   await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
   if (flameHealingRoll) {
-    await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Cauterizar</strong> — recuperação de PDV` });
+    await flameHealingRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Cauterizar</strong> recuperação de PDV` });
   }
 }
 
@@ -936,7 +1099,7 @@ export function registerBreathingEngine() {
       if (actor?.system?.props?.resp_pedra_estado) void actor.update(clearStoneBreathingState(actor.system.props.resp_pedra_estado), { naCsbAutomation: true, naBreathing: true });
       if (actor?.system?.props?.resp_nevoa_estado) void actor.update(clearMistBreathingState(actor.system.props.resp_nevoa_estado), { naCsbAutomation: true, naBreathing: true });
       if (actor?.system?.props?.resp_metal_estado) void actor.update(clearMetalBreathingState(actor.system.props.resp_metal_estado), { naCsbAutomation: true, naBreathing: true });
-      if (actor?.system?.props?.resp_neve_estado) void actor.update(clearSnowBreathingState(), { naCsbAutomation: true, naBreathing: true });
+      if (actor?.system?.props?.resp_neve_estado) void actor.update(clearSnowBreathingState(actor.system.props.resp_neve_estado), { naCsbAutomation: true, naBreathing: true });
       if (actor?.getFlag?.(MODULE_ID, "flameHeat")) void actor.unsetFlag(MODULE_ID, "flameHeat");
       if (actor?.getFlag?.(MODULE_ID, "flameBlockPenalty")) void actor.unsetFlag(MODULE_ID, "flameBlockPenalty");
     }
@@ -956,6 +1119,12 @@ export function registerBreathingEngine() {
       const turns = Number(snowPenalty.turns) - 1;
       if (turns > 0) void actor.setFlag(MODULE_ID, "snowPenalty", { ...snowPenalty, turns });
       else void actor.unsetFlag(MODULE_ID, "snowPenalty");
+    }
+    const snowMovementPenalty = actor.getFlag?.(MODULE_ID, "snowMovementPenalty");
+    if (Number(snowMovementPenalty?.turns) > 0) {
+      const turns = Number(snowMovementPenalty.turns) - 1;
+      if (turns > 0) void actor.setFlag(MODULE_ID, "snowMovementPenalty", { ...snowMovementPenalty, turns });
+      else void actor.unsetFlag(MODULE_ID, "snowMovementPenalty");
     }
     const stonePenalty = actor.getFlag?.(MODULE_ID, "stoneReflectionPenalty");
     if (Number(stonePenalty?.turns) > 0) {

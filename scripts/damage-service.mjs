@@ -9,17 +9,20 @@ import { applyOniDamage, applySlayerDamageAuto } from "./damage-relay.mjs";
 import { getDamageStatusEffects, isReactionBlocked } from "./status-effects.mjs";
 import { consumeSlayerActions } from "./action-service.mjs";
 import { consumeOniActions } from "./oni-action-service.mjs";
-import { parseWaterBreathingState } from "./breath-service.mjs";
+import { applyBreathingStatus, parseWaterBreathingState } from "./breath-service.mjs";
 import { currentPdv } from "./status-engine.mjs";
+import { parseStatusState } from "./status-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
 import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { consumeStonePending, parseStoneBreathingState, stoneStatePatch } from "./stone-breathing-service.mjs";
-import { consumeMistPending, mistStatePatch, parseMistBreathingState, resolveMistFormula } from "./mist-breathing-service.mjs";
+import { consumeMistPending, mistStatePatch, parseMistBreathingState, resolveMistFormula, resolveMistStigmaStunOnHit } from "./mist-breathing-service.mjs";
 import { canApplyMetalChain, consumeMetalHammerPending, metalStatePatch, parseMetalBreathingState, registerMetalChainApplication } from "./metal-breathing-service.mjs";
 import { breakSnowRestrictionOnDamage, consumeSnowPending, parseSnowBreathingState, resolveSnowAvalancheSynergy, resolveSnowFreezeGain, resolveSnowKekkijutsuGuard, snowStatePatch } from "./snow-breathing-service.mjs";
 import { resolveBreathingDefense } from "./breathing-defense.mjs";
+import { consumeWindPending, parseWindBreathingState, windStatePatch } from "./wind-breathing-service.mjs";
+import { WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
 import { addStoneBreak, parseBreathPassiveState, passiveStatePatch } from "./breath-passives.mjs";
 import { openAttackBuilder } from "./items/attack-builder.mjs";
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from "./metal-runtime.mjs";
@@ -77,15 +80,15 @@ function weaponProfileEntry(profile, attrValues, { includeAttributes = true, att
   const additiveRules = usableRules.filter((rule) => rule?.escolha !== true);
   const selected = choiceRules.length > 0
     ? choiceRules.reduce((best, rule) => {
-        const key = String(rule?.key ?? "").toLowerCase();
-        const value = Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
-        return value > best.value ? { key, value } : best;
-      }, { key: "", value: 0 })
+      const key = String(rule?.key ?? "").toLowerCase();
+      const value = Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
+      return value > best.value ? { key, value } : best;
+    }, { key: "", value: 0 })
     : null;
   const additiveTotal = additiveRules.reduce((total, rule) => {
-        const key = String(rule?.key ?? "").toLowerCase();
-        return total + Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
-      }, 0);
+    const key = String(rule?.key ?? "").toLowerCase();
+    return total + Math.floor((attrValues[key] ?? 0) * Number(rule?.multiplicador ?? 1));
+  }, 0);
   const attributeTotal = (selected?.value ?? 0) + additiveTotal;
   return {
     tipoAcao: "ataque",
@@ -104,7 +107,7 @@ function weaponProfileEntries(profile, attrValues) {
 
 async function chooseWeaponProfile(profiles) {
   if (profiles.length === 1) return profiles[0];
-  const options = profiles.map((profile, index) => `<option value="${index}">${profile.nome || `Perfil ${index + 1}`}${profile.alcance ? ` — ${profile.alcance}` : ""}</option>`).join("");
+  const options = profiles.map((profile, index) => `<option value="${index}">${profile.nome || `Perfil ${index + 1}`}${profile.alcance ? ` ${profile.alcance}` : ""}</option>`).join("");
   const result = await foundry.applications.api.DialogV2.wait({
     window: { title: "Escolher ataque da arma" },
     content: `<label>Perfil de ataque</label><select name="weaponProfile">${options}</select>`,
@@ -127,11 +130,11 @@ async function chooseMetalHammerSynergy(attacker) {
   });
   if (allies.length === 0) return null;
   const options = [
-    '<option value="">Sem sinergia — metade do dano</option>',
-    ...allies.map((entry) => `<option value="${entry.uuid}">${entry.name} — ${entry.breathing} (1 PDR; dano integral)</option>`),
+    '<option value="">Sem sinergia metade do dano</option>',
+    ...allies.map((entry) => `<option value="${entry.uuid}">${entry.name} ${entry.breathing} (1 PDR; dano integral)</option>`),
   ].join("");
   const chosenUuid = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Sinergia — Martelo do Julgamento" },
+    window: { title: "Sinergia Martelo do Julgamento" },
     content: `<div class="na-csb-automation"><p>Um aliado de Chamas, Pedra ou Magma pode gastar 1 PDR para elevar o ataque adicional ao dano integral.</p><select name="ally">${options}</select></div>`,
     modal: true,
     rejectClose: false,
@@ -285,7 +288,11 @@ export async function rollDamage(options = {}) {
   if (flameDamage?.formula && hasAttackDamage) specs.push({ label: "Respiração das Chamas", types: ["cortante"], formula: flameDamage.formula, flame: true });
   if (flameTechnique && flameTier.techniqueDie) specs.push({ label: "Fogo Fátuo", types: ["fogo"], formula: flameTier.techniqueDie, flame: true });
   if (flameState.ignition?.damageBonus && hasAttackDamage) specs.push({ label: "Ignição", types: ["fogo"], formula: String(flameState.ignition.damageBonus), flame: true });
-  if (flameTier.weaponDamage > 0 && hasAttackDamage) specs.push({ label: "Fogo Fátuo — Arma", types: [], formula: String(flameTier.weaponDamage), flame: true });
+  const rengokuAllies = Math.max(0, Math.trunc(Number(flameDamage?.rengokuAllies) || 0));
+  if (flameDamage?.rengoku && rengokuAllies > 0 && hasAttackDamage) {
+    specs.push({ label: `Sinergia de Aliados (${rengokuAllies}×5)`, types: ["fogo"], formula: String(rengokuAllies * 5), flame: true });
+  }
+  if (flameTier.weaponDamage > 0 && hasAttackDamage) specs.push({ label: "Fogo Fátuo Arma", types: [], formula: String(flameTier.weaponDamage), flame: true });
   const stoneState = parseStoneBreathingState(attackerKind === "slayer" ? props.resp_pedra_estado : "");
   const stoneDamage = stoneState.pendingDamage;
   if (stoneDamage?.formula && hasAttackDamage) {
@@ -297,14 +304,14 @@ export async function rollDamage(options = {}) {
   if (mistDamage?.formula && hasAttackDamage) {
     if (mistDamage.replaceWeaponDamage) specs = specs.filter((spec) => spec.breathing || spec.flame || spec.stone);
     specs.push({ label: "Respiração da Névoa", types: ["cortante"], formula: resolveMistFormula(mistDamage.formula, props), mist: true });
-    if (critical && mistDamage.criticalFormula) specs.push({ label: "Colapso da Névoa — crítico", types: ["cortante"], formula: resolveMistFormula(mistDamage.criticalFormula, props), mist: true });
+    if (critical && mistDamage.criticalFormula) specs.push({ label: "Colapso da Névoa crítico", types: ["cortante"], formula: resolveMistFormula(mistDamage.criticalFormula, props), mist: true });
   }
   const metalState = parseMetalBreathingState(attackerKind === "slayer" ? props.resp_metal_estado : "");
   const metalChain = metalState.chainReaction;
   const metalChainApplies = canApplyMetalChain(metalState, actionId) && hasAttackDamage
     && specs.some((spec) => spec.types?.some((type) => ["cortante", "perfurante"].includes(type)));
   if (metalChainApplies) {
-    specs.push({ label: "Respiração do Metal — Reação em Cadeia", types: [], formula: String(metalChain.damageBonus || 0), metal: true });
+    specs.push({ label: "Respiração do Metal Reação em Cadeia", types: [], formula: String(metalChain.damageBonus || 0), metal: true });
   }
   const snowState = parseSnowBreathingState(attackerKind === "slayer" ? props.resp_neve_estado : "");
   const snowDamage = snowState.pendingDamage;
@@ -313,6 +320,26 @@ export async function rollDamage(options = {}) {
   }
   if (snowState.belowZero?.fdvDamageBonus && hasAttackDamage) {
     specs.push({ label: "Abaixo de Zero", types: ["congelante"], formula: String(snowState.belowZero.fdvDamageBonus), snow: true });
+  }
+  // Respiração do Vento — contrato pendingDamage (P0 dano fantasma corrigido)
+  const windState = parseWindBreathingState(attackerKind === "slayer" ? props.resp_vento_estado : "");
+  const windDamage = windState.pendingDamage;
+  let garrasApplied = false;
+  if (windDamage?.garras && hasAttackDamage && specs.length > 0 && !garrasApplied) {
+    // Garras do Vento Puro: transforma o PRIMEIRO spec (dano da arma):
+    // N2/N3 → arma ×N · N4 → (arma + DEX) ×N
+    const weaponSpec = specs.find((spec) => !spec.breathing && !spec.flame && !spec.stone && !spec.mist && !spec.snow);
+    if (weaponSpec) {
+      const { multiplier, addDex } = windDamage.garras;
+      weaponSpec.formula = addDex
+        ? `((${weaponSpec.formula}) + ${attrValues.dex ?? 0}) * ${multiplier}`
+        : `(${weaponSpec.formula}) * ${multiplier}`;
+      weaponSpec.label = `${weaponSpec.label} (Garras ×${multiplier})`;
+      garrasApplied = true;
+    }
+  }
+  if (windDamage?.formula && hasAttackDamage) {
+    specs.push({ label: "Respiração do Vento", types: Array.isArray(windDamage.types) ? windDamage.types : [], formula: String(windDamage.formula).replace(/@(dex|fdv|for)\b/giu, (_m, key) => String(attrValues[String(key).toLowerCase()] ?? 0)), wind: true });
   }
   if (specs.length === 0) return ui.notifications?.warn?.("Informe ao menos um dado, valor fixo ou atributo no dano.");
 
@@ -350,7 +377,7 @@ export async function rollDamage(options = {}) {
   }
   const subtotalDamage = components.reduce((total, component) => total + component.subtotal, 0);
   const finalDamage = flameTier.multiplier > 1 && hasAttackDamage ? Math.floor(subtotalDamage * flameTier.multiplier) : subtotalDamage;
-  if (finalDamage > subtotalDamage) components.push({ label: "Fogo Fátuo 60 — +50%", types: ["fogo"], subtotal: finalDamage - subtotalDamage });
+  if (finalDamage > subtotalDamage) components.push({ label: "Fogo Fátuo 60 +50%", types: ["fogo"], subtotal: finalDamage - subtotalDamage });
   const damageTypes = [...new Set(components.flatMap((component) => component.types))];
 
   // Agrupar atualizações por Actor
@@ -395,6 +422,11 @@ export async function rollDamage(options = {}) {
     Object.assign(existing.changes, snowStatePatch(consumeSnowPending(snowState, { damage: true })));
     updatesByActor.set(actor.uuid, existing);
   }
+  if (windDamage && hasAttackDamage && windDamage.formula !== "") {
+    const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+    Object.assign(existing.changes, windStatePatch(consumeWindPending(windState, { damage: true })));
+    updatesByActor.set(actor.uuid, existing);
+  }
   if (metalChainApplies) {
     const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
     Object.assign(existing.changes, registerMetalChainApplication(metalState, actionId).patch);
@@ -411,6 +443,16 @@ export async function rollDamage(options = {}) {
 
   const damageRequests = [];
   const targets = game?.user?.targets;
+  // Estigma da Névoa: "ao acertar qualquer ataque, pode atordoar o inimigo
+  // por 1 turno" — benefício único por ataque bem-sucedido (não por alvo em
+  // AOE), consumido aqui porque este é o ponto em que um acerto com dano
+  // real contra um alvo é confirmado. `earned` nunca é apagado.
+  let stigmaStunApplied = false;
+  let cycloneAttackRoll = null;
+  let cycloneAttackRolledMessage = false;
+  let windSuppressResistances = false;
+  const windVentaniaTargets = new Set();
+  let windTufaoHealPending = false;
   if (targets && targets.size > 0 && finalDamage > 0) {
     for (const targetToken of targets) {
       const protectedActor = targetToken.actor;
@@ -441,7 +483,7 @@ export async function rollDamage(options = {}) {
           ? Math.floor(normalSubtotal * flameTier.multiplier)
           : normalSubtotal;
         if (amount > normalSubtotal) targetComponents.push({
-          label: "Fogo Fátuo 60 — +50%",
+          label: "Fogo Fátuo 60 +50%",
           types: ["fogo"],
           subtotal: amount - normalSubtotal,
         });
@@ -454,10 +496,10 @@ export async function rollDamage(options = {}) {
         const synergy = resolveSnowAvalancheSynergy(snowSource?.system?.props?.resp_neve_estado, { targetUuid: targetActor.uuid, allyStealthed: true });
         if (synergy.applies) {
           const bonusRoll = await Roll.create(synergy.formula).evaluate();
-          await bonusRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Avalanche Negativa</strong> — sinergia com Nevasca" });
+          await bonusRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Avalanche Negativa</strong> sinergia com Nevasca" });
           const bonus = Math.max(0, Math.trunc(Number(bonusRoll.total) || 0));
           amount += bonus;
-          targetComponents.push({ label: "Avalanche Negativa — aliado furtivo", types: ["congelante"], subtotal: bonus });
+          targetComponents.push({ label: "Avalanche Negativa aliado furtivo", types: ["congelante"], subtotal: bonus });
           await targetActor.setFlag(MODULE_ID, "snowMovementPenalty", { value: bonus, turns: synergy.movementTurns, sourceActorUuid: snowSource?.uuid ?? "" });
         }
       }
@@ -479,24 +521,63 @@ export async function rollDamage(options = {}) {
       }
       if (flameDamage?.damagePerEnemyHeat && heatBefore > 0) {
         const heatRoll = await Roll.create(`${heatBefore}d8`).evaluate();
-        await heatRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Tormenta de Chamas</strong> — ${heatBefore}d8 pelas Brasas do alvo` });
+        await heatRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Tormenta de Chamas</strong> ${heatBefore}d8 pelas Brasas do alvo` });
         amount += Math.max(0, Math.trunc(Number(heatRoll.total) || 0));
       }
       if (flameDamage?.evasionDc) {
         const dex = parseAttributeValue(targetActor.system?.props?.dex_display);
         const save = await Roll.create(`1d20 + ${dex}`).evaluate();
-        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Tormenta de Chamas</strong> — Esquiva CD ${flameDamage.evasionDc}` });
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Tormenta de Chamas</strong> Esquiva CD ${flameDamage.evasionDc}` });
         if (save.total >= flameDamage.evasionDc) amount = Math.floor(amount / 2);
       }
       if (flameDamage?.rengoku && flameDamage.saveDc) {
         const fdv = parseAttributeValue(targetActor.system?.props?.fdv_display);
         const save = await Roll.create(`1d20 + ${fdv}`).evaluate();
-        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Rengoku</strong> — FDV CD ${flameDamage.saveDc}` });
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Rengoku</strong> FDV CD ${flameDamage.saveDc}` });
         if (save.total < flameDamage.saveDc) {
-          amount *= 2;
-          const weaponHeat = Math.max(0, Number(flameState.weaponHeat) || 0);
-          rengokuBonus = weaponHeat + (weaponHeat >= 60 ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for)) : 0);
+          // Vulnerável ao Rengoku: +1 dano por ponto de Fogo Fátuo da arma;
+          // com 60+ Brasas Ardentes NAQUELE alvo, acrescenta FDV × FOR.
+          rengokuBonus = Math.max(0, Number(flameState.weaponHeat) || 0)
+            + (heatBefore >= 60 ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for)) : 0);
           amount += rengokuBonus;
+        }
+      }
+      // ─── Respiração do Vento ───────────────────────────────────────────
+      if (windDamage?.cycloneOpposed && hasAttackDamage) {
+        // DECISÃO PENDENTE documentada: usa UMA rolagem ofensiva compartilhada
+        // comparada à Esquiva individual de cada alvo.
+        cycloneAttackRoll ??= await Roll.create(`1d20 + ${parseAttributeValue(props.dex_display)} + ${parseNumber(props.hab_acerto_bonus)}`).evaluate();
+        if (!cycloneAttackRolledMessage) {
+          await cycloneAttackRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: "<strong>Ciclone Penetrante</strong> Acerto padrão" });
+          cycloneAttackRolledMessage = true;
+        }
+        const esquivaTarget = parseAttributeValue(targetActor.system?.props?.dex_display) + parseNumber(targetActor.system?.props?.hab_esquiva_bonus);
+        if (cycloneAttackRoll.total < esquivaTarget) amount = Math.floor(amount / 2);
+      }
+      if (windDamage?.ignoreResistance && hasAttackDamage) windSuppressResistances = true;
+      if (windDamage?.disablesHealing && hasAttackDamage && amount > 0) {
+        await targetActor.setFlag(MODULE_ID, "windHealBlock", {
+          sourceActorUuid: actor.uuid,
+          kekkijutsuSurcharge: Number(windDamage.kekkijutsuSurcharge) || 0,
+          untilRound: (game.combat?.round ?? 0) + 1,
+        });
+        ui.notifications?.info?.(`Tempestade Crescente: ${targetActor.name} não pode curar PDV até o próximo turno do usuário.`);
+      }
+      if (windDamage?.critBlocksRegenerationTurns && effectiveCritical && hasAttackDamage) {
+        await targetActor.setFlag(MODULE_ID, "windRegenBlock", {
+          turns: windDamage.critBlocksRegenerationTurns,
+          sourceName: "Fumaça Escurecedora",
+        });
+      }
+      if (windDamage?.tufao && hasAttackDamage && amount > 0) {
+        const vit = parseAttributeValue(targetActor.system?.props?.vit_display);
+        const bleedSave = await Roll.create(`1d20 + ${vit}`).evaluate();
+        await bleedSave.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Tufão Idaten</strong> Sangramento VIT CD ${windDamage.tufao.bleedSaveDc}` });
+        if (bleedSave.total < windDamage.tufao.bleedSaveDc) {
+          await applyBreathingStatus(targetActor, "sangramento", {
+            damageFormula: String(parseNumber(props.for_display)), remainingTurns: 3,
+            sourceName: "Tufão Idaten", tick: "start", stacks: 1,
+          });
         }
       }
       const targetSnowPenalty = targetActor.getFlag?.(MODULE_ID, "snowPenalty");
@@ -509,7 +590,7 @@ export async function rollDamage(options = {}) {
       const existingSuppression = targetActor.getFlag?.(MODULE_ID, "mistResistanceSuppression");
       const newSuppressionTurns = Math.max(0, Number(mistDamage?.suppressResistanceTurns) || 0);
       if (newSuppressionTurns > 0) await targetActor.setFlag(MODULE_ID, "mistResistanceSuppression", { turns: newSuppressionTurns, sourceActorUuid: actor.uuid });
-      const suppressResistances = newSuppressionTurns > 0 || Number(existingSuppression?.turns) > 0;
+      const suppressResistances = newSuppressionTurns > 0 || Number(existingSuppression?.turns) > 0 || windSuppressResistances;
       const defense = resolveBreathingDefense({ amount, components: targetComponents, damageTypes, props: targetActor.system?.props ?? {}, suppressResistances });
       amount = defense.amount;
       targetComponents = defense.components;
@@ -521,7 +602,7 @@ export async function rollDamage(options = {}) {
         const ranged = Number.isFinite(Number(distance)) && Number(distance) > 2;
         if (!targetMist.incomingReduction.rangedOnly || ranged) {
           const reduction = await Roll.create(targetMist.incomingReduction.formula).evaluate();
-          await reduction.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: "<strong>Expansão de Névoa</strong> — redução de dano" });
+          await reduction.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: "<strong>Expansão de Névoa</strong> redução de dano" });
           amount = Math.max(0, amount - Math.max(0, Math.trunc(Number(reduction.total) || 0)));
           delete targetMist.incomingReduction;
           Object.assign(targetPatch, mistStatePatch(targetMist));
@@ -532,10 +613,23 @@ export async function rollDamage(options = {}) {
         const dc = dcParts.map(Number).reduce((total, value) => total + value, 0);
         const sab = parseAttributeValue(actor.system?.props?.sab_display);
         const save = await Roll.create(`1d20 + ${sab}`).evaluate();
-        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Mar de Nuvens</strong> — SAB contra CD ${dc}` });
+        await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor: `<strong>Mar de Nuvens</strong> SAB contra CD ${dc}` });
         if (save.total < dc) amount = Math.floor(amount / 2);
         delete targetMist.incomingHalfOnFailedSave;
         Object.assign(targetPatch, mistStatePatch(targetMist));
+      }
+      if (!stigmaStunApplied && amount > 0 && attackerKind === "slayer" && targetActor.uuid !== actor.uuid) {
+        const existingAttacker = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+        const attackerMistNow = existingAttacker.changes["system.props.resp_nevoa_estado"]
+          ? parseMistBreathingState(existingAttacker.changes["system.props.resp_nevoa_estado"])
+          : mistState;
+        const stunResult = resolveMistStigmaStunOnHit(attackerMistNow);
+        if (stunResult.applied) {
+          stigmaStunApplied = true;
+          Object.assign(existingAttacker.changes, mistStatePatch(stunResult.state));
+          updatesByActor.set(actor.uuid, existingAttacker);
+          await applyBreathingStatus(targetActor, "atordoamento", stunResult.effect);
+        }
       }
       damageRequests.push({ actor: targetActor, protectedActor, intercepted, amount, rengokuBonus, heatBefore, components: targetComponents, patch: targetPatch, negated: defense.negated, critical: effectiveCritical });
     }
@@ -576,6 +670,51 @@ export async function rollDamage(options = {}) {
     }),
   ]);
 
+  // ─── Respiração do Vento — pós-dano ─────────────────────────────────
+  for (const request of damageRequests) {
+    if (!(request.amount > 0)) continue;
+    // 7º Estilo: inimigos atingidos neste turno testam VIT (uma vez por alvo/turno)
+    if (windDamage?.ventania && hasAttackDamage) {
+      windVentaniaTargets.add(request.actor);
+    }
+    // 9º Estilo: cura 5 PDV se dano líquido >= 10% do PDV máximo do alvo
+    if (windDamage?.tufao && request.amount > 0 && !windTufaoHealPending) {
+      const maxPdv = parseNumber(request.actor.system?.props?.pdv_slayer_maximo_num)
+        || parseNumber(request.actor.system?.props?.pdv_oni_maximo_num) || 0;
+      const thresholdPdv = Number(windDamage.tufao.healThresholdPercent ?? 10);
+      if (maxPdv > 0 && request.amount >= Math.ceil(maxPdv * thresholdPdv / 100)) windTufaoHealPending = true;
+    }
+  }
+  for (const targetActor of windVentaniaTargets) {
+    const round = game.combat?.round ?? 0;
+    const turn = game.combat?.turn ?? 0;
+    const saveKey = `windVentaniaSave`;
+    const saves = targetActor.getFlag?.(MODULE_ID, saveKey) ?? {};
+    if (saves[`${round}:${turn}`]) continue;
+    const dcTotal = (await Roll.create(windDamage.ventania.dcFormula).evaluate()).total;
+    const vit = parseAttributeValue(targetActor.system?.props?.vit_display);
+    const save = await Roll.create(`1d20 + ${vit}`).evaluate();
+    await save.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: `<strong>Ventania Rajadas Repentinas</strong> VIT CD ${dcTotal}` });
+    await targetActor.setFlag(MODULE_ID, saveKey, { ...saves, [`${round}:${turn}`]: true });
+    if (save.total < dcTotal) {
+      const fallRoll = await Roll.create(windDamage.ventania.fallDamage).evaluate();
+      await fallRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: targetActor }), flavor: "<strong>Ventania</strong> dano de queda" });
+      const kind = actorKind(targetActor);
+      if (kind === "slayer") await applySlayerDamageAuto(targetActor, fallRoll.total, { isAttack: false, attackName: "Ventania — queda", damageTypes: ["concussao"] });
+      else if (kind === "oni") await applyOniDamage(targetActor, fallRoll.total, { attackName: "Ventania — queda", rolledTotal: fallRoll.total, damageTypes: ["concussao"] });
+      await targetActor.setFlag(MODULE_ID, "windProne", {
+        sourceActorUuid: actor.uuid,
+        untilRound: round + 1,
+        message: "Levantar exige gastar uma Ação Especial no próximo turno.",
+      });
+    }
+  }
+  if (windTufaoHealPending && Number(windDamage?.healOnBigHit ?? 0) > 0 && attackerKind === "slayer") {
+    const healed = parseNumber(props.pdv_slayer_curado) + Number(windDamage.healOnBigHit);
+    await actor.update({ "system.props.pdv_slayer_curado": healed }, { naCsbAutomation: true, naBreathing: true });
+    ui.notifications?.info?.(`Tufão Idaten: você recupera ${windDamage.healOnBigHit} PDV.`);
+  }
+
   const appliedTargets = [];
   for (const [index, result] of results.entries()) {
     if (result.status === "fulfilled") {
@@ -588,7 +727,7 @@ export async function rollDamage(options = {}) {
             await request.protectedActor.unsetFlag(MODULE_ID, "flameInterception");
             await ChatMessage.create({
               speaker: ChatMessage.getSpeaker({ actor: targetActor }),
-              content: `<p><strong>Ondulação da Chama Fluorescente</strong> — ${targetActor.name} interceptou o dano destinado a ${request.protectedActor.name}.</p>`,
+              content: `<p><strong>Ondulação da Chama Fluorescente</strong> ${targetActor.name} interceptou o dano destinado a ${request.protectedActor.name}.</p>`,
             });
           }
           const amount = Math.max(0, Math.trunc(Number(applied?.appliedDamage) || 0));
@@ -608,7 +747,7 @@ export async function rollDamage(options = {}) {
           ui.notifications?.info?.(`${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ""}.`);
 
           // Água 5 (Chuva Misericordiosa): finalizar o alvo recupera PDR igual
-          // ao Nível de Respiração do usuário (regra do .md — "Se finalizar").
+          // ao Nível de Respiração do usuário (regra do .md "Se finalizar").
           const killRecovery = Math.max(0, Math.trunc(parseNumber(breathingDamage?.recoverPdrOnKill)));
           if (killRecovery > 0 && targetActor.system?.props && currentPdv(targetActor.system.props) <= 0) {
             const pdrGastoAtual = parseNumber(props.pdr_slayer_gasto_valor);
@@ -685,11 +824,11 @@ export async function rollDamage(options = {}) {
   }
   const componentLines = components.map((component) => {
     const labels = component.types.map((key) => TIPOS_DANO.find((type) => type.key === key)?.label ?? key).join(" · ") || "Sem tipo";
-    return `<div><strong>${component.label}</strong> — ${labels}: <strong>${component.subtotal}</strong></div>`;
+    return `<div><strong>${component.label}</strong> ${labels}: <strong>${component.subtotal}</strong></div>`;
   }).join("");
   const targetLine = appliedTargets.length
     ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${target.amount}${target.wound ? `, Ferida ${target.wound}` : ""})`).join(", ")}</div>`
-    : damageRequests.length ? "<div>Alvo solicitado, mas a ficha não foi atualizada</div>" : "<div>Nenhum alvo — ficha não atualizada</div>";
+    : damageRequests.length ? "<div>Alvo solicitado, mas a ficha não foi atualizada</div>" : "<div>Nenhum alvo ficha não atualizada</div>";
   const flavor = `<div><strong>${nome}</strong>${critical ? " · CRÍTICO" : ""}${pdrGasto ? ` · −${pdrGasto} PDR` : ""}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(" · ")}</div>` : ""}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
   const messageMode = game.settings?.get?.("core", "messageMode") ?? "public";
   const chatData = { speaker: ChatMessage.getSpeaker({ actor }), flavor, rolls, messageMode };

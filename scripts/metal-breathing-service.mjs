@@ -78,7 +78,10 @@ export function buildMetalBreathingPlan(formId, level, props = {}, choices = {})
       uses: 1,
     };
   } else if (form.id === "metal_06") {
-    const magnetismEligible = vit >= 6 || parseNumber(props.for_display) >= 6;
+    // Magnetismo é passiva PERMANENTE da Respiração (decisão do Operador,
+    // 2026-08-23): elegível por VIT/FOR efetivas, sem depender do Forjado.
+    const magnetism = resolveMetalMagnetism(props);
+    next.magnetism = { targetUuid: magnetism.eligible ? String(choices.targetUuid ?? "") : "" };
     next.battleForged = {
       turns: selected.turns,
       hits: 0,
@@ -86,8 +89,6 @@ export function buildMetalBreathingPlan(formId, level, props = {}, choices = {})
       stageName: "",
       forBonus: 0,
       fdvBonus: 0,
-      magnetismEligible,
-      magnetismTargetUuid: magnetismEligible ? String(choices.targetUuid ?? "") : "",
     };
   }
 
@@ -181,14 +182,43 @@ export function registerMetalChainApplication(raw, actionId) {
   return { changed: true, state, patch: metalStatePatch(state) };
 }
 
-/** Verifica se o alvo obrigatório de Magnetismo foi respeitado. */
-export function validateMetalMagnetismTarget(raw, targetUuids = []) {
+/** Verifica se o alvo obrigatório de Magnetismo foi respeitado.
+ * Magnetismo é passiva permanente (decisão do Operador): elegível por
+ * VIT/FOR efetivas ≥ 6 — incluindo bônus temporários do Forjado — e não
+ * depende da 5ª Forma estar ativa.
+ * Compatibilidade: estados legados com battleForged.magnetismEligible
+ * continuam validando pelo formato antigo.
+ */
+export function validateMetalMagnetismTarget(raw, targetUuids = [], props = null) {
   const state = parseMetalBreathingState(raw);
-  const magnetism = state.battleForged;
-  const requiredTargetUuid = magnetism?.magnetismEligible ? String(magnetism.magnetismTargetUuid ?? "") : "";
-  if (!requiredTargetUuid) return { active: false, valid: true, requiredTargetUuid: "" };
   const selected = new Set((Array.isArray(targetUuids) ? targetUuids : [targetUuids]).map(String));
+
+  // Legado: elegibilidade congelada dentro do Forjado (mundos existentes)
+  if (state.battleForged?.magnetismEligible === true) {
+    const requiredTargetUuid = String(state.battleForged.magnetismTargetUuid ?? "");
+    if (!requiredTargetUuid) return { active: false, valid: true, requiredTargetUuid: "" };
+    return { active: true, valid: selected.has(requiredTargetUuid), requiredTargetUuid };
+  }
+
+  // Formato novo: passiva permanente, elegibilidade recalculada ao vivo
+  const requiredTargetUuid = String(state.magnetism?.targetUuid ?? "");
+  if (!requiredTargetUuid) return { active: false, valid: true, requiredTargetUuid: "" };
+  const active = props ? resolveMetalMagnetism(props, state).eligible : true;
+  if (!active) return { active: false, valid: true, requiredTargetUuid: "" };
   return { active: true, valid: selected.has(requiredTargetUuid), requiredTargetUuid };
+}
+
+/**
+ * Elegibilidade do Magnetismo a partir das ATRIBUTOS EFETIVAS atuais:
+ * display + bônus temporário do Forjado quando ativo (o estágio pode elevar
+ * FOR até o limiar 6; expirar Forjado pode desligar a passiva).
+ */
+export function resolveMetalMagnetism(props = {}, rawState = null) {
+  const state = rawState ? parseMetalBreathingState(rawState) : null;
+  const forged = state?.battleForged?.turns > 0 ? state.battleForged : null;
+  const effectiveVit = parseNumber(props.vit_display);
+  const effectiveFor = parseNumber(props.for_display) + Math.max(0, Math.trunc(parseNumber(forged?.forBonus)));
+  return { eligible: effectiveVit >= 6 || effectiveFor >= 6, effectiveVit, effectiveFor };
 }
 
 /**
@@ -221,16 +251,22 @@ export function tickMetalBreathing(raw) {
   const state = parseMetalBreathingState(raw);
   for (const key of ["metalized", "unshakable", "chainReaction", "battleForged"]) {
     if (!state[key] || !Number.isFinite(Number(state[key].turns))) continue;
-    state[key].turns = Math.max(0, Math.trunc(parseNumber(state[key].turns)) - 1);
-    if (state[key].turns === 0) delete state[key];
+    // Substitui o objeto em vez de mutar: estados antigos compartilhados por
+    // referência (shallow copy do parser) não podem ser alterados retroativamente.
+    const nextTurns = Math.max(0, Math.trunc(parseNumber(state[key].turns)) - 1);
+    state[key] = { ...state[key], turns: nextTurns };
+    if (nextTurns === 0) delete state[key];
   }
-  if (state.chainReaction) delete state.chainReaction.appliedThisTurn;
+  if (state.chainReaction?.appliedThisTurn !== undefined) {
+    state.chainReaction = { ...state.chainReaction };
+    delete state.chainReaction.appliedThisTurn;
+  }
   delete state.activeForm;
   return { state, patch: metalStatePatch(state) };
 }
 
 export function clearMetalBreathingState(raw) {
   const state = parseMetalBreathingState(raw);
-  for (const key of ["activeForm", "metalized", "unshakable", "chainReaction", "steelDefense", "battleForged"]) delete state[key];
+  for (const key of ["activeForm", "metalized", "unshakable", "chainReaction", "steelDefense", "battleForged", "magnetism"]) delete state[key];
   return metalStatePatch(state);
 }

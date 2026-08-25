@@ -16,9 +16,31 @@ Roll.create = (formula) => ({
   dice: [{ results: [{ result: 1, active: true }] }],
 });
 
-import { rollDamage, rollWeaponItem } from "../scripts/damage-service.mjs";
+import { rollDamage, rollWeaponItem, weaponProfileEntries } from "../scripts/damage-service.mjs";
 
 describe("damage-service", () => {
+  it("resolve os danos oficiais de Katana, Double Blade e Manoplas por modo", () => {
+    const attrs = { dex: 10, for: 6 };
+    const katanaNitoryu = { dano_fixo: 5, atributos: [], ataques: 2, dano_segundo_golpe: "fixo", tipos_dano: ["cortante", "perfurante"] };
+    const katanaMorote = { dano_fixo: 7, atributos: [], ataques: 1, tipos_dano: ["cortante", "perfurante"] };
+    const doubleBlade = { dano_fixo: 5, atributos: [], ataques: 2, dano_segundo_golpe: "normal", tipos_dano: ["cortante", "perfurante"] };
+    const manoplasBase = {
+      dano_fixo: 3,
+      atributos: [
+        { key: "DEX", multiplicador: 0.5, escolha: true },
+        { key: "FOR", multiplicador: 0.5, escolha: true },
+      ],
+      ataques: 2,
+      tipos_dano: ["concussao"],
+      cadeia_critica: { ativa: true, dano_fixo: 1, atributo_inteiro: ["DEX", "FOR"] },
+    };
+    assert.deepEqual(weaponProfileEntries(katanaNitoryu, attrs).map((entry) => entry.fixo), [5, 5]);
+    assert.deepEqual(weaponProfileEntries(katanaMorote, attrs).map((entry) => entry.fixo), [7]);
+    assert.deepEqual(weaponProfileEntries(doubleBlade, attrs).map((entry) => entry.fixo), [5, 5]);
+    assert.deepEqual(weaponProfileEntries({ ...manoplasBase, dano_segundo_golpe: "fixo" }, attrs).map((entry) => entry.fixo), [8, 3]);
+    assert.deepEqual(weaponProfileEntries({ ...manoplasBase, dano_segundo_golpe: "normal" }, attrs).map((entry) => entry.fixo), [8, 8]);
+    assert.equal(weaponProfileEntries(manoplasBase, attrs, { attackIndex: 2 })[0].fixo, 11);
+  });
   it("cancela quando dialog retorna null", async () => {
     _dialogReturn = null;
     const actor = makeActor();
@@ -300,6 +322,7 @@ describe("damage-service", () => {
       parent: actor,
       system: { props: {
         arma_nome: "Rebellion",
+        arma_categoria: "especial",
         arma_perfis_ataque: [{ nome: "Espadão", dano_fixo: 7, dano_dados: "", atributos: [{ key: "FOR", multiplicador: 1 }], tipos_dano: ["cortante"] }],
         arma_formulas_por_rank: { B: ["7 + FOR + 1d10 / Cortante"] },
       } },
@@ -320,6 +343,7 @@ describe("damage-service", () => {
     actor.documentName = "Actor";
     const item = { name: "Gáe Bolg", parent: actor, system: { props: {
       arma_nome: "Gáe Bolg",
+      arma_categoria: "especial",
       arma_perfis_ataque: [{ formula_texto: "5 + metade de FOR ou DEX + FDV / Perfurante", dano_fixo: 5, atributos: [{ key: "FOR", multiplicador: 0.5 }, { key: "DEX", multiplicador: 0.5 }, { key: "FDV", multiplicador: 1 }], tipos_dano: ["perfurante"] }],
       arma_formulas_por_rank: { D: ["5 + metade de FOR ou DEX + FDV + 1d6 / Perfurante"] },
     } } };

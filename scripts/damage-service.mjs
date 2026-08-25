@@ -13,7 +13,7 @@ import { applyBreathingStatus, applyStackingBreathingStatus, parseWaterBreathing
 import { currentPdv } from "./status-engine.mjs";
 import { parseStatusState } from "./status-service.mjs";
 import { actorKind, isSlayerActor } from "./actor-kind.mjs";
-import { weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
+import { ensureWeaponUsageMode, weaponAmmoPatch, weaponAmmoState, weaponProfilesForActor } from "./weapon-service.mjs";
 import { flameWeaponTier } from "./flame-breathing-data.mjs";
 import { consumeFlameInterception, consumeFlamePending, FLAME_HEAT_FLAG, flameStatePatch, flameWeaponHeat, parseFlameBreathingState } from "./flame-breathing-service.mjs";
 import { consumeStonePending, parseStoneBreathingState, stoneStatePatch } from "./stone-breathing-service.mjs";
@@ -100,9 +100,29 @@ function weaponProfileEntry(profile, attrValues, { includeAttributes = true, att
   };
 }
 
-function weaponProfileEntries(profile, attrValues) {
+function criticalChainEntry(profile, attrValues, attackIndex) {
+  const chain = profile?.cadeia_critica;
+  const keys = Array.isArray(chain?.atributo_inteiro) ? chain.atributo_inteiro : [];
+  const best = keys.reduce((maximum, key) => Math.max(maximum, attrValues[String(key).toLowerCase()] ?? 0), 0);
+  return {
+    tipoAcao: "ataque",
+    dado: "",
+    fixo: Math.trunc(parseNumber(chain?.dano_fixo)) + best,
+    attrs: [],
+    tiposDano: Array.isArray(profile?.tipos_dano) ? profile.tipos_dano : [],
+    attackIndex,
+  };
+}
+
+export function weaponProfileEntries(profile, attrValues, { attackIndex = null } = {}) {
   const count = Math.max(1, Math.trunc(Number(profile?.ataques) || 1));
-  return Array.from({ length: count }, (_unused, attackIndex) => weaponProfileEntry(profile, attrValues, { includeAttributes: attackIndex === 0, attackIndex }));
+  const entryFor = (index) => {
+    if (index >= count && profile?.cadeia_critica?.ativa === true) return criticalChainEntry(profile, attrValues, index);
+    const includeAttributes = index === 0 || String(profile?.dano_segundo_golpe ?? "normal") === "normal";
+    return weaponProfileEntry(profile, attrValues, { includeAttributes, attackIndex: index });
+  };
+  if (Number.isInteger(attackIndex) && attackIndex >= 0) return [entryFor(attackIndex)];
+  return Array.from({ length: count }, (_unused, index) => entryFor(index));
 }
 
 async function chooseWeaponProfile(profiles) {
@@ -211,7 +231,7 @@ export async function rollDamage(options = {}) {
     if (weaponAmmo.required && weaponAmmo.current < weaponAmmo.shots) {
       return ui.notifications?.warn?.(`Munição insuficiente: são necessários ${weaponAmmo.shots} disparo(s), mas restam ${weaponAmmo.current}.`);
     }
-    options = { ...options, entradas: weaponProfileEntries(selectedWeaponProfile, attrValues) };
+    options = { ...options, entradas: weaponProfileEntries(selectedWeaponProfile, attrValues, { attackIndex: options.weaponAttackIndex }) };
   }
 
   // Compatibilidade de entradas
@@ -939,6 +959,19 @@ export async function rollWeaponItem(options = {}) {
     : await resolveActor(options);
   if (!actor) return ui.notifications?.warn?.("A arma precisa estar vinculada a um Caçador para calcular o dano.");
 
+  const selectedMode = await ensureWeaponUsageMode(item);
+  const availableModes = weaponProfilesForActor(item.system?.props ?? {}, actor.system?.props ?? {});
+  if (!selectedMode && availableModes.length > 1) return;
+
+  if (options.startWithHit === true && options.damageOnly !== true) {
+    const { rollHit } = await import("./hit-service.mjs");
+    return rollHit({
+      actor,
+      requiredWeaponId: item.id,
+      autoDamage: true,
+    });
+  }
+
   const itemProps = item.system?.props ?? {};
   let profiles = weaponProfilesForActor(itemProps, actor.system?.props ?? {});
   if (profiles.length === 0) return ui.notifications?.warn?.("Esta arma não possui perfil de ataque configurado.");
@@ -951,6 +984,7 @@ export async function rollWeaponItem(options = {}) {
     nome: itemProps.arma_nome || item.name,
     weaponProfiles: profiles,
     weaponItem: item,
+    weaponAttackIndex: Number.isInteger(options.weaponAttackIndex) ? options.weaponAttackIndex : null,
     tipoAcao: "ataque",
     critical: options.critical === true,
     actionId: options.actionId,

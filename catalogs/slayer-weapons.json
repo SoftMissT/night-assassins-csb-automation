@@ -557,10 +557,11 @@
           "arma_requisito": "",
           "descricao": "Uma espada com estilo mais ocidental, com duas lâminas, uma em cada lado.\n\n- Propriedades: Acuidade / Ryōtō\n- Alcance: 1,5m\n- Crítico: 19 Natural\n- Dano: 5 / Cortante e Perfurante\n\nHabilidade\n> Pode acertar duas vezes na mesma ação padrão de ataque. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX.\n\n---",
           "arma_ordem": 6,
-          "arma_perfis_ataque": [
-            {
-              "nome": "Ataque Base",
-              "formula_texto": "5 / Cortante e Perfurante",
+        "arma_perfis_ataque": [
+          {
+            "nome": "Ryōtō",
+            "modo": "ryoto",
+            "formula_texto": "5 / Cortante e Perfurante",
               "dano_fixo": 5,
               "dano_dados": "",
               "atributos": [],
@@ -569,7 +570,11 @@
                 "perfurante"
               ],
               "alcance": "** 1,5m",
-              "critico": 19
+            "critico": 19,
+            "ataques": 2,
+            "dano_segundo_golpe": "normal",
+            "acerto_segundo_sem_atributo": true,
+            "penalidade_segundo_acerto": 0
             }
           ],
           "arma_categoria": "basica",
@@ -2519,8 +2524,9 @@
           "descricao": "A arma padrão da maioria dos exterminadores.\n\n- Propriedades: Acuidade / Nitoryu & Morote\n- Alcance: 1,5m\n- Crítico: 20 Natural\n- Dano: 5 se for Nitoryu / 7 se for Morote / Cortante e Perfurante\n\n---",
           "arma_ordem": 15,
           "arma_perfis_ataque": [
-            {
-              "nome": "Nitoryu",
+          {
+            "nome": "Nitoryu",
+            "modo": "nitoryu",
               "formula_texto": "5 / Cortante e Perfurante",
               "dano_fixo": 5,
               "dano_dados": "",
@@ -2530,10 +2536,15 @@
                 "perfurante"
               ],
               "alcance": "1,5m",
-              "critico": 20
-            },
-            {
-              "nome": "Morote",
+            "critico": 20,
+            "ataques": 2,
+            "dano_segundo_golpe": "fixo",
+            "acerto_segundo_sem_atributo": true,
+            "penalidade_segundo_acerto": -2
+          },
+          {
+            "nome": "Morote",
+            "modo": "morote",
               "formula_texto": "7 / Cortante e Perfurante",
               "dano_fixo": 7,
               "dano_dados": "",
@@ -2543,7 +2554,11 @@
                 "perfurante"
               ],
               "alcance": "1,5m",
-              "critico": 20
+            "critico": 20,
+            "ataques": 1,
+            "dano_segundo_golpe": "normal",
+            "acerto_segundo_sem_atributo": false,
+            "penalidade_segundo_acerto": 0
             }
           ],
           "arma_categoria": "basica",
@@ -2916,10 +2931,11 @@
           "arma_requisito": "",
           "descricao": "Duas soqueiras gêmeas, empunhadas em formato de luvas.\n\n- Propriedades: Acuidade / Ryoto / Nitoryu\n- Alcance: 1,5m\n- Crítico: 20 Natural\n- Dano: 3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Concussivo\n\nHabilidade\n> Acertos críticos concedem +1 de acerto na sua ação de ataque e um ataque extra em sequência. Críticos consecutivos podem continuar aplicando esse efeito, formando uma barragem de socos nos melhores casos. Porém, o dano de cada soco extra conseguido dessa forma é igual a 1 + DEX ou FOR, e não o dano padrão da arma.\n\n---",
           "arma_ordem": 19,
-          "arma_perfis_ataque": [
-            {
-              "nome": "Ataque Base",
-              "formula_texto": "3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Concussivo",
+        "arma_perfis_ataque": [
+          {
+            "nome": "Nitoryu",
+            "modo": "nitoryu",
+            "formula_texto": "3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Concussivo",
               "dano_fixo": 3,
               "dano_dados": "",
               "atributos": [
@@ -2938,8 +2954,58 @@
                 "concussivo"
               ],
               "alcance": "** 1,5m",
-              "critico": 20
+            "critico": 20,
+            "ataques": 2,
+            "dano_segundo_golpe": "fixo",
+            "acerto_segundo_sem_atributo": true,
+            "penalidade_segundo_acerto": -2,
+            "cadeia_critica": {
+              "ativa": true,
+              "bonus_acerto": 1,
+              "dano_fixo": 1,
+              "atributo_inteiro": [
+                "DEX",
+                "FOR"
+              ]
             }
+          },
+          {
+            "nome": "Ryōtō",
+            "modo": "ryoto",
+            "formula_texto": "3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Concussivo",
+            "dano_fixo": 3,
+            "dano_dados": "",
+            "atributos": [
+              {
+                "key": "DEX",
+                "multiplicador": 0.5,
+                "escolha": true
+              },
+              {
+                "key": "FOR",
+                "multiplicador": 0.5,
+                "escolha": true
+              }
+            ],
+            "tipos_dano": [
+              "concussivo"
+            ],
+            "alcance": "** 1,5m",
+            "critico": 20,
+            "ataques": 2,
+            "dano_segundo_golpe": "normal",
+            "acerto_segundo_sem_atributo": true,
+            "penalidade_segundo_acerto": 0,
+            "cadeia_critica": {
+              "ativa": true,
+              "bonus_acerto": 1,
+              "dano_fixo": 1,
+              "atributo_inteiro": [
+                "DEX",
+                "FOR"
+              ]
+            }
+          }
           ],
           "arma_categoria": "basica",
           "arma_tipo": "Corpo a corpo",

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.11.13 - 2026-08-24
+
+- **Contrato oficial de armas separado das armas especiais de campanha**: o template `NA Arma - Slayer` deixa de conter progressão por Rank; o novo template `NA Arma Especial - Slayer` preserva a estrutura necessária para conteúdo especial futuro sem contaminar as armas normais.
+- **Compêndio oficial reduzido ao escopo validado**: somente Katana, Double Blade e Manoplas / Soqueiras são publicadas nesta versão. As demais armas permanecem apenas na fonte de conhecimento até receberem mecânica própria.
+- **Modo de uso persistente por Item sincronizado**: armas com mais de um perfil perguntam ao portador como serão usadas e salvam a escolha no Item embutido do Actor.
+- **Katana corrigida**: Nitoryu realiza dois ataques sequenciais de dano fixo 5, com segundo acerto sem atributo e penalidade -2; Morote realiza um ataque de dano fixo 7. Nenhum dos modos soma atributo ao dano.
+- **Double Blade corrigida**: Ryōtō realiza dois ataques de dano fixo 5; o segundo acerto ignora FOR/DEX sem reduzir o dano da arma.
+- **Manoplas / Soqueiras corrigidas**: dano normal `3 + floor(max(DEX, FOR) / 2)`; Nitoryu usa dano fixo 3 no segundo golpe; Ryōtō repete o dano normal. Cada crítico concede cumulativamente +1 de Acerto e um soco extra de `1 + max(DEX, FOR)`.
+- **Pipeline integrada**: o botão do Item inicia Acerto com os atributos e o crítico da arma; cada confirmação encaminha o índice correto do golpe para o Dano, evitando recursão entre Acerto e Dano.
+- **Piso mundial de crítico**: o GM pode configurar globalmente o menor valor crítico positivo permitido na campanha; a chave persistente anterior foi mantida para compatibilidade.
+- Validação isolada do commit: `node --test` com **849/849** testes aprovados; compêndio-fonte com três armas e dois templates.
+
 ## 0.11.12 - 2026-08-24
 
 - **Ficha Slayer volta a renderizar**: três componentes `table` da aba de Combate tinham `contents` como lista plana de células em vez de lista de linhas, o que fazia o parser do CSB lançar `TypeError: row.entries is not a function` e abortar a montagem de toda a árvore de componentes — a ficha exibia apenas o cabeçalho. Estrutura restaurada para linhas × células.

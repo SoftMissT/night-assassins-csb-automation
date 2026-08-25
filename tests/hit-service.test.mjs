@@ -198,6 +198,50 @@ describe("hit-service", () => {
     }
   });
 
+  it("Manoplas encadeiam um ataque extra e +1 de Acerto após crítico", async () => {
+    const item = {
+      id: "manoplas", uuid: "Item.manoplas", name: "Manoplas / Soqueiras",
+      system: { template: "NAWeaponTpl00001", props: {
+        arma_nome: "Manoplas / Soqueiras",
+        arma_modo_uso: "ryoto",
+        arma_propriedades: "Acuidade / Ryoto / Nitoryu",
+        arma_perfis_ataque: [{
+          nome: "Ryōtō", modo: "ryoto", critico: 20, dano_fixo: 3,
+          atributos: [{ key: "DEX", multiplicador: 0.5, escolha: true }, { key: "FOR", multiplicador: 0.5, escolha: true }],
+          tipos_dano: ["concussao"], ataques: 2, dano_segundo_golpe: "normal",
+          acerto_segundo_sem_atributo: true, cadeia_critica: { ativa: true, bonus_acerto: 1, dano_fixo: 1, atributo_inteiro: ["DEX", "FOR"] },
+        }],
+      } },
+      update: async () => {},
+    };
+    const actor = makeActor({ props: { acerto_label: "acerto_label_dex", dex_display: "10", for_display: "6", folego_slayer_atual: 0 } });
+    actor.items = { [Symbol.iterator]: [item][Symbol.iterator].bind([item]), get: (id) => id === item.id ? item : null };
+    actor.update = async () => {};
+    _dialogReturn = [
+      { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "ataque", weaponId: item.id, weaponProfileIndex: 0, weaponAttribute: "DEX" },
+      { hit: true, continue: true },
+      { hit: true, continue: true },
+      { hit: true, continue: false },
+    ];
+    const naturals = [20, 10, 10];
+    const formulas = [];
+    const previousCreate = Roll.create;
+    Roll.create = (formula) => ({ evaluate: async () => {
+      const natural = naturals.shift();
+      formulas.push(formula);
+      return { total: natural + 10, dice: [{ results: [{ result: natural, active: true }] }], toMessage: async () => ({ id: `roll-${formulas.length}` }) };
+    } });
+    try {
+      const result = await rollHit({ actor, autoDamage: false });
+      assert.equal(result.maximum, 3);
+      assert.equal(result.attempts.length, 3);
+      assert.match(formulas[1], /\+ 1$/);
+      assert.match(formulas[2], /\+ 1$/);
+    } finally {
+      Roll.create = previousCreate;
+    }
+  });
+
   it("Inverno Sombrio (Neve, Área): Congelar crítico é aplicado a TODOS os inimigos marcados, não só ao primeiro", async () => {
     _dialogReturn = [
       { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0, rollCount: 1, actionType: "especial" },

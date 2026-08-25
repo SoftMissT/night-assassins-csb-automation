@@ -115,6 +115,8 @@ export async function resolveAutoDamage({
       await rollWeaponItem({
         actor, item: weaponItem, weaponProfileIndex, critical: attempt.critical,
         actionId, skipActionConsumption: true, forceAttackDamage,
+        damageOnly: true,
+        weaponAttackIndex: Number.isInteger(attempt.attackIndex) ? attempt.attackIndex : 0,
       });
     } else {
       const entradas = techniqueEntradas.length > 0

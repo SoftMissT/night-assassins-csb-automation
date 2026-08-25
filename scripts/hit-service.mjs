@@ -65,7 +65,7 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
 async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVal, rollCount = 1, actionType = "", statusEffects, weapon = null, metalReroll = false, stopOnMiss = false }) {
   mode = mergeRollMode(mode, statusEffects.mode);
   const { extra, display } = parseBonus(bonusRaw);
-  const maximum = Math.min(20, Math.max(1, Math.trunc(Math.max(rollCount || 1, weapon?.attacks || 1))));
+  let maximum = Math.min(20, Math.max(1, Math.trunc(Math.max(rollCount || 1, weapon?.attacks || 1))));
   const modeLabel = getModeLabel(mode);
   const bonusLine = display ? ` | Bônus: ${display}` : "";
   const statusLine = statusEffects.reasons.length ? ` | Status: ${statusEffects.reasons.join(", ")}` : "";
@@ -73,13 +73,15 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
   let interrupted = false;
   const actionLabel = TIPOS_ACAO.find((entry) => entry.key === actionType)?.label;
   const criticalThreshold = weapon?.effectiveCritical ?? 20;
+  let criticalChainBonus = 0;
 
   for (let index = 0; index < maximum; index += 1) {
     const secondaryAttack = index > 0 && weapon?.secondaryNoAttribute === true;
     const attemptAttrVal = secondaryAttack ? 0 : attrVal;
     const secondaryPenalty = secondaryAttack ? Number(weapon?.secondaryPenalty) || 0 : 0;
     const secondaryBonus = secondaryPenalty > 0 ? `+ ${secondaryPenalty}` : secondaryPenalty < 0 ? `- ${Math.abs(secondaryPenalty)}` : "";
-    const attemptBonus = [extra, secondaryBonus].filter(Boolean).join(" ");
+    const chainBonus = index > 0 && criticalChainBonus > 0 ? `+ ${criticalChainBonus}` : "";
+    const attemptBonus = [extra, secondaryBonus, chainBonus].filter(Boolean).join(" ");
     const formula = buildFormula(mode, attemptAttrVal, attemptBonus, statusEffects.modifier);
     let roll;
     try {
@@ -122,6 +124,10 @@ async function doRoll({ actor, attrName, attrVal, mode, rollMode, bonusRaw, cdVa
     const natural = naturalD20(roll);
     const critical = decision.hit && statusEffects.criticalAllowed !== false && weapon?.criticalDisabled !== true && natural >= criticalThreshold;
     attempts.push({ roll, hit: decision.hit, natural, critical, criticalThreshold, weaponId: weapon?.id ?? "", attackIndex: index, secondary: secondaryAttack });
+    if (critical && weapon?.criticalChain?.ativa === true && maximum < 20) {
+      criticalChainBonus += Math.max(1, Math.trunc(Number(weapon.criticalChain.bonus_acerto) || 1));
+      maximum += 1;
+    }
     if (usedMetalReroll && !decision.hit) {
       const current = Math.max(0, Number(actor.system?.props?.status_slayer_exaustao) || 0);
       await actor.update({ "system.props.status_slayer_exaustao": Math.min(8, current + 1) }, { naCsbAutomation: true, naBreathing: true });
@@ -220,7 +226,7 @@ export async function rollHit(options) {
   const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
   const flameState = parseFlameBreathingState(props.resp_chamas_estado);
   const strength = parseAttributeValue(props.for_display);
-  const stoneCriticalFloor = game.settings?.get?.(MODULE_ID, SETTINGS.stoneCriticalFloor) ?? 1;
+  const criticalFloor = game.settings?.get?.(MODULE_ID, SETTINGS.criticalFloor) ?? 1;
   const allWeapons = actorWeapons(actor).map((weapon) => ({
     ...weapon,
     effectiveCritical: effectiveWeaponCritical({
@@ -228,7 +234,7 @@ export async function rollHit(options) {
       state: passiveState,
       weaponId: weapon.id,
       strength,
-      floor: stoneCriticalFloor,
+      floor: criticalFloor,
     }),
   }));
   const pendingFlameWeaponId = flameState.nextHit?.source?.startsWith?.("chamas_")
@@ -314,6 +320,9 @@ export async function rollHit(options) {
   const weapon = weapons.find((entry) => entry.id === dialogResult.weaponId && entry.profileIndex === Number(dialogResult.weaponProfileIndex ?? 0))
     ?? weapons.find((entry) => entry.id === dialogResult.weaponId)
     ?? null;
+  if (weapon?.mode && actor.items?.get?.(weapon.id)?.system?.props?.arma_modo_uso !== weapon.mode) {
+    await actor.items.get(weapon.id).update({ "system.props.arma_modo_uso": weapon.mode }, { naCsbAutomation: true });
+  }
   const allowedWeaponAttributes = Array.isArray(weapon?.attackAttributes) ? weapon.attackAttributes : [];
   const requestedWeaponAttribute = String(dialogResult.weaponAttribute ?? "").toUpperCase();
   const selectedWeaponAttribute = weapon && allowedWeaponAttributes.length > 0

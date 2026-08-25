@@ -180,6 +180,69 @@ export function weaponPropertyMechanics(itemProps = {}) {
   return weaponPropertyKeys(itemProps.arma_propriedades).map((id) => ({ id, kind: "unresolved" }));
 }
 
+function normalizedWeaponMode(value = "") {
+  const normalized = String(value ?? "")
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/gu, "")
+    .replace(/[^a-z0-9]/gu, "");
+  if (normalized.includes("nitoryu")) return "nitoryu";
+  if (normalized.includes("morote")) return "morote";
+  if (normalized.includes("ryoto")) return "ryoto";
+  return "";
+}
+
+export function weaponUsageModes(itemProps = {}) {
+  const profiles = weaponProfilesFromProps(itemProps);
+  const modes = profiles.map((profile) => ({
+    key: normalizedWeaponMode(profile.modo ?? profile.nome),
+    label: String(profile.nome ?? profile.modo ?? "").trim(),
+  })).filter((entry) => entry.key);
+  return [...new Map(modes.map((entry) => [entry.key, entry])).values()];
+}
+
+export function selectedWeaponMode(itemProps = {}) {
+  return normalizedWeaponMode(itemProps.arma_modo_uso);
+}
+
+export async function ensureWeaponUsageMode(item) {
+  const props = item?.system?.props ?? {};
+  const modes = weaponUsageModes(props);
+  if (modes.length <= 1) {
+    const mode = modes[0]?.key ?? "";
+    if (mode && selectedWeaponMode(props) !== mode && typeof item?.update === "function") {
+      await item.update({ "system.props.arma_modo_uso": mode }, { naCsbAutomation: true });
+    }
+    return mode;
+  }
+  const current = selectedWeaponMode(props);
+  if (modes.some((entry) => entry.key === current)) return current;
+  if (!globalThis.foundry?.applications?.api?.DialogV2) return "";
+  const options = modes.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join("");
+  const chosen = await foundry.applications.api.DialogV2.wait({
+    window: { title: `Modo de uso — ${props.arma_nome || item.name || "Arma"}` },
+    content: `<div class="na-csb-automation"><p>Escolha como esta arma será empunhada. A escolha fica salva neste Item.</p><select name="weaponMode">${options}</select></div>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      { action: "save", label: "Sincronizar arma", callback: (_event, button) => String(button.form.elements.weaponMode.value ?? "") },
+      { action: "cancel", label: "Cancelar", callback: () => null },
+    ],
+  });
+  if (!chosen) return "";
+  await item.update({ "system.props.arma_modo_uso": chosen }, { naCsbAutomation: true });
+  return chosen;
+}
+
+export function registerWeaponModeEngine() {
+  Hooks.on("createItem", (item) => {
+    if (item?.parent?.documentName !== "Actor") return;
+    if (!["NAWeaponTpl00001", "NASpecialWeaponTpl00001"].includes(item.system?.template)) return;
+    if (weaponUsageModes(item.system?.props ?? {}).length < 2) return;
+    setTimeout(() => void ensureWeaponUsageMode(item), 0);
+  });
+}
+
 export function weaponProficiencyNames(actorProps = {}) {
   const raw = actorProps.armas_proficientes ?? actorProps.proficiencias_armas ?? actorProps.proficiencia_armas ?? "";
   if (Array.isArray(raw)) return raw.map((name) => String(name).trim()).filter(Boolean);
@@ -206,7 +269,12 @@ export function weaponAmmoPatch(itemProps = {}, remaining = 0) {
 }
 
 export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
-  const profiles = weaponProfilesFromProps(itemProps);
+  const allProfiles = weaponProfilesFromProps(itemProps);
+  const selectedMode = selectedWeaponMode(itemProps);
+  const selectedProfiles = selectedMode
+    ? allProfiles.filter((profile) => normalizedWeaponMode(profile.modo ?? profile.nome) === selectedMode)
+    : allProfiles;
+  const profiles = selectedProfiles.length > 0 ? selectedProfiles : allProfiles;
   const rank = slayerWeaponRank(actorProps);
   const proficient = isWeaponProficient(itemProps, actorProps);
   const parsedRankFormulas = parseStructuredValue(itemProps.arma_formulas_por_rank)
@@ -214,7 +282,8 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
   const rankFormulas = parsedRankFormulas && typeof parsedRankFormulas === "object"
     ? parsedRankFormulas
     : extractWeaponRankFormulas(itemProps.arma_regra_completa);
-  const ranked = Array.isArray(rankFormulas[rank]) ? rankFormulas[rank] : [];
+  const specialWeapon = String(itemProps.arma_categoria ?? "").toLocaleLowerCase("pt-BR") === "especial";
+  const ranked = specialWeapon && Array.isArray(rankFormulas[rank]) ? rankFormulas[rank] : [];
 
   return profiles.map((profile, index) => {
     const rankFormula = ranked[index] ?? ranked[0] ?? "";
@@ -222,24 +291,14 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
     const baseDice = String(profile.dano_dados ?? "").trim();
     const choiceKeys = attributeChoiceKeys(profile.formula_texto || rankFormula);
     const propertyKeys = weaponPropertyKeys(itemProps.arma_propriedades);
-    const profileMode = weaponPropertyKeys(profile.nome).find((key) => ["nitoryu", "ryoto"].includes(key)) ?? "";
-    const namedProfiles = profiles.some((entry) => weaponPropertyKeys(entry.nome).some((key) => ["nitoryu", "ryoto"].includes(key)));
-    const integratedDouble = !namedProfiles && propertyKeys.includes("ryoto");
-    const morote = proficient && propertyKeys.includes("morote");
-    const allowedAttributes = proficient ? weaponAttackAttributes(itemProps, profile) : [];
+    const profileMode = normalizedWeaponMode(profile.modo ?? profile.nome);
     const sourceAttributes = proficient ? objectList(profile.atributos).map((rule) => ({ ...rule })) : [];
-    const generatedMultiplier = morote ? 1 : 0.5;
-    const generatedAttributes = allowedAttributes.length > 0 && sourceAttributes.length === 0
-      ? allowedAttributes.map((key) => ({ key, multiplicador: generatedMultiplier, escolha: allowedAttributes.length > 1 }))
-      : [];
-    const attributes = [...sourceAttributes, ...generatedAttributes].map((rule) => {
+    const attributes = sourceAttributes.map((rule) => {
       const key = String(rule.key ?? "").toUpperCase();
-      const promoted = morote && (key === "FOR" || key === "DEX") && Number(rule.multiplicador) > 0;
       return {
         ...rule,
         key,
-        multiplicador: promoted ? 1 : rule.multiplicador,
-        escolha: rule.escolha === true || choiceKeys.has(key) || (generatedAttributes.length > 1 && (key === "FOR" || key === "DEX")),
+        escolha: rule.escolha === true || choiceKeys.has(key),
       };
     });
     return {
@@ -251,8 +310,12 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
       rank_formula: rankFormula,
       proficiente: proficient,
       propriedade_chaves: propertyKeys,
-      modo_propriedade: profileMode || (integratedDouble ? "ryoto" : ""),
-      ataques: profileMode || integratedDouble ? 2 : 1,
+      modo_propriedade: profileMode,
+      ataques: Math.max(1, Math.trunc(Number(profile.ataques) || (["nitoryu", "ryoto"].includes(profileMode) ? 2 : 1))),
+      dano_segundo_golpe: String(profile.dano_segundo_golpe ?? (profileMode === "nitoryu" ? "fixo" : "normal")),
+      acerto_segundo_sem_atributo: profile.acerto_segundo_sem_atributo === true || ["nitoryu", "ryoto"].includes(profileMode),
+      penalidade_segundo_acerto: Number(profile.penalidade_segundo_acerto ?? (profileMode === "nitoryu" ? -2 : 0)) || 0,
+      cadeia_critica: profile.cadeia_critica && typeof profile.cadeia_critica === "object" ? structuredClone(profile.cadeia_critica) : null,
     };
   });
 }

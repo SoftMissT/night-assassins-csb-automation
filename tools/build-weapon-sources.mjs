@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { extractWeaponRankFormulas } from "../scripts/weapon-service.mjs";
@@ -13,6 +13,11 @@ if (catalog.format !== 1 || !Array.isArray(catalog.documents)) throw new Error("
 const templatePath = path.join(root, "src", "templates", "items", "slayer-weapon-template.json");
 const weaponTemplate = JSON.parse(await readFile(templatePath, "utf8"));
 weaponTemplate._key = `!items!${weaponTemplate._id}`;
+const specialTemplatePath = path.join(root, "src", "templates", "items", "special-slayer-weapon-template.json");
+const specialWeaponTemplate = JSON.parse(await readFile(specialTemplatePath, "utf8"));
+specialWeaponTemplate._key = `!items!${specialWeaponTemplate._id}`;
+const PUBLISHED_WEAPONS = new Set(["Katana", "Double Blade", "Manoplas / Soqueiras"]);
+const BASIC_FOLDER_ID = "02e48b1127bca24a";
 
 export const RANK_DICE = Object.freeze({
   D: "1d6",
@@ -66,13 +71,22 @@ export function normalizeRankFormulas(extracted = {}, profiles = []) {
   );
 }
 
-const documents = catalog.documents.map((document) => {
+const sourceDocuments = catalog.documents.filter((document) => {
+  if (String(document._key ?? "").startsWith("!folders!")) return document._id === BASIC_FOLDER_ID;
+  if (document.type === "_equippableItemTemplate") return document._id === weaponTemplate._id;
+  if (document.type === "equippableItem") return PUBLISHED_WEAPONS.has(document.name);
+  return false;
+});
+
+const documents = [...sourceDocuments, specialWeaponTemplate].map((document) => {
   if (document.type === "_equippableItemTemplate" && document._id === weaponTemplate._id) return weaponTemplate;
+  if (document.type === "_equippableItemTemplate" && document._id === specialWeaponTemplate._id) return specialWeaponTemplate;
   if (document.type !== "equippableItem") return document;
   const props = document.system?.props ?? {};
   const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
-  const extractedFormulas = extractWeaponRankFormulas(props.arma_regra_completa);
-  const formulas = normalizeRankFormulas(extractedFormulas, profiles);
+  const specialWeapon = String(props.arma_categoria ?? "").toLocaleLowerCase("pt-BR") === "especial";
+  const extractedFormulas = specialWeapon ? extractWeaponRankFormulas(props.arma_regra_completa) : {};
+  const formulas = specialWeapon ? normalizeRankFormulas(extractedFormulas, profiles) : {};
   return {
     ...document,
     system: {
@@ -102,12 +116,19 @@ const documents = catalog.documents.map((document) => {
   };
 });
 
-await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
-await Promise.all(documents.map((document, index) => {
+const outputFiles = documents.map((document, index) => {
   const id = document._id ?? `document-${index}`;
-  return writeFile(path.join(outputDirectory, `${String(index).padStart(3, "0")}-${id}.json`), `${JSON.stringify(document, null, 2)}\n`);
-}));
+  return `${String(index).padStart(3, "0")}-${id}.json`;
+});
+await Promise.all(documents.map((document, index) => writeFile(
+  path.join(outputDirectory, outputFiles[index]),
+  `${JSON.stringify(document, null, 2)}\n`,
+)));
+const expectedFiles = new Set(outputFiles);
+await Promise.all((await readdir(outputDirectory))
+  .filter((file) => file.endsWith(".json") && !expectedFiles.has(file))
+  .map((file) => rm(path.join(outputDirectory, file), { force: true })));
 
 const itemCount = documents.filter((document) => document._key?.startsWith("!items!") && !String(document.type).startsWith("_")).length;
 console.info(`Preparados ${itemCount} Items de armas Slayer.`);

@@ -85,6 +85,11 @@ export function normalizeWeaponTechnique(item, { profileIndex = 0, ownerKind = "
       properties: propertyKeys,
       unresolvedRuleText: text(props.arma_regra_completa || props.descricao),
       structuredMechanics: propertyMechanics,
+      weaponMode: text(profile.modo ?? profile.modo_propriedade),
+      secondaryDamagePolicy: text(profile.dano_segundo_golpe, "normal"),
+      secondaryNoAttribute: profile.acerto_segundo_sem_atributo === true,
+      secondaryPenalty: number(profile.penalidade_segundo_acerto),
+      criticalChain: profile.cadeia_critica && typeof profile.cadeia_critica === "object" ? structuredClone(profile.cadeia_critica) : null,
     },
   });
   return validateTechniqueDefinition(definition);

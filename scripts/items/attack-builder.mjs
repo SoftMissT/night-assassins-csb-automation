@@ -4,7 +4,7 @@ import { normalizeBreathingTechnique, normalizeWeaponTechnique } from "./item-te
 import { actorKind } from "../actor-kind.mjs";
 import { oniUnarmedProfile } from "../oni/progression-service.mjs";
 
-const WEAPON_TEMPLATE_ID = "NAWeaponTpl00001";
+const WEAPON_TEMPLATE_IDS = new Set(["NAWeaponTpl00001", "NASpecialWeaponTpl00001"]);
 const BREATH_TEMPLATE_ID = "NABreathTpl00001";
 
 function itemsOf(actor) {
@@ -17,7 +17,7 @@ function itemProps(item) {
 
 function isWeapon(item) {
   const props = itemProps(item);
-  return item?.system?.template === WEAPON_TEMPLATE_ID
+  return WEAPON_TEMPLATE_IDS.has(item?.system?.template)
     || props.arma_critico !== undefined
     || Boolean(props.arma_nome && (props.arma_dano_fixo !== undefined || props.arma_dano_atributo !== undefined || props.arma_tipos_dano !== undefined));
 }
@@ -88,7 +88,8 @@ export function definitionDamageEntries(definition, actor) {
   const attackCount = Math.max(1, Math.trunc(Number(definition?.attack?.count) || 1));
   return Array.from({ length: attackCount }, (_unused, attackIndex) => (definition?.damage ?? []).map((component) => {
     const secondaryAttack = attackIndex > 0;
-    const secondaryComponent = secondaryAttack ? { ...component, attributeTerms: [] } : component;
+    const stripsAttributes = secondaryAttack && definition?.metadata?.secondaryDamagePolicy === "fixo";
+    const secondaryComponent = stripsAttributes ? { ...component, attributeTerms: [] } : component;
     return {
       sourceId: definition.id,
       sourceLabel: `${component.label || definition.name}${attackCount > 1 ? ` Golpe ${attackIndex + 1}` : ""}`,

@@ -60,14 +60,6 @@
           "defaultValue": ""
         },
         {
-          "key": "arma_imagem_vertical",
-          "type": "textField",
-          "size": "full-size",
-          "label": "Arte vertical da arma (9:16)",
-          "defaultValue": "",
-          "tooltip": "Caminho da ilustração expandida. Ex.: modules/night-assassins-csb-automation/assets/weapons/vertical/rebellion.webp"
-        },
-        {
           "key": "arma_requisito",
           "type": "textField",
           "size": "full-size",
@@ -141,9 +133,9 @@
               "type": "label",
               "size": "full-size",
               "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR DANO DA ARMA</span>",
-              "tooltip": "Calcula o perfil, o Rank e os atributos finais do Caçador portador.",
-              "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid});}%",
+              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>",
+              "tooltip": "Usa o modo sincronizado, rola os Acertos e encaminha somente os golpes confirmados ao dano.",
+              "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});}%",
               "altRollMessage": "",
               "rollMessageToChat": false,
               "altRollMessageToChat": false,
@@ -180,59 +172,6 @@
               "type": "textField",
               "size": "medium",
               "label": "Tipos de dano",
-              "defaultValue": ""
-            }
-          ]
-        },
-        {
-          "key": "arma_rank",
-          "type": "panel",
-          "flow": "grid-2",
-          "align": "left",
-          "verticalAlign": "top",
-          "title": "DANO EVOLUTIVO POR RANK",
-          "titleStyle": "bold",
-          "contents": [
-            {
-              "key": "arma_rank_d_formula",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Rank D / Nível 2",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_rank_c_formula",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Rank C / Nível 4",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_rank_b_formula",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Rank B / Nível 6",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_rank_a_formula",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Rank A / Nível 8",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_rank_s_formula",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Rank S / Nível 11",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_rank_ss_formula",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Rank SS / Nível 12",
               "defaultValue": ""
             }
           ]
@@ -295,6 +234,11 @@
               "defaultValue": "{}"
             },
             {
+              "key": "arma_modo_uso",
+              "type": "textField",
+              "defaultValue": ""
+            },
+            {
               "key": "arma_municao_capacidade",
               "type": "numberField",
               "defaultValue": 0,
@@ -305,53 +249,6 @@
               "type": "numberField",
               "defaultValue": 0,
               "allowDecimal": false
-            }
-          ]
-        },
-        {
-          "key": "arma_especial",
-          "type": "panel",
-          "flow": "grid-2",
-          "align": "left",
-          "verticalAlign": "top",
-          "title": "ARMA ESPECIAL",
-          "titleStyle": "bold",
-          "visibilityFormula": "equalText(arma_categoria, 'especial')",
-          "contents": [
-            {
-              "key": "arma_entidade",
-              "type": "textField",
-              "size": "medium",
-              "label": "Entidade",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_demonio",
-              "type": "textField",
-              "size": "medium",
-              "label": "Demônio",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_lado_dominante",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Lado dominante",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_gatilho_despertar",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Gatilho de despertar",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_reacao_entidade",
-              "type": "textField",
-              "size": "full-size",
-              "label": "Reação da entidade",
-              "defaultValue": ""
             }
           ]
         },
@@ -367,7 +264,7 @@
           "key": "arma_regra_completa",
           "type": "textArea",
           "size": "full-size",
-          "label": "Regras completas, técnicas e despertar",
+          "label": "Regras completas e habilidade",
           "defaultValue": "",
           "style": "dialog"
         }

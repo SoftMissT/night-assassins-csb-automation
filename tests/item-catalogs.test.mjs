@@ -96,37 +96,34 @@ describe("catálogo de Respirações", () => {
 });
 
 describe("catálogo de armas Slayer", () => {
-  it("separa as 26 armas básicas e as 17 armas especiais", async () => {
+  it("publica somente as três armas auditadas e mantém templates normal/especial separados", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
-    assert.equal(documents.filter((document) => String(document._key).startsWith("!folders!")).length, 2);
-    assert.equal(documents.filter((document) => document.type === "_equippableItemTemplate").length, 1);
+    assert.equal(documents.filter((document) => String(document._key).startsWith("!folders!")).length, 1);
+    assert.equal(documents.filter((document) => document.type === "_equippableItemTemplate").length, 2);
     const weapons = documents.filter((document) => document.type === "equippableItem");
-    assert.equal(weapons.length, 43);
+    assert.deepEqual(weapons.map((item) => item.name).sort(), ["Double Blade", "Katana", "Manoplas / Soqueiras"]);
     assert.ok(weapons.every((item) => item.system?.props?.inventario_categoria === "arma"));
     assert.ok(weapons.every((item) => /^<(?:p|h[1-6]|ul|ol|blockquote|table|hr)/u.test(item.system.props.descricao)), "descrições de armas devem ser HTML do Foundry");
     assert.ok(weapons.every((item) => item.system?.template === "NAWeaponTpl00001"));
     assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_perfis_ataque) && item.system.props.arma_perfis_ataque.length > 0));
     assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_tipos_dano)));
-    const special = weapons.filter((item) => item.system.props.arma_categoria === "especial");
-    assert.equal(special.length, 17);
-    assert.ok(special.every((item) => item.system.props.arma_entidade && item.system.props.arma_demonio));
-    assert.ok(special.every((item) => Array.isArray(item.system.props.arma_perfis_ataque)));
-    assert.ok(special.every((item) => Object.keys(item.system.props.arma_dano_por_rank).length >= 6));
-    assert.ok(special.every((item) => item.system.props.arma_regra_completa.length > 1000));
-    assert.ok(special.every((item) => ["D", "C", "B", "A", "S", "SS"].every((rank) => item.system.props.arma_formulas_por_rank[rank]?.length > 0)));
-    assert.ok(special.every((item) => item.system.props.arma_rank_ss_formula));
+    assert.ok(weapons.every((item) => Object.keys(item.system.props.arma_formulas_por_rank).length === 0));
   });
 
   it("usa um template exclusivo de arma com rolagem pelo Item portado", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
-    const template = documents.find((document) => document.type === "_equippableItemTemplate");
+    const template = documents.find((document) => document._id === "NAWeaponTpl00001");
     const serialized = JSON.stringify(template.system);
     assert.match(serialized, /rollWeaponItem/);
     assert.match(serialized, /linkedEntity/);
     assert.doesNotMatch(serialized, /itemUuid:entity\.uuid/);
     assert.match(serialized, /na-sheet-text/);
     assert.match(serialized, /arma_perfis_resumo/);
-    assert.match(serialized, /arma_rank_ss_formula/);
+    assert.match(serialized, /arma_modo_uso/);
+    assert.match(serialized, /startWithHit/);
+    assert.doesNotMatch(serialized, /arma_rank_ss_formula|arma_imagem_vertical/);
+    const specialTemplate = documents.find((document) => document._id === "NASpecialWeaponTpl00001");
+    assert.match(JSON.stringify(specialTemplate.system), /arma_rank_ss_formula/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
   });
 
@@ -137,13 +134,13 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
   });
 
-  it("publica ícones de compêndio e artes verticais existentes", async () => {
+  it("publica os três ícones locais sem campo de arte vertical", async () => {
     const documents = await sourceDocuments("../build/compendium/armas-slayer/");
     const weapons = documents.filter((document) => document.type === "equippableItem");
     const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
     const customIcons = weapons.filter((item) => item.img?.startsWith("modules/night-assassins-csb-automation/assets/icons/weapons/"));
     assert.equal(illustrated.length, 0);
-    assert.equal(customIcons.length, 39);
+    assert.equal(customIcons.length, 3);
     for (const item of customIcons) {
       const relativePath = item.img.replace("modules/night-assassins-csb-automation/", "../");
       await access(new URL(relativePath, import.meta.url));

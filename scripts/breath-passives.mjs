@@ -20,7 +20,7 @@ export function passiveStatePatch(state) {
 export function actorWeapons(actor) {
   return [...(actor?.items ?? [])].filter((item) => {
     const props = item?.system?.props ?? {};
-    return item?.system?.template === "NAWeaponTpl00001"
+    return ["NAWeaponTpl00001", "NASpecialWeaponTpl00001"].includes(item?.system?.template)
       || props.arma_critico !== undefined
       || Boolean(props.arma_nome && (props.arma_dano_fixo !== undefined || props.arma_dano_atributo !== undefined || props.arma_tipos_dano !== undefined));
   }).flatMap((item) => {
@@ -28,7 +28,9 @@ export function actorWeapons(actor) {
     const actorProps = actor?.system?.props ?? {};
     const profiles = weaponProfilesForActor(props, actorProps);
     return profiles.map((profile, profileIndex) => {
-      const profileMode = weaponPropertyKeys(profile.nome).find((key) => ["nitoryu", "ryoto"].includes(key)) ?? "";
+      const profileMode = profile.modo_propriedade
+        || weaponPropertyKeys(profile.nome).find((key) => ["nitoryu", "ryoto", "morote"].includes(key))
+        || "";
       const proficient = profile.proficiente !== false;
       return {
         id: item.id,
@@ -39,8 +41,11 @@ export function actorWeapons(actor) {
         proficient,
         attackAttributes: proficient ? weaponAttackAttributes(props, profile) : [],
         attacks: Math.max(1, Math.trunc(Number(profile.ataques) || 1)),
-        secondaryPenalty: profileMode === "nitoryu" ? -2 : 0,
-        secondaryNoAttribute: ["nitoryu", "ryoto"].includes(profileMode) || Number(profile.ataques) > 1,
+        mode: profileMode,
+        secondaryPenalty: Number(profile.penalidade_segundo_acerto) || 0,
+        secondaryNoAttribute: profile.acerto_segundo_sem_atributo === true,
+        secondaryDamagePolicy: profile.dano_segundo_golpe ?? "normal",
+        criticalChain: profile.cadeia_critica ?? null,
         critical: Math.min(20, Math.max(1, Math.trunc(parseNumber(profile.critico ?? props.arma_critico) || 20))),
         criticalDisabled: profile.critico_desabilitado === true,
       };

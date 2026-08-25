@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { extractWeaponRankFormulas, isWeaponProficient, slayerWeaponRank, weaponAmmoPatch, weaponAmmoState, weaponAttackAttributes, weaponDamageTypeKeys, weaponPropertyKeys, weaponProfilesForActor, weaponProfilesFromProps } from "../scripts/weapon-service.mjs";
+import { extractWeaponRankFormulas, isWeaponProficient, selectedWeaponMode, slayerWeaponRank, weaponAmmoPatch, weaponAmmoState, weaponAttackAttributes, weaponDamageTypeKeys, weaponPropertyKeys, weaponProfilesForActor, weaponProfilesFromProps, weaponUsageModes } from "../scripts/weapon-service.mjs";
 
 describe("weapon-service", () => {
   it("resolve o Rank atual pela progressão do Caçador", () => {
@@ -28,6 +28,7 @@ describe("weapon-service", () => {
 
   it("acrescenta somente o dado do Rank ao perfil base", () => {
     const profiles = weaponProfilesForActor({
+      arma_categoria: "especial",
       arma_perfis_ataque: [{ nome: "Lâmina", dano_fixo: 4, dano_dados: "", atributos: [{ key: "DEX", multiplicador: 1 }], tipos_dano: ["cortante"] }],
       arma_formulas_por_rank: { B: ["4 + DEX + 1d10 / Cortante"] },
     }, { nvl_num: 6, dex_display: 5 });
@@ -66,14 +67,14 @@ describe("weapon-service", () => {
     assert.equal(isWeaponProficient(weapon, {}), true);
   });
 
-  it("deriva o dano de Acuidade/Morote e remove atributos sem proficiência", () => {
+  it("não inventa dano de atributo para Acuidade ou Morote", () => {
     const itemProps = {
       arma_nome: "Katana",
       arma_propriedades: "Acuidade / Morote",
       arma_perfis_ataque: [{ nome: "Morote", dano_fixo: 7, atributos: [], tipos_dano: ["cortante"] }],
     };
     const [proficient] = weaponProfilesForActor(itemProps, { nvl_num: 1 });
-    assert.deepEqual(proficient.atributos.map((rule) => [rule.key, rule.multiplicador, rule.escolha]), [["FOR", 1, true], ["DEX", 1, true]]);
+    assert.deepEqual(proficient.atributos, []);
     const [unproficient] = weaponProfilesForActor(itemProps, { nvl_num: 1, armas_proficientes: "Rapieira" });
     assert.deepEqual(unproficient.atributos, []);
   });
@@ -89,6 +90,21 @@ describe("weapon-service", () => {
     }, { nvl_num: 1 });
     assert.equal(profiles[0].ataques, 2);
     assert.equal(profiles[1].ataques, 1);
+  });
+
+  it("filtra perfis pelo modo persistido no Item", () => {
+    const props = {
+      arma_modo_uso: "morote",
+      arma_perfis_ataque: [
+        { nome: "Nitoryu", modo: "nitoryu", dano_fixo: 5, ataques: 2 },
+        { nome: "Morote", modo: "morote", dano_fixo: 7, ataques: 1 },
+      ],
+    };
+    assert.deepEqual(weaponUsageModes(props).map((entry) => entry.key), ["nitoryu", "morote"]);
+    assert.equal(selectedWeaponMode(props), "morote");
+    const profiles = weaponProfilesForActor(props, {});
+    assert.equal(profiles.length, 1);
+    assert.equal(profiles[0].dano_fixo, 7);
   });
 
   it("reconstrói o Ataque Base de um Item legado sem array de perfis", () => {
@@ -112,6 +128,7 @@ describe("weapon-service", () => {
 
   it("aceita perfis e fórmulas estruturados persistidos como JSON textual", () => {
     const [profile] = weaponProfilesForActor({
+      arma_categoria: "especial",
       arma_perfis_ataque: JSON.stringify([{ nome: "Corte", dano_fixo: 4, atributos: JSON.stringify([{ key: "FOR", multiplicador: 1 }]), tipos_dano: ["cortante"] }]),
       arma_formulas_por_rank: JSON.stringify({ D: ["4 + FOR + 1d6 / Cortante"] }),
     }, { nvl_num: 2 });
@@ -127,6 +144,7 @@ describe("weapon-service", () => {
   it("aceita aliases JSON dos campos que o CSB serializa", () => {
     const [profile] = weaponProfilesForActor({
       arma_nome: "Rebellion",
+      arma_categoria: "especial",
       arma_perfis_ataque_json: JSON.stringify([{ nome: "Ataque Base", dano_fixo: 7, atributos: [{ key: "FOR", multiplicador: 1 }], tipos_dano: ["concussivo"] }]),
       arma_formulas_por_rank_json: JSON.stringify({ D: ["7 + FOR + 1d6 / Concussivo"] }),
     }, { nvl_num: 2, for_display: 5 });

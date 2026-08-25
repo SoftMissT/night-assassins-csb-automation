@@ -54,7 +54,7 @@ describe("geração sistêmica de fórmulas por Rank", () => {
     assert.deepEqual(formulas.B, extracted.B);
   });
 
-  it("toda arma construída tem 1 fórmula por perfil em todos os 6 Ranks", async () => {
+  it("armas normais construídas não recebem fórmulas por Rank", async () => {
     const directory = new URL("../build/compendium/armas-slayer/", import.meta.url);
     const files = (await readdir(directory)).filter((file) => file.endsWith(".json"));
     let weaponsChecked = 0;
@@ -68,15 +68,9 @@ describe("geração sistêmica de fórmulas por Rank", () => {
       weaponsChecked += 1;
 
       const formulas = JSON.parse(props.arma_formulas_por_rank_json);
-      for (const rank of Object.keys(RANK_DICE)) {
-        assert.ok(
-          Array.isArray(formulas[rank]) && formulas[rank].length === profiles.length,
-          `${props.nome ?? document._id}: Rank ${rank} deveria ter ${profiles.length} fórmula(s), tem ${formulas[rank]?.length}`,
-        );
-        assert.ok(formulas[rank].every((formula) => /\b\d+d\d+\b/i.test(formula)), `${props.nome ?? document._id}: Rank ${rank} sem dado evolutivo`);
-      }
+      assert.deepEqual(formulas, {});
     }
 
-    assert.ok(weaponsChecked > 0, "nenhuma arma verificada — build não rodou?");
+    assert.equal(weaponsChecked, 3);
   });
 });

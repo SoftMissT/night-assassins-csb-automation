@@ -39,6 +39,7 @@ import * as oniProgression from "./oni/progression-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
 import { repairOniActors } from "./oni/repair-service.mjs";
 import { useKekkijutsuItem } from "./oni/kekkijutsu-use-service.mjs";
+import { registerWeaponModeEngine } from "./weapon-service.mjs";
 
 /**
  * Wrapper público de rollDamage exposto em module.api — ponto de entrada
@@ -98,6 +99,7 @@ Hooks.once("ready", async () => {
   registerBreathingEngine();
   registerLifeDeathEngine();
   registerAdvancedStatesEngine();
+  registerWeaponModeEngine();
 
   // Repair de Actors Oni legados (P0): só o GM primário aplica a migração
   // estrutural — idempotente, preserva dados do personagem, nunca reverte

@@ -67,6 +67,16 @@ describe("hit-service", () => {
     assert.match(_formula, /\+ 6$/);
   });
 
+  it("soma Habilidade Especial e Metal no Acerto", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0 };
+    _rollResult = { total: 14, toMessage: async () => {}, dice: [{ results: [{ result: 1, active: true }] }] };
+    const actor = makeActor({ props: {
+      acerto_label: "acerto_label_for", for_display: "6", hab_acerto_bonus: 1, metal_acerto_bonus: 4,
+    } });
+    await rollHit({ actor, autoDamage: false });
+    assert.match(_formula, /^1d20 \+ 6 \+ 5$/);
+  });
+
   it("aplica Cegueira e Exaustão no Acerto", async () => {
     _dialogReturn = { mode: "normal", rollMode: "publicroll", bonusRaw: "", cdVal: 0 };
     const actor = makeActor({ props: {

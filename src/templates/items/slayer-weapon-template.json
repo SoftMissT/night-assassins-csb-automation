@@ -1,308 +1,276 @@
 {
-  "_id": "NAWeaponTpl00001",
-  "name": "NA Arma - Slayer",
-  "type": "_equippableItemTemplate",
-  "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
-  "system": {
-    "header": {
-      "key": "arma_header",
-      "type": "panel",
-      "flow": "grid-3",
-      "align": "left",
-      "verticalAlign": "top",
-      "contents": [
-        {
-          "key": "arma_nome",
-          "type": "textField",
-          "size": "full-size",
-          "label": "Arma",
-          "defaultValue": ""
+    "_id": "NAWeaponTpl00001",
+    "name": "NA Arma - Slayer",
+    "type": "_equippableItemTemplate",
+    "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
+    "system": {
+        "header": {
+            "key": "arma_header",
+            "type": "panel",
+            "flow": "grid-3",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "arma_nome",
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Arma",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_categoria",
+                    "type": "textField",
+                    "size": "medium",
+                    "label": "Categoria",
+                    "defaultValue": "basica"
+                },
+                {
+                    "key": "arma_tipo",
+                    "type": "textField",
+                    "size": "medium",
+                    "label": "Tipo",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_critico",
+                    "type": "numberField",
+                    "size": "medium",
+                    "label": "Crítico natural",
+                    "defaultValue": 20,
+                    "allowDecimal": false,
+                    "minVal": 1,
+                    "maxVal": 20,
+                    "allowRelative": false,
+                    "showControls": false,
+                    "inputStyle": "text"
+                },
+                {
+                    "key": "arma_alcance",
+                    "type": "textField",
+                    "size": "medium",
+                    "label": "Alcance",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_propriedades",
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Propriedades",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_requisito",
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Requisito",
+                    "defaultValue": ""
+                }
+            ]
         },
-        {
-          "key": "arma_categoria",
-          "type": "textField",
-          "size": "medium",
-          "label": "Categoria",
-          "defaultValue": "basica"
+        "body": {
+            "key": "arma_body",
+            "type": "panel",
+            "flow": "vertical",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "arma_contexto",
+                    "type": "panel",
+                    "flow": "grid-4",
+                    "align": "center",
+                    "verticalAlign": "center",
+                    "title": "DANO DO PORTADOR",
+                    "titleStyle": "bold",
+                    "contents": [
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "value": "Rank: ${fetchFromParent('rank_atual', {fallback: 'Sem portador', top: true})}$",
+                            "rollMessage": "",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "bold"
+                        },
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "value": "FOR: ${fetchFromParent('for_display', {fallback: 0, top: true})}$",
+                            "rollMessage": "",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "bold"
+                        },
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "value": "DEX: ${fetchFromParent('dex_display', {fallback: 0, top: true})}$",
+                            "rollMessage": "",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "bold"
+                        },
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "value": "FDV: ${fetchFromParent('fdv_display', {fallback: 0, top: true})}$",
+                            "rollMessage": "",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "bold"
+                        },
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "icon": "",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>",
+                            "tooltip": "Usa o modo sincronizado, rola os Acertos e encaminha somente os golpes confirmados ao dano.",
+                            "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});}%",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "button"
+                        }
+                    ]
+                },
+                {
+                    "key": "arma_runtime_data",
+                    "type": "panel",
+                    "flow": "grid-3",
+                    "visibilityFormula": "false",
+                    "title": "Estado interno (não editar) — mantido só por ensureWeaponUsageMode()",
+                    "contents": [
+                        {
+                            "key": "arma_dano_dados",
+                            "type": "textField",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_dano_fixo",
+                            "type": "numberField",
+                            "defaultValue": 0,
+                            "allowDecimal": true
+                        },
+                        {
+                            "key": "arma_dano_atributo",
+                            "type": "textField",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_dano_atributo_json",
+                            "type": "textField",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_tipos_dano",
+                            "type": "textField",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_tipos_dano_json",
+                            "type": "textField",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_atributo_acerto_json",
+                            "type": "textField",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_perfis_ataque_json",
+                            "type": "textArea",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_mecanicas_json",
+                            "type": "textArea",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_formulas_por_rank_json",
+                            "type": "textArea",
+                            "defaultValue": "{}"
+                        },
+                        {
+                            "key": "arma_modo_uso",
+                            "type": "textField",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_municao_capacidade",
+                            "type": "numberField",
+                            "defaultValue": 0,
+                            "allowDecimal": false
+                        },
+                        {
+                            "key": "arma_municao_atual",
+                            "type": "numberField",
+                            "defaultValue": 0,
+                            "allowDecimal": false
+                        }
+                    ]
+                },
+                {
+                    "key": "descricao",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "Descrição",
+                    "defaultValue": "",
+                    "style": "dialog"
+                },
+                {
+                    "key": "arma_regra_completa",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "Regras completas e habilidade",
+                    "defaultValue": "",
+                    "style": "dialog"
+                }
+            ]
         },
-        {
-          "key": "arma_tipo",
-          "type": "textField",
-          "size": "medium",
-          "label": "Tipo",
-          "defaultValue": ""
+        "hidden": [
+            {
+                "name": "inventario_categoria",
+                "value": "arma"
+            }
+        ],
+        "display": {
+            "width": 760,
+            "height": 760,
+            "fix_size": false,
+            "pp_width": 100,
+            "pp_height": 100
         },
-        {
-          "key": "arma_critico",
-          "type": "numberField",
-          "size": "medium",
-          "label": "Crítico natural",
-          "defaultValue": 20,
-          "allowDecimal": false,
-          "minVal": 1,
-          "maxVal": 20,
-          "allowRelative": false,
-          "showControls": false,
-          "inputStyle": "text"
-        },
-        {
-          "key": "arma_alcance",
-          "type": "textField",
-          "size": "medium",
-          "label": "Alcance",
-          "defaultValue": ""
-        },
-        {
-          "key": "arma_propriedades",
-          "type": "textField",
-          "size": "full-size",
-          "label": "Propriedades",
-          "defaultValue": ""
-        },
-        {
-          "key": "arma_requisito",
-          "type": "textField",
-          "size": "full-size",
-          "label": "Requisito",
-          "defaultValue": ""
+        "templateSystemUniqueVersion": 1924098631,
+        "uniqueId": "NAWeaponTpl00001"
+    },
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "version": "6.0.2"
         }
-      ]
     },
-    "body": {
-      "key": "arma_body",
-      "type": "panel",
-      "flow": "vertical",
-      "align": "left",
-      "verticalAlign": "top",
-      "contents": [
-        {
-          "key": "arma_contexto",
-          "type": "panel",
-          "flow": "grid-4",
-          "align": "center",
-          "verticalAlign": "center",
-          "title": "DANO DO PORTADOR",
-          "titleStyle": "bold",
-          "contents": [
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "Rank: ${fetchFromParent('rank_atual', {fallback: 'Sem portador', top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "FOR: ${fetchFromParent('for_display', {fallback: 0, top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "DEX: ${fetchFromParent('dex_display', {fallback: 0, top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "value": "FDV: ${fetchFromParent('fdv_display', {fallback: 0, top: true})}$",
-              "rollMessage": "",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "bold"
-            },
-            {
-              "key": "",
-              "type": "label",
-              "size": "full-size",
-              "icon": "",
-              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>",
-              "tooltip": "Usa o modo sincronizado, rola os Acertos e encaminha somente os golpes confirmados ao dano.",
-              "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});}%",
-              "altRollMessage": "",
-              "rollMessageToChat": false,
-              "altRollMessageToChat": false,
-              "style": "button"
-            }
-          ]
-        },
-        {
-          "key": "arma_base",
-          "type": "panel",
-          "flow": "grid-3",
-          "align": "left",
-          "verticalAlign": "top",
-          "title": "PERFIS DE ATAQUE",
-          "titleStyle": "bold",
-          "contents": [
-            {
-              "key": "arma_perfis_resumo",
-              "type": "textArea",
-              "size": "full-size",
-              "label": "Danos disponíveis",
-              "defaultValue": "",
-              "style": "dialog"
-            },
-            {
-              "key": "arma_atributos_resumo",
-              "type": "textField",
-              "size": "medium",
-              "label": "Atributo",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_tipos_dano_resumo",
-              "type": "textField",
-              "size": "medium",
-              "label": "Tipos de dano",
-              "defaultValue": ""
-            }
-          ]
-        },
-        {
-          "key": "arma_runtime_data",
-          "type": "panel",
-          "flow": "grid-3",
-          "visibilityFormula": "false",
-          "contents": [
-            {
-              "key": "arma_dano_dados",
-              "type": "textField",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_dano_fixo",
-              "type": "numberField",
-              "defaultValue": 0,
-              "allowDecimal": true
-            },
-            {
-              "key": "arma_dano_atributo",
-              "type": "textField",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_dano_atributo_json",
-              "type": "textField",
-              "defaultValue": "[]"
-            },
-            {
-              "key": "arma_tipos_dano",
-              "type": "textField",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_tipos_dano_json",
-              "type": "textField",
-              "defaultValue": "[]"
-            },
-            {
-              "key": "arma_atributo_acerto_json",
-              "type": "textField",
-              "defaultValue": "[]"
-            },
-            {
-              "key": "arma_perfis_ataque_json",
-              "type": "textArea",
-              "defaultValue": "[]"
-            },
-            {
-              "key": "arma_mecanicas_json",
-              "type": "textArea",
-              "defaultValue": "[]"
-            },
-            {
-              "key": "arma_formulas_por_rank_json",
-              "type": "textArea",
-              "defaultValue": "{}"
-            },
-            {
-              "key": "arma_modo_uso",
-              "type": "textField",
-              "defaultValue": ""
-            },
-            {
-              "key": "arma_municao_capacidade",
-              "type": "numberField",
-              "defaultValue": 0,
-              "allowDecimal": false
-            },
-            {
-              "key": "arma_municao_atual",
-              "type": "numberField",
-              "defaultValue": 0,
-              "allowDecimal": false
-            }
-          ]
-        },
-        {
-          "key": "descricao",
-          "type": "textArea",
-          "size": "full-size",
-          "label": "Descrição",
-          "defaultValue": "",
-          "style": "dialog"
-        },
-        {
-          "key": "arma_regra_completa",
-          "type": "textArea",
-          "size": "full-size",
-          "label": "Regras completas e habilidade",
-          "defaultValue": "",
-          "style": "dialog"
-        }
-      ]
-    },
-    "hidden": [
-      {
-        "name": "inventario_categoria",
-        "value": "arma"
-      }
-    ],
-    "display": {
-      "width": 760,
-      "height": 760,
-      "fix_size": false,
-      "pp_width": 100,
-      "pp_height": 100
-    },
-    "templateSystemUniqueVersion": 1924098631,
-    "uniqueId": "NAWeaponTpl00001"
-  },
-  "effects": [],
-  "folder": null,
-  "sort": 0,
-  "ownership": {
-    "default": 2
-  },
-  "flags": {
-    "custom-system-builder": {
-      "version": "6.0.2"
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
     }
-  },
-  "_stats": {
-    "systemId": "custom-system-builder",
-    "systemVersion": "6.0.2",
-    "coreVersion": "14",
-    "createdTime": 0,
-    "modifiedTime": 0,
-    "lastModifiedBy": null
-  }
 }

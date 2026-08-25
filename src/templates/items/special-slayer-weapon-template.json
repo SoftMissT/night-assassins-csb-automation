@@ -1,109 +1,256 @@
 {
-  "_id": "NASpecialWeaponTpl00001",
-  "name": "NA Arma Especial - Slayer",
-  "type": "_equippableItemTemplate",
-  "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
-  "system": {
-    "header": {
-      "key": "arma_especial_header",
-      "type": "panel",
-      "flow": "grid-3",
-      "align": "left",
-      "verticalAlign": "top",
-      "contents": [
-        { "key": "arma_nome", "type": "textField", "size": "full-size", "label": "Arma especial", "defaultValue": "" },
-        { "key": "arma_categoria", "type": "textField", "size": "medium", "label": "Categoria", "defaultValue": "especial" },
-        { "key": "arma_tipo", "type": "textField", "size": "medium", "label": "Tipo", "defaultValue": "" },
-        { "key": "arma_critico", "type": "numberField", "size": "medium", "label": "Crítico natural", "defaultValue": 20, "allowDecimal": false, "minVal": 1, "maxVal": 20, "allowRelative": false, "showControls": false, "inputStyle": "text" },
-        { "key": "arma_alcance", "type": "textField", "size": "medium", "label": "Alcance", "defaultValue": "" },
-        { "key": "arma_propriedades", "type": "textField", "size": "full-size", "label": "Propriedades", "defaultValue": "" },
-        { "key": "arma_requisito", "type": "textField", "size": "full-size", "label": "Requisito", "defaultValue": "" }
-      ]
+    "_id": "NASpecialWeaponTpl00001",
+    "name": "NA Arma Especial - Slayer",
+    "type": "_equippableItemTemplate",
+    "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
+    "system": {
+        "header": {
+            "key": "arma_especial_header",
+            "type": "panel",
+            "flow": "grid-3",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "arma_nome",
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Arma especial",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_categoria",
+                    "type": "textField",
+                    "size": "medium",
+                    "label": "Categoria",
+                    "defaultValue": "especial"
+                },
+                {
+                    "key": "arma_tipo",
+                    "type": "textField",
+                    "size": "medium",
+                    "label": "Tipo",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_critico",
+                    "type": "numberField",
+                    "size": "medium",
+                    "label": "Crítico natural",
+                    "defaultValue": 20,
+                    "allowDecimal": false,
+                    "minVal": 1,
+                    "maxVal": 20,
+                    "allowRelative": false,
+                    "showControls": false,
+                    "inputStyle": "text"
+                },
+                {
+                    "key": "arma_alcance",
+                    "type": "textField",
+                    "size": "medium",
+                    "label": "Alcance",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_propriedades",
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Propriedades",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "arma_requisito",
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Requisito",
+                    "defaultValue": ""
+                }
+            ]
+        },
+        "body": {
+            "key": "arma_especial_body",
+            "type": "panel",
+            "flow": "vertical",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "arma_especial_contexto",
+                    "type": "panel",
+                    "flow": "grid-3",
+                    "align": "center",
+                    "verticalAlign": "center",
+                    "title": "ARMA ESPECIAL",
+                    "titleStyle": "bold",
+                    "contents": [
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "value": "Rank: ${fetchFromParent('rank_atual', {fallback: 'Sem portador', top: true})}$",
+                            "rollMessage": "",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "bold"
+                        },
+                        {
+                            "key": "",
+                            "type": "label",
+                            "size": "full-size",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>",
+                            "tooltip": "Rola Acerto e dano usando a progressão própria desta arma especial.",
+                            "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});}%",
+                            "altRollMessage": "",
+                            "rollMessageToChat": false,
+                            "altRollMessageToChat": false,
+                            "style": "button"
+                        }
+                    ]
+                },
+                {
+                    "key": "arma_especial_identidade",
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "contents": [
+                        {
+                            "key": "arma_entidade",
+                            "type": "textField",
+                            "size": "medium",
+                            "label": "Entidade",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_demonio",
+                            "type": "textField",
+                            "size": "medium",
+                            "label": "Demônio",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_lado_dominante",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Lado dominante",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_gatilho_despertar",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Gatilho de despertar",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "arma_reacao_entidade",
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Reação da entidade",
+                            "defaultValue": ""
+                        }
+                    ]
+                },
+                {
+                    "key": "arma_perfis_resumo",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "Perfis de ataque",
+                    "defaultValue": "",
+                    "style": "dialog"
+                },
+                {
+                    "key": "descricao",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "Descrição",
+                    "defaultValue": "",
+                    "style": "dialog"
+                },
+                {
+                    "key": "arma_regra_completa_hint",
+                    "type": "label",
+                    "size": "full-size",
+                    "value": "Dano por Rank: escreva dentro do texto abaixo usando markdown — cabeçalho \"# DANO POR RANK\" seguido de \"## Rank D\" / \"## Rank C\" / \"## Rank B\" / \"## Rank A\" / \"## Rank S\" / \"## Rank SS\", com a fórmula entre crases (`1d8 + FOR`). É o único formato lido por extractWeaponRankFormulas() em weapon-service.mjs.",
+                    "style": "italic"
+                },
+                {
+                    "key": "arma_regra_completa",
+                    "type": "textArea",
+                    "size": "full-size",
+                    "label": "Regras, técnicas e despertar",
+                    "defaultValue": "",
+                    "style": "dialog"
+                },
+                {
+                    "key": "arma_especial_runtime",
+                    "type": "panel",
+                    "flow": "grid-3",
+                    "visibilityFormula": "false",
+                    "title": "Estado interno (não editar) — mantido só por ensureWeaponUsageMode()",
+                    "contents": [
+                        { "key": "arma_dano_dados", "type": "textField", "defaultValue": "" },
+                        {
+                            "key": "arma_dano_fixo",
+                            "type": "numberField",
+                            "defaultValue": 0,
+                            "allowDecimal": true
+                        },
+                        {
+                            "key": "arma_dano_atributo_json",
+                            "type": "textField",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_tipos_dano_json",
+                            "type": "textField",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_atributo_acerto_json",
+                            "type": "textField",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "key": "arma_perfis_ataque_json",
+                            "type": "textArea",
+                            "defaultValue": "[]"
+                        },
+                        { "key": "arma_mecanicas_json", "type": "textArea", "defaultValue": "[]" },
+                        {
+                            "key": "arma_formulas_por_rank_json",
+                            "type": "textArea",
+                            "defaultValue": "{}"
+                        },
+                        { "key": "arma_modo_uso", "type": "textField", "defaultValue": "" }
+                    ]
+                }
+            ]
+        },
+        "hidden": [{ "name": "inventario_categoria", "value": "arma" }],
+        "display": {
+            "width": 760,
+            "height": 760,
+            "fix_size": false,
+            "pp_width": 100,
+            "pp_height": 100
+        },
+        "templateSystemUniqueVersion": 1924098632,
+        "uniqueId": "NASpecialWeaponTpl00001"
     },
-    "body": {
-      "key": "arma_especial_body",
-      "type": "panel",
-      "flow": "vertical",
-      "align": "left",
-      "verticalAlign": "top",
-      "contents": [
-        {
-          "key": "arma_especial_contexto",
-          "type": "panel",
-          "flow": "grid-3",
-          "align": "center",
-          "verticalAlign": "center",
-          "title": "ARMA ESPECIAL",
-          "titleStyle": "bold",
-          "contents": [
-            { "key": "", "type": "label", "size": "full-size", "value": "Rank: ${fetchFromParent('rank_atual', {fallback: 'Sem portador', top: true})}$", "rollMessage": "", "altRollMessage": "", "rollMessageToChat": false, "altRollMessageToChat": false, "style": "bold" },
-            { "key": "", "type": "label", "size": "full-size", "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>", "tooltip": "Rola Acerto e dano usando a progressão própria desta arma especial.", "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});}%", "altRollMessage": "", "rollMessageToChat": false, "altRollMessageToChat": false, "style": "button" }
-          ]
-        },
-        {
-          "key": "arma_especial_identidade",
-          "type": "panel",
-          "flow": "grid-2",
-          "align": "left",
-          "verticalAlign": "top",
-          "contents": [
-            { "key": "arma_entidade", "type": "textField", "size": "medium", "label": "Entidade", "defaultValue": "" },
-            { "key": "arma_demonio", "type": "textField", "size": "medium", "label": "Demônio", "defaultValue": "" },
-            { "key": "arma_lado_dominante", "type": "textField", "size": "full-size", "label": "Lado dominante", "defaultValue": "" },
-            { "key": "arma_gatilho_despertar", "type": "textField", "size": "full-size", "label": "Gatilho de despertar", "defaultValue": "" },
-            { "key": "arma_reacao_entidade", "type": "textField", "size": "full-size", "label": "Reação da entidade", "defaultValue": "" }
-          ]
-        },
-        {
-          "key": "arma_especial_rank",
-          "type": "panel",
-          "flow": "grid-2",
-          "align": "left",
-          "verticalAlign": "top",
-          "title": "PROGRESSÃO ESPECIAL POR RANK",
-          "titleStyle": "bold",
-          "contents": [
-            { "key": "arma_rank_d_formula", "type": "textField", "size": "full-size", "label": "Rank D / Nível 2", "defaultValue": "" },
-            { "key": "arma_rank_c_formula", "type": "textField", "size": "full-size", "label": "Rank C / Nível 4", "defaultValue": "" },
-            { "key": "arma_rank_b_formula", "type": "textField", "size": "full-size", "label": "Rank B / Nível 6", "defaultValue": "" },
-            { "key": "arma_rank_a_formula", "type": "textField", "size": "full-size", "label": "Rank A / Nível 8", "defaultValue": "" },
-            { "key": "arma_rank_s_formula", "type": "textField", "size": "full-size", "label": "Rank S / Nível 11", "defaultValue": "" },
-            { "key": "arma_rank_ss_formula", "type": "textField", "size": "full-size", "label": "Rank SS / Nível 12", "defaultValue": "" }
-          ]
-        },
-        { "key": "arma_perfis_resumo", "type": "textArea", "size": "full-size", "label": "Perfis de ataque", "defaultValue": "", "style": "dialog" },
-        { "key": "descricao", "type": "textArea", "size": "full-size", "label": "Descrição", "defaultValue": "", "style": "dialog" },
-        { "key": "arma_regra_completa", "type": "textArea", "size": "full-size", "label": "Regras, técnicas e despertar", "defaultValue": "", "style": "dialog" },
-        {
-          "key": "arma_especial_runtime",
-          "type": "panel",
-          "flow": "grid-3",
-          "visibilityFormula": "false",
-          "contents": [
-            { "key": "arma_dano_dados", "type": "textField", "defaultValue": "" },
-            { "key": "arma_dano_fixo", "type": "numberField", "defaultValue": 0, "allowDecimal": true },
-            { "key": "arma_dano_atributo_json", "type": "textField", "defaultValue": "[]" },
-            { "key": "arma_tipos_dano_json", "type": "textField", "defaultValue": "[]" },
-            { "key": "arma_atributo_acerto_json", "type": "textField", "defaultValue": "[]" },
-            { "key": "arma_perfis_ataque_json", "type": "textArea", "defaultValue": "[]" },
-            { "key": "arma_mecanicas_json", "type": "textArea", "defaultValue": "[]" },
-            { "key": "arma_formulas_por_rank_json", "type": "textArea", "defaultValue": "{}" },
-            { "key": "arma_modo_uso", "type": "textField", "defaultValue": "" }
-          ]
-        }
-      ]
-    },
-    "hidden": [
-      { "name": "inventario_categoria", "value": "arma" }
-    ],
-    "display": { "width": 760, "height": 760, "fix_size": false, "pp_width": 100, "pp_height": 100 },
-    "templateSystemUniqueVersion": 1924098632,
-    "uniqueId": "NASpecialWeaponTpl00001"
-  },
-  "effects": [],
-  "folder": null,
-  "sort": 0,
-  "ownership": { "default": 2 },
-  "flags": { "custom-system-builder": { "version": "6.0.2" } },
-  "_stats": { "systemId": "custom-system-builder", "systemVersion": "6.0.2", "coreVersion": "14", "createdTime": 0, "modifiedTime": 0, "lastModifiedBy": null }
+    "effects": [],
+    "folder": null,
+    "sort": 0,
+    "ownership": { "default": 2 },
+    "flags": { "custom-system-builder": { "version": "6.0.2" } },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
 }

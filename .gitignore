@@ -39,6 +39,7 @@ module.zip
 /_debug/
 slayer_template_atual_agora.json
 arrumei umas coisas oq vc acha.json
+fvtt-Actor-*.json
 
 # Dados locais do Foundry
 /Data/
@@ -56,3 +57,4 @@ ARCHITECTURE.md
 erros.md
 CURRENT_CONTEXT.md
 HANDOFF-2026-08-23.md
+fvtt-Actor-slayer_template-ybGj27E3GxxP3IQD.json

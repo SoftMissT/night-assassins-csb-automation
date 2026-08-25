@@ -1955,8 +1955,7 @@
     color: var(--oni-text);
 }
 
-/* ── Abas: COMBATE / KEKKIJUTSU / ESPECIALIZAÇÃO / ORIGEM & PROGRESSÃO /
-   INVENTÁRIO & NOTAS / CONFIG — identidade vermelho-sangue, não dourada. */
+/* ── Abas: COMBATE / CONFIGURAÇÕES — identidade vermelho-sangue, não dourada. */
 .na-oni-sheet nav.custom-tabs,
 .na-oni-sheet .custom-tabs {
     margin: 6px 0 10px !important;

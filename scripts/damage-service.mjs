@@ -26,6 +26,7 @@ import { WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
 import { addStoneBreakForAction, parseBreathPassiveState, passiveStatePatch, registerStoneConfirmedDamage } from "./breath-passives.mjs";
 import { openAttackBuilder } from "./items/attack-builder.mjs";
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from "./metal-runtime.mjs";
+import { resolveSlayerDerivedBonuses } from "./derived-bonus-service.mjs";
 
 function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
   const parts = [];
@@ -293,6 +294,14 @@ export async function rollDamage(options = {}) {
   const breathingDamage = breathingState.pendingDamage;
   const hasAttackDamage = options.forceAttackDamage === true
     || entradas.some((entry) => entry.tipoAcao === "ataque" || entry.tipoAcao === "especial" || entry.tipoAcao === "completa");
+  if (attackerKind === "slayer" && hasAttackDamage) {
+    const derivedBonuses = resolveSlayerDerivedBonuses(props);
+    const fixedDamage = derivedBonuses.channels.danoFixo.total;
+    if (fixedDamage) specs.push({ label: "Bônus Derivado", types: [], formula: String(fixedDamage), derived: true });
+    for (const typed of derivedBonuses.typedDamage) {
+      specs.push({ label: typed.label, types: typed.types, formula: String(typed.value), derived: true });
+    }
+  }
   const injectBreathing = options.skipBreathingInjection !== true;
   if (injectBreathing && breathingDamage?.formula && hasAttackDamage) {
     const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) => String(attrValues[key.toLowerCase()] ?? 0));

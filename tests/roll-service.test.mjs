@@ -44,6 +44,13 @@ describe("roll-service", () => {
     assert.match(_formula, /\+ 7$/);
   });
 
+  it("soma Habilidade Especial e Metal em Bloqueio", async () => {
+    _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
+    const actor = makeActor({ props: { for_display: "4", hab_bloqueio_bonus: 3, metal_bloqueio_bonus: 4 } });
+    await rollTest({ actor, test: "Bloqueio", attr: "FOR" });
+    assert.match(_formula, /^1d20 \+ 4 \+ 7$/);
+  });
+
   it("aplica Desvantagem de Fadiga Mental e Cegueira Parcial em Percepção", async () => {
     _dialogReturn = { mode: "normal", rollMode: "publicroll", secVal: 0, bonusRaw: "", cdVal: 0 };
     const actor = makeActor({ props: {

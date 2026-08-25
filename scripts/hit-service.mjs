@@ -18,6 +18,7 @@ import { WIND_SYNERGY_BREATHINGS } from "./wind-breathing-data.mjs";
 import { consumeSnowPending, parseSnowBreathingState, resolveSnowFreezeGain, snowRestrictionFlag, snowStatePatch, spendFreezeForRestriction } from "./snow-breathing-service.mjs";
 import { actorWeapons, effectiveWeaponCritical, parseBreathPassiveState, passiveStatePatch, registerConfirmedCritical, registerWeaponUse } from "./breath-passives.mjs";
 import { SETTINGS } from "./settings.mjs";
+import { resolveSlayerDerivedBonuses } from "./derived-bonus-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -302,7 +303,11 @@ export async function rollHit(options) {
     const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
     if (canonical !== Number(stonePenalty.value)) ui.notifications?.warn?.("Penalidade da Reflexão da Pedra foi normalizada.");
   }
-  const bonusRaw = [dialogResult.bonusRaw, breathBonus ? String(breathBonus) : ""].filter(Boolean).join(" + ");
+  const derivedBonuses = resolveSlayerDerivedBonuses(props, {
+    runtimeSources: breathBonus ? [{ channel: "acerto", value: breathBonus, label: "Efeitos ativos", origin: "Respiração" }] : [],
+  });
+  const hitBonus = derivedBonuses.channels.acerto.total;
+  const bonusRaw = [dialogResult.bonusRaw, hitBonus ? String(hitBonus) : ""].filter(Boolean).join(" + ");
   // Ni no Kata Sōsō Shinato Kaze — passiva a partir do Nível 3 de Respiração:
   // ataques básicos e desta técnica deixam de sofrer atrito do vento e têm
   // Vantagem uma vez por turno (não depende de ativar a técnica em si).

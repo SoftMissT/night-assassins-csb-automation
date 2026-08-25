@@ -6,10 +6,10 @@
 
 | Ficha | Estado |
 | --- | --- |
-| **Caçador (Slayer)** | 6 abas (Perícias, Combate, Skills, Inventário, Notas, Configurações). Combate expõe armas (Item) e Formas de Respiração; Skills restrita a Mundo Transparente, Estado Altruísta, Marca do Caçador e Lâmina Carmesim. |
-| **Oni completo** | 2 abas (Combate; Configurações/Dados). Combate: Acerto/Bloqueio/Esquiva/Dano, Perícias, Ações, Status/Resistências, Vida e Morte, e o itemContainer de Kekkijutsu. Config: Especialização, Origem/Progressão, Identidade/Inventário e os dados administrativos de GM (ledger de PDV por nível, PDK, atributos). |
-| **Oni Minion** | Acerto/Dano/Bloqueio/Esquiva já operacionais; recebe dano automaticamente do relay genérico quando alvo de um ataque. |
-| **NPC** | Acerto/Dano/Bloqueio/Esquiva e as 7 rolagens de atributo puro (VIT/DEX/FOR/CAR/FDV/INT/SAB), mesmo padrão do Slayer; recebe dano automaticamente do relay genérico. |
+| **Caçador (Slayer)** | 3 abas: Perícias, Combate e Config/Dados. Combate reúne PDV/PDR/Fôlego, testes, ações, Status/Resistências, arma sincronizada, Formas e acúmulos da Respiração. Config/Dados concentra habilidades, estados persistentes e auditoria exclusiva do GM. |
+| **Oni completo** | 2 abas próprias: Combate e Configurações/Dados. Usa PDV/PDK, Kekkijutsu, ações, Status/Resistências, progressão e dados administrativos Oni; não recebe Perícias nem Vida e Morte de Slayer. |
+| **Oni Minion** | Ficha enxuta com Combate e Configurações, pacotes de atributos, ataques e PDV/PDK próprios; recebe dano pelo relay genérico. |
+| **NPC** | Ficha narrativa para retrato e informações básicas, sem recursos ou automações artificiais de Slayer/Oni. |
 
 ## Estado mecânico atual
 
@@ -33,6 +33,8 @@ Nomenclatura: todas usam o nome japonês (romaji) como nome primário do Item/t�
 O catálogo mecânico (`catalogs/breathing.json`) tem dados de 44 Respirações do sistema (incluindo Água), mas as que não estão na tabela acima não têm `service.mjs` dedicado nem passaram por auditoria — não são publicadas no módulo até receberem o mesmo tratamento.
 
 ### Demais sistemas
+
+- **Bônus derivados do Slayer:** Acerto, Bloqueio, Esquiva, Percepção, Dano, Iniciativa e PDR máximo passam por um resolvedor central. Ele combina Habilidade Especial, Metal/Cor, Respiração e Status sem gravar totais transitórios na ficha. O GM pode abrir **Config/Dados → Bônus Derivados → AUDITAR BÔNUS** para ver a decomposição por fonte. Metal Preto afeta apenas Bloqueio; Metal Azul afeta Bloqueio e Esquiva; dano tipado do Metal Roxo permanece separado do dano fixo.
 
 - **Dano e cura entre atores:** o relay de dano (`damage-relay.mjs`) já é genérico entre Slayer/Oni/Oni Minion/NPC — qualquer ataque contra qualquer um desses tipos aplica dano automaticamente (com aprovação de GM quando quem ataca não é dono do alvo). Um relay de cura equivalente (`heal-relay.mjs`) foi adicionado; o botão de Dano do Slayer sempre abre um modal "Dano ou Cura?" antes de resolver contra o alvo.
 - **Pipeline de Acerto → Dano:** rolar Acerto já dispara automaticamente a rolagem de Dano usando a arma correta (sem precisar clicar na arma manualmente), e o sistema oferece encadear a próxima Forma de Respiração após um acerto confirmado.
@@ -100,7 +102,7 @@ Ambos são idempotentes rodar de novo em um documento já corrigido não gera ne
 
 ## Roadmap — próximo trabalho planejado
 
-**HUD Telefone/Chat (Projeto Telefone).** SDD completo já aprovado em `MACRO-NA-FOUNDRY/docs/PROJETO TELEFONE/` (Constitution → Requirements → PDR → Research → Blueprint → Specs → Analyze, todos os gates confirmados por Nelson em 2026-08-21). Foi implementado uma vez (626/626 testes) sobre a v0.10.x, mas removido no revert total para a baseline v0.10.0 (release v0.11.0). Reimplementação futura deve reconstruir sobre a v0.11.6 atual seguindo o SDD já aprovado sem reabrir as fases de especificação e sem reintroduzir nenhum hook de render de ficha (ver linha de Troubleshooting sobre a regressão proibida abaixo).
+**HUD Telefone/Chat (Projeto Telefone).** SDD completo já aprovado em `MACRO-NA-FOUNDRY/docs/PROJETO TELEFONE/` (Constitution → Requirements → PDR → Research → Blueprint → Specs → Analyze, todos os gates confirmados por Nelson em 2026-08-21). Foi implementado uma vez sobre a v0.10.x, mas removido no revert total para a baseline v0.10.0. A reimplementação futura deve partir da linha atual sem reintroduzir hooks de render de ficha (ver Troubleshooting).
 
 ## Troubleshooting
 

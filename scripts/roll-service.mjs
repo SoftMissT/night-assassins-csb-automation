@@ -12,6 +12,7 @@ import { consumeMetalSteelDefense, parseMetalBreathingState } from "./metal-brea
 import { parseMistBreathingState } from "./mist-breathing-service.mjs";
 import { parseSnowBreathingState } from "./snow-breathing-service.mjs";
 import { consumeStoneCounterAttack, parseStoneBreathingState } from "./stone-breathing-service.mjs";
+import { derivedChannelForTest, resolveSlayerDerivedBonuses } from "./derived-bonus-service.mjs";
 
 function naturalD20(roll) {
   return Math.max(0, ...(roll?.dice ?? []).flatMap((die) => (die?.results ?? []).filter((result) => result.active !== false).map((result) => Number(result.result) || 0)));
@@ -173,6 +174,11 @@ export async function rollTest(options) {
   const dialogResult = await openRollDialog({ actor, test, attr, value: val, color });
   if (!dialogResult) return;
 
+  const derivedChannel = derivedChannelForTest(test, options.modality ?? "");
+  const derivedBonuses = resolveSlayerDerivedBonuses(actor.system?.props ?? {});
+  const derivedTotal = derivedChannel ? derivedBonuses.channels[derivedChannel]?.total ?? 0 : 0;
+  const bonusRaw = [dialogResult.bonusRaw, derivedTotal ? String(derivedTotal) : ""].filter(Boolean).join(" + ");
+
   // Duro como Aço N2 (Vantagem) é single-use: vale só para o "próximo ataque
   // inimigo", então precisa ser consumido aqui — sem isso, a Vantagem
   // vazaria para toda rolagem de Bloqueio/Esquiva seguinte.
@@ -204,7 +210,7 @@ export async function rollTest(options) {
     mode: dialogResult.mode,
     rollMode: dialogResult.rollMode,
     secVal: dialogResult.secVal,
-    bonusRaw: dialogResult.bonusRaw,
+    bonusRaw,
     cdVal: dialogResult.cdVal,
     statusEffects,
   });

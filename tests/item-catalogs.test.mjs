@@ -118,12 +118,23 @@ describe("catálogo de armas Slayer", () => {
     assert.match(serialized, /linkedEntity/);
     assert.doesNotMatch(serialized, /itemUuid:entity\.uuid/);
     assert.match(serialized, /na-sheet-text/);
-    assert.match(serialized, /arma_perfis_resumo/);
+    // arma_perfis_resumo/arma_tipos_dano_resumo/arma_atributos_resumo saíram da UI editável do
+    // template (painel "PERFIS DE ATAQUE" morto — editar não tinha efeito, build-weapon-sources.mjs
+    // sempre sobrescrevia). O valor continua vivo: gerado aqui e lido pela tabela de inventário do
+    // Actor (src/templates/actors/slayer-template.json → inventario_slayer_armas).
+    assert.doesNotMatch(serialized, /arma_perfis_resumo|arma_atributos_resumo|arma_tipos_dano_resumo/);
     assert.match(serialized, /arma_modo_uso/);
     assert.match(serialized, /startWithHit/);
     assert.doesNotMatch(serialized, /arma_rank_ss_formula|arma_imagem_vertical/);
+    const weapons = documents.filter((document) => document.type === "equippableItem");
+    assert.ok(weapons.every((item) => typeof item.system.props.arma_perfis_resumo === "string" && item.system.props.arma_perfis_resumo.length > 0), "o resumo continua sendo gerado nos Items publicados para alimentar a tabela do Actor");
     const specialTemplate = documents.find((document) => document._id === "NASpecialWeaponTpl00001");
-    assert.match(JSON.stringify(specialTemplate.system), /arma_rank_ss_formula/);
+    const specialSerialized = JSON.stringify(specialTemplate.system);
+    // Os 6 campos soltos arma_rank_d_formula..arma_rank_ss_formula eram "fantasmas": editáveis mas
+    // nunca lidos por extractWeaponRankFormulas() (weapon-service.mjs), que só parseia markdown de
+    // dentro de arma_regra_completa. Substituídos por um hint estático apontando pro formato real.
+    assert.doesNotMatch(specialSerialized, /arma_rank_d_formula|arma_rank_ss_formula/);
+    assert.match(specialSerialized, /DANO POR RANK/);
     assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
   });
 

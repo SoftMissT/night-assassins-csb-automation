@@ -242,12 +242,22 @@ function fixRollButtons(template) {
 }
 
 function fixRollButtonTypography(template) {
+  const attributeRoles = {
+    VIT: "vit",
+    DEX: "dex",
+    FOR: "for",
+    CAR: "car",
+    FDV: "fdv",
+    INT: "int",
+    SAB: "sab",
+  };
   walk(template.system, (node) => {
     if (node.type !== "label" || !node.rollMessage) return;
-    if (String(node.value ?? "").includes("custom-orbitron-wrapper")) return;
     const text = labelText(node.value);
     if (!text) return;
-    node.value = orbitron(text, "#28D7FF", 16);
+    const attribute = node.rollMessage.match(/attr:'(VIT|DEX|FOR|CAR|FDV|INT|SAB)'/)?.[1];
+    const role = attributeRoles[attribute] ?? "dex";
+    node.value = `<span class="na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-${role}">${text}</span>`;
   });
 }
 
@@ -510,51 +520,85 @@ function organizeSlayerTabs(template) {
   const currentNotas = byKey.get("notas_slayer_tab");
   const currentPerfil = byKey.get("perfil_slayer_tab");
   const currentInterludios = byKey.get("interludios_slayer_tab");
-  if (!dados && pericias && combate && configuracoes && currentSkills && currentInventario && currentNotas) {
-    const profileRuntime = extractComponentsByKey(combate.contents, new Set(["descanso_slayer_gerenciar", "deslocamento_slayer_titulo", "deslocamento_slayer_display"])).reverse()
-      .filter((entry) => entry.key !== "deslocamento_slayer_titulo");
-    for (const entry of profileRuntime) {
-      if (entry.key === "deslocamento_slayer_display") entry.value = "Deslocamento: ${deslocamento_slayer}$m (7m + DEX)";
-    }
-    const profilePieces = extractComponentsByKey(currentNotas.contents, new Set(["perfil_slayer_resumo_panel", "perfil_slayer_bio"])).reverse();
-    const interludePieces = extractComponentsByKey(currentNotas.contents, new Set(["interludio_semana_panel", "interludio_cabacas_panel", "interludio_reflexo_panel"])).reverse();
-    const perfil = currentPerfil ?? tab("perfil_slayer_tab", "Perfil/Bio", []);
-    perfil.name = "Perfil/Bio";
-    perfil.contents ??= [];
-    extractComponentsByKey(perfil.contents, new Set(["perfil_slayer_recursos_runtime_panel", "deslocamento_slayer_titulo", "deslocamento_slayer_display", "descanso_slayer_gerenciar"]));
-    if (!JSON.stringify(perfil).includes("perfil_slayer_titulo")) {
-      perfil.contents.unshift(displayLabel("perfil_slayer_titulo", orbitron("PERFIL DO CAÇADOR", "#D45CA4", 18)));
-    }
-    if (profilePieces.length && !JSON.stringify(perfil).includes("perfil_slayer_resumo_panel")) {
-      perfil.contents.push(...profilePieces);
-    }
-    if (profileRuntime.length) {
-      const insertAt = Math.min(1, perfil.contents.length);
-      perfil.contents.splice(insertAt, 0, panel("perfil_slayer_recursos_runtime_panel", "Mesa", profileRuntime, "grid-2"));
-    }
-    const interludios = currentInterludios ?? tab("interludios_slayer_tab", "Interlúdios", []);
-    interludios.name = "Interlúdios";
-    interludios.contents ??= [];
-    if (!JSON.stringify(interludios).includes("interludios_slayer_titulo")) {
-      interludios.contents.unshift(displayLabel("interludios_slayer_titulo", orbitron("INTERLÚDIO, TREINO & REABILITAÇÃO", "#28D7FF", 18)));
-    }
-    if (interludePieces.length && !JSON.stringify(interludios).includes("interludio_semana_panel")) {
-      interludios.contents.push(...interludePieces);
-    }
-    const accum = [];
-    walk(combate, (node) => {
-      if (node.key === "combate_acumulos_slayer_panel") accum.push(node);
-    });
-    for (const node of accum) {
-      if (Array.isArray(node.contents?.[0])) node.contents = node.contents.flat();
-    }
+  if (!dados && pericias && combate && configuracoes && tabs.contents.length === 3) {
     pericias.name = "Perícias";
     combate.name = "Combate";
-    currentSkills.name = "Skills";
-    currentInventario.name = "Inventário";
-    currentNotas.name = "Notas/Diário";
     configuracoes.name = "Config / Dados";
-    tabs.contents = [perfil, pericias, combate, currentSkills, currentInventario, interludios, currentNotas, configuracoes];
+    return;
+  }
+  if (!dados && pericias && combate && configuracoes && currentSkills && currentInventario && currentNotas) {
+    const take = (key) => extractComponentsByKey(tabs.contents, new Set([key])).at(-1) ?? null;
+    const profileRuntime = take("perfil_slayer_recursos_runtime_panel") ?? panel("perfil_slayer_recursos_runtime_panel", "Mesa", [
+      take("descanso_slayer_gerenciar"),
+      take("deslocamento_slayer_display"),
+    ].filter(Boolean), "grid-2");
+    const breathingForms = take("skills_slayer_respiracoes");
+    const weaponContainer = take("inventario_slayer_armas");
+    const accumulations = take("combate_acumulos_slayer_panel");
+    const derivedBonuses = take("bonus_derivados_slayer_panel") ?? panel("bonus_derivados_slayer_panel", "Bônus Derivados", [
+      Object.assign(displayLabel("bonus_derivados_slayer_resumo", '<span class="na-sheet-text na-sheet-label na-sheet-size-sm">ACERTO +${hab_acerto_bonus+metal_acerto_bonus}$ · BLOQUEIO +${hab_bloqueio_bonus+metal_bloqueio_bonus}$ · ESQUIVA +${hab_esquiva_bonus+metal_esquiva_bonus}$ · DANO +${hab_dano_bonus+metal_dano_bonus}$ · PERCEPÇÃO +${metal_percepcao_visual_bonus}$ · INICIATIVA +${metal_iniciativa_bonus}$</span>'), {
+        role: 4,
+        tooltip: "Totais permanentes atuais; Respirações e Status temporários entram no momento da rolagem.",
+      }),
+      Object.assign(displayLabel("bonus_derivados_slayer_auditar", '<span class="na-sheet-text na-sheet-label na-sheet-size-sm">AUDITAR BÔNUS</span>'), {
+        role: 4,
+        tooltip: "Abre a decomposição por fonte. Somente GM.",
+        style: "button",
+        rollMessage: "%{await game.modules.get('night-assassins-csb-automation')?.api?.openDerivedBonusAudit({actorUuid:entity.uuid}); return '';}%",
+      }),
+    ], "grid-4");
+    derivedBonuses.role = 4;
+    derivedBonuses.tooltip = "Resumo calculado das fontes permanentes. Efeitos condicionais são detalhados na auditoria.";
+    const smallBottle = take("interludio_cabaca_pequena_completa");
+    const constantConcentration = take("interludio_concentracao_total_constante");
+
+    if (!profileRuntime || !breathingForms || !weaponContainer || !accumulations) {
+      throw new Error("Componentes obrigatórios da aba Combate do Slayer não encontrados.");
+    }
+
+    for (const field of [smallBottle, constantConcentration].filter(Boolean)) {
+      field.role = 0;
+      field.editRole = 4;
+      field.tooltip = "Estado persistente visível ao jogador e editável somente pelo GM.";
+    }
+    const interludeBonus = panel("combat_slayer_bonus_interludio_panel", "Bônus de Treino", [
+      ...[smallBottle, constantConcentration].filter(Boolean),
+    ], "grid-2");
+
+    const skillPanel = pericias.contents.find((entry) => entry?.type === "panel" && !entry.key);
+    if (!skillPanel || !Array.isArray(skillPanel.contents)) throw new Error("Matriz de Perícias do Slayer não encontrada.");
+    const skillTable = structuredClone(skillPanel);
+    skillTable.type = "table";
+    skillTable.cols = 3;
+    skillTable.rows = Math.ceil(skillPanel.contents.length / 3);
+    skillTable.layout = "ccc";
+    skillTable.contents = Array.from({ length: skillTable.rows }, (_, index) => skillPanel.contents.slice(index * 3, index * 3 + 3));
+    delete skillTable.flow;
+    delete skillTable.align;
+    delete skillTable.verticalAlign;
+    delete skillTable.collapsible;
+    delete skillTable.defaultCollapsed;
+    delete skillTable.title;
+    delete skillTable.titleStyle;
+    pericias.contents = [skillTable, ...pericias.contents.filter((entry) => entry !== skillPanel && entry !== derivedBonuses)];
+
+    const legacySkills = panel("skills_slayer_legado_panel", "Habilidades do Caçador", currentSkills.contents.filter(Boolean), "vertical");
+    legacySkills.collapsible = true;
+    legacySkills.defaultCollapsed = true;
+    configuracoes.contents.unshift(...[derivedBonuses, legacySkills].filter(Boolean));
+
+    pericias.name = "Perícias";
+    combate.name = "Combate";
+    configuracoes.name = "Config / Dados";
+    combate.contents = [
+      profileRuntime,
+      ...combate.contents.filter((entry) => ![weaponContainer, accumulations].includes(entry)),
+      weaponContainer,
+      breathingForms,
+      interludeBonus,
+      accumulations,
+    ];
+    tabs.contents = [pericias, combate, configuracoes];
     return;
   }
   if (!pericias || !combate || !configuracoes || !dados) {
@@ -1014,11 +1058,38 @@ function fixFolegoDisplay(template) {
 function organizeSlayerCombatLayout(template) {
   let combatTab = null;
   let actionButton = null;
+  let combatControls = null;
   walk(template.system?.body, (node) => {
     if (node.key === "combat_slayer_tab" && node.type === "tab") combatTab = node;
     if (node.key === "acoes_slayer_gerenciar" && node.type === "label") actionButton = structuredClone(node);
+    if (node.key === "combat_slayer_table" && node.type === "panel") combatControls = node;
   });
-  if (!combatTab || !actionButton) throw new Error("Aba Combate ou botão Gerenciar Ações não encontrado.");
+  if (!combatTab || !actionButton || !combatControls) throw new Error("Aba Combate, controles ou botão Gerenciar Ações não encontrado.");
+
+  const combatTests = combatControls.contents.filter((entry) => {
+    const text = labelText(entry?.value);
+    return ["Acerto", "Bloqueio", "Esquiva", "Dano", "Rolagem de dano"].includes(text);
+  }).slice(0, 4);
+  if (combatTests.length !== 4) throw new Error("Matriz Acerto/Bloqueio/Esquiva/Dano incompleta.");
+  const remainingControls = combatControls.contents.filter((entry) => !combatTests.includes(entry));
+  combatControls.contents = [{
+    key: "",
+    colSpan: 1,
+    rowSpan: 1,
+    cssClass: "",
+    role: 0,
+    editRole: 0,
+    permission: 0,
+    tooltip: "",
+    visibilityFormula: "",
+    editableFormula: "",
+    escapeHTML: false,
+    type: "table",
+    contents: [combatTests],
+    cols: 4,
+    rows: 1,
+    layout: "cccc",
+  }, ...remainingControls];
 
   removeComponentsByKey(template.system, new Set(["acoes_slayer_gerenciar", "acoes_slayer_display", "acoes_slayer_panel"]));
   actionButton.value = orbitron("GERENCIAR AÇÕES", "#FF9100");
@@ -1041,8 +1112,16 @@ function organizeSlayerCombatLayout(template) {
 
 function flattenNestedPanelContents(template) {
   walk(template.system?.body, (node) => {
+    if (node.type !== "panel") return;
     if (!Array.isArray(node.contents?.[0])) return;
     if (node.contents.every((entry) => Array.isArray(entry))) node.contents = node.contents.flat();
+  });
+}
+
+function trimAttributeCardValues(template) {
+  const keys = new Set(["atr_vit_valor", "atr_dex_valor", "atr_for_valor", "atr_car_valor", "atr_fdv_valor", "atr_int_valor", "atr_sab_valor"]);
+  walk(template.system?.body, (node) => {
+    if (node.type === "label" && keys.has(node.key)) node.value = String(node.value ?? "").trim();
   });
 }
 
@@ -1066,6 +1145,7 @@ export function migrateSlayerTemplate(template) {
   flattenNestedPanelContents(migrated);
   fixLifeDeathStorage(migrated);
   fixRollButtonTypography(migrated);
+  trimAttributeCardValues(migrated);
   fixTextVisibilityFormulas(migrated);
   return migrated;
 }
@@ -1107,15 +1187,20 @@ export function wrapSlayerTemplate(template) {
 }
 
 export function buildActorExport(template, shell) {
+  const slayerIcon = "modules/night-assassins-csb-automation/assets/icons/templates/na-slayer-template_icon.webp";
   return {
     ...structuredClone(shell),
     name: template.name,
     type: template.type,
-    img: template.img ?? "systems/custom-system-builder/img/template-logo.svg",
+    img: slayerIcon,
     system: structuredClone(template.system),
     prototypeToken: {
       ...structuredClone(shell.prototypeToken),
       name: template.name,
+      texture: {
+        ...structuredClone(shell.prototypeToken?.texture),
+        src: slayerIcon,
+      },
     },
     items: structuredClone(template.items ?? []),
     effects: structuredClone(template.effects ?? []),

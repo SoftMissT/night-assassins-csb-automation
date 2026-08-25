@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.11.14 - 2026-08-25
+
+- **Bônus derivados do Slayer centralizados**: Habilidades Especiais, Metal/Cor e contribuições temporárias agora passam por um único resolvedor consumido por Acerto, Bloqueio, Esquiva, Percepção e Dano. Dano fixo e dano tipado permanecem em parcelas distintas; Config/Dados ganhou resumo compacto e auditoria detalhada exclusiva do GM.
+- **Template de Item de arma reorganizado (só UI, zero mudança de lógica)**: `src/templates/items/slayer-weapon-template.json` perde o painel "PERFIS DE ATAQUE" (`arma_perfis_resumo`, `arma_atributos_resumo`, `arma_tipos_dano_resumo`) — os três campos eram editáveis na ficha do Item mas qualquer edição manual era sempre sobrescrita por `tools/build-weapon-sources.mjs`/`scripts/weapon-migration.mjs` no próximo build/repair; os valores continuam sendo gerados normalmente e alimentando a coluna "Dano / Perfil" da tabela de inventário do Actor (`src/templates/actors/slayer-template.json`, intocado).
+- **UI fantasma de Rank removida da arma especial**: `src/templates/items/special-slayer-weapon-template.json` perde os 6 campos soltos `arma_rank_d_formula`...`arma_rank_ss_formula` — nunca eram lidos por `extractWeaponRankFormulas()` (`scripts/weapon-service.mjs`), que só parseia markdown (`# DANO POR RANK` / `## Rank X`) de dentro de `arma_regra_completa`. No lugar, um label estático orienta o formato real.
+- **Paineis de estado interno documentados**: `arma_runtime_data` (normal) e `arma_especial_runtime` (especial), ambos `visibilityFormula:"false"`, ganham `title` explicando que são estado de máquina mantido só por `ensureWeaponUsageMode()` — nenhum campo interno foi alterado.
+- Campos legados `arma_dano_atributo`/`arma_tipos_dano` (sem sufixo `_json`) preservados intactos — fallback de `weaponProfilesFromProps()` usado por outras armas do catálogo fora do escopo desta rodada.
+- `tests/item-catalogs.test.mjs` ajustado para refletir a remoção intencional (nenhuma asserção de campo foi enfraquecida, só redirecionada para onde o dado realmente vive: os Items publicados, não a UI do template).
+- **Ficha Slayer consolidada**: navegação reduzida às três áreas confirmadas — Perícias, Combate e Config/Dados. Descanso, deslocamento, recursos, testes, ações, armas, Formas e acúmulos ficam em Combate; habilidades e dados administrativos ficam em Config/Dados.
+- **Tables CSB válidas**: matrizes de Perícias e Acerto/Bloqueio/Esquiva/Dano usam linhas e colunas reais, evitando `contents` plano incompatível com o parser do Custom System Builder.
+- **Cores semânticas das Perícias**: cada botão usa a cor do atributo realmente rolado, em vez de herdar DEX/ciano para todos.
+- **Migrador Slayer idempotente**: a consolidação de oito para três abas preserva componentes funcionais, ícone próprio, estado das Respirações e o pacote global importável.
+- Validação: `node --test` com **862/862** testes aprovados, 151 suítes e zero falhas.
+
 ## 0.11.13 - 2026-08-24
 
 - **Contrato oficial de armas separado das armas especiais de campanha**: o template `NA Arma - Slayer` deixa de conter progressão por Rank; o novo template `NA Arma Especial - Slayer` preserva a estrutura necessária para conteúdo especial futuro sem contaminar as armas normais.
@@ -725,14 +739,3 @@
 - Automação da Marca do Destino integrada ao `updateActor`.
 - Suporte a DialogV2, ApplicationV2 e persistência em `actor.system.props`.
 - Testes unitários com `node:test`.
-
-## Unreleased
-
-- Respiração das Chamas passa a manter Esquentar por arma sincronizada, crítico e perfil coerentes, Brasas por alvo e limpeza ao fim do combate.
-- Respiração da Pedra recebe setting mundial de piso positivo do crítico, Quebra por arma/ação, técnicas com nomes japoneses e registro de dano confirmado por alvo/turno.
-- `Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki` aplica Sangramento apenas após ataque não anulado; mesma fonte soma o dano e renova para dois turnos.
-- `Ryūmongan, Sokusei / Keikoku` limita a recuperação crítica a 2 PDR por uso; `Kaifuku-ryoku` integra-se opcionalmente à Marca sem bloqueá-la.
-- Validação local: `node --test` com 835/835 testes; validação multicliente no Foundry v14 pendente.
-- Adicionado relay de GM para jogadores acumularem dano em `system.props.pdv_oni_dano_tomado` sem ownership do Actor inimigo.
-- O relay passa a iniciar automaticamente no hook `ready`; a macro standalone do GM não é mais necessária.
-- `na_roll_damage.js` consome a API pública `applyOniDamage` do módulo.

@@ -40,6 +40,7 @@ import { actorKind } from "./actor-kind.mjs";
 import { repairOniActors } from "./oni/repair-service.mjs";
 import { useKekkijutsuItem } from "./oni/kekkijutsu-use-service.mjs";
 import { registerWeaponModeEngine } from "./weapon-service.mjs";
+import { derivedBonusSummary, openDerivedBonusAudit, resolveSlayerDerivedBonuses } from "./derived-bonus-service.mjs";
 
 /**
  * Wrapper público de rollDamage exposto em module.api — ponto de entrada
@@ -180,6 +181,9 @@ reloadWeaponItem,
       openGmDashboard,
       openResistanceManager,
       openStatusManager,
+      openDerivedBonusAudit,
+      resolveSlayerDerivedBonuses,
+      derivedBonusSummary,
       getRollStatusEffects,
       getDamageStatusEffects,
       mergeRollMode,

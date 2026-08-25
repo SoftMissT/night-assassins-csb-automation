@@ -60,6 +60,29 @@ describe("damage-service", () => {
     assert.strictEqual(warned, true);
   });
 
+  it("mantém dano fixo e dano tipado de Metal em parcelas separadas", async () => {
+    _dialogReturn = {
+      nome: "Golpe derivado", pdrGasto: 0, critical: false,
+      entradas: [{ dado: "1d6", fixo: 0, selAttrs: [], selTiposDano: ["cortante"], tipoAcao: "ataque" }],
+    };
+    const formulas = [];
+    const previousCreate = Roll.create;
+    Roll.create = (formula) => {
+      formulas.push(formula);
+      return { evaluate: async () => ({ total: 1, dice: [], toMessage: async () => {} }) };
+    };
+    const actor = makeActor({ props: {
+      nome_slayer: "Slayer", pdv_slayer_total_valor: 20, metal_dano_bonus: 2, metal_dano_veneno: 3,
+    } });
+    game.user.targets = new Set();
+    try {
+      await rollDamage({ actor, skipActionConsumption: true, forceAttackDamage: true });
+    } finally {
+      Roll.create = previousCreate;
+    }
+    assert.deepEqual(formulas, ["1d6", "2", "3"]);
+  });
+
   it("aplica PDR e dano em atacante e alvo diferentes", async () => {
     game.user.isGM = true;
     _dialogReturn = [

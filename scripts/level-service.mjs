@@ -33,8 +33,9 @@ import {
  * @returns {Promise<boolean>}
  */
 export async function createLevelOneValues(actor) {
+  const kind = actorKind(actor);
   const props = actor.system?.props ?? {};
-  const currentValues = currentConfigValues(props);
+  const currentValues = currentConfigValues(props, kind);
 
   const method = await chooseCreationMethod();
   if (!method) return false;
@@ -50,7 +51,7 @@ export async function createLevelOneValues(actor) {
   const values = await distributePool(pool, 1, currentValues);
   if (!values || !(await confirmSnapshot(values, currentValues, 1))) return false;
 
-  const patch = buildSnapshotPatch(1, values);
+  const patch = buildSnapshotPatch(1, values, kind);
   await atomicActorUpdate(actor, patch);
   ui.notifications?.info?.(`Os sete atributos do nível 1 foram salvos para ${actor.name}.`);
   return true;
@@ -64,12 +65,12 @@ export async function createLevelOneValues(actor) {
  */
 export async function processLevelGain(actor, level) {
   const props = actor.system?.props ?? {};
-  const currentValues = currentConfigValues(props);
-  const baseValues = latestValues(props, level);
+  const currentValues = currentConfigValues(props, "slayer");
+  const baseValues = latestValues(props, level, "slayer");
   const gained = await applyAttributeGain(baseValues, level);
   if (!gained || !(await confirmSnapshot(gained, currentValues, level))) return false;
 
-  const patch = buildSnapshotPatch(level, gained);
+  const patch = buildSnapshotPatch(level, gained, "slayer");
   await atomicActorUpdate(actor, patch);
   ui.notifications?.info?.(`Atributos do nível ${level} salvos para ${actor.name}.`);
   return true;
@@ -83,8 +84,8 @@ export async function processLevelGain(actor, level) {
  */
 export async function processOniLevelGain(actor, level) {
   const props = actor.system?.props ?? {};
-  const currentValues = currentConfigValues(props);
-  const baseValues = latestValues(props, level);
+  const currentValues = currentConfigValues(props, "oni");
+  const baseValues = latestValues(props, level, "oni");
   let gained = null;
   if (ONI_PLUS_ONE_LEVELS.includes(level)) gained = await applyAttributeGain(baseValues, level);
   else if (level === ONI_PLUS_TWO_LEVEL) gained = await applyAttributeGainTwo(baseValues, level);
@@ -93,7 +94,7 @@ export async function processOniLevelGain(actor, level) {
   else return false;
   if (!gained || !(await confirmSnapshot(gained, currentValues, level))) return false;
 
-  const patch = buildSnapshotPatch(level, gained);
+  const patch = buildSnapshotPatch(level, gained, "oni");
   await atomicActorUpdate(actor, patch);
   ui.notifications?.info?.(`Atributos Oni do nível ${level} salvos para ${actor.name}.`);
   return true;

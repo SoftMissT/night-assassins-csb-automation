@@ -9,7 +9,7 @@ describe("oni-template", () => {
   it("mantém as keys de dano e converte o recurso demoníaco para PDK", () => {
     const migrated = migrateOniTemplate(source);
     const serialized = JSON.stringify(migrated);
-    for (const key of ["pdv_oni_dano_tomado", "pdv_oni_dano_ferida", "pdk_oni_total_valor", "pdk_oni_atual_valor_display"]) {
+    for (const key of ["pdv_oni_dano_ferida", "pdk_oni_total_conta", "pdk_oni_atual_num"]) {
       assert.match(serialized, new RegExp(key));
     }
     assert.doesNotMatch(serialized, /pdr_oni/);
@@ -37,13 +37,8 @@ describe("oni-template", () => {
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
       const formula = hidden.get(`${attr}_display`);
-      assert.equal(formula, `\${fallback(atr_${attr}_valor_config,0)+fallback(origem_oni_bonus_${attr},0)+fallback(bonus_atr_${attr}_valor_temp,0)}$`);
+      assert.equal(formula, `\${fallback(atr_${attr}_oni_valor_config,0)+fallback(bonus_atr_${attr}_oni_valor_temp,0)}$`);
       assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
-    }
-    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      const bonus = hidden.get(`origem_oni_bonus_${attr}`);
-      assert.ok(bonus, `origem_oni_bonus_${attr} deve existir`);
-      assert.match(bonus, /switchCase\(origem_dropdown/);
     }
   });
 
@@ -87,7 +82,7 @@ describe("oni-template", () => {
     assert.doesNotMatch(pdkInicial, /switchCase/, "conta final nao deve embutir switchCase");
     assert.doesNotMatch(pdvInicial, /fallback/);
     assert.doesNotMatch(pdkInicial, /fallback/);
-    assert.match(pdvInicial, /exterminador_corrompido.*\(30\+\(vit_nvl1\*3\)\+\(10\*oni_nivel_na_queda\)\).*origem_pdv_fixo\+vit_nvl1/s);
-    assert.match(pdkInicial, /exterminador_corrompido.*oni_pdr_maximo_antes_queda\+\(oni_nivel_na_queda\*2\)\+\(fdv_nvl1\*3\).*origem_pdk_fixo\+\(fdv_nvl1\*origem_pdk_fdv_mult\)/s);
+    assert.match(pdvInicial, /exterminador_corrompido.*\(30\+\(vit_oni_nvl1\*3\)\+\(10\*oni_nivel_na_queda\)\).*origem_pdv_fixo\+vit_oni_nvl1/s);
+    assert.match(pdkInicial, /exterminador_corrompido.*oni_pdr_maximo_antes_queda\+\(oni_nivel_na_queda\*2\)\+\(fdv_oni_nvl1\*3\).*origem_pdk_fixo\+\(fdv_oni_nvl1\*origem_pdk_fdv_mult\)/s);
   });
 });

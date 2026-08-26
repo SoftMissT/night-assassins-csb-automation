@@ -140,3 +140,34 @@ export const STATUS_SLAYER_DANO_CONTINUO = Object.freeze([
 ]);
 
 export const MODULE_ID = "night-assassins-csb-automation";
+
+/**
+ * Gera a chave de snapshot para um atributo em um nível específico.
+ * @param {"slayer"|"oni"} kind
+ * @param {string} attrKey
+ * @param {number} level
+ * @returns {string}
+ */
+export function snapshotKey(kind, attrKey, level) {
+  return kind === "oni" ? `${attrKey}_oni_nvl${level}` : `${attrKey}_nvl${level}`;
+}
+
+/**
+ * Gera a chave de config (base value) para um atributo.
+ * @param {"slayer"|"oni"} kind
+ * @param {string} attrKey
+ * @returns {string}
+ */
+export function configKey(kind, attrKey) {
+  return kind === "oni" ? `atr_${attrKey}_oni_valor_config` : `atr_${attrKey}_valor_config`;
+}
+
+/**
+ * Gera a chave de bônus temporário para um atributo.
+ * @param {"slayer"|"oni"} kind
+ * @param {string} attrKey
+ * @returns {string}
+ */
+export function tempKey(kind, attrKey) {
+  return kind === "oni" ? `bonus_atr_${attrKey}_oni_valor_temp` : `bonus_atr_${attrKey}_valor_temp`;
+}

@@ -161,7 +161,7 @@ const ONI_ORIGIN_PDK_FDV_MULT = Object.freeze({
 });
 
 function configureOniOrigins(template) {
-  const origin = findByKey(template, "origem_dropdown");
+  const origin = findByKey(template, "origem_oni_dropdown") ?? findByKey(template, "origem_dropdown");
   if (!origin || !Array.isArray(origin.options)) throw new Error("Dropdown de origem Oni não encontrado.");
   origin.defaultValue = "origem_oni_escolha";
   const keys = new Set(origin.options.map((option) => option.key));
@@ -171,7 +171,7 @@ function configureOniOrigins(template) {
 
   const originSwitchCase = (table, fallbackValue) => {
     const args = Object.entries(table).flatMap(([key, value]) => [`'origem_oni_${key}'`, value]).join(",\n  ");
-    return `\${switchCase(origem_dropdown,\n  ${args},\n  ${fallbackValue}\n)}$`;
+    return `\${switchCase(origem_oni_dropdown,\n  ${args},\n  ${fallbackValue}\n)}$`;
   };
 
   // Camada 1 — constantes por origem (dados puros, sem fórmula embutida).
@@ -183,12 +183,12 @@ function configureOniOrigins(template) {
   upsertHidden(
     template,
     "origem_oni_pdv_inicial",
-    "${(origem_dropdown=='origem_oni_exterminador_corrompido')?(30+(vit_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_nvl1)}$",
+    "${(origem_oni_dropdown=='origem_oni_exterminador_corrompido')?(30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_oni_nvl1)}$",
   );
   upsertHidden(
     template,
     "origem_oni_pdk_inicial",
-    "${(origem_dropdown=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3)):(origem_pdk_fixo+(fdv_nvl1*origem_pdk_fdv_mult))}$",
+    "${(origem_oni_dropdown=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)):(origem_pdk_fixo+(fdv_oni_nvl1*origem_pdk_fdv_mult))}$",
   );
 }
 
@@ -228,7 +228,7 @@ const ONI_ORIGIN_BONUSES = Object.freeze({
 function originBonusSwitchCase(attr) {
   const table = ONI_ORIGIN_BONUSES[attr] ?? {};
   const args = Object.entries(table).flatMap(([origin, bonus]) => [`'origem_oni_${origin}'`, bonus]).join(",");
-  return `\${switchCase(origem_dropdown,${args},0)}$`;
+  return `\${switchCase(origem_oni_dropdown,${args},0)}$`;
 }
 
 function configureOniOriginBonuses(template) {
@@ -239,13 +239,13 @@ function configureOniOriginBonuses(template) {
 
 function configureOniAttributes(template) {
   const formulas = {
-    vit_display: "${fallback(atr_vit_valor_config,0)+fallback(origem_oni_bonus_vit,0)+fallback(bonus_atr_vit_valor_temp,0)}$",
-    dex_display: "${fallback(atr_dex_valor_config,0)+fallback(origem_oni_bonus_dex,0)+fallback(bonus_atr_dex_valor_temp,0)}$",
-    for_display: "${fallback(atr_for_valor_config,0)+fallback(origem_oni_bonus_for,0)+fallback(bonus_atr_for_valor_temp,0)}$",
-    car_display: "${fallback(atr_car_valor_config,0)+fallback(origem_oni_bonus_car,0)+fallback(bonus_atr_car_valor_temp,0)}$",
-    fdv_display: "${fallback(atr_fdv_valor_config,0)+fallback(origem_oni_bonus_fdv,0)+fallback(bonus_atr_fdv_valor_temp,0)}$",
-    int_display: "${fallback(atr_int_valor_config,0)+fallback(origem_oni_bonus_int,0)+fallback(bonus_atr_int_valor_temp,0)}$",
-    sab_display: "${fallback(atr_sab_valor_config,0)+fallback(origem_oni_bonus_sab,0)+fallback(bonus_atr_sab_valor_temp,0)}$",
+    vit_display: "${fallback(atr_vit_oni_valor_config,0)+fallback(bonus_atr_vit_oni_valor_temp,0)}$",
+    dex_display: "${fallback(atr_dex_oni_valor_config,0)+fallback(bonus_atr_dex_oni_valor_temp,0)}$",
+    for_display: "${fallback(atr_for_oni_valor_config,0)+fallback(bonus_atr_for_oni_valor_temp,0)}$",
+    car_display: "${fallback(atr_car_oni_valor_config,0)+fallback(bonus_atr_car_oni_valor_temp,0)}$",
+    fdv_display: "${fallback(atr_fdv_oni_valor_config,0)+fallback(bonus_atr_fdv_oni_valor_temp,0)}$",
+    int_display: "${fallback(atr_int_oni_valor_config,0)+fallback(bonus_atr_int_oni_valor_temp,0)}$",
+    sab_display: "${fallback(atr_sab_oni_valor_config,0)+fallback(bonus_atr_sab_oni_valor_temp,0)}$",
   };
   for (const [name, formula] of Object.entries(formulas)) upsertHidden(template, name, formula);
 }
@@ -319,10 +319,16 @@ export function migrateOniTemplate(source) {
   configureOniBarsAndLabels(migrated);
   configureOniProgressionFields(migrated);
 
+  // Remove hidden attributes that are Slayer-only (should not exist in Oni template)
+  const hidden = migrated.system?.hidden;
+  if (Array.isArray(hidden)) {
+    migrated.system.hidden = hidden.filter((h) =>
+      h.name !== "origem_oni_pdv_val" && h.name !== "origem_oni_pdr_val"
+    );
+  }
+
   const keys = collectKeys(migrated);
   const required = [
-    "pdv_oni_total_valor", "pdv_oni_atual_valor_display", "pdv_oni_dano_tomado",
-    "pdv_oni_dano_ferida", "pdk_oni_total_valor", "pdk_oni_atual_valor_display",
     "pdv_oni_maximo_num", "pdv_oni_atual_num", "pdk_oni_maximo_num", "pdk_oni_atual_num",
   ];
   const missing = required.filter((key) => !keys.has(key));

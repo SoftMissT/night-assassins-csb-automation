@@ -64,16 +64,16 @@ describe("level-service", () => {
       const actor = makeActor({
         props: {
           nome_oni: "Akuma",
-          atr_fdv_valor_config: 3,
-          fdv_nvl1: 3,
+          atr_fdv_oni_valor_config: 3,
+          fdv_oni_nvl1: 3,
         },
       });
       let patch = null;
       actor.update = async (p) => { patch = p; };
       const result = await processOniLevelGain(actor, 16);
       assert.strictEqual(result, true);
-      assert.strictEqual(patch["system.props.fdv_nvl16"], 5);
-      assert.strictEqual(patch["system.props.atr_fdv_valor_config"], 5);
+      assert.strictEqual(patch["system.props.fdv_oni_nvl16"], 5);
+      assert.strictEqual(patch["system.props.atr_fdv_oni_valor_config"], 5);
     });
   });
 

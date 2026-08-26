@@ -2,7 +2,7 @@
  * @fileoverview Parsing e utilitários defensivos para valores CSB.
  */
 
-import { ATTRIBUTES } from "./constants.mjs";
+import { ATTRIBUTES, snapshotKey, configKey } from "./constants.mjs";
 
 /**
  * Extrai um número de um valor cru, tolerando HTML, &nbsp; e vírgula decimal.
@@ -130,20 +130,21 @@ export function poolMatches(values, pool) {
  * ou fallback para atr_*_valor_config.
  * @param {object} props
  * @param {number} level
+ * @param {"slayer"|"oni"} [kind="slayer"]
  * @returns {Record<string, number>}
  */
-export function latestValues(props, level) {
+export function latestValues(props, level, kind = "slayer") {
   return Object.fromEntries(
     ATTRIBUTES.map((attribute) => {
       for (let previous = Math.min(20, level - 1); previous >= 1; previous -= 1) {
-        const snapshot = props[`${attribute.key}_nvl${previous}`];
+        const snapshot = props[snapshotKey(kind, attribute.key, previous)];
         if (snapshot !== undefined && snapshot !== null && snapshot !== "") {
           return [attribute.key, parseNumber(snapshot)];
         }
       }
       return [
         attribute.key,
-        parseNumber(props[`atr_${attribute.key}_valor_config`]),
+        parseNumber(props[configKey(kind, attribute.key)]),
       ];
     })
   );
@@ -152,13 +153,14 @@ export function latestValues(props, level) {
 /**
  * Retorna os valores-base atuais a partir de atr_*_valor_config.
  * @param {object} props
+ * @param {"slayer"|"oni"} [kind="slayer"]
  * @returns {Record<string, number>}
  */
-export function currentConfigValues(props) {
+export function currentConfigValues(props, kind = "slayer") {
   return Object.fromEntries(
     ATTRIBUTES.map((attribute) => [
       attribute.key,
-      parseNumber(props[`atr_${attribute.key}_valor_config`]),
+      parseNumber(props[configKey(kind, attribute.key)]),
     ])
   );
 }

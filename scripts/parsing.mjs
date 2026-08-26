@@ -135,7 +135,7 @@ export function poolMatches(values, pool) {
 export function latestValues(props, level) {
   return Object.fromEntries(
     ATTRIBUTES.map((attribute) => {
-      for (let previous = Math.min(14, level - 1); previous >= 1; previous -= 1) {
+      for (let previous = Math.min(20, level - 1); previous >= 1; previous -= 1) {
         const snapshot = props[`${attribute.key}_nvl${previous}`];
         if (snapshot !== undefined && snapshot !== null && snapshot !== "") {
           return [attribute.key, parseNumber(snapshot)];

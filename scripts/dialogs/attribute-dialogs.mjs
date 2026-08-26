@@ -2,7 +2,7 @@
  * @fileoverview DialogV2 para criação e progressão de atributos.
  */
 
-import { ATTRIBUTES, STANDARD_POOL } from "../constants.mjs";
+import { ATTRIBUTES, ONI_BODY_ATTRIBUTES, STANDARD_POOL } from "../constants.mjs";
 import { parseNumber, poolMatches } from "../parsing.mjs";
 
 /**
@@ -201,7 +201,7 @@ export async function applyAttributeGain(values, level) {
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;">${cards}</div>
         <label style="display:grid;gap:4px;margin-top:4px;">
           <strong>Atributo escolhido</strong>
-          <select id="na-gain-attribute" style="width:100%;">${options}</select>
+          <select id="na-gain-attribute" name="na-gain-attribute" style="width:100%;">${options}</select>
         </label>
         <small style="color:#a99f93;">Bônus de Marca, Respiração, habilidade ou treinamento não entram neste aumento.</small>
       </div>`,
@@ -218,6 +218,131 @@ export async function applyAttributeGain(values, level) {
   });
   if (!ATTRIBUTES.some((attribute) => attribute.key === chosen)) return null;
   return { ...values, [chosen]: values[chosen] + 1 };
+}
+
+/**
+ * Nível 12 Oni: +1 em dois atributos distintos.
+ * @param {Record<string,number>} values
+ * @param {number} level
+ * @returns {Promise<Record<string,number>|null>}
+ */
+export async function applyAttributeGainTwo(values, level) {
+  const options = ATTRIBUTES.map((attribute) =>
+    `<option value="${attribute.key}">${attribute.label} · ${attribute.name} (${values[attribute.key]} → ${values[attribute.key] + 1})</option>`
+  ).join("");
+  const chosen = await foundry.applications.api.DialogV2.wait({
+    window: { title: `Nível ${level} Aprimoramento Amplo` },
+    content: `
+      <div class="na-csb-automation" style="display:grid;gap:8px;padding:4px 0;">
+        <p style="margin:0;">Escolha <strong>dois atributos diferentes</strong> para receber <strong>+1 permanente</strong> cada.</p>
+        <label style="display:grid;gap:4px;">
+          <strong>Primeiro atributo</strong>
+          <select name="na-gain-attribute-a" style="width:100%;">${options}</select>
+        </label>
+        <label style="display:grid;gap:4px;">
+          <strong>Segundo atributo</strong>
+          <select name="na-gain-attribute-b" style="width:100%;">${options}</select>
+        </label>
+      </div>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      {
+        action: "confirm-gain-two",
+        label: "Aplicar +1 em dois",
+        callback: (event, button) => [
+          String(button.form.elements["na-gain-attribute-a"]?.value ?? ""),
+          String(button.form.elements["na-gain-attribute-b"]?.value ?? ""),
+        ],
+      },
+      { action: "cancel", label: "Cancelar", callback: () => null },
+    ],
+  });
+  if (!Array.isArray(chosen)) return null;
+  const [first, second] = chosen;
+  if (first === second) {
+    ui.notifications?.warn?.("Escolha dois atributos diferentes.");
+    return null;
+  }
+  if (!ATTRIBUTES.some((attribute) => attribute.key === first)) return null;
+  if (!ATTRIBUTES.some((attribute) => attribute.key === second)) return null;
+  return { ...values, [first]: values[first] + 1, [second]: values[second] + 1 };
+}
+
+/**
+ * Nível 13 Oni: +2 VIT/FOR/DEX ou +1 em dois desses.
+ * @param {Record<string,number>} values
+ * @returns {Promise<Record<string,number>|null>}
+ */
+export async function applyCorpoDemoniaco(values) {
+  const mode = await foundry.applications.api.DialogV2.wait({
+    window: { title: "Nível 13 Aumento de Corpo Demoníaco" },
+    content: `<div class="na-csb-automation"><p>Escolha o modo do aumento corporal.</p></div>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      { action: "plus2", label: "+2 em um (VIT/FOR/DEX)", callback: () => "plus2" },
+      { action: "split", label: "+1 em dois (VIT/FOR/DEX)", callback: () => "split" },
+      { action: "cancel", label: "Cancelar", callback: () => null },
+    ],
+  });
+  if (mode !== "plus2" && mode !== "split") return null;
+  const body = ATTRIBUTES.filter((attribute) => ONI_BODY_ATTRIBUTES.includes(attribute.key));
+  const options = body.map((attribute) =>
+    `<option value="${attribute.key}">${attribute.label} · ${attribute.name} (${values[attribute.key]})</option>`
+  ).join("");
+  if (mode === "plus2") {
+    const chosen = await foundry.applications.api.DialogV2.wait({
+      window: { title: "Corpo Demoníaco +2" },
+      content: `
+        <div class="na-csb-automation" style="display:grid;gap:8px;">
+          <p>Escolha <strong>um</strong> atributo corporal para <strong>+2</strong>.</p>
+          <select name="na-corpo-attr" style="width:100%;">${options}</select>
+        </div>`,
+      modal: true,
+      rejectClose: false,
+      buttons: [
+        {
+          action: "confirm-corpo-plus2",
+          label: "Aplicar +2",
+          callback: (event, button) => String(button.form.elements["na-corpo-attr"]?.value ?? ""),
+        },
+        { action: "cancel", label: "Cancelar", callback: () => null },
+      ],
+    });
+    if (!ONI_BODY_ATTRIBUTES.includes(chosen)) return null;
+    return { ...values, [chosen]: values[chosen] + 2 };
+  }
+  const chosen = await foundry.applications.api.DialogV2.wait({
+    window: { title: "Corpo Demoníaco +1 em dois" },
+    content: `
+      <div class="na-csb-automation" style="display:grid;gap:8px;">
+        <p>Escolha <strong>dois atributos corporais diferentes</strong> para <strong>+1</strong> cada.</p>
+        <select name="na-corpo-attr-a" style="width:100%;">${options}</select>
+        <select name="na-corpo-attr-b" style="width:100%;">${options}</select>
+      </div>`,
+    modal: true,
+    rejectClose: false,
+    buttons: [
+      {
+        action: "confirm-corpo-split",
+        label: "Aplicar +1 em dois",
+        callback: (event, button) => [
+          String(button.form.elements["na-corpo-attr-a"]?.value ?? ""),
+          String(button.form.elements["na-corpo-attr-b"]?.value ?? ""),
+        ],
+      },
+      { action: "cancel", label: "Cancelar", callback: () => null },
+    ],
+  });
+  if (!Array.isArray(chosen)) return null;
+  const [first, second] = chosen;
+  if (first === second) {
+    ui.notifications?.warn?.("Escolha dois atributos corporais diferentes.");
+    return null;
+  }
+  if (!ONI_BODY_ATTRIBUTES.includes(first) || !ONI_BODY_ATTRIBUTES.includes(second)) return null;
+  return { ...values, [first]: values[first] + 1, [second]: values[second] + 1 };
 }
 
 /**

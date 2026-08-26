@@ -7,7 +7,7 @@ import { handleActorUpdate } from "./trigger-router.mjs";
 import { rollTest } from "./roll-service.mjs";
 import { rollHit } from "./hit-service.mjs";
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from "./damage-service.mjs";
-import { createLevelOneValues, processLevelGain } from "./level-service.mjs";
+import { createLevelOneValues, processLevelGain, processOniLevelGain, runAttributeSnapshot } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
 import { applyOniDamage, registerDamageRelay } from "./damage-relay.mjs";
 import { healActor, registerHealRelay } from "./heal-relay.mjs";
@@ -238,10 +238,14 @@ reloadWeaponItem,
         ensureProgression: oniProgression.ensureOniProgression,
         rollPdvGain: oniProgression.rollOniPdvGain,
         repairActor: repairOniActors,
+        processLevel: processOniLevelGain,
       },
+      actorKind,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,
+      processOniLevel: processOniLevelGain,
+      runAttributeSnapshot,
       processAbility: applyInitialMark,
       upgradeMark: upgradeMarkAtLevelSix,
       diagnoseActor,

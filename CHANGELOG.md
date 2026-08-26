@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.11.15 - 2026-08-26
+
+- **Snapshot de atributos Oni:** níveis `1, 3, 4, 6, 8, 11, 12, 13, 16`. Keys `{attr}_nvl{N}` (total do nível). Nível 12 = +1 em dois; 13 = Corpo Demoníaco (VIT/FOR/DEX); 16 = +2 FDV automático.
+- **Macro `na-attribute-level-snapshot`** passa a chamar `api.runAttributeSnapshot` (Slayer e Oni). Sem duplicar DialogV2 na macro.
+- **Trigger Oni:** além do ledger PDV 2–12, sobe de nível dispara o snapshot se as keys `{attr}_nvl{N}` ainda estiverem vazias.
+- Contrato de keys PDV/PDK/atributos em `docs/ONI-KEYS-PROGRESSAO.md` — table de PDK por nível para montar na ficha (`pdk_oni_ganho_nvl2`…`nvl20`).
+- Validação: suíte do módulo (`node --test`).
+
+## Não publicado - 2026-08-25
+
+- **NPC e Oni Minion substituídos pelo layout real do operador (fonte da verdade nova):** `src/templates/actors/npc-template.json` e `src/templates/actors/oni-minion-template.json` passam a ser cópias do que o operador montou e exportou do Foundry, preservando o layout exatamente como está. Correções aplicadas por cima, sem reorganizar nada: (1) `name` do NPC normalizado para `npc_template` (era `npc_template_atual`, resíduo do export); (2) `"tabs": []` adicionado ao `system` do Oni Minion para paridade estrutural com os demais templates CSB do projeto; (3) 4 keys do NPC renomeadas (`pdv_npc_extra`→`npc_pdv_extra`, `pdr_npc_extra`→`npc_pdr_extra`, `pdv_npc_atual_titulo`→`npc_pdv_atual_titulo`, `pdr_npc_atual_valor_display`→`npc_pdr_atual_valor_display`) e 2 do Oni Minion (`pdv_oni_minion_extra`→`oni_minion_pdv_extra`, `pdk_oni_minion_extra`→`oni_minion_pdk_extra`) para eliminar o resíduo "slayer"/nomenclatura invertida copiado-e-colado; (4) bug real de fórmula corrigido nos dois: nenhuma fórmula de PDV/PDR/PDK "atual"/"total" usava `fallback()`/`max()`/`min()`, então um campo `undefined` (Actor recém-criado ou corrompido) derrubava a cadeia inteira em "ERROR" — mesma classe de bug já documentada em `erros.md` para Oni/Slayer; harden aplicado seguindo o padrão de `slayer-template.json`/`oni-template.json`. No Oni Minion o bug era mais grave: a fórmula de `oni_minion_pdk_atual` lia campos de PDV (`oni_minion_pdv_curado`/`oni_minion_pdv_dano`) em vez dos campos de PDK que já existiam prontos (`oni_minion_pdk_gasto`/`oni_minion_pdk_recuperado`) — corrigido para usar os campos certos. (5) `itemContainer` de Armas do NPC recebeu `templateFilter: ["NAWeaponTpl00001"]` (estava vazio); novo `itemContainer` de Formas de Respiração (`inventario_npc_formas`, `templateFilter: ["NABreathTpl00001"]`) adicionado logo depois, espelhando a estrutura real do container `skills_slayer_respiracoes` do Slayer.
+- `tests/distribution.test.mjs` (teste "mantém o NPC narrativo sem recursos de combate") atualizado: as keys narrativas antigas (`npc_tom`/`npc_aparencia`/`npc_contexto`/`npc_notas_gm`) não existem no layout real do operador — os blocos de texto livre equivalentes são `npc_personalidade`, `npc_personalidade_copy1` (História/Contexto) e `npc_personalidade_copy1_copy2` (Tom/Maneira de falar); nomes de key preservados como o operador montou, fora de escopo renomear.
+- Validação: `node tools/build-template-sources.mjs` OK; `node --test` **864/864** (baseline mantido, zero regressão).
+- Corrige a regressão estrutural da ficha Slayer posterior à `v0.11.14`: restaura `Skills` como quarta aba e impede que habilidades sejam absorvidas por `Config / Dados`.
+- Move `Descanso`, `Deslocamento` e o resumo de `Fôlego` para a mesma linha da Table `perfil` do cabeçalho.
+- Usa a Table administrativa existente de `Config / Dados` para Dano Tomado, Fôlego Atual e PDR Gasto; os valores calculados permanecem visíveis em Combate.
+- Mantém Acerto/Bloqueio/Esquiva/Dano em uma Table 1x4, separa Status/Resistências e coloca Arma/acúmulos condicionais na mesma linha.
+- Corrige a ordem do migrador que recolocava Deslocamento em Combate depois de organizar as abas.
+- Validação local: migrador idempotente e **864/864** testes aprovados, 151 suítes, zero falhas. Gate real no Foundry v14 ainda pendente.
+
 ## 0.11.14 - 2026-08-25
 
 - **Bônus derivados do Slayer centralizados**: Habilidades Especiais, Metal/Cor e contribuições temporárias agora passam por um único resolvedor consumido por Acerto, Bloqueio, Esquiva, Percepção e Dano. Dano fixo e dano tipado permanecem em parcelas distintas; Config/Dados ganhou resumo compacto e auditoria detalhada exclusiva do GM.
@@ -739,3 +759,11 @@
 - Automação da Marca do Destino integrada ao `updateActor`.
 - Suporte a DialogV2, ApplicationV2 e persistência em `actor.system.props`.
 - Testes unitários com `node:test`.
+
+## [2026-08-25] TANG-ROU — Origens Oni: arquitetura em camadas + valores oficiais auditados
+
+**Tipo:** correção + otimização (template CSB)
+**Arquivo(s):** 	ools/migrate-oni-template.mjs, src/templates/actors/oni-template.json, 	ests/oni-template.test.mjs
+**Mudança:** Substituídos os 2 switchCase gigantes de PDV/PDK por origem por 3 camadas de dados (origem_pdv_fixo, origem_pdk_fixo, origem_pdk_fdv_mult) + 2 contas puras sem fallback (origem_oni_pdv_inicial, origem_oni_pdk_inicial), com Exterminador Corrompido como único condicional. Corrigidos 9 valores de PDV e 7 de PDK contra as Origens oficiais (Corte Pálida 18, Maré Negra 20/17, Raiz Podre 23/16, Realidade Distorcida 17, Tela do Submundo 18/20, Outras Terras 18/19, Transfigurado 24/16, Eco Eterno 18/19, Chama Negra 20/19). Confirmado pelo Operador: NVL 9 = +20 PDK (+10 nível +10 Pulso de Sangue). Novo painel "Origem — Recursos Iniciais" na aba Config/Dados.
+**Performance:** 21 fórmulas switchCase independentes → 3 tabelas + 2 contas; zero fallback nas contas derivadas.
+**Status:** ✅ completo (865/865 testes) — pendente validação visual no Foundry

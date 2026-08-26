@@ -91,7 +91,14 @@ describe("module distribution", () => {
   it("mantém o NPC narrativo sem recursos de combate", async () => {
     const actor = JSON.parse(await readFile(new URL("../src/templates/actors/npc-template.json", import.meta.url), "utf8"));
     const serialized = JSON.stringify(actor.system);
-    for (const key of ["npc_nome", "npc_personalidade", "npc_tom", "npc_aparencia", "npc_contexto", "npc_notas_gm"]) {
+    // 2026-08-25: ficha NPC substituída pelo layout real exportado do Foundry pelo
+    // operador (template_npc_atual_que eu fiz.json). As keys narrativas antigas
+    // (npc_tom/npc_aparencia/npc_contexto/npc_notas_gm) não existem mais nesse
+    // layout — os três blocos de texto livre agora são npc_personalidade
+    // ("Personalidade"), npc_personalidade_copy1 ("História / Contexto") e
+    // npc_personalidade_copy1_copy2 ("Tom / Maneira de falar"). Nomes de key
+    // preservados exatamente como o operador montou (fora de escopo renomear).
+    for (const key of ["npc_nome", "npc_personalidade", "npc_personalidade_copy1", "npc_personalidade_copy1_copy2"]) {
       assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
     }
     assert.deepEqual(actor.system.attributeBar, {});

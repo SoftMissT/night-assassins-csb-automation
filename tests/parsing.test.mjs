@@ -119,6 +119,11 @@ describe("parsing", () => {
       const values = latestValues(props, 7);
       assert.strictEqual(values.vit, 5);
     });
+    it("lê snapshot Oni acima do nível 14", () => {
+      const props = { vit_nvl16: 8, vit_nvl13: 6, atr_vit_valor_config: 4 };
+      const values = latestValues(props, 20);
+      assert.strictEqual(values.vit, 8);
+    });
     it("fallback para _config quando não há snapshot", () => {
       const props = { atr_vit_valor_config: 4 };
       const values = latestValues(props, 3);

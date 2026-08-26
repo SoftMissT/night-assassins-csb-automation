@@ -91,4 +91,22 @@ describe("trigger-router", () => {
     // Dialog mockado retorna null, então não aplica
     assert.strictEqual(updated, false);
   });
+
+  it("no Oni, nível 3 dispara snapshot Oni e não Marca Slayer", async () => {
+    const actor = makeActor({
+      name: "oni_template",
+      props: {
+        nome_oni: "Akuma",
+        nvl_pj: 3,
+        pdv_oni_ganho_nvl2: 2,
+        pdv_oni_ganho_nvl3: 3,
+        hab_escolhida: "hab_escolhida_marca_destino",
+        hab_marca_destino_bonus: 2,
+      },
+    });
+    let patch = null;
+    actor.update = async (p) => { patch = p; };
+    await handleActorUpdate(actor, { system: { props: { nvl_pj: 3 } } }, {}, game.user.id);
+    assert.strictEqual(patch, null);
+  });
 });

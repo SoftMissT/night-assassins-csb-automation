@@ -22,6 +22,12 @@ export const ATTR_COLORS = Object.freeze(
 
 export const SNAPSHOT_LEVELS = Object.freeze([1, 3, 7]);
 export const ATTRIBUTE_GAIN_LEVELS = Object.freeze([3, 7]);
+export const ONI_SNAPSHOT_LEVELS = Object.freeze([1, 3, 4, 6, 8, 11, 12, 13, 16]);
+export const ONI_PLUS_ONE_LEVELS = Object.freeze([3, 4, 6, 8, 11]);
+export const ONI_PLUS_TWO_LEVEL = 12;
+export const ONI_CORPO_DEMONIACO_LEVEL = 13;
+export const ONI_FDV_FIXED_LEVEL = 16;
+export const ONI_BODY_ATTRIBUTES = Object.freeze(["vit", "for", "dex"]);
 export const STANDARD_POOL = Object.freeze([4, 3, 2, 2, 1, 1, 1]);
 
 export const PROP_KEYS = Object.freeze({

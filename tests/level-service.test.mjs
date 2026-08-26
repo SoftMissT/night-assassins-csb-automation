@@ -8,7 +8,7 @@ import { makeActor } from "./fixtures/actor.mjs";
 let _dialogReturn = null;
 foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
 
-import { createLevelOneValues, processLevelGain } from "../scripts/level-service.mjs";
+import { createLevelOneValues, processLevelGain, processOniLevelGain, runAttributeSnapshot } from "../scripts/level-service.mjs";
 
 describe("level-service", () => {
   describe("createLevelOneValues", () => {
@@ -43,6 +43,46 @@ describe("level-service", () => {
       let updated = false;
       actor.update = async () => { updated = true; };
       const result = await processLevelGain(actor, 3);
+      assert.strictEqual(result, false);
+      assert.strictEqual(updated, false);
+    });
+  });
+
+  describe("processOniLevelGain", () => {
+    it("cancela quando o diálogo de ganho retorna null", async () => {
+      _dialogReturn = null;
+      const actor = makeActor({ props: { nome_oni: "Akuma" } });
+      let updated = false;
+      actor.update = async () => { updated = true; };
+      const result = await processOniLevelGain(actor, 3);
+      assert.strictEqual(result, false);
+      assert.strictEqual(updated, false);
+    });
+
+    it("aplica +2 FDV no nível 16 sem diálogo de escolha", async () => {
+      _dialogReturn = true;
+      const actor = makeActor({
+        props: {
+          nome_oni: "Akuma",
+          atr_fdv_valor_config: 3,
+          fdv_nvl1: 3,
+        },
+      });
+      let patch = null;
+      actor.update = async (p) => { patch = p; };
+      const result = await processOniLevelGain(actor, 16);
+      assert.strictEqual(result, true);
+      assert.strictEqual(patch["system.props.fdv_nvl16"], 5);
+      assert.strictEqual(patch["system.props.atr_fdv_valor_config"], 5);
+    });
+  });
+
+  describe("runAttributeSnapshot", () => {
+    it("recusa nível sem snapshot Oni", async () => {
+      const actor = makeActor({ props: { nome_oni: "Akuma" } });
+      let updated = false;
+      actor.update = async () => { updated = true; };
+      const result = await runAttributeSnapshot(actor, 5);
       assert.strictEqual(result, false);
       assert.strictEqual(updated, false);
     });

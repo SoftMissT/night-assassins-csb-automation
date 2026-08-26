@@ -237,6 +237,8 @@ describe("Automação da vida do Oni (ledger runtime)", () => {
     };
     globalThis.game = { user: { id: "gm1" }, actors: { contents: [] } };
     globalThis.Roll = { create: () => ({ evaluate: async () => ({ total: 3 }) }) };
+    globalThis.foundry = { applications: { api: { DialogV2: { wait: async () => null } } } };
+    globalThis.ui = { notifications: { warn() {}, error() {}, info() {} } };
     try {
       await handleActorUpdate(actor, { system: { props: { nvl_pj: "nvl_4" } } }, {}, "gm1");
       assert.equal(props["pdv_oni_ganho_nvl2"], 3);
@@ -251,6 +253,8 @@ describe("Automação da vida do Oni (ledger runtime)", () => {
     } finally {
       delete globalThis.game;
       delete globalThis.Roll;
+      delete globalThis.foundry;
+      delete globalThis.ui;
     }
   });
 });

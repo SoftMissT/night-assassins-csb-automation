@@ -503,6 +503,66 @@ function interludePanels() {
   ];
 }
 
+function blankTableCell() {
+  return displayLabel("", "");
+}
+
+function detachTableComponent(node, key) {
+  let detached = null;
+  const visitNode = (current) => {
+    if (!current || typeof current !== "object" || detached) return;
+    if (Array.isArray(current)) {
+      for (let index = 0; index < current.length; index += 1) {
+        const entry = current[index];
+        if (entry?.key === key) {
+          detached = entry;
+          current[index] = blankTableCell();
+          return;
+        }
+        visitNode(entry);
+        if (detached) return;
+      }
+      return;
+    }
+    for (const value of Object.values(current)) {
+      visitNode(value);
+      if (detached) return;
+    }
+  };
+  visitNode(node);
+  return detached;
+}
+
+function csbTable(key, rows, layout = "") {
+  const cols = Math.max(1, ...rows.map((row) => row.length));
+  return {
+    key, colSpan: 1, rowSpan: 1, cssClass: "", role: 0, editRole: 0,
+    permission: 0, tooltip: "", visibilityFormula: "", editableFormula: "",
+    escapeHTML: false, type: "table",
+    contents: rows.map((row) => [...row, ...Array.from({ length: cols - row.length }, blankTableCell)]),
+    cols, rows: rows.length, layout: layout || "c".repeat(cols),
+  };
+}
+
+function configureBreathingAccumulations(accumulations) {
+  if (!accumulations?.contents) return;
+  const breathingKeys = new Map([
+    ["Água:", "resp_slayer_agua"], ["Chamas:", "resp_slayer_chamas"],
+    ["Pedra:", "resp_slayer_pedra"], ["Névoa:", "resp_slayer_nevoa"],
+    ["Metal:", "resp_slayer_metal"], ["Neve:", "resp_slayer_neve"],
+  ]);
+  for (const component of accumulations.contents) {
+    const source = String(component?.value ?? "");
+    const match = [...breathingKeys.entries()].find(([label]) => source.includes(label));
+    if (!match) continue;
+    const breathingKey = match[1];
+    component.visibilityFormula = `equalText(resp_slayer_display, '${breathingKey}') ? 1 : (equalText(resp_slayer_display_2, '${breathingKey}') ? 1 : 0)`;
+  }
+  accumulations.flow = "vertical";
+  accumulations.collapsible = false;
+  accumulations.defaultCollapsed = false;
+}
+
 function organizeSlayerTabs(template) {
   let tabs = null;
   walk(template.system?.body, (node) => {
@@ -520,10 +580,109 @@ function organizeSlayerTabs(template) {
   const currentNotas = byKey.get("notas_slayer_tab");
   const currentPerfil = byKey.get("perfil_slayer_tab");
   const currentInterludios = byKey.get("interludios_slayer_tab");
+  if (!dados && pericias && combate && currentSkills && configuracoes && tabs.contents.length === 4) {
+    pericias.name = "Perícias";
+    combate.name = "Combate";
+    currentSkills.name = "Skills";
+    configuracoes.name = "Config / Dados";
+    tabs.contents = [pericias, combate, currentSkills, configuracoes];
+    const accumulations = combate.contents.find((entry) =>
+      entry?.key === "combate_acumulos_slayer_panel"
+        || (entry?.key === "armas_acumulos_slayer_table" && JSON.stringify(entry).includes("combate_acumulos_slayer_panel"))
+    );
+    if (accumulations?.key === "armas_acumulos_slayer_table") {
+      const panel = accumulations.contents.flat().find((entry) => entry?.key === "combate_acumulos_slayer_panel");
+      configureBreathingAccumulations(panel);
+    } else configureBreathingAccumulations(accumulations);
+    walk(template.system, (node) => {
+      if (node && typeof node === "object") delete node._slayerRemainingControls;
+    });
+    return;
+  }
   if (!dados && pericias && combate && configuracoes && tabs.contents.length === 3) {
+    const legacySkills = configuracoes.contents.find((entry) => entry?.key === "skills_slayer_legado_panel");
+    if (!legacySkills?.contents?.length) throw new Error("Conteúdo da aba Skills não encontrado no painel legado.");
+
+    const headerTable = template.system?.header?.contents?.find((entry) => entry?.type === "table" && entry?.key === "perfil");
+    if (!headerTable) throw new Error("Table perfil do cabeçalho Slayer não encontrada.");
+
+    const damageTaken = detachTableComponent(combate, "pdv_slayer_dano_tomado");
+    const pdrSpent = detachTableComponent(combate, "pdr_slayer_gasto_valor");
+    const currentBreath = detachTableComponent(combate, "folego_slayer_atual");
+    const restButton = extractComponentsByKey(combate, new Set(["descanso_slayer_gerenciar"])).at(-1);
+    const movement = extractComponentsByKey(combate, new Set(["deslocamento_slayer_display"])).at(-1);
+    removeComponentsByKey(combate, new Set(["deslocamento_slayer_titulo", "perfil_slayer_recursos_runtime_panel"]));
+    if (!damageTaken || !pdrSpent || !currentBreath || !restButton || !movement) {
+      throw new Error("Recursos administrativos ou controles do cabeçalho Slayer não encontrados.");
+    }
+
+    headerTable.contents = headerTable.contents.filter((row) =>
+      !row?.some?.((entry) => ["descanso_slayer_gerenciar", "deslocamento_slayer_display", "folego_slayer_atual"].includes(entry?.key))
+    );
+    const headerBreath = displayLabel(
+      "folego_slayer_header_display",
+      '<span class="na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-sab">FÔLEGO: ${folego_slayer_atual}$ / ${folego_slayer_maximo}$</span>',
+    );
+    headerTable.contents.push([restButton, movement, headerBreath]);
+    headerTable.rows = headerTable.contents.length;
+
+    const resourceTable = combate.contents.find((entry) => entry?.type === "table" && JSON.stringify(entry).includes("pdv_slayer_total_valor"));
+    const breathRow = resourceTable?.contents?.find((row) => row?.some?.((entry) => entry?.key === "folego_slayer_titulo"));
+    if (!resourceTable || !breathRow) throw new Error("Table de recursos ou linha de Fôlego não encontrada.");
+    breathRow[1] = displayLabel(
+      "folego_slayer_combate_display",
+      '<span class="na-sheet-text na-sheet-stat na-sheet-size-lg na-sheet-role-sab">${folego_slayer_atual}$ / ${folego_slayer_maximo}$</span>',
+    );
+
+    const dataTable = configuracoes.contents.find((entry) =>
+      entry?.type === "table" && entry?.cols === 3 && JSON.stringify(entry).includes("hab_slayer_pdr_por_nivel")
+    );
+    if (!dataTable) throw new Error("Table administrativa pronta de Config / Dados não encontrada.");
+    dataTable.key = "dados_slayer_runtime_table";
+    dataTable.contents[0][0] = damageTaken;
+    dataTable.contents[1][0] = currentBreath;
+    dataTable.contents[3][0] = pdrSpent;
+
+    const combatControls = combate.contents.find((entry) => entry?.key === "combat_slayer_table");
+    const statusButton = combatControls && extractComponentsByKey(combatControls, new Set(["status_slayer_gerenciar"])).at(-1);
+    const statusDisplay = combatControls && extractComponentsByKey(combatControls, new Set(["status_slayer_display"])).at(-1);
+    const resistancePanel = combate.contents.find((entry) => entry?.key === "resistencias_slayer_panel");
+    const resistanceButton = resistancePanel && extractComponentsByKey(resistancePanel, new Set(["resistencia_slayer_gerenciar"])).at(-1);
+    const resistanceDisplay = resistancePanel && extractComponentsByKey(resistancePanel, new Set(["status_slayer_resistencias_display"])).at(-1);
+    if (!statusButton || !statusDisplay || !resistanceButton || !resistanceDisplay) {
+      throw new Error("Controles de Status/Resistências do Slayer incompletos.");
+    }
+    removeComponentsByKey(combate, new Set(["resistencias_slayer_panel", "status_slayer_panel"]));
+    combate.contents = combate.contents.filter((entry) => {
+      if (entry?.key) return true;
+      return !(entry?.type === "panel" && JSON.stringify(entry).includes("Status e Resistências"));
+    });
+    const statusTable = csbTable("status_resistencias_slayer_table", [
+      [resistanceButton, statusButton], [resistanceDisplay, statusDisplay],
+    ], "cc");
+
+    const weaponContainer = combate.contents.find((entry) => entry?.key === "inventario_slayer_armas");
+    const breathingForms = combate.contents.find((entry) => entry?.key === "skills_slayer_respiracoes");
+    const accumulations = combate.contents.find((entry) => entry?.key === "combate_acumulos_slayer_panel");
+    const trainingBonus = combate.contents.find((entry) => entry?.key === "combat_slayer_bonus_interludio_panel");
+    if (!weaponContainer || !breathingForms || !accumulations || !trainingBonus) {
+      throw new Error("Arma, Formas, acúmulos ou bônus de treino não encontrados em Combate.");
+    }
+    configureBreathingAccumulations(accumulations);
+    combate.contents = combate.contents.filter((entry) =>
+      ![weaponContainer, breathingForms, accumulations, trainingBonus].includes(entry)
+    );
+    const weaponBreathingTable = csbTable("armas_acumulos_slayer_table", [[weaponContainer, accumulations]], "cc");
+
+    const skills = tab("skills_slayer_tab", "Skills", legacySkills.contents.filter(Boolean));
+    configuracoes.contents = configuracoes.contents.filter((entry) => entry !== legacySkills);
+    configuracoes.contents.splice(1, 0, trainingBonus);
+
     pericias.name = "Perícias";
     combate.name = "Combate";
     configuracoes.name = "Config / Dados";
+    combate.contents.push(statusTable, weaponBreathingTable, breathingForms);
+    tabs.contents = [pericias, combate, skills, configuracoes];
     return;
   }
   if (!dados && pericias && combate && configuracoes && currentSkills && currentInventario && currentNotas) {
@@ -854,33 +1013,51 @@ function fixResistanceAndWoundContract(template) {
   if (!current) throw new Error("Hidden Attribute pdv_slayer_conta_atual não encontrado.");
   current.value = "${pdv_slayer_total_conta-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado}$";
 
-  const statusButton = structuredClone(resistanceButton);
+  let existingStatusButton = null;
+  let existingStatusDisplay = null;
+  let existingRestButton = null;
+  walk(template.system, (node) => {
+    if (node.key === "status_slayer_gerenciar") existingStatusButton = node;
+    if (node.key === "status_slayer_display") existingStatusDisplay = node;
+    if (node.key === "descanso_slayer_gerenciar") existingRestButton = node;
+  });
+
+  const statusButton = existingStatusButton ?? structuredClone(resistanceButton);
   statusButton.key = "status_slayer_gerenciar";
   statusButton.value = "GERENCIAR STATUS";
   statusButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAStatusManage01'))?.execute({actorUuid:entity.uuid}); return '';}%";
-  const statusDisplay = structuredClone(resistanceDisplay);
+  const statusDisplay = existingStatusDisplay ?? structuredClone(resistanceDisplay);
   statusDisplay.key = "status_slayer_display";
   statusDisplay.value = "${status_slayer_resumo}$";
-  removeComponentsByKey(template.system, new Set(["status_slayer_gerenciar", "status_slayer_display", "descanso_slayer_gerenciar"]));
-  const removedKeys = new Set(["status_slayer_gerenciar", "status_slayer_display", "descanso_slayer_gerenciar"]);
-  if (combatTable.type === "table") {
-    combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) => removedKeys.has(entry?.key)));
-    combatTable.contents.push([statusButton, statusDisplay, null, null]);
-  } else {
-    combatTable.contents = combatTable.contents.filter((entry) => !removedKeys.has(entry?.key));
-    combatTable.contents.push(statusButton, statusDisplay);
-  }
-
-  const restButton = structuredClone(statusButton);
+  const restButton = existingRestButton ?? structuredClone(statusButton);
   restButton.key = "descanso_slayer_gerenciar";
   restButton.value = "DESCANSO";
   restButton.icon = "";
   restButton.tooltip = "Solicitar Descanso de Campo, Descanso Completo ou Recuperação Profunda ao GM.";
   restButton.rollMessage = "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARestManage0001'))?.execute({actorUuid:entity.uuid}); return '';}%";
-  if (combatTable.type === "table") {
-    combatTable.contents.push([restButton, null, null, null]);
-    combatTable.rows = Math.max(Number(combatTable.rows) || 0, combatTable.contents.length);
-  } else combatTable.contents.push(restButton);
+
+  let statusTable = null;
+  let headerTable = null;
+  walk(template.system, (node) => {
+    if (node.key === "status_resistencias_slayer_table" && node.type === "table") statusTable = node;
+    if (node.key === "perfil" && node.type === "table") headerTable = node;
+  });
+  if (statusTable && headerTable) {
+    const movement = headerTable.contents.flat().find((entry) => entry?.key === "deslocamento_slayer_display");
+    const breath = headerTable.contents.flat().find((entry) => entry?.key === "folego_slayer_header_display");
+    headerTable.contents = headerTable.contents.filter((row) =>
+      !row?.some?.((entry) => ["descanso_slayer_gerenciar", "deslocamento_slayer_display", "folego_slayer_header_display"].includes(entry?.key))
+    );
+    headerTable.contents.push([restButton, movement ?? blankTableCell(), breath ?? blankTableCell()]);
+    headerTable.rows = headerTable.contents.length;
+    statusTable.contents = [[resistanceButton, statusButton], [resistanceDisplay, statusDisplay]];
+    statusTable.cols = 2;
+    statusTable.rows = 2;
+  } else {
+    if (!existingStatusButton) combatTable.contents.push(statusButton);
+    if (!existingStatusDisplay) combatTable.contents.push(statusDisplay);
+    if (!existingRestButton) combatTable.contents.push(restButton);
+  }
 
   const storageKeys = new Set();
   let storagePanel = null;
@@ -938,74 +1115,33 @@ function fixResistanceAndWoundContract(template) {
 function fixMovementDisplay(template) {
   const hidden = template.system?.hidden;
   if (!Array.isArray(hidden)) throw new Error("system.hidden não é uma lista.");
-  const movement = hidden.find((entry) => entry.name === "deslocamento_slayer");
-  if (movement) movement.value = "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$";
+  const hiddenMovement = hidden.find((entry) => entry.name === "deslocamento_slayer");
+  if (hiddenMovement) hiddenMovement.value = "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$";
   else hidden.push({ name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
 
-  let combatTable = null;
-  walk(template.system?.body, (node) => {
-    if (node.key === "combat_slayer_table" && ["table", "panel"].includes(node.type)) combatTable = node;
+  let headerTable = null;
+  walk(template.system?.header, (node) => {
+    if (node.key === "perfil" && node.type === "table") headerTable = node;
   });
-  if (!combatTable) throw new Error("Área de combate do Slayer não encontrada.");
+  if (!headerTable) throw new Error("Table perfil do cabeçalho Slayer não encontrada.");
   removeComponentsByKey(template.system, new Set(["deslocamento_slayer_titulo", "deslocamento_slayer_display"]));
-  const components = [
-    {
-      key: "deslocamento_slayer_titulo",
-      colSpan: 1,
-      rowSpan: 1,
-      cssClass: "",
-      role: 0,
-      editRole: 0,
-      permission: 0,
-      tooltip: "Deslocamento base: 7m + DEX atual.",
-      visibilityFormula: "",
-      editableFormula: "",
-      escapeHTML: false,
-      type: "label",
-      size: "full-size",
-      icon: "",
-      value: orbitron("DESLOCAMENTO", "#28D7FF"),
-      prefix: "",
-      suffix: "",
-      rollMessage: "",
-      altRollMessage: "",
-      rollMessageToChat: false,
-      altRollMessageToChat: false,
-      style: "title",
-    },
-    {
-      key: "deslocamento_slayer_display",
-      colSpan: 3,
-      rowSpan: 1,
-      cssClass: "",
-      role: 0,
-      editRole: 0,
-      permission: 0,
-      tooltip: "Deslocamento base calculado automaticamente.",
-      visibilityFormula: "",
-      editableFormula: "",
-      escapeHTML: false,
-      type: "label",
-      size: "full-size",
-      icon: "",
-      value: "Deslocamento: ${deslocamento_slayer}$m (7m + DEX)",
-      prefix: "",
-      suffix: "",
-      rollMessage: "",
-      altRollMessage: "",
-      rollMessageToChat: false,
-      altRollMessageToChat: false,
-      style: "label",
-    },
-  ];
-  if (combatTable.type === "table") {
-    combatTable.contents = combatTable.contents.filter((row) => !row?.some?.((entry) => entry?.key === "deslocamento_slayer_display"));
-    combatTable.contents.push([...components, null, null]);
-    combatTable.rows = combatTable.contents.length;
+  const movement = displayLabel(
+    "deslocamento_slayer_display",
+    "Deslocamento: ${deslocamento_slayer}$m (7m + DEX)",
+  );
+  movement.tooltip = "Deslocamento base calculado automaticamente.";
+
+  const runtimeRow = headerTable.contents.find((row) => row?.some?.((entry) =>
+    ["descanso_slayer_gerenciar", "folego_slayer_header_display"].includes(entry?.key)
+  ));
+  if (runtimeRow) {
+    const rest = runtimeRow.find((entry) => entry?.key === "descanso_slayer_gerenciar") ?? blankTableCell();
+    const breath = runtimeRow.find((entry) => entry?.key === "folego_slayer_header_display") ?? blankTableCell();
+    runtimeRow.splice(0, runtimeRow.length, rest, movement, breath);
   } else {
-    combatTable.contents = combatTable.contents.filter((entry) => !["deslocamento_slayer_titulo", "deslocamento_slayer_display"].includes(entry?.key));
-    combatTable.contents.push(...components);
+    headerTable.contents.push([blankTableCell(), movement, blankTableCell()]);
   }
+  headerTable.rows = headerTable.contents.length;
 }
 
 function fixFolegoDisplay(template) {
@@ -1062,34 +1198,36 @@ function organizeSlayerCombatLayout(template) {
   walk(template.system?.body, (node) => {
     if (node.key === "combat_slayer_tab" && node.type === "tab") combatTab = node;
     if (node.key === "acoes_slayer_gerenciar" && node.type === "label") actionButton = structuredClone(node);
-    if (node.key === "combat_slayer_table" && node.type === "panel") combatControls = node;
+    if (node.key === "combat_slayer_table" && ["panel", "table"].includes(node.type)) combatControls = node;
   });
   if (!combatTab || !actionButton || !combatControls) throw new Error("Aba Combate, controles ou botão Gerenciar Ações não encontrado.");
 
-  const combatTests = combatControls.contents.filter((entry) => {
+  const existingTestsTable = combatControls.contents.find((entry) => entry?.type === "table" && entry?.key === "combat_slayer_testes_table")
+    ?? combatControls.contents.find((entry) => entry?.type === "table" && entry?.contents?.flat?.().some?.((component) => labelText(component?.value) === "Acerto"));
+  const directTests = (combatControls.type === "table" ? combatControls.contents.flat() : combatControls.contents).filter((entry) => {
+    const text = labelText(entry?.value);
+    return ["Acerto", "Bloqueio", "Esquiva", "Dano", "Rolagem de dano"].includes(text);
+  });
+  const combatTests = (existingTestsTable?.contents?.flat?.() ?? directTests).filter((entry) => {
     const text = labelText(entry?.value);
     return ["Acerto", "Bloqueio", "Esquiva", "Dano", "Rolagem de dano"].includes(text);
   }).slice(0, 4);
   if (combatTests.length !== 4) throw new Error("Matriz Acerto/Bloqueio/Esquiva/Dano incompleta.");
-  const remainingControls = combatControls.contents.filter((entry) => !combatTests.includes(entry));
-  combatControls.contents = [{
-    key: "",
-    colSpan: 1,
-    rowSpan: 1,
-    cssClass: "",
-    role: 0,
-    editRole: 0,
-    permission: 0,
-    tooltip: "",
-    visibilityFormula: "",
-    editableFormula: "",
-    escapeHTML: false,
-    type: "table",
-    contents: [combatTests],
-    cols: 4,
-    rows: 1,
-    layout: "cccc",
-  }, ...remainingControls];
+  const remainingControls = combatControls.contents.filter((entry) => entry !== existingTestsTable && !combatTests.includes(entry));
+  combatControls.type = "table";
+  combatControls.contents = [combatTests];
+  combatControls.cols = 4;
+  combatControls.rows = 1;
+  combatControls.layout = "cccc";
+  delete combatControls.flow;
+  delete combatControls.align;
+  delete combatControls.verticalAlign;
+  delete combatControls.collapsible;
+  delete combatControls.defaultCollapsed;
+  delete combatControls.title;
+  delete combatControls.titleStyle;
+  if (remainingControls.length > 0) combatControls._slayerRemainingControls = remainingControls;
+  else delete combatControls._slayerRemainingControls;
 
   removeComponentsByKey(template.system, new Set(["acoes_slayer_gerenciar", "acoes_slayer_display", "acoes_slayer_panel"]));
   actionButton.value = orbitron("GERENCIAR AÇÕES", "#FF9100");

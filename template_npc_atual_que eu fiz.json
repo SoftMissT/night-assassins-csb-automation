@@ -1,5 +1,5 @@
 {
-    "name": "npc_template",
+    "name": "npc_template_atual",
     "type": "_template",
     "img": "modules/night-assassins-csb-automation/assets/icons/templates/na-npc-template_icon.webp",
     "system": {
@@ -355,7 +355,7 @@
                                 "style": "subtitle"
                             },
                             {
-                                "key": "npc_pdv_atual_titulo",
+                                "key": "pdv_npc_atual_titulo",
                                 "colSpan": 1,
                                 "rowSpan": 1,
                                 "cssClass": "na-resource-pdv",
@@ -467,7 +467,7 @@
                                 "type": "label",
                                 "size": "full-size",
                                 "icon": "",
-                                "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">${npc_pdv_total}$</span>",
+                                "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">${npc_pdv_base}$</span>",
                                 "prefix": "",
                                 "suffix": "",
                                 "rollMessage": "",
@@ -549,7 +549,7 @@
                                 "style": "label"
                             },
                             {
-                                "key": "npc_pdv_extra",
+                                "key": "pdv_npc_extra",
                                 "colSpan": 1,
                                 "rowSpan": 1,
                                 "cssClass": "na-resource-pdv",
@@ -712,7 +712,7 @@
                                 "type": "label",
                                 "size": "m-small",
                                 "icon": "",
-                                "value": "<span class=\"na-sheet-text na-sheet-role-dex na-sheet-size-md\">${npc_pdr_total}$</span>",
+                                "value": "<span class=\"na-sheet-text na-sheet-role-dex na-sheet-size-md\">${npc_pdr_base}$</span>",
                                 "prefix": "",
                                 "suffix": "",
                                 "rollMessage": "",
@@ -722,7 +722,7 @@
                                 "style": "label"
                             },
                             {
-                                "key": "npc_pdr_atual_valor_display",
+                                "key": "pdr_npc_atual_valor_display",
                                 "colSpan": 1,
                                 "rowSpan": 1,
                                 "cssClass": "na-resource-pdr",
@@ -794,7 +794,7 @@
                                 "style": "label"
                             },
                             {
-                                "key": "npc_pdr_extra",
+                                "key": "pdr_npc_extra",
                                 "colSpan": 1,
                                 "rowSpan": 1,
                                 "cssClass": "na-resource-pdr",
@@ -1286,70 +1286,8 @@
                     "statusIcon": true,
                     "nameAlign": "left",
                     "nameLabel": "Arma",
-                    "templateFilter": [
-                        "NAWeaponTpl00001"
-                    ],
+                    "templateFilter": [],
                     "itemFilterFormula": "equalText(item.inventario_categoria, 'arma')",
-                    "sortPredicates": []
-                },
-                {
-                    "key": "inventario_npc_formas",
-                    "colSpan": 1,
-                    "rowSpan": 3,
-                    "cssClass": "",
-                    "role": 0,
-                    "editRole": 0,
-                    "permission": 0,
-                    "tooltip": "Espaço para organizar as Formas de Respiração do NPC.",
-                    "visibilityFormula": "",
-                    "editableFormula": "",
-                    "escapeHTML": false,
-                    "type": "itemContainer",
-                    "contents": [],
-                    "rowLayout": [
-                        {
-                            "key": "respiracao_npc_usar",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "Rola a Forma de Respiração usando o Actor e o Item portados.",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "label",
-                            "size": "full-size",
-                            "icon": "fa-solid fa-fire-flame-curved",
-                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">USAR</span>",
-                            "prefix": "",
-                            "suffix": "",
-                            "rollMessage": "%{const form=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!form)return ui.notifications.warn('Forma de Respiração não encontrada nesta linha.');return await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({actorUuid:entity.uuid,itemUuid:form.uuid});}%",
-                            "altRollMessage": "",
-                            "rollMessageToChat": false,
-                            "altRollMessageToChat": false,
-                            "style": "button",
-                            "align": "center",
-                            "colName": "Usar"
-                        }
-                    ],
-                    "title": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-for\">FORMAS</span>",
-                    "hideEmpty": false,
-                    "hiddenColumns": [],
-                    "sortOption": "manual",
-                    "headDisplay": true,
-                    "showCreate": false,
-                    "defaultTemplate": "",
-                    "createItemDialogShowTemplateList": false,
-                    "showDelete": true,
-                    "statusIcon": true,
-                    "nameAlign": "left",
-                    "nameLabel": "Forma",
-                    "templateFilter": [
-                        "NABreathTpl00001"
-                    ],
-                    "itemFilterFormula": "equalText(item.inventario_categoria, 'respiracao')",
                     "sortPredicates": []
                 },
                 {
@@ -2144,20 +2082,12 @@
                 "value": "${npc_sab_display}$"
             },
             {
-                "name": "npc_pdv_total",
-                "value": "${max(1,fallback(npc_pdv_base,10)+fallback(npc_pdv_extra,0))}$"
-            },
-            {
                 "name": "npc_pdv_atual",
-                "value": "${max(0,fallback(npc_pdv_total,0)-fallback(npc_pdv_dano,0)+fallback(npc_pdv_curado,0))}$"
-            },
-            {
-                "name": "npc_pdr_total",
-                "value": "${max(0,fallback(npc_pdr_base,10))}$"
+                "value": "${npc_pdv_base+pdv_npc_extra+npc_pdv_curado-npc_pdv_dano}$"
             },
             {
                 "name": "npc_pdr_atual",
-                "value": "${min(fallback(npc_pdr_total,0),max(0,fallback(npc_pdr_total,0)-fallback(npc_pdr_gasto_valor,0)+fallback(npc_pdr_recuperado,0)))}$"
+                "value": "${npc_pdr_base-npc_pdr_gasto_valor+npc_pdr_recuperado}$"
             }
         ],
         "attributeBar": {},

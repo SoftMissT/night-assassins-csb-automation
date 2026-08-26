@@ -6,7 +6,7 @@
 
 | Ficha | Estado |
 | --- | --- |
-| **Caçador (Slayer)** | 3 abas: Perícias, Combate e Config/Dados. Combate reúne PDV/PDR/Fôlego, testes, ações, Status/Resistências, arma sincronizada, Formas e acúmulos da Respiração. Config/Dados concentra habilidades, estados persistentes e auditoria exclusiva do GM. |
+| **Caçador (Slayer)** | 4 abas: Perícias, Combate, Skills e Config/Dados. Combate reúne PDV/PDR/Fôlego, testes, ações, Status/Resistências, arma sincronizada, Formas e acúmulos condicionais da Respiração. Skills reúne escolhas e habilidades do Caçador. Config/Dados mantém os Number Fields administrativos e a auditoria exclusiva do GM. |
 | **Oni completo** | 2 abas próprias: Combate e Configurações/Dados. Usa PDV/PDK, Kekkijutsu, ações, Status/Resistências, progressão e dados administrativos Oni; não recebe Perícias nem Vida e Morte de Slayer. |
 | **Oni Minion** | Ficha enxuta com Combate e Configurações, pacotes de atributos, ataques e PDV/PDK próprios; recebe dano pelo relay genérico. |
 | **NPC** | Ficha narrativa para retrato e informações básicas, sem recursos ou automações artificiais de Slayer/Oni. |

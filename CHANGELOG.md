@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.16 - 2026-08-26
+
+- **Templates revisados:** slayer-template, oni-template, oni-minion-template e npc-template atualizados com chaves e estruturas corrigidas.
+- **CSB import:** csb-import-slayer-template.json sincronizado com template final do Slayer.
+- **Testes:** oni-template.test e slayer-template.test adicionados com cobertura de keys e estrutura.
+- **Migração:** ferramentas migrate-oni-template e migrate-slayer-template para reconstrução de templates legados.
+- **Documentação:** ONI-MODELO-PDV-PDK-ATRIBUTOS.md (auditoria de fórmulas PDV/PDK).
+
 ## 0.11.15 - 2026-08-26
 
 - **Snapshot de atributos Oni:** níveis `1, 3, 4, 6, 8, 11, 12, 13, 16`. Keys `{attr}_nvl{N}` (total do nível). Nível 12 = +1 em dois; 13 = Corpo Demoníaco (VIT/FOR/DEX); 16 = +2 FDV automático.

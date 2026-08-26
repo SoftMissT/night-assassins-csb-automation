@@ -61,4 +61,33 @@ describe("oni-template", () => {
     assert.ok(!names.includes("origem_oni_pdv_val"), "origem_oni_pdv_val deve ter sido removido");
     assert.ok(!names.includes("origem_oni_pdr_val"), "origem_oni_pdr_val deve ter sido removido");
   });
+
+  it("usa camadas de origem (fixo/mult/inicial) com valores oficiais auditados", () => {
+    const migrated = migrateOniTemplate(source);
+    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+    for (const name of ["origem_pdv_fixo", "origem_pdk_fixo", "origem_pdk_fdv_mult", "origem_oni_pdv_inicial", "origem_oni_pdk_inicial"]) {
+      assert.ok(hidden.get(name), `${name} deve existir`);
+    }
+    const pdvFixo = hidden.get("origem_pdv_fixo");
+    const pdkFixo = hidden.get("origem_pdk_fixo");
+    assert.match(pdvFixo, /'origem_oni_transfigurado',\s*\n\s*24,/);
+    assert.match(pdvFixo, /'origem_oni_chama_negra',\s*\n\s*20,/);
+    assert.match(pdvFixo, /'origem_oni_corte_palida',\s*\n\s*18,/);
+    assert.doesNotMatch(pdvFixo, /\b(22|28|30|32|26),\s*\n\s*'origem_oni_(transfigurado|chama_negra|corte_palida|tela_do_submundo|eco_eterno|mare_negra|realidade_distorcida|raiz_podre|oni_de_outras_terras)'/);
+    assert.match(pdkFixo, /'origem_oni_tela_do_submundo',\s*\n\s*20,/);
+    assert.match(pdkFixo, /'origem_oni_mare_negra',\s*\n\s*17,/);
+    assert.match(pdkFixo, /'origem_oni_raiz_podre',\s*\n\s*16,/);
+    assert.match(pdkFixo, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
+    const mult = hidden.get("origem_pdk_fdv_mult");
+    assert.match(mult, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
+    assert.match(mult, /\n\s*3\n\)\}\$$/, "multiplicador default deve ser 3");
+    const pdvInicial = hidden.get("origem_oni_pdv_inicial");
+    const pdkInicial = hidden.get("origem_oni_pdk_inicial");
+    assert.doesNotMatch(pdvInicial, /switchCase/, "conta final nao deve embutir switchCase");
+    assert.doesNotMatch(pdkInicial, /switchCase/, "conta final nao deve embutir switchCase");
+    assert.doesNotMatch(pdvInicial, /fallback/);
+    assert.doesNotMatch(pdkInicial, /fallback/);
+    assert.match(pdvInicial, /exterminador_corrompido.*\(30\+\(vit_nvl1\*3\)\+\(10\*oni_nivel_na_queda\)\).*origem_pdv_fixo\+vit_nvl1/s);
+    assert.match(pdkInicial, /exterminador_corrompido.*oni_pdr_maximo_antes_queda\+\(oni_nivel_na_queda\*2\)\+\(fdv_nvl1\*3\).*origem_pdk_fixo\+\(fdv_nvl1\*origem_pdk_fdv_mult\)/s);
+  });
 });

@@ -134,7 +134,7 @@ test("template Slayer mostra deslocamento e bonus da Concentracao Total Constant
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   const movement = template.system.hidden.find((entry) => entry.name === "deslocamento_slayer");
   assert.deepEqual(movement, { name: "deslocamento_slayer", value: "${7+dex_display+(interludio_concentracao_total_constante ? 1.5 : 0)}$" });
-  const source = JSON.stringify(template.system.body);
+  const source = JSON.stringify(template.system);
   assert.match(source, /"deslocamento_slayer_display"/);
   assert.match(source, /Deslocamento: \$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
 });
@@ -177,14 +177,7 @@ test("template Slayer preserva armazenamento de Respiração e expõe automaçã
   assert.match(source, /useBreathForm/);
 });
 
-test("template Slayer organiza as abas canônicas em três abas enxutas", () => {
-  // Perfil/Bio, Notas/Diário, Inventário, Interlúdios e Skills foram removidas
-  // como abas dedicadas (decisão do operador, 2026-08-25): Descanso, Deslocamento,
-  // as Formas de Respiração e o bônus de Concentração Total/Cabaça Pequena foram
-  // realocados para dentro de COMBATE antes da remoção; o restante de Skills virou
-  // um painel colapsável dentro de Config/Dados. Perfil/Notas/Interlúdios/Inventário
-  // não tinham dependências externas (confirmado por auditoria + grep) e foram
-  // descartadas junto com a aba.
+test("template Slayer organiza as quatro abas canônicas sem misturar Skills e Dados", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -195,40 +188,30 @@ test("template Slayer organiza as abas canônicas em três abas enxutas", () => 
   walk(template.system.body);
   assert.ok(tabbedPanel);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.key), [
-    "pericias_tab", "combat_slayer_tab", "configs_tab",
+    "pericias_tab", "combat_slayer_tab", "skills_slayer_tab", "configs_tab",
   ]);
   assert.deepEqual(tabbedPanel.contents.map((entry) => entry.name), [
-    "Perícias", "Combate", "Config / Dados",
+    "Perícias", "Combate", "Skills", "Config / Dados",
   ]);
   const combat = tabbedPanel.contents.find((entry) => entry.key === "combat_slayer_tab");
   const combatSource = JSON.stringify(combat);
-  // Descanso e Deslocamento agora abrem a aba Combate (movidos da extinta Perfil/Bio).
-  assert.match(combatSource, /descanso_slayer_gerenciar/);
-  assert.match(combatSource, /deslocamento_slayer_display/);
-  assert.match(combatSource, /Deslocamento: \$\{deslocamento_slayer\}\$m \(7m \+ DEX\)/);
+  assert.doesNotMatch(combatSource, /descanso_slayer_gerenciar|deslocamento_slayer_display/);
+  assert.doesNotMatch(combatSource, /"key":"pdv_slayer_dano_tomado"|"key":"pdr_slayer_gasto_valor"|"key":"folego_slayer_atual"/);
   const combatKeys = combat.contents.map((entry) => entry.key || entry.type);
   assert.deepEqual(combatKeys, [
-    "perfil_slayer_recursos_runtime_panel", "table", "label", "combat_slayer_table",
-    "acoes_slayer_panel", "panel", "resistencias_slayer_panel", "status_slayer_panel",
-    "inventario_slayer_armas", "skills_slayer_respiracoes", "combat_slayer_bonus_interludio_panel",
-    "combate_acumulos_slayer_panel",
+    "table", "label", "combat_slayer_table", "acoes_slayer_panel",
+    "status_resistencias_slayer_table", "armas_acumulos_slayer_table", "skills_slayer_respiracoes",
   ]);
-  // Condições (Resistências + Status) vivem dentro de COMBATE
   assert.match(combatSource, /status_slayer_gerenciar/);
   assert.match(combatSource, /resistencia_slayer_gerenciar/);
-  // Painel de Acúmulos das Respirações em COMBATE
   assert.match(combatSource, /combate_acumulos_slayer_panel/);
-  // Formas de Respiração (movidas da extinta aba Skills)
   assert.match(combatSource, /"key":"skills_slayer_respiracoes"/);
-  // Bônus de Interlúdio (movido da extinta aba Interlúdios; único conteúdo salvo dela)
-  assert.match(combatSource, /interludio_concentracao_total_constante/);
-  assert.match(combatSource, /interludio_cabaca_pequena_completa/);
   for (const key of ["resp_agua_estado", "resp_chamas_estado", "resp_pedra_estado", "resp_nevoa_estado", "resp_metal_estado", "resp_neve_estado"]) {
     assert.match(combatSource, new RegExp(`\\$\{${key}\}\\$`));
   }
 });
 
-test("Perfil/Bio, Interlúdios, Notas e Inventário deixaram de existir como abas", () => {
+test("Perfil/Bio, Interlúdios, Notas e Inventário não retornam como abas", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -237,7 +220,7 @@ test("Perfil/Bio, Interlúdios, Notas e Inventário deixaram de existir como aba
     Object.values(node).forEach(walk);
   }
   walk(template.system.body);
-  for (const key of ["perfil_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "inventario_slayer_tab", "skills_slayer_tab"]) {
+  for (const key of ["perfil_slayer_tab", "interludios_slayer_tab", "notas_slayer_tab", "inventario_slayer_tab"]) {
     assert.equal(tabbedPanel.contents.find((entry) => entry.key === key), undefined, `Aba ${key} deveria ter sido removida.`);
   }
   const serialized = JSON.stringify(template.system.body);
@@ -257,7 +240,7 @@ test("Perfil/Bio, Interlúdios, Notas e Inventário deixaram de existir como aba
   assert.doesNotMatch(serialized, /"key":"status_slayer_tab"|"key":"dados_tab"/);
 });
 
-test("Marca do Caçador (antiga aba Skills) fica em painel colapsável dentro de Config/Dados", () => {
+test("Skills permanece como aba própria e Config/Dados não absorve suas habilidades", () => {
   const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
   let tabbedPanel = null;
   function walk(node) {
@@ -267,16 +250,14 @@ test("Marca do Caçador (antiga aba Skills) fica em painel colapsável dentro de
   }
   walk(template.system.body);
   const configs = tabbedPanel.contents.find((entry) => entry.key === "configs_tab");
-  const legacyPanel = configs.contents.find((entry) => entry.key === "skills_slayer_legado_panel");
-  assert.ok(legacyPanel, "Painel legado da aba Skills não encontrado em Config/Dados.");
-  assert.equal(legacyPanel.type, "panel");
-  assert.equal(legacyPanel.collapsible, true);
-  const skills = JSON.stringify(legacyPanel);
-  for (const key of ["skills_slayer_origem_panel", "estados_avancados_slayer_panel", "alma_lamina_slayer_panel", "alma_lamina_slayer_notas"]) {
+  const skillsTab = tabbedPanel.contents.find((entry) => entry.key === "skills_slayer_tab");
+  assert.ok(skillsTab, "Aba Skills não encontrada.");
+  const skills = JSON.stringify(skillsTab);
+  for (const key of ["skills_slayer_escolhas_panel", "skills_marca_slayer_panel", "skills_slayer_origem_panel", "estados_avancados_slayer_panel", "alma_lamina_slayer_panel", "alma_lamina_slayer_notas"]) {
     assert.match(skills, new RegExp(key));
   }
-  // Formas de Respiração NÃO ficam aqui: foram movidas para Combate, não para Config.
   assert.doesNotMatch(skills, /"key":"skills_slayer_respiracoes"/);
+  assert.doesNotMatch(JSON.stringify(configs), /skills_slayer_legado_panel|skills_marca_slayer_panel|estados_avancados_slayer_panel|alma_lamina_slayer_panel/);
 });
 
 test("Vida e Morte e áreas remanescentes usam componentes CSB próprios", () => {
@@ -406,12 +387,64 @@ test("painéis convertidos em Perícias e Combate usam contents como array-de-ar
   walk(source);
   const combat = tabbedPanel.contents.find((entry) => entry.key === "combat_slayer_tab");
   const combatSlayerTable = combat.contents.find((entry) => entry.key === "combat_slayer_table");
-  const nestedTable = combatSlayerTable.contents.find((entry) => entry.type === "table");
-  assert.ok(nestedTable, "Tabela de Acerto/Bloqueio/Esquiva/Dano não encontrada dentro de combat_slayer_table.");
-  assert.ok(Array.isArray(nestedTable.contents[0]), "Table.fromJSON exige array-de-arrays, não array flat.");
-  assert.equal(nestedTable.contents[0].length, 4);
-  assert.match(nestedTable.contents[0][0].value, /Acerto/);
-  assert.match(nestedTable.contents[0][1].value, /Bloqueio/);
-  assert.match(nestedTable.contents[0][2].value, /Esquiva/);
-  assert.match(nestedTable.contents[0][3].value, /Dano/);
+  assert.equal(combatSlayerTable.type, "table");
+  assert.ok(Array.isArray(combatSlayerTable.contents[0]), "Table.fromJSON exige array-de-arrays, não array flat.");
+  assert.equal(combatSlayerTable.contents.length, 1);
+  assert.equal(combatSlayerTable.contents[0].length, 4);
+  assert.match(combatSlayerTable.contents[0][0].value, /Acerto/);
+  assert.match(combatSlayerTable.contents[0][1].value, /Bloqueio/);
+  assert.match(combatSlayerTable.contents[0][2].value, /Esquiva/);
+  assert.match(combatSlayerTable.contents[0][3].value, /Dano/);
+});
+
+test("cabeçalho, Combate e Config/Dados possuem os recursos corretos sem duplicação", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const headerTable = template.system.header.contents.find((entry) => entry.key === "perfil");
+  assert.ok(headerTable);
+  const headerSource = JSON.stringify(headerTable);
+  for (const key of ["descanso_slayer_gerenciar", "deslocamento_slayer_display", "folego_slayer_header_display"]) {
+    assert.match(headerSource, new RegExp(`"key":"${key}"`));
+  }
+
+  let tabs = null;
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (!tabs && node.type === "tabbedPanel") tabs = node;
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  const combat = tabs.contents.find((entry) => entry.key === "combat_slayer_tab");
+  const configs = tabs.contents.find((entry) => entry.key === "configs_tab");
+  const combatSource = JSON.stringify(combat);
+  const configSource = JSON.stringify(configs);
+  for (const key of ["pdv_slayer_dano_tomado", "folego_slayer_atual", "pdr_slayer_gasto_valor"]) {
+    assert.doesNotMatch(combatSource, new RegExp(`"key":"${key}"`));
+    assert.match(configSource, new RegExp(`"key":"${key}"`));
+  }
+  const dataTable = configs.contents.find((entry) => entry.key === "dados_slayer_runtime_table");
+  assert.equal(dataTable?.type, "table");
+  assert.equal(dataTable.contents[0][0].key, "pdv_slayer_dano_tomado");
+  assert.equal(dataTable.contents[1][0].key, "folego_slayer_atual");
+  assert.equal(dataTable.contents[3][0].key, "pdr_slayer_gasto_valor");
+});
+
+test("arma e acúmulo ficam na mesma linha e cada Respiração controla sua própria exibição", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  let table = null;
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (node.key === "armas_acumulos_slayer_table") table = node;
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system.body);
+  assert.equal(table?.type, "table");
+  assert.equal(table.contents.length, 1);
+  assert.equal(table.contents[0][0].key, "inventario_slayer_armas");
+  assert.equal(table.contents[0][1].key, "combate_acumulos_slayer_panel");
+  const accumulationLabels = table.contents[0][1].contents.filter((entry) => /<(strong)>?(Água|Chamas|Pedra|Névoa|Metal|Neve):/.test(entry.value ?? ""));
+  assert.equal(accumulationLabels.length, 6);
+  for (const label of accumulationLabels) {
+    assert.match(label.visibilityFormula, /equalText\(resp_slayer_display,/);
+    assert.match(label.visibilityFormula, /equalText\(resp_slayer_display_2,/);
+  }
 });

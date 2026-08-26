@@ -128,6 +128,38 @@ function configureOniLevelAndRank(template) {
   upsertHidden(template, "rank_atual", `\${switchCase(nvl_pj,\n  ${args},\n  'Desconhecido'\n)}$`);
 }
 
+// Valores oficiais auditados contra MACRO-NA-FOUNDRY/Mecânicas para fazer na ficha/Onis/Origens/
+// Sessão 2026-08-25: 9 correções de PDV e 7 de PDK sobre os valores antigos.
+const ONI_ORIGIN_PDV_FIXO = Object.freeze({
+  passado_triste: 22, personalidade_maligna: 16,
+  rastreador_de_sangue: 20, genio_do_mal: 20,
+  adepto_das_trevas: 19, comum: 18,
+  corte_palida: 18, mare_negra: 20, raiz_podre: 23,
+  realidade_distorcida: 17, tela_do_submundo: 18,
+  oni_de_outras_terras: 18, transfigurado: 24,
+  eco_eterno: 18, chama_negra: 20,
+  demonio_de_linhagem_infernal: 21, espirito_ceifador: 20,
+  monarca_demoniaco: 22, vampiro_de_linhagem: 19,
+});
+
+const ONI_ORIGIN_PDK_FIXO = Object.freeze({
+  passado_triste: 2, personalidade_maligna: 3,
+  rastreador_de_sangue: 1, genio_do_mal: 2,
+  adepto_das_trevas: 4, comum: 8,
+  corte_palida: 18, mare_negra: 17, raiz_podre: 16,
+  realidade_distorcida: 20, tela_do_submundo: 20,
+  oni_de_outras_terras: 19, transfigurado: 16,
+  eco_eterno: 19, chama_negra: 19,
+  demonio_de_linhagem_infernal: 20, espirito_ceifador: 18,
+  monarca_demoniaco: 20, vampiro_de_linhagem: 20,
+});
+
+// Origens cuja regra é "N + FDV + (FDV×3)" usam multiplicador 4; as demais são "(FDV×3)".
+const ONI_ORIGIN_PDK_FDV_MULT = Object.freeze({
+  passado_triste: 4, personalidade_maligna: 4, rastreador_de_sangue: 4,
+  genio_do_mal: 4, adepto_das_trevas: 4,
+});
+
 function configureOniOrigins(template) {
   const origin = findByKey(template, "origem_dropdown");
   if (!origin || !Array.isArray(origin.options)) throw new Error("Dropdown de origem Oni não encontrado.");
@@ -137,37 +169,27 @@ function configureOniOrigins(template) {
     throw new Error("O dropdown Oni contém origem que não usa o namespace origem_oni_.");
   }
 
-  const pdvBase = {
-    passado_triste: "22+vit_nvl1", personalidade_maligna: "16+vit_nvl1",
-    rastreador_de_sangue: "20+vit_nvl1", genio_do_mal: "20+vit_nvl1",
-    adepto_das_trevas: "19+vit_nvl1", comum: "18+vit_nvl1",
-    corte_palida: "22+vit_nvl1", mare_negra: "28+vit_nvl1", raiz_podre: "30+vit_nvl1",
-    realidade_distorcida: "28+vit_nvl1", tela_do_submundo: "30+vit_nvl1",
-    oni_de_outras_terras: "20+vit_nvl1", transfigurado: "28+vit_nvl1",
-    eco_eterno: "26+vit_nvl1", chama_negra: "32+vit_nvl1",
-    demonio_de_linhagem_infernal: "21+vit_nvl1", espirito_ceifador: "20+vit_nvl1",
-    monarca_demoniaco: "22+vit_nvl1", vampiro_de_linhagem: "19+vit_nvl1",
-    exterminador_corrompido: "30+(vit_nvl1*3)+(10*oni_nivel_na_queda)",
+  const originSwitchCase = (table, fallbackValue) => {
+    const args = Object.entries(table).flatMap(([key, value]) => [`'origem_oni_${key}'`, value]).join(",\n  ");
+    return `\${switchCase(origem_dropdown,\n  ${args},\n  ${fallbackValue}\n)}$`;
   };
-  const pdkBase = {
-    passado_triste: "2+(fdv_nvl1*4)", personalidade_maligna: "3+(fdv_nvl1*4)",
-    rastreador_de_sangue: "1+(fdv_nvl1*4)", genio_do_mal: "2+(fdv_nvl1*4)",
-    adepto_das_trevas: "4+(fdv_nvl1*4)", comum: "8+(fdv_nvl1*3)",
-    corte_palida: "18+(fdv_nvl1*3)", mare_negra: "18+(fdv_nvl1*3)",
-    raiz_podre: "14+(fdv_nvl1*3)", realidade_distorcida: "20+(fdv_nvl1*3)",
-    tela_do_submundo: "24+(fdv_nvl1*3)", oni_de_outras_terras: "16+(fdv_nvl1*3)",
-    transfigurado: "14+(fdv_nvl1*3)", eco_eterno: "22+(fdv_nvl1*3)",
-    chama_negra: "20+(fdv_nvl1*3)", demonio_de_linhagem_infernal: "20+(fdv_nvl1*3)",
-    espirito_ceifador: "18+(fdv_nvl1*3)", monarca_demoniaco: "20+(fdv_nvl1*3)",
-    vampiro_de_linhagem: "20+(fdv_nvl1*3)",
-    exterminador_corrompido: "oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3)",
-  };
-  const switchFormula = (table) => {
-    const args = Object.entries(table).flatMap(([key, formula]) => [`'origem_oni_${key}'`, formula]).join(",\n  ");
-    return `\${switchCase(origem_dropdown,\n  ${args},\n  0\n)}$`;
-  };
-  upsertHidden(template, "origem_oni_pdv_inicial", switchFormula(pdvBase));
-  upsertHidden(template, "origem_oni_pdk_inicial", switchFormula(pdkBase));
+
+  // Camada 1 — constantes por origem (dados puros, sem fórmula embutida).
+  upsertHidden(template, "origem_pdv_fixo", originSwitchCase(ONI_ORIGIN_PDV_FIXO, 0));
+  upsertHidden(template, "origem_pdk_fixo", originSwitchCase(ONI_ORIGIN_PDK_FIXO, 0));
+  upsertHidden(template, "origem_pdk_fdv_mult", originSwitchCase(ONI_ORIGIN_PDK_FDV_MULT, 3));
+
+  // Camada 2 — conta única; Exterminador Corrompido é o único caso especial.
+  upsertHidden(
+    template,
+    "origem_oni_pdv_inicial",
+    "${(origem_dropdown=='origem_oni_exterminador_corrompido')?(30+(vit_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_nvl1)}$",
+  );
+  upsertHidden(
+    template,
+    "origem_oni_pdk_inicial",
+    "${(origem_dropdown=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3)):(origem_pdk_fixo+(fdv_nvl1*origem_pdk_fdv_mult))}$",
+  );
 }
 
 function configureOniProgression(template) {
@@ -259,6 +281,23 @@ function configureOniProgressionFields(template) {
     { ...makePanel("progressao_oni_titulo_panel", [], ""), type: "label", value: orbitron("PROGRESSÃO DE RECURSOS ONI", "#C1000C", 14), style: "label", size: "full-size" },
     ...fields,
   ], "grid-4"));
+
+  dataTab.contents = dataTab.contents.filter((node) => node.key !== "origem_oni_recursos_panel");
+  const origemLabel = (text) => ({
+    ...makePanel(`origem_label_${text.replace(/[^a-z_]/gi, "")}`, [], ""),
+    type: "label",
+    value: `<span class="na-sheet-text na-sheet-size-md">${text}</span>`,
+    style: "label",
+    size: "full-size",
+  });
+  dataTab.contents.push(makePanel("origem_oni_recursos_panel", [
+    { ...makePanel("origem_oni_titulo_panel", [], ""), type: "label", value: orbitron("ORIGEM — RECURSOS INICIAIS", "#B36CFF", 14), style: "label", size: "full-size" },
+    origemLabel("PDV fixo da Origem: ${origem_pdv_fixo}$"),
+    origemLabel("PDK fixo da Origem: ${origem_pdk_fixo}$"),
+    origemLabel("Multiplicador de FDV do PDK: x${origem_pdk_fdv_mult}$"),
+    origemLabel("PDV inicial da Origem: ${origem_oni_pdv_inicial}$"),
+    origemLabel("PDK inicial da Origem: ${origem_oni_pdk_inicial}$"),
+  ], "grid-2"));
 }
 
 export function migrateOniTemplate(source) {

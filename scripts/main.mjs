@@ -139,6 +139,9 @@ Hooks.once("ready", async () => {
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
     Hooks.on("updateActor", handleActorUpdate);
+    console.log(`[${MODULE_ID}] Hook updateActor REGISTRADO.`);
+  } else {
+    console.warn(`[${MODULE_ID}] Hook updateActor NÃO registrado (desabilitado nas configurações).`);
   }
 
   if (game.settings.get(MODULE_ID, SETTINGS.enableDamageRelay)) {

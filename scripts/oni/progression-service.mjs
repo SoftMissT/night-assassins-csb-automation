@@ -143,9 +143,11 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
   if (!actor?.update) throw new Error("Actor inválido para rolar ganhos de PDV Oni.");
   const props = actor.system?.props ?? {};
   const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? props.nvl_num ?? String(props.nvl_pj ?? "").replace(/^nvl_/, ""));
+  console.log(`[NA-Debug] rollOniPdvGain: actor=${actor.name}, level=${normalized}, onlyMissing=${onlyMissing}`);
   const plan = onlyMissing
     ? missingOniPdvGains(normalized, props)
     : oniRandomPdvRequirements(normalized, {}).required;
+  console.log(`[NA-Debug] plan: ${plan.length} ganhos pendentes`, plan.map((e) => `nvl${e.level}(${e.dice})`));
   const results = [];
   const patch = {};
   for (const entry of plan) {
@@ -155,14 +157,20 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
       const roll = await Roll.create(entry.dice).evaluate();
       rollTotal = Number(roll.total) || 0;
       value = Math.max(0, Math.trunc(rollTotal));
+      console.log(`[NA-Debug] roll nvl${entry.level}: ${entry.dice} = ${rollTotal}`);
     } catch (error) {
+      console.error(`[NA-Debug] erro ao rolar nvl${entry.level}:`, error);
       globalThis.ui?.notifications?.error?.(`Falha ao rolar ganho do nível ${entry.level}: ${error.message}`);
       continue;
     }
     patch[`system.props.${entry.key}`] = value;
     results.push({ level: entry.level, key: entry.key, dice: entry.dice, value, rollTotal });
   }
-  if (results.length) await actor.update(patch, { naCsbAutomation: true });
+  if (results.length) {
+    console.log(`[NA-Debug] actor.update com patch:`, patch);
+    await actor.update(patch, { naCsbAutomation: true });
+    console.log(`[NA-Debug] actor.update concluído`);
+  }
   const total = results.reduce((sum, result) => sum + result.value, 0);
   const remaining = missingOniPdvGains(normalized, { ...props, ...Object.fromEntries(results.map((r) => [r.key, r.value])) });
   return { results, total, complete: remaining.length === 0 };

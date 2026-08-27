@@ -86,6 +86,19 @@ function removeInvalidHiddenPlaceholders(template) {
   template.system.hidden = hidden.filter((entry) => entry?.value !== "$" && entry?.value !== "");
 }
 
+function removeCircularFormulas(template) {
+  const fieldKeys = new Set();
+  walk(template.system, (node) => {
+    if (node.key && ["numberField", "select", "textField"].includes(node.type)) {
+      fieldKeys.add(node.key);
+    }
+  });
+  const hidden = template.system?.hidden;
+  if (Array.isArray(hidden)) {
+    template.system.hidden = hidden.filter((h) => !fieldKeys.has(h.name));
+  }
+}
+
 function removeSlayerOnlyComponents(template) {
   const forbiddenKeys = new Set(["folego_slayer_titulo"]);
   function prune(value) {
@@ -342,6 +355,7 @@ export function migrateOniTemplate(source) {
   }
 
   removeInvalidHiddenPlaceholders(migrated);
+  removeCircularFormulas(migrated);
   removeSlayerOnlyComponents(migrated);
   configureOniActionButtons(migrated);
 

@@ -47,10 +47,12 @@ describe("oni-template (estrutura validada pelo operador)", () => {
     assert.ok(hidden.get("pdk_oni_total_conta"), "pdk_oni_total_conta deve existir");
   });
 
-  it("possui hidden com bônus de origem", () => {
+  it("usa somente as keys canônicas de origem", () => {
     const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
-    assert.ok(hidden.get("origem_oni_pdv_val"), "origem_oni_pdv_val deve existir");
-    assert.ok(hidden.get("origem_oni_pdk_val"), "origem_oni_pdk_val deve existir");
+    assert.ok(hidden.get("origem_pdv_fixo"), "origem_pdv_fixo deve existir");
+    assert.ok(hidden.get("origem_pdk_fixo"), "origem_pdk_fixo deve existir");
+    assert.ok(!hidden.has("origem_oni_pdv_val"), "alias legado origem_oni_pdv_val não deve existir");
+    assert.ok(!hidden.has("origem_oni_pdk_val"), "alias legado origem_oni_pdk_val não deve existir");
   });
 
   it("possui rank de especialização", () => {

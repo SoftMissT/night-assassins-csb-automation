@@ -162,6 +162,7 @@ function fixBars(template) {
     ["pdv_slayer_atual_num", "${min(pdv_slayer_maximo_num,max(0,pdv_slayer_total_conta+interludio_pdv_permanente-pdv_slayer_dano_ferida+pdv_slayer_curado+pdv_slayer_extra-pdv_slayer_dano_tomado))}$"],
     ["pdr_slayer_maximo_num", "${max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_extra)}$"],
     ["pdr_slayer_atual_num", "${min(pdr_slayer_maximo_num,max(0,pdr_slayer_total_conta+metal_slayer_pdr_bonus+pdr_slayer_curado+pdr_slayer_extra-pdr_slayer_gasto_valor))}$"],
+    ["metal_bloqueio_bonus", "${switchCase(metal_escolhido,'metal_azul',3,'metal_preta',4,0)}$"],
   ]);
   for (const [name, value] of formulas) {
     const existing = hidden.find((entry) => entry.name === name);
@@ -259,6 +260,31 @@ function fixRollButtonTypography(template) {
     const role = attributeRoles[attribute] ?? "dex";
     node.value = `<span class="na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-${role}">${text}</span>`;
   });
+}
+
+function fixRuntimeStorageKeys(template) {
+  let configTab = null;
+  walk(template.system?.body, (node) => {
+    if (node.key === "configs_tab" && node.type === "tab") configTab = node;
+  });
+  if (!configTab) throw new Error("Aba Configurações do Slayer não encontrada.");
+
+  const storageKeys = new Set([
+    "marca_dano_dados",
+    "marca_dano_faces",
+    "marca_dano_necrotico_dados",
+    "interludio_concentracao_total_constante",
+    "interludio_cabaca_pequena_completa",
+  ]);
+  removeComponentsByKey(template.system, storageKeys);
+  removeComponentsByKey(configTab, new Set(["runtime_slayer_storage_panel"]));
+  configTab.contents.push(panel("runtime_slayer_storage_panel", "Dados de Marca e Interlúdio", [
+    numberField("marca_dano_dados", "Dados de dano da Marca", 0, 0),
+    numberField("marca_dano_faces", "Faces do dano da Marca", 0, 0),
+    numberField("marca_dano_necrotico_dados", "Dados de dano necrótico da Marca", 0, 0),
+    checkboxField("interludio_concentracao_total_constante", "Concentração Total Constante desbloqueada"),
+    checkboxField("interludio_cabaca_pequena_completa", "Cabaça Pequena completa (+2 PDV máximo)"),
+  ], "grid-2"));
 }
 
 function removeDuplicateAttributeButton(template) {
@@ -1265,6 +1291,8 @@ function trimAttributeCardValues(template) {
 
 export function migrateSlayerTemplate(template) {
   const migrated = visit(structuredClone(template));
+  migrated.name = "slayer_template";
+  migrated.type = "_template";
   if (migrated.flags?.["custom-system-builder"]) {
     delete migrated.flags["custom-system-builder"].templateHistory;
     delete migrated.flags["custom-system-builder"].templateHistoryRedo;
@@ -1282,6 +1310,7 @@ export function migrateSlayerTemplate(template) {
   organizeSlayerTabs(migrated);
   flattenNestedPanelContents(migrated);
   fixLifeDeathStorage(migrated);
+  fixRuntimeStorageKeys(migrated);
   fixRollButtonTypography(migrated);
   trimAttributeCardValues(migrated);
   fixTextVisibilityFormulas(migrated);

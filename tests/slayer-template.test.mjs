@@ -176,6 +176,25 @@ test("template Slayer tem hidden com bônus de metal", () => {
   assert.ok(hiddenNames.includes("metal_acerto_bonus"), "metal_acerto_bonus não encontrado");
   assert.ok(hiddenNames.includes("metal_esquiva_bonus"), "metal_esquiva_bonus não encontrado");
   assert.ok(hiddenNames.includes("metal_dano_bonus"), "metal_dano_bonus não encontrado");
+  assert.ok(hiddenNames.includes("metal_bloqueio_bonus"), "metal_bloqueio_bonus não encontrado");
+});
+
+test("template Slayer declara todas as keys persistentes usadas por fórmulas e macros", () => {
+  const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, "utf8")));
+  const componentKeys = new Set();
+  function walk(node) {
+    if (!node || typeof node !== "object") return;
+    if (typeof node.type === "string" && typeof node.key === "string" && node.key) componentKeys.add(node.key);
+    Object.values(node).forEach(walk);
+  }
+  walk(template.system);
+  for (const key of [
+    "marca_dano_dados",
+    "marca_dano_faces",
+    "marca_dano_necrotico_dados",
+    "interludio_concentracao_total_constante",
+    "interludio_cabaca_pequena_completa",
+  ]) assert.ok(componentKeys.has(key), `${key} deve existir como componente persistente`);
 });
 
 test("template Slayer tem hidden com bônus de habilidade", () => {

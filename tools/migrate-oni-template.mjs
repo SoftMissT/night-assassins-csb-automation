@@ -20,6 +20,13 @@ const PDK_LEVEL_GAINS = Object.freeze({
 function replaceOniResourceNames(value) {
   if (typeof value === "string") {
     return value
+      .replaceAll("pdv_slayer", "pdv_oni")
+      .replaceAll("pdr_slayer", "pdk_oni")
+      .replaceAll("status_slayer", "status_oni")
+      .replaceAll("resistencia_slayer", "resistencia_oni")
+      .replaceAll("combat_slayer", "combat_oni")
+      .replaceAll("origem_oni_pdv_val", "origem_pdv_fixo")
+      .replaceAll("origem_oni_pdk_val", "origem_pdk_fixo")
       .replaceAll("pdr_oni", "pdk_oni")
       .replaceAll("PDR / PDK", "PDK")
       .replaceAll("PDR", "PDK");
@@ -39,6 +46,7 @@ function renameOniKeys(value) {
     let result = value;
     for (const attr of ATTRS) {
       result = result
+        .replaceAll(`atr_${attr}_valor_oni_config`, `atr_${attr}_oni_valor_config`)
         .replaceAll(`atr_${attr}_valor_config`, `atr_${attr}_oni_valor_config`)
         .replaceAll(`bonus_atr_${attr}_valor_temp`, `bonus_atr_${attr}_oni_valor_temp`)
         .replaceAll(`${attr}_nvl`, `${attr}_oni_nvl`);
@@ -57,6 +65,7 @@ function renameOniKeyString(key) {
   let result = key;
   for (const attr of ATTRS) {
     result = result
+      .replaceAll(`atr_${attr}_valor_oni_config`, `atr_${attr}_oni_valor_config`)
       .replaceAll(`atr_${attr}_valor_config`, `atr_${attr}_oni_valor_config`)
       .replaceAll(`bonus_atr_${attr}_valor_temp`, `bonus_atr_${attr}_oni_valor_temp`)
       .replaceAll(`${attr}_nvl`, `${attr}_oni_nvl`);
@@ -77,6 +86,35 @@ function collectKeys(document) {
     if (typeof value.name === "string" && value.value !== undefined) keys.add(value.name);
   });
   return keys;
+}
+
+function removeInvalidHiddenPlaceholders(template) {
+  const hidden = template.system?.hidden;
+  if (!Array.isArray(hidden)) return;
+  template.system.hidden = hidden.filter((entry) => entry?.value !== "$" && entry?.value !== "");
+}
+
+function removeSlayerOnlyComponents(template) {
+  const forbiddenKeys = new Set(["folego_slayer_titulo"]);
+  function prune(value) {
+    if (Array.isArray(value)) {
+      for (let index = value.length - 1; index >= 0; index -= 1) {
+        if (value[index]?.key && forbiddenKeys.has(value[index].key)) value.splice(index, 1);
+        else prune(value[index]);
+      }
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    for (const child of Object.values(value)) prune(child);
+  }
+  prune(template.system);
+}
+
+function configureOniActionButtons(template) {
+  walk(template.system, (node) => {
+    if (typeof node.rollMessage !== "string") return;
+    node.rollMessage = node.rollMessage.replace("kind:'slayer'", "kind:'oni'");
+  });
 }
 
 function orbitron(text, color, size = 16) {
@@ -310,8 +348,12 @@ function configureOniProgressionFields(template) {
     `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
   ));
   fields.push(
+    makeNumberField("vit_oni_nvl7", "VIT no Nv. 7", "Snapshot de VIT usado pela progressão oficial."),
+    makeNumberField("fdv_oni_nvl7", "FDV no Nv. 7", "Snapshot de FDV usado pela progressão oficial."),
     makeNumberField("oni_nivel_na_queda", "Nível na Queda", "Somente Exterminador Corrompido."),
     makeNumberField("oni_pdr_maximo_antes_queda", "PDR máximo antes da Queda", "Somente Exterminador Corrompido."),
+    makeNumberField("pdv_oni_dano_tomado", "Dano de PDV tomado", "Ledger persistente de dano recebido."),
+    makeNumberField("pdk_oni_gasto_valor", "PDK gasto", "Ledger persistente de PDK consumido."),
   );
   dataTab.contents.push(makePanel("progressao_oni_recursos_panel", [
     { ...makePanel("progressao_oni_titulo_panel", [], ""), type: "label", value: orbitron("PROGRESSÃO DE RECURSOS ONI", "#C1000C", 14), style: "label", size: "full-size" },
@@ -347,6 +389,10 @@ export function migrateOniTemplate(source) {
     delete migrated.flags["custom-system-builder"].templateHistoryRedo;
   }
 
+  removeInvalidHiddenPlaceholders(migrated);
+  removeSlayerOnlyComponents(migrated);
+  configureOniActionButtons(migrated);
+
   configureOniLevelAndRank(migrated);
   configureOniOrigins(migrated);
   configureOniOriginBonuses(migrated);
@@ -355,11 +401,13 @@ export function migrateOniTemplate(source) {
   configureOniBarsAndLabels(migrated);
   configureOniProgressionFields(migrated);
 
-  // Remove hidden attributes that are Slayer-only (should not exist in Oni template)
+  // Remove aliases legados que não pertencem ao contrato Oni.
   const hidden = migrated.system?.hidden;
   if (Array.isArray(hidden)) {
     migrated.system.hidden = hidden.filter((h) =>
-      h.name !== "origem_oni_pdv_val" && h.name !== "origem_oni_pdr_val"
+      h.name !== "origem_oni_pdv_val"
+      && h.name !== "origem_oni_pdr_val"
+      && !String(h.name ?? "").includes("slayer")
     );
   }
 

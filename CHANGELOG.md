@@ -775,3 +775,8 @@
 **Mudança:** Substituídos os 2 switchCase gigantes de PDV/PDK por origem por 3 camadas de dados (origem_pdv_fixo, origem_pdk_fixo, origem_pdk_fdv_mult) + 2 contas puras sem fallback (origem_oni_pdv_inicial, origem_oni_pdk_inicial), com Exterminador Corrompido como único condicional. Corrigidos 9 valores de PDV e 7 de PDK contra as Origens oficiais (Corte Pálida 18, Maré Negra 20/17, Raiz Podre 23/16, Realidade Distorcida 17, Tela do Submundo 18/20, Outras Terras 18/19, Transfigurado 24/16, Eco Eterno 18/19, Chama Negra 20/19). Confirmado pelo Operador: NVL 9 = +20 PDK (+10 nível +10 Pulso de Sangue). Novo painel "Origem — Recursos Iniciais" na aba Config/Dados.
 **Performance:** 21 fórmulas switchCase independentes → 3 tabelas + 2 contas; zero fallback nas contas derivadas.
 **Status:** ✅ completo (865/865 testes) — pendente validação visual no Foundry
+## 0.11.23 - 2026-08-26
+
+- Oni: removidos Hidden Attributes inválidos `"$"`, aliases inconsistentes e componentes Slayer; recursos, ações e fórmulas usam somente keys Oni canônicas.
+- Slayer: restauradas as keys persistentes da Marca, `metal_bloqueio_bonus` e flags de Interlúdio.
+- Testes: 872/872; Compendium de templates reconstruído localmente.

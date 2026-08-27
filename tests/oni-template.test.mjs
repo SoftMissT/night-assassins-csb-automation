@@ -85,4 +85,29 @@ describe("oni-template", () => {
     assert.match(pdvInicial, /exterminador_corrompido.*\(30\+\(vit_oni_nvl1\*3\)\+\(10\*oni_nivel_na_queda\)\).*origem_pdv_fixo\+vit_oni_nvl1/s);
     assert.match(pdkInicial, /exterminador_corrompido.*oni_pdr_maximo_antes_queda\+\(oni_nivel_na_queda\*2\)\+\(fdv_oni_nvl1\*3\).*origem_pdk_fixo\+\(fdv_oni_nvl1\*origem_pdk_fdv_mult\)/s);
   });
+
+  it("remove placeholders vazios e preserva somente fórmulas CSB válidas", () => {
+    const migrated = migrateOniTemplate(source);
+    for (const entry of migrated.system.hidden) {
+      assert.notEqual(entry.value, "$", `${entry.name} não pode usar o placeholder inválido '$'`);
+      assert.notEqual(entry.value, "", `${entry.name} não pode ter fórmula vazia`);
+    }
+  });
+
+  it("isola componentes, recursos e ações no namespace Oni", () => {
+    const migrated = migrateOniTemplate(source);
+    const serialized = JSON.stringify(migrated);
+    assert.doesNotMatch(serialized, /pdv_slayer|pdr_slayer|status_slayer|resistencia_slayer|combat_slayer|folego_slayer/);
+    assert.match(serialized, /kind:'oni'/);
+  });
+
+  it("normaliza todas as keys de atributos Oni para o contrato canônico", () => {
+    const migrated = migrateOniTemplate(source);
+    const serialized = JSON.stringify(migrated);
+    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
+      assert.match(serialized, new RegExp(`atr_${attr}_oni_valor_config`));
+      assert.match(serialized, new RegExp(`bonus_atr_${attr}_oni_valor_temp`));
+      assert.doesNotMatch(serialized, new RegExp(`atr_${attr}_valor_oni_config`));
+    }
+  });
 });

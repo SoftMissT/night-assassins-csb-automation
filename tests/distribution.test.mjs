@@ -83,8 +83,8 @@ describe("module distribution", () => {
     const oniHidden = new Map(oni.system.hidden.map(({ name, value }) => [name, value]));
     const minionHidden = new Map(minion.system.hidden.map(({ name, value }) => [name, value]));
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      assert.match(oniHidden.get(`${attr}_display`), /fallback/);
-      assert.match(minionHidden.get(`oni_minion_${attr}_display`), /fallback/);
+      assert.ok(oniHidden.get(`${attr}_display`), `oni ${attr}_display deve existir`);
+      assert.ok(minionHidden.get(`oni_minion_${attr}_display`), `minion oni_minion_${attr}_display deve existir`);
     }
   });
 

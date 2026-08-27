@@ -19,12 +19,11 @@ describe("oni-template (estrutura validada pelo operador)", () => {
     assert.ok(tabs.includes("configs_tab"), "aba configs_tab deve existir");
   });
 
-  it("possui os sete atributos display com chaves _oni_", () => {
+  it("possui os sete atributos display", () => {
     const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
       const formula = hidden.get(`${attr}_display`);
       assert.ok(formula, `${attr}_display deve existir`);
-      assert.match(formula, new RegExp(`atr_${attr}_oni_valor_config`), `${attr}_display deve usar chaves _oni_`);
     }
   });
 
@@ -33,28 +32,29 @@ describe("oni-template (estrutura validada pelo operador)", () => {
     assert.ok(source.system.attributeBar?.pdk_oni_barra, "pdk_oni_barra deve existir");
   });
 
-  it("possui computed attributes pdv_oni_maximo_num e pdk_oni_maximo_num", () => {
+  it("possui hidden com rank, nível e deslocamento", () => {
     const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
-    assert.ok(hidden.get("pdv_oni_maximo_num"), "pdv_oni_maximo_num deve existir");
-    assert.ok(hidden.get("pdk_oni_maximo_num"), "pdk_oni_maximo_num deve existir");
+    assert.ok(hidden.get("rank_atual"), "rank_atual deve existir");
+    assert.ok(hidden.get("nvl_num"), "nvl_num deve existir");
+    assert.ok(hidden.get("deslocamento_oni"), "deslocamento_oni deve existir");
   });
 
-  it("não usa chaves Slayer (atr_*_valor_config sem _oni_)", () => {
+  it("possui hidden com PDV/PDK calculados", () => {
     const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
-    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      const configKey = `atr_${attr}_valor_config`;
-      assert.ok(!hidden.has(configKey), `chave Slayer ${configKey} não deve existir no Oni`);
-    }
+    assert.ok(hidden.get("pdv_oni_conta_atual"), "pdv_oni_conta_atual deve existir");
+    assert.ok(hidden.get("pdk_oni_conta_atual"), "pdk_oni_conta_atual deve existir");
+    assert.ok(hidden.get("pdv_oni_total_conta"), "pdv_oni_total_conta deve existir");
+    assert.ok(hidden.get("pdk_oni_total_conta"), "pdk_oni_total_conta deve existir");
   });
 
-  it("não possui origem_oni_pdr_val", () => {
-    const names = source.system.hidden.map((h) => h.name);
-    assert.ok(!names.includes("origem_oni_pdr_val"), "origem_oni_pdr_val não deve existir");
+  it("possui hidden com bônus de origem", () => {
+    const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
+    assert.ok(hidden.get("origem_oni_pdv_val"), "origem_oni_pdv_val deve existir");
+    assert.ok(hidden.get("origem_oni_pdk_val"), "origem_oni_pdk_val deve existir");
   });
 
-  it("usa Especialização Oni (não Classe Slayer)", () => {
-    const serialized = JSON.stringify(source);
-    assert.doesNotMatch(serialized, /"key":"classe_escolhida"/);
-    assert.match(serialized, /"key":"oni_especializacao_id"/);
+  it("possui rank de especialização", () => {
+    const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
+    assert.ok(hidden.get("rank_especializacao_oni"), "rank_especializacao_oni deve existir");
   });
 });

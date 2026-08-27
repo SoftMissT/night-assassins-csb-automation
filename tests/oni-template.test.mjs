@@ -1,140 +1,186 @@
-import { describe, it } from "node:test";
-import assert from "node:assert";
-import fs from "node:fs";
-import { migrateOniTemplate } from "../tools/migrate-oni-template.mjs";
+import { describe, it } from 'node:test';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import { migrateOniTemplate } from '../tools/migrate-oni-template.mjs';
 
-const source = JSON.parse(fs.readFileSync(new URL("../src/templates/actors/oni-template.json", import.meta.url), "utf8"));
+const source = JSON.parse(
+    fs.readFileSync(new URL('../src/templates/actors/oni-template.json', import.meta.url), 'utf8')
+);
 
-describe("oni-template", () => {
-  it("mantém as keys de dano e converte o recurso demoníaco para PDK", () => {
-    const migrated = migrateOniTemplate(source);
-    const serialized = JSON.stringify(migrated);
-    for (const key of ["pdv_oni_dano_ferida", "pdk_oni_total_conta"]) {
-      assert.match(serialized, new RegExp(key));
-    }
-    assert.doesNotMatch(serialized, /pdr_oni/);
-    assert.equal(migrated.name, "oni_template");
-    assert.equal(migrated.type, "_template");
-  });
-
-  it("usa recursos numéricos nas barras e progressão Oni de 0 a 20", () => {
-    const migrated = migrateOniTemplate(source);
-    assert.deepEqual(migrated.system.attributeBar, {
-      pdv_oni_barra: { value: "${pdv_oni_atual_num}$", max: "${pdv_oni_total_conta}$", editable: false },
-      pdk_oni_barra: { value: "${pdk_oni_atual_num}$", max: "${pdk_oni_total_conta}$", editable: false },
+describe('oni-template', () => {
+    it('mantém as keys de dano e converte o recurso demoníaco para PDK', () => {
+        const migrated = migrateOniTemplate(source);
+        const serialized = JSON.stringify(migrated);
+        for (const key of ['pdv_oni_dano_ferida', 'pdk_oni_total_conta']) {
+            assert.match(serialized, new RegExp(key));
+        }
+        assert.doesNotMatch(serialized, /pdr_oni/);
+        assert.equal(migrated.name, 'oni_template');
+        assert.equal(migrated.type, '_template');
     });
-    const serialized = JSON.stringify(migrated);
-    for (const key of [
-      "pdv_oni_total_conta", "pdk_oni_total_conta",
-      "pdv_oni_ganho_nvl2", "pdv_oni_ganho_nvl12",
-    ]) assert.match(serialized, new RegExp(key));
-    assert.match(serialized, /"key":"nvl_20","value":"20"/);
-    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    const pdvTotal = hidden.get("pdv_oni_total_conta");
-    assert.match(pdvTotal, /switchCase/);
-    assert.match(pdvTotal, /pdv_oni_nvl1/);
-    const pdkTotal = hidden.get("pdk_oni_total_conta");
-    assert.match(pdkTotal, /switchCase/);
-    assert.match(pdkTotal, /pdk_oni_nvl1/);
-  });
 
-  it("calcula os sete atributos somando bonus de origem Oni, sem depender de bonus exclusivos do Slayer", () => {
-    const migrated = migrateOniTemplate(source);
-    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      const formula = hidden.get(`${attr}_display`);
-      assert.ok(formula, `${attr}_display deve existir`);
-      assert.match(formula, new RegExp(`atr_${attr}_.*valor.*config\\+bonus_atr_${attr}_.*valor.*temp`));
-      assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
-    }
-  });
-
-  it("pdk_oni_atual_num nao referencia metal_oni_pdr_bonus", () => {
-    const migrated = migrateOniTemplate(source);
-    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    const formula = hidden.get("pdk_oni_atual_num");
-    assert.ok(formula, "pdk_oni_atual_num deve existir");
-    assert.doesNotMatch(formula, /metal_oni_pdr_bonus/);
-  });
-
-  it("nao possui hidden attributes de Origens Slayer (origem_oni_pdr_val)", () => {
-    const migrated = migrateOniTemplate(source);
-    const names = migrated.system.hidden.map((h) => h.name);
-    assert.ok(!names.includes("origem_oni_pdr_val"), "origem_oni_pdr_val deve ter sido removido");
-    assert.ok(!names.includes("origem_pdv_fixo"), "origem_pdv_fixo nao deve existir no template Oni");
-    assert.ok(!names.includes("origem_pdk_fixo"), "origem_pdk_fixo nao deve existir no template Oni");
-    assert.ok(names.includes("origem_oni_pdv_val"), "origem_oni_pdv_val deve existir no template oficial");
-    assert.ok(names.includes("origem_oni_pdk_val"), "origem_oni_pdk_val deve existir no template oficial");
-  });
-
-  it("usa camadas de origem (fixo) com valores oficiais auditados", () => {
-    const migrated = migrateOniTemplate(source);
-    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    for (const name of ["origem_oni_pdv_val", "origem_oni_pdk_val"]) {
-      assert.ok(hidden.get(name), `${name} deve existir`);
-    }
-    const pdvVal = hidden.get("origem_oni_pdv_val");
-    assert.match(pdvVal, /switchCase/);
-    assert.match(pdvVal, /'origem_oni_transfigurado',\s*\n\s*24,/);
-    assert.match(pdvVal, /'origem_oni_chama_negra',\s*\n\s*20,/);
-    assert.match(pdvVal, /'origem_oni_corte_palida',\s*\n\s*18,/);
-    assert.match(pdvVal, /'origem_oni_exterminador_corrompido',.*30\+\(vit_oni_nvl1\*3\)/s);
-    const pdkVal = hidden.get("origem_oni_pdk_val");
-    assert.match(pdkVal, /switchCase/);
-    assert.match(pdkVal, /'origem_oni_tela_do_submundo',\s*\n\s*20,/);
-    assert.match(pdkVal, /'origem_oni_mare_negra',\s*\n\s*17,/);
-    assert.match(pdkVal, /'origem_oni_raiz_podre',\s*\n\s*16,/);
-    assert.match(pdkVal, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
-  });
-
-  it("remove placeholders vazios e preserva somente fórmulas CSB válidas", () => {
-    const migrated = migrateOniTemplate(source);
-    for (const entry of migrated.system.hidden) {
-      assert.notEqual(entry.value, "$", `${entry.name} não pode usar o placeholder inválido '$'`);
-      assert.notEqual(entry.value, "", `${entry.name} não pode ter fórmula vazia`);
-    }
-  });
-
-  it("isola componentes, recursos e ações no namespace Oni", () => {
-    const migrated = migrateOniTemplate(source);
-    const serialized = JSON.stringify(migrated);
-    assert.doesNotMatch(serialized, /pdv_slayer|pdr_slayer|status_slayer|resistencia_slayer|combat_slayer|folego_slayer/);
-    assert.match(serialized, /kind:'oni'/);
-  });
-
-  it("normaliza todas as keys de atributos Oni para o contrato canônico", () => {
-    const migrated = migrateOniTemplate(source);
-    const serialized = JSON.stringify(migrated);
-    for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      assert.match(serialized, new RegExp(`atr_${attr}_.*valor.*config`));
-      assert.match(serialized, new RegExp(`bonus_atr_${attr}_.*valor.*temp`));
-      assert.doesNotMatch(serialized, new RegExp(`atr_${attr}_valor_config`));
-    }
-  });
-
-  it("não duplica keys nem produz linhas de tabela inválidas para o CSB", () => {
-    const migrated = migrateOniTemplate(source);
-    const componentKeys = [];
-    const invalidRows = [];
-    const walk = (value) => {
-      if (Array.isArray(value)) return value.forEach(walk);
-      if (!value || typeof value !== "object") return;
-      if (typeof value.key === "string" && value.key) componentKeys.push(value.key);
-      if (value.type === "table") {
-        assert.ok(Array.isArray(value.contents), `${value.key}: contents deve ser array`);
-        value.contents.forEach((row, index) => {
-          if (!Array.isArray(row)) invalidRows.push(`${value.key}[${index}]`);
+    it('usa recursos numéricos nas barras e progressão Oni de 0 a 20', () => {
+        const migrated = migrateOniTemplate(source);
+        assert.deepEqual(migrated.system.attributeBar, {
+            pdv_oni_barra: {
+                value: '${pdv_oni_atual_num}$',
+                max: '${pdv_oni_total_conta}$',
+                editable: false,
+            },
+            pdk_oni_barra: {
+                value: '${pdk_oni_atual_num}$',
+                max: '${pdk_oni_total_conta}$',
+                editable: false,
+            },
         });
-      }
-      Object.values(value).forEach(walk);
-    };
-    walk(migrated.system.body);
+        const serialized = JSON.stringify(migrated);
+        for (const key of [
+            'pdv_oni_total_conta',
+            'pdk_oni_total_conta',
+            'pdv_oni_ganho_nvl2',
+            'pdv_oni_ganho_nvl12',
+        ])
+            assert.match(serialized, new RegExp(key));
+        assert.match(serialized, /"key":"nvl_20","value":"20"/);
+        const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+        const pdvTotal = hidden.get('pdv_oni_total_conta');
+        assert.match(pdvTotal, /switchCase/);
+        assert.match(pdvTotal, /pdv_oni_nvl1/);
+        const pdkTotal = hidden.get('pdk_oni_total_conta');
+        assert.match(pdkTotal, /switchCase/);
+        assert.match(pdkTotal, /pdk_oni_nvl1/);
+    });
 
-    const duplicateComponents = [...new Set(componentKeys.filter((key, index) => componentKeys.indexOf(key) !== index))];
-    const hiddenNames = migrated.system.hidden.map((entry) => entry.name);
-    const duplicateHidden = [...new Set(hiddenNames.filter((name, index) => hiddenNames.indexOf(name) !== index))];
-    assert.deepEqual(duplicateComponents, [], `keys de componentes duplicadas: ${duplicateComponents.join(", ")}`);
-    assert.deepEqual(duplicateHidden, [], `hidden duplicados: ${duplicateHidden.join(", ")}`);
-    assert.deepEqual(invalidRows, [], `linhas de tabela inválidas: ${invalidRows.join(", ")}`);
-  });
+    it('calcula os sete atributos somando bonus de origem Oni, sem depender de bonus exclusivos do Slayer', () => {
+        const migrated = migrateOniTemplate(source);
+        const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+        for (const attr of ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab']) {
+            const formula = hidden.get(`${attr}_display`);
+            assert.ok(formula, `${attr}_display deve existir`);
+            assert.match(
+                formula,
+                new RegExp(`atr_${attr}_.*valor.*config\\+bonus_atr_${attr}_.*valor.*temp`)
+            );
+            assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
+        }
+    });
+
+    it('pdk_oni_atual_num nao referencia metal_oni_pdr_bonus', () => {
+        const migrated = migrateOniTemplate(source);
+        const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+        const formula = hidden.get('pdk_oni_atual_num');
+        assert.ok(formula, 'pdk_oni_atual_num deve existir');
+        assert.doesNotMatch(formula, /metal_oni_pdr_bonus/);
+    });
+
+    it('nao possui hidden attributes de Origens Slayer (origem_oni_pdr_val)', () => {
+        const migrated = migrateOniTemplate(source);
+        const names = migrated.system.hidden.map((h) => h.name);
+        assert.ok(
+            !names.includes('origem_oni_pdr_val'),
+            'origem_oni_pdr_val deve ter sido removido'
+        );
+        assert.ok(
+            !names.includes('origem_pdv_fixo'),
+            'origem_pdv_fixo nao deve existir no template Oni'
+        );
+        assert.ok(
+            !names.includes('origem_pdk_fixo'),
+            'origem_pdk_fixo nao deve existir no template Oni'
+        );
+        assert.ok(
+            names.includes('origem_oni_pdv_val'),
+            'origem_oni_pdv_val deve existir no template oficial'
+        );
+        assert.ok(
+            names.includes('origem_oni_pdk_val'),
+            'origem_oni_pdk_val deve existir no template oficial'
+        );
+    });
+
+    it('usa camadas de origem (fixo) com valores oficiais auditados', () => {
+        const migrated = migrateOniTemplate(source);
+        const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+        for (const name of ['origem_oni_pdv_val', 'origem_oni_pdk_val']) {
+            assert.ok(hidden.get(name), `${name} deve existir`);
+        }
+        const pdvVal = hidden.get('origem_oni_pdv_val');
+        assert.match(pdvVal, /switchCase/);
+        assert.match(pdvVal, /'origem_oni_transfigurado',\s*\n\s*24,/);
+        assert.match(pdvVal, /'origem_oni_chama_negra',\s*\n\s*20,/);
+        assert.match(pdvVal, /'origem_oni_corte_palida',\s*\n\s*18,/);
+        assert.match(pdvVal, /'origem_oni_exterminador_corrompido',.*30\+\(vit_oni_nvl1\*3\)/s);
+        const pdkVal = hidden.get('origem_oni_pdk_val');
+        assert.match(pdkVal, /switchCase/);
+        assert.match(pdkVal, /'origem_oni_tela_do_submundo',\s*\n\s*20,/);
+        assert.match(pdkVal, /'origem_oni_mare_negra',\s*\n\s*17,/);
+        assert.match(pdkVal, /'origem_oni_raiz_podre',\s*\n\s*16,/);
+        assert.match(pdkVal, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
+    });
+
+    it('remove placeholders vazios e preserva somente fórmulas CSB válidas', () => {
+        const migrated = migrateOniTemplate(source);
+        for (const entry of migrated.system.hidden) {
+            assert.notEqual(
+                entry.value,
+                '$',
+                `${entry.name} não pode usar o placeholder inválido '$'`
+            );
+            assert.notEqual(entry.value, '', `${entry.name} não pode ter fórmula vazia`);
+        }
+    });
+
+    it('isola componentes, recursos e ações no namespace Oni', () => {
+        const migrated = migrateOniTemplate(source);
+        const serialized = JSON.stringify(migrated);
+        assert.doesNotMatch(
+            serialized,
+            /pdv_slayer|pdr_slayer|status_slayer|resistencia_slayer|combat_slayer|folego_slayer/
+        );
+        assert.match(serialized, /kind:'oni'/);
+    });
+
+    it('normaliza todas as keys de atributos Oni para o contrato canônico', () => {
+        const migrated = migrateOniTemplate(source);
+        const serialized = JSON.stringify(migrated);
+        for (const attr of ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab']) {
+            assert.match(serialized, new RegExp(`atr_${attr}_.*valor.*config`));
+            assert.match(serialized, new RegExp(`bonus_atr_${attr}_.*valor.*temp`));
+            assert.doesNotMatch(serialized, new RegExp(`atr_${attr}_valor_config`));
+        }
+    });
+
+    it('não duplica keys nem produz linhas de tabela inválidas para o CSB', () => {
+        const migrated = migrateOniTemplate(source);
+        const componentKeys = [];
+        const invalidRows = [];
+        const walk = (value) => {
+            if (Array.isArray(value)) return value.forEach(walk);
+            if (!value || typeof value !== 'object') return;
+            if (typeof value.key === 'string' && value.key) componentKeys.push(value.key);
+            if (value.type === 'table') {
+                assert.ok(Array.isArray(value.contents), `${value.key}: contents deve ser array`);
+                value.contents.forEach((row, index) => {
+                    if (!Array.isArray(row)) invalidRows.push(`${value.key}[${index}]`);
+                });
+            }
+            Object.values(value).forEach(walk);
+        };
+        walk(migrated.system.body);
+
+        const duplicateComponents = [
+            ...new Set(componentKeys.filter((key, index) => componentKeys.indexOf(key) !== index)),
+        ];
+        const hiddenNames = migrated.system.hidden.map((entry) => entry.name);
+        const duplicateHidden = [
+            ...new Set(hiddenNames.filter((name, index) => hiddenNames.indexOf(name) !== index)),
+        ];
+        assert.deepEqual(
+            duplicateComponents,
+            [],
+            `keys de componentes duplicadas: ${duplicateComponents.join(', ')}`
+        );
+        assert.deepEqual(duplicateHidden, [], `hidden duplicados: ${duplicateHidden.join(', ')}`);
+        assert.deepEqual(invalidRows, [], `linhas de tabela inválidas: ${invalidRows.join(', ')}`);
+    });
 });

@@ -1,14 +1,14 @@
 ---
-title: "Gate P0 Multicliente — v0.9.13"
-created: "2026-08-20"
-last_updated: "2026-08-20"
+title: 'Gate P0 Multicliente — v0.9.13'
+created: '2026-08-20'
+last_updated: '2026-08-20'
 status: active
 type: spec
 tags:
-  - "#stage/active"
-  - "#projeto/night-assassins-csb-automation"
-  - "#gate/p0"
-  - "#foundry/v14"
+    - '#stage/active'
+    - '#projeto/night-assassins-csb-automation'
+    - '#gate/p0'
+    - '#foundry/v14'
 ---
 
 # Gate P0 Multicliente — v0.9.13
@@ -137,14 +137,14 @@ tags:
 
 > Medir com `performance.now()` no console ou timestamp dos logs do GM. Os 387 testes locais não substituem benchmark multicliente.
 
-| Escrita | Esperado | Observado (GM) | Observado (Jogador) | Falha? |
-|---------|----------|-----------------|---------------------|--------|
-| Dano em Actor sem ownership (relay) | < 500ms | | | |
-| Autorização GM → aplicar dano | < 1000ms | | | |
-| Reset de ações no início do combate | < 200ms | | | |
-| Recuperação de Fôlego no turno | < 200ms | | | |
-| Dano contínuo no início do turno | < 300ms | | | |
-| Persistência de status (save) | < 300ms | | | |
+| Escrita                             | Esperado | Observado (GM) | Observado (Jogador) | Falha? |
+| ----------------------------------- | -------- | -------------- | ------------------- | ------ |
+| Dano em Actor sem ownership (relay) | < 500ms  |                |                     |        |
+| Autorização GM → aplicar dano       | < 1000ms |                |                     |        |
+| Reset de ações no início do combate | < 200ms  |                |                     |        |
+| Recuperação de Fôlego no turno      | < 200ms  |                |                     |        |
+| Dano contínuo no início do turno    | < 300ms  |                |                     |        |
+| Persistência de status (save)       | < 300ms  |                |                     |        |
 
 ---
 
@@ -152,9 +152,9 @@ tags:
 
 > Registrar cada falha reproduzível aqui. Após o gate, transformar cada falha em teste local antes de corrigir código.
 
-| ID | Fase | Descrição | Console (GM/Jogador) | Reprodutível? | Status |
-|----|------|-----------|----------------------|---------------|--------|
-| — | — | *Nenhuma falha registrada ainda* | — | — | — |
+| ID  | Fase | Descrição                        | Console (GM/Jogador) | Reprodutível? | Status |
+| --- | ---- | -------------------------------- | -------------------- | ------------- | ------ |
+| —   | —    | _Nenhuma falha registrada ainda_ | —                    | —             | —      |
 
 ### Formato de registro
 

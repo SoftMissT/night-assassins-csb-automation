@@ -1,13 +1,13 @@
 ---
-title: "Pipeline de Build — Geração de Packs e ZIP"
-created: "2026-08-20"
-last_updated: "2026-08-20"
+title: 'Pipeline de Build — Geração de Packs e ZIP'
+created: '2026-08-20'
+last_updated: '2026-08-20'
 status: active
 type: doc
 tags:
-  - "#projeto/night-assassins-csb-automation"
-  - "#foundry/build"
-  - "#foundry/pipeline"
+    - '#projeto/night-assassins-csb-automation'
+    - '#foundry/build'
+    - '#foundry/pipeline'
 ---
 
 # Pipeline de Build — Geração de Packs e ZIP
@@ -146,19 +146,19 @@ ls build/verify/templates-de-ficha/
 
 ## Build tools disponíveis
 
-| Tool | Função |
-|------|--------|
-| `tools/build-template-sources.mjs` | Gera templates de Actor (Slayer/Oni/Oni Minion/NPC) |
-| `tools/build-macro-sources.mjs` | Gera fontes de macros do Compendium |
-| `tools/build-breathing-sources.mjs` | Gera Items de Respiração (300 técnicas) |
-| `tools/build-weapon-sources.mjs` | Gera Items de armas (43 armas) |
-| `tools/build-asset-sources.mjs` | Gera Items de arte (catálogo de ícones) |
-| `tools/migrate-slayer-template.mjs` | Migra template Slayer legado |
-| `tools/migrate-oni-template.mjs` | Migra template Oni legado |
-| `tools/clean-oni-template.mjs` | Remove heranças Slayer do template Oni |
-| `tools/build-oni-minion-template.mjs` | Gera template Oni Minion |
-| `tools/snapshot-compendium-catalogs.mjs` | Snapshot de catálogos para verificação |
-| `tools/compendium-catalog-utils.mjs` | Utilidades compartilhadas de catálogo |
+| Tool                                     | Função                                              |
+| ---------------------------------------- | --------------------------------------------------- |
+| `tools/build-template-sources.mjs`       | Gera templates de Actor (Slayer/Oni/Oni Minion/NPC) |
+| `tools/build-macro-sources.mjs`          | Gera fontes de macros do Compendium                 |
+| `tools/build-breathing-sources.mjs`      | Gera Items de Respiração (300 técnicas)             |
+| `tools/build-weapon-sources.mjs`         | Gera Items de armas (43 armas)                      |
+| `tools/build-asset-sources.mjs`          | Gera Items de arte (catálogo de ícones)             |
+| `tools/migrate-slayer-template.mjs`      | Migra template Slayer legado                        |
+| `tools/migrate-oni-template.mjs`         | Migra template Oni legado                           |
+| `tools/clean-oni-template.mjs`           | Remove heranças Slayer do template Oni              |
+| `tools/build-oni-minion-template.mjs`    | Gera template Oni Minion                            |
+| `tools/snapshot-compendium-catalogs.mjs` | Snapshot de catálogos para verificação              |
+| `tools/compendium-catalog-utils.mjs`     | Utilidades compartilhadas de catálogo               |
 
 ## O que NÃO publicar
 

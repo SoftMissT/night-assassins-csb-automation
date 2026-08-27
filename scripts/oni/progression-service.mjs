@@ -114,7 +114,7 @@ export function oniRandomPdvRequirements(level, persisted = {}) {
     required.push(entry);
     const raw = persisted[key] ?? persisted[current];
     const value = Number(raw);
-    if (!Number.isFinite(value) || value < 0) missing.push(entry);
+    if (!Number.isFinite(value) || value <= 0) missing.push(entry);
     else total += Math.trunc(value);
   }
   return Object.freeze({ total, required, missing, complete: missing.length === 0 });

@@ -36,7 +36,7 @@ describe('P0 estabilização', () => {
             assert.equal(actorKind({ system: { props: {} } }), null);
         });
 
-        it('mantém oni_minion, oni e slayer', () => {S
+        it('mantém oni_minion, oni e slayer', () => {
             assert.equal(
                 actorKind({ system: { props: { oni_minion_pdv_base: 8 } } }),
                 'oni_minion'

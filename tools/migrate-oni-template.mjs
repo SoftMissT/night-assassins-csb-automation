@@ -241,29 +241,19 @@ function configureOniOrigins(template) {
 
   upsertHidden(template, "origem_oni_pdv_val", `\${switchCase(${originKey},\n  ${pdvArgs},\n  0\n)}$`);
   upsertHidden(template, "origem_oni_pdk_val", `\${switchCase(${originKey},\n  ${pdkArgs},\n  0\n)}$`);
-  upsertHidden(template, "origem_oni_pdv_inicial", `\${origem_oni_pdv_val+vit_display}$`);
-  upsertHidden(template, "origem_oni_pdk_inicial", `\${origem_oni_pdk_val+fdv_display}$`);
 }
 
 function configureOniProgression(template) {
   const pdvLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-  const pdvParts = pdvLevels.map((level) => {
-    if (level < 20) return `(nvl_num>=${level}?fallback(pdv_oni_ganho_nvl${level},0):0)`;
-    return `(nvl_num>=20?(50+(vit_display*5)):0)`;
-  });
-  upsertHidden(template, "pdv_oni_total_conta", `\${origem_oni_pdv_inicial+${pdvParts.join("+")}}$`);
+  const pdvArgs = pdvLevels.map((level) => `'nvl_${level}', pdv_oni_nvl${level}`).join(", ");
+  upsertHidden(template, "pdv_oni_total_conta", `\${switchCase(nvl_pj, ${pdvArgs}, 0)}$`);
 
-  const pdkLevels = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-  const pdkParts = pdkLevels.map((level) => {
-    if (level < 20) return `(nvl_num>=${level}?4:0)`;
-    return `(nvl_num>=20?50:0)`;
-  });
-  upsertHidden(template, "pdk_oni_total_conta", `\${origem_oni_pdk_inicial+${pdkParts.join("+")}}$`);
+  const pdkLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  const pdkArgs = pdkLevels.map((level) => `'nvl_${level}', pdk_oni_nvl${level}`).join(", ");
+  upsertHidden(template, "pdk_oni_total_conta", `\${switchCase(nvl_pj, ${pdkArgs}, 0)}$`);
 
-  upsertHidden(template, "pdv_oni_maximo_num", "${max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_extra)}$");
-  upsertHidden(template, "pdv_oni_atual_num", "${min(pdv_oni_maximo_num,max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_curado+pdv_oni_extra-pdv_oni_dano_tomado))}$");
-  upsertHidden(template, "pdk_oni_maximo_num", "${max(0,pdk_oni_total_conta+pdk_oni_extra)}$");
-  upsertHidden(template, "pdk_oni_atual_num", "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor))}$");
+  upsertHidden(template, "pdv_oni_atual_num", "${(pdv_oni_total_conta+pdv_oni_curado+pdv_oni_extra)-pdv_oni_dano_tomado}$");
+  upsertHidden(template, "pdk_oni_atual_num", "${(pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra)-pdk_oni_gasto_valor}$");
 }
 
 function configureOniAttributes(template) {
@@ -281,8 +271,8 @@ function configureOniAttributes(template) {
 
 function configureOniBarsAndLabels(template) {
   template.system.attributeBar = {
-    pdv_oni_barra: { value: "${pdv_oni_total_conta}$", max: "${pdv_oni_total_conta}$", editable: false },
-    pdk_oni_barra: { value: "${pdk_oni_total_conta}$", max: "${pdk_oni_total_conta}$", editable: false },
+    pdv_oni_barra: { value: "${pdv_oni_atual_num}$", max: "${pdv_oni_total_conta}$", editable: false },
+    pdk_oni_barra: { value: "${pdk_oni_atual_num}$", max: "${pdk_oni_total_conta}$", editable: false },
   };
   walk(template.system, (node) => {
     if (node.type !== "label") return;
@@ -337,8 +327,6 @@ function configureOniProgressionFields(template) {
   });
   dataTab.contents.push(makePanel("origem_oni_recursos_panel", [
     { ...makePanel("origem_oni_titulo_panel", [], ""), type: "label", value: orbitron("ORIGEM — RECURSOS INICIAIS", "#B36CFF", 14), style: "label", size: "full-size" },
-    origemLabel("PDV inicial da Origem: ${origem_oni_pdv_inicial}$"),
-    origemLabel("PDK inicial da Origem: ${origem_oni_pdk_inicial}$"),
   ], "grid-2"));
 }
 

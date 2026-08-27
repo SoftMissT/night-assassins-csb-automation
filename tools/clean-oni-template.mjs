@@ -146,9 +146,9 @@ function ledgerDisplayField(key, formula, color) {
 
 function normalizeOniLedgerNode(node) {
   node.visibilityFormula = "";
-  if (node.key === "pdv_oni_total_valor") Object.assign(node, ledgerDisplayField(node.key, "${pdv_oni_maximo_num}$", "#C1000C"));
+  if (node.key === "pdv_oni_total_valor") Object.assign(node, ledgerDisplayField(node.key, "${pdv_oni_total_conta}$", "#C1000C"));
   if (node.key === "pdv_oni_atual_valor_display") Object.assign(node, ledgerDisplayField(node.key, "${pdv_oni_atual_num}$", "#C1000C"));
-  if (node.key === "pdk_oni_total_valor") Object.assign(node, ledgerDisplayField(node.key, "${pdk_oni_maximo_num}$", "#B36CFF"));
+  if (node.key === "pdk_oni_total_valor") Object.assign(node, ledgerDisplayField(node.key, "${pdk_oni_total_conta}$", "#B36CFF"));
   if (node.key === "pdk_oni_atual_valor_display") Object.assign(node, ledgerDisplayField(node.key, "${pdk_oni_atual_num}$", "#B36CFF"));
   const labels = {
     pdv_oni_dano_tomado: "Dano Tomado",
@@ -168,14 +168,14 @@ function ensureOniCombatLedger(t, combatTab) {
   const existingByKey = new Map(extracted.reverse().map((node) => [node.key, node]));
   const ordered = [
     label("PDV TOTAL", { size: "na-sheet-size-md", role: "vit" }),
-    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_total_valor", ledgerDisplayField("pdv_oni_total_valor", "${pdv_oni_maximo_num}$", "#C1000C"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_total_valor", ledgerDisplayField("pdv_oni_total_valor", "${pdv_oni_total_conta}$", "#C1000C"))),
     label("PDV ATUAL", { size: "na-sheet-size-md", role: "vit" }),
     normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_atual_valor_display", ledgerDisplayField("pdv_oni_atual_valor_display", "${pdv_oni_atual_num}$", "#C1000C"))),
     normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_dano_tomado", ledgerNumberField("pdv_oni_dano_tomado", "Dano Tomado"))),
     normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_curado", ledgerNumberField("pdv_oni_curado", "Curado"))),
     normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdv_oni_extra", ledgerNumberField("pdv_oni_extra", "PDV Extra"))),
     label("PDK TOTAL", { size: "na-sheet-size-md", role: "fdv" }),
-    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_total_valor", ledgerDisplayField("pdk_oni_total_valor", "${pdk_oni_maximo_num}$", "#B36CFF"))),
+    normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_total_valor", ledgerDisplayField("pdk_oni_total_valor", "${pdk_oni_total_conta}$", "#B36CFF"))),
     label("PDK ATUAL", { size: "na-sheet-size-md", role: "fdv" }),
     normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_atual_valor_display", ledgerDisplayField("pdk_oni_atual_valor_display", "${pdk_oni_atual_num}$", "#B36CFF"))),
     normalizeOniLedgerNode(ensureNodeByKey(existingByKey, "pdk_oni_gasto_valor", ledgerNumberField("pdk_oni_gasto_valor", "PDK Gasto"))),
@@ -365,11 +365,11 @@ export function cleanOniTemplate(source) {
   const resourceBar = panel("recursos_oni_barra_panel", [
     panel("pdv_oni_barra_row", [
       label("PDV", { size: "na-sheet-size-md", role: "vit" }),
-      resourceValueLabel("${pdv_oni_atual_num}$ / ${pdv_oni_maximo_num}$", "pdv"),
+      resourceValueLabel("${pdv_oni_atual_num}$ / ${pdv_oni_total_conta}$", "pdv"),
     ], { flow: "grid-2" }),
     panel("pdk_oni_barra_row", [
       label("PDK", { size: "na-sheet-size-md", role: "fdv" }),
-      resourceValueLabel("${pdk_oni_atual_num}$ / ${pdk_oni_maximo_num}$", "pdk"),
+      resourceValueLabel("${pdk_oni_atual_num}$ / ${pdk_oni_total_conta}$", "pdk"),
     ], { flow: "grid-2" }),
   ], { title: "Recursos", flow: "vertical", cssClass: "na-oni-resource-bars" });
   combat.contents.unshift(resourceBar);
@@ -407,14 +407,12 @@ export function cleanOniTemplate(source) {
     label("ORIGEM & PROGRESSÃO", { size: "na-sheet-size-xl", role: "car" }),
     panel("origem_oni_resumo_panel", [
       label("Origem: ${fallback(origem_dropdown,'origem_oni_escolha')}$", { size: "na-sheet-size-md" }),
-      label("PDV inicial da Origem: ${origem_oni_pdv_inicial}$", { size: "na-sheet-size-md" }),
-      label("PDK inicial da Origem: ${origem_oni_pdk_inicial}$", { size: "na-sheet-size-md" }),
     ], { title: "Origem", flow: "vertical" }),
     panel("progressao_oni_resumo_panel", [
       label("Nível: ${nvl_num}$", { size: "na-sheet-size-md" }),
       label("Patente: ${rank_atual}$", { size: "na-sheet-size-md" }),
-      label("PDV Máximo: ${pdv_oni_maximo_num}$", { size: "na-sheet-size-md" }),
-      label("PDK Máximo: ${pdk_oni_maximo_num}$", { size: "na-sheet-size-md" }),
+      label("PDV Máximo: ${pdv_oni_total_conta}$", { size: "na-sheet-size-md" }),
+      label("PDK Máximo: ${pdk_oni_total_conta}$", { size: "na-sheet-size-md" }),
     ], { title: "Progressão", flow: "vertical" }),
   ];
 

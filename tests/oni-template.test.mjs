@@ -20,22 +20,22 @@ describe("oni-template", () => {
   it("usa recursos numéricos nas barras e progressão Oni de 0 a 20", () => {
     const migrated = migrateOniTemplate(source);
     assert.deepEqual(migrated.system.attributeBar, {
-      pdv_oni_barra: { value: "${pdv_oni_total_conta}$", max: "${pdv_oni_total_conta}$", editable: false },
-      pdk_oni_barra: { value: "${pdk_oni_total_conta}$", max: "${pdk_oni_total_conta}$", editable: false },
+      pdv_oni_barra: { value: "${pdv_oni_atual_num}$", max: "${pdv_oni_total_conta}$", editable: false },
+      pdk_oni_barra: { value: "${pdk_oni_atual_num}$", max: "${pdk_oni_total_conta}$", editable: false },
     });
     const serialized = JSON.stringify(migrated);
     for (const key of [
-      "origem_oni_pdv_inicial", "origem_oni_pdk_inicial", "pdv_oni_total_conta", "pdk_oni_total_conta",
+      "pdv_oni_total_conta", "pdk_oni_total_conta",
       "pdv_oni_ganho_nvl2", "pdv_oni_ganho_nvl12",
     ]) assert.match(serialized, new RegExp(key));
     assert.match(serialized, /"key":"nvl_20","value":"20"/);
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
     const pdvTotal = hidden.get("pdv_oni_total_conta");
-    assert.match(pdvTotal, /origem_oni_pdv_inicial/);
-    assert.match(pdvTotal, /nvl_num>=2/);
+    assert.match(pdvTotal, /switchCase/);
+    assert.match(pdvTotal, /pdv_oni_nvl1/);
     const pdkTotal = hidden.get("pdk_oni_total_conta");
-    assert.match(pdkTotal, /origem_oni_pdk_inicial/);
-    assert.match(pdkTotal, /nvl_num>=2\?4:0/);
+    assert.match(pdkTotal, /switchCase/);
+    assert.match(pdkTotal, /pdk_oni_nvl1/);
   });
 
   it("calcula os sete atributos somando bonus de origem Oni, sem depender de bonus exclusivos do Slayer", () => {
@@ -49,11 +49,11 @@ describe("oni-template", () => {
     }
   });
 
-  it("pdk_oni_conta_atual nao referencia metal_oni_pdr_bonus", () => {
+  it("pdk_oni_atual_num nao referencia metal_oni_pdr_bonus", () => {
     const migrated = migrateOniTemplate(source);
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    const formula = hidden.get("pdk_oni_conta_atual");
-    assert.ok(formula, "pdk_oni_conta_atual deve existir");
+    const formula = hidden.get("pdk_oni_atual_num");
+    assert.ok(formula, "pdk_oni_atual_num deve existir");
     assert.doesNotMatch(formula, /metal_oni_pdr_bonus/);
   });
 
@@ -67,10 +67,10 @@ describe("oni-template", () => {
     assert.ok(names.includes("origem_oni_pdk_val"), "origem_oni_pdk_val deve existir no template oficial");
   });
 
-  it("usa camadas de origem (fixo/mult/inicial) com valores oficiais auditados", () => {
+  it("usa camadas de origem (fixo) com valores oficiais auditados", () => {
     const migrated = migrateOniTemplate(source);
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    for (const name of ["origem_oni_pdv_val", "origem_oni_pdk_val", "origem_oni_pdv_inicial", "origem_oni_pdk_inicial"]) {
+    for (const name of ["origem_oni_pdv_val", "origem_oni_pdk_val"]) {
       assert.ok(hidden.get(name), `${name} deve existir`);
     }
     const pdvVal = hidden.get("origem_oni_pdv_val");
@@ -85,12 +85,6 @@ describe("oni-template", () => {
     assert.match(pdkVal, /'origem_oni_mare_negra',\s*\n\s*17,/);
     assert.match(pdkVal, /'origem_oni_raiz_podre',\s*\n\s*16,/);
     assert.match(pdkVal, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
-    const pdvInicial = hidden.get("origem_oni_pdv_inicial");
-    const pdkInicial = hidden.get("origem_oni_pdk_inicial");
-    assert.match(pdvInicial, /origem_oni_pdv_val\+vit_display/);
-    assert.match(pdkInicial, /origem_oni_pdk_val\+fdv_display/);
-    assert.doesNotMatch(pdvInicial, /switchCase/);
-    assert.doesNotMatch(pdkInicial, /switchCase/);
   });
 
   it("remove placeholders vazios e preserva somente fórmulas CSB válidas", () => {

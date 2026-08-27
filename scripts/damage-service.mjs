@@ -736,7 +736,8 @@ export async function rollDamage(options = {}) {
     // 9º Estilo: cura 5 PDV se dano líquido >= 10% do PDV máximo do alvo
     if (windDamage?.tufao && request.amount > 0 && !windTufaoHealPending) {
       const maxPdv = parseNumber(request.actor.system?.props?.pdv_slayer_maximo_num)
-        || parseNumber(request.actor.system?.props?.pdv_oni_maximo_num) || 0;
+        || parseNumber(request.actor.system?.props?.pdv_oni_maximo_num)
+        || parseNumber(request.actor.system?.props?.pdv_oni_total_conta) || 0;
       const thresholdPdv = Number(windDamage.tufao.healThresholdPercent ?? 10);
       if (maxPdv > 0 && request.amount >= Math.ceil(maxPdv * thresholdPdv / 100)) windTufaoHealPending = true;
     }

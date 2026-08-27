@@ -41,8 +41,8 @@ describe("oni-template (estrutura validada pelo operador)", () => {
 
   it("possui hidden com PDV/PDK calculados", () => {
     const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
-    assert.ok(hidden.get("pdv_oni_conta_atual"), "pdv_oni_conta_atual deve existir");
-    assert.ok(hidden.get("pdk_oni_conta_atual"), "pdk_oni_conta_atual deve existir");
+    assert.ok(hidden.get("pdv_oni_atual_num"), "pdv_oni_atual_num deve existir");
+    assert.ok(hidden.get("pdk_oni_atual_num"), "pdk_oni_atual_num deve existir");
     assert.ok(hidden.get("pdv_oni_total_conta"), "pdv_oni_total_conta deve existir");
     assert.ok(hidden.get("pdk_oni_total_conta"), "pdk_oni_total_conta deve existir");
   });

@@ -32,6 +32,38 @@ function replaceOniResourceNames(value) {
   ]));
 }
 
+const ATTRS = ["vit", "dex", "for", "car", "fdv", "int", "sab"];
+
+function renameOniKeys(value) {
+  if (typeof value === "string") {
+    let result = value;
+    for (const attr of ATTRS) {
+      result = result
+        .replaceAll(`atr_${attr}_valor_config`, `atr_${attr}_oni_valor_config`)
+        .replaceAll(`bonus_atr_${attr}_valor_temp`, `bonus_atr_${attr}_oni_valor_temp`)
+        .replaceAll(`${attr}_nvl`, `${attr}_oni_nvl`);
+    }
+    return result;
+  }
+  if (Array.isArray(value)) return value.map(renameOniKeys);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value).map(([key, child]) => [
+    renameOniKeyString(key),
+    renameOniKeys(child),
+  ]));
+}
+
+function renameOniKeyString(key) {
+  let result = key;
+  for (const attr of ATTRS) {
+    result = result
+      .replaceAll(`atr_${attr}_valor_config`, `atr_${attr}_oni_valor_config`)
+      .replaceAll(`bonus_atr_${attr}_valor_temp`, `bonus_atr_${attr}_oni_valor_temp`)
+      .replaceAll(`${attr}_nvl`, `${attr}_oni_nvl`);
+  }
+  return result;
+}
+
 function walk(value, visitor) {
   if (!value || typeof value !== "object") return;
   visitor(value);
@@ -169,9 +201,11 @@ function configureOniOrigins(template) {
     throw new Error("O dropdown Oni contém origem que não usa o namespace origem_oni_.");
   }
 
+  const originKey = origin.key;
+
   const originSwitchCase = (table, fallbackValue) => {
     const args = Object.entries(table).flatMap(([key, value]) => [`'origem_oni_${key}'`, value]).join(",\n  ");
-    return `\${switchCase(origem_oni_dropdown,\n  ${args},\n  ${fallbackValue}\n)}$`;
+    return `\${switchCase(${originKey},\n  ${args},\n  ${fallbackValue}\n)}$`;
   };
 
   // Camada 1 — constantes por origem (dados puros, sem fórmula embutida).
@@ -183,12 +217,12 @@ function configureOniOrigins(template) {
   upsertHidden(
     template,
     "origem_oni_pdv_inicial",
-    "${(origem_oni_dropdown=='origem_oni_exterminador_corrompido')?(30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_oni_nvl1)}$",
+    `\${(${originKey}=='origem_oni_exterminador_corrompido')?(30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_oni_nvl1)}$`,
   );
   upsertHidden(
     template,
     "origem_oni_pdk_inicial",
-    "${(origem_oni_dropdown=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)):(origem_pdk_fixo+(fdv_oni_nvl1*origem_pdk_fdv_mult))}$",
+    `\${(${originKey}=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)):(origem_pdk_fixo+(fdv_oni_nvl1*origem_pdk_fdv_mult))}$`,
   );
 }
 
@@ -225,15 +259,17 @@ const ONI_ORIGIN_BONUSES = Object.freeze({
   sab: { rastreador_de_sangue: 1, tela_do_submundo: 1, eco_eterno: 1 },
 });
 
-function originBonusSwitchCase(attr) {
+function originBonusSwitchCase(attr, originKey) {
   const table = ONI_ORIGIN_BONUSES[attr] ?? {};
   const args = Object.entries(table).flatMap(([origin, bonus]) => [`'origem_oni_${origin}'`, bonus]).join(",");
-  return `\${switchCase(origem_oni_dropdown,${args},0)}$`;
+  return `\${switchCase(${originKey},${args},0)}$`;
 }
 
 function configureOniOriginBonuses(template) {
+  const origin = findByKey(template, "origem_oni_dropdown") ?? findByKey(template, "origem_dropdown");
+  const originKey = origin?.key ?? "origem_oni_dropdown";
   for (const attr of Object.keys(ONI_ORIGIN_BONUSES)) {
-    upsertHidden(template, `origem_oni_bonus_${attr}`, originBonusSwitchCase(attr));
+    upsertHidden(template, `origem_oni_bonus_${attr}`, originBonusSwitchCase(attr, originKey));
   }
 }
 
@@ -301,7 +337,7 @@ function configureOniProgressionFields(template) {
 }
 
 export function migrateOniTemplate(source) {
-  const migrated = replaceOniResourceNames(structuredClone(source));
+  const migrated = renameOniKeys(replaceOniResourceNames(structuredClone(source)));
   migrated.name = "oni_template";
   migrated.type = "_template";
   migrated._id = "PQR15WSdSqBcN15w";

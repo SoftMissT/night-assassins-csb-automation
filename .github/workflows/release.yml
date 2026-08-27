@@ -90,8 +90,12 @@ jobs:
       - name: Build module.zip
         shell: bash
         run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          node tools/prepare-package-tree.mjs
           rm -f module.zip
-          zip -r module.zip \
+          cd build/package
+          zip -r ../../module.zip \
             module.json \
             scripts \
             catalogs \
@@ -99,11 +103,17 @@ jobs:
             lang \
             packs \
             assets/icons \
-            assets/weapons \
             README.md \
             CHANGELOG.md
+          cd ../..
 
           test "$(unzip -Z1 module.zip | head -n 1)" = "module.json"
+          unzip -Z1 module.zip | grep -qx "catalogs/slayer/origins.json"
+          unzip -Z1 module.zip | grep -qx "catalogs/slayer/progression.json"
+          unzip -Z1 module.zip | grep -qx "catalogs/slayer/classes.json"
+          unzip -Z1 module.zip | grep -qx "assets/icons/templates/na-oni-template_icon.webp"
+          unzip -Z1 module.zip | grep -qx "assets/icons/macros/na_roll_damage_icon.webp"
+          unzip -Z1 module.zip | grep -qx "assets/icons/weapons/katana_icon.webp"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2

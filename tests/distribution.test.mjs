@@ -21,7 +21,7 @@ describe('module distribution', () => {
                 { name: 'night-assassins-macros', label: 'Macros Night Assassins', type: 'Macro' },
                 {
                     name: 'night-assassins-templates-de-ficha',
-                    label: 'Night Assassins Templates de Ficha',
+                    label: 'Night Assassins — Templates de Ficha',
                     type: 'Actor',
                 },
                 {

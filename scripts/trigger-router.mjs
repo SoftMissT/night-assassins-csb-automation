@@ -58,11 +58,15 @@ export async function handleActorUpdate(actor, changes, options, userId) {
   if (userId !== game?.user?.id) return;
   if (!actor?.isOwner) return;
 
+  const kind = actorKind(actor);
+
   // Domínio Oni: sem Marca Slayer. Ledger de PDV (2–12) + snapshot de atributo.
-  if (actorKind(actor) === "oni") {
+  if (kind === "oni") {
     const rawOniLevel = changedProp(changes, PROP_KEYS.level);
+    console.log(`[NA-Oni] updateActor: actor=${actor.name}, rawLevel=${rawOniLevel}, changes=${JSON.stringify(Object.keys(changes?.system?.props ?? changes ?? {}))}`);
     if (rawOniLevel === undefined) return;
     const oniLevel = parseLevel(rawOniLevel);
+    console.log(`[NA-Oni] oniLevel=${oniLevel}, calling ensureOniProgression`);
     await withActorLock(actor.uuid, async () => {
       await ensureOniProgression(actor, { level: oniLevel });
       const props = actor.system?.props ?? {};

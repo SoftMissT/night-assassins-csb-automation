@@ -190,10 +190,13 @@ export async function ensureOniProgression(actor, { level } = {}) {
   if (!actor?.update) throw new Error("Actor inválido para progressão Oni.");
   const props = actor.system?.props ?? {};
   const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? props.nvl_num ?? String(props.nvl_pj ?? "").replace(/^nvl_/, ""));
-  if (!missingOniPdvGains(normalized, props).length) {
+  const missing = missingOniPdvGains(normalized, props);
+  console.log(`[NA-Oni] ensureOniProgression: actor=${actor.name}, level=${normalized}, missing=${missing.length} gains:`, missing.map((e) => e.key));
+  if (!missing.length) {
     return { needed: false, rolled: [], total: 0, complete: true };
   }
   const result = await rollOniPdvGain(actor, { level: normalized });
+  console.log(`[NA-Oni] ensureOniProgression: rolled ${result.results.length} gains, total=${result.total}`);
   return { needed: true, rolled: result.results, total: result.total, complete: result.complete };
 }
 

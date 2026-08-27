@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.24 - 2026-08-26
+
+- **Oni PDV/PDK simplificado:** fórmulas de total PDV/PDK substituídas por `switchCase(nvl_pj,...)` que lê diretamente `pdv_oni_nvl{N}` e `pdk_oni_nvl{N}`, eliminando a cadeia condicional gigante.
+- **Migração idempotente:** `migrate-oni-template.mjs` agora filtra keys duplicadas e garante que campos legados não são recriados sobrepostos.
+- **Renomeação:** `progressao_oni_titulo_panel` → `progressao_oni_campos_titulo` (consistência de nomenclatura).
+- **Testes adicionados:** validação de que todas as 20 keys de nível aparecem nas fórmulas `switchCase`, e detecção de keys duplicadas em componentes e hidden.
+- **Slayer intacto:** nvl7 permanece em `SNAPSHOT_LEVELS` para Slayer; mudanças são exclusivas do namespace Oni.
+- Validação: `node --test` **873/873** testes aprovados, 153 suítes, zero falhas.
+
 ## 0.11.16 - 2026-08-26
 
 - **Templates revisados:** slayer-template, oni-template, oni-minion-template e npc-template atualizados com chaves e estruturas corrigidas.

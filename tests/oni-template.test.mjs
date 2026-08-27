@@ -30,6 +30,13 @@ describe("oni-template", () => {
       "pdv_oni_ganho_nvl2", "pdv_oni_ganho_nvl12",
     ]) assert.match(serialized, new RegExp(key));
     assert.match(serialized, /"key":"nvl_20","value":"20"/);
+    const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
+    for (const resource of ["pdv", "pdk"]) {
+      const total = hidden.get(`${resource}_oni_total_conta`);
+      for (let level = 1; level <= 20; level += 1) {
+        assert.match(total, new RegExp(`'nvl_${level}',${resource}_oni_nvl${level}(?:,|\\})`));
+      }
+    }
   });
 
   it("calcula os sete atributos somando bonus de origem Oni, sem depender de bonus exclusivos do Slayer", () => {
@@ -109,5 +116,31 @@ describe("oni-template", () => {
       assert.match(serialized, new RegExp(`bonus_atr_${attr}_oni_valor_temp`));
       assert.doesNotMatch(serialized, new RegExp(`atr_${attr}_valor_oni_config`));
     }
+  });
+
+  it("não duplica keys nem produz linhas de tabela inválidas para o CSB", () => {
+    const migrated = migrateOniTemplate(source);
+    const componentKeys = [];
+    const invalidRows = [];
+    const walk = (value) => {
+      if (Array.isArray(value)) return value.forEach(walk);
+      if (!value || typeof value !== "object") return;
+      if (typeof value.key === "string" && value.key) componentKeys.push(value.key);
+      if (value.type === "table") {
+        assert.ok(Array.isArray(value.contents), `${value.key}: contents deve ser array`);
+        value.contents.forEach((row, index) => {
+          if (!Array.isArray(row)) invalidRows.push(`${value.key}[${index}]`);
+        });
+      }
+      Object.values(value).forEach(walk);
+    };
+    walk(migrated.system.body);
+
+    const duplicateComponents = [...new Set(componentKeys.filter((key, index) => componentKeys.indexOf(key) !== index))];
+    const hiddenNames = migrated.system.hidden.map((entry) => entry.name);
+    const duplicateHidden = [...new Set(hiddenNames.filter((name, index) => hiddenNames.indexOf(name) !== index))];
+    assert.deepEqual(duplicateComponents, [], `keys de componentes duplicadas: ${duplicateComponents.join(", ")}`);
+    assert.deepEqual(duplicateHidden, [], `hidden duplicados: ${duplicateHidden.join(", ")}`);
+    assert.deepEqual(invalidRows, [], `linhas de tabela inválidas: ${invalidRows.join(", ")}`);
   });
 });

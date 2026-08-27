@@ -11,12 +11,6 @@ const PDV_DICE_LEVELS = Object.freeze({
   7: "2d4", 8: "2d4", 9: "2d4", 10: "2d6", 11: "2d6", 12: "2d6",
 });
 
-const PDK_LEVEL_GAINS = Object.freeze({
-  2: 4, 3: 4, 4: 6, 5: 6, 6: 6, 7: 8, 8: 8, 9: 20,
-  10: 10, 11: 10, 12: 12, 13: 12, 14: 14, 15: 14, 16: 16,
-  17: 16, 18: 18, 19: 20, 20: 50,
-});
-
 function replaceOniResourceNames(value) {
   if (typeof value === "string") {
     return value
@@ -124,9 +118,12 @@ function orbitron(text, color, size = 16) {
 function upsertHidden(template, name, value) {
   const hidden = template.system?.hidden;
   if (!Array.isArray(hidden)) throw new Error("system.hidden do Oni não é uma lista.");
-  const existing = hidden.find((entry) => entry.name === name);
-  if (existing) existing.value = value;
-  else hidden.push({ name, value });
+  const existingIndex = hidden.findIndex((entry) => entry.name === name);
+  if (existingIndex < 0) hidden.push({ name, value });
+  else {
+    hidden[existingIndex].value = value;
+    template.system.hidden = hidden.filter((entry, index) => entry.name !== name || index === existingIndex);
+  }
 }
 
 function findByKey(template, key) {
@@ -265,21 +262,12 @@ function configureOniOrigins(template) {
 }
 
 function configureOniProgression(template) {
-  const pdvTerms = ["origem_oni_pdv_inicial"];
-  for (const level of Object.keys(PDV_DICE_LEVELS).map(Number)) {
-    pdvTerms.push(`(nvl_num>=${level}?pdv_oni_ganho_nvl${level}:0)`);
-  }
-  for (let level = 13; level <= 20; level += 1) {
-    const gain = level <= 15 ? "30+vit_display" : level <= 19 ? "40+vit_display" : "50+(vit_display*5)";
-    pdvTerms.push(`(nvl_num>=${level}?(${gain}):0)`);
-  }
-  upsertHidden(template, "pdv_oni_total_conta", `\${${pdvTerms.join("+")}}$`);
-
-  const pdkTerms = ["origem_oni_pdk_inicial"];
-  for (const [level, gain] of Object.entries(PDK_LEVEL_GAINS)) {
-    pdkTerms.push(`(nvl_num>=${level}?${gain}:0)`);
-  }
-  upsertHidden(template, "pdk_oni_total_conta", `\${${pdkTerms.join("+")}}$`);
+  const levelValue = (resource) => Array.from({ length: 20 }, (_, index) => {
+    const level = index + 1;
+    return [`'nvl_${level}'`, `${resource}_oni_nvl${level}`];
+  }).flat().join(",");
+  upsertHidden(template, "pdv_oni_total_conta", `\${switchCase(nvl_pj,${levelValue("pdv")},0)}$`);
+  upsertHidden(template, "pdk_oni_total_conta", `\${switchCase(nvl_pj,${levelValue("pdk")},0)}$`);
 
   upsertHidden(template, "pdv_oni_maximo_num", "${max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_extra)}$");
   upsertHidden(template, "pdv_oni_atual_num", "${min(pdv_oni_maximo_num,max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_curado+pdv_oni_extra-pdv_oni_dano_tomado))}$");
@@ -342,11 +330,12 @@ function configureOniProgressionFields(template) {
   const dataTab = findByKey(template, "dados_tab") ?? findByKey(template, "configs_tab");
   if (!dataTab || !Array.isArray(dataTab.contents)) return;
   dataTab.contents = dataTab.contents.filter((node) => node.key !== "progressao_oni_recursos_panel");
+  const existingKeys = collectKeys(template);
   const fields = Object.entries(PDV_DICE_LEVELS).map(([level, dice]) => makeNumberField(
     `pdv_oni_ganho_nvl${level}`,
     `PDV ganho Nv. ${level} (${dice})`,
     `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
-  ));
+  )).filter((field) => !existingKeys.has(field.key));
   fields.push(
     makeNumberField("vit_oni_nvl7", "VIT no Nv. 7", "Snapshot de VIT usado pela progressão oficial."),
     makeNumberField("fdv_oni_nvl7", "FDV no Nv. 7", "Snapshot de FDV usado pela progressão oficial."),
@@ -355,9 +344,10 @@ function configureOniProgressionFields(template) {
     makeNumberField("pdv_oni_dano_tomado", "Dano de PDV tomado", "Ledger persistente de dano recebido."),
     makeNumberField("pdk_oni_gasto_valor", "PDK gasto", "Ledger persistente de PDK consumido."),
   );
+  const missingFields = fields.filter((field) => !existingKeys.has(field.key));
   dataTab.contents.push(makePanel("progressao_oni_recursos_panel", [
-    { ...makePanel("progressao_oni_titulo_panel", [], ""), type: "label", value: orbitron("PROGRESSÃO DE RECURSOS ONI", "#C1000C", 14), style: "label", size: "full-size" },
-    ...fields,
+    { ...makePanel("progressao_oni_campos_titulo", [], ""), type: "label", value: orbitron("PROGRESSÃO DE RECURSOS ONI", "#C1000C", 14), style: "label", size: "full-size" },
+    ...missingFields,
   ], "grid-4"));
 
   dataTab.contents = dataTab.contents.filter((node) => node.key !== "origem_oni_recursos_panel");

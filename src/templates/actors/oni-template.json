@@ -5520,7 +5520,7 @@
                         "inputStyle": "text"
                       },
                       {
-                        "key": "atr_dex_oni_valor_config",
+                        "key": "atr_dex_valor_oni_config",
                         "colSpan": 1,
                         "rowSpan": 1,
                         "cssClass": "",
@@ -5533,7 +5533,7 @@
                         "escapeHTML": false,
                         "type": "numberField",
                         "size": "full-size",
-                        "label": "atr_dex_oni_valor_config",
+                        "label": "atr_dex_valor_oni_config",
                         "defaultValue": "0",
                         "allowDecimal": false,
                         "minVal": "",
@@ -5545,7 +5545,7 @@
                         "inputStyle": "text"
                       },
                       {
-                        "key": "atr_for_oni_valor_config",
+                        "key": "atr_for_valor_oni_config",
                         "colSpan": 1,
                         "rowSpan": 1,
                         "cssClass": "",
@@ -5558,7 +5558,7 @@
                         "escapeHTML": false,
                         "type": "numberField",
                         "size": "full-size",
-                        "label": "atr_for_oni_valor_config",
+                        "label": "atr_for_valor_oni_config",
                         "defaultValue": "0",
                         "allowDecimal": false,
                         "minVal": "",
@@ -5570,7 +5570,7 @@
                         "inputStyle": "text"
                       },
                       {
-                        "key": "atr_car_oni_valor_config",
+                        "key": "atr_car_valor_oni_config",
                         "colSpan": 1,
                         "rowSpan": 1,
                         "cssClass": "",
@@ -5583,7 +5583,7 @@
                         "escapeHTML": false,
                         "type": "numberField",
                         "size": "full-size",
-                        "label": "atr_car_oni_valor_config",
+                        "label": "atr_car_valor_oni_config",
                         "defaultValue": "0",
                         "allowDecimal": false,
                         "minVal": "",
@@ -8921,21 +8921,21 @@
         "value": "${switchCase(origem_oni_dropdown,\n  'origem_oni_passado_triste',\n  22,\n  'origem_oni_personalidade_maligna',\n  16,\n  'origem_oni_rastreador_de_sangue',\n  20,\n  'origem_oni_genio_do_mal',\n  20,\n  'origem_oni_adepto_das_trevas',\n  19,\n  'origem_oni_comum',\n  18,\n  'origem_oni_corte_palida',\n  18,\n  'origem_oni_mare_negra',\n  20,\n  'origem_oni_raiz_podre',\n  23,\n  'origem_oni_realidade_distorcida',\n  17,\n  'origem_oni_tela_do_submundo',\n  18,\n  'origem_oni_oni_de_outras_terras',\n  18,\n  'origem_oni_transfigurado',\n  24,\n  'origem_oni_eco_eterno',\n  18,\n  'origem_oni_chama_negra',\n  20,\n  'origem_oni_demonio_de_linhagem_infernal',\n  21,\n  'origem_oni_espirito_ceifador',\n  20,\n  'origem_oni_monarca_demoniaco',\n  22,\n  'origem_oni_vampiro_de_linhagem',\n  19,\n  'origem_oni_exterminador_corrompido',\n  30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda),\n  0\n)}$"
       },
       {
-        "name": "atr_dex_oni_valor_config",
+        "name": "atr_dex_valor_oni_config",
         "label": "DEX Config",
-        "value": "${atr_dex_oni_valor_config}$",
+        "value": "${atr_dex_valor_oni_config}$",
         "type": "String"
       },
       {
-        "name": "atr_for_oni_valor_config",
+        "name": "atr_for_valor_oni_config",
         "label": "FOR Config",
-        "value": "${atr_for_oni_valor_config}$",
+        "value": "${atr_for_valor_oni_config}$",
         "type": "String"
       },
       {
-        "name": "atr_car_oni_valor_config",
+        "name": "atr_car_valor_oni_config",
         "label": "CAR Config",
-        "value": "${atr_car_oni_valor_config}$",
+        "value": "${atr_car_valor_oni_config}$",
         "type": "String"
       },
       {

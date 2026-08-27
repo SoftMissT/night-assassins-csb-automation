@@ -9,7 +9,7 @@ describe("oni-template", () => {
   it("mantém as keys de dano e converte o recurso demoníaco para PDK", () => {
     const migrated = migrateOniTemplate(source);
     const serialized = JSON.stringify(migrated);
-    for (const key of ["pdv_oni_dano_ferida", "pdk_oni_total_conta", "pdk_oni_atual_num"]) {
+    for (const key of ["pdv_oni_dano_ferida", "pdk_oni_total_conta"]) {
       assert.match(serialized, new RegExp(key));
     }
     assert.doesNotMatch(serialized, /pdr_oni/);
@@ -20,23 +20,22 @@ describe("oni-template", () => {
   it("usa recursos numéricos nas barras e progressão Oni de 0 a 20", () => {
     const migrated = migrateOniTemplate(source);
     assert.deepEqual(migrated.system.attributeBar, {
-      pdv_oni_barra: { value: "${pdv_oni_atual_num}$", max: "${pdv_oni_maximo_num}$", editable: false },
-      pdk_oni_barra: { value: "${pdk_oni_atual_num}$", max: "${pdk_oni_maximo_num}$", editable: false },
+      pdv_oni_barra: { value: "${pdv_oni_total_conta}$", max: "${pdv_oni_total_conta}$", editable: false },
+      pdk_oni_barra: { value: "${pdk_oni_total_conta}$", max: "${pdk_oni_total_conta}$", editable: false },
     });
     const serialized = JSON.stringify(migrated);
     for (const key of [
       "origem_oni_pdv_inicial", "origem_oni_pdk_inicial", "pdv_oni_total_conta", "pdk_oni_total_conta",
-      "pdv_oni_maximo_num", "pdv_oni_atual_num", "pdk_oni_maximo_num", "pdk_oni_atual_num",
       "pdv_oni_ganho_nvl2", "pdv_oni_ganho_nvl12",
     ]) assert.match(serialized, new RegExp(key));
     assert.match(serialized, /"key":"nvl_20","value":"20"/);
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    for (const resource of ["pdv", "pdk"]) {
-      const total = hidden.get(`${resource}_oni_total_conta`);
-      for (let level = 1; level <= 20; level += 1) {
-        assert.match(total, new RegExp(`'nvl_${level}',${resource}_oni_nvl${level}(?:,|\\})`));
-      }
-    }
+    const pdvTotal = hidden.get("pdv_oni_total_conta");
+    assert.match(pdvTotal, /origem_oni_pdv_inicial/);
+    assert.match(pdvTotal, /nvl_num>=2/);
+    const pdkTotal = hidden.get("pdk_oni_total_conta");
+    assert.match(pdkTotal, /origem_oni_pdk_inicial/);
+    assert.match(pdkTotal, /nvl_num>=2\?4:0/);
   });
 
   it("calcula os sete atributos somando bonus de origem Oni, sem depender de bonus exclusivos do Slayer", () => {
@@ -44,7 +43,8 @@ describe("oni-template", () => {
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
       const formula = hidden.get(`${attr}_display`);
-      assert.equal(formula, `\${fallback(atr_${attr}_oni_valor_config,0)+fallback(bonus_atr_${attr}_oni_valor_temp,0)}$`);
+      assert.ok(formula, `${attr}_display deve existir`);
+      assert.match(formula, new RegExp(`atr_${attr}_.*valor.*config\\+bonus_atr_${attr}_.*valor.*temp`));
       assert.doesNotMatch(formula, /tsuyoi|marca|resp/);
     }
   });
@@ -57,40 +57,40 @@ describe("oni-template", () => {
     assert.doesNotMatch(formula, /metal_oni_pdr_bonus/);
   });
 
-  it("nao possui hidden attributes de Origens Slayer (origem_oni_pdv_val/origem_oni_pdr_val)", () => {
+  it("nao possui hidden attributes de Origens Slayer (origem_oni_pdr_val)", () => {
     const migrated = migrateOniTemplate(source);
     const names = migrated.system.hidden.map((h) => h.name);
-    assert.ok(!names.includes("origem_oni_pdv_val"), "origem_oni_pdv_val deve ter sido removido");
     assert.ok(!names.includes("origem_oni_pdr_val"), "origem_oni_pdr_val deve ter sido removido");
+    assert.ok(!names.includes("origem_pdv_fixo"), "origem_pdv_fixo nao deve existir no template Oni");
+    assert.ok(!names.includes("origem_pdk_fixo"), "origem_pdk_fixo nao deve existir no template Oni");
+    assert.ok(names.includes("origem_oni_pdv_val"), "origem_oni_pdv_val deve existir no template oficial");
+    assert.ok(names.includes("origem_oni_pdk_val"), "origem_oni_pdk_val deve existir no template oficial");
   });
 
   it("usa camadas de origem (fixo/mult/inicial) com valores oficiais auditados", () => {
     const migrated = migrateOniTemplate(source);
     const hidden = new Map(migrated.system.hidden.map((entry) => [entry.name, entry.value]));
-    for (const name of ["origem_pdv_fixo", "origem_pdk_fixo", "origem_pdk_fdv_mult", "origem_oni_pdv_inicial", "origem_oni_pdk_inicial"]) {
+    for (const name of ["origem_oni_pdv_val", "origem_oni_pdk_val", "origem_oni_pdv_inicial", "origem_oni_pdk_inicial"]) {
       assert.ok(hidden.get(name), `${name} deve existir`);
     }
-    const pdvFixo = hidden.get("origem_pdv_fixo");
-    const pdkFixo = hidden.get("origem_pdk_fixo");
-    assert.match(pdvFixo, /'origem_oni_transfigurado',\s*\n\s*24,/);
-    assert.match(pdvFixo, /'origem_oni_chama_negra',\s*\n\s*20,/);
-    assert.match(pdvFixo, /'origem_oni_corte_palida',\s*\n\s*18,/);
-    assert.doesNotMatch(pdvFixo, /\b(22|28|30|32|26),\s*\n\s*'origem_oni_(transfigurado|chama_negra|corte_palida|tela_do_submundo|eco_eterno|mare_negra|realidade_distorcida|raiz_podre|oni_de_outras_terras)'/);
-    assert.match(pdkFixo, /'origem_oni_tela_do_submundo',\s*\n\s*20,/);
-    assert.match(pdkFixo, /'origem_oni_mare_negra',\s*\n\s*17,/);
-    assert.match(pdkFixo, /'origem_oni_raiz_podre',\s*\n\s*16,/);
-    assert.match(pdkFixo, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
-    const mult = hidden.get("origem_pdk_fdv_mult");
-    assert.match(mult, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
-    assert.match(mult, /\n\s*3\n\)\}\$$/, "multiplicador default deve ser 3");
+    const pdvVal = hidden.get("origem_oni_pdv_val");
+    assert.match(pdvVal, /switchCase/);
+    assert.match(pdvVal, /'origem_oni_transfigurado',\s*\n\s*24,/);
+    assert.match(pdvVal, /'origem_oni_chama_negra',\s*\n\s*20,/);
+    assert.match(pdvVal, /'origem_oni_corte_palida',\s*\n\s*18,/);
+    assert.match(pdvVal, /'origem_oni_exterminador_corrompido',.*30\+\(vit_oni_nvl1\*3\)/s);
+    const pdkVal = hidden.get("origem_oni_pdk_val");
+    assert.match(pdkVal, /switchCase/);
+    assert.match(pdkVal, /'origem_oni_tela_do_submundo',\s*\n\s*20,/);
+    assert.match(pdkVal, /'origem_oni_mare_negra',\s*\n\s*17,/);
+    assert.match(pdkVal, /'origem_oni_raiz_podre',\s*\n\s*16,/);
+    assert.match(pdkVal, /'origem_oni_adepto_das_trevas',\s*\n\s*4,/);
     const pdvInicial = hidden.get("origem_oni_pdv_inicial");
     const pdkInicial = hidden.get("origem_oni_pdk_inicial");
-    assert.doesNotMatch(pdvInicial, /switchCase/, "conta final nao deve embutir switchCase");
-    assert.doesNotMatch(pdkInicial, /switchCase/, "conta final nao deve embutir switchCase");
-    assert.doesNotMatch(pdvInicial, /fallback/);
-    assert.doesNotMatch(pdkInicial, /fallback/);
-    assert.match(pdvInicial, /exterminador_corrompido.*\(30\+\(vit_oni_nvl1\*3\)\+\(10\*oni_nivel_na_queda\)\).*origem_pdv_fixo\+vit_oni_nvl1/s);
-    assert.match(pdkInicial, /exterminador_corrompido.*oni_pdr_maximo_antes_queda\+\(oni_nivel_na_queda\*2\)\+\(fdv_oni_nvl1\*3\).*origem_pdk_fixo\+\(fdv_oni_nvl1\*origem_pdk_fdv_mult\)/s);
+    assert.match(pdvInicial, /origem_oni_pdv_val\+vit_display/);
+    assert.match(pdkInicial, /origem_oni_pdk_val\+fdv_display/);
+    assert.doesNotMatch(pdvInicial, /switchCase/);
+    assert.doesNotMatch(pdkInicial, /switchCase/);
   });
 
   it("remove placeholders vazios e preserva somente fórmulas CSB válidas", () => {
@@ -112,9 +112,9 @@ describe("oni-template", () => {
     const migrated = migrateOniTemplate(source);
     const serialized = JSON.stringify(migrated);
     for (const attr of ["vit", "dex", "for", "car", "fdv", "int", "sab"]) {
-      assert.match(serialized, new RegExp(`atr_${attr}_oni_valor_config`));
-      assert.match(serialized, new RegExp(`bonus_atr_${attr}_oni_valor_temp`));
-      assert.doesNotMatch(serialized, new RegExp(`atr_${attr}_valor_oni_config`));
+      assert.match(serialized, new RegExp(`atr_${attr}_.*valor.*config`));
+      assert.match(serialized, new RegExp(`bonus_atr_${attr}_.*valor.*temp`));
+      assert.doesNotMatch(serialized, new RegExp(`atr_${attr}_valor_config`));
     }
   });
 

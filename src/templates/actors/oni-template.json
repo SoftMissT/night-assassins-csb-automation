@@ -2190,7 +2190,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${origem_pdv_fixo + vit_oni_nvl1}$",
+                        "value": "${origem_oni_pdv_val + vit_oni_nvl1}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2214,7 +2214,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${origem_pdk_fixo+fdv_oni_nvl1}$",
+                        "value": "${origem_oni_pdk_val+fdv_oni_nvl1}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2289,7 +2289,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl1+(vit_oni_nvl1+origem_pdv_fixo)+pdv_oni_ganho_nvl2}$",
+                        "value": "${pdv_oni_nvl1+(vit_oni_nvl1+origem_oni_pdv_val)+pdv_oni_ganho_nvl2}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2313,7 +2313,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl1+(origem_pdk_fixo+fdv_oni_nvl1+4)}$",
+                        "value": "${pdk_oni_nvl1+(origem_oni_pdk_val+fdv_oni_nvl1+4)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2388,7 +2388,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl2+(vit_oni_nvl3+origem_pdv_fixo)+pdv_oni_ganho_nvl3}$",
+                        "value": "${pdv_oni_nvl2+(vit_oni_nvl3+origem_oni_pdv_val)+pdv_oni_ganho_nvl3}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2412,7 +2412,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl2+(origem_pdk_fixo+fdv_oni_nvl3+4)}$",
+                        "value": "${pdk_oni_nvl2+(origem_oni_pdk_val+fdv_oni_nvl3+4)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2487,7 +2487,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl3+(vit_oni_nvl4+pdv_oni_ganho_nvl4+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl3+(vit_oni_nvl4+pdv_oni_ganho_nvl4+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2511,7 +2511,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl3+(origem_pdk_fixo+fdv_oni_nvl4+6)}$",
+                        "value": "${pdk_oni_nvl3+(origem_oni_pdk_val+fdv_oni_nvl4+6)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2586,7 +2586,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl4+(vit_oni_nvl4+pdv_oni_ganho_nvl5+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl4+(vit_oni_nvl4+pdv_oni_ganho_nvl5+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2610,7 +2610,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl4+(origem_pdk_fixo+fdv_oni_nvl4+6)}$",
+                        "value": "${pdk_oni_nvl4+(origem_oni_pdk_val+fdv_oni_nvl4+6)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2685,7 +2685,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl5+(vit_oni_nvl6+pdv_oni_ganho_nvl6+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl5+(vit_oni_nvl6+pdv_oni_ganho_nvl6+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2709,7 +2709,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl5+(origem_pdk_fixo+fdv_oni_nvl6+6)}$",
+                        "value": "${pdk_oni_nvl5+(origem_oni_pdk_val+fdv_oni_nvl6+6)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2784,7 +2784,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl6+(vit_oni_nvl7+pdv_oni_ganho_nvl7+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl6+(vit_oni_nvl7+pdv_oni_ganho_nvl7+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2808,7 +2808,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl6+(origem_pdk_fixo+fdv_oni_nvl7+8)}$",
+                        "value": "${pdk_oni_nvl6+(origem_oni_pdk_val+fdv_oni_nvl7+8)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2883,7 +2883,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl7+(vit_oni_nvl8+pdv_oni_ganho_nvl8+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl7+(vit_oni_nvl8+pdv_oni_ganho_nvl8+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2907,7 +2907,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl7+(origem_pdk_fixo+fdv_oni_nvl8+8)}$",
+                        "value": "${pdk_oni_nvl7+(origem_oni_pdk_val+fdv_oni_nvl8+8)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -2982,7 +2982,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl8+(vit_oni_nvl8+pdv_oni_ganho_nvl9+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl8+(vit_oni_nvl8+pdv_oni_ganho_nvl9+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3006,7 +3006,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl8+(origem_pdk_fixo+fdv_oni_nvl8+10)}$",
+                        "value": "${pdk_oni_nvl8+(origem_oni_pdk_val+fdv_oni_nvl8+10)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3081,7 +3081,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl9+(vit_oni_nvl8+pdv_oni_ganho_nvl10+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl9+(vit_oni_nvl8+pdv_oni_ganho_nvl10+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3105,7 +3105,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl9+(origem_pdk_fixo+fdv_oni_nvl8+10)}$",
+                        "value": "${pdk_oni_nvl9+(origem_oni_pdk_val+fdv_oni_nvl8+10)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3180,7 +3180,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl10+(vit_oni_nvl11+pdv_oni_ganho_nvl11+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl10+(vit_oni_nvl11+pdv_oni_ganho_nvl11+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3204,7 +3204,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl10+(origem_pdk_fixo+fdv_oni_nvl11+10)}$",
+                        "value": "${pdk_oni_nvl10+(origem_oni_pdk_val+fdv_oni_nvl11+10)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3279,7 +3279,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl11+(vit_oni_nvl12+pdv_oni_ganho_nvl12+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl11+(vit_oni_nvl12+pdv_oni_ganho_nvl12+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3303,7 +3303,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl11+(origem_pdk_fixo+fdv_oni_nvl12+12)}$",
+                        "value": "${pdk_oni_nvl11+(origem_oni_pdk_val+fdv_oni_nvl12+12)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3378,7 +3378,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl12+((vit_oni_nvl13*2)+30+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl12+((vit_oni_nvl13*2)+30+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3402,7 +3402,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl12+(origem_pdk_fixo+fdv_oni_nvl13+12)}$",
+                        "value": "${pdk_oni_nvl12+(origem_oni_pdk_val+fdv_oni_nvl13+12)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3477,7 +3477,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl13+((vit_oni_nvl13*2)+30+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl13+((vit_oni_nvl13*2)+30+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3501,7 +3501,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl13+(origem_pdk_fixo+fdv_oni_nvl13+14)}$",
+                        "value": "${pdk_oni_nvl13+(origem_oni_pdk_val+fdv_oni_nvl13+14)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3551,7 +3551,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl14+((vit_oni_nvl13*2)+30+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl14+((vit_oni_nvl13*2)+30+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3575,7 +3575,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl14+(origem_pdk_fixo+fdv_oni_nvl13+14)}$",
+                        "value": "${pdk_oni_nvl14+(origem_oni_pdk_val+fdv_oni_nvl13+14)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3625,7 +3625,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl15+((vit_oni_nvl16*2)+40+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl15+((vit_oni_nvl16*2)+40+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3649,7 +3649,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl15+(origem_pdk_fixo+fdv_oni_nvl16+16)}$",
+                        "value": "${pdk_oni_nvl15+(origem_oni_pdk_val+fdv_oni_nvl16+16)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3699,7 +3699,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl16+((vit_oni_nvl16*2)+40+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl16+((vit_oni_nvl16*2)+40+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3723,7 +3723,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl16+(origem_pdk_fixo+fdv_oni_nvl16+16)}$",
+                        "value": "${pdk_oni_nvl16+(origem_oni_pdk_val+fdv_oni_nvl16+16)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3773,7 +3773,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl17+((vit_oni_nvl16*2)+40+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl17+((vit_oni_nvl16*2)+40+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3797,7 +3797,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl17+(origem_pdk_fixo+fdv_oni_nvl16+18)}$",
+                        "value": "${pdk_oni_nvl17+(origem_oni_pdk_val+fdv_oni_nvl16+18)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3847,7 +3847,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl18+((vit_oni_nvl16*2)+40+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl18+((vit_oni_nvl16*2)+40+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3871,7 +3871,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl18+(origem_pdk_fixo+fdv_oni_nvl16+20)}$",
+                        "value": "${pdk_oni_nvl18+(origem_oni_pdk_val+fdv_oni_nvl16+20)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3921,7 +3921,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdv_oni_nvl19+((vit_oni_nvl16*6)+50+origem_pdv_fixo)}$",
+                        "value": "${pdv_oni_nvl19+((vit_oni_nvl16*6)+50+origem_oni_pdv_val)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -3945,7 +3945,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${pdk_oni_nvl19+(origem_pdk_fixo+fdv_oni_nvl16+50)}$",
+                        "value": "${pdk_oni_nvl19+(origem_oni_pdk_val+fdv_oni_nvl16+50)}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -5568,7 +5568,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${origem_pdv_fixo}$",
+                        "value": "${origem_oni_pdv_val}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -5592,7 +5592,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "${origem_pdk_fixo}$",
+                        "value": "${origem_oni_pdk_val}$",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -8552,7 +8552,7 @@
                       "size": "full-size"
                     },
                     {
-                      "key": "origem_label_PDVfixodaOrigemorigem_pdv_fixo",
+                      "key": "origem_label_PDVfixodaOrigemorigem_oni_pdv_val",
                       "colSpan": 1,
                       "rowSpan": 1,
                       "cssClass": "",
@@ -8566,12 +8566,12 @@
                       "flow": "row",
                       "align": "center",
                       "contents": [],
-                      "value": "<span class=\"na-sheet-text na-sheet-size-md\">PDV fixo da Origem: ${origem_pdv_fixo}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-size-md\">PDV fixo da Origem: ${origem_oni_pdv_val}$</span>",
                       "style": "label",
                       "size": "full-size"
                     },
                     {
-                      "key": "origem_label_PDKfixodaOrigemorigem_pdk_fixo",
+                      "key": "origem_label_PDKfixodaOrigemorigem_oni_pdk_val",
                       "colSpan": 1,
                       "rowSpan": 1,
                       "cssClass": "",
@@ -8585,7 +8585,7 @@
                       "flow": "row",
                       "align": "center",
                       "contents": [],
-                      "value": "<span class=\"na-sheet-text na-sheet-size-md\">PDK fixo da Origem: ${origem_pdk_fixo}$</span>",
+                      "value": "<span class=\"na-sheet-text na-sheet-size-md\">PDK fixo da Origem: ${origem_oni_pdk_val}$</span>",
                       "style": "label",
                       "size": "full-size"
                     },
@@ -9106,31 +9106,31 @@
       },
       {
         "name": "vit_display",
-        "value": "${fallback(atr_vit_oni_valor_config,0)+fallback(bonus_atr_vit_oni_valor_temp,0)}$"
+        "value": "${atr_vit_oni_valor_config+bonus_atr_vit_oni_valor_temp}$"
       },
       {
         "name": "dex_display",
-        "value": "${fallback(atr_dex_oni_valor_config,0)+fallback(bonus_atr_dex_oni_valor_temp,0)}$"
+        "value": "${atr_dex_valor_oni_config+bonus_atr_dex_oni_valor_temp}$"
       },
       {
         "name": "for_display",
-        "value": "${fallback(atr_for_oni_valor_config,0)+fallback(bonus_atr_for_oni_valor_temp,0)}$"
+        "value": "${atr_for_valor_oni_config+bonus_atr_for_oni_valor_temp}$"
       },
       {
         "name": "car_display",
-        "value": "${fallback(atr_car_oni_valor_config,0)+fallback(bonus_atr_car_oni_valor_temp,0)}$"
+        "value": "${atr_car_valor_oni_config+bonus_atr_car_oni_valor_temp}$"
       },
       {
         "name": "fdv_display",
-        "value": "${fallback(atr_fdv_oni_valor_config,0)+fallback(bonus_atr_fdv_oni_valor_temp,0)}$"
+        "value": "${atr_fdv_oni_valor_config+bonus_atr_fdv_oni_valor_temp}$"
       },
       {
         "name": "int_display",
-        "value": "${fallback(atr_int_oni_valor_config,0)+fallback(bonus_atr_int_oni_valor_temp,0)}$"
+        "value": "${atr_int_oni_valor_config+bonus_atr_int_oni_valor_temp}$"
       },
       {
         "name": "sab_display",
-        "value": "${fallback(atr_sab_oni_valor_config,0)+fallback(bonus_atr_sab_oni_valor_temp,0)}$"
+        "value": "${atr_sab_oni_valor_config+bonus_atr_sab_oni_valor_temp}$"
       },
       {
         "name": "pdk_oni_conta_atual",
@@ -9142,67 +9142,11 @@
       },
       {
         "name": "pdv_oni_total_conta",
-        "value": "${switchCase(nvl_pj,'nvl_1',pdv_oni_nvl1,'nvl_2',pdv_oni_nvl2,'nvl_3',pdv_oni_nvl3,'nvl_4',pdv_oni_nvl4,'nvl_5',pdv_oni_nvl5,'nvl_6',pdv_oni_nvl6,'nvl_7',pdv_oni_nvl7,'nvl_8',pdv_oni_nvl8,'nvl_9',pdv_oni_nvl9,'nvl_10',pdv_oni_nvl10,'nvl_11',pdv_oni_nvl11,'nvl_12',pdv_oni_nvl12,'nvl_13',pdv_oni_nvl13,'nvl_14',pdv_oni_nvl14,'nvl_15',pdv_oni_nvl15,'nvl_16',pdv_oni_nvl16,'nvl_17',pdv_oni_nvl17,'nvl_18',pdv_oni_nvl18,'nvl_19',pdv_oni_nvl19,'nvl_20',pdv_oni_nvl20,0)}$"
+        "value": "${origem_oni_pdv_inicial+(nvl_num>=2?fallback(pdv_oni_ganho_nvl2,0):0)+(nvl_num>=3?fallback(pdv_oni_ganho_nvl3,0):0)+(nvl_num>=4?fallback(pdv_oni_ganho_nvl4,0):0)+(nvl_num>=5?fallback(pdv_oni_ganho_nvl5,0):0)+(nvl_num>=6?fallback(pdv_oni_ganho_nvl6,0):0)+(nvl_num>=7?fallback(pdv_oni_ganho_nvl7,0):0)+(nvl_num>=8?fallback(pdv_oni_ganho_nvl8,0):0)+(nvl_num>=9?fallback(pdv_oni_ganho_nvl9,0):0)+(nvl_num>=10?fallback(pdv_oni_ganho_nvl10,0):0)+(nvl_num>=11?fallback(pdv_oni_ganho_nvl11,0):0)+(nvl_num>=12?fallback(pdv_oni_ganho_nvl12,0):0)+(nvl_num>=13?(30+vit_display):0)+(nvl_num>=14?(30+vit_display):0)+(nvl_num>=15?(30+vit_display):0)+(nvl_num>=16?(40+vit_display):0)+(nvl_num>=17?(40+vit_display):0)+(nvl_num>=18?(40+vit_display):0)+(nvl_num>=19?(40+vit_display):0)+(nvl_num>=20?(50+(vit_display*5)):0)}$"
       },
       {
         "name": "pdk_oni_total_conta",
-        "value": "${switchCase(nvl_pj,'nvl_1',pdk_oni_nvl1,'nvl_2',pdk_oni_nvl2,'nvl_3',pdk_oni_nvl3,'nvl_4',pdk_oni_nvl4,'nvl_5',pdk_oni_nvl5,'nvl_6',pdk_oni_nvl6,'nvl_7',pdk_oni_nvl7,'nvl_8',pdk_oni_nvl8,'nvl_9',pdk_oni_nvl9,'nvl_10',pdk_oni_nvl10,'nvl_11',pdk_oni_nvl11,'nvl_12',pdk_oni_nvl12,'nvl_13',pdk_oni_nvl13,'nvl_14',pdk_oni_nvl14,'nvl_15',pdk_oni_nvl15,'nvl_16',pdk_oni_nvl16,'nvl_17',pdk_oni_nvl17,'nvl_18',pdk_oni_nvl18,'nvl_19',pdk_oni_nvl19,'nvl_20',pdk_oni_nvl20,0)}$"
-      },
-      {
-        "name": "deslocamento_oni",
-        "value": "${7+dex_display}$"
-      },
-      {
-        "name": "rank_especializacao_oni",
-        "value": "${nvl_num>=19?'SS':nvl_num>=16?'S':nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':''}$"
-      },
-      {
-        "name": "origem_pdk_fixo",
-        "value": "${switchCase(origem_oni_dropdown,\n  'origem_oni_passado_triste',\n  2,\n  'origem_oni_personalidade_maligna',\n  3,\n  'origem_oni_rastreador_de_sangue',\n  1,\n  'origem_oni_genio_do_mal',\n  2,\n  'origem_oni_adepto_das_trevas',\n  4,\n  'origem_oni_comum',\n  8,\n  'origem_oni_corte_palida',\n  18,\n  'origem_oni_mare_negra',\n  17,\n  'origem_oni_raiz_podre',\n  16,\n  'origem_oni_realidade_distorcida',\n  20,\n  'origem_oni_tela_do_submundo',\n  20,\n  'origem_oni_oni_de_outras_terras',\n  19,\n  'origem_oni_transfigurado',\n  16,\n  'origem_oni_eco_eterno',\n  19,\n  'origem_oni_chama_negra',\n  19,\n  'origem_oni_demonio_de_linhagem_infernal',\n  20,\n  'origem_oni_espirito_ceifador',\n  18,\n  'origem_oni_monarca_demoniaco',\n  20,\n  'origem_oni_vampiro_de_linhagem',\n  20,\n  0\n)}$"
-      },
-      {
-        "name": "origem_pdv_fixo",
-        "value": "${switchCase(origem_oni_dropdown,\n  'origem_oni_passado_triste',\n  22,\n  'origem_oni_personalidade_maligna',\n  16,\n  'origem_oni_rastreador_de_sangue',\n  20,\n  'origem_oni_genio_do_mal',\n  20,\n  'origem_oni_adepto_das_trevas',\n  19,\n  'origem_oni_comum',\n  18,\n  'origem_oni_corte_palida',\n  18,\n  'origem_oni_mare_negra',\n  20,\n  'origem_oni_raiz_podre',\n  23,\n  'origem_oni_realidade_distorcida',\n  17,\n  'origem_oni_tela_do_submundo',\n  18,\n  'origem_oni_oni_de_outras_terras',\n  18,\n  'origem_oni_transfigurado',\n  24,\n  'origem_oni_eco_eterno',\n  18,\n  'origem_oni_chama_negra',\n  20,\n  'origem_oni_demonio_de_linhagem_infernal',\n  21,\n  'origem_oni_espirito_ceifador',\n  20,\n  'origem_oni_monarca_demoniaco',\n  22,\n  'origem_oni_vampiro_de_linhagem',\n  19,\n  0\n)}$"
-      },
-      {
-        "name": "origem_pdk_fdv_mult",
-        "value": "${switchCase(origem_oni_dropdown,\n  'origem_oni_passado_triste',\n  4,\n  'origem_oni_personalidade_maligna',\n  4,\n  'origem_oni_rastreador_de_sangue',\n  4,\n  'origem_oni_genio_do_mal',\n  4,\n  'origem_oni_adepto_das_trevas',\n  4,\n  3\n)}$"
-      },
-      {
-        "name": "origem_oni_pdv_inicial",
-        "value": "${(origem_oni_dropdown=='origem_oni_exterminador_corrompido')?(30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_oni_nvl1)}$"
-      },
-      {
-        "name": "origem_oni_pdk_inicial",
-        "value": "${(origem_oni_dropdown=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)):(origem_pdk_fixo+(fdv_oni_nvl1*origem_pdk_fdv_mult))}$"
-      },
-      {
-        "name": "origem_oni_bonus_vit",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_exterminador_corrompido',1,'origem_oni_comum',1,'origem_oni_raiz_podre',2,'origem_oni_transfigurado',1,'origem_oni_canibal',1,'origem_oni_chama_negra',1,0)}$"
-      },
-      {
-        "name": "origem_oni_bonus_dex",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_mare_negra',1,'origem_oni_transfigurado',1,0)}$"
-      },
-      {
-        "name": "origem_oni_bonus_for",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_chama_negra',1,0)}$"
-      },
-      {
-        "name": "origem_oni_bonus_car",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_passado_triste',1,'origem_oni_personalidade_maligna',1,'origem_oni_corte_palida',1,0)}$"
-      },
-      {
-        "name": "origem_oni_bonus_fdv",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_adepto_das_trevas',1,'origem_oni_corte_palida',1,'origem_oni_mare_negra',1,'origem_oni_realidade_distorcida',1,'origem_oni_tela_do_submundo',1,'origem_oni_oni_de_outras_terras',1,'origem_oni_eco_eterno',2,'origem_oni_chama_negra',1,0)}$"
-      },
-      {
-        "name": "origem_oni_bonus_int",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_genio_do_mal',1,'origem_oni_realidade_distorcida',1,'origem_oni_tela_do_submundo',1,'origem_oni_oni_de_outras_terras',1,0)}$"
-      },
-      {
-        "name": "origem_oni_bonus_sab",
-        "value": "${switchCase(origem_oni_dropdown,'origem_oni_rastreador_de_sangue',1,'origem_oni_tela_do_submundo',1,'origem_oni_eco_eterno',1,0)}$"
+        "value": "${origem_oni_pdk_inicial+(nvl_num>=2?4:0)+(nvl_num>=3?4:0)+(nvl_num>=4?6:0)+(nvl_num>=5?6:0)+(nvl_num>=6?6:0)+(nvl_num>=7?8:0)+(nvl_num>=8?8:0)+(nvl_num>=9?20:0)+(nvl_num>=10?10:0)+(nvl_num>=11?10:0)+(nvl_num>=12?12:0)+(nvl_num>=13?12:0)+(nvl_num>=14?14:0)+(nvl_num>=15?14:0)+(nvl_num>=16?16:0)+(nvl_num>=17?16:0)+(nvl_num>=18?18:0)+(nvl_num>=19?20:0)+(nvl_num>=20?50:0)}$"
       },
       {
         "name": "pdv_oni_maximo_num",
@@ -9219,6 +9163,66 @@
       {
         "name": "pdk_oni_atual_num",
         "value": "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor))}$"
+      },
+      {
+        "name": "deslocamento_oni",
+        "value": "${7+dex_display}$"
+      },
+      {
+        "name": "rank_especializacao_oni",
+        "value": "${nvl_num>=19?'SS':nvl_num>=16?'S':nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':''}$"
+      },
+      {
+        "name": "origem_oni_pdk_val",
+        "value": "${switchCase(origem_oni_dropdown,\n  'origem_oni_adepto_das_trevas', 4+fdv_nvl1+(fdv_nvl1*3),\n  'origem_oni_chama_negra', 19+(fdv_nvl1*3),\n  'origem_oni_comum', 8+(fdv_nvl1*3),\n  'origem_oni_corte_palida', 18+(fdv_nvl1*3),\n  'origem_oni_demonio_de_linhagem_infernal', 20+(fdv_nvl1*3),\n  'origem_oni_eco_eterno', 19+(fdv_nvl1*3),\n  'origem_oni_espirito_ceifador', 18+(fdv_nvl1*3),\n  'origem_oni_exterminador_corrompido', oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_nvl1*3),\n  'origem_oni_genio_do_mal', 2+(fdv_nvl1*4),\n  'origem_oni_mare_negra', 17+(fdv_nvl1*3),\n  'origem_oni_monarca_demoniaco', 20+(fdv_nvl1*3),\n  'origem_oni_oni_de_outras_terras', 19+(fdv_nvl1*3),\n  'origem_oni_passado_triste', 2+(fdv_nvl1*4),\n  'origem_oni_personalidade_maligna', 3+(fdv_nvl1*4),\n  'origem_oni_raiz_podre', 16+(fdv_nvl1*3),\n  'origem_oni_rastreador_de_sangue', 1+(fdv_nvl1*4),\n  'origem_oni_realidade_distorcida', 20+(fdv_nvl1*3),\n  'origem_oni_tela_do_submundo', 20+(fdv_nvl1*3),\n  'origem_oni_transfigurado', 16+(fdv_nvl1*3),\n  'origem_oni_vampiro_de_linhagem', 20+(fdv_nvl1*3),\n  0\n)}$"
+      },
+      {
+        "name": "origem_oni_pdv_val",
+        "value": "${switchCase(origem_oni_dropdown,\n  'origem_oni_adepto_das_trevas', 19,\n  'origem_oni_chama_negra', 20,\n  'origem_oni_comum', 18,\n  'origem_oni_corte_palida', 18,\n  'origem_oni_demonio_de_linhagem_infernal', 21,\n  'origem_oni_eco_eterno', 18,\n  'origem_oni_espirito_ceifador', 20,\n  'origem_oni_exterminador_corrompido', 30+(vit_nvl1*3)+(10*oni_nivel_na_queda),\n  'origem_oni_genio_do_mal', 20,\n  'origem_oni_mare_negra', 20,\n  'origem_oni_monarca_demoniaco', 22,\n  'origem_oni_oni_de_outras_terras', 18,\n  'origem_oni_passado_triste', 22,\n  'origem_oni_personalidade_maligna', 16,\n  'origem_oni_raiz_podre', 23,\n  'origem_oni_rastreador_de_sangue', 20,\n  'origem_oni_realidade_distorcida', 17,\n  'origem_oni_tela_do_submundo', 18,\n  'origem_oni_transfigurado', 24,\n  'origem_oni_vampiro_de_linhagem', 19,\n  0\n)}$"
+      },
+      {
+        "name": "origem_oni_pdv_inicial",
+        "value": "${origem_oni_pdv_val+vit_display}$"
+      },
+      {
+        "name": "origem_oni_pdk_inicial",
+        "value": "${origem_oni_pdk_val+fdv_display}$"
+      },
+      {
+        "name": "origem_pdk_fdv_mult",
+        "label": "Multiplicador de FDV do PDK",
+        "value": "",
+        "type": "String"
+      },
+      {
+        "name": "atr_dex_valor_oni_config",
+        "label": "DEX Config",
+        "value": "${atr_dex_oni_valor_config}$",
+        "type": "String"
+      },
+      {
+        "name": "atr_for_valor_oni_config",
+        "label": "FOR Config",
+        "value": "${atr_for_oni_valor_config}$",
+        "type": "String"
+      },
+      {
+        "name": "atr_car_valor_oni_config",
+        "label": "CAR Config",
+        "value": "${atr_car_oni_valor_config}$",
+        "type": "String"
+      },
+      {
+        "name": "fdv_nvl1",
+        "label": "FDV Nv.1 (alias)",
+        "value": "${fdv_oni_nvl1}$",
+        "type": "String"
+      },
+      {
+        "name": "vit_nvl1",
+        "label": "VIT Nv.1 (alias)",
+        "value": "${vit_oni_nvl1}$",
+        "type": "String"
       }
     ],
     "attributeBar": {

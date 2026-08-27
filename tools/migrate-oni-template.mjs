@@ -19,8 +19,6 @@ function replaceOniResourceNames(value) {
       .replaceAll("status_slayer", "status_oni")
       .replaceAll("resistencia_slayer", "resistencia_oni")
       .replaceAll("combat_slayer", "combat_oni")
-      .replaceAll("origem_oni_pdv_val", "origem_pdv_fixo")
-      .replaceAll("origem_oni_pdk_val", "origem_pdk_fixo")
       .replaceAll("pdr_oni", "pdk_oni")
       .replaceAll("PDR / PDK", "PDK")
       .replaceAll("PDR", "PDK");
@@ -221,12 +219,6 @@ const ONI_ORIGIN_PDK_FIXO = Object.freeze({
   monarca_demoniaco: 20, vampiro_de_linhagem: 20,
 });
 
-// Origens cuja regra é "N + FDV + (FDV×3)" usam multiplicador 4; as demais são "(FDV×3)".
-const ONI_ORIGIN_PDK_FDV_MULT = Object.freeze({
-  passado_triste: 4, personalidade_maligna: 4, rastreador_de_sangue: 4,
-  genio_do_mal: 4, adepto_das_trevas: 4,
-});
-
 function configureOniOrigins(template) {
   const origin = findByKey(template, "origem_oni_dropdown") ?? findByKey(template, "origem_dropdown");
   if (!origin || !Array.isArray(origin.options)) throw new Error("Dropdown de origem Oni não encontrado.");
@@ -238,36 +230,35 @@ function configureOniOrigins(template) {
 
   const originKey = origin.key;
 
-  const originSwitchCase = (table, fallbackValue) => {
-    const args = Object.entries(table).flatMap(([key, value]) => [`'origem_oni_${key}'`, value]).join(",\n  ");
-    return `\${switchCase(${originKey},\n  ${args},\n  ${fallbackValue}\n)}$`;
-  };
+  const pdvArgs = Object.entries(ONI_ORIGIN_PDV_FIXO)
+    .flatMap(([key, value]) => [`'origem_oni_${key}'`, value])
+    .concat([`'origem_oni_exterminador_corrompido'`, `30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda)`])
+    .join(",\n  ");
+  const pdkArgs = Object.entries(ONI_ORIGIN_PDK_FIXO)
+    .flatMap(([key, value]) => [`'origem_oni_${key}'`, value])
+    .concat([`'origem_oni_exterminador_corrompido'`, `oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)`])
+    .join(",\n  ");
 
-  // Camada 1 — constantes por origem (dados puros, sem fórmula embutida).
-  upsertHidden(template, "origem_pdv_fixo", originSwitchCase(ONI_ORIGIN_PDV_FIXO, 0));
-  upsertHidden(template, "origem_pdk_fixo", originSwitchCase(ONI_ORIGIN_PDK_FIXO, 0));
-  upsertHidden(template, "origem_pdk_fdv_mult", originSwitchCase(ONI_ORIGIN_PDK_FDV_MULT, 3));
-
-  // Camada 2 — conta única; Exterminador Corrompido é o único caso especial.
-  upsertHidden(
-    template,
-    "origem_oni_pdv_inicial",
-    `\${(${originKey}=='origem_oni_exterminador_corrompido')?(30+(vit_oni_nvl1*3)+(10*oni_nivel_na_queda)):(origem_pdv_fixo+vit_oni_nvl1)}$`,
-  );
-  upsertHidden(
-    template,
-    "origem_oni_pdk_inicial",
-    `\${(${originKey}=='origem_oni_exterminador_corrompido')?(oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)):(origem_pdk_fixo+(fdv_oni_nvl1*origem_pdk_fdv_mult))}$`,
-  );
+  upsertHidden(template, "origem_oni_pdv_val", `\${switchCase(${originKey},\n  ${pdvArgs},\n  0\n)}$`);
+  upsertHidden(template, "origem_oni_pdk_val", `\${switchCase(${originKey},\n  ${pdkArgs},\n  0\n)}$`);
+  upsertHidden(template, "origem_oni_pdv_inicial", `\${origem_oni_pdv_val+vit_display}$`);
+  upsertHidden(template, "origem_oni_pdk_inicial", `\${origem_oni_pdk_val+fdv_display}$`);
 }
 
 function configureOniProgression(template) {
-  const levelValue = (resource) => Array.from({ length: 20 }, (_, index) => {
-    const level = index + 1;
-    return [`'nvl_${level}'`, `${resource}_oni_nvl${level}`];
-  }).flat().join(",");
-  upsertHidden(template, "pdv_oni_total_conta", `\${switchCase(nvl_pj,${levelValue("pdv")},0)}$`);
-  upsertHidden(template, "pdk_oni_total_conta", `\${switchCase(nvl_pj,${levelValue("pdk")},0)}$`);
+  const pdvLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  const pdvParts = pdvLevels.map((level) => {
+    if (level < 20) return `(nvl_num>=${level}?fallback(pdv_oni_ganho_nvl${level},0):0)`;
+    return `(nvl_num>=20?(50+(vit_display*5)):0)`;
+  });
+  upsertHidden(template, "pdv_oni_total_conta", `\${origem_oni_pdv_inicial+${pdvParts.join("+")}}$`);
+
+  const pdkLevels = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  const pdkParts = pdkLevels.map((level) => {
+    if (level < 20) return `(nvl_num>=${level}?4:0)`;
+    return `(nvl_num>=20?50:0)`;
+  });
+  upsertHidden(template, "pdk_oni_total_conta", `\${origem_oni_pdk_inicial+${pdkParts.join("+")}}$`);
 
   upsertHidden(template, "pdv_oni_maximo_num", "${max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_extra)}$");
   upsertHidden(template, "pdv_oni_atual_num", "${min(pdv_oni_maximo_num,max(0,pdv_oni_total_conta-pdv_oni_dano_ferida+pdv_oni_curado+pdv_oni_extra-pdv_oni_dano_tomado))}$");
@@ -275,54 +266,30 @@ function configureOniProgression(template) {
   upsertHidden(template, "pdk_oni_atual_num", "${min(pdk_oni_maximo_num,max(0,pdk_oni_total_conta+pdk_oni_curado+pdk_oni_extra-pdk_oni_gasto_valor))}$");
 }
 
-const ONI_ORIGIN_BONUSES = Object.freeze({
-  vit: { exterminador_corrompido: 1, comum: 1, raiz_podre: 2, transfigurado: 1, canibal: 1, chama_negra: 1 },
-  dex: { mare_negra: 1, transfigurado: 1 },
-  for: { chama_negra: 1 },
-  car: { passado_triste: 1, personalidade_maligna: 1, corte_palida: 1 },
-  fdv: { adepto_das_trevas: 1, corte_palida: 1, mare_negra: 1, realidade_distorcida: 1, tela_do_submundo: 1, oni_de_outras_terras: 1, eco_eterno: 2, chama_negra: 1 },
-  int: { genio_do_mal: 1, realidade_distorcida: 1, tela_do_submundo: 1, oni_de_outras_terras: 1 },
-  sab: { rastreador_de_sangue: 1, tela_do_submundo: 1, eco_eterno: 1 },
-});
-
-function originBonusSwitchCase(attr, originKey) {
-  const table = ONI_ORIGIN_BONUSES[attr] ?? {};
-  const args = Object.entries(table).flatMap(([origin, bonus]) => [`'origem_oni_${origin}'`, bonus]).join(",");
-  return `\${switchCase(${originKey},${args},0)}$`;
-}
-
-function configureOniOriginBonuses(template) {
-  const origin = findByKey(template, "origem_oni_dropdown") ?? findByKey(template, "origem_dropdown");
-  const originKey = origin?.key ?? "origem_oni_dropdown";
-  for (const attr of Object.keys(ONI_ORIGIN_BONUSES)) {
-    upsertHidden(template, `origem_oni_bonus_${attr}`, originBonusSwitchCase(attr, originKey));
-  }
-}
-
 function configureOniAttributes(template) {
   const formulas = {
-    vit_display: "${fallback(atr_vit_oni_valor_config,0)+fallback(bonus_atr_vit_oni_valor_temp,0)}$",
-    dex_display: "${fallback(atr_dex_oni_valor_config,0)+fallback(bonus_atr_dex_oni_valor_temp,0)}$",
-    for_display: "${fallback(atr_for_oni_valor_config,0)+fallback(bonus_atr_for_oni_valor_temp,0)}$",
-    car_display: "${fallback(atr_car_oni_valor_config,0)+fallback(bonus_atr_car_oni_valor_temp,0)}$",
-    fdv_display: "${fallback(atr_fdv_oni_valor_config,0)+fallback(bonus_atr_fdv_oni_valor_temp,0)}$",
-    int_display: "${fallback(atr_int_oni_valor_config,0)+fallback(bonus_atr_int_oni_valor_temp,0)}$",
-    sab_display: "${fallback(atr_sab_oni_valor_config,0)+fallback(bonus_atr_sab_oni_valor_temp,0)}$",
+    vit_display: "${atr_vit_oni_valor_config+bonus_atr_vit_oni_valor_temp}$",
+    dex_display: "${atr_dex_valor_oni_config+bonus_atr_dex_oni_valor_temp}$",
+    for_display: "${atr_for_valor_oni_config+bonus_atr_for_oni_valor_temp}$",
+    car_display: "${atr_car_valor_oni_config+bonus_atr_car_oni_valor_temp}$",
+    fdv_display: "${atr_fdv_oni_valor_config+bonus_atr_fdv_oni_valor_temp}$",
+    int_display: "${atr_int_oni_valor_config+bonus_atr_int_oni_valor_temp}$",
+    sab_display: "${atr_sab_oni_valor_config+bonus_atr_sab_oni_valor_temp}$",
   };
   for (const [name, formula] of Object.entries(formulas)) upsertHidden(template, name, formula);
 }
 
 function configureOniBarsAndLabels(template) {
   template.system.attributeBar = {
-    pdv_oni_barra: { value: "${pdv_oni_atual_num}$", max: "${pdv_oni_maximo_num}$", editable: false },
-    pdk_oni_barra: { value: "${pdk_oni_atual_num}$", max: "${pdk_oni_maximo_num}$", editable: false },
+    pdv_oni_barra: { value: "${pdv_oni_total_conta}$", max: "${pdv_oni_total_conta}$", editable: false },
+    pdk_oni_barra: { value: "${pdk_oni_total_conta}$", max: "${pdk_oni_total_conta}$", editable: false },
   };
   walk(template.system, (node) => {
     if (node.type !== "label") return;
-    if (node.key === "pdv_oni_total_valor") node.value = orbitron("${pdv_oni_maximo_num}$", "#C1000C", 18);
-    if (node.key === "pdv_oni_atual_valor_display") node.value = orbitron("${pdv_oni_atual_num}$", "#C1000C", 18);
-    if (node.key === "pdk_oni_total_valor") node.value = orbitron("${pdk_oni_maximo_num}$", "#B36CFF", 18);
-    if (node.key === "pdk_oni_atual_valor_display") node.value = orbitron("${pdk_oni_atual_num}$", "#B36CFF", 18);
+    if (node.key === "pdv_oni_total_valor") node.value = orbitron("${pdv_oni_total_conta}$", "#C1000C", 18);
+    if (node.key === "pdv_oni_atual_valor_display") node.value = orbitron("${pdv_oni_total_conta}$", "#C1000C", 18);
+    if (node.key === "pdk_oni_total_valor") node.value = orbitron("${pdk_oni_total_conta}$", "#B36CFF", 18);
+    if (node.key === "pdk_oni_atual_valor_display") node.value = orbitron("${pdk_oni_total_conta}$", "#B36CFF", 18);
   });
 }
 
@@ -337,6 +304,16 @@ function configureOniProgressionFields(template) {
     `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`,
   )).filter((field) => !existingKeys.has(field.key));
   fields.push(
+    makeNumberField("pdv_oni_ganho_nvl1", "PDV ganho Nv. 1 (0)", "Resultado persistido do ganho de PDV do nível 1."),
+    makeNumberField("pdv_oni_ganho_nvl13", "PDV ganho Nv. 13 (0)", "Resultado persistido do ganho de PDV do nível 13."),
+    makeNumberField("pdv_oni_ganho_nvl14", "PDV ganho Nv. 14 (0)", "Resultado persistido do ganho de PDV do nível 14."),
+    makeNumberField("pdv_oni_ganho_nvl15", "PDV ganho Nv. 15 (0)", "Resultado persistido do ganho de PDV do nível 15."),
+    makeNumberField("pdv_oni_ganho_nvl16", "PDV ganho Nv. 16 (0)", "Resultado persistido do ganho de PDV do nível 16."),
+    makeNumberField("pdv_oni_ganho_nvl17", "PDV ganho Nv. 17 (0)", "Resultado persistido do ganho de PDV do nível 17."),
+    makeNumberField("pdv_oni_ganho_nvl18", "PDV ganho Nv. 18 (0)", "Resultado persistido do ganho de PDV do nível 18."),
+    makeNumberField("pdv_oni_ganho_nvl19", "PDV ganho Nv. 19 (0)", "Resultado persistido do ganho de PDV do nível 19."),
+    makeNumberField("vit_oni_nvl1", "VIT no Nv. 1", "Snapshot de VIT usado pela progressão oficial."),
+    makeNumberField("fdv_oni_nvl1", "FDV no Nv. 1", "Snapshot de FDV usado pela progressão oficial."),
     makeNumberField("vit_oni_nvl7", "VIT no Nv. 7", "Snapshot de VIT usado pela progressão oficial."),
     makeNumberField("fdv_oni_nvl7", "FDV no Nv. 7", "Snapshot de FDV usado pela progressão oficial."),
     makeNumberField("oni_nivel_na_queda", "Nível na Queda", "Somente Exterminador Corrompido."),
@@ -360,9 +337,6 @@ function configureOniProgressionFields(template) {
   });
   dataTab.contents.push(makePanel("origem_oni_recursos_panel", [
     { ...makePanel("origem_oni_titulo_panel", [], ""), type: "label", value: orbitron("ORIGEM — RECURSOS INICIAIS", "#B36CFF", 14), style: "label", size: "full-size" },
-    origemLabel("PDV fixo da Origem: ${origem_pdv_fixo}$"),
-    origemLabel("PDK fixo da Origem: ${origem_pdk_fixo}$"),
-    origemLabel("Multiplicador de FDV do PDK: x${origem_pdk_fdv_mult}$"),
     origemLabel("PDV inicial da Origem: ${origem_oni_pdv_inicial}$"),
     origemLabel("PDK inicial da Origem: ${origem_oni_pdk_inicial}$"),
   ], "grid-2"));
@@ -385,7 +359,6 @@ export function migrateOniTemplate(source) {
 
   configureOniLevelAndRank(migrated);
   configureOniOrigins(migrated);
-  configureOniOriginBonuses(migrated);
   configureOniAttributes(migrated);
   configureOniProgression(migrated);
   configureOniBarsAndLabels(migrated);
@@ -395,18 +368,11 @@ export function migrateOniTemplate(source) {
   const hidden = migrated.system?.hidden;
   if (Array.isArray(hidden)) {
     migrated.system.hidden = hidden.filter((h) =>
-      h.name !== "origem_oni_pdv_val"
-      && h.name !== "origem_oni_pdr_val"
+      h.name !== "origem_oni_pdr_val"
       && !String(h.name ?? "").includes("slayer")
     );
   }
 
-  const keys = collectKeys(migrated);
-  const required = [
-    "pdv_oni_maximo_num", "pdv_oni_atual_num", "pdk_oni_maximo_num", "pdk_oni_atual_num",
-  ];
-  const missing = required.filter((key) => !keys.has(key));
-  if (missing.length) throw new Error(`Template ONI sem keys obrigatórias: ${missing.join(", ")}`);
   if (JSON.stringify(migrated).includes("pdr_oni")) throw new Error("Migração ONI deixou referências pdr_oni.");
   return migrated;
 }

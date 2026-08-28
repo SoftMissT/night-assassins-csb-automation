@@ -24,9 +24,15 @@ function detectKind(actor) {
  * @returns {boolean}
  */
 function canReset(actor) {
-  if (game.user?.isGM) return true;
-  const ownership = actor.ownership?.[game.user?.id] ?? actor.permission;
-  return ownership >= CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+  const user = globalThis.game?.user;
+  if (!user) return false;
+  if (user.isGM) return true;
+  if (typeof actor.testUserPermission === "function") {
+    return actor.testUserPermission(user, "OWNER");
+  }
+  const ownerLevel = globalThis.CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3;
+  const ownership = actor.ownership?.[user.id] ?? actor.permission ?? 0;
+  return ownership >= ownerLevel;
 }
 
 /**
@@ -39,18 +45,20 @@ export async function resetSheet(actor) {
 
   const kind = detectKind(actor);
   if (kind === "unknown") {
-    ui.notifications.warn(`${actor.name} não é um Slayer ou Oni válido para reset.`);
+    globalThis.ui?.notifications?.warn?.(`${actor.name} não é um Slayer ou Oni válido para reset.`);
     return { success: false, cancelled: false };
   }
 
   if (!canReset(actor)) {
-    ui.notifications.warn("Você não tem permissão para resetar esta ficha.");
+    globalThis.ui?.notifications?.warn?.("Você não tem permissão para resetar esta ficha.");
     return { success: false, cancelled: false };
   }
 
   console.warn(`[NA-RESET] REQUESTED actor=${actor.name} kind=${kind}`);
 
   // DialogV2 confirmação
+  const DialogV2 = globalThis.foundry?.applications?.api?.DialogV2 ?? globalThis.DialogV2;
+  if (!DialogV2?.wait) throw new Error("DialogV2 indisponível no Foundry v14.");
   const confirmed = await DialogV2.wait({
     window: {
       title: "Resetar ficha?",
@@ -68,17 +76,19 @@ export async function resetSheet(actor) {
         action: "cancel",
         label: "CANCELAR",
         class: "na-reset-cancel",
+        callback: () => false,
       },
       {
         action: "confirm",
         label: "RESETAR",
         class: "na-reset-confirm",
+        callback: () => true,
       },
     ],
-    close: () => ({ action: "cancel" }),
+    rejectClose: false,
   });
 
-  if (!confirmed || confirmed.action !== "confirm") {
+  if (confirmed !== true) {
     console.warn(`[NA-RESET] CANCELLED actor=${actor.name}`);
     return { success: false, cancelled: true };
   }
@@ -93,7 +103,7 @@ export async function resetSheet(actor) {
       await resetOniSheetState(actor);
     }
 
-    ui.notifications.info(`Ficha de ${actor.name} resetada.`);
+    globalThis.ui?.notifications?.info?.(`Ficha de ${actor.name} resetada.`);
 
     // Re-render se necessário
     if (actor.sheet?.rendered) {
@@ -103,7 +113,7 @@ export async function resetSheet(actor) {
     return { success: true };
   } catch (error) {
     console.error(`[NA-RESET] FAILED actor=${actor.name}:`, error);
-    ui.notifications.error(`Falha ao resetar ${actor.name}: ${error.message}`);
+    globalThis.ui?.notifications?.error?.(`Falha ao resetar ${actor.name}: ${error.message}`);
     return { success: false };
   }
 }

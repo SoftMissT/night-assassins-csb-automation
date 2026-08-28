@@ -158,12 +158,24 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true, showDic
       rollTotal = Number(roll.total) || 0;
       value = Math.max(0, Math.trunc(rollTotal));
       console.warn(`[NA-ONI-PDV] ROLL RESULT level=${entry.level} dice=${entry.dice} result=${rollTotal}`);
-      if (showDice && game.dice3d?.showForRoll) {
+      const foundryGame = globalThis.game;
+      if (showDice && typeof roll.toMessage === "function") {
         try {
-          await game.dice3d.showForRoll(roll, game.user, true);
-          console.warn(`[NA-ONI-PDV] DICE3D displayed=true level=${entry.level}`);
+          const speaker = globalThis.ChatMessage?.getSpeaker?.({ actor });
+          await roll.toMessage({
+            speaker,
+            flavor: `<strong>Ganho de PDV Oni — Nível ${entry.level}</strong> (${entry.dice})`,
+          });
+          console.warn(`[NA-ONI-PDV] CHAT ROLL published=true level=${entry.level}`);
         } catch (diceError) {
-          console.warn(`[NA-ONI-PDV] DICE3D failed:`, diceError);
+          console.warn(`[NA-ONI-PDV] CHAT ROLL failed:`, diceError);
+        }
+      } else if (showDice && foundryGame?.dice3d?.showForRoll) {
+        try {
+          await foundryGame.dice3d.showForRoll(roll, foundryGame.user, true);
+          console.warn(`[NA-ONI-PDV] DICE3D fallback displayed=true level=${entry.level}`);
+        } catch (diceError) {
+          console.warn(`[NA-ONI-PDV] DICE3D fallback failed:`, diceError);
         }
       }
     } catch (error) {

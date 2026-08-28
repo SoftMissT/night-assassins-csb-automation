@@ -5,6 +5,7 @@
  */
 
 import { parseNumber } from "./parsing.mjs";
+import { actionSummary, defaultActionState } from "./action-service.mjs";
 
 /**
  * Chaves de estado TEMPORÁRIO do Slayer (resetadas no reset).
@@ -16,6 +17,24 @@ const SLAYER_TEMP_KEYS = Object.freeze({
   pdv_slayer_extra: 0,
   pdr_slayer_gasto_valor: 0,
   pdr_slayer_curado: 0,
+  pdr_slayer_extra: 0,
+  bonus_atr_vit_valor_temp: 0,
+  bonus_atr_dex_valor_temp: 0,
+  bonus_atr_for_valor_temp: 0,
+  bonus_atr_car_valor_temp: 0,
+  bonus_atr_fdv_valor_temp: 0,
+  bonus_atr_int_valor_temp: 0,
+  bonus_atr_sab_valor_temp: 0,
+  vit_resp_bonus_temp_slayer: 0,
+  dex_resp_bonus_temp_slayer: 0,
+  for_resp_bonus_temp_slayer: 0,
+  car_resp_bonus_temp_slayer: 0,
+  fdv_resp_bonus_temp_slayer: 0,
+  int_resp_bonus_temp_slayer: 0,
+  sab_resp_bonus_temp_slayer: 0,
+  resp_bonus_acerto_temp: 0,
+  resp_bonus_esquiva_temp: 0,
+  resp_bonus_bloqueio_temp: 0,
 });
 
 /**
@@ -45,6 +64,7 @@ export function buildSlayerResetPatch(actor) {
 
   // Reset chaves temporárias
   for (const [key, defaultValue] of Object.entries(SLAYER_TEMP_KEYS)) {
+    if (!Object.hasOwn(props, key)) continue;
     patch[`system.props.${key}`] = defaultValue;
     summary.push(`${key} → ${defaultValue}`);
   }
@@ -54,8 +74,19 @@ export function buildSlayerResetPatch(actor) {
     0,
     parseNumber(props.folego_slayer_maximo) || (2 + parseNumber(props.fdv_display))
   );
-  patch["system.props.folego_slayer_atual"] = folegoMax;
-  summary.push(`folego_slayer_atual → ${folegoMax} (máximo)`);
+  if (Object.hasOwn(props, "folego_slayer_atual")) {
+    patch["system.props.folego_slayer_atual"] = folegoMax;
+    summary.push(`folego_slayer_atual → ${folegoMax} (máximo)`);
+  }
+
+  if (Object.hasOwn(props, "acoes_slayer_dados")) {
+    const actionState = defaultActionState();
+    patch["system.props.acoes_slayer_dados"] = JSON.stringify(actionState);
+    if (Object.hasOwn(props, "acoes_slayer_resumo")) {
+      patch["system.props.acoes_slayer_resumo"] = actionSummary(actionState, props);
+    }
+    summary.push("economia de ações Slayer → estado inicial");
+  }
 
   return { patch, summary };
 }

@@ -5,7 +5,7 @@
  * Reseta: dano, cura, extra, gasto PDK, PDV/PDK atual → máximo.
  */
 
-import { parseNumber } from "../parsing.mjs";
+import { defaultOniActionState, oniActionMaximums } from "../oni-action-service.mjs";
 
 /**
  * Chaves de estado TEMPORÁRIO do Oni (resetadas no reset).
@@ -17,29 +17,15 @@ const ONI_TEMP_KEYS = Object.freeze({
   pdv_oni_extra: 0,
   pdk_oni_gasto_valor: 0,
   pdk_oni_curado: 0,
+  pdk_oni_extra: 0,
+  bonus_atr_vit_oni_valor_temp: 0,
+  bonus_atr_dex_oni_valor_temp: 0,
+  bonus_atr_for_oni_valor_temp: 0,
+  bonus_atr_car_oni_valor_temp: 0,
+  bonus_atr_fdv_oni_valor_temp: 0,
+  bonus_atr_int_oni_valor_temp: 0,
+  bonus_atr_sab_oni_valor_temp: 0,
 });
-
-/**
- * Chaves de progressão Oni que NUNCA devem ser limpas.
- */
-const ONI_PERMANENT_KEYS = Object.freeze([
-  "nvl_oni",
-  "nvl_pj",
-  "origem_oni_pdv_val",
-  "origem_oni_pdk_val",
-  "fdv_oni_nvl1",
-  "pdv_oni_ganho_nvl2",
-  "pdv_oni_ganho_nvl3",
-  "pdv_oni_ganho_nvl4",
-  "pdv_oni_ganho_nvl5",
-  "pdv_oni_ganho_nvl6",
-  "pdv_oni_ganho_nvl7",
-  "pdv_oni_ganho_nvl8",
-  "pdv_oni_ganho_nvl9",
-  "pdv_oni_ganho_nvl10",
-  "pdv_oni_ganho_nvl11",
-  "pdv_oni_ganho_nvl12",
-]);
 
 /**
  * Verifica se um actor é um Oni válido para reset.
@@ -68,22 +54,22 @@ export function buildOniResetPatch(actor) {
 
   // Reset chaves temporárias
   for (const [key, defaultValue] of Object.entries(ONI_TEMP_KEYS)) {
+    if (!Object.hasOwn(props, key)) continue;
     patch[`system.props.${key}`] = defaultValue;
     summary.push(`${key} → ${defaultValue}`);
   }
 
-  // PDV atual → PDV máximo (via switchCase no CSB, mas podemos setar display)
-  const pdvMax = parseNumber(props.pdv_oni_maximo_num) || parseNumber(props.pdv_oni_total_conta);
-  if (pdvMax > 0) {
-    patch["system.props.pdv_oni_atual_valor_display"] = pdvMax;
-    summary.push(`pdv_oni_atual_valor_display → ${pdvMax} (máximo)`);
-  }
-
-  // PDK atual → PDK máximo
-  const pdkMax = parseNumber(props.pdk_oni_maximo_num) || parseNumber(props.pdk_oni_total_conta);
-  if (pdkMax > 0) {
-    patch["system.props.pdk_oni_atual_valor_display"] = pdkMax;
-    summary.push(`pdk_oni_atual_valor_display → ${pdkMax} (máximo)`);
+  if (Object.hasOwn(props, "acoes_oni_dados")) {
+    const actionState = defaultOniActionState();
+    patch["system.props.acoes_oni_dados"] = JSON.stringify(actionState);
+    if (Object.hasOwn(props, "acoes_oni_resumo")) {
+      const maximums = oniActionMaximums(props);
+      patch["system.props.acoes_oni_resumo"] = Object.entries({
+        ...actionState.turn,
+        ...actionState.round,
+      }).map(([key]) => `${key.toUpperCase()} ${maximums[key]}/${maximums[key]}`).join(" · ");
+    }
+    summary.push("economia de ações Oni → estado inicial");
   }
 
   return { patch, summary };

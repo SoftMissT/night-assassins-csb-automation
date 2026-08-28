@@ -329,6 +329,22 @@ function configureOniOrigins(template) {
 }
 
 function configureOniProgression(template) {
+    const inheritedVitSnapshots = {
+        2: 1,
+        5: 4,
+        9: 8,
+        10: 8,
+        14: 13,
+        15: 13,
+        17: 16,
+        18: 16,
+        19: 16,
+        20: 16,
+    };
+    for (const [level, sourceLevel] of Object.entries(inheritedVitSnapshots)) {
+        upsertHidden(template, `vit_oni_nvl${level}`, `\${vit_oni_nvl${sourceLevel}}$`);
+    }
+
     const pdvLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     const pdvArgs = pdvLevels.map((level) => `'nvl_${level}', pdv_oni_nvl${level}`).join(', ');
     upsertHidden(template, 'pdv_oni_total_conta', `\${switchCase(nvl_pj, ${pdvArgs}, 0)}$`);

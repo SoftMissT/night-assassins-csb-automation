@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.36 - 2026-08-28
+
+- **CI v0.11.35:** corrigido o download do manifesto, o acesso opcional ao Dice So Nice e o contrato do macro de reset Slayer.
+- **PDV/PDK Oni:** auditoria N1-N20 confirmou as cadeias e o N8 (`pdv_oni_nvl7` + `vit_oni_nvl8`); dez snapshots de VIT ausentes foram materializados como aliases derivados dos últimos níveis oficiais, sem alterar a matemática.
+- **Reset seguro:** Slayer e Oni agora resetam somente keys temporárias existentes, economia de ações e fôlego Slayer, com DialogV2, permissão OWNER/GM e um único `actor.update()`.
+- **Paridade:** templates, pacote global CSB e compêndios reconstruídos. Validação manual no Foundry v14 permanece pendente.
+- **Rolagens PDV Oni:** ganhos automáticos N2–N12 agora publicam a Roll no chat, acionando o Dice So Nice; o catch-up também deixa de preencher o ledger silenciosamente.
+- **Cores da ficha Oni:** corrigida a precedência que tornava PDV, PDK e os sete atributos brancos; o template agora usa papéis semânticos próprios para PDV/PDK.
+- **Validação final:** 918/918 testes aprovados em 174 suítes.
+
 ## 0.11.35 - 2026-08-26
 
 - **RESETAR FICHA:** botão adicionado às abas CONFIGURAÇÕES dos templates Slayer e Oni. Reseta estado temporário de combate (dano, cura, extra, gasto PDR/PDK, fôlego) preservando nível, atributos, progressão, origem, especialização e inventário.

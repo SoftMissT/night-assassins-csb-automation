@@ -2272,6 +2272,18 @@
     color: #ffffff;
 }
 
+/* Cores semânticas vencem o fallback branco da skin. A especificidade deste
+   bloco é deliberadamente igual ou maior que a regra de labels acima. */
+.na-oni-sheet .window-content .na-sheet-role-vit { color: var(--na-vit); }
+.na-oni-sheet .window-content .na-sheet-role-dex { color: var(--na-dex); }
+.na-oni-sheet .window-content .na-sheet-role-for { color: var(--na-for); }
+.na-oni-sheet .window-content .na-sheet-role-car { color: var(--na-car); }
+.na-oni-sheet .window-content .na-sheet-role-fdv { color: var(--na-fdv); }
+.na-oni-sheet .window-content .na-sheet-role-int { color: var(--na-int); }
+.na-oni-sheet .window-content .na-sheet-role-sab { color: var(--na-sab); }
+.na-oni-sheet .window-content .na-sheet-role-pdv { color: var(--oni-red); }
+.na-oni-sheet .window-content .na-sheet-role-pdk { color: #b36cff; }
+
 /* --- Slayer e NPC: azul marinho escuro --- */
 .na-slayer-sheet .window-content,
 .na-npc-sheet .window-content {

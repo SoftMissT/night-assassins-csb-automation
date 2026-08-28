@@ -98,6 +98,7 @@ function teardownGlobals() {
   delete globalThis.ui;
   delete globalThis.foundry;
   delete globalThis.Hooks;
+  delete globalThis.ChatMessage;
 }
 
 describe('Engine de progressão Oni — PDV automático', () => {
@@ -176,6 +177,31 @@ describe('Engine de progressão Oni — PDV automático', () => {
       const n12 = result.rolled.find((r) => r.level === 12);
       assert.ok(n12);
       assert.equal(n12.dice, '2d6');
+    });
+  });
+
+  describe('Publicação visual da rolagem', () => {
+    it('publica Roll no chat para o Dice So Nice observar', async () => {
+      let messages = 0;
+      let directDice3d = 0;
+      globalThis.ChatMessage = { getSpeaker: ({ actor }) => ({ actor: actor.uuid }) };
+      globalThis.game.dice3d = { showForRoll: async () => { directDice3d += 1; } };
+      globalThis.Roll = {
+        create: () => {
+          const roll = {
+            total: 3,
+            async evaluate() { return roll; },
+            async toMessage() { messages += 1; },
+          };
+          return roll;
+        },
+      };
+      const actor = fakeActor({ nvl_num: 2 });
+
+      await ensureOniProgression(actor, { level: 2, showDice: true });
+
+      assert.equal(messages, 1);
+      assert.equal(directDice3d, 0, 'toMessage evita exibição duplicada no Dice So Nice');
     });
   });
 

@@ -39,12 +39,12 @@ async function oniUpdateHandler(actor, changes, options, userId) {
   if (rawLevel === undefined) return;
 
   const level = parseLevel(rawLevel);
-  console.log(`[NA-Oni] level change: ${actor.name} → N${level}`);
+  console.warn(`[NA-ONI-PDV] TRIGGER updateActor actor=${actor.name} level=${level}`);
 
   await withLock(actor.uuid, async () => {
     try {
       await ensureOniProgression(actor, { level, showDice: true });
-      console.log(`[NA-Oni] progression persisted for ${actor.name}`);
+      console.warn(`[NA-ONI-PDV] TRIGGER completed actor=${actor.name} level=${level}`);
     } catch (error) {
       console.error(`[NA-Oni] progression failed for ${actor.name}:`, error);
     }
@@ -60,9 +60,9 @@ async function oniCreateHandler(actor) {
 
   await withLock(actor.uuid, async () => {
     try {
-      console.log(`[NA-Oni] createActor: ${actor.name}`);
+      console.warn(`[NA-ONI-PDV] TRIGGER createActor actor=${actor.name}`);
       await ensureOniProgression(actor, { showDice: true });
-      console.log(`[NA-Oni] progression persisted for ${actor.name}`);
+      console.warn(`[NA-ONI-PDV] TRIGGER createActor completed actor=${actor.name}`);
     } catch (error) {
       console.error(`[NA-Oni] progression failed for ${actor.name}:`, error);
     }
@@ -81,18 +81,18 @@ export async function oniReadyCatchUp() {
 
   if (game.user?.id !== gmId) return;
 
-      console.log(`[NA-Oni] ready catch-up: starting for ${game.actors?.contents?.length ?? 0} actors`);
+  console.warn(`[NA-ONI-PDV] CATCH-UP starting actors=${game.actors?.contents?.length ?? 0}`);
 
   for (const actor of game.actors?.contents ?? []) {
     if (actorKind(actor) !== "oni") continue;
     try {
-      await ensureOniProgression(actor, { showDice: false });
+      await ensureOniProgression(actor, { showDice: true });
     } catch (error) {
       console.warn(`[NA-Oni] Falha no catch-up de ${actor.name}:`, error);
     }
   }
 
-  console.log(`[NA-Oni] ready catch-up: complete`);
+  console.warn(`[NA-ONI-PDV] CATCH-UP complete`);
 }
 
 /**

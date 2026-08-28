@@ -836,7 +836,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">PDV TOTAL</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-pdv\">PDV TOTAL</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -860,7 +860,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">PDV ATUAL</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-pdv\">PDV ATUAL</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -884,7 +884,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">DANO TOMADO</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-pdv\">DANO TOMADO</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -908,7 +908,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">DANO CURADO</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-pdv\">DANO CURADO</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -932,7 +932,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">PDV EXTRA</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-pdv\">PDV EXTRA</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -958,7 +958,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#C1000C;text-transform:uppercase;letter-spacing:.12em;\">${pdv_oni_total_conta}$</span></div>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"><span class=\"na-sheet-text na-sheet-stat na-sheet-role-pdv\">${pdv_oni_total_conta}$</span></div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -982,7 +982,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#C1000C;text-transform:uppercase;letter-spacing:.12em;\">${pdv_oni_total_conta}$</span></div>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"><span class=\"na-sheet-text na-sheet-stat na-sheet-role-pdv\">${pdv_oni_total_conta}$</span></div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1006,7 +1006,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-for\">${pdv_oni_dano_tomado}$</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-lg na-sheet-role-pdv\">${pdv_oni_dano_tomado}$</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1204,7 +1204,7 @@
                         "type": "label",
                         "size": "m-small",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#B36CFF;text-transform:uppercase;letter-spacing:.12em;\">${pdk_oni_total_conta}$</span></div>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"><span class=\"na-sheet-text na-sheet-stat na-sheet-role-pdk\">${pdk_oni_total_conta}$</span></div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1228,7 +1228,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<div class=\"custom-orbitron-wrapper\"><span style=\"font-family:'Orbitron','Times New Roman',serif;font-size:18px;font-weight:700;color:#B36CFF;text-transform:uppercase;letter-spacing:.12em;\">${pdk_oni_total_conta}$</span></div>",
+                        "value": "<div class=\"custom-orbitron-wrapper\"><span class=\"na-sheet-text na-sheet-stat na-sheet-role-pdk\">${pdk_oni_total_conta}$</span></div>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -1252,7 +1252,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-role-dex na-sheet-size-md\">${pdk_oni_gasto_valor}$</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-role-pdk na-sheet-size-md\">${pdk_oni_gasto_valor}$</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "",
@@ -8935,6 +8935,46 @@
       {
         "name": "rank_especializacao_oni",
         "value": "${nvl_num>=19?'SS':nvl_num>=16?'S':nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':''}$"
+      },
+      {
+        "name": "vit_oni_nvl2",
+        "value": "${vit_oni_nvl1}$"
+      },
+      {
+        "name": "vit_oni_nvl5",
+        "value": "${vit_oni_nvl4}$"
+      },
+      {
+        "name": "vit_oni_nvl9",
+        "value": "${vit_oni_nvl8}$"
+      },
+      {
+        "name": "vit_oni_nvl10",
+        "value": "${vit_oni_nvl8}$"
+      },
+      {
+        "name": "vit_oni_nvl14",
+        "value": "${vit_oni_nvl13}$"
+      },
+      {
+        "name": "vit_oni_nvl15",
+        "value": "${vit_oni_nvl13}$"
+      },
+      {
+        "name": "vit_oni_nvl17",
+        "value": "${vit_oni_nvl16}$"
+      },
+      {
+        "name": "vit_oni_nvl18",
+        "value": "${vit_oni_nvl16}$"
+      },
+      {
+        "name": "vit_oni_nvl19",
+        "value": "${vit_oni_nvl16}$"
+      },
+      {
+        "name": "vit_oni_nvl20",
+        "value": "${vit_oni_nvl16}$"
       },
       {
         "name": "origem_oni_pdk_val",

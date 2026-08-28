@@ -96,6 +96,10 @@ test("template Slayer tem pelo menos 35 botões com macros estáveis", () => {
   walk(template.system);
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões; encontrados ${buttons.length}.`);
   for (const button of buttons) {
+    if (button.key === "na_slayer_reset_ficha") {
+      assert.match(button.rollMessage, /api\?\.resetSheet\(entity\)/);
+      continue;
+    }
     assert.match(button.rollMessage, /actorUuid:entity\.uuid/);
     assert.match(button.rollMessage, /fromUuid\('Compendium\.night-assassins-csb-automation\.|api\?\./);
   }

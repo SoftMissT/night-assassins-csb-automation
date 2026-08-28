@@ -75,8 +75,29 @@ for (const [level, { from, to }] of Object.entries(fixes)) {
   }
 }
 
-// Parse back to object and write
+// As fórmulas usam a key do próprio nível. Níveis sem ganho de atributo
+// recebem aliases derivados para o último snapshot oficial, nunca Number Fields zeráveis.
 const fixed = JSON.parse(content);
+const inheritedVitSnapshots = {
+  2: 1,
+  5: 4,
+  9: 8,
+  10: 8,
+  14: 13,
+  15: 13,
+  17: 16,
+  18: 16,
+  19: 16,
+  20: 16,
+};
+fixed.system.hidden ??= [];
+for (const [level, sourceLevel] of Object.entries(inheritedVitSnapshots)) {
+  const name = `vit_oni_nvl${level}`;
+  const value = `\${vit_oni_nvl${sourceLevel}}$`;
+  const existing = fixed.system.hidden.find((entry) => entry.name === name);
+  if (existing) existing.value = value;
+  else fixed.system.hidden.push({ name, value });
+}
 fs.writeFileSync(srcPath, JSON.stringify(fixed, null, 2) + '\n');
 
 console.log(`\nTotal fixes applied: ${fixCount}`);

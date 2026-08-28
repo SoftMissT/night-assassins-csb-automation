@@ -5441,7 +5441,7 @@
                         "type": "label",
                         "size": "full-size",
                         "icon": "",
-                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">RESETAR FICHA</span>",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">RESETAR FICHA</span>",
                         "prefix": "",
                         "suffix": "",
                         "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.resetSheet(entity); return '';}%",

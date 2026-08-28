@@ -6,8 +6,41 @@ import { migrateOniTemplate } from '../tools/migrate-oni-template.mjs';
 const source = JSON.parse(
     fs.readFileSync(new URL('../src/templates/actors/oni-template.json', import.meta.url), 'utf8')
 );
+const css = fs.readFileSync(
+    new URL('../styles/na-csb-automation.css', import.meta.url),
+    'utf8'
+);
 
 describe('oni-template', () => {
+    it('preserva as cores semânticas de atributos, PDV e PDK contra o fallback branco', () => {
+        const serialized = JSON.stringify(source.system?.body);
+        for (const role of ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab', 'pdv', 'pdk']) {
+            assert.match(serialized, new RegExp(`na-sheet-role-${role}`));
+            assert.match(
+                css,
+                new RegExp(`\\.na-oni-sheet \\.window-content \\.na-sheet-role-${role}\\s*\\{`)
+            );
+        }
+        const whiteFallback = css.indexOf('.na-sheet .window-content .na-sheet-label');
+        const semanticOverride = css.indexOf('.na-oni-sheet .window-content .na-sheet-role-vit');
+        assert.ok(semanticOverride > whiteFallback, 'override semântico deve vir depois do fallback branco');
+    });
+
+    it('expõe o botão RESETAR FICHA delegando somente para a API do módulo', () => {
+        const nodes = [];
+        const walk = (value) => {
+            if (Array.isArray(value)) return value.forEach(walk);
+            if (!value || typeof value !== 'object') return;
+            if (value.key === 'na_oni_reset_ficha') nodes.push(value);
+            Object.values(value).forEach(walk);
+        };
+        walk(source.system?.body);
+
+        assert.equal(nodes.length, 1);
+        assert.match(nodes[0].rollMessage, /api\?\.resetSheet\(entity\)/);
+        assert.doesNotMatch(nodes[0].rollMessage, /reloadTemplate/);
+    });
+
     it('mantém as keys de dano e converte o recurso demoníaco para PDK', () => {
         const migrated = migrateOniTemplate(source);
         const serialized = JSON.stringify(migrated);

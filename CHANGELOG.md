@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.11.38 - 2026-08-28
+
+- **Templates oficiais:** Oni e Slayer restaurados a partir dos exports integrais do operador; na Slayer foi removido somente o botão provisório de atributos.
+- **Slayer distribuída:** template do módulo, import CSB e Actor do Compendium sincronizados e protegidos por equivalência estrutural.
+- **Vida e Morte:** toggle mundial dedicado, filtro por mudanças relevantes e bloqueio de reconciliação enquanto o PDV Slayer estiver incompleto ou inválido.
+- **Atributos:** cancelamento silencioso corrigido; entrada do Discord ganhou contador; distribuição mostra o pool e marca resultados utilizados.
+- **Ações Oni:** persistência e gerenciamento separados das chaves Slayer.
+- **Diagnóstico:** Journal privado do GM recebe somente erros atribuíveis ao módulo, inclusive relay filtrado dos jogadores.
+- **Limpeza:** removidos reset legado, migrador/reorganizador Slayer antigos e utilitários PDV que contradiziam as fórmulas oficiais.
+- **Validação local:** 918/918 testes; gate visual e runtime Foundry v14 ainda necessário.
+
 ## 0.11.36 - 2026-08-28
 
 - **CI v0.11.35:** corrigido o download do manifesto, o acesso opcional ao Dice So Nice e o contrato do macro de reset Slayer.
@@ -810,3 +821,20 @@
 - Oni: removidos Hidden Attributes inválidos `"$"`, aliases inconsistentes e componentes Slayer; recursos, ações e fórmulas usam somente keys Oni canônicas.
 - Slayer: restauradas as keys persistentes da Marca, `metal_bloqueio_bonus` e flags de Interlúdio.
 - Testes: 872/872; Compendium de templates reconstruído localmente.
+## [Unreleased] Recuperação do contrato Oni e diagnóstico GM
+
+- Template Oni restaurado a partir do export oficial do operador; somente PDV N2/N5 divergem do export para obedecer literalmente às fórmulas fornecidas.
+- Cadeias `pdv_oni_nvl1..20` e `pdk_oni_nvl1..20` travadas por regressão literal.
+- `RESETAR FICHA` removido dos templates, API, serviços e testes.
+- `GERENCIAR AÇÕES` passou a aceitar Oni e persistir `acoes_oni_dados`/`acoes_oni_resumo` sem misturar chaves Slayer.
+- Diagnóstico automático filtrado adicionado com Journal exclusivo de GM e relay de erros dos jogadores.
+- Validação local: 905/905 testes; GitNexus CRITICAL por 21 fluxos compartilhados em `action-service.mjs`; runtime Foundry v14 pendente.
+- Botão superior `Atributos` removido também da Slayer; grades de atributos preservadas nas duas fichas.
+- Fluxo compartilhado Slayer/Oni corrigido: Cancelar encerra silenciosamente, entrada Discord mostra contador e distribuição exibe os dados rolados com selects 1–4 e estado visual de uso.
+- Validação local atualizada: 912/912 testes; runtime Foundry v14 pendente.
+- Motor Vida e Morte ganhou toggle mundial próprio e deixou de reagir a updates genéricos do Actor; somente alterações nas seis props de vida/morte com PDV Slayer estável entram em `reconcileActor`.
+- Escrita final de `lifePatch` agora exige snapshot alterado e estado de combate relevante, reduzindo recomputações CSB inúteis.
+- Validação local atualizada: 917/917 testes; criação/reload e dano real ainda exigem gate no Foundry v14.
+- Slayer adotada integralmente de `MACRO-NA-FOUNDRY/TEMPLATE_SLAYER_ATUALIZADO.json`; removido somente o label provisório que chamava `NAAttrLevel00001`.
+- Template do módulo, import CSB e Actor intermediário do Compendium conferidos como estruturalmente idênticos à fonte oficial após essa única remoção.
+- Validação local atualizada: 918/918 testes; runtime e visual Foundry v14 pendentes.

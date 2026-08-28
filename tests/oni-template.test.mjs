@@ -6,24 +6,83 @@ import { migrateOniTemplate } from '../tools/migrate-oni-template.mjs';
 const source = JSON.parse(
     fs.readFileSync(new URL('../src/templates/actors/oni-template.json', import.meta.url), 'utf8')
 );
-const css = fs.readFileSync(
-    new URL('../styles/na-csb-automation.css', import.meta.url),
-    'utf8'
-);
+const css = fs.readFileSync(new URL('../styles/na-csb-automation.css', import.meta.url), 'utf8');
 
 describe('oni-template', () => {
-    it('preserva as cores semânticas de atributos, PDV e PDK contra o fallback branco', () => {
+    it('preserva as cores do export oficial contra overrides globais', () => {
         const serialized = JSON.stringify(source.system?.body);
-        for (const role of ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab', 'pdv', 'pdk']) {
+        for (const role of ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab']) {
             assert.match(serialized, new RegExp(`na-sheet-role-${role}`));
             assert.match(
                 css,
                 new RegExp(`\\.na-oni-sheet \\.window-content \\.na-sheet-role-${role}\\s*\\{`)
             );
         }
+        for (const color of ['#ff2638', '#b36cff', '#ffffff', '#ff8c1a']) {
+            assert.match(serialized.toLowerCase(), new RegExp(color));
+        }
         assert.doesNotMatch(css, /\.na-sheet \.window-content \.na-sheet-label/);
         assert.doesNotMatch(css, /\.na-sheet \.window-content label\s*\{\s*color:\s*#fff/i);
         assert.doesNotMatch(css, /\.na-oni-sheet \.na-sheet-text\s*\{\s*color:/i);
+    });
+
+    it('preserva literalmente as 40 fórmulas encadeadas de PDV e PDK fornecidas pelo operador', () => {
+        const byKey = new Map();
+        const walk = (value) => {
+            if (Array.isArray(value)) return value.forEach(walk);
+            if (!value || typeof value !== 'object') return;
+            if (value.key) byKey.set(value.key, value);
+            Object.values(value).forEach(walk);
+        };
+        walk(source.system);
+        const pdv = [
+            '${origem_oni_pdv_val + vit_oni_nvl1}$',
+            '${pdv_oni_nvl1+(vit_oni_nvl1+origem_oni_pdv_val)+pdv_oni_ganho_nvl2}$',
+            '${pdv_oni_nvl2+(vit_oni_nvl3+origem_oni_pdv_val)+pdv_oni_ganho_nvl3}$',
+            '${pdv_oni_nvl3+(vit_oni_nvl4+pdv_oni_ganho_nvl4+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl4+(vit_oni_nvl4+pdv_oni_ganho_nvl5+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl5+(vit_oni_nvl6+pdv_oni_ganho_nvl6+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl6+(vit_oni_nvl6+pdv_oni_ganho_nvl6+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl7+(vit_oni_nvl8+pdv_oni_ganho_nvl8+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl8+(vit_oni_nvl8+pdv_oni_ganho_nvl9+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl9+(vit_oni_nvl8+pdv_oni_ganho_nvl10+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl10+(vit_oni_nvl11+pdv_oni_ganho_nvl11+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl11+(vit_oni_nvl12+pdv_oni_ganho_nvl12+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl12+((vit_oni_nvl13*2)+30+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl13+((vit_oni_nvl14*2)+30+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl14+((vit_oni_nvl15*2)+30+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl15+((vit_oni_nvl16*2)+40+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl16+((vit_oni_nvl17*2)+40+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl17+((vit_oni_nvl18*2)+40+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl18+((vit_oni_nvl19*2)+40+origem_oni_pdv_val)}$',
+            '${pdv_oni_nvl19+((vit_oni_nvl20*6)+50+origem_oni_pdv_val)}$',
+        ];
+        const pdk = [
+            '${origem_oni_pdk_val+fdv_oni_nvl1}$',
+            '${pdk_oni_nvl1+(origem_oni_pdk_val+fdv_oni_nvl1+4)}$',
+            '${pdk_oni_nvl2+(origem_oni_pdk_val+fdv_oni_nvl3+4)}$',
+            '${pdk_oni_nvl3+(origem_oni_pdk_val+fdv_oni_nvl4+6)}$',
+            '${pdk_oni_nvl4+(origem_oni_pdk_val+fdv_oni_nvl4+6)}$',
+            '${pdk_oni_nvl5+(origem_oni_pdk_val+fdv_oni_nvl6+6)}$',
+            '${pdk_oni_nvl6+(origem_oni_pdk_val+fdv_oni_nvl6+8)}$',
+            '${pdk_oni_nvl7+(origem_oni_pdk_val+fdv_oni_nvl8+8)}$',
+            '${pdk_oni_nvl8+(origem_oni_pdk_val+fdv_oni_nvl8+10)}$',
+            '${pdk_oni_nvl9+(origem_oni_pdk_val+fdv_oni_nvl8+10)}$',
+            '${pdk_oni_nvl10+(origem_oni_pdk_val+fdv_oni_nvl11+10)}$',
+            '${pdk_oni_nvl11+(origem_oni_pdk_val+fdv_oni_nvl12+12)}$',
+            '${pdk_oni_nvl12+(origem_oni_pdk_val+fdv_oni_nvl13+12)}$',
+            '${pdk_oni_nvl13+(origem_oni_pdk_val+fdv_oni_nvl13+14)}$',
+            '${pdk_oni_nvl14+(origem_oni_pdk_val+fdv_oni_nvl13+14)}$',
+            '${pdk_oni_nvl15+(origem_oni_pdk_val+fdv_oni_nvl16+16)}$',
+            '${pdk_oni_nvl16+(origem_oni_pdk_val+fdv_oni_nvl16+16)}$',
+            '${pdk_oni_nvl17+(origem_oni_pdk_val+fdv_oni_nvl16+18)}$',
+            '${pdk_oni_nvl18+(origem_oni_pdk_val+fdv_oni_nvl16+20)}$',
+            '${pdk_oni_nvl19+(origem_oni_pdk_val+fdv_oni_nvl16+50)}$',
+        ];
+        for (let level = 1; level <= 20; level += 1) {
+            assert.equal(byKey.get(`pdv_oni_nvl${level}`)?.value, pdv[level - 1]);
+            assert.equal(byKey.get(`pdk_oni_nvl${level}`)?.value, pdk[level - 1]);
+        }
     });
 
     it('não expõe painéis internos de progressão nem componentes Slayer', () => {
@@ -33,7 +92,8 @@ describe('oni-template', () => {
             'origem_oni_recursos_panel',
             'armas_proficientes',
             'acoes_slayer_panel',
-        ]) assert.doesNotMatch(serialized, new RegExp(forbidden));
+        ])
+            assert.doesNotMatch(serialized, new RegExp(forbidden));
         assert.match(serialized, /acoes_oni_panel/);
     });
 
@@ -42,7 +102,8 @@ describe('oni-template', () => {
         const walk = (value) => {
             if (Array.isArray(value)) return value.forEach(walk);
             if (!value || typeof value !== 'object') return;
-            if (typeof value.rollMessage === 'string' && value.rollMessage) messages.push(value.rollMessage);
+            if (typeof value.rollMessage === 'string' && value.rollMessage)
+                messages.push(value.rollMessage);
             Object.values(value).forEach(walk);
         };
         walk(source.system);
@@ -53,19 +114,14 @@ describe('oni-template', () => {
         }
     });
 
-    it('expõe o botão RESETAR FICHA delegando somente para a API do módulo', () => {
-        const nodes = [];
-        const walk = (value) => {
-            if (Array.isArray(value)) return value.forEach(walk);
-            if (!value || typeof value !== 'object') return;
-            if (value.key === 'na_oni_reset_ficha') nodes.push(value);
-            Object.values(value).forEach(walk);
-        };
-        walk(source.system?.body);
+    it('não expõe RESETAR FICHA nem chama resetSheet', () => {
+        const serialized = JSON.stringify(source.system);
+        assert.doesNotMatch(serialized, /na_oni_reset_ficha|RESETAR FICHA|resetSheet/);
+    });
 
-        assert.equal(nodes.length, 1);
-        assert.match(nodes[0].rollMessage, /api\?\.resetSheet\(entity\)/);
-        assert.doesNotMatch(nodes[0].rollMessage, /reloadTemplate/);
+    it('não expõe o botão de snapshot Atributos na ficha Oni', () => {
+        const serialized = JSON.stringify(source.system?.body);
+        assert.doesNotMatch(serialized, /NAAttrLevel00001|>Atributos<\/span>/);
     });
 
     it('mantém as keys de dano e converte o recurso demoníaco para PDK', () => {
@@ -252,7 +308,10 @@ describe('oni-template', () => {
                 return results;
             }
             if (!value || typeof value !== 'object') return results;
-            if (value.key === 'pdv_oni_atual_valor_display' || value.key === 'pdk_oni_atual_valor_display') {
+            if (
+                value.key === 'pdv_oni_atual_valor_display' ||
+                value.key === 'pdk_oni_atual_valor_display'
+            ) {
                 results.push({ key: value.key, value: value.value });
             }
             for (const v of Object.values(value)) results.push(...walk(v));
@@ -263,7 +322,11 @@ describe('oni-template', () => {
         for (const { key, value } of displays) {
             assert.match(value, /\$\{(pdv|pdk)_oni_atual_num\}/, `${key} deve usar *_atual_num`);
             assert.doesNotMatch(value, /total_conta/, `${key} não pode usar *_total_conta`);
-            assert.doesNotMatch(value, /custom-orbitron-wrapper/, `${key} não pode ter wrapper HTML`);
+            assert.doesNotMatch(
+                value,
+                /custom-orbitron-wrapper/,
+                `${key} não pode ter wrapper HTML`
+            );
         }
     });
 
@@ -273,7 +336,11 @@ describe('oni-template', () => {
             if (entry.name.includes('_num') || entry.name.includes('_conta')) {
                 assert.doesNotMatch(entry.value, /<div/, `${entry.name} não pode conter <div>`);
                 assert.doesNotMatch(entry.value, /<span/, `${entry.name} não pode conter <span>`);
-                assert.doesNotMatch(entry.value, /custom-orbitron-wrapper/, `${entry.name} não pode ter wrapper`);
+                assert.doesNotMatch(
+                    entry.value,
+                    /custom-orbitron-wrapper/,
+                    `${entry.name} não pode ter wrapper`
+                );
             }
         }
     });

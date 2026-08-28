@@ -112,7 +112,7 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
  * Respirações com motor de estado/combate real (service dedicado, testes,
  * auditoria forma-por-forma contra a fonte oficial). O catálogo mecânico
  * (`catalogs/breathing.json`) contém dados de todas as Respirações do jogo,
- * mas só estas são publicadas no pack Foundry distribuído — as demais não
+ * mas só estas são publicadas no pack Foundry distribuído as demais não
  * têm mecânica implementada (não passam de descrição), então não vão para
  * o build até receberem o mesmo tratamento.
  */
@@ -178,7 +178,7 @@ for (const document of catalog.documents) {
             ? 1
             : 0;
     if (flame) {
-        document.name = `Honō no Kokyū — ${flame.name}`;
+        document.name = `Honō no Kokyū ${flame.name}`;
         document.system.props.nome_forma = flame.name;
         document.system.props.nome_jp = flame.ptName ?? '';
         document.system.props.tipo_manobra = flame.passive
@@ -201,7 +201,7 @@ for (const document of catalog.documents) {
     const curated = stone ?? mist ?? metal ?? snow;
     if (curated) {
         if (stone) {
-            document.name = `Iwa no Kokyū — ${stone.name}`;
+            document.name = `Iwa no Kokyū ${stone.name}`;
             document.system.props.nome_forma = stone.name;
             document.system.props.nome_jp = stone.ptName ?? '';
         }

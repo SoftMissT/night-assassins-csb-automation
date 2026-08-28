@@ -42,7 +42,7 @@ function isBreathingLike(props) {
 /**
  * Remove o spam de descrição no chat: labels cujo valor renderiza a
  * descrição completa da Forma não devem ter rollMessageToChat ligado.
- * Cirúrgico e idempotente — só desliga o flag, não altera mais nada.
+ * Cirúrgico e idempotente só desliga o flag, não altera mais nada.
  */
 function stripDescriptionChatFlag(body) {
   if (!body || typeof body !== "object") return false;
@@ -68,7 +68,7 @@ export function breathingItemPatch(item, canonical) {
   // abrir a Forma; Observer é o mínimo para ver e executar os botões.
   const ownershipLevel = Number(item.ownership?.default ?? 0);
   const ownershipFix = ownershipLevel < 2 ? { ...(item.ownership ?? {}), default: 2 } : null;
-  // Repair de Respiração só toca em itens relacionados — itens comuns (Erva,
+  // Repair de Respiração só toca em itens relacionados itens comuns (Erva,
   // loot etc.) não recebem ownership nem body por este caminho.
   const related = Boolean(canonical) || isBreathingLike(props) || chatSpam;
   if (!related) return null;

@@ -18,7 +18,7 @@ const defaultPath = path.join(root, 'src', 'templates', 'actors', 'oni-template.
 //
 // Regra de segurança: nenhuma key computacional usada por runtime
 // (damage-relay.mjs, hit-service.mjs, migrate-oni-template.mjs,
-// progression-service.mjs) é removida — apenas Fôlego, Marca Slayer e a
+// progression-service.mjs) é removida apenas Fôlego, Marca Slayer e a
 // aba antiga são eliminados; campos administrativos (dano tomado, curado,
 // extra, gasto) ficam visíveis em COMBATE para uso real de mesa.
 // ─────────────────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ const ADMIN_LEDGER_KEYS = new Set([
 // Lixo de migração: switchCase morto com origens/keys do SLAYER
 // (origem_civilizado, origem_corsario, origem_criado_ex_hashira...) que
 // nunca casam com o dropdown Oni real (namespace origem_oni_*) e apontam
-// para identificadores que não existem em lugar nenhum do template — a
+// para identificadores que não existem em lugar nenhum do template a
 // contaminação visual confirmada pelo Operador ("CÁLCULO DE VIDA" com
 // Origens do Slayer). Não é exibido em nenhuma label; remoção segura.
 const DEAD_LEGACY_HIDDEN = new Set(['origem_hab_1_display', 'origem_hab_2_display']);
@@ -473,13 +473,13 @@ function numberField(key, labelText, tooltip, { defaultValue = '0' } = {}) {
     };
 }
 
-/** Rank da Especialização Oni por nível — decisão fixada pelo Operador. */
+/** Rank da Especialização Oni por nível decisão fixada pelo Operador. */
 const RANK_ESPECIALIZACAO_FORMULA =
     "${nvl_num>=19?'SS':nvl_num>=16?'S':nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':''}$";
 
 /**
  * Garante que toda propriedade referenciada por fórmula CSB do template
- * exista de fato (componente ou hidden) — guarda incondicional contra a
+ * exista de fato (componente ou hidden) guarda incondicional contra a
  * classe de bug que quebrou o PDV (`pdv_oni_ganho_nvl2..12` referenciados
  * sem existir). Idempotente: só adiciona o que falta.
  */
@@ -519,7 +519,7 @@ function ensureLedgerIntegrity(t) {
                 )
             );
         }
-        // Nome Oni-nativo (nunca "PDR" — recurso exclusivo do Slayer). Guarda
+        // Nome Oni-nativo (nunca "PDR" recurso exclusivo do Slayer). Guarda
         // o valor de defesa do Slayer no momento da Queda, para a origem
         // Exterminador Corrompido; renomeia qualquer referência legada em
         // `system.hidden` que ainda use o nome antigo contaminado.
@@ -528,7 +528,7 @@ function ensureLedgerIntegrity(t) {
                 numberField(
                     'oni_recurso_slayer_antes_queda',
                     'Recurso do Slayer antes da Queda',
-                    'Somente Exterminador Corrompido — defesa que o Slayer tinha antes de cair.'
+                    'Somente Exterminador Corrompido defesa que o Slayer tinha antes de cair.'
                 )
             );
         }
@@ -563,7 +563,7 @@ export function cleanOniTemplate(source) {
     const tabbedPanel = findOne(body, (n) => n.type === 'tabbedPanel');
     if (!tabbedPanel) throw new Error('tabbedPanel não encontrado no template Oni.');
 
-    // `system.hidden` sempre é higienizado, mesmo no ramo idempotente — Fôlego,
+    // `system.hidden` sempre é higienizado, mesmo no ramo idempotente Fôlego,
     // Marca e dead code de Origens Slayer (origem_hab_1/2_display) podem
     // reaparecer via edição manual do JSON sem mexer na estrutura de abas.
     const removedHiddenNames = new Set([...FOLEGO_KEYS, ...MARCA_TEMP_KEYS, ...DEAD_LEGACY_HIDDEN]);
@@ -575,7 +575,7 @@ export function cleanOniTemplate(source) {
     // fórmula CSB referenciando uma propriedade que não existe em lugar nenhum
     // do template quebra a cadeia inteira (fallback(undefinedSymbol,0) ainda
     // falha porque o símbolo nunca foi registrado). Roda em TODO caminho —
-    // idempotente ou não — porque edições concorrentes no restante da ficha
+    // idempotente ou não porque edições concorrentes no restante da ficha
     // (Testes, Especialização) podem reintroduzir a mesma classe de bug sem
     // tocar na estrutura de abas.
     ensureLedgerIntegrity(t);
@@ -605,14 +605,12 @@ export function cleanOniTemplate(source) {
         configs,
     })) {
         if (!node)
-            throw new Error(
-                `Aba original "${name}" não encontrada — layout inesperado, abortando.`
-            );
+            throw new Error(`Aba original "${name}" não encontrada layout inesperado, abortando.`);
     }
 
     // ── 1. Extrair admin ledger fields e destruir Fôlego/Marca antes de mover blocos ──
     const adminFields = extractByKeys(combat, ADMIN_LEDGER_KEYS);
-    // Labels legados (pdv_oni_total_valor etc.) — mantidos ocultos por compat
+    // Labels legados (pdv_oni_total_valor etc.) mantidos ocultos por compat
     // com tools/migrate-oni-template.mjs (que exige essas keys existam em
     // algum lugar da árvore); a UI principal usa o novo `recursos_oni_barra_panel`.
     const legacyDisplayLabels = extractByKeys(combat, LEGACY_DISPLAY_KEYS).map((node) => ({
@@ -694,7 +692,7 @@ export function cleanOniTemplate(source) {
         ),
     ];
     // "especializacao_oni_habilidades_display" (textArea vazio, sem uso) e seu
-    // painel/label de título são órfãos aprovados para remoção — não são
+    // painel/label de título são órfãos aprovados para remoção não são
     // recriados na estrutura de 2 abas.
 
     // ── 7. Seção ORIGEM & PROGRESSÃO (dentro de CONFIG) ──

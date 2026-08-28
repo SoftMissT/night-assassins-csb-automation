@@ -1,7 +1,9 @@
-const moduleApi = game.modules.get("night-assassins-csb-automation")?.api;
+const moduleApi = game.modules.get('night-assassins-csb-automation')?.api;
 if (!moduleApi?.rollDamage) {
-  return ui.notifications.error("Night Assassins CSB Automation não está ativo ou precisa ser atualizado.");
+    return ui.notifications.error(
+        'Night Assassins CSB Automation não está ativo ou precisa ser atualizado.'
+    );
 }
-const macroArgs = typeof scope !== "undefined" ? scope ?? {} : {};
+const macroArgs = typeof scope !== 'undefined' ? (scope ?? {}) : {};
 await moduleApi.rollDamage(macroArgs);
-return "";
+return '';

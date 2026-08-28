@@ -145,7 +145,12 @@ describe('Validador de referências CSB — Oni (guarda contra props órfãs)', 
         for (const source_ of allFormulaSources) {
             for (const body of extractFormulaBodies(source_)) {
                 for (const identifier of extractIdentifiers(body)) {
-                    if (resolvable.has(identifier) || KNOWN_CSB_FUNCTIONS.has(identifier) || CSB_SYSTEM_PROPS.has(identifier)) continue;
+                    if (
+                        resolvable.has(identifier) ||
+                        KNOWN_CSB_FUNCTIONS.has(identifier) ||
+                        CSB_SYSTEM_PROPS.has(identifier)
+                    )
+                        continue;
                     if (!orphans.has(identifier)) orphans.set(identifier, new Set());
                     orphans.get(identifier).add(body.slice(0, 80));
                 }

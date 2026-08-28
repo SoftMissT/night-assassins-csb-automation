@@ -153,12 +153,12 @@ ls build/verify/templates-de-ficha/
 | `tools/build-breathing-sources.mjs`      | Gera Items de Respiração (300 técnicas)             |
 | `tools/build-weapon-sources.mjs`         | Gera Items de armas (43 armas)                      |
 | `tools/build-asset-sources.mjs`          | Gera Items de arte (catálogo de ícones)             |
-| `tools/migrate-slayer-template.mjs`      | Migra template Slayer legado                        |
 | `tools/migrate-oni-template.mjs`         | Migra template Oni legado                           |
 | `tools/clean-oni-template.mjs`           | Remove heranças Slayer do template Oni              |
 | `tools/build-oni-minion-template.mjs`    | Gera template Oni Minion                            |
 | `tools/snapshot-compendium-catalogs.mjs` | Snapshot de catálogos para verificação              |
 | `tools/compendium-catalog-utils.mjs`     | Utilidades compartilhadas de catálogo               |
+| `tools/adopt-official-slayer-template.mjs` | Adota integralmente o export Slayer oficial e remove somente o botão provisório |
 
 ## O que NÃO publicar
 

@@ -6,9 +6,11 @@ import assert from 'node:assert/strict';
 import { makeActor } from './fixtures/actor.mjs';
 import {
     actionMaximums,
+    consumeOniActions,
     consumeSlayerActions,
     parseActionState,
     recoverSlayerFolego,
+    resetOniActions,
     resetSlayerActions,
     slayerFolegoMaximum,
     slayerFolegoPatch,
@@ -19,6 +21,8 @@ import { TIPOS_ACAO } from '../scripts/constants.mjs';
 describe('action-service', () => {
     const makeSlayer = (props = {}) =>
         makeActor({ props: { nome_slayer: 'Teste', pdv_slayer_total_valor: 20, ...props } });
+    const makeOni = (props = {}) =>
+        makeActor({ props: { nome_oni: 'Teste', acoes_oni_dados: '', ...props } });
 
     it('cataloga todos os tipos de ação oficiais', () => {
         assert.deepEqual(
@@ -62,6 +66,26 @@ describe('action-service', () => {
         assert.equal(result.ok, true);
         assert.deepEqual(result.state.turn, { movimento: 1, ataque: 1, especial: 0 });
         assert.equal(writes, 1);
+    });
+
+    it('Oni consome e restaura ações usando exclusivamente as chaves Oni', async () => {
+        const actor = makeOni();
+        actor.update = async (patch) => {
+            if (patch['system.props.acoes_oni_dados'] !== undefined) {
+                actor.system.props.acoes_oni_dados = patch['system.props.acoes_oni_dados'];
+                actor.system.props.acoes_oni_resumo = patch['system.props.acoes_oni_resumo'];
+            }
+        };
+        const consumed = await consumeOniActions(actor, 'completa');
+        assert.equal(consumed.ok, true);
+        assert.deepEqual(consumed.state.turn, { movimento: 1, ataque: 1, especial: 0 });
+        assert.equal(actor.system.props.acoes_slayer_dados, undefined);
+        await resetOniActions(actor, 'turn');
+        assert.deepEqual(parseActionState(actor.system.props.acoes_oni_dados).turn, {
+            movimento: 0,
+            ataque: 0,
+            especial: 0,
+        });
     });
 
     it('Ação Única mantém teto 1 e bônus amplia as demais', () => {

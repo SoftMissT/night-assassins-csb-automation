@@ -2,7 +2,7 @@
  * @fileoverview Parsing e utilitários defensivos para valores CSB.
  */
 
-import { ATTRIBUTES, snapshotKey, configKey } from "./constants.mjs";
+import { ATTRIBUTES, snapshotKey, configKey } from './constants.mjs';
 
 /**
  * Extrai um número de um valor cru, tolerando HTML, &nbsp; e vírgula decimal.
@@ -10,15 +10,15 @@ import { ATTRIBUTES, snapshotKey, configKey } from "./constants.mjs";
  * @returns {number}
  */
 export function parseNumber(raw) {
-  if (typeof raw === "number" && Number.isFinite(raw)) return raw;
-  const text = String(raw ?? "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;|&#160;/gi, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(",", ".");
-  const match = text.match(/-?\d+(?:\.\d+)?/);
-  return match ? Number(match[0]) : 0;
+    if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+    const text = String(raw ?? '')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&nbsp;|&#160;/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(',', '.');
+    const match = text.match(/-?\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : 0;
 }
 
 /**
@@ -27,7 +27,7 @@ export function parseNumber(raw) {
  * @returns {number}
  */
 export function parseAttributeValue(raw) {
-  return parseNumber(raw);
+    return parseNumber(raw);
 }
 
 /**
@@ -36,12 +36,14 @@ export function parseAttributeValue(raw) {
  * @returns {number}
  */
 export function parseLevel(raw) {
-  if (typeof raw === "number" && Number.isFinite(raw)) return Math.trunc(raw);
-  const s = String(raw ?? "").trim().toLowerCase();
-  const m = s.match(/^nvl[_\s]?(\d+)$/);
-  if (m) return Number(m[1]);
-  const n = Number(s);
-  return Number.isFinite(n) ? Math.trunc(n) : 0;
+    if (typeof raw === 'number' && Number.isFinite(raw)) return Math.trunc(raw);
+    const s = String(raw ?? '')
+        .trim()
+        .toLowerCase();
+    const m = s.match(/^nvl[_\s]?(\d+)$/);
+    if (m) return Number(m[1]);
+    const n = Number(s);
+    return Number.isFinite(n) ? Math.trunc(n) : 0;
 }
 
 /**
@@ -50,16 +52,16 @@ export function parseLevel(raw) {
  * @returns {boolean}
  */
 export function isDestinyMark(value) {
-  const normalized = String(value ?? "")
-    .replace(/<[^>]*>/g, " ")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-  return (
-    normalized.includes("hab_escolhida_marca_destino") ||
-    normalized.includes("marca do destino")
-  );
+    const normalized = String(value ?? '')
+        .replace(/<[^>]*>/g, ' ')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    return (
+        normalized.includes('hab_escolhida_marca_destino') ||
+        normalized.includes('marca do destino')
+    );
 }
 
 /**
@@ -68,35 +70,35 @@ export function isDestinyMark(value) {
  * @returns {string|null}
  */
 export function normalizeAbilityKey(raw) {
-  const s = String(raw ?? "").trim();
-  if (!s) return null;
-  if (s.startsWith("hab_escolhida_")) return s;
-  const normalized = s
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-  // Fallback por label (migração)
-  const map = {
-    "escolha": "hab_escolhida_base",
-    "sem habilidade": "hab_escolhida_sem",
-    "tato sensitivo": "hab_escolhida_tato",
-    "audicao sobrenatural": "hab_escolhida_audicao",
-    "visao agucada": "hab_escolhida_visao",
-    "olfato sobrenatural": "hab_escolhida_olfato",
-    "metamorfose carnivora": "hab_escolhida_metamorfose",
-    "tsuyoi — o inabalavel": "hab_escolhida_tsuyoi",
-    "tsuyoi o inabalavel": "hab_escolhida_tsuyoi",
-    "tsuyoi - o inabalavel": "hab_escolhida_tsuyoi",
-    "marechi — o sangue raro": "hab_escolhida_marechi",
-    "marechi o sangue raro": "hab_escolhida_marechi",
-    "marechi - o sangue raro": "hab_escolhida_marechi",
-    "oketsu — o sangue real": "hab_escolhida_oketsu",
-    "oketsu o sangue real": "hab_escolhida_oketsu",
-    "oketsu - o sangue real": "hab_escolhida_oketsu",
-    "marca do destino": "hab_escolhida_marca_destino",
-  };
-  return map[normalized] || null;
+    const s = String(raw ?? '').trim();
+    if (!s) return null;
+    if (s.startsWith('hab_escolhida_')) return s;
+    const normalized = s
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    // Fallback por label (migração)
+    const map = {
+        escolha: 'hab_escolhida_base',
+        'sem habilidade': 'hab_escolhida_sem',
+        'tato sensitivo': 'hab_escolhida_tato',
+        'audicao sobrenatural': 'hab_escolhida_audicao',
+        'visao agucada': 'hab_escolhida_visao',
+        'olfato sobrenatural': 'hab_escolhida_olfato',
+        'metamorfose carnivora': 'hab_escolhida_metamorfose',
+        'tsuyoi — o inabalavel': 'hab_escolhida_tsuyoi',
+        'tsuyoi o inabalavel': 'hab_escolhida_tsuyoi',
+        'tsuyoi - o inabalavel': 'hab_escolhida_tsuyoi',
+        'marechi — o sangue raro': 'hab_escolhida_marechi',
+        'marechi o sangue raro': 'hab_escolhida_marechi',
+        'marechi - o sangue raro': 'hab_escolhida_marechi',
+        'oketsu — o sangue real': 'hab_escolhida_oketsu',
+        'oketsu o sangue real': 'hab_escolhida_oketsu',
+        'oketsu - o sangue real': 'hab_escolhida_oketsu',
+        'marca do destino': 'hab_escolhida_marca_destino',
+    };
+    return map[normalized] || null;
 }
 
 /**
@@ -107,10 +109,10 @@ export function normalizeAbilityKey(raw) {
  * @returns {unknown|undefined}
  */
 export function changedProp(changes, key) {
-  if (Object.prototype.hasOwnProperty.call(changes?.system?.props ?? {}, key)) {
-    return changes.system.props[key];
-  }
-  return changes?.[`system.props.${key}`];
+    if (Object.prototype.hasOwnProperty.call(changes?.system?.props ?? {}, key)) {
+        return changes.system.props[key];
+    }
+    return changes?.[`system.props.${key}`];
 }
 
 /**
@@ -120,9 +122,9 @@ export function changedProp(changes, key) {
  * @returns {boolean}
  */
 export function poolMatches(values, pool) {
-  const a = [...values].map(Number).sort((x, y) => x - y);
-  const b = [...pool].map(Number).sort((x, y) => x - y);
-  return a.length === b.length && a.every((v, i) => v === b[i]);
+    const a = [...values].map(Number).sort((x, y) => x - y);
+    const b = [...pool].map(Number).sort((x, y) => x - y);
+    return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
 /**
@@ -133,21 +135,18 @@ export function poolMatches(values, pool) {
  * @param {"slayer"|"oni"} [kind="slayer"]
  * @returns {Record<string, number>}
  */
-export function latestValues(props, level, kind = "slayer") {
-  return Object.fromEntries(
-    ATTRIBUTES.map((attribute) => {
-      for (let previous = Math.min(20, level - 1); previous >= 1; previous -= 1) {
-        const snapshot = props[snapshotKey(kind, attribute.key, previous)];
-        if (snapshot !== undefined && snapshot !== null && snapshot !== "") {
-          return [attribute.key, parseNumber(snapshot)];
-        }
-      }
-      return [
-        attribute.key,
-        parseNumber(props[configKey(kind, attribute.key)]),
-      ];
-    })
-  );
+export function latestValues(props, level, kind = 'slayer') {
+    return Object.fromEntries(
+        ATTRIBUTES.map((attribute) => {
+            for (let previous = Math.min(20, level - 1); previous >= 1; previous -= 1) {
+                const snapshot = props[snapshotKey(kind, attribute.key, previous)];
+                if (snapshot !== undefined && snapshot !== null && snapshot !== '') {
+                    return [attribute.key, parseNumber(snapshot)];
+                }
+            }
+            return [attribute.key, parseNumber(props[configKey(kind, attribute.key)])];
+        })
+    );
 }
 
 /**
@@ -156,11 +155,11 @@ export function latestValues(props, level, kind = "slayer") {
  * @param {"slayer"|"oni"} [kind="slayer"]
  * @returns {Record<string, number>}
  */
-export function currentConfigValues(props, kind = "slayer") {
-  return Object.fromEntries(
-    ATTRIBUTES.map((attribute) => [
-      attribute.key,
-      parseNumber(props[configKey(kind, attribute.key)]),
-    ])
-  );
+export function currentConfigValues(props, kind = 'slayer') {
+    return Object.fromEntries(
+        ATTRIBUTES.map((attribute) => [
+            attribute.key,
+            parseNumber(props[configKey(kind, attribute.key)]),
+        ])
+    );
 }

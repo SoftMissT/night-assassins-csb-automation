@@ -222,6 +222,7 @@ describe('module settings', () => {
             [
                 SETTINGS.enableSheetAutomation,
                 SETTINGS.enableDamageRelay,
+                SETTINGS.enableLifeDeathEngine,
                 SETTINGS.stoneCriticalFloor,
             ]
         );

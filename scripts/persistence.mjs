@@ -2,7 +2,7 @@
  * @fileoverview Persistência atômica em actor.system.props.
  */
 
-import { ATTRIBUTES, snapshotKey, configKey } from "./constants.mjs";
+import { ATTRIBUTES, snapshotKey, configKey } from './constants.mjs';
 
 /**
  * Constrói um patch de snapshot para um nível específico.
@@ -11,13 +11,13 @@ import { ATTRIBUTES, snapshotKey, configKey } from "./constants.mjs";
  * @param {"slayer"|"oni"} [kind="slayer"]
  * @returns {Record<string, number>}
  */
-export function buildSnapshotPatch(level, values, kind = "slayer") {
-  const entries = [];
-  for (const { key } of ATTRIBUTES) {
-    entries.push([`system.props.${snapshotKey(kind, key, level)}`, values[key]]);
-    entries.push([`system.props.${configKey(kind, key)}`, values[key]]);
-  }
-  return Object.fromEntries(entries);
+export function buildSnapshotPatch(level, values, kind = 'slayer') {
+    const entries = [];
+    for (const { key } of ATTRIBUTES) {
+        entries.push([`system.props.${snapshotKey(kind, key, level)}`, values[key]]);
+        entries.push([`system.props.${configKey(kind, key)}`, values[key]]);
+    }
+    return Object.fromEntries(entries);
 }
 
 /**
@@ -26,12 +26,12 @@ export function buildSnapshotPatch(level, values, kind = "slayer") {
  * @param {"slayer"|"oni"} [kind="slayer"]
  * @returns {Record<string, number>}
  */
-export function buildConfigPatch(values, kind = "slayer") {
-  const entries = [];
-  for (const { key } of ATTRIBUTES) {
-    entries.push([`system.props.${configKey(kind, key)}`, values[key]]);
-  }
-  return Object.fromEntries(entries);
+export function buildConfigPatch(values, kind = 'slayer') {
+    const entries = [];
+    for (const { key } of ATTRIBUTES) {
+        entries.push([`system.props.${configKey(kind, key)}`, values[key]]);
+    }
+    return Object.fromEntries(entries);
 }
 
 /**
@@ -41,8 +41,8 @@ export function buildConfigPatch(values, kind = "slayer") {
  * @returns {Promise<void>}
  */
 export async function atomicActorUpdate(actor, patch) {
-  if (!actor || typeof actor.update !== "function") {
-    throw new Error("Actor inválido para atualização atômica.");
-  }
-  await actor.update(patch, { naCsbAutomation: true });
+    if (!actor || typeof actor.update !== 'function') {
+        throw new Error('Actor inválido para atualização atômica.');
+    }
+    await actor.update(patch, { naCsbAutomation: true });
 }

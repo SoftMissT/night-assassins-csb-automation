@@ -24,7 +24,7 @@ describe('P0 estabilização', () => {
             );
             assert.match(
                 source,
-                /targetKind === "oni" \|\| targetKind === "oni_minion" \|\| targetKind === "npc"/
+                /targetKind === ['"]oni['"] \|\| targetKind === ['"]oni_minion['"] \|\| targetKind === ['"]npc['"]/
             );
         });
     });

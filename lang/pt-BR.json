@@ -1,24 +1,26 @@
 {
-  "NA.Settings.EnableSheetAutomation.Name": "Ativar automação da ficha",
-  "NA.Settings.EnableSheetAutomation.Hint": "Monitora nível e Habilidade Especial para aplicar snapshots e progressões automáticas na ficha do Custom System Builder.",
-  "NA.Settings.EnableDamageRelay.Name": "Ativar relay de dano do GM",
-  "NA.Settings.EnableDamageRelay.Hint": "Permite que jogadores solicitem ao GM conectado a atualização de pdv_oni_dano_tomado nos inimigos.",
-  "NA.Settings.StoneCriticalFloor.Name": "Limite mundial mínimo do crítico",
-  "NA.Settings.StoneCriticalFloor.Hint": "Menor resultado natural ao qual qualquer redução positiva dos jogadores pode levar o crítico de uma arma.",
-  "NA.Settings.CriticalFloor.Name": "Limite mundial mínimo do crítico",
-  "NA.Settings.CriticalFloor.Hint": "Define o menor resultado natural de crítico que reduções positivas dos jogadores podem alcançar nesta campanha. Também limita os acúmulos de Quebra da Respiração da Pedra.",
-  "night-assassins-csb-automation": {
-    "system-incompatible": "Sistema incompatível. Ative o Custom System Builder.",
-    "actor-not-found": "Nenhum Actor encontrado.",
-    "actor-no-owner": "Você não tem permissão para editar este Actor.",
-    "attributes-incomplete": "Atributos do nível 1 precisam ser concluídos primeiro.",
-    "invalid-values-count": "Informe exatamente sete valores numéricos.",
-    "duplicate-distribution": "Cada resultado precisa ser usado uma única vez.",
-    "mark-invalid-attribute": "Atributo da Marca do Destino inválido.",
-    "automation-already-applied": "Automação já aplicada para este Actor.",
-    "formula-error": "Erro na fórmula: {formula}",
-    "roll-damage-empty": "Adicione ao menos uma entrada de dano.",
-    "roll-damage-invalid": "Fórmula inválida: {formula}",
-    "update-failed": "Não foi possível atualizar {name}."
-  }
+    "NA.Settings.EnableSheetAutomation.Name": "Ativar automação da ficha",
+    "NA.Settings.EnableSheetAutomation.Hint": "Monitora nível e Habilidade Especial para aplicar snapshots e progressões automáticas na ficha do Custom System Builder.",
+    "NA.Settings.EnableDamageRelay.Name": "Ativar relay de dano do GM",
+    "NA.Settings.EnableDamageRelay.Hint": "Permite que jogadores solicitem ao GM conectado a atualização de pdv_oni_dano_tomado nos inimigos.",
+    "NA.Settings.EnableLifeDeathEngine.Name": "Ativar motor de Vida e Morte",
+    "NA.Settings.EnableLifeDeathEngine.Hint": "Monitora somente dano, Ferida, cura, PDV extra, Exaustão e estado de Vida e Morte em Slayers com PDV calculável.",
+    "NA.Settings.StoneCriticalFloor.Name": "Limite mundial mínimo do crítico",
+    "NA.Settings.StoneCriticalFloor.Hint": "Menor resultado natural ao qual qualquer redução positiva dos jogadores pode levar o crítico de uma arma.",
+    "NA.Settings.CriticalFloor.Name": "Limite mundial mínimo do crítico",
+    "NA.Settings.CriticalFloor.Hint": "Define o menor resultado natural de crítico que reduções positivas dos jogadores podem alcançar nesta campanha. Também limita os acúmulos de Quebra da Respiração da Pedra.",
+    "night-assassins-csb-automation": {
+        "system-incompatible": "Sistema incompatível. Ative o Custom System Builder.",
+        "actor-not-found": "Nenhum Actor encontrado.",
+        "actor-no-owner": "Você não tem permissão para editar este Actor.",
+        "attributes-incomplete": "Atributos do nível 1 precisam ser concluídos primeiro.",
+        "invalid-values-count": "Informe exatamente sete valores numéricos.",
+        "duplicate-distribution": "Cada resultado precisa ser usado uma única vez.",
+        "mark-invalid-attribute": "Atributo da Marca do Destino inválido.",
+        "automation-already-applied": "Automação já aplicada para este Actor.",
+        "formula-error": "Erro na fórmula: {formula}",
+        "roll-damage-empty": "Adicione ao menos uma entrada de dano.",
+        "roll-damage-invalid": "Fórmula inválida: {formula}",
+        "update-failed": "Não foi possível atualizar {name}."
+    }
 }

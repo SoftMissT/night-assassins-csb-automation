@@ -1,14 +1,14 @@
-import { TIPOS_ACAO } from "../constants.mjs";
+import { TIPOS_ACAO } from '../constants.mjs';
 
 /**
  * @fileoverview DialogV2 para rolagem de acerto.
  */
 
 function parseBonus(raw) {
-  const s = (raw || "").trim();
-  if (!s) return { extra: "", display: "" };
-  const clean = s.replace(/^\+/, "");
-  return { extra: clean ? `+ ${clean}` : "", display: s };
+    const s = (raw || '').trim();
+    if (!s) return { extra: '', display: '' };
+    const clean = s.replace(/^\+/, '');
+    return { extra: clean ? `+ ${clean}` : '', display: s };
 }
 
 /**
@@ -19,17 +19,36 @@ function parseBonus(raw) {
  * @param {string} options.color
  * @returns {Promise<{mode:string,rollMode:string,bonusRaw:string,cdVal:number,rollCount:number}|null>}
  */
-export async function openHitDialog({ attrName, attrVal, color, weapons = [], requiredWeapon = false }) {
-  const weaponOptions = weapons.map((weapon) => {
-    const attributes = Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes.join("/") : "";
-    const profileLabel = weapon.profileName ? ` ${weapon.profileName}` : "";
-    const value = `${weapon.id}|${Number.isInteger(weapon.profileIndex) ? weapon.profileIndex : 0}`;
-    return `<option value="${value}" data-critical="${weapon.effectiveCritical}" data-attributes="${attributes}">${weapon.name}${profileLabel} ${attributes || "atributo do Actor"} crítico ${weapon.effectiveCritical}+</option>`;
-  }).join("");
-  const weaponAttributeOptions = [...new Set(weapons.flatMap((weapon) => Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes : []))]
-    .map((attribute) => `<option value="${attribute}" ${attribute === attrName ? "selected" : ""}>${attribute}</option>`)
-    .join("");
-  const content = `
+export async function openHitDialog({
+    attrName,
+    attrVal,
+    color,
+    weapons = [],
+    requiredWeapon = false,
+}) {
+    const weaponOptions = weapons
+        .map((weapon) => {
+            const attributes = Array.isArray(weapon.attackAttributes)
+                ? weapon.attackAttributes.join('/')
+                : '';
+            const profileLabel = weapon.profileName ? ` ${weapon.profileName}` : '';
+            const value = `${weapon.id}|${Number.isInteger(weapon.profileIndex) ? weapon.profileIndex : 0}`;
+            return `<option value="${value}" data-critical="${weapon.effectiveCritical}" data-attributes="${attributes}">${weapon.name}${profileLabel} ${attributes || 'atributo do Actor'} crítico ${weapon.effectiveCritical}+</option>`;
+        })
+        .join('');
+    const weaponAttributeOptions = [
+        ...new Set(
+            weapons.flatMap((weapon) =>
+                Array.isArray(weapon.attackAttributes) ? weapon.attackAttributes : []
+            )
+        ),
+    ]
+        .map(
+            (attribute) =>
+                `<option value="${attribute}" ${attribute === attrName ? 'selected' : ''}>${attribute}</option>`
+        )
+        .join('');
+    const content = `
     <div class="na-csb-automation na-hit-setup">
       <header class="na-hit-hero" style="--na-hit-color:${color}">
         <span class="na-hit-kicker">SEQUÊNCIA DE ATAQUE</span>
@@ -55,17 +74,17 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [], re
         <span>Tipo de ação</span>
         <select id="na-ac-action">
           <option value="">Não informar —</option>
-          ${TIPOS_ACAO.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join("")}
+          ${TIPOS_ACAO.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join('')}
         </select>
         <small>Identifica a técnica no chat. A rolagem de Acerto não gasta a ação.</small>
       </label>
       <label class="na-hit-field">
         <span>Arma usada / crítico</span>
         <select id="na-ac-weapon">
-          ${requiredWeapon ? "" : '<option value="">Sem arma crítico 20</option>'}
+          ${requiredWeapon ? '' : '<option value="">Sem arma crítico 20</option>'}
           ${weaponOptions}
         </select>
-        <small>${requiredWeapon ? "A técnica está sincronizada com esta arma." : "O crítico vem da arma. Quebra da Respiração da Pedra reduz este número."}</small>
+        <small>${requiredWeapon ? 'A técnica está sincronizada com esta arma.' : 'O crítico vem da arma. Quebra da Respiração da Pedra reduz este número.'}</small>
       </label>
       <label class="na-hit-field">
         <span>Atributo do acerto</span>
@@ -87,71 +106,86 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [], re
     </div>
   `;
 
-  const result = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Acerto" },
-    content,
-    modal: true,
-    rejectClose: false,
-    buttons: [
-      {
-        action: "advantage",
-        label: "Vantagem",
-        callback: (event, button) => {
-          const form = button.form;
-          return {
-            mode: "advantage",
-            rollMode: form.elements["na-ac-rollmode"].value ?? "publicroll",
-            bonusRaw: form.elements["na-ac-bonus"].value ?? "",
-            cdVal: Number(form.elements["na-ac-cd"].value) || 0,
-            rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
-            actionType: form.elements["na-ac-action"].value ?? "",
-            weaponId: (form.elements["na-ac-weapon"].value ?? "").split("|")[0],
-            weaponProfileIndex: Number((form.elements["na-ac-weapon"].value ?? "").split("|")[1] ?? 0),
-            weaponAttribute: form.elements["na-ac-weapon-attribute"].value ?? "",
-          };
-        },
-      },
-      {
-        action: "normal",
-        label: "Normal",
-        callback: (event, button) => {
-          const form = button.form;
-          return {
-            mode: "normal",
-            rollMode: form.elements["na-ac-rollmode"].value ?? "publicroll",
-            bonusRaw: form.elements["na-ac-bonus"].value ?? "",
-            cdVal: Number(form.elements["na-ac-cd"].value) || 0,
-            rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
-            actionType: form.elements["na-ac-action"].value ?? "",
-            weaponId: (form.elements["na-ac-weapon"].value ?? "").split("|")[0],
-            weaponProfileIndex: Number((form.elements["na-ac-weapon"].value ?? "").split("|")[1] ?? 0),
-            weaponAttribute: form.elements["na-ac-weapon-attribute"].value ?? "",
-          };
-        },
-      },
-      {
-        action: "disadvantage",
-        label: "Desvantagem",
-        callback: (event, button) => {
-          const form = button.form;
-          return {
-            mode: "disadvantage",
-            rollMode: form.elements["na-ac-rollmode"].value ?? "publicroll",
-            bonusRaw: form.elements["na-ac-bonus"].value ?? "",
-            cdVal: Number(form.elements["na-ac-cd"].value) || 0,
-            rollCount: Math.min(20, Math.max(1, Math.trunc(Number(form.elements["na-ac-count"].value) || 1))),
-            actionType: form.elements["na-ac-action"].value ?? "",
-            weaponId: (form.elements["na-ac-weapon"].value ?? "").split("|")[0],
-            weaponProfileIndex: Number((form.elements["na-ac-weapon"].value ?? "").split("|")[1] ?? 0),
-            weaponAttribute: form.elements["na-ac-weapon-attribute"].value ?? "",
-          };
-        },
-      },
-      { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
-    ],
-  });
+    const result = await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Acerto' },
+        content,
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            {
+                action: 'advantage',
+                label: 'Vantagem',
+                callback: (event, button) => {
+                    const form = button.form;
+                    return {
+                        mode: 'advantage',
+                        rollMode: form.elements['na-ac-rollmode'].value ?? 'publicroll',
+                        bonusRaw: form.elements['na-ac-bonus'].value ?? '',
+                        cdVal: Number(form.elements['na-ac-cd'].value) || 0,
+                        rollCount: Math.min(
+                            20,
+                            Math.max(1, Math.trunc(Number(form.elements['na-ac-count'].value) || 1))
+                        ),
+                        actionType: form.elements['na-ac-action'].value ?? '',
+                        weaponId: (form.elements['na-ac-weapon'].value ?? '').split('|')[0],
+                        weaponProfileIndex: Number(
+                            (form.elements['na-ac-weapon'].value ?? '').split('|')[1] ?? 0
+                        ),
+                        weaponAttribute: form.elements['na-ac-weapon-attribute'].value ?? '',
+                    };
+                },
+            },
+            {
+                action: 'normal',
+                label: 'Normal',
+                callback: (event, button) => {
+                    const form = button.form;
+                    return {
+                        mode: 'normal',
+                        rollMode: form.elements['na-ac-rollmode'].value ?? 'publicroll',
+                        bonusRaw: form.elements['na-ac-bonus'].value ?? '',
+                        cdVal: Number(form.elements['na-ac-cd'].value) || 0,
+                        rollCount: Math.min(
+                            20,
+                            Math.max(1, Math.trunc(Number(form.elements['na-ac-count'].value) || 1))
+                        ),
+                        actionType: form.elements['na-ac-action'].value ?? '',
+                        weaponId: (form.elements['na-ac-weapon'].value ?? '').split('|')[0],
+                        weaponProfileIndex: Number(
+                            (form.elements['na-ac-weapon'].value ?? '').split('|')[1] ?? 0
+                        ),
+                        weaponAttribute: form.elements['na-ac-weapon-attribute'].value ?? '',
+                    };
+                },
+            },
+            {
+                action: 'disadvantage',
+                label: 'Desvantagem',
+                callback: (event, button) => {
+                    const form = button.form;
+                    return {
+                        mode: 'disadvantage',
+                        rollMode: form.elements['na-ac-rollmode'].value ?? 'publicroll',
+                        bonusRaw: form.elements['na-ac-bonus'].value ?? '',
+                        cdVal: Number(form.elements['na-ac-cd'].value) || 0,
+                        rollCount: Math.min(
+                            20,
+                            Math.max(1, Math.trunc(Number(form.elements['na-ac-count'].value) || 1))
+                        ),
+                        actionType: form.elements['na-ac-action'].value ?? '',
+                        weaponId: (form.elements['na-ac-weapon'].value ?? '').split('|')[0],
+                        weaponProfileIndex: Number(
+                            (form.elements['na-ac-weapon'].value ?? '').split('|')[1] ?? 0
+                        ),
+                        weaponAttribute: form.elements['na-ac-weapon-attribute'].value ?? '',
+                    };
+                },
+            },
+            { action: 'cancel', label: 'Cancelar', callback: () => ({ cancelled: true }) },
+        ],
+    });
 
-  return !result || result.cancelled ? null : result;
+    return !result || result.cancelled ? null : result;
 }
 
 /**
@@ -164,31 +198,47 @@ export async function openHitDialog({ attrName, attrVal, color, weapons = [], re
  * @returns {Promise<{chain:boolean,itemUuid?:string}>}
  */
 export async function openChainFormDialog({ chainable = [] } = {}) {
-  const hasOptions = chainable.length > 0;
-  const optionsHtml = chainable.map((entry) => `<option value="${entry.uuid}">${entry.label}</option>`).join("");
-  const content = `
+    const hasOptions = chainable.length > 0;
+    const optionsHtml = chainable
+        .map((entry) => `<option value="${entry.uuid}">${entry.label}</option>`)
+        .join('');
+    const content = `
     <div class="na-csb-automation na-hit-chain">
       <p>Acerto confirmado. Deseja usar <strong>outra Forma de Respiração</strong> encadeada agora, antes de rolar o dano?</p>
-      ${hasOptions
-        ? `<label class="na-hit-field"><span>Próxima Forma</span><select id="na-chain-form">${optionsHtml}</select></label>`
-        : "<p><em>Nenhuma outra Forma disponível para encadear.</em></p>"}
+      ${
+          hasOptions
+              ? `<label class="na-hit-field"><span>Próxima Forma</span><select id="na-chain-form">${optionsHtml}</select></label>`
+              : '<p><em>Nenhuma outra Forma disponível para encadear.</em></p>'
+      }
     </div>
   `;
-  const result = await foundry.applications.api.DialogV2.wait({
-    window: { title: "Encadear Forma?" },
-    content,
-    modal: true,
-    rejectClose: false,
-    buttons: [
-      ...(hasOptions ? [{
-        action: "chain",
-        label: "Sim, encadear",
-        callback: (event, button) => ({ chain: true, itemUuid: button.form.elements["na-chain-form"]?.value ?? "" }),
-      }] : []),
-      { action: "damage", label: "Não, rolar dano", default: true, callback: () => ({ chain: false }) },
-    ],
-  });
-  return result ?? { chain: false };
+    const result = await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Encadear Forma?' },
+        content,
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            ...(hasOptions
+                ? [
+                      {
+                          action: 'chain',
+                          label: 'Sim, encadear',
+                          callback: (event, button) => ({
+                              chain: true,
+                              itemUuid: button.form.elements['na-chain-form']?.value ?? '',
+                          }),
+                      },
+                  ]
+                : []),
+            {
+                action: 'damage',
+                label: 'Não, rolar dano',
+                default: true,
+                callback: () => ({ chain: false }),
+            },
+        ],
+    });
+    return result ?? { chain: false };
 }
 
 /**
@@ -196,26 +246,44 @@ export async function openChainFormDialog({ chainable = [] } = {}) {
  * @returns {Promise<{hit:boolean,continue:boolean}|null>}
  */
 export async function openHitConfirmationDialog({ current, maximum, total, cdVal = 0 }) {
-  const isLast = current >= maximum;
-  const cdResult = cdVal > 0 ? `<span class="na-hit-cd ${total >= cdVal ? "is-success" : "is-failure"}">CD ${cdVal}: ${total >= cdVal ? "superada" : "não superada"}</span>` : "";
-  const content = `<div class="na-csb-automation na-hit-confirm">
+    const isLast = current >= maximum;
+    const cdResult =
+        cdVal > 0
+            ? `<span class="na-hit-cd ${total >= cdVal ? 'is-success' : 'is-failure'}">CD ${cdVal}: ${total >= cdVal ? 'superada' : 'não superada'}</span>`
+            : '';
+    const content = `<div class="na-csb-automation na-hit-confirm">
     <span class="na-hit-kicker">TENTATIVA ${current} DE ${maximum}</span>
     <div class="na-hit-total"><small>RESULTADO</small><strong>${total}</strong></div>
     ${cdResult}
-    <p>${isLast ? "Última tentativa. Confirme o resultado." : "Este ataque acertou? Você pode continuar ou encerrar a técnica agora."}</p>
-    ${isLast ? "" : `<label class="na-hit-stop"><input type="checkbox" name="na-hit-stop"><span>Encerrar a sequência depois deste resultado</span></label>`}
+    <p>${isLast ? 'Última tentativa. Confirme o resultado.' : 'Este ataque acertou? Você pode continuar ou encerrar a técnica agora.'}</p>
+    ${isLast ? '' : `<label class="na-hit-stop"><input type="checkbox" name="na-hit-stop"><span>Encerrar a sequência depois deste resultado</span></label>`}
   </div>`;
-  const decision = await foundry.applications.api.DialogV2.wait({
-    window: { title: `Confirmar Acerto ${current}/${maximum}` },
-    content,
-    position: { width: 430 },
-    modal: true,
-    rejectClose: false,
-    buttons: [
-      { action: "hit", label: "Acertou", default: true, callback: (event, button) => ({ hit: true, continue: !isLast && !button.form.elements["na-hit-stop"]?.checked }) },
-      { action: "miss", label: "Errou", callback: (event, button) => ({ hit: false, continue: !isLast && !button.form.elements["na-hit-stop"]?.checked }) },
-      { action: "stop", label: "Encerrar sequência", callback: () => ({ stop: true }) },
-    ],
-  });
-  return decision ?? null;
+    const decision = await foundry.applications.api.DialogV2.wait({
+        window: { title: `Confirmar Acerto ${current}/${maximum}` },
+        content,
+        position: { width: 430 },
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            {
+                action: 'hit',
+                label: 'Acertou',
+                default: true,
+                callback: (event, button) => ({
+                    hit: true,
+                    continue: !isLast && !button.form.elements['na-hit-stop']?.checked,
+                }),
+            },
+            {
+                action: 'miss',
+                label: 'Errou',
+                callback: (event, button) => ({
+                    hit: false,
+                    continue: !isLast && !button.form.elements['na-hit-stop']?.checked,
+                }),
+            },
+            { action: 'stop', label: 'Encerrar sequência', callback: () => ({ stop: true }) },
+        ],
+    });
+    return decision ?? null;
 }

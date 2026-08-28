@@ -3973,7 +3973,7 @@
               "critico": 20
             },
             {
-              "nome": "Mangual — Concussão",
+              "nome": "Mangual Concussão",
               "formula_texto": "5 + FOR ou DEX + dado evolutivo / Concussão",
               "dano_fixo": 5,
               "dano_dados": "",
@@ -3996,7 +3996,7 @@
               "critico": 20
             },
             {
-              "nome": "Mangual — Cortante",
+              "nome": "Mangual Cortante",
               "formula_texto": "5 + FOR ou DEX + dado evolutivo / Cortante",
               "dano_fixo": 5,
               "dano_dados": "",

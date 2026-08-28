@@ -2,58 +2,62 @@
  * @fileoverview DialogV2 para rolagem de dano com múltiplas entradas.
  */
 
-import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO } from "../constants.mjs";
-import { parseAttributeValue } from "../parsing.mjs";
+import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO } from '../constants.mjs';
+import { parseAttributeValue } from '../parsing.mjs';
 
 function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
-  const parts = [];
-  const cleanDado = (dado || "").trim();
-  if (cleanDado) parts.push(cleanDado);
+    const parts = [];
+    const cleanDado = (dado || '').trim();
+    if (cleanDado) parts.push(cleanDado);
 
-  if (fixo !== 0) {
-    if (parts.length === 0) parts.push(String(fixo));
-    else parts.push(fixo > 0 ? `+ ${fixo}` : `- ${Math.abs(fixo)}`);
-  }
-
-  for (const k of selAttrs) {
-    const v = attrValues[k] ?? 0;
-    if (v !== 0) {
-      if (parts.length === 0) parts.push(String(v));
-      else parts.push(v > 0 ? `+ ${v}` : `- ${Math.abs(v)}`);
+    if (fixo !== 0) {
+        if (parts.length === 0) parts.push(String(fixo));
+        else parts.push(fixo > 0 ? `+ ${fixo}` : `- ${Math.abs(fixo)}`);
     }
-  }
 
-  return parts.length > 0 ? parts.join(" ") : "0";
+    for (const k of selAttrs) {
+        const v = attrValues[k] ?? 0;
+        if (v !== 0) {
+            if (parts.length === 0) parts.push(String(v));
+            else parts.push(v > 0 ? `+ ${v}` : `- ${Math.abs(v)}`);
+        }
+    }
+
+    return parts.length > 0 ? parts.join(' ') : '0';
 }
 
 function makeAcaoOpts(sel) {
-  return `<option value="">Nenhuma —</option>
-    ${TIPOS_ACAO.filter((t) => t.damage && t.key !== "epica").map((t) => `<option value="${t.key}" ${sel === t.key ? "selected" : ""}>${t.label}</option>`).join("")}`;
+    return `<option value="">Nenhuma —</option>
+    ${TIPOS_ACAO.filter((t) => t.damage && t.key !== 'epica')
+        .map(
+            (t) => `<option value="${t.key}" ${sel === t.key ? 'selected' : ''}>${t.label}</option>`
+        )
+        .join('')}`;
 }
 
 function makeDanoCheckboxes(selTipos, idx) {
-  return TIPOS_DANO.map((t) => {
-    const chk = selTipos.includes(t.key) ? "checked" : "";
-    return `<label class="na-dano-label" title="${t.desc}">
+    return TIPOS_DANO.map((t) => {
+        const chk = selTipos.includes(t.key) ? 'checked' : '';
+        return `<label class="na-dano-label" title="${t.desc}">
       <input type="checkbox" class="na-dano-chk" data-idx="${idx}" value="${t.key}" ${chk} />
       <span>${t.label}</span>
     </label>`;
-  }).join("");
+    }).join('');
 }
 
 function makeAttrCheckboxes(selAttrs, idx, attrValues) {
-  return ATTRIBUTES.map(({ key, label, color }) => {
-    const chk = selAttrs.includes(key) ? "checked" : "";
-    return `<label class="na-attr-label">
+    return ATTRIBUTES.map(({ key, label, color }) => {
+        const chk = selAttrs.includes(key) ? 'checked' : '';
+        return `<label class="na-attr-label">
       <input type="checkbox" class="na-attr-chk" data-idx="${idx}" value="${key}" ${chk} />
       <span style="color:${color};font-weight:700;font-size:11px;">${label}</span>
       <span style="color:#9C9284;font-size:10px;">${attrValues[key] ?? 0}</span>
     </label>`;
-  }).join("");
+    }).join('');
 }
 
 function makeEntradaHtml(e, idx, attrValues) {
-  return `
+    return `
   <div class="na-entrada" data-idx="${idx}">
     <div class="na-entry-header">
       <strong class="na-entry-num"></strong>
@@ -66,7 +70,7 @@ function makeEntradaHtml(e, idx, attrValues) {
       </div>
       <div>
         <label class="na-label">Dado(s) <span class="na-hint">(ex: 3d8)</span></label>
-        <input type="text" class="na-dado-inp" data-idx="${idx}" value="${e.dado ?? ""}" placeholder="sem dado" />
+        <input type="text" class="na-dado-inp" data-idx="${idx}" value="${e.dado ?? ''}" placeholder="sem dado" />
       </div>
     </div>
     <div class="na-row-grid" style="margin-top:4px;">
@@ -87,50 +91,63 @@ function makeEntradaHtml(e, idx, attrValues) {
 }
 
 function bindDamageDialogInteractions(root, attrValues) {
-  const container = root?.querySelector?.("#na-entradas-container");
-  const addButton = root?.querySelector?.("#na-add-btn");
-  const totalPreview = root?.querySelector?.("#na-total-preview");
-  if (!container || !addButton) return;
+    const container = root?.querySelector?.('#na-entradas-container');
+    const addButton = root?.querySelector?.('#na-add-btn');
+    const totalPreview = root?.querySelector?.('#na-total-preview');
+    if (!container || !addButton) return;
 
-  const renumber = () => {
-    container.querySelectorAll(".na-entrada").forEach((entry, index) => {
-      const label = entry.querySelector(".na-entry-num");
-      if (label) label.textContent = `DANO ${index + 1}`;
+    const renumber = () => {
+        container.querySelectorAll('.na-entrada').forEach((entry, index) => {
+            const label = entry.querySelector('.na-entry-num');
+            if (label) label.textContent = `DANO ${index + 1}`;
+        });
+    };
+
+    const updatePreview = () => {
+        const formulas = [...container.querySelectorAll('.na-entrada')]
+            .map((entry) => {
+                const idx = entry.dataset.idx;
+                const dado =
+                    entry.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() ?? '';
+                const fixo =
+                    Number(entry.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
+                const attrs = [
+                    ...entry.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`),
+                ].map((checkbox) => checkbox.value);
+                return buildEntryFormula(dado, fixo, attrs, attrValues);
+            })
+            .filter((formula) => formula !== '0');
+        if (totalPreview) totalPreview.textContent = formulas.length ? formulas.join(' + ') : '0';
+    };
+
+    addButton.addEventListener('click', () => {
+        const indexes = [...container.querySelectorAll('.na-entrada')]
+            .map((entry) => Number(entry.dataset.idx))
+            .filter(Number.isFinite);
+        const nextIndex = indexes.length ? Math.max(...indexes) + 1 : 0;
+        container.insertAdjacentHTML(
+            'beforeend',
+            makeEntradaHtml(
+                { tipoAcao: '', dado: '', fixo: 0, attrs: [], tiposDano: [] },
+                nextIndex,
+                attrValues
+            )
+        );
+        renumber();
+        updatePreview();
     });
-  };
 
-  const updatePreview = () => {
-    const formulas = [...container.querySelectorAll(".na-entrada")].map((entry) => {
-      const idx = entry.dataset.idx;
-      const dado = entry.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() ?? "";
-      const fixo = Number(entry.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
-      const attrs = [...entry.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`)].map((checkbox) => checkbox.value);
-      return buildEntryFormula(dado, fixo, attrs, attrValues);
-    }).filter((formula) => formula !== "0");
-    if (totalPreview) totalPreview.textContent = formulas.length ? formulas.join(" + ") : "0";
-  };
-
-  addButton.addEventListener("click", () => {
-    const indexes = [...container.querySelectorAll(".na-entrada")]
-      .map((entry) => Number(entry.dataset.idx))
-      .filter(Number.isFinite);
-    const nextIndex = indexes.length ? Math.max(...indexes) + 1 : 0;
-    container.insertAdjacentHTML("beforeend", makeEntradaHtml({ tipoAcao: "", dado: "", fixo: 0, attrs: [], tiposDano: [] }, nextIndex, attrValues));
+    container.addEventListener('click', (event) => {
+        const removeButton = event.target.closest?.('.na-remove-btn');
+        if (!removeButton) return;
+        removeButton.closest('.na-entrada')?.remove();
+        renumber();
+        updatePreview();
+    });
+    container.addEventListener('input', updatePreview);
+    container.addEventListener('change', updatePreview);
     renumber();
     updatePreview();
-  });
-
-  container.addEventListener("click", (event) => {
-    const removeButton = event.target.closest?.(".na-remove-btn");
-    if (!removeButton) return;
-    removeButton.closest(".na-entrada")?.remove();
-    renumber();
-    updatePreview();
-  });
-  container.addEventListener("input", updatePreview);
-  container.addEventListener("change", updatePreview);
-  renumber();
-  updatePreview();
 }
 
 /**
@@ -142,36 +159,51 @@ function bindDamageDialogInteractions(root, attrValues) {
  * @param {number} options.pdrCusto
  * @returns {Promise<{nome:string,pdrGasto:number,entradas:Array}|null>}
  */
-export async function openDamageDialog({ actor, nome, entradas, pdrCusto, resourceLabel = "PDR", resourceKey = "pdr_slayer_gasto_valor", critical = false }) {
-  const props = actor?.system?.props ?? {};
-  const attrValues = {};
-  for (const { key } of ATTRIBUTES) {
-    attrValues[key] = parseAttributeValue(props[`${key}_display`]);
-  }
+export async function openDamageDialog({
+    actor,
+    nome,
+    entradas,
+    pdrCusto,
+    resourceLabel = 'PDR',
+    resourceKey = 'pdr_slayer_gasto_valor',
+    critical = false,
+}) {
+    const props = actor?.system?.props ?? {};
+    const attrValues = {};
+    for (const { key } of ATTRIBUTES) {
+        attrValues[key] = parseAttributeValue(props[`${key}_display`]);
+    }
 
-  const preEntradas = Array.isArray(entradas) && entradas.length > 0
-    ? entradas.map((e) => ({
-      tipoAcao: e.tipoAcao ?? "",
-      dado: e.dado ?? "",
-      fixo: Number.isFinite(Number(e.fixo)) ? Number(e.fixo) : 0,
-      attrs: Array.isArray(e.attrs) ? e.attrs : e.attr ? [e.attr] : [],
-      tiposDano: Array.isArray(e.tiposDano) ? e.tiposDano : e.tipoDano ? [e.tipoDano] : [],
-    }))
-    : [{
-      tipoAcao: "",
-      dado: "",
-      fixo: 0,
-      attrs: [],
-      tiposDano: [],
-    }];
+    const preEntradas =
+        Array.isArray(entradas) && entradas.length > 0
+            ? entradas.map((e) => ({
+                  tipoAcao: e.tipoAcao ?? '',
+                  dado: e.dado ?? '',
+                  fixo: Number.isFinite(Number(e.fixo)) ? Number(e.fixo) : 0,
+                  attrs: Array.isArray(e.attrs) ? e.attrs : e.attr ? [e.attr] : [],
+                  tiposDano: Array.isArray(e.tiposDano)
+                      ? e.tiposDano
+                      : e.tipoDano
+                        ? [e.tipoDano]
+                        : [],
+              }))
+            : [
+                  {
+                      tipoAcao: '',
+                      dado: '',
+                      fixo: 0,
+                      attrs: [],
+                      tiposDano: [],
+                  },
+              ];
 
-  const entradasIniciais = preEntradas.map((e, i) => makeEntradaHtml(e, i, attrValues)).join("");
+    const entradasIniciais = preEntradas.map((e, i) => makeEntradaHtml(e, i, attrValues)).join('');
 
-  const content = `
+    const content = `
   <div class="na-dmg-dialog">
     <div style="margin-bottom:8px;">
       <label class="na-label">Nome do Ataque / Técnica</label>
-      <input type="text" id="na-dmg-nome" value="${nome ?? ""}" placeholder="ex: Corte Celestial" />
+      <input type="text" id="na-dmg-nome" value="${nome ?? ''}" placeholder="ex: Corte Celestial" />
     </div>
     <div id="na-entradas-container">${entradasIniciais}</div>
     <button type="button" id="na-add-btn">+ Adicionar Entrada de Dano</button>
@@ -183,60 +215,75 @@ export async function openDamageDialog({ actor, nome, entradas, pdrCusto, resour
     <label class="na-label">Fórmula Total</label>
     <div id="na-total-preview">—</div>
     <label class="na-critical-toggle">
-      <input type="checkbox" id="na-dmg-critical" ${critical ? "checked" : ""} />
+      <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
       <span><strong>Foi crítico?</strong><small>Dobra cada parcela deste ataque antes da resistência.</small></span>
     </label>
   </div>`;
 
-  const hookApi = globalThis.Hooks;
-  const renderHook = hookApi?.on?.("renderDialogV2", (dialog, element) => {
-    const root = element?.querySelector ? element : element?.[0];
-    if (!root?.querySelector?.("#na-add-btn")) return;
-    bindDamageDialogInteractions(root, attrValues);
-  });
-
-  let result;
-  try {
-    result = await foundry.applications.api.DialogV2.wait({
-      window: { title: "Rolar Dano Night Assassins" },
-      content,
-      modal: true,
-      rejectClose: false,
-      buttons: [
-        {
-          action: "rolar",
-          label: "Rolar",
-          callback: (event, button) => {
-            const form = button.form;
-            const container = form.querySelector("#na-entradas-container");
-            const entries = [];
-            container.querySelectorAll(".na-entrada").forEach((el) => {
-              const idx = el.dataset.idx;
-              const dado = el.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() || "";
-              const fixo = Number(el.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
-              const tipoAcao = el.querySelector(`.na-acao-sel[data-idx="${idx}"]`)?.value || "";
-              const selTiposDano = [];
-              el.querySelectorAll(`.na-dano-chk[data-idx="${idx}"]:checked`).forEach((cb) => selTiposDano.push(cb.value));
-              const selAttrs = [];
-              el.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`).forEach((cb) => {
-                if (ATTRIBUTES.some((a) => a.key === cb.value)) selAttrs.push(cb.value);
-              });
-              entries.push({ dado, fixo, tipoAcao, selTiposDano, selAttrs });
-            });
-            return {
-              nome: form.querySelector("#na-dmg-nome")?.value?.trim() || "Dano",
-              pdrGasto: Math.max(0, Number(form.querySelector("#na-dmg-pdr")?.value) || 0),
-              critical: Boolean(form.querySelector("#na-dmg-critical")?.checked),
-              entradas: entries,
-            };
-          },
-        },
-        { action: "cancel", label: "Cancelar", callback: () => ({ cancelled: true }) },
-      ],
+    const hookApi = globalThis.Hooks;
+    const renderHook = hookApi?.on?.('renderDialogV2', (dialog, element) => {
+        const root = element?.querySelector ? element : element?.[0];
+        if (!root?.querySelector?.('#na-add-btn')) return;
+        bindDamageDialogInteractions(root, attrValues);
     });
-  } finally {
-    if (renderHook !== undefined) hookApi?.off?.("renderDialogV2", renderHook);
-  }
 
-  return !result || result.cancelled ? null : result;
+    let result;
+    try {
+        result = await foundry.applications.api.DialogV2.wait({
+            window: { title: 'Rolar Dano Night Assassins' },
+            content,
+            modal: true,
+            rejectClose: false,
+            buttons: [
+                {
+                    action: 'rolar',
+                    label: 'Rolar',
+                    callback: (event, button) => {
+                        const form = button.form;
+                        const container = form.querySelector('#na-entradas-container');
+                        const entries = [];
+                        container.querySelectorAll('.na-entrada').forEach((el) => {
+                            const idx = el.dataset.idx;
+                            const dado =
+                                el
+                                    .querySelector(`.na-dado-inp[data-idx="${idx}"]`)
+                                    ?.value?.trim() || '';
+                            const fixo =
+                                Number(
+                                    el.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value
+                                ) || 0;
+                            const tipoAcao =
+                                el.querySelector(`.na-acao-sel[data-idx="${idx}"]`)?.value || '';
+                            const selTiposDano = [];
+                            el.querySelectorAll(`.na-dano-chk[data-idx="${idx}"]:checked`).forEach(
+                                (cb) => selTiposDano.push(cb.value)
+                            );
+                            const selAttrs = [];
+                            el.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`).forEach(
+                                (cb) => {
+                                    if (ATTRIBUTES.some((a) => a.key === cb.value))
+                                        selAttrs.push(cb.value);
+                                }
+                            );
+                            entries.push({ dado, fixo, tipoAcao, selTiposDano, selAttrs });
+                        });
+                        return {
+                            nome: form.querySelector('#na-dmg-nome')?.value?.trim() || 'Dano',
+                            pdrGasto: Math.max(
+                                0,
+                                Number(form.querySelector('#na-dmg-pdr')?.value) || 0
+                            ),
+                            critical: Boolean(form.querySelector('#na-dmg-critical')?.checked),
+                            entradas: entries,
+                        };
+                    },
+                },
+                { action: 'cancel', label: 'Cancelar', callback: () => ({ cancelled: true }) },
+            ],
+        });
+    } finally {
+        if (renderHook !== undefined) hookApi?.off?.('renderDialogV2', renderHook);
+    }
+
+    return !result || result.cancelled ? null : result;
 }

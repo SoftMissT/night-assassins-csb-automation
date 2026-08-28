@@ -159,7 +159,7 @@ describe('catálogo de Respirações', () => {
             );
         }
         const stone = items.filter((item) => item.system?.props?.respiracao_nome === 'Pedra');
-        assert.ok(stone.every((item) => item.name.startsWith('Iwa no Kokyū — ')));
+        assert.ok(stone.every((item) => item.name.startsWith('Iwa no Kokyū ')));
         assert.ok(stone.some((item) => item.system.props.nome_forma.includes('Tenmen Kudaki')));
     });
 

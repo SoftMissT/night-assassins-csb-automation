@@ -27,12 +27,11 @@ function hidden(name) {
     return template.system.hidden.find((entry) => entry.name === name);
 }
 
-test('painel de bônus derivados é exclusivo do GM e abre a API sem publicar chat', () => {
+test('template oficial preserva auditoria GM sem inventar resumo ausente no export', () => {
     const summary = findByKey(template.system, 'bonus_derivados_slayer_resumo');
     const audit = findByKey(template.system, 'bonus_derivados_slayer_auditar');
 
-    assert.ok(summary, 'bonus_derivados_slayer_resumo deve existir');
-    assert.ok(audit, 'bonus_derivados_slayer_auditar deve existir');
+    assert.equal(summary, null);
     assert.ok(audit?.rollMessage.includes('openDerivedBonusAudit'));
     assert.equal(audit?.rollMessageToChat, false);
 });

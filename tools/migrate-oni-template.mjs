@@ -139,7 +139,10 @@ function configureOniActionButtons(template) {
         if (typeof node.rollMessage !== 'string') return;
         node.rollMessage = node.rollMessage
             .replace("kind:'slayer'", "kind:'oni'")
-            .replace(/return await (\(await fromUuid\([\s\S]*?\)\)\?\.execute\([\s\S]*?\));}%$/, "await $1; return '';}%");
+            .replace(
+                /return await (\(await fromUuid\([\s\S]*?\)\)\?\.execute\([\s\S]*?\));}%$/,
+                "await $1; return '';}%"
+            );
     });
 }
 
@@ -376,15 +379,15 @@ function configureOniProgression(template) {
 }
 
 function configureOniAttributes(template) {
-  const formulas = {
-    vit_display: "${atr_vit_oni_valor_config+bonus_atr_vit_oni_valor_temp}$",
-    dex_display: "${atr_dex_oni_valor_config+bonus_atr_dex_oni_valor_temp}$",
-    for_display: "${atr_for_oni_valor_config+bonus_atr_for_oni_valor_temp}$",
-    car_display: "${atr_car_oni_valor_config+bonus_atr_car_oni_valor_temp}$",
-    fdv_display: "${atr_fdv_oni_valor_config+bonus_atr_fdv_oni_valor_temp}$",
-    int_display: "${atr_int_oni_valor_config+bonus_atr_int_oni_valor_temp}$",
-    sab_display: "${atr_sab_oni_valor_config+bonus_atr_sab_oni_valor_temp}$",
-  };
+    const formulas = {
+        vit_display: '${atr_vit_oni_valor_config+bonus_atr_vit_oni_valor_temp}$',
+        dex_display: '${atr_dex_oni_valor_config+bonus_atr_dex_oni_valor_temp}$',
+        for_display: '${atr_for_oni_valor_config+bonus_atr_for_oni_valor_temp}$',
+        car_display: '${atr_car_oni_valor_config+bonus_atr_car_oni_valor_temp}$',
+        fdv_display: '${atr_fdv_oni_valor_config+bonus_atr_fdv_oni_valor_temp}$',
+        int_display: '${atr_int_oni_valor_config+bonus_atr_int_oni_valor_temp}$',
+        sab_display: '${atr_sab_oni_valor_config+bonus_atr_sab_oni_valor_temp}$',
+    };
     for (const [name, formula] of Object.entries(formulas)) upsertHidden(template, name, formula);
 }
 
@@ -422,7 +425,8 @@ function configureOniProgressionFields(template) {
         'pdk_oni_gasto_valor',
         'vit_oni_nvl7',
         'fdv_oni_nvl7',
-    ]) upsertHidden(template, name, '0');
+    ])
+        upsertHidden(template, name, '0');
     removeSlayerOnlyComponents(template);
 }
 

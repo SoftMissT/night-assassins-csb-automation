@@ -1879,15 +1879,15 @@
     color: #f2f2f2;
 }
 
-.na-sheet .custom-system-actor div[style*="color:#888"],
-.na-sheet .custom-system-actor span[style*="color:#888"],
-.na-sheet .custom-system-actor em[style*="color:#888"],
-.na-sheet .custom-system-actor div[style*="color: #888"],
-.na-sheet .custom-system-actor span[style*="color: #888"],
-.na-sheet .custom-system-actor div[style*="color:#aaa"],
-.na-sheet .custom-system-actor span[style*="color:#aaa"],
-.na-sheet .custom-system-actor div[style*="color: #aaa"],
-.na-sheet .custom-system-actor span[style*="color: #aaa"] {
+.na-sheet .custom-system-actor div[style*='color:#888'],
+.na-sheet .custom-system-actor span[style*='color:#888'],
+.na-sheet .custom-system-actor em[style*='color:#888'],
+.na-sheet .custom-system-actor div[style*='color: #888'],
+.na-sheet .custom-system-actor span[style*='color: #888'],
+.na-sheet .custom-system-actor div[style*='color:#aaa'],
+.na-sheet .custom-system-actor span[style*='color:#aaa'],
+.na-sheet .custom-system-actor div[style*='color: #aaa'],
+.na-sheet .custom-system-actor span[style*='color: #aaa'] {
     color: #f2f2f2;
 }
 
@@ -1977,7 +1977,11 @@
     padding: 6px 10px;
     border: 1px solid transparent;
     border-radius: 4px;
-    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease, text-shadow 0.15s ease;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease,
+        text-shadow 0.15s ease;
 }
 
 .na-oni-sheet nav.custom-tabs a.item:hover,
@@ -2078,7 +2082,9 @@
     border-radius: 4px !important;
     font-family: var(--na-font-body);
     font-size: 13px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
 .na-oni-sheet input:focus,
@@ -2101,7 +2107,11 @@
     background: linear-gradient(180deg, #2a161a, #170b0d);
     border: 1px solid #4a2a30;
     border-radius: 5px;
-    transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+    transition:
+        border-color 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.12s ease;
 }
 
 .na-oni-sheet button:hover,
@@ -2159,7 +2169,9 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--oni-text) !important;
-    text-shadow: 0 0 4px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9) !important;
+    text-shadow:
+        0 0 4px rgba(0, 0, 0, 0.9),
+        0 1px 2px rgba(0, 0, 0, 0.9) !important;
 }
 
 /* ── Kekkijutsu — badges e lista restantes (ação/origem/container) ── */
@@ -2195,7 +2207,9 @@
     border: 1px solid var(--oni-line) !important;
     border-radius: 8px !important;
     background: var(--oni-bg);
-    box-shadow: 0 0 0 1px rgba(255, 38, 56, 0.12), 0 10px 24px rgba(0, 0, 0, 0.45);
+    box-shadow:
+        0 0 0 1px rgba(255, 38, 56, 0.12),
+        0 10px 24px rgba(0, 0, 0, 0.45);
     overflow: hidden;
 }
 
@@ -2245,14 +2259,32 @@
 
 /* Cores semânticas da ficha Oni. Estas regras são deliberadamente locais:
    Slayer/NPC mantêm suas próprias fontes, fundos e paletas. */
-.na-oni-sheet .window-content .na-sheet-role-vit { color: var(--na-vit) !important; }
-.na-oni-sheet .window-content .na-sheet-role-dex { color: var(--na-dex) !important; }
-.na-oni-sheet .window-content .na-sheet-role-for { color: var(--na-for) !important; }
-.na-oni-sheet .window-content .na-sheet-role-car { color: var(--na-car) !important; }
-.na-oni-sheet .window-content .na-sheet-role-fdv { color: var(--na-fdv) !important; }
-.na-oni-sheet .window-content .na-sheet-role-int { color: var(--na-int) !important; }
-.na-oni-sheet .window-content .na-sheet-role-sab { color: var(--na-sab) !important; }
-.na-oni-sheet .window-content .na-sheet-role-pdv { color: var(--oni-red) !important; text-shadow: 0 0 8px rgba(255, 38, 56, 0.4); }
-.na-oni-sheet .window-content .na-sheet-role-pdk { color: #b36cff !important; text-shadow: 0 0 8px rgba(179, 108, 255, 0.35); }
-
-
+.na-oni-sheet .window-content .na-sheet-role-vit {
+    color: var(--na-vit) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-dex {
+    color: var(--na-dex) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-for {
+    color: var(--na-for) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-car {
+    color: var(--na-car) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-fdv {
+    color: var(--na-fdv) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-int {
+    color: var(--na-int) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-sab {
+    color: var(--na-sab) !important;
+}
+.na-oni-sheet .window-content .na-sheet-role-pdv {
+    color: var(--oni-red) !important;
+    text-shadow: 0 0 8px rgba(255, 38, 56, 0.4);
+}
+.na-oni-sheet .window-content .na-sheet-role-pdk {
+    color: #b36cff !important;
+    text-shadow: 0 0 8px rgba(179, 108, 255, 0.35);
+}

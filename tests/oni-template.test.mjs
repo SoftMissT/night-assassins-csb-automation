@@ -21,9 +21,36 @@ describe('oni-template', () => {
                 new RegExp(`\\.na-oni-sheet \\.window-content \\.na-sheet-role-${role}\\s*\\{`)
             );
         }
-        const whiteFallback = css.indexOf('.na-sheet .window-content .na-sheet-label');
-        const semanticOverride = css.indexOf('.na-oni-sheet .window-content .na-sheet-role-vit');
-        assert.ok(semanticOverride > whiteFallback, 'override semântico deve vir depois do fallback branco');
+        assert.doesNotMatch(css, /\.na-sheet \.window-content \.na-sheet-label/);
+        assert.doesNotMatch(css, /\.na-sheet \.window-content label\s*\{\s*color:\s*#fff/i);
+        assert.doesNotMatch(css, /\.na-oni-sheet \.na-sheet-text\s*\{\s*color:/i);
+    });
+
+    it('não expõe painéis internos de progressão nem componentes Slayer', () => {
+        const serialized = JSON.stringify(source.system?.body);
+        for (const forbidden of [
+            'progressao_oni_recursos_panel',
+            'origem_oni_recursos_panel',
+            'armas_proficientes',
+            'acoes_slayer_panel',
+        ]) assert.doesNotMatch(serialized, new RegExp(forbidden));
+        assert.match(serialized, /acoes_oni_panel/);
+    });
+
+    it('botões executam ações sem devolver objetos para o avaliador do CSB', () => {
+        const messages = [];
+        const walk = (value) => {
+            if (Array.isArray(value)) return value.forEach(walk);
+            if (!value || typeof value !== 'object') return;
+            if (typeof value.rollMessage === 'string' && value.rollMessage) messages.push(value.rollMessage);
+            Object.values(value).forEach(walk);
+        };
+        walk(source.system);
+        assert.ok(messages.length > 0);
+        for (const message of messages) {
+            assert.doesNotMatch(message, /return await/);
+            assert.match(message, /return '';}%$/);
+        }
     });
 
     it('expõe o botão RESETAR FICHA delegando somente para a API do módulo', () => {
@@ -215,5 +242,39 @@ describe('oni-template', () => {
         );
         assert.deepEqual(duplicateHidden, [], `hidden duplicados: ${duplicateHidden.join(', ')}`);
         assert.deepEqual(invalidRows, [], `linhas de tabela inválidas: ${invalidRows.join(', ')}`);
+    });
+
+    it('display fields usam valores numéricos puros, não totais', () => {
+        const walk = (value) => {
+            const results = [];
+            if (Array.isArray(value)) {
+                for (const item of value) results.push(...walk(item));
+                return results;
+            }
+            if (!value || typeof value !== 'object') return results;
+            if (value.key === 'pdv_oni_atual_valor_display' || value.key === 'pdk_oni_atual_valor_display') {
+                results.push({ key: value.key, value: value.value });
+            }
+            for (const v of Object.values(value)) results.push(...walk(v));
+            return results;
+        };
+        const displays = walk(source.system?.body);
+        assert.equal(displays.length, 2, 'deve haver exatamente 2 display fields (PDV + PDK)');
+        for (const { key, value } of displays) {
+            assert.match(value, /\$\{(pdv|pdk)_oni_atual_num\}/, `${key} deve usar *_atual_num`);
+            assert.doesNotMatch(value, /total_conta/, `${key} não pode usar *_total_conta`);
+            assert.doesNotMatch(value, /custom-orbitron-wrapper/, `${key} não pode ter wrapper HTML`);
+        }
+    });
+
+    it('hidden numéricos não contêm HTML', () => {
+        const migrated = migrateOniTemplate(source);
+        for (const entry of migrated.system.hidden) {
+            if (entry.name.includes('_num') || entry.name.includes('_conta')) {
+                assert.doesNotMatch(entry.value, /<div/, `${entry.name} não pode conter <div>`);
+                assert.doesNotMatch(entry.value, /<span/, `${entry.name} não pode conter <span>`);
+                assert.doesNotMatch(entry.value, /custom-orbitron-wrapper/, `${entry.name} não pode ter wrapper`);
+            }
+        }
     });
 });

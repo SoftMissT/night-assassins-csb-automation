@@ -1950,8 +1950,7 @@
 .na-oni-sheet .custom-system-entity,
 .na-oni-sheet p,
 .na-oni-sheet li,
-.na-oni-sheet label,
-.na-oni-sheet .na-sheet-text {
+.na-oni-sheet label {
     color: var(--oni-text);
 }
 
@@ -2244,59 +2243,16 @@
     background: var(--oni-red);
 }
 
-/* ==========================================================================
-   Paleta por espécie de ficha + tipografia Orbitron (pedido do Operador)
-   - Oni / Oni Minion: fundo vermelho vinho
-   - Slayer / NPC:     fundo azul marinho escuro
-   - Texto de label:   branco (antes cinza via --na-muted)
-   - Orbitron em toda a ficha, não só nos títulos
-   ========================================================================== */
+/* Cores semânticas da ficha Oni. Estas regras são deliberadamente locais:
+   Slayer/NPC mantêm suas próprias fontes, fundos e paletas. */
+.na-oni-sheet .window-content .na-sheet-role-vit { color: var(--na-vit) !important; }
+.na-oni-sheet .window-content .na-sheet-role-dex { color: var(--na-dex) !important; }
+.na-oni-sheet .window-content .na-sheet-role-for { color: var(--na-for) !important; }
+.na-oni-sheet .window-content .na-sheet-role-car { color: var(--na-car) !important; }
+.na-oni-sheet .window-content .na-sheet-role-fdv { color: var(--na-fdv) !important; }
+.na-oni-sheet .window-content .na-sheet-role-int { color: var(--na-int) !important; }
+.na-oni-sheet .window-content .na-sheet-role-sab { color: var(--na-sab) !important; }
+.na-oni-sheet .window-content .na-sheet-role-pdv { color: var(--oni-red) !important; text-shadow: 0 0 8px rgba(255, 38, 56, 0.4); }
+.na-oni-sheet .window-content .na-sheet-role-pdk { color: #b36cff !important; text-shadow: 0 0 8px rgba(179, 108, 255, 0.35); }
 
-/* Tudo abaixo fica restrito a `.window-content`: é o corpo da ficha. A classe
-   `.na-sheet` também é aplicada ao elemento externo da janela, então estilizar
-   `.na-sheet` direto vazaria para cabeçalho, tooltips e menus do Foundry. */
-
-.na-sheet .window-content,
-.na-sheet .window-content :is(button, input, select, textarea, label, span, td, th, a, p, div) {
-    font-family: var(--na-font-display);
-}
-
-/* Labels deixam de ser cinza: branco legível em qualquer um dos dois fundos. */
-.na-sheet .window-content {
-    --na-muted: #ffffff;
-    --color-text-secondary: #ffffff;
-}
-
-.na-sheet .window-content .na-sheet-label,
-.na-sheet .window-content label {
-    color: #ffffff;
-}
-
-/* Cores semânticas vencem o fallback branco da skin. A especificidade deste
-   bloco é deliberadamente igual ou maior que a regra de labels acima. */
-.na-oni-sheet .window-content .na-sheet-role-vit { color: var(--na-vit); }
-.na-oni-sheet .window-content .na-sheet-role-dex { color: var(--na-dex); }
-.na-oni-sheet .window-content .na-sheet-role-for { color: var(--na-for); }
-.na-oni-sheet .window-content .na-sheet-role-car { color: var(--na-car); }
-.na-oni-sheet .window-content .na-sheet-role-fdv { color: var(--na-fdv); }
-.na-oni-sheet .window-content .na-sheet-role-int { color: var(--na-int); }
-.na-oni-sheet .window-content .na-sheet-role-sab { color: var(--na-sab); }
-.na-oni-sheet .window-content .na-sheet-role-pdv { color: var(--oni-red); }
-.na-oni-sheet .window-content .na-sheet-role-pdk { color: #b36cff; }
-
-/* --- Slayer e NPC: azul marinho escuro --- */
-.na-slayer-sheet .window-content,
-.na-npc-sheet .window-content {
-    background:
-        radial-gradient(ellipse 70% 45% at 100% 0%, rgba(40, 215, 255, 0.06), transparent 52%),
-        linear-gradient(165deg, #0d1b33 0%, #091327 55%, #060d1c 100%);
-}
-
-/* --- Oni e Oni Minion: vermelho vinho --- */
-.na-oni-sheet .window-content,
-.na-oni-minion-sheet .window-content {
-    background:
-        radial-gradient(ellipse 70% 45% at 100% 0%, rgba(255, 38, 56, 0.07), transparent 52%),
-        linear-gradient(165deg, #3a0d18 0%, #2a0912 55%, #1c060c 100%);
-}
 

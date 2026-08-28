@@ -96,6 +96,8 @@ test("template Slayer tem pelo menos 35 botões com macros estáveis", () => {
   walk(template.system);
   assert.ok(buttons.length >= 35, `Esperados ao menos 35 botões; encontrados ${buttons.length}.`);
   for (const button of buttons) {
+    assert.doesNotMatch(button.rollMessage, /return await/);
+    assert.match(button.rollMessage, /return '';}%$/);
     if (button.key === "na_slayer_reset_ficha") {
       assert.match(button.rollMessage, /api\?\.resetSheet\(entity\)/);
       continue;

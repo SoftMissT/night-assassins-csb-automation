@@ -110,7 +110,12 @@ function removeCircularFormulas(template) {
 }
 
 function removeSlayerOnlyComponents(template) {
-    const forbiddenKeys = new Set(['folego_slayer_titulo']);
+    const forbiddenKeys = new Set([
+        'folego_slayer_titulo',
+        'armas_proficientes',
+        'progressao_oni_recursos_panel',
+        'origem_oni_recursos_panel',
+    ]);
     function prune(value) {
         if (Array.isArray(value)) {
             for (let index = value.length - 1; index >= 0; index -= 1) {
@@ -124,12 +129,17 @@ function removeSlayerOnlyComponents(template) {
         for (const child of Object.values(value)) prune(child);
     }
     prune(template.system);
+
+    const actionPanel = findByKey(template, 'acoes_slayer_panel');
+    if (actionPanel) actionPanel.key = 'acoes_oni_panel';
 }
 
 function configureOniActionButtons(template) {
     walk(template.system, (node) => {
         if (typeof node.rollMessage !== 'string') return;
-        node.rollMessage = node.rollMessage.replace("kind:'slayer'", "kind:'oni'");
+        node.rollMessage = node.rollMessage
+            .replace("kind:'slayer'", "kind:'oni'")
+            .replace(/return await (\(await fromUuid\([\s\S]*?\)\)\?\.execute\([\s\S]*?\));}%$/, "await $1; return '';}%");
     });
 }
 
@@ -405,136 +415,15 @@ function configureOniBarsAndLabels(template) {
 }
 
 function configureOniProgressionFields(template) {
-    const dataTab = findByKey(template, 'dados_tab') ?? findByKey(template, 'configs_tab');
-    if (!dataTab || !Array.isArray(dataTab.contents)) return;
-    dataTab.contents = dataTab.contents.filter(
-        (node) => node.key !== 'progressao_oni_recursos_panel'
-    );
-    const existingKeys = collectKeys(template);
-    const fields = Object.entries(PDV_DICE_LEVELS)
-        .map(([level, dice]) =>
-            makeNumberField(
-                `pdv_oni_ganho_nvl${level}`,
-                `PDV ganho Nv. ${level} (${dice})`,
-                `Resultado persistido do ganho de PDV do nível ${level}. Role uma vez e salve aqui.`
-            )
-        )
-        .filter((field) => !existingKeys.has(field.key));
-    fields.push(
-        makeNumberField(
-            'pdv_oni_ganho_nvl1',
-            'PDV ganho Nv. 1 (0)',
-            'Resultado persistido do ganho de PDV do nível 1.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl13',
-            'PDV ganho Nv. 13 (0)',
-            'Resultado persistido do ganho de PDV do nível 13.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl14',
-            'PDV ganho Nv. 14 (0)',
-            'Resultado persistido do ganho de PDV do nível 14.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl15',
-            'PDV ganho Nv. 15 (0)',
-            'Resultado persistido do ganho de PDV do nível 15.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl16',
-            'PDV ganho Nv. 16 (0)',
-            'Resultado persistido do ganho de PDV do nível 16.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl17',
-            'PDV ganho Nv. 17 (0)',
-            'Resultado persistido do ganho de PDV do nível 17.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl18',
-            'PDV ganho Nv. 18 (0)',
-            'Resultado persistido do ganho de PDV do nível 18.'
-        ),
-        makeNumberField(
-            'pdv_oni_ganho_nvl19',
-            'PDV ganho Nv. 19 (0)',
-            'Resultado persistido do ganho de PDV do nível 19.'
-        ),
-        makeNumberField(
-            'vit_oni_nvl1',
-            'VIT no Nv. 1',
-            'Snapshot de VIT usado pela progressão oficial.'
-        ),
-        makeNumberField(
-            'fdv_oni_nvl1',
-            'FDV no Nv. 1',
-            'Snapshot de FDV usado pela progressão oficial.'
-        ),
-        makeNumberField(
-            'vit_oni_nvl7',
-            'VIT no Nv. 7',
-            'Snapshot de VIT usado pela progressão oficial.'
-        ),
-        makeNumberField(
-            'fdv_oni_nvl7',
-            'FDV no Nv. 7',
-            'Snapshot de FDV usado pela progressão oficial.'
-        ),
-        makeNumberField('oni_nivel_na_queda', 'Nível na Queda', 'Somente Exterminador Corrompido.'),
-        makeNumberField(
-            'oni_pdr_maximo_antes_queda',
-            'PDR máximo antes da Queda',
-            'Somente Exterminador Corrompido.'
-        ),
-        makeNumberField(
-            'pdv_oni_dano_tomado',
-            'Dano de PDV tomado',
-            'Ledger persistente de dano recebido.'
-        ),
-        makeNumberField('pdk_oni_gasto_valor', 'PDK gasto', 'Ledger persistente de PDK consumido.')
-    );
-    const missingFields = fields.filter((field) => !existingKeys.has(field.key));
-    dataTab.contents.push(
-        makePanel(
-            'progressao_oni_recursos_panel',
-            [
-                {
-                    ...makePanel('progressao_oni_campos_titulo', [], ''),
-                    type: 'label',
-                    value: orbitron('PROGRESSÃO DE RECURSOS ONI', '#C1000C', 14),
-                    style: 'label',
-                    size: 'full-size',
-                },
-                ...missingFields,
-            ],
-            'grid-4'
-        )
-    );
-
-    dataTab.contents = dataTab.contents.filter((node) => node.key !== 'origem_oni_recursos_panel');
-    const origemLabel = (text) => ({
-        ...makePanel(`origem_label_${text.replace(/[^a-z_]/gi, '')}`, [], ''),
-        type: 'label',
-        value: `<span class="na-sheet-text na-sheet-size-md">${text}</span>`,
-        style: 'label',
-        size: 'full-size',
-    });
-    dataTab.contents.push(
-        makePanel(
-            'origem_oni_recursos_panel',
-            [
-                {
-                    ...makePanel('origem_oni_titulo_panel', [], ''),
-                    type: 'label',
-                    value: orbitron('ORIGEM — RECURSOS INICIAIS', '#B36CFF', 14),
-                    style: 'label',
-                    size: 'full-size',
-                },
-            ],
-            'grid-2'
-        )
-    );
+    // O ledger de progressão é estado interno. Não deve reaparecer como painel
+    // editável na ficha; o runtime persiste os resultados diretamente nas props.
+    for (const name of [
+        'pdv_oni_dano_tomado',
+        'pdk_oni_gasto_valor',
+        'vit_oni_nvl7',
+        'fdv_oni_nvl7',
+    ]) upsertHidden(template, name, '0');
+    removeSlayerOnlyComponents(template);
 }
 
 export function migrateOniTemplate(source) {

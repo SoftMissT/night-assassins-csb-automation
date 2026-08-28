@@ -278,6 +278,16 @@ function fixRollButtons(template) {
     });
 }
 
+function normalizeRollMessageResults(template) {
+    walk(template.system, (node) => {
+        if (typeof node.rollMessage !== 'string' || !node.rollMessage) return;
+        node.rollMessage = node.rollMessage.replace(
+            /return await ([\s\S]*?);}%$/,
+            "await $1; return '';}%"
+        );
+    });
+}
+
 function fixRollButtonTypography(template) {
     const attributeRoles = {
         VIT: 'vit',
@@ -2041,6 +2051,7 @@ export function migrateSlayerTemplate(template) {
     fixRollButtonTypography(migrated);
     trimAttributeCardValues(migrated);
     fixTextVisibilityFormulas(migrated);
+    normalizeRollMessageResults(migrated);
     return migrated;
 }
 

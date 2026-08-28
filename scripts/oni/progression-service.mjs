@@ -139,15 +139,15 @@ export function missingOniPdvGains(level, persisted = {}) {
  * @param {boolean} [options.onlyMissing] Rola apenas ganhos pendentes (padrão).
  * @returns {Promise<{results: object[], total: number, complete: boolean}>}
  */
-export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) {
+export async function rollOniPdvGain(actor, { level, onlyMissing = true, showDice = true } = {}) {
   if (!actor?.update) throw new Error("Actor inválido para rolar ganhos de PDV Oni.");
   const props = actor.system?.props ?? {};
   const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? props.nvl_num ?? String(props.nvl_pj ?? "").replace(/^nvl_/, ""));
-  console.log(`[NA-Debug] rollOniPdvGain: actor=${actor.name}, level=${normalized}, onlyMissing=${onlyMissing}`);
+  console.warn(`[NA-ONI-PDV] ROLL START level=${normalized}`);
   const plan = onlyMissing
     ? missingOniPdvGains(normalized, props)
     : oniRandomPdvRequirements(normalized, {}).required;
-  console.log(`[NA-Debug] plan: ${plan.length} ganhos pendentes`, plan.map((e) => `nvl${e.level}(${e.dice})`));
+  console.warn(`[NA-ONI-PDV] PLAN ${plan.length} gains:`, plan.map((e) => `nvl${e.level}(${e.dice})`));
   const results = [];
   const patch = {};
   for (const entry of plan) {
@@ -157,9 +157,17 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
       const roll = await Roll.create(entry.dice).evaluate();
       rollTotal = Number(roll.total) || 0;
       value = Math.max(0, Math.trunc(rollTotal));
-      console.log(`[NA-Debug] roll nvl${entry.level}: ${entry.dice} = ${rollTotal}`);
+      console.warn(`[NA-ONI-PDV] ROLL RESULT level=${entry.level} dice=${entry.dice} result=${rollTotal}`);
+      if (showDice && game.dice3d?.showForRoll) {
+        try {
+          await game.dice3d.showForRoll(roll, game.user, true);
+          console.warn(`[NA-ONI-PDV] DICE3D displayed=true level=${entry.level}`);
+        } catch (diceError) {
+          console.warn(`[NA-ONI-PDV] DICE3D failed:`, diceError);
+        }
+      }
     } catch (error) {
-      console.error(`[NA-Debug] erro ao rolar nvl${entry.level}:`, error);
+      console.error(`[NA-ONI-PDV] ROLL FAILED level=${entry.level}:`, error);
       globalThis.ui?.notifications?.error?.(`Falha ao rolar ganho do nível ${entry.level}: ${error.message}`);
       continue;
     }
@@ -167,9 +175,9 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
     results.push({ level: entry.level, key: entry.key, dice: entry.dice, value, rollTotal });
   }
   if (results.length) {
-    console.log(`[NA-Debug] actor.update com patch:`, patch);
+    console.warn(`[NA-ONI-PDV] PERSIST ${results.length} fields`);
     await actor.update(patch, { naCsbAutomation: true });
-    console.log(`[NA-Debug] actor.update concluído`);
+    console.warn(`[NA-ONI-PDV] PERSIST COMPLETE ${results.length} fields updated`);
   }
   const total = results.reduce((sum, result) => sum + result.value, 0);
   const remaining = missingOniPdvGains(normalized, { ...props, ...Object.fromEntries(results.map((r) => [r.key, r.value])) });
@@ -186,17 +194,17 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true } = {}) 
  * @param {number} [options.level] Nível explícito; senão deriva das props.
  * @returns {Promise<{needed: boolean, rolled: object[], total: number, complete: boolean}>}
  */
-export async function ensureOniProgression(actor, { level } = {}) {
+export async function ensureOniProgression(actor, { level, showDice = true } = {}) {
   if (!actor?.update) throw new Error("Actor inválido para progressão Oni.");
   const props = actor.system?.props ?? {};
   const normalized = normalizeOniLevel(level ?? props.nvl_oni ?? props.nvl_num ?? String(props.nvl_pj ?? "").replace(/^nvl_/, ""));
   const missing = missingOniPdvGains(normalized, props);
-  console.log(`[NA-Oni] ensureOniProgression: actor=${actor.name}, level=${normalized}, missing=${missing.length} gains:`, missing.map((e) => e.key));
+  console.warn(`[NA-ONI-PDV] LEVEL CHANGE actor=${actor.name} level=${normalized} missing=${missing.length}`);
   if (!missing.length) {
     return { needed: false, rolled: [], total: 0, complete: true };
   }
-  const result = await rollOniPdvGain(actor, { level: normalized });
-  console.log(`[NA-Oni] ensureOniProgression: rolled ${result.results.length} gains, total=${result.total}`);
+  const result = await rollOniPdvGain(actor, { level: normalized, showDice });
+  console.warn(`[NA-ONI-PDV] COMPLETE rolled=${result.results.length} total=${result.total}`);
   return { needed: true, rolled: result.results, total: result.total, complete: result.complete };
 }
 

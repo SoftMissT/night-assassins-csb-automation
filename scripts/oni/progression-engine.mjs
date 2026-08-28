@@ -43,7 +43,7 @@ async function oniUpdateHandler(actor, changes, options, userId) {
 
   await withLock(actor.uuid, async () => {
     try {
-      await ensureOniProgression(actor, { level });
+      await ensureOniProgression(actor, { level, showDice: true });
       console.log(`[NA-Oni] progression persisted for ${actor.name}`);
     } catch (error) {
       console.error(`[NA-Oni] progression failed for ${actor.name}:`, error);
@@ -61,7 +61,7 @@ async function oniCreateHandler(actor) {
   await withLock(actor.uuid, async () => {
     try {
       console.log(`[NA-Oni] createActor: ${actor.name}`);
-      await ensureOniProgression(actor);
+      await ensureOniProgression(actor, { showDice: true });
       console.log(`[NA-Oni] progression persisted for ${actor.name}`);
     } catch (error) {
       console.error(`[NA-Oni] progression failed for ${actor.name}:`, error);
@@ -81,12 +81,12 @@ export async function oniReadyCatchUp() {
 
   if (game.user?.id !== gmId) return;
 
-  console.log(`[NA-Oni] ready catch-up: starting for ${game.actors?.contents?.length ?? 0} actors`);
+      console.log(`[NA-Oni] ready catch-up: starting for ${game.actors?.contents?.length ?? 0} actors`);
 
   for (const actor of game.actors?.contents ?? []) {
     if (actorKind(actor) !== "oni") continue;
     try {
-      await ensureOniProgression(actor);
+      await ensureOniProgression(actor, { showDice: false });
     } catch (error) {
       console.warn(`[NA-Oni] Falha no catch-up de ${actor.name}:`, error);
     }

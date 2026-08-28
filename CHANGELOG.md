@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.35 - 2026-08-26
+
+- **RESETAR FICHA:** botão adicionado às abas CONFIGURAÇÕES dos templates Slayer e Oni. Reseta estado temporário de combate (dano, cura, extra, gasto PDR/PDK, fôlego) preservando nível, atributos, progressão, origem, especialização e inventário.
+- **Oni PDV Dice So Nice:** rolagem de PDV do Oni agora exibe dados 3D quando disponível (manual: mostra, catch-up automático: não mostra para evitar spam).
+- **Logs padronizados:** todos os logs do motor Oni PDV agora usam `console.warn` com prefixo `[NA-ONI-PDV]`.
+- **Painel Oni oculto:** `progressao_oni_recursos_panel` removido da UI (visibilityFormula: "false").
+- **Correções PDV VIT:** 10 referências incorretas corrigidas no template Oni (cada `pdv_oni_nvlN` agora usa `vit_oni_nvlN` correto).
+- **Ferramentas de auditoria:** `audit-pdv-vit.cjs`, `fix-pdv-vit.cjs`, `check-pdv-chain.cjs` adicionadas.
+- **Testes:** 17 testes de reset (16/16 pass), 38 testes de regressão PDV (38/38 pass).
+
 ## 0.11.24 - 2026-08-26
 
 - **Oni PDV/PDK simplificado:** fórmulas de total PDV/PDK substituídas por `switchCase(nvl_pj,...)` que lê diretamente `pdv_oni_nvl{N}` e `pdk_oni_nvl{N}`, eliminando a cadeia condicional gigante.
@@ -92,7 +102,7 @@
     - Metal: corrigido o contra-ataque do Duro como Aço nível 4, que nunca disparava; corrigida a Vantagem do nível 2, que ficava ativa indefinidamente em vez de valer só para o próximo ataque inimigo.
     - Neve: corrigido o bônus "+2 em quaisquer testes contra CD" do Coração de Gelo nível 4, que nunca era aplicado fora de Bloqueio/Esquiva.
     - Vento: corrigida a passiva do 2º Estilo (Garras do Vento Puro) Vantagem automática uma vez por turno a partir do Nível 3 de Respiração, que nunca havia sido implementada.
-    - Chamas: auditada integralmente, nenhuma divergência encontrada.
+  - Chamas: auditada integralmente, nenhuma divergência encontrada.
 - **Nomenclatura em japonês**: todas as Respirações publicadas usam o nome romaji como identificador primário da técnica (nas mensagens de chat, diálogos e catálogo), com o nome em português como referência secundária.
 - **Somente as Respirações com motor de estado dedicado e auditadas são publicadas no Compendium** (Chamas, Metal, Neve, Névoa, Pedra, Vento). Água e as demais Respirações do catálogo de fonte deixam de ser empacotadas até receberem o mesmo tratamento.
 - Validação: `node --test` com **844/844** testes aprovados.

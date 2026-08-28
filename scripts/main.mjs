@@ -42,6 +42,7 @@ import { repairOniActors } from "./oni/repair-service.mjs";
 import { useKekkijutsuItem } from "./oni/kekkijutsu-use-service.mjs";
 import { registerWeaponModeEngine } from "./weapon-service.mjs";
 import { derivedBonusSummary, openDerivedBonusAudit, resolveSlayerDerivedBonuses } from "./derived-bonus-service.mjs";
+import { resetSheet } from "./reset-service.mjs";
 
 /**
  * Wrapper público de rollDamage exposto em module.api — ponto de entrada
@@ -234,6 +235,7 @@ reloadWeaponItem,
         processLevel: processOniLevelGain,
       },
       actorKind,
+      resetSheet,
       syncMacros: syncCanonicalMacros,
       openLevelOne: createLevelOneValues,
       processLevel: processLevelGain,

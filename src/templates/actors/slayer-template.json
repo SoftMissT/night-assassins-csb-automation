@@ -5423,10 +5423,38 @@
                         "altRollMessageToChat": false,
                         "style": "button"
                       }
+                    ],
+                    [
+                      null,
+                      {
+                        "key": "na_slayer_reset_ficha",
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "cssClass": "",
+                        "role": 0,
+                        "editRole": 0,
+                        "permission": 0,
+                        "tooltip": "Reseta dano, cura e recursos temporários. Nível, atributos e itens são preservados.",
+                        "visibilityFormula": "",
+                        "editableFormula": "",
+                        "escapeHTML": false,
+                        "type": "label",
+                        "size": "full-size",
+                        "icon": "",
+                        "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md\">RESETAR FICHA</span>",
+                        "prefix": "",
+                        "suffix": "",
+                        "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.resetSheet(entity); return '';}%",
+                        "altRollMessage": "",
+                        "rollMessageToChat": false,
+                        "altRollMessageToChat": false,
+                        "style": "button"
+                      },
+                      null
                     ]
                   ],
                   "cols": 2,
-                  "rows": 40,
+                  "rows": 41,
                   "layout": "ccc"
                 },
                 {

@@ -7,7 +7,6 @@ import { changedProp, parseLevel, isDestinyMark, parseNumber } from "./parsing.m
 import { createLevelOneValues, processLevelGain, processOniLevelGain } from "./level-service.mjs";
 import { applyInitialMark, upgradeMarkAtLevelSix } from "./ability-service.mjs";
 import { actorKind } from "./actor-kind.mjs";
-import { ensureOniProgression } from "./oni/progression-service.mjs";
 
 /** @type {Map<string, Promise<void>>} */
 const actorLocks = new Map();
@@ -60,15 +59,12 @@ export async function handleActorUpdate(actor, changes, options, userId) {
 
   const kind = actorKind(actor);
 
-  // Domínio Oni: sem Marca Slayer. Ledger de PDV (2–12) + snapshot de atributo.
+  // Domínio Oni: snapshot de atributo. PDV gains são handled por progression-engine.mjs.
   if (kind === "oni") {
     const rawOniLevel = changedProp(changes, PROP_KEYS.level);
-    console.log(`[NA-Oni] updateActor: actor=${actor.name}, rawLevel=${rawOniLevel}, changes=${JSON.stringify(Object.keys(changes?.system?.props ?? changes ?? {}))}`);
     if (rawOniLevel === undefined) return;
     const oniLevel = parseLevel(rawOniLevel);
-    console.log(`[NA-Oni] oniLevel=${oniLevel}, calling ensureOniProgression`);
     await withActorLock(actor.uuid, async () => {
-      await ensureOniProgression(actor, { level: oniLevel });
       const props = actor.system?.props ?? {};
       if (!ONI_SNAPSHOT_LEVELS.includes(oniLevel) || isSnapshotComplete(props, oniLevel)) return;
       if (oniLevel === 1) await createLevelOneValues(actor);

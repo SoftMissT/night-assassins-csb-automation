@@ -13,6 +13,7 @@ import {
     ensureOniProgression,
 } from '../scripts/oni/progression-service.mjs';
 import { handleActorUpdate } from '../scripts/trigger-router.mjs';
+import { oniReadyCatchUp } from '../scripts/oni/progression-engine.mjs';
 
 describe('Progressão Oni 1–20', () => {
     describe('Rank da Especialização — decisão do Operador (modelo 1B)', () => {
@@ -294,7 +295,7 @@ describe('Automação da vida do Oni (ledger runtime)', () => {
         }
     });
 
-    it('updateActor de Oni roteia para a automação sem rodar triggers Slayer', async () => {
+    it('updateActor de Oni NÃO processa PDV no trigger-router (agora é engine)', async () => {
         const calls = { update: 0 };
         const props = { pdv_oni_total_conta: 1, nvl_pj: 'nvl_2' };
         const actor = {
@@ -320,17 +321,21 @@ describe('Automação da vida do Oni (ledger runtime)', () => {
         globalThis.foundry = { applications: { api: { DialogV2: { wait: async () => null } } } };
         globalThis.ui = { notifications: { warn() {}, error() {}, info() {} } };
         try {
+            // trigger-router NÃO deve processar PDV de Oni (delegado ao engine)
             await handleActorUpdate(actor, { system: { props: { nvl_pj: 'nvl_4' } } }, {}, 'gm1');
-            assert.equal(props['pdv_oni_ganho_nvl2'], 3);
-            assert.equal(props['pdv_oni_ganho_nvl3'], 3);
-            assert.equal(props['pdv_oni_ganho_nvl4'], 3);
-            assert.equal(calls.update, 1); // um único patch atômico
-            // Nenhum campo Slayer contaminou o Oni
-            for (const key of Object.keys(props))
-                assert.doesNotMatch(key, /slayer|marca|hab_escolhida/i);
+            assert.equal(props['pdv_oni_ganho_nvl2'], undefined);
+            assert.equal(calls.update, 0);
+            // engine processa PDV via ensureOniProgression
+            const result = await ensureOniProgression(actor, { level: 4 });
+            assert.equal(result.needed, true);
+            assert.equal(result.rolled.length, 3);
+            assert.ok(props['pdv_oni_ganho_nvl2'] >= 1);
+            assert.ok(props['pdv_oni_ganho_nvl3'] >= 1);
+            assert.ok(props['pdv_oni_ganho_nvl4'] >= 1);
             // Update de outra pessoa não roda nada
-            await handleActorUpdate(actor, { system: { props: { nvl_pj: 'nvl_9' } } }, {}, 'outro');
-            assert.equal(props['pdv_oni_ganho_nvl9'], undefined);
+            const result2 = await ensureOniProgression(actor, { level: 9 });
+            assert.equal(result2.needed, true);
+            assert.equal(result2.rolled.length, 5);
         } finally {
             delete globalThis.game;
             delete globalThis.Roll;

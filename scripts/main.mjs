@@ -36,6 +36,7 @@ import * as slayerOrigins from "./slayer/origin-contracts.mjs";
 import * as slayerClasses from "./slayer/class-contracts.mjs";
 import * as slayerAdvancedStates from "./slayer/advanced-states.mjs";
 import * as oniProgression from "./oni/progression-service.mjs";
+import { registerOniProgressionEngine } from "./oni/progression-engine.mjs";
 import { actorKind } from "./actor-kind.mjs";
 import { repairOniActors } from "./oni/repair-service.mjs";
 import { useKekkijutsuItem } from "./oni/kekkijutsu-use-service.mjs";
@@ -61,6 +62,7 @@ async function rollWeaponItemPublic(options = {}) {
 
 Hooks.once("init", () => {
   registerSettings();
+  registerOniProgressionEngine();
 });
 
 /**
@@ -117,20 +119,8 @@ Hooks.once("ready", async () => {
     }
   }
 
-  // Vida do Oni 100% automática: completa o ledger de ganhos de PDV de Onis
-  // existentes na carga do mundo. Idempotente — só faltantes, nunca rerrola.
-  for (const actor of game.actors?.contents ?? []) {
-    const props = actor?.system?.props ?? {};
-    const templateName = String(actor?.system?.template ?? "").toLowerCase();
-    const isFullOni = (props.pdv_oni_total_conta !== undefined || props.nome_oni !== undefined)
-      && !templateName.includes("oni_minion");
-    if (!isFullOni) continue;
-    try {
-      await oniProgression.ensureOniProgression(actor);
-    } catch (error) {
-      console.warn?.(`[${MODULE_ID}] Falha ao completar progressão Oni de ${actor.name}:`, error);
-    }
-  }
+  // Oni PDV progression catch-up is now handled by progression-engine.mjs
+  // (registered in init, runs in ready via Hooks.once("ready", oniReadyCatchUp))
   Hooks.on("renderActorSheet", tagNightAssassinsSheet);
   Hooks.on("renderActorSheetV2", tagNightAssassinsSheet);
   Hooks.on("renderApplicationV2", (app, element) => {

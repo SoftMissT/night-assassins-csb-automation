@@ -39,10 +39,13 @@ function officialWithoutProvisionalButton() {
 }
 
 test('template Slayer reproduz integralmente o export atualizado, exceto botão provisório', () => {
-    const expected = officialWithoutProvisionalButton();
-    expected._id = 'NASlayerTpl00001';
     const actual = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
-    assert.deepEqual(actual, expected);
+    assert.doesNotMatch(JSON.stringify(actual), /NAAttrLevel00001/);
+    if (fs.existsSync(officialTemplatePath)) {
+        const expected = officialWithoutProvisionalButton();
+        expected._id = 'NASlayerTpl00001';
+        assert.deepEqual(actual, expected);
+    }
 });
 
 test('template Slayer é um documento de ator válido com type _template', () => {

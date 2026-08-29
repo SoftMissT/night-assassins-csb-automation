@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.39 - 2026-08-29
+
+- **Slayer N1:** campos de snapshot com valor padrão `0` deixam de ser classificados como atributos já distribuídos; selecionar `nvl_1` volta a abrir o fluxo automático.
+- **Vida e Morte:** reconciliação bloqueada até a Slayer possuir nível 1, sete snapshots N1 positivos e PDV total positivo.
+- **Escopo:** nenhuma fórmula PDV/PDR e nenhum layout de Actor foram alterados; Oni permanece intacta.
+- **Validação:** 920/920 testes, 166 suítes, zero falhas.
+
 ## 0.11.38 - 2026-08-28
 
 - **Templates oficiais:** Oni e Slayer restaurados a partir dos exports integrais do operador; na Slayer foi removido somente o botão provisório de atributos.
@@ -838,3 +845,22 @@
 - Slayer adotada integralmente de `MACRO-NA-FOUNDRY/TEMPLATE_SLAYER_ATUALIZADO.json`; removido somente o label provisório que chamava `NAAttrLevel00001`.
 - Template do módulo, import CSB e Actor intermediário do Compendium conferidos como estruturalmente idênticos à fonte oficial após essa única remoção.
 - Validação local atualizada: 918/918 testes; runtime e visual Foundry v14 pendentes.
+
+## [2026-08-28] Encerramento pós-v0.11.38
+
+- Release `v0.11.38` confirmada no workflow `33217182304`.
+- Sessão de @MAKO-MORI e @TANG-ROU encerrada com handoff formal.
+- Dezoito solicitações registradas como `TASK-001` a `TASK-018`, todas em `TODO`.
+- Próximo gate obrigatório: validação N1–N20 de Slayer/Oni no Foundry v14.
+## [2026-08-29] Backlog integral do projeto
+
+- As 910 linhas de `tasks/todo.md` foram lidas e classificadas integralmente.
+- Demandas reais consolidadas em 33 TASKs canônicas, todas `TODO`.
+- Prompts genéricos de segurança, UX e performance foram convertidos em critérios próprios do módulo, sem importar exemplos React/pnpm.
+- Nenhum código, template, versão ou release foi alterado.
+## [Unreleased] Hotfix Slayer N1 e guarda Vida e Morte
+
+- Snapshot Slayer N1 com valores padrão `0` deixou de ser classificado como concluído; mudar para `nvl_1` volta a abrir a criação automática de atributos.
+- Vida e Morte agora exige nível 1, sete snapshots N1 positivos e PDV total positivo antes de reagir a updates.
+- 2 regressões novas; suíte completa `920/920`, 166 suítes, 6,82s.
+- Runtime Foundry v14 e release permanecem pendentes.

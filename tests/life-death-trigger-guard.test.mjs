@@ -17,6 +17,14 @@ function actor(total = 20) {
                 pdv_slayer_dano_tomado: 0,
                 pdv_slayer_dano_ferida: 0,
                 pdv_slayer_curado: 0,
+                nvl_pj: 'nvl_1',
+                vit_nvl1: 4,
+                dex_nvl1: 3,
+                for_nvl1: 2,
+                car_nvl1: 2,
+                fdv_nvl1: 1,
+                int_nvl1: 1,
+                sab_nvl1: 1,
             },
         },
         update: async () => {},
@@ -61,6 +69,24 @@ test('life death does not reconcile when total PDV is object', () => {
         shouldRunLifeDeath(target, { 'system.props.pdv_slayer_dano_tomado': 10 }, {}),
         false
     );
+});
+
+test('life death does not reconcile before Slayer level one snapshot', () => {
+    primaryGm();
+    const target = actor(20);
+    target.system.props.nvl_pj = 'nvl_0';
+    target.system.props.vit_nvl1 = 0;
+    const changes = { system: { props: { pdv_slayer_dano_tomado: 0 } } };
+    assert.equal(hasStableSlayerLifeInputs(target), false);
+    assert.equal(shouldRunLifeDeath(target, changes, {}), false);
+});
+
+test('life death does not reconcile while Slayer total PDV is zero', () => {
+    primaryGm();
+    const target = actor(0);
+    const changes = { system: { props: { pdv_slayer_dano_tomado: 0 } } };
+    assert.equal(hasStableSlayerLifeInputs(target), false);
+    assert.equal(shouldRunLifeDeath(target, changes, {}), false);
 });
 
 test('hook updateActor encaminha changes para a guarda', () => {

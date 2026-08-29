@@ -5,7 +5,11 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { makeActor } from './fixtures/actor.mjs';
 
-foundry.applications.api.DialogV2.wait = async () => null;
+let dialogCalls = 0;
+foundry.applications.api.DialogV2.wait = async () => {
+    dialogCalls += 1;
+    return null;
+};
 
 import { handleActorUpdate } from '../scripts/trigger-router.mjs';
 
@@ -56,14 +60,32 @@ describe('trigger-router', () => {
     });
 
     it('dispara criação de nível 1 quando nível muda para 1 e snapshot incompleto', async () => {
-        const actor = makeActor({ props: { vit_nvl1: undefined, nvl_pj: 1 } });
+        dialogCalls = 0;
+        const actor = makeActor({
+            props: {
+                vit_nvl1: 0,
+                dex_nvl1: 0,
+                for_nvl1: 0,
+                car_nvl1: 0,
+                fdv_nvl1: 0,
+                int_nvl1: 0,
+                sab_nvl1: 0,
+                nvl_pj: 'nvl_1',
+            },
+        });
         let updated = false;
         actor.update = async () => {
             updated = true;
         };
-        await handleActorUpdate(actor, { system: { props: { nvl_pj: 1 } } }, {}, game.user.id);
+        await handleActorUpdate(
+            actor,
+            { system: { props: { nvl_pj: 'nvl_1' } } },
+            {},
+            game.user.id
+        );
         // Como o dialog é mockado para null, a criação não deve aplicar update
         assert.strictEqual(updated, false);
+        assert.strictEqual(dialogCalls, 1);
     });
 
     it('dispara ganho de nível 3 quando nível muda para 3 e snapshot incompleto', async () => {

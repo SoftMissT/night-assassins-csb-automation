@@ -2,7 +2,7 @@
  * @fileoverview Motor GM-authoritativo de Vida e Morte dos Slayers.
  */
 
-import { MODULE_ID } from './constants.mjs';
+import { ATTRIBUTES, MODULE_ID } from './constants.mjs';
 import { changedProp, parseNumber } from './parsing.mjs';
 import { consumeSlayerActions } from './action-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
@@ -216,6 +216,9 @@ export function hasStableSlayerLifeInputs(actor) {
 
     if (!isSlayer(actor)) return false;
     if (isBadCsbNumber(props.pdv_slayer_total_conta)) return false;
+    if (parseNumber(props.pdv_slayer_total_conta) <= 0) return false;
+    if (parseNumber(props.nvl_pj) < 1) return false;
+    if (ATTRIBUTES.some(({ key }) => parseNumber(props[`${key}_nvl1`]) <= 0)) return false;
     if (
         props.pdv_slayer_dano_tomado !== undefined &&
         typeof props.pdv_slayer_dano_tomado === 'object'

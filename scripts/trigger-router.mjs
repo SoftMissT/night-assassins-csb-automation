@@ -41,7 +41,9 @@ async function withActorLock(uuid, task) {
 function isSnapshotComplete(props, level) {
     return ATTRIBUTES.every((a) => {
         const v = props[`${a.key}_nvl${level}`];
-        return v !== undefined && v !== null && v !== '';
+        // Number Fields do CSB nascem com defaultValue "0". Zero significa
+        // que o snapshot ainda não foi distribuído, não que está concluído.
+        return parseNumber(v) > 0;
     });
 }
 

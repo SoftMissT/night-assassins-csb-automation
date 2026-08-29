@@ -23,7 +23,12 @@ const specialTemplatePath = path.join(
 );
 const specialWeaponTemplate = JSON.parse(await readFile(specialTemplatePath, 'utf8'));
 specialWeaponTemplate._key = `!items!${specialWeaponTemplate._id}`;
-const PUBLISHED_WEAPONS = new Set(['Katana', 'Double Blade', 'Manoplas / Soqueiras']);
+const PUBLISHED_WEAPONS = new Set([
+    'Katana',
+    'Double Blade',
+    'Manoplas / Soqueiras',
+    'Cutelos Gêmeos',
+]);
 const BASIC_FOLDER_ID = '02e48b1127bca24a';
 
 export const RANK_DICE = Object.freeze({
@@ -120,6 +125,16 @@ const documents = [...sourceDocuments, specialWeaponTemplate].map((document) => 
                 arma_dano_atributo_json: JSON.stringify(props.arma_dano_atributo ?? []),
                 arma_tipos_dano_json: JSON.stringify(props.arma_tipos_dano ?? []),
                 arma_atributo_acerto_json: JSON.stringify(props.arma_atributo_acerto ?? []),
+                // O CSB 6 espera texto nos textFields. Arrays aqui viravam
+                // "[object Object]" durante o prepareData e quebravam o Actor.
+                arma_dano_atributo: (Array.isArray(props.arma_dano_atributo)
+                    ? props.arma_dano_atributo
+                    : []
+                ).join(' ou '),
+                arma_tipos_dano: (Array.isArray(props.arma_tipos_dano)
+                    ? props.arma_tipos_dano
+                    : []
+                ).join(', '),
                 arma_perfis_resumo: profiles
                     .map((profile) => profile.formula_texto || profile.nome)
                     .filter(Boolean)

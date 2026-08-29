@@ -101,7 +101,7 @@
                             "size": "full-size",
                             "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>",
                             "tooltip": "Rola Acerto e dano usando a progressão própria desta arma especial.",
-                            "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});}%",
+                            "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});return '';}%",
                             "altRollMessage": "",
                             "rollMessageToChat": false,
                             "altRollMessageToChat": false,

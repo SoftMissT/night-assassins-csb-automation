@@ -134,6 +134,22 @@
         return 35;
     }
 
+    async function rollVisible(formula, flavor) {
+        const roll = await new Roll(formula).evaluate();
+        const message = await roll.toMessage({
+            flavor,
+            speaker: ChatMessage.getSpeaker({ actor }),
+        });
+        if (message?.id) {
+            try {
+                await game.dice3d?.waitFor3DAnimationByMessageID?.(message.id);
+            } catch (_) {
+                // Dice So Nice é opcional; a Marca continua se a animação falhar.
+            }
+        }
+        return roll;
+    }
+
     async function awaken() {
         const props = actor.system.props ?? {};
         if (number(props.marca_despertada) === 1)
@@ -147,25 +163,25 @@
         if (!bornMarked) {
             const cd = awakeningCd(props);
             const fdv = attribute(props, 'fdv');
-            const roll = await new Roll(`1d20 + ${fdv}`).evaluate();
-            await roll.toMessage({
-                flavor: `<strong>Despertar da Marca do Caçador</strong> FDV ${fdv} contra CD ${cd}`,
-                speaker: ChatMessage.getSpeaker({ actor }),
-            });
+            const roll = await rollVisible(
+                `1d20 + ${fdv}`,
+                `<strong>Despertar da Marca do Caçador</strong> FDV ${fdv} contra CD ${cd}`
+            );
             if (roll.total < cd) return ui.notifications.warn('A Marca não despertou.');
         }
 
         let remainingLife = number(props.vid_rest_num);
         if (!bornMarked && remainingLife <= 0) {
             const destinyBonus = isDestinyMark(props) && level(props) >= 12 ? 15 : 0;
-            const roll = await new Roll(
-                `1d100 + ${attribute(props, 'vit')} + ${destinyBonus}`
-            ).evaluate();
+            const roll = await rollVisible(
+                `1d100 + ${attribute(props, 'vit')} + ${destinyBonus}`,
+                '<strong>Marca do Caçador</strong> determinação da vida restante'
+            );
             const rolledYears = lifeYears(roll.total);
             const age = number(props.idade);
             remainingLife =
                 age >= 25
-                    ? (await new Roll('1d12').evaluate()).total / 12
+                    ? (await rollVisible('1d12', '<strong>Marca do Caçador</strong> meses restantes')).total / 12
                     : Math.min(rolledYears, Math.max(1, 25 - age));
         }
 

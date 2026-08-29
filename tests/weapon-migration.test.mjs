@@ -34,6 +34,8 @@ describe('weapon-migration', () => {
         assert.equal(changes['system.props.arma_perfis_resumo'], 'Ataque Base');
         assert.equal(changes['system.props.arma_tipos_dano_resumo'], 'cortante');
         assert.equal(changes['system.props.arma_atributos_resumo'], 'DEX');
+        assert.equal(changes['system.props.arma_tipos_dano'], 'cortante');
+        assert.equal(changes['system.props.arma_dano_atributo'], 'DEX');
     });
 
     it('é idempotente: após aplicar, não gera novo patch', () => {
@@ -46,6 +48,8 @@ describe('weapon-migration', () => {
             arma_perfis_resumo: first['system.props.arma_perfis_resumo'],
             arma_tipos_dano_resumo: first['system.props.arma_tipos_dano_resumo'],
             arma_atributos_resumo: first['system.props.arma_atributos_resumo'],
+            arma_tipos_dano: first['system.props.arma_tipos_dano'],
+            arma_dano_atributo: first['system.props.arma_dano_atributo'],
         };
         assert.equal(
             weaponRepairChanges({

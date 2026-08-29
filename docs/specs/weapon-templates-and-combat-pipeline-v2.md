@@ -1,7 +1,7 @@
 ---
 title: "Templates e pipeline de armas Slayer v2"
 created: "2026-08-24"
-last_updated: "2026-08-24"
+last_updated: "2026-08-29"
 status: approved
 type: spec
 tags:
@@ -14,7 +14,7 @@ tags:
 
 ## Escopo aprovado
 
-Esta tranche publica somente **Katana**, **Double Blade** e **Manoplas / Soqueiras**. As demais armas normais e todas as armas especiais permanecem como fonte de backlog fora do Compêndio distribuído até receberem mecânica individual auditada.
+Esta tranche publica somente **Katana**, **Double Blade**, **Manoplas / Soqueiras** e **Cutelos Gêmeos**. As demais armas normais e todas as armas especiais permanecem como fonte de backlog fora do Compêndio distribuído até receberem mecânica individual auditada.
 
 O módulo possui dois contratos de Item distintos:
 
@@ -35,6 +35,18 @@ O módulo possui dois contratos de Item distintos:
 - **RF-010** — Quando uma Forma de Respiração usar uma arma, a arma deve fornecer atributo de Acerto, crítico, modo e dano-base; a Forma deve fornecer apenas suas parcelas, bônus e efeitos declarados.
 - **RF-011** — Quando um golpe não for confirmado, nenhuma parcela de dano daquele golpe deve ser rolada ou aplicada.
 - **RF-012** — Quando o usuário cancelar qualquer diálogo antes da confirmação, nenhuma ação, recurso, munição ou dano deve ser consumido.
+- **RF-013** — Cutelos Gêmeos causam `4 + floor(max(DEX, FOR) / 2)`; sua Reação de aparo exige Acerto CD 16 e reduz `4 + floor(max(INT, SAB) / 2)` quando integrada ao fluxo de dano.
+
+## Contrato visual futuro
+
+O Item normal usa identidade de aço escuro com destaque Nichirin contido. O layout oficial do JSON canônico governa estrutura, ordem, rótulos e campos; CSS não pode recriar ou duplicar componentes.
+
+- Escopo raiz próprio do template normal; nenhuma regra pode atingir `NASpecialWeaponTpl00001`.
+- Ações rápidas previstas: **Rolar Ataque**, **Dano Normal** e **Dano Crítico**, conectadas ao mesmo perfil mecânico do Item.
+- A hierarquia mostra primeiro nome/imagem, depois categoria, modo, crítico, alcance e propriedades oficiais; dano deve estar visível e nunca apenas dentro da descrição.
+- Estados hover/focus são discretos, acessíveis e não dependem apenas da cor.
+- Não adicionar flags genéricas `is_nichirin`, `is_carmesim`, `is_glicinia`, `is_alcance`, `is_flexivel` ou `is_oculta`; elas não pertencem ao contrato mecânico aprovado desta tranche.
+- Implementação CSS fica bloqueada até a estabilização P0 e exige gate visual no Foundry v14.
 
 ## Contrato de dados
 
@@ -88,6 +100,9 @@ O GM dispõe de um Number setting de Mundo que define o menor limiar de crítico
 - **CT-008** — O piso mundial impede reduções abaixo do valor definido pelo GM.
 - **CT-009** — Respirações continuam resolvendo a arma sincronizada sem regressão.
 - **CT-010** — Cancelamento não gera rolagem, gasto nem update.
+- **CT-011** — Cutelos Gêmeos usam o dano oficial e a habilidade de aparo só é declarada como funcional após teste runtime integrado.
+- **CT-012** — CSS do Item normal não altera arma especial, ficha Slayer, Oni, Oni Minion ou outros Items.
+- **CT-013** — Ataque, dano normal e dano crítico usam o mesmo perfil, sem duplicar parcelas.
 
 ## Conexões
 

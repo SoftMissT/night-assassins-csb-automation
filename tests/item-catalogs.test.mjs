@@ -197,7 +197,7 @@ describe('catálogo de Respirações', () => {
 });
 
 describe('catálogo de armas Slayer', () => {
-    it('publica somente as três armas auditadas e mantém templates normal/especial separados', async () => {
+    it('publica somente as quatro armas entregues pelo operador e mantém templates normal/especial separados', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         assert.equal(
             documents.filter((document) => String(document._key).startsWith('!folders!')).length,
@@ -209,6 +209,7 @@ describe('catálogo de armas Slayer', () => {
         );
         const weapons = documents.filter((document) => document.type === 'equippableItem');
         assert.deepEqual(weapons.map((item) => item.name).sort(), [
+            'Cutelos Gêmeos',
             'Double Blade',
             'Katana',
             'Manoplas / Soqueiras',
@@ -228,7 +229,38 @@ describe('catálogo de armas Slayer', () => {
                     item.system.props.arma_perfis_ataque.length > 0
             )
         );
-        assert.ok(weapons.every((item) => Array.isArray(item.system.props.arma_tipos_dano)));
+        assert.ok(
+            weapons.every(
+                (item) =>
+                    typeof item.system.props.arma_tipos_dano === 'string' &&
+                    Array.isArray(JSON.parse(item.system.props.arma_tipos_dano_json))
+            ),
+            'textFields do CSB recebem texto; o array canônico permanece no campo _json'
+        );
+        const cutelos = weapons.find((item) => item.name === 'Cutelos Gêmeos');
+        assert.equal(cutelos.system.props.arma_dano_fixo, 4);
+        assert.deepEqual(cutelos.system.props.arma_dano_atributo, 'DEX ou FOR');
+        assert.deepEqual(JSON.parse(cutelos.system.props.arma_dano_atributo_json), [
+            'DEX',
+            'FOR',
+        ]);
+        assert.deepEqual(JSON.parse(cutelos.system.props.arma_tipos_dano_json), ['cortante']);
+        const cutelosMechanics = JSON.parse(cutelos.system.props.arma_mecanicas_json);
+        const parry = cutelosMechanics.find((mechanic) => mechanic.id === 'aparar_corrente');
+        assert.deepEqual(parry, {
+            id: 'aparar_corrente',
+            kind: 'reaction-parry',
+            action: 'reacao',
+            physicalOnly: true,
+            targets: ['self', 'ally'],
+            hitDc: 16,
+            reduction: {
+                fixed: 4,
+                attributes: ['INT', 'SAB'],
+                multiplier: 0.5,
+                choice: true,
+            },
+        });
         assert.ok(
             weapons.every(
                 (item) => Object.keys(item.system.props.arma_formulas_por_rank).length === 0
@@ -244,16 +276,15 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /linkedEntity/);
         assert.doesNotMatch(serialized, /itemUuid:entity\.uuid/);
         assert.match(serialized, /na-sheet-text/);
-        // arma_perfis_resumo/arma_tipos_dano_resumo/arma_atributos_resumo saíram da UI editável do
-        // template (painel "PERFIS DE ATAQUE" morto — editar não tinha efeito, build-weapon-sources.mjs
-        // sempre sobrescrevia). O valor continua vivo: gerado aqui e lido pela tabela de inventário do
-        // Actor (src/templates/actors/slayer-template.json → inventario_slayer_armas).
-        assert.doesNotMatch(
-            serialized,
-            /arma_perfis_resumo|arma_atributos_resumo|arma_tipos_dano_resumo/
-        );
-        assert.match(serialized, /arma_modo_uso/);
+        // O template visual normal é o export oficial do operador. Dados mecânicos
+        // pertencem a cada Item e ao serviço de rolagem, não a um painel duplicado.
+        assert.doesNotMatch(serialized, /arma_runtime_data/);
+        assert.doesNotMatch(serialized, /arma_perfis_resumo/);
+        assert.doesNotMatch(serialized, /arma_atributos_resumo/);
+        assert.doesNotMatch(serialized, /arma_tipos_dano_resumo/);
+        assert.doesNotMatch(serialized, /arma_modo_uso/);
         assert.match(serialized, /startWithHit/);
+        assert.match(serialized, /return '';/);
         assert.doesNotMatch(serialized, /arma_rank_ss_formula|arma_imagem_vertical/);
         const weapons = documents.filter((document) => document.type === 'equippableItem');
         assert.ok(
@@ -283,7 +314,7 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
     });
 
-    it('publica os três ícones locais sem campo de arte vertical', async () => {
+    it('publica os quatro ícones locais sem campo de arte vertical', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         const weapons = documents.filter((document) => document.type === 'equippableItem');
         const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
@@ -291,7 +322,7 @@ describe('catálogo de armas Slayer', () => {
             item.img?.startsWith('modules/night-assassins-csb-automation/assets/icons/weapons/')
         );
         assert.equal(illustrated.length, 0);
-        assert.equal(customIcons.length, 3);
+        assert.equal(customIcons.length, 4);
         for (const item of customIcons) {
             const relativePath = item.img.replace('modules/night-assassins-csb-automation/', '../');
             await access(new URL(relativePath, import.meta.url));

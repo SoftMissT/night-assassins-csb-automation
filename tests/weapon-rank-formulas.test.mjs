@@ -80,6 +80,6 @@ describe('geração sistêmica de fórmulas por Rank', () => {
             assert.deepEqual(formulas, {});
         }
 
-        assert.equal(weaponsChecked, 3);
+        assert.equal(weaponsChecked, 4);
     });
 });

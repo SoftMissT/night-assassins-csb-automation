@@ -503,8 +503,29 @@
             {
               "id": "morote",
               "kind": "two-handed",
-              "fullAttributeDamage": true,
+              "fullAttributeDamage": false,
+              "specificWeaponDamage": "4 + metade de DEX ou FOR",
               "penetrationMargin": 5
+            },
+            {
+              "id": "aparar_corrente",
+              "kind": "reaction-parry",
+              "action": "reacao",
+              "physicalOnly": true,
+              "targets": [
+                "self",
+                "ally"
+              ],
+              "hitDc": 16,
+              "reduction": {
+                "fixed": 4,
+                "attributes": [
+                  "INT",
+                  "SAB"
+                ],
+                "multiplier": 0.5,
+                "choice": true
+              }
             }
           ],
           "arma_propriedades_chaves": [

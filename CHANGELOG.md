@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.11.40 - 2026-08-29
+
+- **Template Slayer oficial:** export atualizado adotado integralmente, removendo somente o botão provisório de atributos e preservando o dropdown `acerto_label`.
+- **Atributos N1:** contador do Discord ligado por listener seguro, resultados usados ficam marcados e Cancelar encerra sem warning ou `selected.map` inválido.
+- **Marca do Caçador:** resultados mecânicos aguardam a mensagem e, quando disponível, a animação do Dice So Nice antes de continuar o fluxo.
+- **Armas normais:** Katana, Double Blade, Manoplas / Soqueiras e Cutelos Gêmeos entram no Compêndio; dano e tipos deixam de chegar ao CSB como objetos.
+- **Cutelos Gêmeos:** dano oficial e metadados declarativos de aparo registrados; integração runtime da Reação continua pendente de teste no Foundry.
+- **Fontes oficiais:** adotadores passam a consumir diretamente os exports migrados para `wiki/projects/MACRO-NA-FOUNDRY`.
+- **Sistema visual futuro:** contratos de Respirações, Kekkijutsu e armas documentados como TODO; CSS completo ainda não implementado.
+- **Validação local:** 922/922 testes, 166 suítes, zero falhas; validação runtime será feita pelo operador por atualização do pacote GitHub.
+
 ## 0.11.39 - 2026-08-29
 
 - **Slayer N1:** campos de snapshot com valor padrão `0` deixam de ser classificados como atributos já distribuídos; selecionar `nvl_1` volta a abrir o fluxo automático.

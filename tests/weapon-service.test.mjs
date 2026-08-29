@@ -16,6 +16,27 @@ import {
 } from '../scripts/weapon-service.mjs';
 
 describe('weapon-service', () => {
+    it('usa o perfil JSON mesmo quando campos textuais do CSB chegam como object Object', () => {
+        const profiles = weaponProfilesFromProps({
+            arma_dano_atributo: '[object Object]',
+            arma_tipos_dano: '[object Object]',
+            arma_perfis_ataque_json: JSON.stringify([
+                {
+                    nome: 'Ryōtō',
+                    dano_fixo: 5,
+                    dano_dados: '',
+                    atributos: [],
+                    tipos_dano: ['cortante', 'perfurante'],
+                    ataques: 2,
+                },
+            ]),
+        });
+        assert.equal(profiles.length, 1);
+        assert.equal(profiles[0].dano_fixo, 5);
+        assert.deepEqual(profiles[0].tipos_dano, ['cortante', 'perfurante']);
+        assert.equal(profiles[0].ataques, 2);
+    });
+
     it('resolve o Rank atual pela progressão do Caçador', () => {
         assert.equal(slayerWeaponRank({ nvl_num: 1 }), '');
         assert.equal(slayerWeaponRank({ nvl_num: 2 }), 'D');

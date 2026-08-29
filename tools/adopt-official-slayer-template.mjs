@@ -6,8 +6,13 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const officialPath = path.resolve(
     repoRoot,
     '..',
+    '..',
+    '..',
+    'wiki',
+    'projects',
     'MACRO-NA-FOUNDRY',
-    'TEMPLATE_SLAYER_ATUALIZADO.json'
+    'templates',
+    'template-slayer-atualizado.json'
 );
 const templatePath = path.join(repoRoot, 'src', 'templates', 'actors', 'slayer-template.json');
 const importPath = path.join(repoRoot, 'src', 'imports', 'csb-import-slayer-template.json');

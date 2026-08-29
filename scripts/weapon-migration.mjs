@@ -69,12 +69,16 @@ export function weaponRepairChanges(item) {
     }
     const profiles = weaponProfilesFromProps(props);
     if (profiles.length > 0) {
+        const types = typeSummary(profiles, props);
+        const attributes = attributeSummary(profiles, props);
         const next = {
             arma_perfis_ataque_json: JSON.stringify(profiles),
             arma_mecanicas_json: JSON.stringify(weaponPropertyMechanics(props)),
             arma_perfis_resumo: profileSummary(profiles),
-            arma_tipos_dano_resumo: typeSummary(profiles, props),
-            arma_atributos_resumo: attributeSummary(profiles, props),
+            arma_tipos_dano_resumo: types,
+            arma_atributos_resumo: attributes,
+            arma_tipos_dano: types,
+            arma_dano_atributo: attributes,
         };
         for (const [key, value] of Object.entries(next)) {
             if (!sameValue(props[key], value)) changes[`system.props.${key}`] = value;

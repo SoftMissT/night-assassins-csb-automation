@@ -2686,7 +2686,7 @@
                       "templateFilter": [
                         "NAWeaponTpl00001"
                       ],
-                      "itemFilterFormula": "equalText(item.inventario_categoria, 'arma')",
+                      "itemFilterFormula": "",
                       "sortPredicates": []
                     },
                     {
@@ -2773,7 +2773,7 @@
                       "templateFilter": [
                         "NABreathTpl00001"
                       ],
-                      "itemFilterFormula": "equalText(item.inventario_categoria, 'respiracao')",
+                      "itemFilterFormula": "",
                       "sortPredicates": []
                     }
                   ],
@@ -9385,6 +9385,38 @@
                     {
                       "key": "metal_vermelha",
                       "value": "Vermelha"
+                    }
+                  ]
+                },
+                {
+                  "key": "acerto_label",
+                  "colSpan": 1,
+                  "rowSpan": 1,
+                  "cssClass": "",
+                  "role": 0,
+                  "editRole": 0,
+                  "permission": 0,
+                  "tooltip": "",
+                  "visibilityFormula": "",
+                  "editableFormula": "",
+                  "escapeHTML": false,
+                  "type": "select",
+                  "size": "m-large",
+                  "label": "Escolha como Acerta",
+                  "defaultValue": "acerto_label_escolha",
+                  "selectedOptionType": "custom",
+                  "options": [
+                    {
+                      "key": "acerto_label_escolha",
+                      "value": "Escolha"
+                    },
+                    {
+                      "key": "acerto_label_dex",
+                      "value": "DEX"
+                    },
+                    {
+                      "key": "acerto_label_for",
+                      "value": "FOR"
                     }
                   ]
                 },

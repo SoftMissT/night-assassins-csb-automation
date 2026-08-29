@@ -5,6 +5,85 @@
 import { ATTRIBUTES, ONI_BODY_ATTRIBUTES, STANDARD_POOL } from '../constants.mjs';
 import { parseNumber, poolMatches } from '../parsing.mjs';
 
+export function discordPoolCounter(raw = '') {
+    const count = String(raw).split(/[;,\s]+/).filter(Boolean).length;
+    if (count === 7) return { count, text: '7 de 7 pronto', color: '#3ddc84' };
+    if (count < 7) {
+        const remaining = 7 - count;
+        return {
+            count,
+            text: `${remaining} ${remaining === 1 ? 'valor restante' : 'valores restantes'}`,
+            color: '#ff8c1a',
+        };
+    }
+    const exceeded = count - 7;
+    return {
+        count,
+        text: `${exceeded} ${exceeded === 1 ? 'valor excedente' : 'valores excedentes'}`,
+        color: '#ff2638',
+    };
+}
+
+function dialogRoot(element) {
+    return element?.querySelector ? element : element?.[0];
+}
+
+function watchDialog(selector, bind) {
+    const hookApi = globalThis.Hooks;
+    const hookId = hookApi?.on?.('renderDialogV2', (_dialog, element) => {
+        const root = dialogRoot(element);
+        if (!root?.querySelector?.(selector)) return;
+        bind(root);
+    });
+    return () => {
+        if (hookId !== undefined) hookApi?.off?.('renderDialogV2', hookId);
+    };
+}
+
+function bindDiscordCounter(root) {
+    const input = root.querySelector('#na-discord-pool');
+    const counter = root.querySelector('[data-na-discord-counter]');
+    if (!input || !counter || input.dataset.naCounterBound === 'true') return;
+    input.dataset.naCounterBound = 'true';
+    const update = () => {
+        const state = discordPoolCounter(input.value);
+        counter.textContent = state.text;
+        counter.style.color = state.color;
+    };
+    input.addEventListener('input', update);
+    update();
+}
+
+function bindPoolUsage(root) {
+    const selects = [...root.querySelectorAll('select[data-na-pool-select]')];
+    if (!selects.length || root.dataset.naPoolBound === 'true') return;
+    root.dataset.naPoolBound = 'true';
+    const update = () => {
+        const selected = selects.map((entry) => entry.value).filter(Boolean);
+        const counts = {};
+        for (const value of selected) counts[value] = (counts[value] ?? 0) + 1;
+        const seen = {};
+        for (const chip of root.querySelectorAll('[data-na-pool-chip]')) {
+            const value = chip.dataset.value;
+            seen[value] = (seen[value] ?? 0) + 1;
+            const used = seen[value] <= (counts[value] ?? 0);
+            chip.dataset.used = used ? 'true' : 'false';
+            chip.style.background = used ? '#3a3028' : '#171411';
+            chip.style.color = used ? '#777' : '#fff';
+            chip.style.textDecoration = used ? 'line-through' : 'none';
+        }
+        const remaining = root.querySelector('[data-na-pool-remaining]');
+        const count = 7 - selected.length;
+        remaining.textContent =
+            count === 0
+                ? 'Todos os resultados escolhidos'
+                : `${count} ${count === 1 ? 'resultado restante' : 'resultados restantes'}`;
+        remaining.style.color = count === 0 ? '#3ddc84' : '#ff8c1a';
+    };
+    for (const select of selects) select.addEventListener('change', update);
+    update();
+}
+
 /**
  * Pergunta o método de geração dos atributos no nível 1.
  * @returns {Promise<"standard"|"roll"|"discord"|null>}
@@ -101,14 +180,16 @@ export async function chooseRolledPool(actor, first) {
  */
 export async function readDiscordPool() {
     while (true) {
-        const result = await foundry.applications.api.DialogV2.wait({
+        const stopWatching = watchDialog('#na-discord-pool', bindDiscordCounter);
+        let result;
+        try {
+            result = await foundry.applications.api.DialogV2.wait({
             window: { title: 'Atributos resultados do Discord' },
             content: `
         <div class="na-csb-automation" style="padding:6px 0;">
           <p>Digite os sete resultados separados por vírgula.</p>
           <div style="display:flex;align-items:center;gap:8px;">
-            <input id="na-discord-pool" name="na-discord-pool" type="text" placeholder="4, 3, 2, 2, 1, 1, 1" style="width:100%;"
-              oninput="const n=this.value.split(/[;,\\s]+/).filter(Boolean).length;const c=this.form.querySelector('[data-na-discord-counter]');c.textContent=n===7?'7 de 7 pronto':n<7?(7-n)+' '+(7-n===1?'valor restante':'valores restantes'):(n-7)+' '+(n-7===1?'valor excedente':'valores excedentes');c.style.color=n===7?'#3ddc84':n>7?'#ff2638':'#ff8c1a';" />
+            <input id="na-discord-pool" name="na-discord-pool" type="text" placeholder="4, 3, 2, 2, 1, 1, 1" style="width:100%;" />
             <strong data-na-discord-counter style="min-width:132px;color:#ff8c1a;text-align:right;">7 valores restantes</strong>
           </div>
         </div>`,
@@ -123,7 +204,10 @@ export async function readDiscordPool() {
                 },
                 { action: 'cancel', label: 'Cancelar', callback: () => null },
             ],
-        });
+            });
+        } finally {
+            stopWatching();
+        }
         if (result === null || result === undefined || result === 'cancel') return null;
         const pool = result
             .split(/[;,\s]+/)
@@ -143,8 +227,6 @@ export async function readDiscordPool() {
  */
 export async function distributePool(pool, level, currentValues) {
     while (true) {
-        const updateUsage =
-            "const f=this.form,s=[...f.querySelectorAll('select[data-na-pool-select]')].map(x=>x.value).filter(Boolean),c={};s.forEach(v=>c[v]=(c[v]||0)+1);const seen={};f.querySelectorAll('[data-na-pool-chip]').forEach(x=>{const v=x.dataset.value;seen[v]=(seen[v]||0)+1;const used=seen[v]<=(c[v]||0);x.dataset.used=used?'true':'false';x.style.background=used?'#3a3028':'#171411';x.style.color=used?'#777':'#fff';x.style.textDecoration=used?'line-through':'none';});const r=f.querySelector('[data-na-pool-remaining]'),n=7-s.length;r.textContent=n===0?'Todos os resultados escolhidos':`${n} ${n===1?'resultado restante':'resultados restantes'}`;r.style.color=n===0?'#3ddc84':'#ff8c1a';";
         const chips = pool
             .map(
                 (value, index) =>
@@ -161,13 +243,16 @@ export async function distributePool(pool, level, currentValues) {
             <span>${attribute.label} · ${attribute.name}</span>
             <small style="color:#a99f93;font-size:10px;font-weight:500;">Atual: ${currentValues[attribute.key]}</small>
           </span>
-          <select id="na-distribute-${attribute.key}" name="na-distribute-${attribute.key}" data-na-pool-select style="width:92px;" onchange="${updateUsage}">
+          <select id="na-distribute-${attribute.key}" name="na-distribute-${attribute.key}" data-na-pool-select style="width:92px;">
             <option value="">—</option>${options}
           </select>
         </label>`;
         }).join('');
 
-        const selected = await foundry.applications.api.DialogV2.wait({
+        const stopWatching = watchDialog('[data-na-pool-select]', bindPoolUsage);
+        let selected;
+        try {
+            selected = await foundry.applications.api.DialogV2.wait({
             window: { title: `Distribuir atributos Nível ${level}` },
             content: `<div class="na-csb-automation" style="display:grid;gap:7px;padding:4px 0;">
         <p style="margin:0;">Distribua os resultados rolados. Cada ocorrência pode ser usada uma vez.</p>
@@ -190,7 +275,10 @@ export async function distributePool(pool, level, currentValues) {
                 },
                 { action: 'cancel', label: 'Cancelar', callback: () => null },
             ],
-        });
+            });
+        } finally {
+            stopWatching();
+        }
         if (!Array.isArray(selected)) return null;
         const values = selected.map(parseNumber);
         if (poolMatches(values, pool)) {

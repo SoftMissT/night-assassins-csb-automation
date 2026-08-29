@@ -109,6 +109,30 @@ test('template Slayer preserva as abas oficiais Combate e Config/Dados', () => {
     assert.ok(tabKeys.includes('configs_tab'), 'Aba Config/Dados não encontrada');
 });
 
+test('template Slayer preserva o dropdown que escolhe DEX ou FOR para Acerto', () => {
+    const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
+    let acerto = null;
+    function walk(node) {
+        if (!node || typeof node !== 'object') return;
+        if (node.key === 'acerto_label') acerto = node;
+        Object.values(node).forEach(walk);
+    }
+    walk(template.system);
+
+    assert.ok(acerto, 'Dropdown acerto_label não encontrado');
+    assert.equal(acerto.type, 'select');
+    assert.equal(acerto.label, 'Escolha como Acerta');
+    assert.equal(acerto.defaultValue, 'acerto_label_escolha');
+    assert.deepEqual(
+        acerto.options.map(({ key, value }) => ({ key, value })),
+        [
+            { key: 'acerto_label_escolha', value: 'Escolha' },
+            { key: 'acerto_label_dex', value: 'DEX' },
+            { key: 'acerto_label_for', value: 'FOR' },
+        ]
+    );
+});
+
 test('template Slayer tem itens oficiais de perfil no header', () => {
     const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
     const headerKeys = [];
@@ -168,6 +192,14 @@ test('template Slayer tem itemContainer para armas e Formas', () => {
         containers.has('skills_slayer_respiracoes'),
         'skills_slayer_respiracoes não encontrado'
     );
+    assert.deepEqual(containers.get('inventario_slayer_armas').templateFilter, [
+        'NAWeaponTpl00001',
+    ]);
+    assert.equal(containers.get('inventario_slayer_armas').itemFilterFormula, '');
+    assert.deepEqual(containers.get('skills_slayer_respiracoes').templateFilter, [
+        'NABreathTpl00001',
+    ]);
+    assert.equal(containers.get('skills_slayer_respiracoes').itemFilterFormula, '');
 });
 
 test('pacote CSB import segue o contrato de importação', () => {

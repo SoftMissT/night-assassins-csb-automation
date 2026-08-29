@@ -24,8 +24,8 @@ Roll.create = (formula) => ({
 import { rollDamage, rollWeaponItem, weaponProfileEntries } from '../scripts/damage-service.mjs';
 
 describe('damage-service', () => {
-    it('resolve os danos oficiais de Katana, Double Blade e Manoplas por modo', () => {
-        const attrs = { dex: 10, for: 6 };
+    it('resolve os danos oficiais de Katana, Double Blade, Manoplas e Cutelos', () => {
+        const attrs = { dex: 10, for: 6, int: 8, sab: 4 };
         const katanaNitoryu = {
             dano_fixo: 5,
             atributos: [],
@@ -56,6 +56,15 @@ describe('damage-service', () => {
             tipos_dano: ['concussao'],
             cadeia_critica: { ativa: true, dano_fixo: 1, atributo_inteiro: ['DEX', 'FOR'] },
         };
+        const cutelos = {
+            dano_fixo: 4,
+            atributos: [
+                { key: 'DEX', multiplicador: 0.5, escolha: true },
+                { key: 'FOR', multiplicador: 0.5, escolha: true },
+            ],
+            ataques: 1,
+            tipos_dano: ['cortante'],
+        };
         assert.deepEqual(
             weaponProfileEntries(katanaNitoryu, attrs).map((entry) => entry.fixo),
             [5, 5]
@@ -81,6 +90,7 @@ describe('damage-service', () => {
             [8, 8]
         );
         assert.equal(weaponProfileEntries(manoplasBase, attrs, { attackIndex: 2 })[0].fixo, 11);
+        assert.deepEqual(weaponProfileEntries(cutelos, attrs).map((entry) => entry.fixo), [9]);
     });
     it('cancela quando dialog retorna null', async () => {
         _dialogReturn = null;

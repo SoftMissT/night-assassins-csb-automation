@@ -50,3 +50,11 @@ test('Marca integra a reativação opcional da Resiliência em um único update'
     assert.equal((activationSource.match(/await actor\.update/g) ?? []).length, 1);
     assert.doesNotMatch(activationSource, /consumeSlayerActions/);
 });
+
+test('Marca aguarda o Dice So Nice antes de processar o resultado da rolagem', () => {
+    assert.match(macro, /async function rollVisible/);
+    assert.match(macro, /await roll\.toMessage/);
+    assert.match(macro, /await game\.dice3d\?\.waitFor3DAnimationByMessageID\?\./);
+    assert.match(macro, /await rollVisible\(\s*`1d20/);
+    assert.match(macro, /await rollVisible\(\s*`1d100/);
+});

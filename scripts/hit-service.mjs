@@ -6,6 +6,7 @@ import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openHitConfirmationDialog, openHitDialog } from './dialogs/hit-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
+import { dispatchClassEvent } from './slayer/class-event-dispatcher.mjs';
 import { consumeSlayerActions, recoverSlayerFolego } from './action-service.mjs';
 import { parseWaterBreathingState } from './breath-service.mjs';
 import { flameWeaponTier } from './flame-breathing-data.mjs';
@@ -607,6 +608,63 @@ export async function rollHit(options) {
             naBreathing: true,
         });
     }
+
+    // ─── Class event dispatching (Slayer abilities) ──────────────────
+    if (result?.attempts?.length && actor.system?.props?.classe_escolhida) {
+        const targetId = targetedActors?.[0]?.uuid ?? '';
+        const attackerCAR = Number(actor.system?.props?.atr_car_valor_config) || 0;
+
+        // Dispatch basic-hit for each successful hit
+        for (const attempt of result.attempts) {
+            if (attempt.hit) {
+                const hitResult = dispatchClassEvent(actor, 'basic-hit', {
+                    targetId,
+                    attackerCAR,
+                });
+                if (Object.keys(hitResult.patches).length) {
+                    await actor.update(hitResult.patches, { naCsbAutomation: true });
+                }
+                for (const msg of hitResult.notifications) {
+                    ui.notifications?.info?.(msg);
+                }
+            }
+        }
+
+        // Dispatch basic-critical if any critical landed
+        if (confirmedCritical) {
+            const critResult = dispatchClassEvent(actor, 'basic-critical', {
+                targetId,
+                bleedingChoice: context?.bleedingChoice,
+                ferimentoChoice: context?.ferimentoChoice,
+                attrChoice: context?.attrChoice,
+            });
+            if (Object.keys(critResult.patches).length) {
+                await actor.update(critResult.patches, { naCsbAutomation: true });
+            }
+            for (const msg of critResult.notifications) {
+                ui.notifications?.info?.(msg);
+            }
+        }
+
+        // Dispatch enemy-misses-melee for each miss (melee attacks only)
+        const isMelee = !dialogResult.actionType || dialogResult.actionType === 'acao_livre' || dialogResult.actionType === 'acao_combate';
+        if (isMelee) {
+            for (const attempt of result.attempts) {
+                if (!attempt.hit) {
+                    const missResult = dispatchClassEvent(actor, 'enemy-misses-melee', {
+                        damageAmount: 0,
+                    });
+                    if (Object.keys(missResult.patches).length) {
+                        await actor.update(missResult.patches, { naCsbAutomation: true });
+                    }
+                    for (const msg of missResult.notifications) {
+                        ui.notifications?.info?.(msg);
+                    }
+                }
+            }
+        }
+    }
+
     // 3º Estilo (Reação) — Sinergia de crítico: cura 1 PDV por aliado compatível
     // presente no campo (Insetos/Névoa/Grama/Areia, por respiracao_nome).
     if (confirmedCritical && windState.pendingDamage?.criticalSynergy) {

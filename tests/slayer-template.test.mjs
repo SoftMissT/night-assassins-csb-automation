@@ -94,7 +94,7 @@ test('template Slayer oficial tem hidden com deslocamento e fôlego calculados',
     assert.ok(hidden.has('folego_slayer_maximo'), 'folego_slayer_maximo não encontrado');
 });
 
-test('template Slayer preserva as abas oficiais Combate e Config/Dados', () => {
+test('template Slayer preserva as abas oficiais Combate, Habilidades e Config/Dados', () => {
     const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
     let tabbedPanel = null;
     function walk(node) {
@@ -106,6 +106,7 @@ test('template Slayer preserva as abas oficiais Combate e Config/Dados', () => {
     assert.ok(tabbedPanel, 'tabbedPanel não encontrado');
     const tabKeys = tabbedPanel.contents.map((entry) => entry.key);
     assert.ok(tabKeys.includes('combat_slayer_tab'), 'Aba Combate não encontrada');
+    assert.ok(tabKeys.includes('habilidades_tab'), 'Aba Habilidades não encontrada');
     assert.ok(tabKeys.includes('configs_tab'), 'Aba Config/Dados não encontrada');
 });
 
@@ -221,9 +222,9 @@ test('pacote CSB import contém template Slayer válido', () => {
     assert.ok(actor.data.attributeBar, 'actor.data.attributeBar não encontrado');
 });
 
-test('template Slayer preserva os 39 itens hidden oficiais', () => {
+test('template Slayer preserva os 71 itens hidden oficiais', () => {
     const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
-    assert.equal(template.system.hidden.length, 39);
+    assert.equal(template.system.hidden.length, 71);
 });
 
 test('template Slayer tem hidden com atributos display', () => {

@@ -70,7 +70,9 @@ async function oniCreateHandler(actor) {
 }
 
 /**
- * Catch-up no ready: GM autoritativo reconcilia Onis existentes.
+ * Catch-up manual: GM autoritativo reconcilia Onis existentes.
+ * Nunca é registrado no ready porque escreve em todos os Onis e força uma
+ * tempestade de recomputações do Custom System Builder durante o boot.
  */
 export async function oniReadyCatchUp() {
     if (game.system.id !== 'custom-system-builder') return;
@@ -103,7 +105,6 @@ export async function oniReadyCatchUp() {
 export function registerOniProgressionEngine() {
     Hooks.on('updateActor', oniUpdateHandler);
     Hooks.on('createActor', oniCreateHandler);
-    Hooks.once('ready', oniReadyCatchUp);
 
     console.log(`[NA-Oni] progression engine registered`);
 }

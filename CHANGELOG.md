@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.41 - 2026-08-29
+
+- **Hotfix de desempenho P0:** removidas do `ready` as varreduras e escritas automáticas sobre todos os Actors Oni, armas Slayer e respirações; essas manutenções permanecem disponíveis manualmente na API do módulo.
+- **Progressão Oni:** criação e mudança real de nível continuam automáticas; o catch-up mundial deixa de rodar na abertura e passa a ser comando explícito do GM.
+- **Macros:** sincronização automática preservada, limitada ao pequeno Compendium de macros e sem regravar Actors ou Items do mundo.
+- **Journal diagnóstico:** objetos estruturados do CSB deixam de ser serializados e atribuídos falsamente ao módulo; ownership só é atualizado quando realmente mudou.
+- **Status:** ciclos sem mudança deixam de escrever novamente no Actor.
+- **Dano e Dice So Nice:** somente parcelas que realmente contêm dados são enviadas à API 3D; dano fixo não inventa dado, enquanto o dado separado da Marca continua identificável.
+- **Validação local:** 926/926 testes, 166 suítes, zero falhas; o RTT precisa ser confirmado no mundo Foundry v14 após atualizar o pacote.
+
 ## 0.11.40 - 2026-08-29
 
 - **Template Slayer oficial:** export atualizado adotado integralmente, removendo somente o botão provisório de atributos e preservando o dropdown `acerto_label`.

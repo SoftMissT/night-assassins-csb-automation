@@ -25,6 +25,15 @@ describe('diagnostic-journal', () => {
         );
         assert.equal(isNightAssassinsDiagnostic('Foundry VTT | Connected to server socket'), false);
         assert.equal(isNightAssassinsDiagnostic('libWrapper: another-module failed'), false);
+        assert.equal(
+            isNightAssassinsDiagnostic({
+                scope: {
+                    uuid: 'Compendium.night-assassins-csb-automation.night-assassins-armas',
+                },
+            }),
+            false,
+            'objetos estruturados do CSB não são serializados nem atribuídos ao módulo'
+        );
     });
 
     it('mantém o Journal invisível por padrão e OWNER somente para GMs', () => {

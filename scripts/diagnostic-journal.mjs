@@ -50,6 +50,10 @@ function redact(value) {
 }
 
 export function isNightAssassinsDiagnostic(value) {
+    // Objetos de contexto do CSB podem conter UUIDs do módulo dentro de um
+    // Actor/Item completo. Serializá-los em todo console.warn é caro e ainda
+    // atribui falsamente o warning do sistema ao módulo.
+    if (typeof value !== 'string' && !(value instanceof Error)) return false;
     const text = stringifyPart(value);
     return MODULE_MARKERS.some((marker) => text.includes(marker));
 }
@@ -145,7 +149,9 @@ async function ensureJournal() {
             ownership: diagnosticJournalOwnership(),
         });
     } else {
-        await journal.update({ ownership: diagnosticJournalOwnership() });
+        const ownership = diagnosticJournalOwnership();
+        const current = journal.ownership?.toObject?.() ?? journal.ownership ?? {};
+        if (!foundry.utils.deepEqual(current, ownership)) await journal.update({ ownership });
     }
     return journal;
 }

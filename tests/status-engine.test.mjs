@@ -26,8 +26,10 @@ function actorWith(props) {
     const actor = {
         id: 'slayer-1',
         name: 'Slayer',
+        updateCount: 0,
         system: { props: { ...props } },
         async update(patch) {
+            actor.updateCount += 1;
             for (const [path, value] of Object.entries(patch)) {
                 const key = path.replace('system.props.', '');
                 actor.system.props[key] = value;
@@ -36,6 +38,23 @@ function actorWith(props) {
     };
     return actor;
 }
+
+test('turno sem mudança de status não escreve no Actor', async () => {
+    const actor = actorWith({
+        status_slayer_exaustao: 0,
+        status_slayer_resumo: 'Nenhum status',
+        status_slayer_dados: JSON.stringify({
+            version: 2,
+            active: [],
+            exhaustion: 0,
+            effects: {},
+            exhaustionMilestones: [],
+        }),
+    });
+    const result = await processActorStatusTiming(actor, 'start');
+    assert.equal(actor.updateCount, 0);
+    assert.equal(result.updated, false);
+});
 
 test('Vulnerável e Exaustão 6 dobram somente dano de ataque', () => {
     const state = { active: ['vulneravel'], exhaustion: 0 };

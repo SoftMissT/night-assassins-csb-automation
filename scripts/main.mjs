@@ -99,7 +99,7 @@ import * as slayerOrigins from './slayer/origin-contracts.mjs';
 import * as slayerClasses from './slayer/class-contracts.mjs';
 import * as slayerAdvancedStates from './slayer/advanced-states.mjs';
 import * as oniProgression from './oni/progression-service.mjs';
-import { registerOniProgressionEngine } from './oni/progression-engine.mjs';
+import { oniReadyCatchUp, registerOniProgressionEngine } from './oni/progression-engine.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { repairOniActors } from './oni/repair-service.mjs';
 import { useKekkijutsuItem } from './oni/kekkijutsu-use-service.mjs';
@@ -188,28 +188,9 @@ Hooks.once('ready', async () => {
     registerAdvancedStatesEngine();
     registerWeaponModeEngine();
 
-    // Repair de Actors Oni legados (P0): só o GM primário aplica a migração
-    // estrutural idempotente, preserva dados do personagem, nunca reverte
-    // PDV/PDK atual para o máximo. Roda ANTES do ledger de progressão porque
-    // pode reescrever a forma como os campos legados são lidos.
-    if (
-        game.user?.isGM &&
-        game.users
-            ?.filter((u) => u.active && u.isGM)
-            .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0]?.id === game.user.id
-    ) {
-        for (const actor of game.actors?.contents ?? []) {
-            if (actorKind(actor) !== 'oni') continue;
-            try {
-                await repairOniActors(actor);
-            } catch (error) {
-                console.warn?.(`[${MODULE_ID}] Falha ao reparar Actor Oni ${actor.name}:`, error);
-            }
-        }
-    }
-
-    // Oni PDV progression catch-up is now handled by progression-engine.mjs
-    // (registered in init, runs in ready via Hooks.once("ready", oniReadyCatchUp))
+    // Manutenções mundiais nunca rodam no boot. Elas atualizam Actors/Items e
+    // cada escrita força o CSB a recomputar a ficha inteira. Permanecem
+    // disponíveis na API para execução manual e consciente pelo GM.
     Hooks.on('renderActorSheet', tagNightAssassinsSheet);
     Hooks.on('renderActorSheetV2', tagNightAssassinsSheet);
     Hooks.on('renderApplicationV2', (app, element) => {
@@ -230,29 +211,9 @@ Hooks.once('ready', async () => {
         registerHealRelay();
     }
 
+    // Macros can be synchronized automatically: this touches only o pequeno
+    // Compendium de macros e não percorre/regrava Actors ou Items do mundo.
     if (game.user.isGM) {
-        void repairSlayerWeaponItems()
-            .then(({ items }) => {
-                if (items > 0)
-                    ui.notifications.info(
-                        `Armas Slayer compatibilizadas: ${items} Item(ns) atualizado(s).`
-                    );
-            })
-            .catch((error) =>
-                ui.notifications.warn(`Falha ao compatibilizar armas Slayer: ${error.message}`)
-            );
-
-        void repairBreathingItems()
-            .then(({ items }) => {
-                if (items > 0)
-                    ui.notifications.info(
-                        `Respirações compatibilizadas: ${items} Item(ns) atualizado(s).`
-                    );
-            })
-            .catch((error) =>
-                ui.notifications.warn(`Falha ao compatibilizar respirações: ${error.message}`)
-            );
-
         void syncCanonicalMacros()
             .then(({ created, updated }) => {
                 if (created > 0 || updated > 0)
@@ -336,6 +297,7 @@ Hooks.once('ready', async () => {
                 progression: oniProgression,
                 ensureProgression: oniProgression.ensureOniProgression,
                 rollPdvGain: oniProgression.rollOniPdvGain,
+                catchUp: oniReadyCatchUp,
                 repairActor: repairOniActors,
                 processLevel: processOniLevelGain,
                 consumeActions: consumeOniActions,

@@ -21,9 +21,31 @@ Roll.create = (formula) => ({
     dice: [{ results: [{ result: 1, active: true }] }],
 });
 
-import { rollDamage, rollWeaponItem, weaponProfileEntries } from '../scripts/damage-service.mjs';
+import {
+    rollDamage,
+    rollWeaponItem,
+    showDamageRolls3d,
+    weaponProfileEntries,
+} from '../scripts/damage-service.mjs';
 
 describe('damage-service', () => {
+    it('envia somente parcelas com dados à API do Dice So Nice', async () => {
+        const shown = [];
+        game.dice3d = {
+            showForRoll: async (roll, user, synchronize) => {
+                shown.push({ roll, user, synchronize });
+                return true;
+            },
+        };
+        const fixed = { total: 5, dice: [] };
+        const mark = { total: 9, dice: [{ faces: 12 }] };
+        assert.equal(await showDamageRolls3d([fixed, mark]), true);
+        assert.equal(shown.length, 1);
+        assert.equal(shown[0].roll, mark);
+        assert.equal(shown[0].user, game.user);
+        assert.equal(shown[0].synchronize, true);
+        delete game.dice3d;
+    });
     it('resolve os danos oficiais de Katana, Double Blade, Manoplas e Cutelos', () => {
         const attrs = { dex: 10, for: 6, int: 8, sab: 4 };
         const katanaNitoryu = {

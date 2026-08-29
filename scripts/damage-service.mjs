@@ -115,6 +115,17 @@ function markDamageFormula(props, entries) {
     return directAttack ? `${dice}d${faces}` : '';
 }
 
+export async function showDamageRolls3d(rolls = []) {
+    const showForRoll = game.dice3d?.showForRoll;
+    if (typeof showForRoll !== 'function') return false;
+    const diceRolls = rolls.filter((roll) => Array.isArray(roll?.dice) && roll.dice.length > 0);
+    if (!diceRolls.length) return false;
+    await Promise.all(
+        diceRolls.map((roll) => showForRoll.call(game.dice3d, roll, game.user, true))
+    );
+    return true;
+}
+
 async function resolveActor(options) {
     if (options.actor && typeof options.actor.update === 'function') return options.actor;
     if (options.actorUuid) {
@@ -650,7 +661,6 @@ export async function rollDamage(options = {}) {
             }
         }
     }
-    // Dice So Nice é acionado automaticamente pelo ChatMessage.create quando rolls está preenchido.
     const components = specs.map((spec, index) => ({
         label: spec.label,
         types: spec.types,
@@ -1555,7 +1565,19 @@ export async function rollDamage(options = {}) {
           : '<div>Nenhum alvo ficha não atualizada</div>';
     const flavor = `<div><strong>${nome}</strong>${critical ? ' · CRÍTICO' : ''}${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(' · ')}</div>` : ''}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
     const messageMode = game.settings?.get?.('core', 'messageMode') ?? 'public';
-    const chatData = { speaker: ChatMessage.getSpeaker({ actor }), flavor, rolls, messageMode };
+    let diceShownExplicitly = false;
+    try {
+        diceShownExplicitly = await showDamageRolls3d(rolls);
+    } catch (error) {
+        console.warn?.(`[${MODULE_ID}] Dice So Nice não exibiu o dano`, error);
+    }
+    const chatData = {
+        speaker: ChatMessage.getSpeaker({ actor }),
+        flavor,
+        rolls,
+        messageMode,
+        ...(diceShownExplicitly ? { flags: { 'dice-so-nice': { skip: true } } } : {}),
+    };
     await ChatMessage.create(chatData);
 }
 

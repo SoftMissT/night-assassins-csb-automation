@@ -276,6 +276,7 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         state.exhaustion,
         Number.parseInt(props[contract.exhaustion], 10) || 0
     );
+    const stateBeforeTiming = JSON.stringify(state);
     const active = new Set(state.active);
     const messages = [];
     let statusDamageTotal = parseNumber(props[contract.damage]);
@@ -388,17 +389,30 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         if (decrementEffect(state, key)) messages.push(`${key} expirou`);
     }
 
-    await actor.update(actorStatusPatch(actor, state), {
-        naCsbAutomation: true,
-        naStatusTurn: true,
-    });
+    const patch = actorStatusPatch(actor, state);
+    const stateChanged = JSON.stringify(state) !== stateBeforeTiming;
+    const summaryChanged = patch[`system.props.${contract.summary}`] !== props[contract.summary];
+    const exhaustionChanged =
+        patch[`system.props.${contract.exhaustion}`] !==
+        (Number.parseInt(props[contract.exhaustion], 10) || 0);
+    if (stateChanged || summaryChanged || exhaustionChanged) {
+        await actor.update(patch, {
+            naCsbAutomation: true,
+            naStatusTurn: true,
+        });
+    }
     if (messages.length) {
         await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
             content: `<strong>Status — ${actor.name}</strong><br>${messages.join('<br>')}`,
         });
     }
-    return { processed: true, messages, state };
+    return {
+        processed: stateChanged || summaryChanged || exhaustionChanged || messages.length > 0,
+        updated: stateChanged || summaryChanged || exhaustionChanged,
+        messages,
+        state,
+    };
 }
 
 export async function reconcileSlayerExhaustion(actor) {

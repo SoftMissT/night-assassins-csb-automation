@@ -102,8 +102,6 @@ Ambos são idempotentes rodar de novo em um documento já corrigido não gera ne
 
 ## Roadmap próximo trabalho planejado
 
-**HUD Telefone/Chat (Projeto Telefone).** SDD completo já aprovado em `MACRO-NA-FOUNDRY/docs/PROJETO TELEFONE/` (Constitution → Requirements → PDR → Research → Blueprint → Specs → Analyze, todos os gates confirmados por Nelson em 2026-08-21). Foi implementado uma vez sobre a v0.10.x, mas removido no revert total para a baseline v0.10.0. A reimplementação futura deve partir da linha atual sem reintroduzir hooks de render de ficha (ver Troubleshooting).
-
 ## Troubleshooting
 
 | Sintoma                                                                          | Causa                                                                                                                                                                                                                                                                                     | Correção                                                                                                                                                                                                                                                                                                                                                |

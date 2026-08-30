@@ -20,6 +20,16 @@
  * lógica em dois lugares.
  */
 import { actorWeapons, isPassiveItem } from './breath-passives.mjs';
+import { actorKind } from './actor-kind.mjs';
+
+export function canChainBreathForms(actor) {
+    const kind = actorKind(actor);
+    if (kind !== 'oni') return true;
+    const origin = String(actor?.system?.props?.origem_oni_dropdown ?? '').trim();
+    return (
+        origin === 'origem_oni_exterminador_corrompido' || origin === 'exterior_corrompido'
+    );
+}
 
 /**
  * Lista as Formas de Respiração do Actor que podem ser encadeadas após um
@@ -60,6 +70,7 @@ export function listChainableBreathForms(actor, { excludeItemUuid = '' } = {}) {
  * resolveu (ou está resolvendo) o próprio dano.
  */
 export async function confirmChainedForma(actor, { excludeItemUuid = '' } = {}) {
+    if (!canChainBreathForms(actor)) return false;
     const { openChainFormDialog } = await import('./dialogs/hit-dialog.mjs');
     const chainable = listChainableBreathForms(actor, { excludeItemUuid });
     const decision = await openChainFormDialog({ chainable });

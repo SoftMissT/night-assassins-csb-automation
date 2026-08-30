@@ -24,26 +24,21 @@ Roll.create = (formula) => ({
 import {
     rollDamage,
     rollWeaponItem,
-    showDamageRolls3d,
+    waitForDamageRolls3d,
     weaponProfileEntries,
 } from '../scripts/damage-service.mjs';
 
 describe('damage-service', () => {
-    it('envia somente parcelas com dados à API do Dice So Nice', async () => {
-        const shown = [];
+    it('aguarda a única animação criada pela mensagem do Dice So Nice', async () => {
+        const waited = [];
         game.dice3d = {
-            showForRoll: async (roll, user, synchronize) => {
-                shown.push({ roll, user, synchronize });
+            waitFor3DAnimationByMessageID: async (messageId) => {
+                waited.push(messageId);
                 return true;
             },
         };
-        const fixed = { total: 5, dice: [] };
-        const mark = { total: 9, dice: [{ faces: 12 }] };
-        assert.equal(await showDamageRolls3d([fixed, mark]), true);
-        assert.equal(shown.length, 1);
-        assert.equal(shown[0].roll, mark);
-        assert.equal(shown[0].user, game.user);
-        assert.equal(shown[0].synchronize, true);
+        assert.equal(await waitForDamageRolls3d({ id: 'damage-message' }), true);
+        assert.deepEqual(waited, ['damage-message']);
         delete game.dice3d;
     });
     it('resolve os danos oficiais de Katana, Double Blade, Manoplas e Cutelos', () => {
@@ -140,6 +135,39 @@ describe('damage-service', () => {
         };
         await assert.doesNotReject(() => rollDamage({ actor }));
         assert.strictEqual(warned, true);
+    });
+
+    it('crítico rola a fórmula uma vez e duplica somente o dano final', async () => {
+        _dialogReturn = {
+            nome: 'Golpe crítico',
+            pdrGasto: 0,
+            critical: true,
+            entradas: [
+                {
+                    dado: '1d8',
+                    fixo: 2,
+                    selAttrs: [],
+                    selTiposDano: ['cortante'],
+                    tipoAcao: 'ataque',
+                },
+            ],
+        };
+        const formulas = [];
+        const previousRollCreate = Roll.create;
+        Roll.create = (formula) => {
+            formulas.push(formula);
+            return { evaluate: async () => ({ total: 7, dice: [{ faces: 8 }] }) };
+        };
+        let chatData;
+        ChatMessage.create = async (data) => (chatData = data);
+        game.user.targets = new Set();
+        const actor = makeActor({ props: { nome_slayer: 'Slayer', pdv_slayer_total_valor: 20 } });
+
+        await rollDamage({ actor });
+
+        assert.deepEqual(formulas, ['1d8 + 2']);
+        assert.match(chatData.flavor, /Total: 14<\/strong>/);
+        Roll.create = previousRollCreate;
     });
 
     it('mantém dano fixo e dano tipado de Metal em parcelas separadas', async () => {
@@ -504,7 +532,7 @@ describe('damage-service', () => {
             if (options?.naStatusDamage) criticalOption = options.naCritical;
         };
         game.user.targets = new Set([{ actor: target }]);
-        _rollResult = { total: 18, toMessage: async () => {}, dice: [] };
+        _rollResult = { total: 9, toMessage: async () => {}, dice: [] };
 
         await rollDamage({ actor: attacker });
 

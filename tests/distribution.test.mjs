@@ -5,6 +5,11 @@ import { readFile } from 'node:fs/promises';
 import { registerSettings, SETTINGS } from '../scripts/settings.mjs';
 
 describe('module distribution', () => {
+    it('declara Dice So Nice como dependência obrigatória', async () => {
+        const manifest = JSON.parse(await readFile(new URL('../module.json', import.meta.url), 'utf8'));
+        assert.ok(manifest.relationships?.requires?.some((entry) => entry.id === 'dice-so-nice'));
+    });
+
     it('declara o Compendium de macros no manifesto', async () => {
         const manifest = JSON.parse(
             await readFile(new URL('../module.json', import.meta.url), 'utf8')

@@ -1226,7 +1226,7 @@ export async function triggerSnowOpportunityAttack({ actorUuid } = {}) {
         `${actor.name} ganhou um Ataque de Oportunidade (Canção de um Dia Frio) contra ${enemyActor?.name ?? 'o conjurador do Kekkijutsu'}. Role o Acerto normalmente; este ataque não consome a economia de ações.`
     );
     const { rollHit } = await import('./hit-service.mjs');
-    return rollHit({ actor, actorUuid: actor.uuid });
+    return rollHit({ actor, actorUuid: actor.uuid, skipActionConsumption: true });
 }
 
 /**
@@ -1755,6 +1755,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             actor,
             actorUuid: actor.uuid,
             autoDamage: false,
+            skipActionConsumption: true,
             requiredWeaponId: isFlameForm ? plan.state?.synchronizedWeapon?.id : '',
         });
         if (!hitResult?.attempts?.length) {

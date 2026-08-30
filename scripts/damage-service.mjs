@@ -7,8 +7,7 @@ import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
 import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
-import { consumeSlayerActions } from './action-service.mjs';
-import { consumeOniActions } from './oni-action-service.mjs';
+import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
 import {
     applyBreathingStatus,
     applyStackingBreathingStatus,
@@ -121,14 +120,10 @@ function markDamageFormula(props, entries) {
     return directAttack ? `${dice}d${faces}` : '';
 }
 
-export async function showDamageRolls3d(rolls = []) {
-    const showForRoll = game.dice3d?.showForRoll;
-    if (typeof showForRoll !== 'function') return false;
-    const diceRolls = rolls.filter((roll) => Array.isArray(roll?.dice) && roll.dice.length > 0);
-    if (!diceRolls.length) return false;
-    await Promise.all(
-        diceRolls.map((roll) => showForRoll.call(game.dice3d, roll, game.user, true))
-    );
+export async function waitForDamageRolls3d(message) {
+    const wait = game.dice3d?.waitFor3DAnimationByMessageID;
+    if (!message?.id || typeof wait !== 'function') return false;
+    await wait.call(game.dice3d, message.id);
     return true;
 }
 
@@ -641,9 +636,7 @@ export async function rollDamage(options = {}) {
     let rolls;
     try {
         rolls = await Promise.all(
-            specs.map((spec) =>
-                Roll.create(critical ? `2 * (${spec.formula})` : spec.formula).evaluate()
-            )
+            specs.map((spec) => Roll.create(spec.formula).evaluate())
         );
     } catch (_) {
         ui.notifications?.error?.(
@@ -685,16 +678,25 @@ export async function rollDamage(options = {}) {
         penalty -= reduction;
     }
     const subtotalDamage = components.reduce((total, component) => total + component.subtotal, 0);
-    const finalDamage =
+    const damageBeforeCritical =
         flameTier.multiplier > 1 && hasAttackDamage
             ? Math.floor(subtotalDamage * flameTier.multiplier)
             : subtotalDamage;
-    if (finalDamage > subtotalDamage)
+    if (damageBeforeCritical > subtotalDamage)
         components.push({
             label: 'Fogo Fátuo 60 +50%',
             types: ['fogo'],
-            subtotal: finalDamage - subtotalDamage,
+            subtotal: damageBeforeCritical - subtotalDamage,
         });
+    const finalDamage = critical ? damageBeforeCritical * 2 : damageBeforeCritical;
+    if (critical && damageBeforeCritical > 0) {
+        const criticalBonus = components.map((component) => ({
+            label: `Crítico ×2 · ${component.label}`,
+            types: [...component.types],
+            subtotal: component.subtotal,
+        }));
+        components.push(...criticalBonus);
+    }
     const damageTypes = [...new Set(components.flatMap((component) => component.types))];
 
     // Agrupar atualizações por Actor
@@ -831,25 +833,10 @@ export async function rollDamage(options = {}) {
             );
             let effectiveCritical = critical;
             if (targetMist.dazzle?.criticalImmunity && critical) {
-                targetComponents = specs.map((spec, index) => ({
-                    label: spec.label,
-                    types: [...spec.types],
-                    subtotal: Math.max(0, Math.trunc((Number(rolls[index].total) || 0) / 2)),
-                }));
-                const normalSubtotal = targetComponents.reduce(
-                    (total, component) => total + component.subtotal,
-                    0
-                );
-                amount =
-                    flameTier.multiplier > 1 && hasAttackDamage
-                        ? Math.floor(normalSubtotal * flameTier.multiplier)
-                        : normalSubtotal;
-                if (amount > normalSubtotal)
-                    targetComponents.push({
-                        label: 'Fogo Fátuo 60 +50%',
-                        types: ['fogo'],
-                        subtotal: amount - normalSubtotal,
-                    });
+                targetComponents = components
+                    .filter((component) => !component.label.startsWith('Crítico ×2 · '))
+                    .map((component) => ({ ...component, types: [...component.types] }));
+                amount = damageBeforeCritical;
                 effectiveCritical = false;
             }
             const blizzardStealth = actor.getFlag?.(MODULE_ID, 'snowBlizzardStealth');
@@ -1229,6 +1216,12 @@ export async function rollDamage(options = {}) {
             }
         ),
     ]);
+    const failedDamage = results.slice(pending.length).filter((result) => result.status === 'rejected');
+    if (failedDamage.length > 0) {
+        const reason = failedDamage[0]?.reason?.message ?? 'Falha desconhecida no relay de dano.';
+        ui.notifications?.error?.(`O dano não foi aplicado ao alvo: ${reason}`);
+        console.error?.(`[${MODULE_ID}] Falha ao aplicar dano em alvo`, failedDamage[0].reason);
+    }
 
     const poisonRank =
         attackerKind === 'slayer' && props.classe_escolhida === 'classe_usuario_de_veneno'
@@ -1364,6 +1357,7 @@ export async function rollDamage(options = {}) {
                 actor: request.actor,
                 actorUuid: request.actor.uuid,
                 autoDamage: true,
+                skipActionConsumption: true,
             });
         }
     }
@@ -1573,7 +1567,12 @@ export async function rollDamage(options = {}) {
                 const { rollHit } = await import('./hit-service.mjs');
                 // autoDamage:false o dano deste ataque extra é resolvido manualmente
                 // logo abaixo (dano fixo do Martelo, não o dano padrão da arma).
-                const hit = await rollHit({ actor, actorUuid: actor.uuid, autoDamage: false });
+                const hit = await rollHit({
+                    actor,
+                    actorUuid: actor.uuid,
+                    autoDamage: false,
+                    skipActionConsumption: true,
+                });
                 if (hit?.hits > 0) {
                     const targetActor = appliedTargets[0].actor;
                     const context = {
@@ -1612,20 +1611,14 @@ export async function rollDamage(options = {}) {
           : '<div>Nenhum alvo ficha não atualizada</div>';
     const flavor = `<div><strong>${nome}</strong>${critical ? ' · CRÍTICO' : ''}${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(' · ')}</div>` : ''}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
     const messageMode = game.settings?.get?.('core', 'messageMode') ?? 'public';
-    let diceShownExplicitly = false;
-    try {
-        diceShownExplicitly = await showDamageRolls3d(rolls);
-    } catch (error) {
-        console.warn?.(`[${MODULE_ID}] Dice So Nice não exibiu o dano`, error);
-    }
     const chatData = {
         speaker: ChatMessage.getSpeaker({ actor }),
         flavor,
         rolls,
         messageMode,
-        ...(diceShownExplicitly ? { flags: { 'dice-so-nice': { skip: true } } } : {}),
     };
-    await ChatMessage.create(chatData);
+    const message = await ChatMessage.create(chatData);
+    await waitForDamageRolls3d(message);
 }
 
 /**

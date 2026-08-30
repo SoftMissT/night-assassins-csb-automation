@@ -286,7 +286,12 @@ export async function rollTest(options) {
             });
             if (useCounter) {
                 const { rollHit } = await import('./hit-service.mjs');
-                await rollHit({ actor, actorUuid: actor.uuid, autoDamage: true });
+                await rollHit({
+                    actor,
+                    actorUuid: actor.uuid,
+                    autoDamage: true,
+                    skipActionConsumption: true,
+                });
             }
         }
     }

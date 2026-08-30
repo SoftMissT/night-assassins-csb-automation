@@ -914,3 +914,10 @@
 - Vida e Morte agora exige nível 1, sete snapshots N1 positivos e PDV total positivo antes de reagir a updates.
 - 2 regressões novas; suíte completa `920/920`, 166 suítes, 6,82s.
 - Runtime Foundry v14 e release permanecem pendentes.
+## v0.11.46 — 2026-08-30
+
+- Consolidação do hotfix de combate Oni/Slayer: ações, crítico como dano final e fila Dice So Nice aguardada.
+- Regeneração Oni integrada ao runtime e à macro de ações.
+- Dano desarmado Oni restaurado conforme a progressão oficial N1–N20.
+- Encadear Forma restrito a Exterminador Corrompido.
+- Sincronização automática de macros preservada.

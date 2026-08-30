@@ -428,6 +428,7 @@ async function openOniActionManager(actor) {
         window: { title: `Ações Oni ${actor.name}` },
         content: `<div class="na-action-manager"><p><strong>Deslocamento:</strong> ${Math.max(0, parseNumber(props.deslocamento_oni))}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p></div>`,
         buttons: [
+            { action: 'regenerate', label: 'Regeneração Oni', callback: () => 'regenerate' },
             {
                 action: 'use',
                 label: 'Usar ação',
@@ -439,7 +440,10 @@ async function openOniActionManager(actor) {
             { action: 'close', label: 'Fechar', default: true, callback: () => null },
         ],
     });
-    if (result?.startsWith?.('use:')) {
+    if (result === 'regenerate') {
+        const { useOniRegeneration } = await import('./oni/regeneration-runtime.mjs');
+        await useOniRegeneration({ actor });
+    } else if (result?.startsWith?.('use:')) {
         const consumed = await consumeOniActions(actor, result.slice(4));
         if (!consumed.ok) ui.notifications.warn(consumed.reason);
     } else if (result) await resetOniActions(actor, result);

@@ -103,6 +103,10 @@ import { oniReadyCatchUp, registerOniProgressionEngine } from './oni/progression
 import { actorKind } from './actor-kind.mjs';
 import { repairOniActors } from './oni/repair-service.mjs';
 import { useKekkijutsuItem } from './oni/kekkijutsu-use-service.mjs';
+import {
+    registerOniRegenerationEngine,
+    useOniRegeneration,
+} from './oni/regeneration-runtime.mjs';
 import { registerWeaponModeEngine } from './weapon-service.mjs';
 import {
     derivedBonusSummary,
@@ -178,6 +182,7 @@ Hooks.once('ready', async () => {
     registerActionEngine();
     registerRestEngine();
     registerBreathingEngine();
+    registerOniRegenerationEngine();
     if (game.settings.get(MODULE_ID, SETTINGS.enableLifeDeathEngine)) {
         registerLifeDeathEngine();
     } else {
@@ -302,6 +307,7 @@ Hooks.once('ready', async () => {
                 processLevel: processOniLevelGain,
                 consumeActions: consumeOniActions,
                 resetActions: resetOniActions,
+                regenerate: useOniRegeneration,
             },
             actorKind,
             openDiagnosticJournal,

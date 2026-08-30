@@ -216,7 +216,7 @@ export async function openDamageDialog({
     <div id="na-total-preview">—</div>
     <label class="na-critical-toggle">
       <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
-      <span><strong>Foi crítico?</strong><small>Dobra cada parcela deste ataque antes da resistência.</small></span>
+      <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>
     </label>
   </div>`;
 

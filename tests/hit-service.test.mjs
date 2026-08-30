@@ -98,6 +98,87 @@ describe('hit-service', () => {
         assert.match(_formula, /\+ 6$/);
     });
 
+    it('consome e persiste a Ação de Ataque na ficha Slayer', async () => {
+        _dialogReturn = [
+            {
+                mode: 'normal',
+                rollMode: 'publicroll',
+                bonusRaw: '',
+                cdVal: 0,
+                rollCount: 1,
+                actionType: 'ataque',
+            },
+            { hit: true, continue: false },
+        ];
+        _rollResult = {
+            total: 12,
+            toMessage: async () => ({ id: 'slayer-hit' }),
+            dice: [{ results: [{ result: 8, active: true }] }],
+        };
+        const actor = makeActor({ props: { nome_slayer: 'Slayer' } });
+        let actionPatch = null;
+        actor.update = async (patch) => {
+            if (patch['system.props.acoes_slayer_dados']) actionPatch = patch;
+        };
+
+        await rollHit({ actor, autoDamage: false });
+
+        assert.equal(JSON.parse(actionPatch['system.props.acoes_slayer_dados']).turn.ataque, 1);
+    });
+
+    it('consome e persiste a Ação de Ataque na ficha Oni', async () => {
+        _dialogReturn = [
+            {
+                mode: 'normal',
+                rollMode: 'publicroll',
+                bonusRaw: '',
+                cdVal: 0,
+                rollCount: 1,
+                actionType: 'ataque',
+            },
+            { hit: true, continue: false },
+        ];
+        _rollResult = {
+            total: 12,
+            toMessage: async () => ({ id: 'oni-hit' }),
+            dice: [{ results: [{ result: 8, active: true }] }],
+        };
+        const actor = makeActor({ props: { nome_oni: 'Oni' } });
+        let actionPatch = null;
+        actor.update = async (patch) => {
+            if (patch['system.props.acoes_oni_dados']) actionPatch = patch;
+        };
+
+        await rollHit({ actor, autoDamage: false });
+
+        assert.equal(JSON.parse(actionPatch['system.props.acoes_oni_dados']).turn.ataque, 1);
+    });
+
+    it('aguarda o Dice So Nice terminar antes de publicar o resumo do Acerto', async () => {
+        const order = [];
+        game.dice3d = {
+            waitFor3DAnimationByMessageID: async (messageId) => order.push(`dice:${messageId}`),
+        };
+        ChatMessage.create = async () => {
+            order.push('summary');
+            return {};
+        };
+        _dialogReturn = [
+            { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0, rollCount: 1 },
+            { hit: true, continue: false },
+        ];
+        _rollResult = {
+            total: 12,
+            toMessage: async () => ({ id: 'hit-message' }),
+            dice: [{ results: [{ result: 8, active: true }] }],
+        };
+
+        await rollHit({ actor: makeActor(), autoDamage: false });
+
+        assert.deepEqual(order, ['dice:hit-message', 'summary']);
+        delete game.dice3d;
+    });
+
     it('soma Habilidade Especial e Metal no Acerto', async () => {
         _dialogReturn = { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0 };
         _rollResult = {
@@ -302,7 +383,9 @@ describe('hit-service', () => {
             },
         });
         actor.update = async (patch) => {
-            actor.system.props.folego_slayer_atual = patch['system.props.folego_slayer_atual'];
+            if (Object.hasOwn(patch, 'system.props.folego_slayer_atual'))
+                actor.system.props.folego_slayer_atual =
+                    patch['system.props.folego_slayer_atual'];
         };
         await rollHit({ actor });
         assert.equal(actor.system.props.folego_slayer_atual, 3);

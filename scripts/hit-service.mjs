@@ -6,7 +6,12 @@ import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openHitConfirmationDialog, openHitDialog } from './dialogs/hit-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
-import { consumeSlayerActions, recoverSlayerFolego } from './action-service.mjs';
+import {
+    consumeOniActions,
+    consumeSlayerActions,
+    recoverSlayerFolego,
+} from './action-service.mjs';
+import { actorKind } from './actor-kind.mjs';
 import { parseWaterBreathingState } from './breath-service.mjs';
 import { flameWeaponTier } from './flame-breathing-data.mjs';
 import {
@@ -48,6 +53,13 @@ import {
     snowStatePatch,
     spendFreezeForRestriction,
 } from './snow-breathing-service.mjs';
+
+async function waitForHitRoll3d(message) {
+    const wait = globalThis.game?.dice3d?.waitFor3DAnimationByMessageID;
+    if (!message?.id || typeof wait !== 'function') return false;
+    await wait.call(game.dice3d, message.id);
+    return true;
+}
 import {
     actorWeapons,
     effectiveWeaponCritical,
@@ -173,7 +185,7 @@ async function doRoll({
             speaker: ChatMessage.getSpeaker({ actor }),
             rollMode,
         });
-        await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+        await waitForHitRoll3d(message);
         let usedMetalReroll = false;
         if (metalReroll && roll.total < 10) {
             const reroll = await foundry.applications.api.DialogV2.confirm({
@@ -190,7 +202,7 @@ async function doRoll({
                     speaker: ChatMessage.getSpeaker({ actor }),
                     rollMode,
                 });
-                await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
+                await waitForHitRoll3d(message);
                 usedMetalReroll = true;
             }
         }
@@ -576,6 +588,13 @@ export async function rollHit(options) {
         Number(snowHit?.count) || 1,
         Number(windHit?.count) || 1
     );
+    if (options.skipActionConsumption !== true && dialogResult.actionType) {
+        const actionResult =
+            actorKind(actor) === 'oni'
+                ? await consumeOniActions(actor, [dialogResult.actionType])
+                : await consumeSlayerActions(actor, [dialogResult.actionType]);
+        if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
+    }
     const result = await doRoll({
         actor,
         attrName,

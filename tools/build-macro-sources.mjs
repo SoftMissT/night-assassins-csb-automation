@@ -7,8 +7,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDirectory = path.join(root, 'macros');
 const outputDirectory = path.join(root, 'build', 'compendium', 'macros');
 
-function macroIconPath(file) {
-    return `modules/${MODULE_ID}/assets/icons/macros/${path.basename(file, '.js')}_icon.webp`;
+function macroIconPath(file, icon = '') {
+    return `modules/${MODULE_ID}/assets/icons/macros/${icon || `${path.basename(file, '.js')}_icon.webp`}`;
 }
 
 const macros = [
@@ -49,6 +49,12 @@ const macros = [
         id: 'NAActionManage01',
         file: 'na-gerenciar-acoes.js',
         name: 'Night Assassins Gerenciar Ações',
+    },
+    {
+        id: 'NAOniRegen000001',
+        file: 'na-regeneracao-oni.js',
+        name: 'Night Assassins Regeneração Oni',
+        icon: 'na-gerenciar-acoes_icon.webp',
     },
     {
         id: 'NARestManage0001',
@@ -100,7 +106,7 @@ for (const [index, macro] of macros.entries()) {
         name: macro.name,
         type: 'script',
         author: null,
-        img: macroIconPath(macro.file),
+        img: macroIconPath(macro.file, macro.icon),
         scope: 'global',
         command,
         folder: null,

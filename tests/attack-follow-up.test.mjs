@@ -21,7 +21,7 @@ Roll.create = () => ({
 });
 
 import { rollHit } from '../scripts/hit-service.mjs';
-import { resolveAutoDamage } from '../scripts/attack-follow-up.mjs';
+import { canChainBreathForms, resolveAutoDamage } from '../scripts/attack-follow-up.mjs';
 
 /** Actor.items precisa iterar como array E responder a .get(id), como a EmbeddedCollection real do Foundry. */
 function itemsCollection(items) {
@@ -49,6 +49,18 @@ function makeWeaponItem({ id = 'weapon1', uuid = 'Item.weapon1', name = 'Nichiri
 }
 
 describe('attack-follow-up — pipeline Acerto → Dano (Problemas 1, 2 e 3)', () => {
+    it('não oferece encadeamento para Oni comum e libera Exterminador Corrompido', () => {
+        const oni = makeActor({ props: { nome_oni: 'Oni', origem_oni_dropdown: 'origem_oni_comum' } });
+        const corrupted = makeActor({
+            props: {
+                nome_oni: 'Corrompido',
+                origem_oni_dropdown: 'origem_oni_exterminador_corrompido',
+            },
+        });
+        assert.equal(canChainBreathForms(oni), false);
+        assert.equal(canChainBreathForms(corrupted), true);
+    });
+
     it('Problema 1 — Acerto confirmado com arma dispara o dano automaticamente, sem clique manual na arma', async () => {
         const weapon = makeWeaponItem();
         const actor = makeActor({ props: { acerto_label: 'acerto_label_for', for_display: '6' } });

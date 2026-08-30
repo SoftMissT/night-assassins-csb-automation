@@ -5098,7 +5098,7 @@
                               "type": "label",
                               "size": "full-size",
                               "icon": "",
-                              "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#3ddc84;\">HAB TSUYOI FOR BONUS: ${hab_tsuyoi_for_bonus}$</span>\n",
+                          "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#3ddc84;\">HAB TSUYOI FOR BONUS: ${hab_tsuyoi_for_bonus}$</span>\n",
                               "prefix": "",
                               "suffix": "",
                               "rollMessage": "",
@@ -7555,6 +7555,63 @@
                           "rollMessageToChat": false,
                           "altRollMessageToChat": false,
                           "style": "label"
+                        },
+                        {
+                          "key": "nvl_14_bonus_choice",
+                          "colSpan": 1,
+                          "rowSpan": 1,
+                          "cssClass": "",
+                          "role": 0,
+                          "editRole": 0,
+                          "permission": 0,
+                          "tooltip": "",
+                          "visibilityFormula": "equalText(nvl_pj, 'nvl_14')",
+                          "editableFormula": "",
+                          "escapeHTML": false,
+                          "type": "select",
+                          "size": "full-size",
+                          "label": "Bônus Nvl 14: ",
+                          "defaultValue": "nenhum",
+                          "selectedOptionType": "custom",
+                          "options": [
+                            {
+                              "key": "nenhum",
+                              "value": "Selecionar Bônus"
+                            },
+                            {
+                              "key": "pdv_vit3",
+                              "value": "PDV + VIT × 3"
+                            },
+                            {
+                              "key": "pdr_fdv2",
+                              "value": "PDR + FDV × 2"
+                            }
+                          ]
+                        },
+                        {
+                          "key": "slayer_class_mb_corpo_guerra_applied",
+                          "colSpan": 1,
+                          "rowSpan": 1,
+                          "cssClass": "",
+                          "role": 0,
+                          "editRole": 3,
+                          "permission": 0,
+                          "tooltip": "Ganho permanente de Corpo de Guerra no nível 11.",
+                          "visibilityFormula": "equalText(classe_escolhida, 'classe_mb')",
+                          "editableFormula": "",
+                          "escapeHTML": false,
+                          "type": "numberField",
+                          "size": "full-size",
+                          "label": "Corpo de Guerra — PDV permanente",
+                          "defaultValue": "0",
+                          "allowDecimal": false,
+                          "minVal": "0",
+                          "maxVal": "12",
+                          "allowRelative": false,
+                          "showControls": false,
+                          "controlsStyle": "hover",
+                          "controlsCustomIncrements": "",
+                          "inputStyle": "text"
                         }
                       ],
                       "flow": "grid-2",
@@ -9658,9 +9715,9 @@
             "name": "metal_bloqueio_bonus",
             "value": "${switchCase(metal_escolhido,'metal_azul',3,'metal_preta',4,0)}$"
           },
-          {
-            "name": "pdr_slayer_total",
-            "value": "${pdr_slayer_total_conta+metal_slayer_pdr_bonus}$"
+      {
+        "name": "pdr_slayer_total",
+        "value": "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
           },
           {
             "name": "pdr_slayer_total_conta",
@@ -9670,9 +9727,9 @@
             "name": "pdv_slayer_total_conta",
             "value": "${switchCase(\n  nvl_pj,\n  'nvl_1', pdv_slayer_nvl1,\n  'nvl_2', pdv_slayer_nvl2,\n  'nvl_3', pdv_slayer_nvl3,\n  'nvl_4', pdv_slayer_nvl4,\n  'nvl_5', pdv_slayer_nvl5,\n  'nvl_6', pdv_slayer_nvl6,\n  'nvl_7', pdv_slayer_nvl7,\n  'nvl_8', pdv_slayer_nvl8,\n  'nvl_9', pdv_slayer_nvl9,\n  'nvl_10', pdv_slayer_nvl10,\n  'nvl_11', pdv_slayer_nvl11,\n  'nvl_12', pdv_slayer_nvl12,\n  'nvl_13', pdv_slayer_nvl13,\n  'nvl_14', pdv_slayer_nvl14,\n  0\n)}$"
           },
-          {
-            "name": "pdv_slayer_total",
-            "value": "${pdv_slayer_total_conta-pdv_slayer_dano_ferida}$"
+      {
+        "name": "pdv_slayer_total",
+        "value": "${(pdv_slayer_total_conta+slayer_class_mb_corpo_guerra_applied+(equalText(nvl_14_bonus_choice, 'pdv_vit3') ? atr_vit_valor_config*3 : 0))-pdv_slayer_dano_ferida}$"
           },
           {
             "name": "pdv_slayer_atual",

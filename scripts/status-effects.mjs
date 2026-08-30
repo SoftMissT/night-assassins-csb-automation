@@ -3,6 +3,7 @@
  */
 
 import { parseStatusState } from './status-service.mjs';
+import { parseUserPoisonState, USER_POISON_STATE_KEY } from './slayer/poison-user-service.mjs';
 
 function statusContext(props = {}) {
     const state = parseStatusState(props.status_slayer_dados);
@@ -145,6 +146,10 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
     }
 
     if (defense) {
+        if (parseUserPoisonState(props[USER_POISON_STATE_KEY]).toxicWound) {
+            modifier -= 1;
+            reasons.push('Ferida Tóxica −1 Defesa');
+        }
         if (active.has('desequilibrado')) {
             modifier -= 2;
             reasons.push('Desequilibrado −2 Defesa');

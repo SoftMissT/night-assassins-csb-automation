@@ -7,6 +7,12 @@ import { actorKind } from './actor-kind.mjs';
 import { parseNumber } from './parsing.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import {
+    USER_POISON_STATE_KEY,
+    parseUserPoisonState,
+    tickUserPoison,
+    userPoisonStatePatch,
+} from './slayer/poison-user-service.mjs';
+import {
     parseWindBreathingState,
     registerWindBattleDamage,
     windStatePatch,
@@ -495,6 +501,31 @@ async function processCurrentTurn(combat) {
     const actorContract = statusContract(actor);
     if (actor.system?.props?.[actorContract.data] !== undefined)
         await processActorStatusTiming(actor, 'start');
+    const poisonRaw = actor.system?.props?.[USER_POISON_STATE_KEY];
+    if (poisonRaw !== undefined && poisonRaw !== '') {
+        const poison = tickUserPoison(poisonRaw);
+        await actor.update(userPoisonStatePatch(poison.state), {
+            naCsbAutomation: true,
+            naUserPoison: true,
+        });
+        if (poison.damage > 0) {
+            const { applyOniDamage, applySlayerDamageAuto } = await import('./damage-relay.mjs');
+            const kind = actorKind(actor);
+            if (kind === 'slayer')
+                await applySlayerDamageAuto(actor, poison.damage, {
+                    isAttack: false,
+                    attackName: 'Veneno do Usuário',
+                    damageTypes: ['veneno'],
+                });
+            else
+                await applyOniDamage(actor, poison.damage, {
+                    attackName: 'Veneno do Usuário',
+                    rolledTotal: poison.damage,
+                    damageTypes: ['veneno'],
+                    requireApproval: false,
+                });
+        }
+    }
 }
 
 export function movementBlocked(props = {}) {
@@ -519,13 +550,19 @@ export function resolveSlayerHealing(props = {}, requestedTotal = 0) {
     );
     const current = parseNumber(props.pdv_slayer_curado);
     const delta = Math.max(0, parseNumber(requestedTotal) - current);
-    const multiplier =
+    const statusMultiplier =
         exhaustion >= 8
             ? 0
             : active.has('corrupcao') || active.has('regeneracao_suprimida')
               ? 0.5
               : 1;
-    return { value: current + Math.floor(delta * multiplier), multiplier, requestedDelta: delta };
+    const poisonSuppressed = parseUserPoisonState(
+        props[USER_POISON_STATE_KEY]
+    ).healingSuppressed;
+    const afterStatus = Math.floor(delta * statusMultiplier);
+    const applied = poisonSuppressed ? Math.ceil(afterStatus / 2) : afterStatus;
+    const multiplier = statusMultiplier * (poisonSuppressed ? 0.5 : 1);
+    return { value: current + applied, multiplier, requestedDelta: delta };
 }
 
 export function registerStatusEngine() {

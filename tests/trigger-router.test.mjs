@@ -118,6 +118,46 @@ describe('trigger-router', () => {
         assert.strictEqual(patch['system.props.hab_marca_destino_bonus'], 3);
     });
 
+    it('nível 11 de Mestre de Batalha dispara Corpo de Guerra uma única vez', async () => {
+        const previousRoll = globalThis.Roll;
+        const previousSpeaker = ChatMessage.getSpeaker;
+        const actor = makeActor({
+            props: {
+                nvl_pj: 'nvl_11',
+                nvl_num: 10,
+                classe_escolhida: 'classe_mb',
+                slayer_class_mb_corpo_guerra_applied: 0,
+            },
+        });
+        let patch = null;
+        actor.update = async (next) => {
+            patch = next;
+        };
+        globalThis.Roll = {
+            create: () => ({
+                total: 0,
+                async evaluate() {
+                    this.total = 9;
+                    return this;
+                },
+                async toMessage() {},
+            }),
+        };
+        ChatMessage.getSpeaker = () => ({ actor: actor.id });
+        try {
+            await handleActorUpdate(
+                actor,
+                { system: { props: { nvl_pj: 'nvl_11' } } },
+                {},
+                game.user.id
+            );
+            assert.equal(patch['system.props.slayer_class_mb_corpo_guerra_applied'], 9);
+        } finally {
+            globalThis.Roll = previousRoll;
+            ChatMessage.getSpeaker = previousSpeaker;
+        }
+    });
+
     it('dispara Marca inicial quando habilidade muda para marca e bônus < 2', async () => {
         const actor = makeActor({
             props: {

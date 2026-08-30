@@ -133,6 +133,39 @@ test('template Slayer preserva o dropdown que escolhe DEX ou FOR para Acerto', (
     );
 });
 
+test('nível 14 oferece escolha exclusiva entre bônus de PDV e PDR nos hidden totals', () => {
+    const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
+    let choice = null;
+    function walk(node) {
+        if (!node || typeof node !== 'object') return;
+        if (node.key === 'nvl_14_bonus_choice') choice = node;
+        Object.values(node).forEach(walk);
+    }
+    walk(template.system.body);
+
+    assert.ok(choice, 'Dropdown nvl_14_bonus_choice não encontrado');
+    assert.equal(choice.type, 'select');
+    assert.equal(choice.visibilityFormula, "equalText(nvl_pj, 'nvl_14')");
+    assert.deepEqual(
+        choice.options.map(({ key, value }) => ({ key, value })),
+        [
+            { key: 'nenhum', value: 'Selecionar Bônus' },
+            { key: 'pdv_vit3', value: 'PDV + VIT × 3' },
+            { key: 'pdr_fdv2', value: 'PDR + FDV × 2' },
+        ]
+    );
+
+    const hidden = new Map(template.system.hidden.map((entry) => [entry.name, entry.value]));
+    assert.equal(
+        hidden.get('pdv_slayer_total'),
+        "${(pdv_slayer_total_conta+slayer_class_mb_corpo_guerra_applied+(equalText(nvl_14_bonus_choice, 'pdv_vit3') ? atr_vit_valor_config*3 : 0))-pdv_slayer_dano_ferida}$"
+    );
+    assert.equal(
+        hidden.get('pdr_slayer_total'),
+        "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
+    );
+});
+
 test('template Slayer tem itens oficiais de perfil no header', () => {
     const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
     const headerKeys = [];

@@ -12,6 +12,10 @@
 import { MODULE_ID } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
 import { actorKind } from './actor-kind.mjs';
+import {
+    USER_POISON_STATE_KEY,
+    userPoisonHealingAmount,
+} from './slayer/poison-user-service.mjs';
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const HEAL_REQUEST_TYPE = 'applyHeal';
@@ -45,10 +49,14 @@ export function healKeysFor(actor) {
 
 async function updateActorHeal(actor, amount) {
     const keys = healKeysFor(actor);
+    const adjustedAmount = userPoisonHealingAmount(
+        actor.system?.props?.[USER_POISON_STATE_KEY],
+        amount
+    );
     const current = parseNumber(actor.system?.props?.[keys.heal]);
-    const total = current + amount;
+    const total = current + adjustedAmount;
     await actor.update({ [`system.props.${keys.heal}`]: total }, { naCsbAutomation: true });
-    return { total, key: keys.heal };
+    return { total, key: keys.heal, appliedHeal: adjustedAmount };
 }
 
 function emitHealResult(recipientId, requestId, result) {
@@ -81,13 +89,13 @@ async function handleHealRequest(message) {
         return;
     }
     try {
-        const { total, key } = await updateActorHeal(actor, amount);
+        const { total, key, appliedHeal } = await updateActorHeal(actor, amount);
         emitHealResult(message.requesterId, message.requestId, {
             ok: true,
             total,
             key,
             actorName: actor.name,
-            appliedHeal: amount,
+            appliedHeal,
         });
     } catch (error) {
         emitHealResult(message.requesterId, message.requestId, {
@@ -136,8 +144,8 @@ export async function applyHealTo(targetActor, amount, _context = {}) {
     }
 
     if (game.user.isGM || targetActor.isOwner) {
-        const { total, key } = await updateActorHeal(targetActor, heal);
-        return { ok: true, total, key, actorName: targetActor.name, appliedHeal: heal };
+        const { total, key, appliedHeal } = await updateActorHeal(targetActor, heal);
+        return { ok: true, total, key, actorName: targetActor.name, appliedHeal };
     }
 
     const gm = activePrimaryGM();

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.44 - 2026-08-29
+
+- **Slayer N14:** adicionada a escolha oficial entre `PDV + VIT x3` e `PDR + FDV x2`, aplicada diretamente aos totais ocultos sem alterar os cálculos-base.
+- **Mestre de Batalha:** Corpo de Guerra passa a rolar `2d6` uma única vez no nível 11, publicar a rolagem no chat/Dice So Nice e persistir o bônus no PDV máximo; Ataque Dilacerador mantém corretamente o bônus de +4 nos ranks A, S e SS.
+- **Usuário de Veneno:** implementados ranks C a SS, incluindo duração, renovação, múltiplas instâncias, ataque adicional, Corta-Cura e Ferida Tóxica, com estado persistido por alvo.
+- **Segurança do fluxo:** veneno só é aplicado após acerto e dano válido contra o alvo; Técnicas de Respiração, dano automático e fontes incompatíveis ficam fora do gatilho de ataque básico.
+- **Validação local:** 939/939 testes, 166 suítes, zero falhas; validação runtime com Actors reais no Foundry v14 permanece obrigatória.
+
 ## 0.11.43 - 2026-08-29
 
 - **Rollback corretivo:** removidas integralmente as mudanças funcionais da `v0.11.42`, que regrediram o template Slayer e alteraram hooks críticos de Acerto, Dano e Status sem validação runtime.

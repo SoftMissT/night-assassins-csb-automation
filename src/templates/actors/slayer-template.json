@@ -5103,6 +5103,63 @@
                           "rollMessageToChat": true,
                           "altRollMessageToChat": true,
                           "style": "label"
+                        },
+                        {
+                          "key": "nvl_14_bonus_choice",
+                          "colSpan": 1,
+                          "rowSpan": 1,
+                          "cssClass": "",
+                          "role": 0,
+                          "editRole": 0,
+                          "permission": 0,
+                          "tooltip": "",
+                          "visibilityFormula": "equalText(nvl_pj, 'nvl_14')",
+                          "editableFormula": "",
+                          "escapeHTML": false,
+                          "type": "select",
+                          "size": "full-size",
+                          "label": "Bônus Nvl 14: ",
+                          "defaultValue": "nenhum",
+                          "selectedOptionType": "custom",
+                          "options": [
+                            {
+                              "key": "nenhum",
+                              "value": "Selecionar Bônus"
+                            },
+                            {
+                              "key": "pdv_vit3",
+                              "value": "PDV + VIT × 3"
+                            },
+                            {
+                              "key": "pdr_fdv2",
+                              "value": "PDR + FDV × 2"
+                            }
+                          ]
+                        },
+                        {
+                          "key": "slayer_class_mb_corpo_guerra_applied",
+                          "colSpan": 1,
+                          "rowSpan": 1,
+                          "cssClass": "",
+                          "role": 0,
+                          "editRole": 3,
+                          "permission": 0,
+                          "tooltip": "Ganho permanente de Corpo de Guerra no nível 11.",
+                          "visibilityFormula": "equalText(classe_escolhida, 'classe_mb')",
+                          "editableFormula": "",
+                          "escapeHTML": false,
+                          "type": "numberField",
+                          "size": "full-size",
+                          "label": "Corpo de Guerra — PDV permanente",
+                          "defaultValue": "0",
+                          "allowDecimal": false,
+                          "minVal": "0",
+                          "maxVal": "12",
+                          "allowRelative": false,
+                          "showControls": false,
+                          "controlsStyle": "hover",
+                          "controlsCustomIncrements": "",
+                          "inputStyle": "text"
                         }
                       ],
                       "flow": "grid-3",
@@ -9657,7 +9714,7 @@
       },
       {
         "name": "pdr_slayer_total",
-        "value": "${pdr_slayer_total_conta+metal_slayer_pdr_bonus}$"
+        "value": "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
       },
       {
         "name": "pdr_slayer_total_conta",
@@ -9669,7 +9726,7 @@
       },
       {
         "name": "pdv_slayer_total",
-        "value": "${pdv_slayer_total_conta-pdv_slayer_dano_ferida}$"
+        "value": "${(pdv_slayer_total_conta+slayer_class_mb_corpo_guerra_applied+(equalText(nvl_14_bonus_choice, 'pdv_vit3') ? atr_vit_valor_config*3 : 0))-pdv_slayer_dano_ferida}$"
       },
       {
         "name": "pdv_slayer_atual",

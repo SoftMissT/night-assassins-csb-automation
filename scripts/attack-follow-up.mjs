@@ -89,6 +89,7 @@ export async function resolveAutoDamage({
     techniqueEntradas = [],
     forceAttackDamage = true,
     skipBreathingInjection = false,
+    classBasicAttack = false,
 }) {
     const successful = (hitResult?.attempts ?? []).filter((attempt) => attempt.hit);
     if (successful.length === 0) return;
@@ -128,6 +129,7 @@ export async function resolveAutoDamage({
                 forceAttackDamage,
                 damageOnly: true,
                 weaponAttackIndex: Number.isInteger(attempt.attackIndex) ? attempt.attackIndex : 0,
+                classBasicAttack,
             });
         } else {
             const entradas =
@@ -143,6 +145,7 @@ export async function resolveAutoDamage({
                 skipActionConsumption: true,
                 forceAttackDamage,
                 skipBreathingInjection: skipBreathingInjection || techniqueEntradas.length > 0,
+                classBasicAttack,
             });
         }
     }

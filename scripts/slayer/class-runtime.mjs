@@ -19,7 +19,7 @@ export function classStateKey(classKey, suffix) {
 }
 
 export function mbDamageBonus(rank) {
-    if (rank === 'B') return 4;
+    if (rank === 'B' || rank === 'A' || rank === 'S' || rank === 'SS') return 4;
     if (rank === 'C') return 2;
     return 0;
 }
@@ -33,11 +33,30 @@ export function mbPermanentPdvPatch(rolledTotal, alreadyApplied = 0) {
     const gain = Math.max(0, integer(rolledTotal));
     const applied = Math.max(0, integer(alreadyApplied));
     return Object.freeze({
-        'system.props.pdv_slayer_extra': integer(applied + gain),
         [`system.props.${classStateKey('classe_mb', 'corpo_guerra_applied')}`]: integer(
             applied + gain
         ),
     });
+}
+
+export async function applyMasterBattleLevelEleven(actor, level = null) {
+    const props = actor?.system?.props ?? {};
+    const normalizedLevel = Math.max(0, integer(level ?? props.nvl_num ?? props.nvl_pj));
+    const plan = masterBattleLevelElevenPlan({ ...props, nvl_num: normalizedLevel });
+    if (!actor?.update || !plan.eligible || !plan.permanentPdv) return false;
+
+    const roll = await Roll.create(plan.permanentPdv.formula).evaluate();
+    const total = Math.max(0, integer(roll.total));
+    await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        flavor: `${actor.name} — Corpo de Guerra: +${total} PDV máximo permanente`,
+    });
+    await actor.update(mbPermanentPdvPatch(total), {
+        naCsbAutomation: true,
+        naMasterBattleLevelEleven: true,
+    });
+    ui.notifications?.info?.(`Corpo de Guerra concedeu +${total} PDV máximo a ${actor.name}.`);
+    return true;
 }
 
 export function mbParryAvailable(props = {}) {

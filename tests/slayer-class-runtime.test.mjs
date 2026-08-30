@@ -6,6 +6,7 @@ import {
     mbDamageBonus,
     mbShouldApplyPermanentPdv,
     mbPermanentPdvPatch,
+    applyMasterBattleLevelEleven,
     mbParryAvailable,
     mbParryConsume,
     mbParryReduction,
@@ -51,9 +52,10 @@ describe('class-runtime - Mestre de Batalha', () => {
         assert.equal(mbDamageBonus('B'), 4);
     });
 
-    it('rank A/S/SS nao da bonus de Dilacerador', () => {
-        assert.equal(mbDamageBonus('A'), 0);
-        assert.equal(mbDamageBonus('S'), 0);
+    it('rank A/S/SS preserva o +4 de Dilacerador Aprimorado', () => {
+        assert.equal(mbDamageBonus('A'), 4);
+        assert.equal(mbDamageBonus('S'), 4);
+        assert.equal(mbDamageBonus('SS'), 4);
     });
 
     it('ganho permanente de 2d6 PDV so aplica uma vez (idempotente)', () => {
@@ -67,10 +69,56 @@ describe('class-runtime - Mestre de Batalha', () => {
         assert.equal(mbShouldApplyPermanentPdv(appliedProps), false);
     });
 
-    it('mbPermanentPdvPatch soma ao ja aplicado', () => {
+    it('mbPermanentPdvPatch persiste somente o ganho próprio de Corpo de Guerra', () => {
         const patch = mbPermanentPdvPatch(7, 5);
-        assert.equal(patch['system.props.pdv_slayer_extra'], 12);
+        assert.equal(patch['system.props.pdv_slayer_extra'], undefined);
         assert.equal(patch['system.props.slayer_class_mb_corpo_guerra_applied'], 12);
+    });
+
+    it('nível 11 rola 2d6, anuncia e persiste uma única vez', async () => {
+        const previousRoll = globalThis.Roll;
+        const previousChatMessage = globalThis.ChatMessage;
+        const previousUi = globalThis.ui;
+        const messages = [];
+        globalThis.Roll = {
+            create(formula) {
+                assert.equal(formula, '2d6');
+                return {
+                    async evaluate() {
+                        this.total = 8;
+                        return this;
+                    },
+                    async toMessage(data) {
+                        messages.push(data);
+                    },
+                };
+            },
+        };
+        globalThis.ChatMessage = { getSpeaker: ({ actor }) => ({ actor: actor.id }) };
+        globalThis.ui = { notifications: { info() {} } };
+        try {
+            let patch = null;
+            const actor = {
+                id: 'A1',
+                name: 'Hashira',
+                system: { props: { nvl_num: 11, classe_escolhida: 'classe_mb' } },
+                async update(next) {
+                    patch = next;
+                },
+            };
+            assert.equal(await applyMasterBattleLevelEleven(actor, 11), true);
+            assert.equal(patch['system.props.slayer_class_mb_corpo_guerra_applied'], 8);
+            assert.match(messages[0].flavor, /\+8 PDV máximo permanente/);
+
+            actor.system.props.slayer_class_mb_corpo_guerra_applied = 8;
+            patch = null;
+            assert.equal(await applyMasterBattleLevelEleven(actor, 11), false);
+            assert.equal(patch, null);
+        } finally {
+            globalThis.Roll = previousRoll;
+            globalThis.ChatMessage = previousChatMessage;
+            globalThis.ui = previousUi;
+        }
     });
 
     it('parry disponivel no inicio da rodada', () => {

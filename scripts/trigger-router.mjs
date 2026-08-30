@@ -7,6 +7,7 @@ import { changedProp, parseLevel, isDestinyMark, parseNumber } from './parsing.m
 import { createLevelOneValues, processLevelGain, processOniLevelGain } from './level-service.mjs';
 import { applyInitialMark, upgradeMarkAtLevelSix } from './ability-service.mjs';
 import { actorKind } from './actor-kind.mjs';
+import { applyMasterBattleLevelEleven } from './slayer/class-runtime.mjs';
 
 /** @type {Map<string, Promise<void>>} */
 const actorLocks = new Map();
@@ -114,6 +115,12 @@ export async function handleActorUpdate(actor, changes, options, userId) {
         // Nível 7
         if (level === 7 && !isSnapshotComplete(props, 7)) {
             await processLevelGain(actor, 7);
+            return;
+        }
+
+        // Nível 11 — Mestre de Batalha: Corpo de Guerra, ganho único de 2d6 PDV máximo.
+        if (level === 11 && String(props.classe_escolhida ?? '') === 'classe_mb') {
+            await applyMasterBattleLevelEleven(actor, level);
             return;
         }
 

@@ -368,6 +368,23 @@ test('Corrupção e Regeneração Suprimida reduzem cura pela metade', () => {
     });
 });
 
+test('Corta-Cura reduz cura manual/regeneração em 50% arredondando para cima', () => {
+    const props = {
+        status_slayer_dados: JSON.stringify({ version: 1, active: [], exhaustion: 0 }),
+        status_slayer_exaustao: 0,
+        pdv_slayer_curado: 0,
+        slayer_veneno_usuario_estado: JSON.stringify({
+            healingSuppressed: true,
+            instances: [],
+        }),
+    };
+    assert.deepEqual(resolveSlayerHealing(props, 9), {
+        value: 5,
+        multiplier: 0.5,
+        requestedDelta: 9,
+    });
+});
+
 test('Exaustão 8 impede qualquer cura', () => {
     const props = { pdv_slayer_curado: 2, status_slayer_exaustao: 8 };
     assert.deepEqual(resolveSlayerHealing(props, 12), {

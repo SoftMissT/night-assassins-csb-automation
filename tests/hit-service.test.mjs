@@ -171,6 +171,41 @@ describe('hit-service', () => {
         assert.equal(actorUpdates, 0);
     });
 
+    it('Usuário de Veneno rank A ganha exatamente um ataque adicional na Ação de Ataque', async () => {
+        _dialogReturn = [
+            {
+                mode: 'normal',
+                rollMode: 'publicroll',
+                bonusRaw: '',
+                cdVal: 0,
+                rollCount: 1,
+                actionType: 'ataque',
+            },
+            { hit: true, continue: true },
+            { hit: true, continue: false },
+        ];
+        let rolls = 0;
+        _rollResult = {
+            total: 14,
+            toMessage: async () => {
+                rolls += 1;
+                return { id: `poison-extra-${rolls}` };
+            },
+        };
+        const actor = makeActor({
+            props: {
+                nome_slayer: 'Veneficista',
+                acerto_label: 'acerto_label_dex',
+                dex_display: '5',
+                classe_escolhida: 'classe_usuario_de_veneno',
+                nvl_pj: 'nvl_8',
+            },
+        });
+        actor.getFlag = () => null;
+        await rollHit({ actor, autoDamage: false });
+        assert.equal(rolls, 2);
+    });
+
     it('Reflexão da Pedra: penaliza a próxima rolagem de Acerto e consome a penalidade em uso único (regressão)', async () => {
         _dialogReturn = { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0 };
         let called = false;

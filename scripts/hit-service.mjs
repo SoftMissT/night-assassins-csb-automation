@@ -39,6 +39,7 @@ import {
     windStatePatch,
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
+import { classRankAtLevel } from './slayer/class-contracts.mjs';
 import {
     consumeSnowPending,
     parseSnowBreathingState,
@@ -392,6 +393,14 @@ export async function rollHit(options) {
     const snowHit = snowState.nextHit;
     const windState = parseWindBreathingState(props.resp_vento_estado);
     const windHit = windState.nextHit;
+    const classTechniquePending = [
+        breathHit,
+        flameHit,
+        stoneHit,
+        mistHit,
+        snowHit,
+        windHit,
+    ].some((pending) => pending && typeof pending === 'object');
     const snowPenalty = actor.getFlag?.(MODULE_ID, 'snowPenalty');
     const stonePenalty = actor.getFlag?.(MODULE_ID, 'stoneReflectionPenalty');
     const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
@@ -541,6 +550,32 @@ export async function rollHit(options) {
     if (finalStatusEffects.autoFail)
         return ui.notifications?.warn?.('Paralisia: falha automática neste Acerto.');
 
+    const poisonRank =
+        props.classe_escolhida === 'classe_usuario_de_veneno'
+            ? classRankAtLevel(parseNumber(props.nvl_num ?? props.nvl_pj))
+            : null;
+    const poisonExtraFlag = actor.getFlag?.(MODULE_ID, 'poisonExtraAttack');
+    const combatRound = game.combat?.round ?? null;
+    const combatTurn = game.combat?.turn ?? null;
+    const poisonExtraUsed =
+        combatRound !== null &&
+        poisonExtraFlag?.round === combatRound &&
+        poisonExtraFlag?.turn === combatTurn;
+    const poisonExtraAttack =
+        ['A', 'S', 'SS'].includes(poisonRank) &&
+        dialogResult.actionType === 'ataque' &&
+        !classTechniquePending &&
+        !poisonExtraUsed;
+    const baseRollCount = Math.max(
+        dialogResult.rollCount,
+        Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1,
+        Number(breathHit?.count) || 1,
+        Number(flameHit?.count) || 1,
+        Number(stoneHit?.count) || 1,
+        Number(mistHit?.count) || 1,
+        Number(snowHit?.count) || 1,
+        Number(windHit?.count) || 1
+    );
     const result = await doRoll({
         actor,
         attrName,
@@ -549,22 +584,18 @@ export async function rollHit(options) {
         rollMode: dialogResult.rollMode,
         bonusRaw,
         cdVal: dialogResult.cdVal,
-        rollCount: Math.max(
-            dialogResult.rollCount,
-            Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1,
-            Number(breathHit?.count) || 1,
-            Number(flameHit?.count) || 1,
-            Number(stoneHit?.count) || 1,
-            Number(mistHit?.count) || 1,
-            Number(snowHit?.count) || 1,
-            Number(windHit?.count) || 1
-        ),
+        rollCount: baseRollCount + (poisonExtraAttack ? 1 : 0),
         actionType: dialogResult.actionType,
         statusEffects: finalStatusEffects,
         weapon,
         metalReroll: metalState.chainReaction?.turns > 0,
         stopOnMiss: mistHit?.stopOnMiss === true,
     });
+    if (poisonExtraAttack && result && combatRound !== null)
+        await actor.setFlag?.(MODULE_ID, 'poisonExtraAttack', {
+            round: combatRound,
+            turn: combatTurn,
+        });
     if (windAdvantageAvailable) {
         await actor.setFlag(MODULE_ID, windAdvantageKey, {
             round: currentRound,
@@ -800,6 +831,7 @@ export async function rollHit(options) {
                 actor,
                 hitResult: finalResult,
                 techniqueLabel: actionLabel || 'Ataque',
+                classBasicAttack: !classTechniquePending,
             });
         }
     }

@@ -17,6 +17,12 @@ import {
 import { currentPdv } from './status-engine.mjs';
 import { parseStatusState } from './status-service.mjs';
 import { actorKind, isSlayerActor } from './actor-kind.mjs';
+import { classRankAtLevel } from './slayer/class-contracts.mjs';
+import {
+    applyUserPoison,
+    USER_POISON_STATE_KEY,
+    userPoisonStatePatch,
+} from './slayer/poison-user-service.mjs';
 import {
     ensureWeaponUsageMode,
     weaponAmmoPatch,
@@ -1224,6 +1230,47 @@ export async function rollDamage(options = {}) {
         ),
     ]);
 
+    const poisonRank =
+        attackerKind === 'slayer' && props.classe_escolhida === 'classe_usuario_de_veneno'
+            ? classRankAtLevel(parseNumber(props.nvl_num ?? props.nvl_pj))
+            : null;
+    const validPoisonAttack =
+        Boolean(poisonRank) &&
+        options.classBasicAttack === true &&
+        selectedWeaponProfile?.proficiente !== false;
+    if (validPoisonAttack) {
+        const damageResults = results.slice(pending.length);
+        for (let index = 0; index < damageRequests.length; index += 1) {
+            const outcome = damageResults[index];
+            const request = damageRequests[index];
+            const appliedDamage = Number(
+                outcome?.value?.appliedDamage ?? outcome?.value?.totalDamage ?? request?.amount ?? 0
+            );
+            if (outcome?.status !== 'fulfilled' || !(appliedDamage > 0)) continue;
+            const targetProps = request.actor?.system?.props ?? {};
+            const immunityText = [
+                targetProps.imunidades,
+                targetProps.imunidade,
+                targetProps.resistencias,
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLocaleLowerCase('pt-BR');
+            const poison = applyUserPoison(targetProps[USER_POISON_STATE_KEY], {
+                sourceActorUuid: actor.uuid,
+                rank: poisonRank,
+                carisma: attrValues.car,
+                actionId,
+                immune: /imune?[^,;]*veneno|veneno[^,;]*imune?/u.test(immunityText),
+            });
+            if (poison.applied)
+                await request.actor.update(userPoisonStatePatch(poison.state), {
+                    naCsbAutomation: true,
+                    naUserPoison: true,
+                });
+        }
+    }
+
     // ─── Respiração do Vento pós-dano ─────────────────────────────────
     for (const request of damageRequests) {
         if (!(request.amount > 0)) continue;
@@ -1637,6 +1684,7 @@ export async function rollWeaponItem(options = {}) {
         skipActionConsumption: options.skipActionConsumption === true,
         forceAttackDamage: options.forceAttackDamage === true,
         promptHealOrDamage: options.promptHealOrDamage === true,
+        classBasicAttack: options.classBasicAttack === true,
     });
 }
 

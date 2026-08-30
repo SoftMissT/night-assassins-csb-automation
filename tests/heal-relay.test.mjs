@@ -118,6 +118,29 @@ describe('heal-relay', () => {
             assert.strictEqual(result.total, 7);
         });
 
+        it('Corta-Cura reduz 50% e arredonda a cura para cima', async () => {
+            game.user.isGM = true;
+            let patch = null;
+            const actor = makeSlayerActor({
+                system: {
+                    props: {
+                        nome_slayer: 'Alvo',
+                        pdv_slayer_curado: 0,
+                        slayer_veneno_usuario_estado: JSON.stringify({
+                            healingSuppressed: true,
+                            instances: [],
+                        }),
+                    },
+                },
+                update: async (next) => {
+                    patch = next;
+                },
+            });
+            const result = await applyHealTo(actor, 9);
+            assert.equal(result.appliedHeal, 5);
+            assert.equal(patch['system.props.pdv_slayer_curado'], 5);
+        });
+
         it('rejeita cura zero, negativa ou não numérica', async () => {
             const actor = makeSlayerActor();
             await assert.rejects(() => applyHealTo(actor, 0), /valor de cura inválido/i);

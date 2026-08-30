@@ -180,6 +180,64 @@ describe('damage-service', () => {
         assert.deepEqual(formulas, ['1d6', '2', '3']);
     });
 
+    it('ataque básico válido do Usuário de Veneno aplica a dose no alvo', async () => {
+        game.user.isGM = true;
+        _dialogReturn = {
+            nome: 'Ataque básico',
+            pdrGasto: 0,
+            critical: false,
+            entradas: [
+                {
+                    dado: '1d6',
+                    fixo: 0,
+                    selAttrs: [],
+                    selTiposDano: ['cortante'],
+                    tipoAcao: 'ataque',
+                },
+            ],
+        };
+        _rollResult = { total: 6, dice: [], toMessage: async () => {} };
+        const attacker = makeActor({
+            id: 'poisoner',
+            uuid: 'Actor.poisoner',
+            props: {
+                nome_slayer: 'Veneficista',
+                classe_escolhida: 'classe_usuario_de_veneno',
+                nvl_pj: 'nvl_6',
+                car_display: 4,
+            },
+        });
+        const patches = [];
+        const target = makeActor({
+            id: 'poison-target',
+            uuid: 'Actor.poison-target',
+            props: {
+                nome_slayer: 'Alvo',
+                pdv_slayer_total_conta: 30,
+                pdv_slayer_dano_tomado: 0,
+                pdv_slayer_dano_ferida: 0,
+            },
+        });
+        target.update = async (next) => patches.push(next);
+        game.user.targets = new Set([{ actor: target }]);
+
+        await rollDamage({
+            actor: attacker,
+            entradas: _dialogReturn.entradas,
+            classBasicAttack: true,
+            skipActionConsumption: true,
+            forceAttackDamage: true,
+            actionId: 'ACTION-1',
+        });
+
+        const poisonPatch = patches.find((entry) => entry['system.props.slayer_veneno_usuario_estado']);
+        assert.ok(poisonPatch, 'estado do Veneno do Usuário não aplicado no alvo');
+        const poison = JSON.parse(poisonPatch['system.props.slayer_veneno_usuario_estado']);
+        assert.equal(poison.instances.length, 1);
+        assert.equal(poison.instances[0].damage, 6);
+        assert.equal(poison.instances[0].remainingTurns, 3);
+    });
+
     it('aplica PDR e dano em atacante e alvo diferentes', async () => {
         game.user.isGM = true;
         _dialogReturn = [

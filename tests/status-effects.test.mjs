@@ -52,6 +52,21 @@ test('Cegueira Parcial penaliza Acerto e Defesa', () => {
     );
 });
 
+test('Ferida Tóxica aplica -1 somente em Esquiva/Bloqueio', () => {
+    const current = {
+        ...props(),
+        slayer_veneno_usuario_estado: JSON.stringify({ toxicWound: true, instances: [] }),
+    };
+    assert.equal(
+        getRollStatusEffects(current, { test: 'Esquiva', attr: 'DEX', kind: 'defense' }).modifier,
+        -1
+    );
+    assert.equal(
+        getRollStatusEffects(current, { test: 'Acerto', attr: 'DEX', kind: 'attack' }).modifier,
+        0
+    );
+});
+
 test('Fadiga Espiritual afeta FDV e aumenta o custo de PDR', () => {
     assert.equal(
         getRollStatusEffects(props(['fadiga_espiritual']), { test: 'Resistência', attr: 'FDV' })

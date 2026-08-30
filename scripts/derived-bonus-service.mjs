@@ -148,19 +148,6 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
         allSources.push(source);
     }
 
-    const poisonDefensePenalty = parseNumber(props.slayer_veneno_penalidade_defesa);
-    if (poisonDefensePenalty) {
-        add({ channel: 'esquiva', value: poisonDefensePenalty, label: 'Ferida Tóxica', origin: 'Veneno' });
-        add({ channel: 'bloqueio', value: poisonDefensePenalty, label: 'Ferida Tóxica', origin: 'Veneno' });
-    }
-
-    const kakushiBuffChoice = String(props.slayer_class_kakushi_amparar_buff_choice ?? '');
-    if (kakushiBuffChoice === 'esquiva') {
-        add({ channel: 'esquiva', value: 1, label: 'Amparar Aprimorado', origin: 'Kakushi' });
-    } else if (kakushiBuffChoice === 'bloqueio') {
-        add({ channel: 'bloqueio', value: 1, label: 'Amparar Aprimorado', origin: 'Kakushi' });
-    }
-
     for (const runtime of context.runtimeSources ?? []) {
         if (!runtime || runtime.channel === 'danoTipado') {
             const value = parseNumber(runtime?.value);

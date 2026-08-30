@@ -12,7 +12,6 @@
 import { MODULE_ID } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
 import { actorKind } from './actor-kind.mjs';
-import { cortaCuraMultiplier } from './slayer/class-runtime.mjs';
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const HEAL_REQUEST_TYPE = 'applyHeal';
@@ -45,14 +44,11 @@ export function healKeysFor(actor) {
 }
 
 async function updateActorHeal(actor, amount) {
-    const props = actor.system?.props ?? {};
-    const multiplier = cortaCuraMultiplier(props);
-    const adjustedAmount = Math.floor(amount * multiplier);
     const keys = healKeysFor(actor);
     const current = parseNumber(actor.system?.props?.[keys.heal]);
-    const total = current + adjustedAmount;
+    const total = current + amount;
     await actor.update({ [`system.props.${keys.heal}`]: total }, { naCsbAutomation: true });
-    return { total, key: keys.heal, multiplier };
+    return { total, key: keys.heal };
 }
 
 function emitHealResult(recipientId, requestId, result) {
@@ -130,17 +126,13 @@ export function registerHealRelay() {
  * deve invocar duas vezes para o mesmo evento de cura).
  * @param {Actor} targetActor
  * @param {number} amount
- * @param {object} [context]
- * @param {boolean} [context.kakushiPrioridadeMedica] - Quando true, aplica bônus de +2 da Passiva "Prioridade Médica" (Kakushi Rank A).
+ * @param {object} [context] - reservado para uso futuro (paridade com applyOniDamage/applySlayerDamageAuto).
  * @returns {Promise<{ok:boolean, total:number, key:string, actorName:string, appliedHeal:number}>}
  */
-export async function applyHealTo(targetActor, amount, context = {}) {
-    let heal = Math.trunc(Number(amount));
+export async function applyHealTo(targetActor, amount, _context = {}) {
+    const heal = Math.trunc(Number(amount));
     if (!targetActor || !Number.isSafeInteger(heal) || heal <= 0) {
         throw new Error('Actor alvo ou valor de cura inválido.');
-    }
-    if (context.kakushiPrioridadeMedica) {
-        heal += 2;
     }
 
     if (game.user.isGM || targetActor.isOwner) {

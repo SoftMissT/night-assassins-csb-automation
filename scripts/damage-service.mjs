@@ -17,7 +17,6 @@ import {
 import { currentPdv } from './status-engine.mjs';
 import { parseStatusState } from './status-service.mjs';
 import { actorKind, isSlayerActor } from './actor-kind.mjs';
-import { dispatchClassEvent } from './slayer/class-event-dispatcher.mjs';
 import {
     ensureWeaponUsageMode,
     weaponAmmoPatch,
@@ -1163,22 +1162,6 @@ export async function rollDamage(options = {}) {
                         naCsbAutomation: true,
                         naBreathing: true,
                     });
-
-                // ─── Class event dispatching (physical-melee-damage) ───
-                const targetClassKey = targetActor?.system?.props?.classe_escolhida;
-                if (targetClassKey && amount > 0) {
-                    const dmgResult = dispatchClassEvent(targetActor, 'physical-melee-damage', {
-                        damageType: damageTypes?.[0] ?? '',
-                        amount,
-                    });
-                    if (Object.keys(dmgResult.patches).length) {
-                        await targetActor.update(dmgResult.patches, { naCsbAutomation: true });
-                    }
-                    for (const msg of dmgResult.notifications) {
-                        ui.notifications?.info?.(msg);
-                    }
-                }
-
                 if (amount <= 0) return { ok: true, appliedDamage: 0, woundDamage: 0, negated };
                 // Nunca assumir Cura silenciosamente: só desvia para o relay de cura
                 // quando o jogador escolheu "cura" explicitamente no diálogo.

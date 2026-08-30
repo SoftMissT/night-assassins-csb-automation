@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.43 - 2026-08-29
+
+- **Rollback corretivo:** removidas integralmente as mudanças funcionais da `v0.11.42`, que regrediram o template Slayer e alteraram hooks críticos de Acerto, Dano e Status sem validação runtime.
+- **Baseline restaurada:** código, template Slayer e testes retornam ao conteúdo funcional da `v0.11.41` (`38cfa15`).
+- **Desempenho:** preservado o hotfix P0 da `v0.11.41`, incluindo remoção das varreduras mundiais no boot.
+- **Macros:** sincronização automática permanece ativa.
+- **Histórico:** a tag e a release `v0.11.42` permanecem disponíveis apenas como registro; nenhuma publicação anterior foi apagada.
+
 ## 0.11.41 - 2026-08-29
 
 - **Hotfix de desempenho P0:** removidas do `ready` as varreduras e escritas automáticas sobre todos os Actors Oni, armas Slayer e respirações; essas manutenções permanecem disponíveis manualmente na API do módulo.

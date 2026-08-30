@@ -6,8 +6,6 @@ import { MODULE_ID, STATUS_SLAYER_DANO_CONTINUO } from './constants.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { parseNumber } from './parsing.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
-import { cortaCuraMultiplier } from './slayer/class-runtime.mjs';
-import { dispatchClassEvent } from './slayer/class-event-dispatcher.mjs';
 import {
     parseWindBreathingState,
     registerWindBattleDamage,
@@ -475,9 +473,7 @@ export async function reconcileSlayerExhaustion(actor) {
     }
 }
 
-let lastProcessedRound = 0;
-
-async function processCurrentTurn(combat, roundChanged = false) {
+async function processCurrentTurn(combat) {
     if (!isPrimaryGm() || !combat?.started) return;
     const combatant = combat.combatant;
     const actor = combatant?.actor;
@@ -499,29 +495,6 @@ async function processCurrentTurn(combat, roundChanged = false) {
     const actorContract = statusContract(actor);
     if (actor.system?.props?.[actorContract.data] !== undefined)
         await processActorStatusTiming(actor, 'start');
-
-    // Dispatch class events for Slayer abilities
-    if (actor.system?.props?.classe_escolhida) {
-        // Dispatch turn-start on every turn change
-        const turnResult = dispatchClassEvent(actor, 'turn-start');
-        if (Object.keys(turnResult.patches).length) {
-            await actor.update(turnResult.patches, { naCsbAutomation: true });
-        }
-        for (const msg of turnResult.notifications) {
-            ui.notifications?.info?.(msg);
-        }
-
-        // Dispatch round-start only when round actually changes
-        if (roundChanged) {
-            const roundResult = dispatchClassEvent(actor, 'round-start');
-            if (Object.keys(roundResult.patches).length) {
-                await actor.update(roundResult.patches, { naCsbAutomation: true });
-            }
-            for (const msg of roundResult.notifications) {
-                ui.notifications?.info?.(msg);
-            }
-        }
-    }
 }
 
 export function movementBlocked(props = {}) {
@@ -546,27 +519,20 @@ export function resolveSlayerHealing(props = {}, requestedTotal = 0) {
     );
     const current = parseNumber(props.pdv_slayer_curado);
     const delta = Math.max(0, parseNumber(requestedTotal) - current);
-    const poisonMult = cortaCuraMultiplier(props);
     const multiplier =
         exhaustion >= 8
             ? 0
             : active.has('corrupcao') || active.has('regeneracao_suprimida')
-              ? 0.5 * poisonMult
-              : poisonMult;
+              ? 0.5
+              : 1;
     return { value: current + Math.floor(delta * multiplier), multiplier, requestedDelta: delta };
 }
 
 export function registerStatusEngine() {
-    Hooks.on('combatStart', (combat) => {
-        lastProcessedRound = combat.round ?? 1;
-        void processCurrentTurn(combat);
-    });
+    Hooks.on('combatStart', (combat) => void processCurrentTurn(combat));
     Hooks.on('updateCombat', (combat, changes) => {
-        if (Object.hasOwn(changes, 'turn') || Object.hasOwn(changes, 'round')) {
-            const roundChanged = Object.hasOwn(changes, 'round') && changes.round !== lastProcessedRound;
-            if (roundChanged) lastProcessedRound = changes.round;
-            void processCurrentTurn(combat, roundChanged);
-        }
+        if (Object.hasOwn(changes, 'turn') || Object.hasOwn(changes, 'round'))
+            void processCurrentTurn(combat);
     });
     Hooks.on('updateActor', (actor, changes, options) => {
         if (!isPrimaryGm() || options?.naExhaustion) return;

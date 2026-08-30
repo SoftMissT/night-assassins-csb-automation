@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.45 - 2026-08-30
+
+- Slayer N14 — Hashira de Elite: corrigido o gatilho da escolha ao alcançar o nível 14.
+- Adicionado DialogV2 comparando os valores atuais e finais antes da escolha permanente.
+- Opção PDV aplica `VIT × 3` ao total final de PDV.
+- Opção PDR aplica `FDV × 2` ao total final de PDR.
+- Escolha persistida em `nvl_14_bonus_choice`.
+- Corrigida a definição de `pdv_slayer_total_conta` nos hidden do template Slayer.
+- Atualizados os testes de regressão do N14.
+
 ## 0.11.44 - 2026-08-29
 
 - **Slayer N14:** adicionada a escolha oficial entre `PDV + VIT x3` e `PDR + FDV x2`, aplicada diretamente aos totais ocultos sem alterar os cálculos-base.
@@ -163,10 +173,10 @@
 
 - **Chamas e Pedra por arma sincronizada**: Esquentar (Chamas) e Quebra/Sangramento/Reflexão (Pedra) agora rastreiam estado por arma equipada em vez de globalmente no Actor; piso mundial de crítico configurável pelo GM (Iwa no Kokyū); dois ataques sequenciais da Pedra com recuperação única de PDR; Kaifuku reativável pela Marca sem bloquear a ativação.
 - **Auditoria completa das Respirações publicadas (Chamas, Pedra, Névoa, Metal, Neve, Vento)** contra a fonte oficial, técnica por técnica:
-    - Névoa: 5 decisões fechadas empate na Expansão de Névoa nega o dano (defesa vence em empate); o Colapso da 6ª Forma não consome os 3 Padrões (Ciclone/Estigma/Reflexão), só os lê; o bônus de Acerto da Neblina passa a valer só contra o inimigo que testou SAB e falhou (antes era global); os 3 Padrões resetam ao fim do combate.
-    - Metal: corrigido o contra-ataque do Duro como Aço nível 4, que nunca disparava; corrigida a Vantagem do nível 2, que ficava ativa indefinidamente em vez de valer só para o próximo ataque inimigo.
-    - Neve: corrigido o bônus "+2 em quaisquer testes contra CD" do Coração de Gelo nível 4, que nunca era aplicado fora de Bloqueio/Esquiva.
-    - Vento: corrigida a passiva do 2º Estilo (Garras do Vento Puro) Vantagem automática uma vez por turno a partir do Nível 3 de Respiração, que nunca havia sido implementada.
+  - Névoa: 5 decisões fechadas empate na Expansão de Névoa nega o dano (defesa vence em empate); o Colapso da 6ª Forma não consome os 3 Padrões (Ciclone/Estigma/Reflexão), só os lê; o bônus de Acerto da Neblina passa a valer só contra o inimigo que testou SAB e falhou (antes era global); os 3 Padrões resetam ao fim do combate.
+  - Metal: corrigido o contra-ataque do Duro como Aço nível 4, que nunca disparava; corrigida a Vantagem do nível 2, que ficava ativa indefinidamente em vez de valer só para o próximo ataque inimigo.
+  - Neve: corrigido o bônus "+2 em quaisquer testes contra CD" do Coração de Gelo nível 4, que nunca era aplicado fora de Bloqueio/Esquiva.
+  - Vento: corrigida a passiva do 2º Estilo (Garras do Vento Puro) Vantagem automática uma vez por turno a partir do Nível 3 de Respiração, que nunca havia sido implementada.
   - Chamas: auditada integralmente, nenhuma divergência encontrada.
 - **Nomenclatura em japonês**: todas as Respirações publicadas usam o nome romaji como identificador primário da técnica (nas mensagens de chat, diálogos e catálogo), com o nome em português como referência secundária.
 - **Somente as Respirações com motor de estado dedicado e auditadas são publicadas no Compendium** (Chamas, Metal, Neve, Névoa, Pedra, Vento). Água e as demais Respirações do catálogo de fonte deixam de ser empacotadas até receberem o mesmo tratamento.
@@ -865,6 +875,7 @@
 - Oni: removidos Hidden Attributes inválidos `"$"`, aliases inconsistentes e componentes Slayer; recursos, ações e fórmulas usam somente keys Oni canônicas.
 - Slayer: restauradas as keys persistentes da Marca, `metal_bloqueio_bonus` e flags de Interlúdio.
 - Testes: 872/872; Compendium de templates reconstruído localmente.
+
 ## [Unreleased] Recuperação do contrato Oni e diagnóstico GM
 
 - Template Oni restaurado a partir do export oficial do operador; somente PDV N2/N5 divergem do export para obedecer literalmente às fórmulas fornecidas.
@@ -889,12 +900,14 @@
 - Sessão de @MAKO-MORI e @TANG-ROU encerrada com handoff formal.
 - Dezoito solicitações registradas como `TASK-001` a `TASK-018`, todas em `TODO`.
 - Próximo gate obrigatório: validação N1–N20 de Slayer/Oni no Foundry v14.
+
 ## [2026-08-29] Backlog integral do projeto
 
 - As 910 linhas de `tasks/todo.md` foram lidas e classificadas integralmente.
 - Demandas reais consolidadas em 33 TASKs canônicas, todas `TODO`.
 - Prompts genéricos de segurança, UX e performance foram convertidos em critérios próprios do módulo, sem importar exemplos React/pnpm.
 - Nenhum código, template, versão ou release foi alterado.
+
 ## [Unreleased] Hotfix Slayer N1 e guarda Vida e Morte
 
 - Snapshot Slayer N1 com valores padrão `0` deixou de ser classificado como concluído; mudar para `nvl_1` volta a abrir a criação automática de atributos.

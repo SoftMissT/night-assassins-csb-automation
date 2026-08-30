@@ -158,7 +158,7 @@ test('nível 14 oferece escolha exclusiva entre bônus de PDV e PDR nos hidden t
     const hidden = new Map(template.system.hidden.map((entry) => [entry.name, entry.value]));
     assert.equal(
         hidden.get('pdv_slayer_total'),
-        "${(pdv_slayer_total_conta+slayer_class_mb_corpo_guerra_applied+(equalText(nvl_14_bonus_choice, 'pdv_vit3') ? atr_vit_valor_config*3 : 0))-pdv_slayer_dano_ferida}$"
+        "${(pdv_slayer_total_conta+(equalText(nvl_14_bonus_choice, 'pdv_vit3') ? atr_vit_valor_config*3 : 0))-pdv_slayer_dano_ferida}$"
     );
     assert.equal(
         hidden.get('pdr_slayer_total'),

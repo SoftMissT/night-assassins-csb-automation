@@ -8,6 +8,7 @@ import { createLevelOneValues, processLevelGain, processOniLevelGain } from './l
 import { applyInitialMark, upgradeMarkAtLevelSix } from './ability-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { applyMasterBattleLevelEleven } from './slayer/class-runtime.mjs';
+import { chooseHashiraEliteBonus } from './dialogs/attribute-dialogs.mjs';
 
 /** @type {Map<string, Promise<void>>} */
 const actorLocks = new Map();
@@ -123,7 +124,28 @@ export async function handleActorUpdate(actor, changes, options, userId) {
             await applyMasterBattleLevelEleven(actor, level);
             return;
         }
+        // Nível 14 — Hashira de Elite.
+        if (level === 14) {
+            const currentChoice = String(props.nvl_14_bonus_choice ?? '').trim();
 
+            if (currentChoice === 'pdv_vit3' || currentChoice === 'pdr_fdv2') {
+                return;
+            }
+
+            const choice = await chooseHashiraEliteBonus(props);
+
+            await actor.update(
+                {
+                    'system.props.nvl_14_bonus_choice': choice,
+                },
+                {
+                    naCsbAutomation: true,
+                    naHashiraEliteLevelFourteen: true,
+                }
+            );
+
+            return;
+        }
         // Marca do Destino escolha inicial
         if (ability !== null && isDestinyMark(ability)) {
             const markBonus = parseNumber(props.hab_marca_destino_bonus);

@@ -123,6 +123,21 @@ describe('roll-service', () => {
         assert.match(_formula, /^2d20kh1 \+ 4$/);
     });
 
+    it('Dalgona soma +2 em SAB durante a cena registrada', async () => {
+        _dialogReturn = {
+            mode: 'normal',
+            rollMode: 'publicroll',
+            secVal: 0,
+            bonusRaw: '',
+            cdVal: 0,
+        };
+        globalThis.canvas.scene = { id: 'honmoon-scene' };
+        const actor = makeActor({ props: { sab_display: '4' } });
+        actor.getFlag = () => ({ sceneId: 'honmoon-scene', bonus: 2 });
+        await rollTest({ actor, test: 'Percepção', attr: 'SAB' });
+        assert.match(_formula, /^1d20 \+ 4 \+ 2$/);
+    });
+
     it('avisa quando actor não é encontrado', async () => {
         let warned = false;
         ui.notifications.warn = () => {

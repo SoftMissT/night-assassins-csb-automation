@@ -197,6 +197,221 @@ describe('catálogo de Respirações', () => {
 });
 
 describe('catálogo de armas Slayer', () => {
+    it('mantém os sources das quatro armas ligados às identidades publicadas e aos perfis oficiais', async () => {
+        const sourceFiles = [
+            '05-cutelos_gemeos.json',
+            '06-double_blade.json',
+            '15-katana.json',
+            '19-manoplas_soqueiras.json',
+        ];
+        const weapons = await Promise.all(
+            sourceFiles.map(async (file) =>
+                JSON.parse(
+                    await readFile(
+                        new URL(`../data/catalog-source/weapons/${file}`, import.meta.url),
+                        'utf8'
+                    )
+                )
+            )
+        );
+        assert.deepEqual(
+            Object.fromEntries(weapons.map((weapon) => [weapon.name, weapon._id])),
+            {
+                'Cutelos Gêmeos': '8e84ac37aa68b12e',
+                'Double Blade': '47e17fac9073ca55',
+                Katana: '91df1986cfa75f80',
+                'Manoplas / Soqueiras': 'fd054d4ef3666ee8',
+            }
+        );
+        assert.ok(weapons.every((weapon) => weapon._key === `!items!${weapon._id}`));
+        assert.equal(new Set(weapons.map((weapon) => weapon._id)).size, 4);
+
+        const publishedCatalog = JSON.parse(
+            await readFile(new URL('../catalogs/slayer-weapons.json', import.meta.url), 'utf8')
+        ).documents.filter((document) => document.type === 'equippableItem');
+        for (const weapon of weapons) {
+            const published = publishedCatalog.find((document) => document._id === weapon._id);
+            assert.ok(published, `${weapon.name} mantém o Item publicado`);
+            assert.equal(weapon.name, published.name);
+            assert.equal(weapon._key, published._key);
+            assert.equal(weapon.system.template, 'NAWeaponTpl00001');
+            assert.equal(weapon.system.props.arma_alcance, '1,5m');
+            assert.equal(weapon.system.props.descricao, published.system.props.descricao);
+        }
+
+        const byName = Object.fromEntries(weapons.map((weapon) => [weapon.name, weapon]));
+        assert.deepEqual(
+            Object.fromEntries(
+                weapons.map((weapon) => [
+                    weapon.name,
+                    {
+                        critico: weapon.system.props.arma_critico,
+                        tipos: weapon.system.props.arma_tipos_dano,
+                    },
+                ])
+            ),
+            {
+                'Cutelos Gêmeos': { critico: 20, tipos: ['cortante'] },
+                'Double Blade': { critico: 19, tipos: ['cortante', 'perfurante'] },
+                Katana: { critico: 20, tipos: ['cortante', 'perfurante'] },
+                'Manoplas / Soqueiras': { critico: 20, tipos: ['concussivo'] },
+            }
+        );
+
+        const katana = byName.Katana.system.props.arma_perfis_ataque;
+        assert.equal(byName.Katana.system.props.arma_propriedades, 'Acuidade / Nitoryu & Morote');
+        assert.ok(katana.every((profile) => profile.alcance === '1,5m'));
+        assert.deepEqual(
+            katana.map(
+                ({
+                    modo,
+                    dano_fixo,
+                    ataques,
+                    atributos,
+                    dano_segundo_golpe,
+                    acerto_segundo_sem_atributo,
+                    penalidade_segundo_acerto,
+                }) => ({
+                    modo,
+                    dano_fixo,
+                    ataques,
+                    atributos,
+                    dano_segundo_golpe,
+                    acerto_segundo_sem_atributo,
+                    penalidade_segundo_acerto,
+                })
+            ),
+            [
+                {
+                    modo: 'nitoryu',
+                    dano_fixo: 5,
+                    ataques: 2,
+                    atributos: [],
+                    dano_segundo_golpe: 'fixo',
+                    acerto_segundo_sem_atributo: true,
+                    penalidade_segundo_acerto: -2,
+                },
+                {
+                    modo: 'morote',
+                    dano_fixo: 7,
+                    ataques: 1,
+                    atributos: [],
+                    dano_segundo_golpe: 'normal',
+                    acerto_segundo_sem_atributo: false,
+                    penalidade_segundo_acerto: 0,
+                },
+            ]
+        );
+
+        const cutelos = byName['Cutelos Gêmeos'].system.props.arma_perfis_ataque[0];
+        assert.equal(cutelos.dano_fixo, 4);
+        assert.equal(cutelos.formula_texto, '4 + Metade da DEX ou FOR / Cortante');
+        assert.equal(cutelos.critico, 20);
+        assert.deepEqual(cutelos.tipos_dano, ['cortante']);
+        assert.equal(cutelos.alcance, '1,5m');
+        assert.equal(
+            byName['Cutelos Gêmeos'].system.props.arma_propriedades,
+            'Acuidade / Morote'
+        );
+        assert.deepEqual(cutelos.atributos, [
+            { key: 'DEX', multiplicador: 0.5, escolha: true },
+            { key: 'FOR', multiplicador: 0.5, escolha: true },
+        ]);
+        const cutelosParry = byName['Cutelos Gêmeos'].system.props.arma_mecanicas.find(
+            (mechanic) => mechanic.id === 'aparar_corrente'
+        );
+        assert.deepEqual(cutelosParry, {
+            id: 'aparar_corrente',
+            kind: 'reaction-parry',
+            action: 'reacao',
+            physicalOnly: true,
+            targets: ['self', 'ally'],
+            hitDc: 16,
+            reduction: {
+                fixed: 4,
+                attributes: ['INT', 'SAB'],
+                multiplier: 0.5,
+                choice: true,
+            },
+        });
+        assert.match(byName['Cutelos Gêmeos'].system.props.descricao, /Habilidade\n> /u);
+        assert.match(byName['Cutelos Gêmeos'].system.props.descricao, /\n\n---$/u);
+
+        const doubleBlade = byName['Double Blade'].system.props.arma_perfis_ataque[0];
+        assert.equal(doubleBlade.formula_texto, '5 / Cortante e Perfurante');
+        assert.equal(doubleBlade.alcance, '1,5m');
+        assert.equal(
+            byName['Double Blade'].system.props.arma_propriedades,
+            'Acuidade / Ryōtō'
+        );
+        assert.deepEqual(
+            {
+                modo: doubleBlade.modo,
+                dano_fixo: doubleBlade.dano_fixo,
+                ataques: doubleBlade.ataques,
+                acerto_segundo_sem_atributo: doubleBlade.acerto_segundo_sem_atributo,
+                dano_segundo_golpe: doubleBlade.dano_segundo_golpe,
+                penalidade_segundo_acerto: doubleBlade.penalidade_segundo_acerto,
+                atributos: doubleBlade.atributos,
+            },
+            {
+                modo: 'ryoto',
+                dano_fixo: 5,
+                ataques: 2,
+                acerto_segundo_sem_atributo: true,
+                dano_segundo_golpe: 'normal',
+                penalidade_segundo_acerto: 0,
+                atributos: [],
+            }
+        );
+        assert.match(byName['Double Blade'].system.props.descricao, /Habilidade\n> /u);
+        assert.match(byName['Double Blade'].system.props.descricao, /\n\n---$/u);
+
+        const manoplas = byName['Manoplas / Soqueiras'].system.props.arma_perfis_ataque;
+        assert.equal(
+            byName['Manoplas / Soqueiras'].system.props.arma_propriedades,
+            'Acuidade / Ryoto / Nitoryu'
+        );
+        assert.ok(manoplas.every((profile) => profile.alcance === '1,5m'));
+        assert.deepEqual(manoplas.map((profile) => profile.modo), ['nitoryu', 'ryoto']);
+        assert.ok(manoplas.every((profile) => profile.ataques === 2));
+        assert.ok(manoplas.every((profile) => profile.dano_fixo === 3));
+        assert.ok(
+            manoplas.every(
+                (profile) =>
+                    profile.formula_texto ===
+                    '3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Concussivo'
+            )
+        );
+        assert.deepEqual(
+            manoplas.map((profile) => profile.penalidade_segundo_acerto),
+            [-2, 0]
+        );
+        assert.deepEqual(
+            manoplas.map((profile) => profile.dano_segundo_golpe),
+            ['fixo', 'normal']
+        );
+        assert.ok(manoplas.every((profile) => profile.acerto_segundo_sem_atributo === true));
+        assert.ok(manoplas.every((profile) => profile.cadeia_critica?.ativa === true));
+        assert.ok(
+            manoplas.every(
+                (profile) =>
+                    profile.cadeia_critica.bonus_acerto === 1 &&
+                    profile.cadeia_critica.dano_fixo === 1 &&
+                    JSON.stringify(profile.cadeia_critica.atributo_inteiro) ===
+                        JSON.stringify(['DEX', 'FOR'])
+            )
+        );
+        assert.match(byName['Manoplas / Soqueiras'].system.props.descricao, /Habilidade\n> /u);
+        assert.match(byName['Manoplas / Soqueiras'].system.props.descricao, /\n\n---$/u);
+        assert.match(byName.Katana.system.props.descricao, /\n\n---$/u);
+        assert.ok(
+            manoplas.every((profile) =>
+                profile.atributos.every((attribute) => attribute.multiplicador === 0.5)
+            )
+        );
+    });
+
     it('publica somente as quatro armas entregues pelo operador e mantém templates normal/especial separados', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         assert.equal(
@@ -208,7 +423,7 @@ describe('catálogo de armas Slayer', () => {
             2
         );
         const weapons = documents.filter((document) => document.type === 'equippableItem');
-        assert.deepEqual(weapons.map((item) => item.name).sort(), [
+        assert.deepEqual(weapons.map((item) => item.name), [
             'Cutelos Gêmeos',
             'Double Blade',
             'Katana',

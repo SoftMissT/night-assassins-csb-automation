@@ -2,7 +2,7 @@
     "id": "night-assassins-csb-automation",
     "title": "Night Assassins — CSB Automation",
     "description": "Automação de atributos, progressão e Habilidades Especiais de Night Assassins para Custom System Builder.",
-    "version": "0.11.47",
+    "version": "0.11.48",
     "socket": true,
     "authors": [
         {
@@ -53,6 +53,13 @@
             "system": "custom-system-builder"
         },
         {
+            "name": "night-assassins-consumiveis",
+            "label": "Night Assassin's Consumíveis HonMoon",
+            "path": "packs/night-assassins-consumiveis",
+            "type": "Item",
+            "system": "custom-system-builder"
+        },
+        {
             "name": "night-assassins-arte",
             "label": "Night Assassin's Arte",
             "path": "packs/night-assassins-arte",
@@ -79,7 +86,7 @@
     },
     "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
     "manifest": "https://raw.githubusercontent.com/SoftMissT/night-assassins-csb-automation/main/module.json",
-    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.47/module.zip",
+    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.48/module.zip",
     "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
     "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
     "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"

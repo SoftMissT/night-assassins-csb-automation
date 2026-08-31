@@ -39,6 +39,11 @@ describe('module distribution', () => {
                     label: "Night Assassin's Armas dos Caçadores",
                     type: 'Item',
                 },
+                {
+                    name: 'night-assassins-consumiveis',
+                    label: "Night Assassin's Consumíveis HonMoon",
+                    type: 'Item',
+                },
                 { name: 'night-assassins-arte', label: "Night Assassin's Arte", type: 'Item' },
             ]
         );

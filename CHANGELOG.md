@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.48 — 2026-08-31
+
+- Adicionado o template e o Compendium `Consumíveis HonMoon`, integrado ao inventário da ficha Slayer.
+- Implementados Kkoedori, Dalgona Amargo, Choco Pie sem Selo e Kimbap Triangular Vencido com consumo unitário, rolagens e alterações de PDV/Exaustão.
+- Dalgona recupera o PDV do Slayer alvo e aplica +2 em SAB/Vontade apenas na cena atual; Choco Pie cura os Slayers presentes e registra permanentemente o nome escolhido na cena.
+- Adicionados quatro Energéticos e uma Água como suprimentos mundanos, sem bônus mecânico inventado.
+- Consolidado o novo template visual das armas normais e as fontes oficiais de Katana, Double Blade, Manoplas/Soqueiras e Cutelos Gêmeos.
+- Cutelos Gêmeos passam a expor o Aparar por Reação; sequências de múltiplos golpes consomem uma única Ação de Ataque.
+- Validação local: 979/979 testes, 171 suítes, zero falhas; importação e uso com Actor real permanecem como gate no Foundry v14.
+
 ## v0.11.47 — 2026-08-30
 
 - Adicionado gerenciador GM com ações para registrar erro, abrir o Journal e exportar todas as páginas em Markdown ou JSON.

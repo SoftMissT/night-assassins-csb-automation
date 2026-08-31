@@ -13,6 +13,7 @@ import { parseMistBreathingState } from './mist-breathing-service.mjs';
 import { parseSnowBreathingState } from './snow-breathing-service.mjs';
 import { consumeStoneCounterAttack, parseStoneBreathingState } from './stone-breathing-service.mjs';
 import { derivedChannelForTest, resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
+import { honmoonSceneTestBonus } from './consumable-service.mjs';
 
 function naturalD20(roll) {
     return Math.max(
@@ -159,6 +160,15 @@ export async function rollTest(options) {
         attr,
         kind: ['Bloqueio', 'Esquiva'].includes(test) ? 'defense' : 'test',
     });
+    const honmoonBonus = honmoonSceneTestBonus(actor, {
+        test,
+        attr,
+        sceneId: globalThis.canvas?.scene?.id ?? '',
+    });
+    if (honmoonBonus) {
+        statusEffects.modifier += honmoonBonus;
+        statusEffects.reasons.push(`Dalgona Amargo +${honmoonBonus}`);
+    }
     if (test === 'Bloqueio') {
         const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
         if (Number(flameState.block?.bonus) > 0) {

@@ -1,0 +1,64 @@
+{
+    "_id": "NAConsumableTpl1",
+    "name": "NA Consumível - Slayer",
+    "type": "_equippableItemTemplate",
+    "img": "modules/night-assassins-csb-automation/assets/icons/items/na_Slayer_Weapon_icon.webp",
+    "system": {
+        "header": {
+            "key": "consumivel_header",
+            "type": "panel",
+            "flow": "grid-3",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                { "key": "consumivel_nome", "type": "textField", "size": "full-size", "label": "Consumível", "defaultValue": "" },
+                { "key": "consumivel_tipo", "type": "textField", "size": "medium", "label": "Tipo", "defaultValue": "comida" },
+                { "key": "consumivel_quantidade", "type": "numberField", "size": "medium", "label": "Quantidade", "defaultValue": 1, "allowDecimal": false, "minVal": 0, "allowRelative": false, "showControls": true, "inputStyle": "text" }
+            ]
+        },
+        "body": {
+            "key": "consumivel_body",
+            "type": "panel",
+            "flow": "vertical",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "consumivel_usar",
+                    "type": "label",
+                    "size": "full-size",
+                    "value": "USAR CONSUMÍVEL",
+                    "tooltip": "Aplica a mecânica e consome uma unidade.",
+                    "rollMessage": "%{const item=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=item?.parent?.documentName==='Actor'?item.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.useConsumableItem({item,actor:bearer});return '';}%",
+                    "altRollMessage": "",
+                    "rollMessageToChat": false,
+                    "altRollMessageToChat": false,
+                    "style": "button"
+                },
+                { "key": "consumivel_era", "type": "textArea", "size": "full-size", "label": "Era / origem", "defaultValue": "", "style": "dialog" },
+                { "key": "consumivel_preco", "type": "textArea", "size": "full-size", "label": "Preço da máquina", "defaultValue": "", "style": "dialog" },
+                { "key": "descricao", "type": "textArea", "size": "full-size", "label": "Efeito e nota de mesa", "defaultValue": "", "style": "dialog" },
+                {
+                    "key": "consumivel_runtime",
+                    "type": "panel",
+                    "flow": "vertical",
+                    "visibilityFormula": "false",
+                    "contents": [
+                        { "key": "consumivel_efeito", "type": "textField", "defaultValue": "mundano" },
+                        { "key": "inventario_categoria", "type": "textField", "defaultValue": "consumivel" }
+                    ]
+                }
+            ]
+        },
+        "hidden": [],
+        "display": { "width": 680, "height": 700, "fix_size": false, "pp_width": 250, "pp_height": 400 },
+        "templateHistory": "[]"
+    },
+    "effects": [],
+    "folder": null,
+    "flags": {},
+    "_stats": { "systemId": "custom-system-builder", "systemVersion": "6.0.2", "coreVersion": "14", "createdTime": 0, "modifiedTime": 0, "lastModifiedBy": null, "compendiumSource": null },
+    "ownership": { "default": 0 },
+    "sort": 0,
+    "_key": "!items!NAConsumableTpl1"
+}

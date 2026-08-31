@@ -1,0 +1,98 @@
+{
+    "_id": "8e84ac37aa68b12e",
+    "_key": "!items!8e84ac37aa68b12e",
+    "name": "Cutelos Gêmeos",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/cutelos_gemeos_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Cutelos Gêmeos",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["DEX", "FOR"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 20,
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Morote",
+            "arma_requisito": "",
+            "descricao": "Duas lâminas em formato de cutelos e com cabos padrão estilo katanas, unidos por uma corrente que permite manobras ofensivas e defensivas.\n\n- Propriedades: Acuidade / Morote\n- Alcance: 1,5m\n- Crítico: 20 Natural\n- Dano: 4 + Metade da DEX ou FOR / Cortante\n\nHabilidade\n> Você pode usar suas Reações para aparar ataques físicos realizados contra você ou contra aliados, realizando um teste de acerto C.D 16 ao invés de realizar uma rolagem de defesa padrão. Sendo assim, você pode reduzir o dano desses ataques em uma quantidade igual ao dano de sua arma (4) + Metade de sua INT ou SAB.\n\n---",
+            "arma_ordem": 5,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "4 + Metade da DEX ou FOR / Cortante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false,
+                    "specificWeaponDamage": "4 + metade de DEX ou FOR",
+                    "penetrationMargin": 5
+                },
+                {
+                    "id": "aparar_corrente",
+                    "kind": "reaction-parry",
+                    "action": "reacao",
+                    "physicalOnly": true,
+                    "targets": ["self", "ally"],
+                    "hitDc": 16,
+                    "reduction": {
+                        "fixed": 4,
+                        "attributes": ["INT", "SAB"],
+                        "multiplier": 0.5,
+                        "choice": true
+                    }
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade", "morote"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 500000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

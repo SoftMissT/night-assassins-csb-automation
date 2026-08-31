@@ -507,13 +507,15 @@ describe('hit-service', () => {
                 dex_display: '10',
                 for_display: '6',
                 folego_slayer_atual: 0,
+                nome_slayer: 'Slayer',
             },
         });
         actor.items = {
             [Symbol.iterator]: [item][Symbol.iterator].bind([item]),
             get: (id) => (id === item.id ? item : null),
         };
-        actor.update = async () => {};
+        const actorPatches = [];
+        actor.update = async (patch) => actorPatches.push(patch);
         _dialogReturn = [
             {
                 mode: 'normal',
@@ -548,8 +550,14 @@ describe('hit-service', () => {
             const result = await rollHit({ actor, autoDamage: false });
             assert.equal(result.maximum, 3);
             assert.equal(result.attempts.length, 3);
+            assert.equal(formulas.length, 3, 'cada ataque cria exatamente uma rolagem de Acerto');
             assert.match(formulas[1], /\+ 1$/);
             assert.match(formulas[2], /\+ 1$/);
+            assert.equal(
+                actorPatches.filter((patch) => patch['system.props.acoes_slayer_dados']).length,
+                1,
+                'a sequência inteira consome uma única Ação de Ataque'
+            );
         } finally {
             Roll.create = previousCreate;
         }

@@ -23,13 +23,69 @@ const specialTemplatePath = path.join(
 );
 const specialWeaponTemplate = JSON.parse(await readFile(specialTemplatePath, 'utf8'));
 specialWeaponTemplate._key = `!items!${specialWeaponTemplate._id}`;
-const PUBLISHED_WEAPONS = new Set([
-    'Katana',
-    'Double Blade',
-    'Manoplas / Soqueiras',
-    'Cutelos Gêmeos',
-]);
 const BASIC_FOLDER_ID = '02e48b1127bca24a';
+const weaponSourceDirectory = path.join(root, 'data', 'catalog-source', 'weapons');
+const PUBLISHED_WEAPON_SOURCES = Object.freeze([
+    {
+        file: '05-cutelos_gemeos.json',
+        name: 'Cutelos Gêmeos',
+        id: '8e84ac37aa68b12e',
+    },
+    { file: '06-double_blade.json', name: 'Double Blade', id: '47e17fac9073ca55' },
+    { file: '15-katana.json', name: 'Katana', id: '91df1986cfa75f80' },
+    {
+        file: '19-manoplas_soqueiras.json',
+        name: 'Manoplas / Soqueiras',
+        id: 'fd054d4ef3666ee8',
+    },
+]);
+
+const sourceResults = await Promise.all(
+    PUBLISHED_WEAPON_SOURCES.map(async (expected) => {
+        try {
+            return {
+                expected,
+                source: JSON.parse(
+                    await readFile(path.join(weaponSourceDirectory, expected.file), 'utf8')
+                ),
+            };
+        } catch (error) {
+            return { expected, error };
+        }
+    })
+);
+const missingSources = sourceResults
+    .filter(({ error }) => error?.code === 'ENOENT')
+    .map(({ expected }) => expected.file);
+const readableSources = sourceResults.filter(({ source }) => source);
+const duplicateSources = readableSources
+    .filter(
+        ({ source }, index, entries) =>
+            entries.findIndex(
+                ({ source: candidate }) =>
+                    candidate.name === source.name || candidate._id === source._id
+            ) !== index
+    )
+    .map(({ expected }) => expected.file);
+const conflictingSources = sourceResults
+    .filter(
+        ({ expected, source, error }) =>
+            (error && error.code !== 'ENOENT') ||
+            (source &&
+                (source.name !== expected.name ||
+                    source._id !== expected.id ||
+                    source._key !== `!items!${expected.id}`))
+    )
+    .map(({ expected }) => expected.file);
+
+if (missingSources.length || duplicateSources.length || conflictingSources.length) {
+    throw new Error(
+        `Sources de armas Slayer inválidos: faltantes=[${missingSources.join(', ')}]; ` +
+            `duplicados=[${duplicateSources.join(', ')}]; ` +
+            `conflitos=[${conflictingSources.join(', ')}]`
+    );
+}
+const publishedWeaponSources = readableSources.map(({ source }) => source);
 
 export const RANK_DICE = Object.freeze({
     D: '1d6',
@@ -92,30 +148,34 @@ const sourceDocuments = catalog.documents.filter((document) => {
     if (String(document._key ?? '').startsWith('!folders!'))
         return document._id === BASIC_FOLDER_ID;
     if (document.type === '_equippableItemTemplate') return document._id === weaponTemplate._id;
-    if (document.type === 'equippableItem') return PUBLISHED_WEAPONS.has(document.name);
+    if (document.type === 'equippableItem') return false;
     return false;
 });
 
-const documents = [...sourceDocuments, specialWeaponTemplate].map((document) => {
-    if (document.type === '_equippableItemTemplate' && document._id === weaponTemplate._id)
-        return weaponTemplate;
-    if (document.type === '_equippableItemTemplate' && document._id === specialWeaponTemplate._id)
-        return specialWeaponTemplate;
-    if (document.type !== 'equippableItem') return document;
-    const props = document.system?.props ?? {};
-    const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
-    const specialWeapon =
-        String(props.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
-    const extractedFormulas = specialWeapon
-        ? extractWeaponRankFormulas(props.arma_regra_completa)
-        : {};
-    const formulas = specialWeapon ? normalizeRankFormulas(extractedFormulas, profiles) : {};
-    return {
-        ...document,
-        system: {
-            ...document.system,
-            props: {
-                ...props,
+const documents = [...sourceDocuments, specialWeaponTemplate, ...publishedWeaponSources].map(
+    (document) => {
+        if (document.type === '_equippableItemTemplate' && document._id === weaponTemplate._id)
+            return weaponTemplate;
+        if (
+            document.type === '_equippableItemTemplate' &&
+            document._id === specialWeaponTemplate._id
+        )
+            return specialWeaponTemplate;
+        if (document.type !== 'equippableItem') return document;
+        const props = document.system?.props ?? {};
+        const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
+        const specialWeapon =
+            String(props.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
+        const extractedFormulas = specialWeapon
+            ? extractWeaponRankFormulas(props.arma_regra_completa)
+            : {};
+        const formulas = specialWeapon ? normalizeRankFormulas(extractedFormulas, profiles) : {};
+        return {
+            ...document,
+            system: {
+                ...document.system,
+                props: {
+                    ...props,
                 descricao: markdownToFoundryHtml(props.descricao ?? ''),
                 arma_regra_completa: markdownToFoundryHtml(props.arma_regra_completa ?? ''),
                 arma_formulas_por_rank: formulas,
@@ -153,10 +213,11 @@ const documents = [...sourceDocuments, specialWeaponTemplate].map((document) => 
                 arma_rank_a_formula: formulas.A?.join(' | ') ?? '',
                 arma_rank_s_formula: formulas.S?.join(' | ') ?? '',
                 arma_rank_ss_formula: formulas.SS?.join(' | ') ?? '',
+                },
             },
-        },
-    };
-});
+        };
+    }
+);
 
 await mkdir(outputDirectory, { recursive: true });
 const outputFiles = documents.map((document, index) => {

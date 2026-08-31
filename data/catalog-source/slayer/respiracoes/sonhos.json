@@ -1,0 +1,136 @@
+{
+    "titulo": "Respiração dos Sonhos",
+    "aliases": ["Dream Breathing", "Yume no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva_especial": {
+        "nome": "Troca Equivalente",
+        "descricao": "Uma vez por dia, ao receber dano letal, pode ofertar ao Domínio dos Sonhos parte de suas memórias. Isso custa permanentemente 1 ponto de SAB, mas a alma é trazida de volta ao mundo com 1 PDV. A cada uso subsequente, o custo de SAB aumenta.",
+        "tabela_custo": [
+            { "uso": "1º", "custo_de_sab": "1 ponto" },
+            { "uso": "2º", "custo_de_sab": "2 pontos" },
+            { "uso": "3º", "custo_de_sab": "3 pontos" },
+            { "uso": "4º+", "custo_de_sab": "Não é possível usar" }
+        ],
+        "limite": "Não é possível ativar a Troca Equivalente se isso resultar em um valor negativo de SAB."
+    },
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Hora de Dormir",
+            "nome_romaji": "Ichi no Kata Shushin Jikan",
+            "tipo_manobra": "Única",
+            "descricao": "Aplica a respiração dos sonhos na Nichirin. Os próximos ataques bem-sucedidos neste turno causam dano reduzido conforme indicado, mas aplicam 1 status de Exaustão no inimigo. É considerado efeito de contato aplicado uma vez por ação.",
+            "niveis": [
+                { "nivel": 1, "reducao_de_dano": "1d6 + 1", "custo": "1 PDR" },
+                { "nivel": 2, "reducao_de_dano": "1d6", "custo": "1 PDR" },
+                { "nivel": 3, "reducao_de_dano": "1d4 + 1", "custo": "2 PDR" },
+                { "nivel": 4, "reducao_de_dano": "1d4", "custo": "2 PDR" }
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Ilusão de Ótica",
+            "nome_romaji": "Ni no Kata Sakushi",
+            "tipo_manobra": "Ataque Surpresa / Furtivo",
+            "custo_fixo": "2 PDR",
+            "descricao": "Utilizada apenas a partir de uma posição de furtividade. Lança uma vertigem de ilusões que atinge os olhos do inimigo e confunde seus sentidos, fazendo com que seus próximos 2 ataques sejam rolados com um debuff na rolagem de acerto igual à SAB do usuário dos Sonhos."
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Estrela Cadente",
+            "nome_romaji": "San no Kata Shūtingusutā",
+            "tipo_manobra": "Única",
+            "descricao": "Pode ser conjurado apenas enquanto estiver no ar. Pode usar uma Ação Especial para fazer um teste de DEX (C.D. 12) para pular. Ao ativar, o usuário desce em movimento rápido dos céus e golpeia o inimigo com a Nichirin.",
+            "niveis": [
+                { "nivel": 1, "dano": "2d6 + DEX", "custo": "2 PDR" },
+                { "nivel": 2, "dano": "4d6 + DEX", "custo": "2 PDR" },
+                { "nivel": 3, "dano": "5d6 + DEX", "custo": "3 PDR" },
+                { "nivel": 4, "dano": "6d6 + DEX", "custo": "3 PDR" }
+            ],
+            "sinergia": {
+                "nome": "Escolha dos Aliados",
+                "descricao": "Se houver aliados com sinergia no campo ao conjurar esta técnica, um acerto bem-sucedido de Estrela Cadente permite que cada aliado com sinergia escolha individualmente se deseja: receber 1 ponto de Exaustão e recuperar PDR = CAR + SAB do usuário dos Sonhos; ou não ativar o efeito.",
+                "limite": "Este efeito pode ser ativado um número de vezes por combate igual ao Nível de Respiração do usuário dos Sonhos.",
+                "respiracoes_com_sinergia": [
+                    "Respiração das Sombras",
+                    "Respiração da Luz",
+                    "Respiração da Lua"
+                ]
+            }
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Mar de Memórias",
+            "nome_romaji": "Shi no Kata Omoide no Umi",
+            "tipo_manobra": "Especial",
+            "descricao": "Movido por suas melhores memórias, o usuário aumenta sua velocidade de movimento durante 2 turnos, ganhando bônus em rolagens de acerto e esquiva. Não pode ser ativado enquanto o mesmo efeito de uma conjuração anterior ainda estiver vigente.",
+            "niveis": [
+                { "nivel": 1, "bonus_acerto_e_esquiva": "+1", "custo": "1 PDR" },
+                { "nivel": 2, "bonus_acerto_e_esquiva": "+2", "custo": "2 PDR" },
+                { "nivel": 3, "bonus_acerto_e_esquiva": "SAB", "custo": "3 PDR" },
+                { "nivel": 4, "bonus_acerto_e_esquiva": "SAB + CAR", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Radar Noturno",
+            "nome_romaji": "Go no Kata Naitorēdā",
+            "tipo_manobra": "Única",
+            "custo_fixo": "2 PDR",
+            "descricao": "Sincroniza o espírito de batalha da Nichirin com a visão das estrelas; ela começa a brilhar ao apontar na direção de Onis a até 500m de distância. Recebe um bônus em testes para encontrar Onis próximos igual ao seu Nível de Respiração + SAB."
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Domínio dos Pesadelos",
+            "nome_romaji": "Roku no Kata Akumu no Ryōiki",
+            "tipo_manobra": "Ataque",
+            "descricao": "Denomina uma área circular de 10m de diâmetro sob o inimigo como o \"Domínio dos Pesadelos\", que perdura pelos próximos 5 turnos. Durante cada turno, o inimigo deve testar SAB (C.D. 9 + SAB + CAR do usuário) caso queira sair da área; um único sucesso é suficiente para escapar. Inimigos dentro do Domínio recebem dano concussivo contínuo no início de seu turno.",
+            "niveis": [
+                { "nivel": 1, "dano_por_turno": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano_por_turno": "3d8", "custo": "5 PDR" },
+                { "nivel": 3, "dano_por_turno": "4d8", "custo": "6 PDR" },
+                { "nivel": 4, "dano_por_turno": "5d8", "custo": "6 PDR" }
+            ]
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Teoria do Caos",
+            "nome_romaji": "Shichi no Kata Kaosu Riron",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "5 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Adquire Roubo de Vida na Nichirin por 2d4 turnos. Roubo de vida converte em PDV 25% do dano causado ao inimigo por turno (arredonda para cima). Não é considerado efeito de contato; os PDV são recuperados no final do próprio turno, não imediatamente após cada acerto."
+        },
+        {
+            "estilo": 8,
+            "nome_pt": "Raio de Luz da Morte",
+            "nome_romaji": "Hachi no Kata Kōsen no Shi",
+            "tipo_manobra": "Ataque",
+            "descricao": "Conjura um raio de luz alimentado pelos sonhos do usuário em direção ao inimigo. A rolagem de acerto aplica CAR e SAB como bônus na rolagem.",
+            "niveis": [
+                { "nivel": 1, "dano_se_acertar": "6d8 + CAR + SAB", "custo": "7 PDR" },
+                { "nivel": 2, "dano_se_acertar": "10d8 + CAR + SAB", "custo": "8 PDR" },
+                { "nivel": 3, "dano_se_acertar": "12d8 + CAR + SAB", "custo": "10 PDR" },
+                { "nivel": 4, "dano_se_acertar": "12d10 + CAR + SAB", "custo": "12 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Bônus contra Inimigo Exausto",
+                "efeito": "Se o inimigo estiver com pelo menos 3 pontos de Exaustão ao receber um acerto bem-sucedido, também aplica sangramento com dano igual à DEX do usuário dos Sonhos por 6 turnos."
+            }
+        },
+        {
+            "estilo": 9,
+            "nome_pt": "Fantasia Final",
+            "nome_romaji": "Ku no Kata Fainarufantaji",
+            "tipo_manobra": "Completa",
+            "descricao": "Usa uma Ação Completa para dar um dash até o inimigo e atacá-lo seguidamente com a Nichirin quantas vezes desejar. Para cada golpe realiza uma rolagem de ataque normal. A técnica é interrompida ao errar 3 vezes.",
+            "niveis": [
+                { "nivel": 1, "dano_por_acerto": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano_por_acerto": "4d4", "custo": "7 PDR" },
+                { "nivel": 3, "dano_por_acerto": "6d4", "custo": "9 PDR" },
+                { "nivel": 4, "dano_por_acerto": "7d4", "custo": "10 PDR" }
+            ]
+        }
+    ]
+}

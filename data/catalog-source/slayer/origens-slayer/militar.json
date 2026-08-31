@@ -1,0 +1,26 @@
+{
+    "name": "Militar",
+    "subtitle": "O Tático de Campo",
+    "quote": "O campo de batalha não respeita coragem. Respeita posicionamento.",
+    "description": "O Militar não pensa em combates. Pensa em campanhas. Cada encontro é uma equação: posição, cobertura, linha de visão, prioridade de alvo e ordem de ação. Onde outros veem caos, o Militar vê informação. Onde outros reagem, ele já havia previsto e posicionado.",
+    "attributes": {
+        "pdv": "13 + VIT",
+        "pdr": "6 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Ordem de Campo",
+            "level": 1,
+            "description": "Duas vezes por combate, como Ação Especial, você pode dar uma ordem tática a um aliado que possa ouvir você a até 12m. Escolha um efeito: Reposicionar (o aliado pode se mover 3m imediatamente sem gastar o próprio movimento); Foco de Ataque (o aliado recebe +1 no próximo teste de ataque contra um alvo que você indique); Recuar e Cobrir (o aliado recebe +2 na Defesa até o início do próximo turno dele, desde que se afaste de um inimigo ou busque cobertura). Você não pode escolher a si mesmo como alvo da Ordem de Campo."
+        },
+        {
+            "name": "Fogo de Cobertura",
+            "level": 6,
+            "description": "Duas vezes por combate, quando um inimigo que você possa ver declarar um ataque contra um aliado, você pode usar sua Reação para fazer um ataque com arma de disparo contra esse inimigo. Se acertar, você causa o dano normal da arma e o ataque do inimigo sofre -2 no Acerto. Para usar esta habilidade, você precisa estar com uma arma de disparo carregada ou pronta para uso."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 8
+    }
+}

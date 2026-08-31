@@ -1,0 +1,26 @@
+{
+    "name": "Estrangeiro",
+    "subtitle": "O Estilo Exótico",
+    "quote": "Eles não conhecem seus movimentos. Isso vale mais do que qualquer técnica.",
+    "description": "O Estrangeiro trouxe consigo um vocabulário de combate que os inimigos nunca viram. Não necessariamente superior. Apenas diferente o suficiente para criar um segundo de hesitação — e um segundo de hesitação pode ser tudo. Suas técnicas vêm de terras distantes, com ângulos inesperados, ritmos incomuns e formas de lutar que o treinamento local não preparou ninguém para ler. A estranheza é uma vantagem com prazo de validade. Usá-la bem é uma arte.",
+    "attributes": {
+        "pdv": "13 + VIT",
+        "pdr": "8 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Ritmo Desconhecido",
+            "level": 1,
+            "description": "Na primeira rodada de um combate, você recebe +2 na Defesa contra ataques feitos por humanoides, Onis inteligentes ou criaturas capazes de interpretar padrões de luta. Além disso, uma vez por combate, quando acertar um ataque contra um alvo que ainda não havia sido atingido por você nesse combate, você pode aplicar Movimento Exótico. Escolha um efeito: Ângulo Inesperado (o alvo sofre -2 na Defesa contra o próximo ataque feito contra ele até o início do seu próximo turno); Ritmo Quebrado (o alvo sofre -2 no próximo teste de ataque que fizer até o fim do próximo turno dele); Passo Estranho (após o ataque, você pode se mover 3m sem provocar abertura óbvia). Esta habilidade não funciona contra criaturas sem instinto de combate, sem percepção corporal ou incapazes de reagir à imprevisibilidade dos seus movimentos."
+        },
+        {
+            "name": "Adaptação Cultural",
+            "level": 6,
+            "description": "Você aprende mecanicamente com inimigos durante o combate. Uma vez por rodada, quando for atingido por um ataque de um inimigo, você pode registrar o padrão daquele tipo de ameaça. A partir da rodada seguinte, contra inimigos do mesmo tipo, você recebe +1 na Defesa ou +1 no Acerto, escolhido no momento em que registra o padrão. Você pode manter apenas 1 padrão registrado por vez. Se registrar um novo padrão, o anterior é perdido. O padrão também é perdido ao fim do combate. Para registrar um padrão, você precisa sofrer o ataque — esquivar, bloquear completamente ou evitar o dano não ensina o suficiente."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 6
+    }
+}

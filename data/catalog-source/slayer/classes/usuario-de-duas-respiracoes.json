@@ -1,0 +1,74 @@
+{
+    "name": "Usuário de Duas Respirações",
+    "oneLiner": "um Exterminador raro que sustenta duas Respirações no mesmo corpo e aprende a criar Variações técnicas existentes remodeladas pela outra Respiração, não técnicas novas grátis nem números maiores.",
+    "specialRules": [
+        {
+            "title": "Escolha inicial e progressão da Secundária",
+            "description": "Escolha uma Respiração Primária (progride normal) e uma Secundária (progressão própria, mais lenta, aprovada pelo Mestre). Só pode criar Variações usando técnicas da Secundária até o nível liberado na tabela de progressão."
+        },
+        {
+            "title": "Compatibilidade entre Respirações",
+            "description": "O Mestre classifica o par como Compatível (descendência, origem, elemento ou filosofia próximos custa +1 PDR ao usar técnica/Variação da Secundária) ou Incompatível (ritmo/postura/filosofia opostos, sem sinergia clara custa +2 PDR e +2 PDV)."
+        },
+        {
+            "title": "O que é uma Variação",
+            "description": "Técnica-base (Primária ou Secundária) + um traço da outra Respiração + custo adicional + limitação clara + aprovação do Mestre, registrada com nome próprio. Regra de ouro: muda estrutura (forma, alcance, movimento, tipo de dano, condição, alvo, ritmo, exigência, consequência) nunca só soma poder (mais dano, +acerto, custa menos, ataca mais, ignora defesa, junta as duas técnicas inteiras). Isso seria buff, e essa especialização não trabalha com buff. Os 6 tipos de traço que uma Variação pode usar: Elemento (estética/energia, não muda dano), Forma (geometria: linha, arco, cone, avanço, etc.), Movimento (deslocamento embutido no golpe), Condição (troca força por status), Defesa (aspecto defensivo emprestado), Ritmo (cadência ou pré-requisito de uso)."
+        },
+        {
+            "title": "Como criar uma Variação",
+            "description": "1) escolha a técnica-base; 2) escolha a Respiração de influência (a que não é da técnica-base); 3) escolha um traço da lista; 4) defina o custo (base + compatibilidade + limitação se for mais forte que a base); 5) registre na ficha (nome, técnica-base, Respiração de influência, traço, ação, custo, alvo/área, efeito, limitação, descrição)."
+        }
+    ],
+    "secondaryProgressionTable": [
+        {
+            "secondaryLevel": 1,
+            "characterLevelRequired": 2
+        },
+        {
+            "secondaryLevel": 2,
+            "characterLevelRequired": 6
+        },
+        {
+            "secondaryLevel": 3,
+            "characterLevelRequired": 10
+        },
+        {
+            "secondaryLevel": 4,
+            "characterLevelRequired": 14
+        }
+    ],
+    "ranks": [
+        {
+            "rank": "C",
+            "name": "Segunda Respiração",
+            "description": "Libera a Respiração Secundária e permite criar 1 Variação Menor (altera 1 traço simples: elemento, forma simples, movimento curto, condição leve ou ritmo simples). Ela não pode aumentar dano, adicionar ataque, reduzir custo, ignorar defesa, afetar mais de um alvo adicional, ou aplicar condição forte sem contrapartida. Limite: 1 técnica da Secundária ou 1 Variação por turno."
+        },
+        {
+            "rank": "B",
+            "name": "Forja de Variações",
+            "description": "Ganha mais 1 Variação Menor (total: 2). Pode revisar uma Variação existente ao subir de Rank, mantendo a técnica-base. A partir daqui, Variações de Forma podem mudar geometria de forma mais livre (ex: atingir 2 alvos adjacentes com dano reduzido) atingir mais alvos exige uma limitação: -1d6 de dano, só Dano Fixo, +1 PDR, exigir adjacência, impedir Efeito de Contato, ou 1x/combate."
+        },
+        {
+            "rank": "A",
+            "name": "Técnica Derivada",
+            "description": "Pode criar 1 Técnica Derivada (total: 2 Variações Menores + 1 Derivada), que altera até 2 traços combinados (ex: Elemento+Forma, Forma+Condição, Defesa+Ritmo). Custo: base + compatibilidade + 1 PDR adicional (mais PDV se Incompatível). Não pode causar mais dano sem reduzir outro aspecto, adicionar ataque extra, duplicar Efeito de Contato, ou usar efeito de técnica que o personagem não conhece."
+        },
+        {
+            "rank": "S",
+            "name": "Forma Intermediária",
+            "description": "Cria uma postura híbrida com uma regra de funcionamento à escolha: Sequência (ativa após usar 1 técnica de cada Respiração no combate), Alternância (precisa alternar Primária/Secundária ou a Forma acaba), Sobrecarga (Variações mais fortes, mas 1 PDV de dano interno por uso) ou Postura Fixa (Variações estáveis, mas perde uma condição de movimento/defesa/alcance). Enquanto ativa, permite 2 Variações por turno (ações diferentes, custos pagos, nenhuma Ação Completa, nenhuma gerando ataque extra grátis). Não dá bônus de dano/acerto/defesa por si só; termina se Atordoado, Paralisado ou sem PDR suficiente."
+        },
+        {
+            "rank": "SS",
+            "name": "Forma Composta",
+            "description": "1x/combate, Ação Especial: cria uma técnica híbrida registrada (nome, técnica Primária usada, técnica Secundária usada, ação, custo, alvo/área, efeito combinado, preço, limite, descrição). Escolhe um dos 5 tipos de mistura (Forma, Movimento, Condição, Defesa ou Execução condicional) nunca soma as duas técnicas inteiras. Custo: maior custo entre as duas técnicas + custo de compatibilidade + 2 PDR (+2 PDV se Incompatível). Precisa de 1 preço obrigatório além do PDR: 1x/combate, 2 PDV de dano interno, encerra a Forma Intermediária, trava a Secundária até o próximo turno, exige Ação Completa, exige alvo já com condição, Desvantagem na próxima defesa, ou +1 Exaustão se falhar. Nunca ignora custo, nunca duplica Efeito de Contato, nunca cria ataque extra, nunca anula fraqueza da Secundária."
+        }
+    ],
+    "tableRules": [
+        "Criação: sempre com o Mestre o jogador propõe, o Mestre aprova/ajusta/nega considerando nível, custo, alcance, dano, condição, risco, coerência narrativa e impacto em chefes/grupos.",
+        "Aprendizado: exige contexto treino entre missões, registro, descoberta narrativa, falha traumática, duelo, estudo de outro usuário, ou autorização direta.",
+        "Registro: Variação não escrita na ficha não existe em regra.",
+        "Segurança: se uma Variação gerar dúvida na mesa, use a versão mais fraca e revise depois da sessão nunca pare o combate 20 minutos discutindo engenharia de técnica."
+    ],
+    "balanceNote": "nunca deve receber buffs genéricos o que ganha é permissão para criar, sempre com técnica-base, custo de compatibilidade, limitação clara, e nunca somando duas técnicas inteiras."
+}

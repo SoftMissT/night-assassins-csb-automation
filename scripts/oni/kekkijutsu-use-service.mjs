@@ -1,10 +1,10 @@
 /**
- * @fileoverview Fluxo "USAR KEKKIJUTSU" (P0 — UI Kekkijutsu na ficha Oni).
+ * @fileoverview Fluxo "USAR KEKKIJUTSU" (P0 UI Kekkijutsu na ficha Oni).
  *
  * Item → validar nível/PDK/ação (kekkijutsu-service.mjs) → confirmar via
  * DialogV2 → consumir PDK/ação → rolar teste (se houver) e dano → registrar
  * uso → postar no chat. Não reimplementa o pipeline completo de dano do
- * Slayer (flame/status/resistências) — cobre o essencial para a técnica
+ * Slayer (flame/status/resistências) cobre o essencial para a técnica
  * ser jogável; integração fina com damage-relay.mjs fica para follow-up.
  */
 import { MODULE_ID } from '../constants.mjs';
@@ -60,7 +60,7 @@ export async function useKekkijutsuItem({ item, actor } = {}) {
             const testRoll = await globalThis.Roll.create(attack.testFormula).evaluate();
             rolls.push(testRoll);
         } catch {
-            /* fórmula de teste inválida/ausente — segue sem rolagem de teste */
+            /* fórmula de teste inválida/ausente segue sem rolagem de teste */
         }
     }
     for (const component of attack.damage) {
@@ -68,12 +68,12 @@ export async function useKekkijutsuItem({ item, actor } = {}) {
             const damageRoll = await globalThis.Roll.create(component.formula).evaluate();
             rolls.push(damageRoll);
         } catch {
-            /* fórmula de dano inválida/ausente — ignora componente */
+            /* fórmula de dano inválida/ausente ignora componente */
         }
     }
 
     if (globalThis.ChatMessage && globalThis.game?.user) {
-        const flavor = `<strong>${technique.name}</strong> (${technique.origin ?? 'Kekkijutsu'}) — Rank ${technique.rank} · ${technique.pdkCost} PDK`;
+        const flavor = `<strong>${technique.name}</strong> (${technique.origin ?? 'Kekkijutsu'}) Rank ${technique.rank} · ${technique.pdkCost} PDK`;
         await globalThis.ChatMessage.create({
             speaker: globalThis.ChatMessage.getSpeaker({ actor }),
             flavor,

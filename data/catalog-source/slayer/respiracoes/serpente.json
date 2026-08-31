@@ -1,0 +1,203 @@
+{
+    "titulo": "Respiração da Serpente",
+    "aliases": ["Snake Breathing", "Hebi no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Tecelagem da Cobra",
+            "nome_romaji": "Ichi no Kata Ida Giri",
+            "descricao": "Esta técnica possui duas variações conforme o tipo de arma utilizada.",
+            "variacoes": [
+                {
+                    "nome": "Variação 1 - Espadas, Armas Corpo a Corpo e Chicotes",
+                    "tipo_manobra": "Especial",
+                    "descricao": "Gira a arma e libera um ataque circular que potencializa o próximo acerto usando ação de ataque padrão. Não é considerado efeito de contato.",
+                    "niveis": [
+                        { "nivel": 1, "bonus_acerto": "+1", "dano_bonus": "1d4", "custo": "1 PDR" },
+                        { "nivel": 2, "bonus_acerto": "+1", "dano_bonus": "1d6", "custo": "1 PDR" },
+                        { "nivel": 3, "bonus_acerto": "+1", "dano_bonus": "2d4", "custo": "2 PDR" },
+                        { "nivel": 4, "bonus_acerto": "+1", "dano_bonus": "2d6", "custo": "2 PDR" }
+                    ]
+                },
+                {
+                    "nome": "Variação 2 - Armas à Distância",
+                    "tipo_manobra": "Todas as ações do turno",
+                    "custo_fixo": "4 PDR",
+                    "descricao": "Um tiro de veneno aprimorado. Abdica de todas as ações do turno para realizar um único e potente ataque. Ao acertar com rolagem de acerto vs. defesa padrão, o inimigo deve fazer um teste de VIT com C.D. 10 + INT + SAB do usuário.",
+                    "tabela_resultado": [
+                        {
+                            "resultado": "Falhou",
+                            "dano_de_veneno_dura_2_turnos": "6d10 instantaneamente"
+                        },
+                        { "resultado": "Passou", "dano_de_veneno_dura_2_turnos": "Metade do dano" }
+                    ]
+                }
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Presas Venenosas das Pontas Finas",
+            "nome_romaji": "Ni no Kata Kyōzu no Dokuga",
+            "tipo_manobra": "Única",
+            "requisito": "Ataque Furtivo",
+            "descricao": "Vai atrás do oponente a uma velocidade ofuscante e corta um de seus membros superiores, causando sangramento por 3 turnos. O dano pode ser acumulativo com outro sangramento causado da mesma maneira dentro do período de 3 turnos, porém o número de turnos não acumula.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_de_sangramento_por_turno": "1d4 + DEX do usuário",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_de_sangramento_por_turno": "1d6 + DEX do usuário",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_de_sangramento_por_turno": "2d4 + DEX do usuário",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_de_sangramento_por_turno": "2d8 + DEX do usuário",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Balança Serpentina",
+            "nome_romaji": "San no Kata Toguro Jime",
+            "tipo_manobra": "Única",
+            "requisito": "Ataque Furtivo",
+            "descricao": "Curva a espada ou o disparo como uma cobra rastejante rapidamente dando um bote.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_bonus_no_ataque_furtivo": "+2",
+                    "bonus_na_proxima_rolagem_de_acerto_mesmo_turno": "+1",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_bonus_no_ataque_furtivo": "+3",
+                    "bonus_na_proxima_rolagem_de_acerto_mesmo_turno": "+2",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_bonus_no_ataque_furtivo": "+4",
+                    "bonus_na_proxima_rolagem_de_acerto_mesmo_turno": "+3",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_bonus_no_ataque_furtivo": "+5",
+                    "bonus_na_proxima_rolagem_de_acerto_mesmo_turno": "+4",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Mordida Venenosa",
+            "nome_romaji": "Shi no Kata Paison Baito",
+            "tipo_manobra": "Especial",
+            "descricao": "A serpente familiar fica mais letal ao atacar o inimigo na ação de ataque, chegando ao oponente com mais brutalidade e aplicando envenenamento.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_bonus_no_ataque_da_serpente": "+1",
+                    "envenenamento_2_turnos": "CAR do usuário",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_bonus_no_ataque_da_serpente": "+2",
+                    "envenenamento_2_turnos": "CAR do usuário",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_bonus_no_ataque_da_serpente": "+2",
+                    "envenenamento_2_turnos": "CAR do usuário",
+                    "efeito_adicional": "Inimigo acertado testa VIT (C.D. 12); falha: perde qualquer Resistência que tenha por 3 turnos",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_bonus_no_ataque_da_serpente": "+2",
+                    "envenenamento_2_turnos": "CAR do usuário",
+                    "efeito_adicional": "Igual ao anterior + inimigo fica amedrontado por 1 turno contra o usuário",
+                    "custo": "3 PDR"
+                }
+            ],
+            "sinergia": {
+                "nome": "Estrangulamento",
+                "descricao": "Se a cobra tiver uma diferença de rolagem de acerto vs. esquiva ou bloqueio maior que 3, ela se enrolará ao corpo do inimigo tentando estrangulá-lo. O inimigo ficará vulnerável contra o próximo ataque de um aliado com sinergia, aplicável apenas ao primeiro ataque que acertar.",
+                "respiracoes_com_sinergia": [
+                    "Respiração dos Insetos",
+                    "Respiração do Sangue",
+                    "Respiração do Veneno",
+                    "Respiração do Dragão"
+                ]
+            }
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Serpente Deslizante",
+            "nome_romaji": "Go no Kata Enen Chōda",
+            "tipo_manobra": "Ataque",
+            "descricao": "Usa a arma curvada como uma cobra, curvando-a da direita para a esquerda em uma velocidade incrível. Capaz de decapitar vários alvos ao mesmo tempo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "O ataque padrão pode atingir mais um alvo após o primeiro, mesmo que o primeiro não acerte",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "O ataque padrão pode atingir mais dois alvos adicionais",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + +2 de acerto nos ataques adicionais",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + se acertar todos os inimigos alvejados com ataques adicionais, ganha o direito de usar uma Respiração da Recuperação como Ação Especial neste turno (mesmo que já tenha usado uma neste combate)",
+                    "custo": "4 PDR"
+                }
+            ],
+            "passiva": {
+                "nome": "Troca de Pele Cromática",
+                "descricao": "Acertos críticos durante esta técnica permitem ao usuário gastar 2 PDR para ficar furtivo ao final da ação de ataque, sem necessidade de rolagem de furtividade."
+            }
+        }
+    ],
+    "passiva_exclusiva": {
+        "nome": "Cobra Familiar",
+        "nome_romaji": "Kazoku no Hebi",
+        "descricao": "Você tem uma cobra familiar especial. Crie uma história que vincule você a ela e ela será sua leal companheira de batalha e no dia a dia.",
+        "pdv_da_cobra": "10 + 1 por nível de personagem do usuário + 1 por ponto de CAR do usuário",
+        "companheiro_leal": {
+            "descricao": "Toda vez que for atacado, role 1d12.",
+            "resultado_12": "Pode dar um comando de defesa: a cobra pula e te defende, recebendo 50% do dano que você receberia (arredonda para cima).",
+            "resultado_1": "A cobra pula para te defender sem comando e recebe 120% do dano que você receberia (arredonda para cima)."
+        },
+        "instinto_compartilhado": "Enquanto a cobra estiver viva, você ganha +1 de esquiva ou bloqueio permanentemente (à sua escolha). Pode definir qual bônus receber no início de seu primeiro turno como ação livre. Trocar depois custa 1 Ação Única.",
+        "ataque_da_serpente": "A cobra pode atacar como um ataque adicional aos seus ataques padrão quando você lhe der um comando de ataque. Rolagem: 1d20 + 2. Dano: 1d4 + 1 por nível de respiração do usuário.",
+        "retaliacao": "Devido ao alto vínculo com o familiar, a serpente pode revelar pontos fracos do inimigo enquanto você está furtivo. Ataques furtivos bem-sucedidos passam a ser críticos e aplicam sangramento de 2d4, durando um número de turnos igual a DEX ÷ 2 (arredonda para cima)."
+    },
+    "regra_de_sistema_furtividade_em_combate": {
+        "como_funciona": "Antes de um combate iniciar (antes mesmo das rolagens de iniciativa), o mestre deve avaliar se pode ser aplicado um teste de furtividade. O teste padrão é DEX vs. SAB ou INT de quem tenta perceber quem se esconde. O jogador bem-sucedido fica furtivo e terá vantagem no primeiro ataque declarado neste estado, considerado efeito de contato, portanto aplicável ao primeiro ataque por ação. Se acertar, o ataque é crítico.",
+        "furtividade_durante_o_combate": "É possível tentar furtividade durante o combate para se esconder ou tentar fuga, porém o teste é feito com desvantagem na rolagem de DEX, custando Ação de Movimento + Ação Especial.",
+        "excecao": "Usuários da Respiração da Serpente realizam testes de furtividade em batalha sem essa desvantagem."
+    }
+}

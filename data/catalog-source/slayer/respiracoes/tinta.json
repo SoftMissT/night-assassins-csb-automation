@@ -1,0 +1,574 @@
+{
+    "titulo": "Respiração da Tinta",
+    "nome_romaji": "Sumi no Kokyū",
+    "kanji": "墨の呼吸",
+    "citacao": "O guerreiro corta o que existe. A escriba apaga o que existe e pinta o que deveria ser.",
+    "descricao_geral": "A Respiração da Tinta é uma derivação rara da Respiração da Água. Da Água, herdou o fluxo, a adaptação, a purificação e o domínio sobre formas instáveis. Mas onde a Água se move como corrente, a Tinta registra, cobre, altera e reescreve. O usuário não luta apenas com lâmina. Luta com traços, selos, Kanjis, manchas, ilusões e formas temporárias desenhadas no campo de batalha. A Tinta é uma Respiração de suporte, controle e manipulação de estado. Ela não foi feita para competir com Chamas em dano bruto, nem com Trovão em velocidade. Ela vence mudando as condições da luta até que o inimigo perceba tarde demais que está preso dentro da pintura.",
+    "estrutura_padrao": "[ Nível de Respiração ] [ Efeito ] [ Custo de PDR ]",
+    "conversoes_de_atributo": [
+        { "termo_original": "Kūdō", "night_assassins": "PDR" },
+        { "termo_original": "ESPÍRITO", "night_assassins": "FDV" },
+        { "termo_original": "MENTE", "night_assassins": "INT, SAB ou CAR" },
+        { "termo_original": "CORPO", "night_assassins": "VIT, DEX ou FOR" }
+    ],
+    "atributo_de_tinta": {
+        "descricao": "Ao aprender a Respiração da Tinta, o personagem escolhe seu Atributo de Tinta. Depois de escolhido, esse atributo não muda facilmente.",
+        "opcoes": [
+            { "atributo": "INT", "tema": "técnica, estudo, caligrafia, padrões e selos" },
+            {
+                "atributo": "SAB",
+                "tema": "percepção, leitura emocional, instinto artístico e interpretação do campo"
+            },
+            {
+                "atributo": "CAR",
+                "tema": "presença, expressão, imposição estética e força simbólica"
+            }
+        ],
+        "observacao": "Sempre que uma técnica pedir Atributo de Tinta, use o atributo escolhido."
+    },
+    "funcao_mecanica": {
+        "papel_principal": "Suporte e controle",
+        "papel_secundario": "Cura, proteção, reposicionamento e selamento",
+        "atributos_chave": ["Atributo de Tinta", "FDV"],
+        "recurso_interno": "Kanjis ativos",
+        "dano_comum": ["Cortante", "Perfurante", "Concussão"],
+        "fraqueza": "Interrupção, Atordoamento, perda de concentração e custo alto de PDR"
+    },
+    "passiva_especial": {
+        "nome": "Arte dos Cinco Elementos",
+        "nome_romaji": "Gogyō no Geijutsu",
+        "kanji": "五行の芸術",
+        "descricao": "O usuário desenha Kanjis de Tinta no ar, sobre aliados, inimigos, objetos ou regiões do campo. Cada Kanji representa uma cor e uma função. A Tinta não cria poder do nada. Ela dá forma a uma intenção.",
+        "aplicar_kanji": {
+            "tipo_manobra": "Especial",
+            "alcance": "9m",
+            "custo": "1 PDR",
+            "alvo": "1 criatura, 1 objeto ou 1 ponto no campo",
+            "area_em_zona": "raio de 3m centrado no ponto escolhido"
+        },
+        "capacidade_de_manutencao": [
+            { "nivel_de_respiracao": 1, "kanjis_ativos": 1 },
+            { "nivel_de_respiracao": 2, "kanjis_ativos": 2 },
+            { "nivel_de_respiracao": 3, "kanjis_ativos": 3 },
+            { "nivel_de_respiracao": 4, "kanjis_ativos": 4 }
+        ],
+        "observacao_nivel_4": "No Nível 4, se o personagem for reconhecido como Hashira ou equivalente narrativo, o Mestre pode permitir 5 Kanjis ativos.",
+        "duracao_em_aliados_e_objetos": "Duram até o combate terminar; o usuário remover voluntariamente; o usuário perder concentração; ou o alvo ficar fora de alcance narrativo da técnica, a critério do Mestre.",
+        "duracao_em_inimigos": "Duram até o início do próximo turno do usuário. A partir do Nível de Respiração 3, Kanjis aplicados em inimigos duram 2 rodadas.",
+        "remocao_por_inimigo": "Um inimigo pode tentar remover um Kanji gastando uma Ação Completa e passando em teste de INT, SAB ou CAR (à sua escolha) contra CD da Tinta.",
+        "quebra_da_tinta": "O usuário perde todos os Kanjis ativos se ficar Atordoado, Paralisado, Inconsciente, Ofegante, em Frenesi, sob efeito de controle mental severo, ou incapaz de respirar conscientemente."
+    },
+    "cd_da_tinta": "10 + Atributo de Tinta + Nível de Respiração",
+    "observacao_cd": "Quando a técnica exigir resistência física, o alvo usa VIT, DEX ou FOR, conforme a natureza do efeito.",
+    "tabela_de_cores": [
+        {
+            "kanji": "Amarelo - Luz",
+            "efeito_geral": "O alvo amplia sua margem de crítico.",
+            "niveis": [
+                { "nivel": "1–2", "efeito": "Crítico natural em 19–20" },
+                { "nivel": "3–4", "efeito": "Crítico natural em 18–20" }
+            ],
+            "observacao": "Esse efeito não acumula com outros aumentos de margem crítica. Use sempre o melhor valor.",
+            "em_objeto": "Ilumina raio de 9m."
+        },
+        {
+            "kanji": "Azul - Fluxo",
+            "efeito_em_criatura": "+ Atributo de Tinta na primeira rolagem de ataque do turno. Ataques adicionais no mesmo turno recebem apenas +1 no acerto.",
+            "em_objeto": "Reduz o peso à metade para fins de transporte, arremesso ou movimentação."
+        },
+        {
+            "kanji": "Branco - Puro",
+            "efeito_em_criatura": "Redução de Dano físico = FDV do usuário. Aplica-se contra dano Cortante, Perfurante e Concussão.",
+            "nao_reduz": [
+                "Dano Trovejante",
+                "Dano Sonoro",
+                "Dano de Ferida",
+                "Dano Necrótico",
+                "dano que diga explicitamente que não pode ser reduzido"
+            ],
+            "em_objeto": "O objeto ganha resistência narrativa contra dano elemental enquanto o Kanji estiver ativo."
+        },
+        {
+            "kanji": "Roxo - Caos",
+            "efeito_geral": "A Tinta introduz instabilidade na cena.",
+            "em_aliado": "Uma vez por turno, quando o aliado causar dano a um inimigo, pode rolar 1d20 na Roleta do Caos. O resultado afeta o inimigo atingido.",
+            "em_inimigo": "Uma vez por turno, quando o inimigo fizer um ataque, role 1d20 na Roleta do Caos. O resultado afeta o próprio inimigo."
+        },
+        {
+            "kanji": "Verde - Vida",
+            "efeito_geral": "O alvo recupera PDV no início do próprio turno.",
+            "tabela_cura": [
+                { "nivel": 1, "cura_por_turno": "FDV" },
+                { "nivel": 2, "cura_por_turno": "FDV + 1" },
+                { "nivel": 3, "cura_por_turno": "FDV + 2" },
+                { "nivel": 4, "cura_por_turno": "FDV + 3" }
+            ],
+            "restricao": "Essa cura não restaura Dano de Ferida, Dano Necrótico, membros perdidos ou perda permanente de atributo.",
+            "em_objeto": "O objeto se repara lentamente, a critério do Mestre."
+        },
+        {
+            "kanji": "Vermelho - Força",
+            "efeito_geral": "O alvo soma um atributo corporal ao dano do primeiro ataque bem-sucedido do turno.",
+            "escolha_no_momento_da_aplicacao": [
+                "FOR, se a força física for o foco",
+                "DEX, se precisão ou velocidade forem o foco",
+                "VIT, se resistência corporal ou impacto sustentado forem o foco"
+            ],
+            "observacao": "Esse dano é do mesmo tipo principal do ataque.",
+            "em_objeto": "Armas com Kanji Vermelho ignoram 1 ponto de Redução de Dano do alvo."
+        }
+    ],
+    "roleta_do_caos": {
+        "observacao": "Os efeitos duram 1 turno, salvo indicação contrária.",
+        "tabela": [
+            { "d20": 1, "efeito": "Ofegante: deslocamento 0m até o início do próximo turno." },
+            {
+                "d20": 2,
+                "efeito": "Desorientado: -2 em ataques e não pode usar Reação por 1 turno."
+            },
+            {
+                "d20": 3,
+                "efeito": "Distraído: ataques contra o alvo recebem Vantagem por 1 turno."
+            },
+            {
+                "d20": 4,
+                "efeito": "Restrição de Movimento: deslocamento zerado, mas ainda pode agir."
+            },
+            { "d20": 5, "efeito": "Surdez Parcial: Desvantagem em testes ligados a som." },
+            { "d20": 6, "efeito": "Sangramento: 1d4 de dano no início do turno por 2 turnos." },
+            { "d20": 7, "efeito": "Derrubado." },
+            { "d20": 8, "efeito": "Desequilibrado: -2 em Defesa por 1 turno." },
+            { "d20": 9, "efeito": "Enjoado: custo de PDR da próxima técnica aumenta em +1." },
+            {
+                "d20": 10,
+                "efeito": "Vulnerável: o próximo ataque bem-sucedido contra o alvo causa dano dobrado."
+            },
+            {
+                "d20": 11,
+                "efeito": "Cegueira Parcial: -2 em ataques e defesas que dependam de visão."
+            },
+            { "d20": 12, "efeito": "Hipotermia: -3m de deslocamento por 1 turno." },
+            {
+                "d20": 13,
+                "efeito": "Confusão: o Mestre define uma ação simples e prejudicial, sem forçar autodestruição direta."
+            },
+            {
+                "d20": 14,
+                "efeito": "Bloqueio Respiratório: não pode usar Forma de Respiração até o fim do próximo turno."
+            },
+            { "d20": 15, "efeito": "Em Chamas: sofre 1d4 de dano no início do turno até apagar." },
+            { "d20": 16, "efeito": "Atordoado: perde o próximo turno." },
+            { "d20": 17, "efeito": "Paralisia: fica Paralisado até o início do próximo turno." },
+            {
+                "d20": 18,
+                "efeito": "Sonhando: fica incapacitado; o próximo ataque contra ele tem Vantagem e +2 no acerto."
+            },
+            { "d20": 19, "efeito": "Suprimido: perde a próxima Ação de Ataque." },
+            {
+                "d20": 20,
+                "efeito": "Colapso de Tinta: role mais 2 vezes na tabela e aplique ambos os resultados."
+            }
+        ],
+        "observacao_chefes": "Chefes, Onis especiais e inimigos de arco podem transformar resultados 16–20 em versões reduzidas, a critério do Mestre."
+    },
+    "maestrias_de_pintura": [
+        {
+            "nivel_de_respiracao": 3,
+            "nome": "Tinta Indelével",
+            "efeito": "Kanjis em inimigos passam a durar 2 rodadas. Kanjis em aliados só terminam por remoção voluntária, quebra da concentração ou fim do combate."
+        },
+        {
+            "nivel_de_respiracao": 4,
+            "nome": "Mistura",
+            "efeito": "O usuário pode fundir 2 cores diferentes em 1 único Kanji. Esse Kanji ocupa apenas 1 espaço de manutenção e aplica os efeitos das duas cores. Limite: 1 Kanji misturado por vez."
+        }
+    ],
+    "hashira_obra_viva": "Se o usuário for reconhecido como Hashira ou equivalente narrativo, o alcance dos Kanjis aumenta para 18m. Além disso, uma vez por combate, pode iniciar o combate com 1 Kanji já ativo em si ou em um aliado que esteja presente na cena.",
+    "status_especificos_da_tinta": [
+        { "nome": "Cegueira Parcial", "efeito": "-2 em ataques e defesas que dependam de visão." },
+        {
+            "nome": "Bloqueio Respiratório",
+            "efeito": "Enquanto durar: não pode usar Formas de Respiração; ainda pode fazer ataques padrão; ainda pode defender-se normalmente."
+        },
+        {
+            "nome": "Sonhando",
+            "efeito": "Enquanto durar: não pode agir; não pode se mover; ataques contra ele têm Vantagem; o efeito termina após ele sofrer dano."
+        }
+    ],
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Névoa de Tinta Oculta",
+            "nome_romaji": "Ichi no Kata: Sumigakure no Kiri",
+            "kanji": "一の型・墨隠れの霧",
+            "tipo_manobra": "Especial",
+            "tipo": "Área defensiva e ocultação",
+            "duracao": "Sustentada",
+            "area": "Raio de 9m",
+            "descricao": "O usuário dissolve a lâmina em fumaça negra, criando uma névoa que distorce distância, profundidade e silhueta.",
+            "condicoes_de_termino": [
+                "O usuário se mover mais de 1,5m da posição de criação.",
+                "O usuário sofrer Quebra da Tinta.",
+                "O usuário dissipar a névoa como Ação Livre.",
+                "O combate terminar."
+            ],
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Inimigos têm Desvantagem em ataques contra alvos dentro da névoa.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual + ataques à distância contra aliados na névoa falham se o dado natural do inimigo for ímpar.",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual + aliados podem se Esconder como Ação Especial mesmo em campo aberto.",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual + o primeiro ataque físico que atingiria cada aliado na névoa tem dano reduzido a 0, uma vez por aliado por ativação.",
+                    "custo": "9 PDR"
+                }
+            ],
+            "sinergia_kanji_branco": "Se o Kanji Branco estiver ativo em um aliado dentro da névoa, ele recebe +2 de Redução de Dano físico enquanto permanecer na área."
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Cascata Purificadora",
+            "nome_romaji": "Ni no Kata: Kiyome no Taki",
+            "kanji": "二の型・清めの滝",
+            "tipo_manobra": "Especial",
+            "alcance": "9m",
+            "alvo": "1 aliado",
+            "funcao": "Remoção de status e cura",
+            "descricao": "O usuário invoca uma torrente de tinta clara que sobe pelo corpo do aliado, lavando toxinas e reescrevendo seu estado físico.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Remove até 2 status menores: Sangramento, Envenenamento leve, Em Chamas, Desequilibrado ou Derrubado.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual + pode remover Paralisia ou Atordoamento.",
+                    "custo": "5 PDR"
+                },
+                { "nivel": 3, "efeito": "Igual + cura 3d8 + FDV PDV.", "custo": "7 PDR" },
+                {
+                    "nivel": 4,
+                    "efeito": "Remove todos os status negativos ativos possíveis e cura 4d8 + FDV PDV.",
+                    "custo": "9 PDR"
+                }
+            ],
+            "observacao_nivel_4": "No Nível 4, o alvo também recebe imunidade a novos status negativos até o início do próximo turno dele. Esse efeito de imunidade só pode ser aplicado uma vez por combate por alvo.",
+            "sinergia_kanji_verde": "Se o Kanji Verde estiver ativo no alvo, a cura desta Forma é maximizada.",
+            "restricao": "Esta Forma não remove Dano de Ferida, Dano Necrótico, perda permanente de atributo, amputação ou morte."
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Procissão das Bestas de Tinta",
+            "nome_romaji": "San no Kata: Sumi Giga Hyakki Yagyō",
+            "kanji": "三の型・墨戯画・百鬼夜行",
+            "tipo_manobra": "Especial",
+            "funcao": "Distração, proteção e controle",
+            "descricao": "O usuário cria bestas de tinta que mordem, confundem, cercam ou interceptam ataques.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Uma besta flanqueia 1 inimigo. O próximo ataque contra ele recebe Vantagem.",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "O inimigo fica Distraído por 1 turno e não pode usar Reação.",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "O inimigo testa INT, SAB ou CAR contra CD da Tinta. Falha: perde a próxima Ação de Ataque destruindo a besta.",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Cria 3 bestas. Cada uma protege um aliado diferente e absorve o primeiro ataque físico contra ele.",
+                    "custo": "8 PDR"
+                }
+            ],
+            "observacao": "Bestas têm 1 PDV e desaparecem após cumprir sua função.",
+            "sinergia_kanji_roxo": "Se o Kanji Roxo estiver ativo no usuário, a primeira besta que morder, distrair ou for destruída pode aplicar 1 resultado da Roleta do Caos."
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Pintura da Fortaleza de Ferro",
+            "nome_romaji": "Shi no Kata: Kōtetsu no Yoroi-e",
+            "kanji": "四の型・鋼鉄の鎧絵",
+            "tipo_manobra": "Especial",
+            "funcao": "Proteção direta",
+            "descricao": "O usuário desenha uma armadura de tinta sobre o corpo de um aliado.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "1 aliado recebe +3 em Defesa por 1 rodada.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual + Resistência a dano Cortante, Perfurante e Concussão por 1 rodada.",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Afeta todos os aliados em raio de 4,5m.",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual + ataques corpo a corpo contra aliados protegidos sofrem revide de 3d8 Perfurante.",
+                    "custo": "9 PDR"
+                }
+            ],
+            "observacao": "O revide do Nível 4 ocorre no máximo uma vez por aliado protegido.",
+            "sinergia_kanji_vermelho": "Se o Kanji Vermelho estiver ativo no aliado protegido, o revide causa dano adicional igual ao atributo corporal escolhido no Kanji Vermelho."
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Traço Célere: Voo das Andorinhas",
+            "nome_romaji": "Go no Kata: Sōhitsu Tsubame Gaeshi",
+            "kanji": "五の型・走筆・燕返し",
+            "tipo_manobra": "Especial",
+            "alcance": "9m",
+            "funcao": "Reposicionamento aliado",
+            "descricao": "O usuário pinta trilhos de tinta no chão e no ar, permitindo que um aliado se mova fora do próprio turno.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "1 aliado move até seu Deslocamento total imediatamente.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Esse movimento não provoca Ataques de Oportunidade e ignora terreno difícil.",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual + no próximo turno do aliado, ele recebe +1,5m de Movimento.",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "O aliado recebe Velocidade por 2 rodadas.",
+                    "custo": "8 PDR"
+                }
+            ],
+            "status_velocidade": "Enquanto estiver em Velocidade: +2 em Defesa; Deslocamento dobrado; Vantagem em testes de DEX ligados a movimentação.",
+            "sinergia_kanji_azul": "Se o Kanji Azul estiver ativo no aliado, o próximo ataque que ele fizer após se mover com esta Forma recebe Vantagem."
+        },
+        {
+            "forma": 6,
+            "nome_pt": "O Vazio da Tela em Branco",
+            "nome_romaji": "Roku no Kata: Kūhaku no Kyanbasu",
+            "kanji": "六の型・空白のキャンバス",
+            "tipo_manobra": "Ataque",
+            "alcance": "9m",
+            "funcao": "Bloqueio sensorial e respiratório",
+            "descricao": "O usuário lança uma fita de tinta sobre os olhos, ouvidos e respiração do inimigo. O alvo realiza teste de VIT contra CD da Tinta.",
+            "niveis": [
+                { "nivel": 1, "falha_no_teste": "Cegueira Parcial por 1 turno.", "custo": "3 PDR" },
+                {
+                    "nivel": 2,
+                    "falha_no_teste": "Cegueira Parcial + Surdez Parcial por 1 turno.",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "falha_no_teste": "Igual + Bloqueio Respiratório por 1 turno.",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "falha_no_teste": "Afeta todos os inimigos em cone de 9m com os efeitos do Nível 3.",
+                    "custo": "9 PDR"
+                }
+            ],
+            "sinergia_kanji_roxo": "Se o Kanji Roxo estiver ativo no usuário, os alvos sofrem Desvantagem no teste contra esta Forma."
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Quietude do Tinteiro Zen",
+            "nome_romaji": "Shichi no Kata: Zen Suzuri no Seijaku",
+            "kanji": "七の型・禅硯の静寂",
+            "tipo_manobra": "Completa",
+            "funcao": "Recuperação de PDR e sustentação",
+            "descricao": "O usuário assume postura de meditação e recolhe a tinta espalhada pelo campo.",
+            "observacao": "Cada efeito desta Forma só pode ser usado uma vez por combate.",
+            "niveis": [
+                { "nivel": 1, "efeito": "O usuário recupera 3 PDR.", "custo": "0 PDR" },
+                {
+                    "nivel": 2,
+                    "efeito": "O usuário sofre 5 PDV de dano não reduzível para restaurar 6 PDR de um aliado adjacente.",
+                    "custo": "0 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Cria um Círculo Zen em raio de 3m por 3 rodadas.",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Um aliado adjacente recupera 1 uso de uma habilidade limitada por combate, com aprovação do Mestre.",
+                    "custo": "10 PDR + 1 Exaustão"
+                }
+            ],
+            "circulo_zen": {
+                "descricao": "Aliados dentro do círculo recuperam no início de seus turnos 1d10 + Atributo de Tinta em PDV.",
+                "termino": "O círculo termina se o usuário mover-se mais de 1,5m; ficar Atordoado; ficar Inconsciente; ou sofrer Quebra da Tinta.",
+                "sinergia_kanji_verde": "Se o Kanji Verde estiver ativo em um aliado dentro do Círculo Zen, a cura nele aumenta para 2d10 + Atributo de Tinta."
+            }
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Prisão do Pergaminho Selado",
+            "nome_romaji": "Hachi no Kata: Fūin no Makimono",
+            "kanji": "八の型・封印の巻物",
+            "tipo_manobra": "Ataque",
+            "alcance": "9m",
+            "alvo": "1 inimigo",
+            "funcao": "Prisão e selamento",
+            "descricao": "O usuário desenha pilares de tinta ao redor do alvo, prendendo-o dentro de uma pintura viva. O alvo realiza teste de FOR ou DEX contra CD da Tinta (o alvo escolhe se tenta romper com FOR ou escapar com DEX).",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "falha_no_teste": "Restrição de Movimento por 1 turno.",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "falha_no_teste": "Igual + alcance dos ataques corpo a corpo do alvo fica limitado a 1,5m.",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "falha_no_teste": "Cria uma Gaiola de Tinta com 30 PDV.",
+                    "custo": "8 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "falha_no_teste": "O alvo fica Paralisado até passar no teste no início de um de seus turnos.",
+                    "custo": "10 PDR"
+                }
+            ],
+            "gaiola_de_tinta": {
+                "descricao": "Enquanto a Gaiola existir: o alvo não pode sair; o alvo não pode atacar criaturas fora dela; criaturas fora dela podem atacar a Gaiola; ao ser destruída, o alvo fica Desequilibrado por 1 turno."
+            },
+            "sinergia_kanji_amarelo": "Se o Kanji Amarelo estiver ativo no usuário, inimigos presos pela Forma sofrem no início de seus turnos 2d6 de Dano Cortante."
+        },
+        {
+            "forma": 9,
+            "nome_pt": "Corte de Tinta: O Final da História",
+            "nome_romaji": "Ku no Kata: Hitofude Ketsu",
+            "kanji": "九の型・一筆・結",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Cortante",
+            "alvo": "1 inimigo",
+            "funcao": "Finalização ofensiva",
+            "descricao": "A única técnica puramente destrutiva da Respiração da Tinta. O usuário concentra toda a tinta na lâmina e desfere um corte vertical que parece riscar o alvo da cena.",
+            "niveis": [
+                { "nivel": 1, "dano": "Dano da arma + 5d10", "efeito": null, "custo": "7 PDR" },
+                {
+                    "nivel": 2,
+                    "dano": "Igual + 1d10 para cada status negativo no alvo, máximo +5d10",
+                    "efeito": null,
+                    "custo": "9 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "Igual + ignora Resistência e Redução de Dano física",
+                    "efeito": "Sofre 1 Exaustão",
+                    "custo": "11 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "Igual + execução contra alvo comum com menos de 25% do PDV máximo",
+                    "efeito": "Sofre 1 Exaustão",
+                    "custo": "13 PDR"
+                }
+            ],
+            "observacao_chefes": "Contra Chefes, Onis especiais ou inimigos de arco, a execução do Nível 4 não reduz automaticamente a 0 PDV. Em vez disso, o dano total da técnica é dobrado após a rolagem.",
+            "ponto_final": {
+                "sinergia_kanji_vermelho": "Se o Kanji Vermelho estiver ativo no usuário, esta Forma recebe Crítico Automático se acertar.",
+                "custo_apos_dano": "Após resolver o dano, o usuário sofre 2d8 de dano por Hemorragia interna. Esse dano não pode ser reduzido."
+            }
+        },
+        {
+            "forma": 10,
+            "nome_pt": "Tsunami da Criação Primordial",
+            "nome_romaji": "Jū no Kata: Banbutsu Sōzō no Tsunami",
+            "kanji": "十の型・万物創造の津波",
+            "tipo_manobra": "Completa",
+            "funcao": "Domínio de suporte e controle",
+            "duracao": "3 rodadas",
+            "descricao": "O usuário crava a arma no solo e transforma o campo em um pergaminho vivo. O mundo perde cor. A tinta decide o que permanece.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar.", "area": null, "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Domínio Menor: aliados recebem efeitos de 2 Kanjis à escolha do usuário.",
+                    "area": "Raio de 6m",
+                    "custo": "8 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Domínio da Tinta: aliados recebem efeitos de 3 Kanjis à escolha do usuário; inimigos tratam a área como terreno difícil.",
+                    "area": "Raio de 9m",
+                    "custo": "10 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Criação Primordial: aliados recebem efeitos dos 5 Kanjis; inimigos têm Desvantagem em testes de resistência dentro da área.",
+                    "area": "Raio de 12m",
+                    "custo": "12 PDR + 2 Exaustão"
+                }
+            ],
+            "observacao": "Os Kanjis concedidos por esta Forma não contam no limite de manutenção.",
+            "imortalidade_da_arte": "No Nível 4, enquanto o Domínio durar, a primeira vez que cada aliado dentro da área cairia a 0 PDV, ele fica com 1 PDV em vez disso. Quando o Domínio termina, qualquer aliado salvo por esse efeito fica Inconsciente, a menos que tenha recuperado PDV acima de 1 antes do fim da duração.",
+            "onipresenca_da_tinta": "No Nível 4, uma vez por rodada, o usuário pode usar sua Reação para mover uma criatura dentro do Domínio até 4,5m para outro ponto também dentro do Domínio. Se a criatura for inimiga, ela pode resistir com FOR ou DEX contra CD da Tinta; se passar, não é movida.",
+            "termino_do_dominio": "O Domínio termina imediatamente se o usuário ficar Inconsciente ou sofrer Quebra da Tinta."
+        }
+    ],
+    "sinergias": {
+        "agua": "Quando um usuário da Água estiver sob efeito de um Kanji da Tinta, ele pode gastar 1 PDR ao usar uma técnica defensiva. Se fizer isso, recebe +1 em Esquiva ou Bloqueio. Esse efeito só ocorre uma vez por rodada.",
+        "flores": "Quando um usuário das Flores atingir um inimigo afetado por Kanji Roxo, Cegueira Parcial ou Restrição de Movimento causada pela Tinta, pode escolher um: causar +1d6 de Dano Cortante; remover Sangramento ou Envenenamento de um aliado adjacente; receber +1 em CAR até o fim do próximo turno. Esse efeito ocorre no máximo uma vez por turno.",
+        "insetos": "Se um usuário dos Insetos aplicar Veneno em um alvo afetado por Kanji Roxo, pode rolar a Roleta do Caos uma vez. Esse efeito só ocorre uma vez por rodada.",
+        "som": "Se um usuário do Som estiver com Kanji Azul ativo, a primeira técnica ofensiva dele no turno recebe +1d6 de Dano Sonoro. Esse efeito só ocorre uma vez por turno."
+    },
+    "notas_de_balanceamento": [
+        "A Tinta é suporte e controle, não DPS principal. Possui apenas uma Forma realmente ofensiva: a 9ª Forma. O restante do kit existe para melhorar aliados, remover status, esconder o grupo, prender inimigos, alterar posicionamento e impedir colapso em cenas críticas.",
+        "Kanjis são fortes porque exigem manutenção. O usuário não consegue manter tudo ao mesmo tempo. A escolha do Kanji certo é a decisão central da Respiração. Um Kanji errado em um momento certo é desperdício. Um Kanji certo em um momento errado é arrogância com caligrafia.",
+        "Dano Verdadeiro foi removido. A Tinta não usa Dano Verdadeiro, Radiante ou Espiritual como tipo próprio. Quando um efeito precisava ferir diretamente, foi convertido para Cortante, Perfurante, Concussão, ou dano não reduzível em casos específicos de custo ou rebote.",
+        "Kanji Roxo é limitado por rodada. A Roleta do Caos é poderosa demais para ativar em todo acerto. Por isso, ela ocorre no máximo uma vez por turno ou rodada, conforme o caso.",
+        "A 10ª Forma não começa completa. O Tsunami da Criação Primordial só se torna domínio total no Nível 4. Antes disso, é uma zona poderosa, mas limitada. O usuário não reescreve o campo inteiro antes de aprender a segurar a própria mão."
+    ],
+    "resumo_mecanico": [
+        { "elemento": "Kanji Amarelo", "funcao": "Crítico ampliado" },
+        { "elemento": "Kanji Azul", "funcao": "Precisão e fluxo" },
+        { "elemento": "Kanji Branco", "funcao": "Redução de dano físico" },
+        { "elemento": "Kanji Roxo", "funcao": "Roleta do Caos" },
+        { "elemento": "Kanji Verde", "funcao": "Cura por turno" },
+        { "elemento": "Kanji Vermelho", "funcao": "Dano físico adicional" },
+        { "elemento": "Névoa de Tinta", "funcao": "Defesa e ocultação" },
+        { "elemento": "Cascata Purificadora", "funcao": "Remoção de status" },
+        { "elemento": "Bestas de Tinta", "funcao": "Distração e interceptação" },
+        { "elemento": "Fortaleza de Ferro", "funcao": "Proteção direta" },
+        { "elemento": "Traço Célere", "funcao": "Reposicionamento" },
+        { "elemento": "Tela em Branco", "funcao": "Controle sensorial" },
+        { "elemento": "Tinteiro Zen", "funcao": "Recuperação" },
+        { "elemento": "Pergaminho Selado", "funcao": "Prisão" },
+        { "elemento": "Final da História", "funcao": "Finalização ofensiva" },
+        { "elemento": "Tsunami Primordial", "funcao": "Domínio de suporte" }
+    ]
+}

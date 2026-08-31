@@ -1,0 +1,21 @@
+{
+    "name": "Visão Aguçada",
+    "rollRange": "48-58",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Olho Clínico",
+            "effect": "+1 Acerto, +1 Esquiva, +2 Percepção visual (rastreamento, leitura labial, armadilhas, ilusões, detalhes à distância, postura)."
+        },
+        {
+            "level": 6,
+            "name": "Análise de Combate",
+            "effect": "Após observar o mesmo inimigo por 2 rodadas, identifica padrão de combate dele. Bônus sobe pra +2 Acerto, +2 Esquiva contra esse inimigo até o fim do combate."
+        },
+        {
+            "level": 12,
+            "name": "Visão Preditiva",
+            "effect": "1x/combate, ao ver o inimigo usar técnica/ataque especial/Kekkijutsu, declara \"Eu vi\": na próxima repetição, ganha Vantagem na Defesa (aliados avisados: +2 Defesa). Custo: após 5 rodadas de combate, teste VIT CD 12; falha dá -1 Acerto e -2 Percepção visual até o fim do combate."
+        }
+    ]
+}

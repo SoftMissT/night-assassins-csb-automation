@@ -1,0 +1,26 @@
+{
+    "name": "Artista Marcial",
+    "subtitle": "O Corpo de Diamante",
+    "quote": "A katana corta. Eu trituro.",
+    "description": "O Artista Marcial não rejeitou a Respiração; ele a redirecionou. Enquanto outros Exterminadores conduzem o fôlego pela lâmina, ele o conduz aos ossos, tendões, punhos, cotovelos, joelhos e impacto direto da carne contra carne. Anos golpeando madeira, pedra e o próprio limite ensinaram uma verdade simples: o corpo também pode ser uma Nichirin, desde que sobreviva à própria forja. Artistas Marciais costumam lutar com ataques desarmados, manoplas, tonfas, bastões curtos, correntes leves ou armas flexíveis de curto alcance.",
+    "attributes": {
+        "pdv": "16 + VIT",
+        "pdr": "10 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Corpo de Diamante",
+            "level": 1,
+            "description": "Seus ataques desarmados contam como arma proficiente. Além disso, você pode escolher manoplas, tonfas, bastões curtos, correntes leves ou armas flexíveis de curto alcance como sua arma proficiente inicial. Quando você acerta dois ou mais ataques no mesmo turno contra o mesmo alvo usando ataques desarmados ou uma arma compatível com esta Origem, você inicia uma Cadeia de Impacto. O primeiro acerto causa dano normal. O segundo acerto causa +1 de dano. O terceiro acerto em diante causa +2 de dano. A Cadeia de Impacto termina se você errar um ataque, trocar de alvo ou usar uma Técnica de Respiração. Esta habilidade não se aplica a ataques feitos com armas longas, armas pesadas, armas de disparo ou Técnicas de Respiração."
+        },
+        {
+            "name": "Oito Portões",
+            "level": 6,
+            "description": "Uma vez por rodada, como Ação Livre, você pode gastar 2 PDR para abrir um dos Oito Portões internos do corpo até o fim do seu turno. Escolha um dos efeitos abaixo: Portão da Força: seu próximo ataque corpo a corpo neste turno causa +1d6 de dano. Portão da Rocha: você recebe Redução de Dano 2 contra o próximo dano físico sofrido até o início do seu próximo turno. Portão da Velocidade: você pode se mover +3m neste turno ou se reposicionar após acertar um ataque corpo a corpo. Você só pode ativar um Portão por rodada."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 1
+    }
+}

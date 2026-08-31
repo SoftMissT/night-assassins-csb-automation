@@ -1,0 +1,21 @@
+{
+    "name": "Sem Habilidade",
+    "rollRange": "01-25",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Sem Dom",
+            "effect": "Sem bônus, sem maldição."
+        },
+        {
+            "level": 2,
+            "name": "Caminho Próprio",
+            "effect": "Evolui só por Origem, Respiração, Especialização, equipamento e decisões narrativas."
+        },
+        {
+            "level": 3,
+            "name": "Livre de Maldição",
+            "effect": "Nunca sofre custo, compulsão ou fraqueza vinda de Dom do Sangue."
+        }
+    ]
+}

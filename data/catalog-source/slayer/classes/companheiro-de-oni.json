@@ -1,0 +1,38 @@
+{
+    "name": "Companheiro de Oni",
+    "oneLiner": "dois seres perigosos lutando lado a lado porque escolheram confiar um no outro o Oni intercepta o que mataria o Exterminador, mas isso cobra consequências e nunca é escudo infinito.",
+    "specialRules": [
+        {
+            "title": "Sobre o Oni Companheiro",
+            "description": "O Oni Companheiro tem ficha própria, aprovada pelo Mestre, e progride junto com o Exterminador até o limite da campanha. Ele não é um segundo personagem sem custo: só age fora do próprio turno quando a habilidade permitir, não concede ações extras ao Exterminador salvo indicado, e não é objeto sem vontade fome, instinto ou lealdade podem exigir teste ou interpretação."
+        }
+    ],
+    "ranks": [
+        {
+            "rank": "C",
+            "name": "Cercar & Proteger",
+            "description": "Reação do Oni, 1x/rodada, custa 2 PDK, gatilho: Exterminador falha Esquiva/Bloqueio, Oni a até 3m. O Oni faz nova defesa contra o mesmo ataque com -2. Se passar, o ataque atinge o Oni em vez do Exterminador. Contra múltiplos acertos, defende só uma instância (o Oni escolhe qual). Não funciona se o Oni estiver Atordoado/Paralisado/impedido de agir, contra ataques não interceptáveis fisicamente, ou separado por barreira total."
+        },
+        {
+            "rank": "B",
+            "name": "Guarda Vinculada",
+            "description": "Remove o -2 de Cercar & Proteger (defesa normal). Reposicionamento Protetor: depois de usá-la, o Oni pode se mover até 1,5m pra ficar adjacente ao Exterminador ou entre ele e o atacante (sem ação extra, sem teleporte, sem atravessar inimigos/terreno difícil). Presença de Guarda: após o uso bem-sucedido, o próximo ataque corpo a corpo do mesmo inimigo contra o Exterminador sofre -1 no acerto até o início do próximo turno dele (não acumula)."
+        },
+        {
+            "rank": "A",
+            "name": "Resistência Elemental",
+            "description": "O Oni ganha Resistência a um tipo de dano coerente com Kekkijutsu/origem/mutação/história/treino conjunto escolha que não deve mudar livremente entre combates sem justificativa narrativa. Escudo Instintivo: 1x/rodada, se Cercar & Proteger interceptar um ataque do tipo resistido, aplica a Resistência antes de qualquer outro cálculo defensivo. Não concede resistência ao Exterminador, não anula dano, não afeta efeitos sem tipo de dano claro."
+        },
+        {
+            "rank": "S",
+            "name": "Presença Intimidadora",
+            "description": "Com o Oni presente e influenciando a cena, o Exterminador ganha +2 em testes de Carisma em situações sociais fora de combate (intimidar, pressionar, impor respeito, negociar). Presença Ambígua: o Mestre pode negar/penalizar se a presença do Oni assustar civis, gerar rejeição de Kakushi ou desconfiança da Corporação. Juramento Visível: se usada pra evitar violência contra inocentes de forma exemplar, o Mestre pode trocar o bônus por Vantagem (deve ser raro)."
+        },
+        {
+            "rank": "SS",
+            "name": "Sinergia de Kekkijutsu",
+            "description": "O Kekkijutsu do Oni vira elemento de sinergia com a Respiração do Exterminador. Ataque Coordenado: 1x/rodada, se a Técnica de Respiração do Exterminador acertar um alvo que o Oni também acertou desde o último turno dele, escolha 1: Pressão Conjunta (-1 Esquiva/Bloqueio do alvo contra o próximo ataque de qualquer um dos dois), Rastro de Sangue (+1 rodada de duração num efeito contínuo já causado, não acumula) ou Abertura Demoníaca (+1 no acerto do próximo ataque do Oni contra esse alvo). Exige ambos conscientes, percebendo o mesmo alvo, sem controle inimigo, e o Oni não ter traído/fugido na cena. Nunca duplica dano completo, nunca dá ação extra, nunca ignora custo."
+        }
+    ],
+    "balanceNote": "perigoso por somar um corpo ao combate, absorver ataques fatais e abrir sinergia entre duas fichas por isso precisa de limites claros e nunca deve virar \"segunda ficha grátis\"."
+}

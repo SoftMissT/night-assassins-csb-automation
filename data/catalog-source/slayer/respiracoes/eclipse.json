@@ -1,0 +1,198 @@
+{
+    "titulo": "Respiração do Eclipse",
+    "aliases": ["Eclipse Breathing", "Nisshoku no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "poema": {
+        "titulo": "O Caminho do Eclipse",
+        "estrofes": [
+            "Entre o brilho e a sombra, estou perdido,\nLua e sol, destinos já esculpidos.\nCom a espada em punho, desejo apartar,\nMas meu coração hesita: onde devo lutar?",
+            "A luz do sol, ardente, me chama a avançar,\nA calma da lua me pede para parar.\nMas nem luz nem sombra são meu lugar,\nBusco no eclipse meu lar a encontrar.",
+            "Quando a lua na sombra do mundo repousa,\nO céu revela sua dança silenciosa.\nNem luz, nem trevas, mas o equilíbrio visto,\nÉ ali que escolho trilhar meu mito.",
+            "O caminho do eclipse, entre o ser e o não,\nReflete a beleza da eterna transição.\nNão é força ou glória que desejo seguir,\nMas o oculto encanto que há em existir."
+        ]
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "União Solar-Lunar",
+            "nome_romaji": "Ichi no Kata Jitsugetsu Ittai",
+            "tipo_de_acao": "Variável",
+            "descricao": "Com o conhecimento sobre as duas formas primordiais que deram origem a todas as outras, esta forma foi criada para amplificar técnicas de aliados, como se a sombra do usuário pairasse sobre o movimento do companheiro, criando uma ilusão de forma conjunta.",
+            "declaracao": "Deve ser feita durante o turno do aliado. Em contrapartida, no próximo turno do usuário, as ações gastas na amplificação não estarão disponíveis.",
+            "exemplo": "Se um aliado usa uma forma que gasta uma Ação de Ataque, o usuário gasta uma Ação de Ataque para amplificar e em seu próximo turno não poderá usar essa ação. A Primeira Forma é ativada por um gatilho fora do próprio turno.",
+            "custo": "PDR da técnica do aliado + 1 PDR",
+            "restricoes": [
+                "Não ajuda na obtenção de pontos, marcas, acúmulos ou passivas como Status de Quebra.",
+                "Para amplificações em que o aliado aplica um valor fixo (sem dados), o bônus é igual ao Nível de Respiração utilizado nesta forma."
+            ],
+            "bonus_por_tipo_de_tecnica_amplificada": {
+                "dano": [
+                    { "nivel": 1, "bonus": "+2 dados do tipo padrão da técnica do aliado" },
+                    { "nivel": 2, "bonus": "Anterior + FDV" },
+                    {
+                        "nivel": 3,
+                        "bonus": "+3 dados do tipo padrão da técnica do aliado + 2× FDV"
+                    },
+                    { "nivel": 4, "bonus": "+5 dados do tipo padrão da técnica do aliado + 2× FDV" }
+                ],
+                "buff": [
+                    { "nivel": 1, "bonus": "+1 ao bônus principal da técnica" },
+                    { "nivel": 2, "bonus": "+2 ao bônus principal da técnica" },
+                    { "nivel": 3, "bonus": "Dobra o bônus principal + 1" },
+                    { "nivel": 4, "bonus": "Dobra o bônus principal + metade da CAR" }
+                ],
+                "cura": [
+                    { "nivel": 1, "bonus": "+1 dado de cura do tipo padrão" },
+                    { "nivel": 2, "bonus": "+1 dado de cura + metade da SAB (mín. 1)" },
+                    { "nivel": 3, "bonus": "+2 dados de cura + SAB" },
+                    { "nivel": 4, "bonus": "+3 dados de cura + SAB" }
+                ],
+                "debuff": [
+                    { "nivel": "1–2", "extensao_de_duracao": "+1 turno" },
+                    { "nivel": 3, "extensao_de_duracao": "+2 turnos" },
+                    { "nivel": 4, "extensao_de_duracao": "+1d4 + 1 turnos" }
+                ]
+            }
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Luz e Sombra",
+            "nome_romaji": "Ni no Kata Meian",
+            "tipo_manobra": "Ataque",
+            "descricao": "Dois cortes lançados em qualquer direção, que podem ser disparados como projéteis devido à força empregada para realizar esses dois movimentos em meia-lua.",
+            "niveis": [
+                { "nivel": 1, "dano_total": "4d6", "custo": "3 PDR" },
+                { "nivel": 2, "dano_total": "6d6", "custo": "4 PDR" },
+                { "nivel": 3, "dano_total": "6d6 + FDV", "custo": "5 PDR" },
+                { "nivel": 4, "dano_total": "8d6 + FDV", "custo": "6 PDR" }
+            ],
+            "passiva_especial": {
+                "nome": "Conceptáculo Penumbral",
+                "descricao": "Sua respiração é derivada das duas respirações primordiais, tornando seus ataques adaptáveis para a maioria das respirações descendentes. Aliados de certas Árvores de Origem recebem bônus ao ser afetados pela 2ª Forma.",
+                "bonus_por_arvore_de_origem": [
+                    {
+                        "arvore": "Água",
+                        "bonus": "Bônus de deslocamento igual à distância percorrida pelo corte da 2ª Forma (+2m por padrão)"
+                    },
+                    {
+                        "arvore": "Chamas",
+                        "bonus": "+5 Pontos de Esquentar de Arma temporários até o final do próximo turno"
+                    },
+                    {
+                        "arvore": "Pedra",
+                        "bonus": "Ganha VIT ou metade de FDV (à escolha) na rolagem do próximo acerto"
+                    },
+                    {
+                        "arvore": "Trovão",
+                        "bonus": "Pode gastar +2 PDR para impulsionar o corte; bônus de dano: 2d6 (Trovejante ou Sonoro, à escolha)"
+                    },
+                    {
+                        "arvore": "Vento",
+                        "bonus": "Sem custo de ação: realiza um teste de acerto junto ao usuário do Eclipse; se igual ou maior, aplica sangramento bônus de 1d4 + Nível de Respiração do aliado (críticos dobram normalmente)"
+                    }
+                ]
+            }
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Pseudo-Anoitecer",
+            "nome_romaji": "San no Kata Nisegure",
+            "tipo_manobra": "Reação",
+            "descricao": "Pode ser conjurada contra ataques ao próprio usuário ou a aliados dentro do alcance da arma. Escolha entre duas opções.",
+            "opcoes": [
+                {
+                    "opcao": "Acerto",
+                    "efeito": "Testa acerto contra o acerto do inimigo. Sucesso: anula o golpe completamente; se for ataque físico, devolve dano igual ao padrão da arma do inimigo. Crítico: devolve o dobro",
+                    "custo": "4 PDR"
+                },
+                {
+                    "opcao": "Esquiva",
+                    "efeito": "Anula o dano para o usuário e, se for ataque em área, pode anulá-lo também para 1 aliado a até 2m. Crítico: o aliado incluído pode gastar 6 PDR para adicionar mais um aliado",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Eclipse Escaldante",
+            "nome_romaji": "Shi no Kata Shakunetsu no Nisshoku",
+            "tipo_manobra": "Única",
+            "descricao": "Uma sucessão de golpes rápidos que deixam um rastro negro com bordas reluzentes como a lua em um eclipse, manchando o corpo do alvo com o rastro escuro. No total são 4 ataques com 4 rolagens de acerto. Esta forma não causa dano diretamente, mas aplica efeitos conforme o número de acertos.",
+            "bonus_condicional": "Cada acerto crítico com esta forma concede +1 ataque adicional.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "ate_2_acertos": "Metade do dano padrão da arma por ataque",
+                    "3_ou_mais_acertos": "Status Supressão",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "ate_2_acertos": "Dano padrão da arma por ataque",
+                    "3_ou_mais_acertos": "Status Supressão",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "ate_2_acertos": "Dano padrão da arma + metade do Nível de Respiração",
+                    "3_ou_mais_acertos": "Status Supressão",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "ate_2_acertos": "Dano padrão da arma por ataque",
+                    "3_ou_mais_acertos": "Status Supressão por 2 turnos (ao invés do padrão)",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Eclipse Verdadeiro",
+            "nome_romaji": "Go no Kata Shin no Nisshoku",
+            "tipo_manobra": "Completa + Única",
+            "descricao": "Ao declarar, cria um efeito de campo com duração de 3 rodadas, semelhante à Nona Forma da Lua. Nas primeiras duas rodadas, inimigos dentro do domínio devem testar SAB ou VIT ou têm seus pontos de KKJ reduzidos em 2× o Nível de Respiração do usuário. Ao ativar, escolha entre as duas variações.",
+            "eclipse_lunar": {
+                "descricao": "A Terra está entre o Sol e a Lua, projetando sua sombra sobre a Lua.",
+                "fases": [
+                    {
+                        "fase": "Anular",
+                        "rodada": "1ª",
+                        "efeito": "Aliados testam FDV (C.D. 18); sucesso: redução de −1 PDR no gasto de técnicas (mínimo 1 PDR sempre). Se o usuário passar, tem vantagem no teste da fase Parcial"
+                    },
+                    {
+                        "fase": "Parcial",
+                        "rodada": "2ª",
+                        "efeito": "Aliados e usuário testam FDV (C.D. 18); sucesso: o usuário pode escolher 2 aliados que passaram na fase Anular para realizarem qualquer técnica de respiração dentro do turno do usuário"
+                    },
+                    {
+                        "fase": "Completa",
+                        "rodada": "3ª",
+                        "efeito": "Se aliados obtiveram sucesso em alguma das fases anteriores, escolha: (A) você + 1 aliado, ou (B) 2 aliados realizam um Ultra-Combo no turno do usuário sem a exaustão padrão. Se escolher (B), pode ainda aplicar o Conceptáculo Penumbral conforme a Árvore de origem dos aliados no combo"
+                    }
+                ]
+            },
+            "eclipse_solar": {
+                "descricao": "A Lua passa entre a Terra e o Sol, bloqueando parcial ou totalmente a luz solar.",
+                "fases": [
+                    {
+                        "fase": "Anular",
+                        "rodada": "1ª",
+                        "efeito": "Luz artificial do sol em campo: caçadores ganham bônus em qualquer teste igual a metade do Nível de Respiração do usuário, até o fim da fase Parcial"
+                    },
+                    {
+                        "fase": "Parcial",
+                        "rodada": "2ª",
+                        "efeito": "Onis recuperam os KKJ perdidos na 1ª rodada (mais confortáveis com a falta de luz). Aliados testam FDV (C.D. 16); sucesso: margem de crítico −1 (o mesmo vale para o usuário)"
+                    },
+                    {
+                        "fase": "Completa",
+                        "rodada": "3ª",
+                        "efeito": "Onis ganham bônus em testes igual ao Nível de Respiração deles e aliados também. O usuário testa FDV (C.D. 18); sucesso: escolhe um bônus do Conceptáculo Penumbral para aplicar em seus ataques. Bônus especial: se o usuário cair a 0 PDV durante o Eclipse, ao invés de teste de morte realiza um teste de acerto com vantagem; sucesso: morde o Oni e ganha os benefícios de Transformação Demoníaca (ou, se já tiver esse poder, pode ativá-la em qualquer fase, estendendo o Eclipse por +1 rodada)"
+                    }
+                ]
+            }
+        }
+    ]
+}

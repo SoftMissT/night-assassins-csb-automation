@@ -1,0 +1,20 @@
+{
+    "number": 7,
+    "name": "Oni Comum",
+    "description": "Você não foi escolhido por destino, linhagem ou grande trauma. O sangue demoníaco encontrou apenas medo, fome e instinto de sobrevivência. Você é o tipo mais simples de Oni. E é exatamente por isso que ainda é perigoso.",
+    "pdv": "18 + VIT",
+    "pdk": "8 + (FDV * 3)",
+    "passive": {
+        "name": "Regeneração Sombria",
+        "description": "No início de cada um dos seus turnos, você recupera 2 PDV. Essa regeneração não acontece se você sofreu dano de Nichirin, Glicínia ou Solar desde o seu último turno."
+    },
+    "abilities": [
+        {
+            "name": "Frenesi de Fome",
+            "cost": "2 PDK",
+            "action": "Ação de Ataque",
+            "target": "uma criatura adjacente",
+            "description": "Você realiza um ataque desarmado com mordida, garra ou golpe predatório. Se acertar, causa o dano normal do seu ataque desarmado e recupera 1 PDK. Se o alvo estiver com metade ou menos do PDV máximo, você recupera 2 PDK. Esta habilidade só recupera PDK se causar dano."
+        }
+    ]
+}

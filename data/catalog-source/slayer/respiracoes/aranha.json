@@ -1,0 +1,253 @@
+{
+    "titulo": "Respiração da Aranha",
+    "aliases": ["Spider Breathing", "Kumo no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Corrente de Teias Traçantes",
+            "nome_romaji": "Ichi no Kata Uebu Chēn no Torēsu",
+            "tipo_manobra": "Especial",
+            "descricao": "Quando realizar um ataque padrão ou proveniente de uma técnica, evoca um emaranhado de teias que acompanha a lâmina ou projétil para causar efeitos no inimigo. A declaração de uso deve ser feita antes da rolagem de ataque. Escolha um dos três efeitos abaixo, aplicado apenas se o ataque for bem-sucedido.",
+            "variacoes": [
+                {
+                    "nome": "Enredar Presa",
+                    "niveis": [
+                        {
+                            "nivel": 1,
+                            "efeito": "Restrição de Movimentos parcial: deslocamento reduzido à metade (dura 2 turnos, não acumulável com a própria técnica)",
+                            "custo": "1 PDR"
+                        },
+                        {
+                            "nivel": 2,
+                            "efeito": "Deslocamento reduzido à metade + −2 em rolagens de esquiva (dura 2 turnos, não acumulável com a própria técnica)",
+                            "custo": "1 PDR"
+                        },
+                        {
+                            "nivel": 3,
+                            "efeito": "Deslocamento reduzido à metade + −3 em rolagens de esquiva (dura 2 turnos, não acumulável com a própria técnica)",
+                            "custo": "2 PDR"
+                        },
+                        {
+                            "nivel": 4,
+                            "efeito": "Deslocamento reduzido à metade + impossibilita rolagens de esquiva (dura 2 turnos, não acumulável com a própria técnica)",
+                            "custo": "3 PDR"
+                        }
+                    ]
+                },
+                {
+                    "nome": "Perfuração",
+                    "niveis": [
+                        {
+                            "nivel": 1,
+                            "efeito": "Dano bônus igual a DEX (perfurante)",
+                            "custo": "1 PDR"
+                        },
+                        {
+                            "nivel": 2,
+                            "efeito": "Dano bônus igual a DEX + 2 (perfurante)",
+                            "custo": "1 PDR"
+                        },
+                        {
+                            "nivel": 3,
+                            "efeito": "Dano bônus igual a DEX + 2 (perfurante) + sangramento igual a FDV por 2 turnos (não acumulável)",
+                            "custo": "2 PDR"
+                        },
+                        {
+                            "nivel": 4,
+                            "efeito": "Dano bônus igual a DEX + 4 (perfurante) + sangramento igual a FDV + 2 por 2 turnos (não acumulável)",
+                            "custo": "3 PDR"
+                        }
+                    ]
+                },
+                {
+                    "nome": "Terror",
+                    "niveis": [
+                        {
+                            "nivel": 1,
+                            "cd_teste_fdv_inimigo": "8 + CAR",
+                            "consequencia_da_falha": "Perde a Ação Especial no próximo turno",
+                            "custo": "1 PDR"
+                        },
+                        {
+                            "nivel": 2,
+                            "cd_teste_fdv_inimigo": "10 + CAR",
+                            "consequencia_da_falha": "Perde a Ação Especial no próximo turno",
+                            "custo": "1 PDR"
+                        },
+                        {
+                            "nivel": 3,
+                            "cd_teste_fdv_inimigo": "10 + CAR",
+                            "consequencia_da_falha": "Perde a Ação Especial e a Ação Única no próximo turno",
+                            "custo": "2 PDR"
+                        },
+                        {
+                            "nivel": 4,
+                            "cd_teste_fdv_inimigo": "12 + CAR",
+                            "consequencia_da_falha": "Perde a Ação Especial e a Ação Única no próximo turno",
+                            "custo": "3 PDR"
+                        }
+                    ]
+                }
+            ],
+            "passiva": {
+                "nome": "Sensação de Queda",
+                "descricao": "Sempre que aplicar um dos efeitos de Corrente de Teias Traçantes em um inimigo, pode declarar um novo ataque padrão contra o inimigo afetado. Esse novo ataque não contém o efeito anterior a menos que se declare novamente o uso da técnica, pagando o dobro do PDR para compensar a falta de Ação Especial disponível."
+            }
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Disparada",
+            "nome_romaji": "Ni no Kata Shotto",
+            "tipo_manobra": "Única",
+            "descricao": "Adquire velocidade aumentada temporariamente, incrementando o deslocamento neste turno.",
+            "niveis": [
+                { "nivel": 1, "bonus_deslocamento": "+3m", "custo": "1 PDR" },
+                { "nivel": 2, "bonus_deslocamento": "+5m", "custo": "1 PDR" },
+                { "nivel": 3, "bonus_deslocamento": "+7m", "custo": "2 PDR" },
+                { "nivel": 4, "bonus_deslocamento": "+9m", "custo": "2 PDR" }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Pular e Matar",
+            "nome_romaji": "San no Kata Janpu shite Korosu",
+            "tipo_manobra": "Ataque",
+            "descricao": "Um festival de ataques que abdica de qualquer guarda; o ímpeto da aranha em dilacerar sua presa abre mão das defesas para causar o máximo de dano possível em menos tempo.",
+            "debuff_fixo_todos_os_niveis": "Após usar esta técnica, recebe −2 em rolagens de esquiva e bloqueio até o início de seu próximo turno.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Transforma todas as ações restantes do turno em ações de ataque",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao anterior + +1 em rolagens de acerto até o fim do turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior → bônus de acerto passa a +2",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + +2 de dano por acerto até o fim do turno",
+                    "custo": "3 PDR"
+                }
+            ],
+            "combo_com_2a_forma": "Se utilizada logo após a 2ª Forma, além dos efeitos indicados, a taxa de crítico diminui em 1 para cada Nível de Respiração do usuário. Exemplo: Nível 3 → crítico 3 pontos abaixo do limiar normal da arma."
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Vingança",
+            "nome_romaji": "Shi no Kata Fukushū",
+            "tipo_manobra": "Ataque",
+            "requisito": "Ter recebido um ataque inimigo não defendido durante o último turno dele.",
+            "descricao": "Declare como alvo o inimigo que lhe acertou com sucesso durante seu último turno e carregue um ataque venenoso mirando suas fraquezas. O dano de veneno é considerado efeito de contato e aplicado no início do turno do inimigo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_acerto": "+1",
+                    "dano_de_veneno": "1d4 + FDV",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_acerto": "+1",
+                    "dano_de_veneno": "2d6 + FDV",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_acerto": "+1",
+                    "dano_de_veneno": "2d6 + FDV",
+                    "efeito_adicional": "Inimigo testa FDV ou SAB (à escolha dele) contra C.D. 10 + CAR; falha: amedrontado até o início de seu próximo turno",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_acerto": "+1",
+                    "dano_de_veneno": "2d8 + FDV",
+                    "efeito_adicional": "Inimigo testa FDV ou SAB (à escolha dele) contra C.D. 12 + CAR; falha: amedrontado até o início de seu próximo turno",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "O Brilho dos Olhos Mortos",
+            "nome_romaji": "Go no Kata Shinda Me no Kagayaki",
+            "tipo_manobra": "Especial",
+            "descricao": "Os olhos do usuário ficam com um aspecto perdido no vazio, como se focassem em tudo, a todo tempo, em qualquer lugar. Um estado de transe em que a aranha permanece atenta aos arredores para atacar de surpresa e evitar ser surpreendida. Levemente assustador para aliados, mas eficaz.",
+            "duracao": "Os bônus duram 5 minutos ou até que um combate se inicie e o primeiro turno desse combate seja finalizado.",
+            "niveis": [
+                { "nivel": 1, "bonus_sab_dex": "+1", "bonus_iniciativa": null, "custo": "1 PDR" },
+                { "nivel": 2, "bonus_sab_dex": "+2", "bonus_iniciativa": null, "custo": "2 PDR" },
+                { "nivel": 3, "bonus_sab_dex": "+2", "bonus_iniciativa": "+3", "custo": "3 PDR" },
+                { "nivel": 4, "bonus_sab_dex": "+2", "bonus_iniciativa": "+5", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "A Imparável Linha do Destino",
+            "nome_romaji": "Roku no Kata Tomaranai Unmei-sen",
+            "tipo_manobra": "Movimento + Especial",
+            "descricao": "Esta técnica possui duas variações conforme a situação.",
+            "variacoes": [
+                {
+                    "nome": "Variação 1 - Exclusiva para Atacantes à Distância",
+                    "descricao": "Após acertar um ataque à distância (padrão ou via técnica), um fio tênue e mortal de teia prateada é disparado em direção ao inimigo. Esse fio atravessa pele e músculos, prendendo-se a órgãos vitais; conforme o usuário se afasta, o fio aperta ainda mais, causando dano crescente.",
+                    "condicoes_para_desfazer_o_fio": [
+                        "O inimigo engaja em corpo a corpo com o usuário da Aranha.",
+                        "O usuário decide desprender o fio voluntariamente.",
+                        "O usuário é nocauteado ou atordoado."
+                    ],
+                    "aplicacao_automatica": "Não é necessária rolagem de acerto para os danos de teia. Eles são aplicados automaticamente desde que o ataque à distância tenha acertado e o custo de PDR tenha sido pago.",
+                    "niveis": [
+                        {
+                            "nivel": 1,
+                            "dano_por_metro_afastado": "1 de dano perfurante",
+                            "custo": "2 PDR"
+                        },
+                        {
+                            "nivel": 2,
+                            "dano_por_metro_afastado": "2 de dano perfurante",
+                            "custo": "3 PDR"
+                        },
+                        {
+                            "nivel": 3,
+                            "dano_por_metro_afastado": "2 de dano perfurante + 1 de envenenamento (início do turno inimigo)",
+                            "custo": "4 PDR"
+                        },
+                        {
+                            "nivel": 4,
+                            "dano_por_metro_afastado": "2 de dano perfurante + 2 de envenenamento (início do turno inimigo)",
+                            "custo": "5 PDR"
+                        }
+                    ]
+                },
+                {
+                    "nome": "Variação 2 - Reação",
+                    "descricao": "Lança uma rede de teias fortes à frente para impedir um ataque de chegar até você. Utilizável apenas contra ataques à distância.",
+                    "niveis": [
+                        {
+                            "nivel": "Níveis 1–2",
+                            "efeito": "Soma DEX ou FDV (à sua escolha) a uma rolagem de bloqueio declarada contra o ataque que gerou esta reação",
+                            "custo": "2 PDR"
+                        },
+                        {
+                            "nivel": "Níveis 3–4",
+                            "efeito": "Soma DEX ou FDV (à sua escolha) a todas as rolagens de bloqueio contra o ataque que gerou esta reação; útil contra técnicas com múltiplos acertos",
+                            "custo": "4 PDR"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

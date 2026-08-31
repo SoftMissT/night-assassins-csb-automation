@@ -1,0 +1,21 @@
+{
+    "number": 17,
+    "name": "Oni da Chama Negra",
+    "description": "Você nasceu do que o fogo não conseguiu apagar. Seu corpo carrega marcas de cinza, brasas escuras e calor morto. A chama que você manifesta não ilumina. Ela escurece, corrói e impede que a carne lembre como se curar.",
+    "pdv": "20 + VIT",
+    "pdk": "19 + (FDV * 3)",
+    "passive": {
+        "name": "Cinzas que Permanecem",
+        "description": "Quando você causa dano de Fogo ou Necrótico em uma criatura, ela recebe -1 na próxima cura de PDV que receber antes do início do seu próximo turno. Contra Onis ou criaturas com regeneração, esse efeito aplica Regeneração Suprimida até o início do seu próximo turno. Esse efeito só pode afetar a mesma criatura 1 vez por rodada."
+    },
+    "abilities": [
+        {
+            "name": "Brasa Negra",
+            "cost": "3 PDK",
+            "action": "Ação de Ataque",
+            "range": "9m",
+            "test": "ataque com FDV contra Defesa do alvo",
+            "description": "Você dispara ou espalha uma chama escura que não queima como fogo comum. Ela gruda na carne e apaga a recuperação do corpo. Acerto: causa 1d8 + FDV de Dano de Fogo. Além disso, o alvo deve fazer 1d20 + VIT contra CD 10 + FDV do Oni. Falha: o alvo fica Em Chamas até o início do próximo turno dele. Se o alvo já estiver com Regeneração Suprimida, o dano aumenta em +1d6. Erro: nada acontece."
+        }
+    ]
+}

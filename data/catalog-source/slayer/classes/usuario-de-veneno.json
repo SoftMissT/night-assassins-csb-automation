@@ -1,0 +1,39 @@
+{
+    "name": "Usuário de Veneno",
+    "oneLiner": "o Exterminador que vence por desgaste cada acerto continua ferindo depois que a lâmina já saiu, e o inimigo cura cada vez menos.",
+    "improves": "aplicação de veneno, dano recorrente no início do turno inimigo, ataques adicionais, múltiplas doses de veneno, redução de cura/regeneração inimiga.",
+    "specialRules": [
+        {
+            "title": "Ataques válidos e Efeito de Contato",
+            "description": "Vale pra ataques com rolagem de acerto que atingem alvo diretamente e causam dano de arma/fixo/básico. Não vale pra dano automático, área sem alvo direto, terreno, aura, Sangramento, ou Envenenamento já ativo. Até o Rank S, o Veneno do Usuário é Efeito de Contato: só pode ser aplicado 1x por ação, mesmo com múltiplos acertos na mesma ação."
+        }
+    ],
+    "ranks": [
+        {
+            "rank": "C",
+            "name": "Envenenar",
+            "description": "Ao acertar, aplica Veneno do Usuário: CAR de dano no início de cada turno do alvo, por 2 rodadas. Renova a duração se reaplicado; não acumula consigo mesmo; não afeta imunes a veneno."
+        },
+        {
+            "rank": "B",
+            "name": "Veneno Agravado",
+            "description": "O dano sobe pra CAR + 2, duração vira 3 rodadas. Persistência Tóxica: reacertar um alvo já envenenado renova a duração pro máximo, e o alvo sofre -1 em testes pra resistir/tratar/remover esse veneno (não acumula)."
+        },
+        {
+            "rank": "A",
+            "name": "Ataque Adicional",
+            "description": "1x/turno, ao declarar Ação de Ataque, faça um ataque adicional (nova rolagem, dano normal da arma). Pode aplicar veneno respeitando o Efeito de Contato se a ação já aplicou veneno, o ataque adicional não aplica de novo. Não é Técnica de Respiração/Kekkijutsu, não ativa Nitoryu/Ryōtō/Terceiro Corte de novo, não funciona Atordoado/Paralisado/impedido de atacar."
+        },
+        {
+            "rank": "S",
+            "name": "Maestria Suprema",
+            "description": "O veneno deixa de ser Efeito de Contato cada ataque válido que acertar pode aplicar uma instância. Um alvo aguenta até 3 instâncias simultâneas, cada uma com sua própria duração; todas causam dano juntas no início do turno dele. Se já tiver 3 e for envenenado de novo: renove uma existente ou substitua a de menor duração."
+        },
+        {
+            "rank": "SS",
+            "name": "Corta-Cura",
+            "description": "Inimigos que começam o turno envenenados por você têm cura/regeneração recebida reduzida em 50% (arredonda pra cima) até o início do próximo turno deles. Ferida Tóxica: com 3 instâncias ativas, o alvo também sofre -1 Esquiva/Bloqueio até o início do próximo turno (não acumula). Não afeta cura de aliados, nem imunes ao seu veneno, nem restauração que diga explicitamente que não pode ser reduzida."
+        }
+    ],
+    "balanceNote": "não compete em dano imediato com Mestre de Batalha vence no atraso, forçando o inimigo a gastar ações se tratando enquanto a cura dele rende cada vez menos."
+}

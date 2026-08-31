@@ -1,0 +1,97 @@
+{
+    "titulo": "Respiração do Cristal",
+    "aliases": ["Crystal Breathing", "Kurisutaru no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "progressao_por_nivel_de_respiracao": "O usuário da Respiração do Cristal não tem melhorias nas técnicas com o passar dos Níveis de Respiração. Em vez disso, seus bônus escalam por meio da Passiva Especial Lótus Prismática.",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Espelhos Reversos",
+            "nome_romaji": "Ichi no Kata Ribasumira",
+            "tipo_manobra": "Especial",
+            "custo_fixo_por_espelho": "2 PDR",
+            "maximo_simultaneo": "3 espelhos",
+            "descricao": "Cada uso cria um espelho de cristal próximo ao usuário. Durante o próximo turno, se o espelho estiver refletindo a imagem do inimigo, o usuário pode atacá-lo para causar dano ao inimigo com acerto automático, ao invés de atacá-lo diretamente. Quando o usuário receber um ataque que cause no mínimo 1 de dano, um espelho é destruído.",
+            "mecanica_de_reflexo": "Role 1d6. Se o resultado for igual ou menor ao número de espelhos ativos, a reflexão do inimigo está em um deles."
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Esmeraldas Cintilantes",
+            "nome_romaji": "Ni no Kata Kagayaku Emerarudo",
+            "tipo_manobra": "Especial",
+            "custo_de_ativacao": "3 PDR",
+            "descricao": "Aplica a cor verde à Nichirin. Os ataques passam a poder ser lançados à distância. Enquanto ativa, recupera 1d4 + Nível de Respiração de PDV no início de cada turno.",
+            "condicoes_extras": [
+                { "condicao": "Usuário já à distância", "bonus": "+1 em rolagens de acerto" },
+                {
+                    "condicao": "Lutando em Floresta",
+                    "bonus": "+1 de dano por acerto em ataques padrão e técnicas, escalando +1 por Nível de Respiração acima do 1 (máximo +4 no Nível 4)"
+                }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Topázio das Profundezas",
+            "nome_romaji": "San no Kata Fukai Tokoro Kara no Topazu",
+            "tipo_manobra": "Especial",
+            "custo_de_ativacao": "3 PDR",
+            "descricao": "Aplica a cor azul à Nichirin. As rolagens de acerto padrão necessitam de 1 a menos naturalmente no dado para serem críticas. Concede também +2 em rolagens para realizar a Respiração da Recuperação.",
+            "condicoes_extras": [
+                {
+                    "condicao": "Lutando perto de Rio, Lago ou Mar",
+                    "bonus": "+1 de acerto por acerto em ataques padrão e técnicas, escalando +1 por Nível de Respiração acima do 1 (máximo +4 no Nível 4)"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Rubi da Princesa",
+            "nome_romaji": "Shi no Kata Purinsesu Rubi",
+            "tipo_manobra": "Especial",
+            "custo_de_ativacao": "4 PDR",
+            "descricao": "Aplica a cor vermelha à Nichirin. Os ataques passam a infligir dano com Status de Ferida. A cada acerto, ganha +1 em bloqueio contra qualquer ataque realizado contra você.",
+            "condicoes_extras": [
+                {
+                    "condicao": "Lutando perto de Montanha ou Vulcão",
+                    "bonus": "+1 de Bloqueio + +1 de PDR Máximo temporário"
+                }
+            ],
+            "bonus_condicional": {
+                "nome": "Contra-ataque por Bloqueio Superior",
+                "efeito": "Ao bloquear um ataque com sucesso e uma diferença de 3 ou mais entre a rolagem de ataque do inimigo e a sua rolagem de bloqueio, pode executar imediatamente um número de ataques padrão de oportunidade igual ao seu Nível de Respiração atual."
+            }
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Ametista Enigmática",
+            "nome_romaji": "Go no Kata Nazo no Amejisuto",
+            "tipo_manobra": "Especial",
+            "custo_de_ativacao": "5 PDR",
+            "descricao": "Aplica a cor roxa à Nichirin. O primeiro ataque bem-sucedido de cada turno aplica 1 ponto de Exaustão ao inimigo. Os demais ataques causam 1d4 de dano bônus por Nível de Respiração. Ataques que aplicariam Envenenamento ou Sangramento ganham +1 de dano nesse status por acerto.",
+            "condicoes_extras": [
+                {
+                    "condicao": "Lutando em Grandes Cidades ou Vilarejos",
+                    "bonus": "+1 de Esquiva + +1 Ação de Ataque por turno"
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Diamante Aquarela",
+            "nome_romaji": "Roku no Kata Suisai Daiyamondo",
+            "tipo_manobra": "Completa",
+            "custo_fixo": "9 PDR",
+            "descricao": "O usuário torna-se invisível e inalvejável durante os próximos 3 turnos. Todas as rolagens de ataque são feitas com vantagem e o modificador de CAR é aplicado ao dano dos ataques padrão enquanto esta forma estiver ativa."
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Lótus Prismática",
+        "descricao": "Para cada Nível de Respiração, o usuário pode escolher um aliado próximo com sinergia para receber um dos seguintes benefícios no início do combate: +2 de PDR Máximo temporário até o final do combate; ou +2 de PDV Máximo temporário até o final do combate.",
+        "respiracoes_com_sinergia": [
+            "Respiração da Pedra",
+            "Respiração da Areia",
+            "Respiração da Luz"
+        ]
+    }
+}

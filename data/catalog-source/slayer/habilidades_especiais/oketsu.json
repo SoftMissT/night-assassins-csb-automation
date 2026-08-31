@@ -1,0 +1,22 @@
+{
+    "name": "Ōketsu",
+    "subtitle": "O Sangue Real",
+    "rollRange": "99",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Presença do Sangue",
+            "effect": "Vantagem no Acerto e na Defesa contra Onis. +2 PDR máximo por nível (retroativo). Sente presença Oni relevante até 30m."
+        },
+        {
+            "level": 6,
+            "name": "Aura do Sangue Real",
+            "effect": "1x/combate, Ação Especial: Onis até 6m testam FDV CD 10 + sua FDV; falha = Amedrontado 1 rodada (Onis fracos: 2 rodadas)."
+        },
+        {
+            "level": 12,
+            "name": "Ressonância Nichirin",
+            "effect": "Margem de Crítico com Nichirin contra Onis sobe +1. Ao critar um Oni, recupera 2 PDR (1x/rodada). Custo: após cada combate contra Onis, teste VIT CD 14 (CD 16 no Nível 3); falha = 1d6 de dano Necrótico e -1 VIT até descanso longo. Usar Aura do Sangue Real causa 2 de dano Necrótico automático."
+        }
+    ]
+}

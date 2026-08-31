@@ -1,0 +1,215 @@
+{
+    "titulo": "Respiração do Corvo",
+    "aliases": ["Crow Breathing", "Karasu no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva_kasugai_de_batalha": {
+        "descricao": "Diferente dos corvos mensageiros Kasugai, o seu corvo tem uma estranha paixão por ser efetivamente parte das batalhas. Difícil de controlar, mas conforme sua afinidade com ele cresce, você aprenderá que o melhor amigo do homem nem sempre é um cachorro. O corvo sempre age no final de seus turnos, podendo realizar uma das seguintes ações.",
+        "acoes": [
+            {
+                "nome": "Chamar Atenção",
+                "efeito": "O corvo começa a chamar atenção para si mesmo, emitindo sons e movimentos que prejudicam um inimigo alvo. Role 1d20 + 1 por Nível de Respiração contra uma rolagem de defesa do inimigo. Se bem-sucedido, o alvo tem −1 na rolagem de acerto contra o usuário até o final de seu próximo turno."
+            },
+            {
+                "nome": "Vigília",
+                "efeito": "O corvo sobrevoa o campo de batalha, atento a ataques inesperados. Sem necessidade de rolagem, qualquer inimigo Furtivo que tente atacar o Exterminador da Respiração do Corvo tem −2 na rolagem de acerto por Nível de Respiração deste Exterminador."
+            },
+            {
+                "nome": "Levar Mensagem",
+                "efeito": "O corvo pode ser enviado para se comunicar com qualquer Equipe, Exterminador, Kakushi ou Membro do Esquadrão a até 10 km de distância, entregando uma mensagem de uma única frase."
+            }
+        ]
+    },
+    "passiva_imitacao": {
+        "descricao": "Se o usuário tiver o traço Audição Aguçada, pode imitar a voz de qualquer ser vivo que tenha escutado por pelo menos 1 minuto (fora de combate) ou 3 rodadas (em combate). A imitação é extremamente fiel e pode forçar inimigos a fazerem testes de percepção com desvantagem para notar que não é a pessoa original, desde que o inimigo não tenha visão do usuário.",
+        "extra": "Além disso, o usuário aprendeu a se comunicar com corvos sem que saibam a língua humana, e a replicar perfeitamente sons e ruídos que escutar."
+    },
+    "passiva_dom_natural": "O usuário com origem Mestre de Uma Coisa Só pode escolher qualquer uma de suas seis técnicas para ser mestre, sem ter que seguir o padrão de dominar apenas a primeira.",
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Bater das Asas",
+            "nome_romaji": "Ichi no Kata Habataki",
+            "tipo_manobra": "Especial",
+            "descricao": "Lança inspiração aos aliados, concedendo-lhes uma leve impressão de bater de asas sobre suas costas enquanto se movem pelo campo de batalha, motivando-os a continuar lutando.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "aliados_afetados": "Até 2",
+                    "bonus_contra_kekkijutsus": "+1",
+                    "duracao": "2 rodadas",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "aliados_afetados": "Até 2",
+                    "bonus_contra_kekkijutsus": "+2",
+                    "duracao": "2 rodadas",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "aliados_afetados": "Até 2",
+                    "bonus_contra_kekkijutsus": "+3",
+                    "duracao": "2 rodadas",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "aliados_afetados": "Até 3",
+                    "bonus_contra_kekkijutsus": "+3",
+                    "duracao": "2 rodadas",
+                    "custo": "2 PDR"
+                }
+            ],
+            "observacao_bonus": "Aplica-se a testes de defesa comuns e testes de C.D.",
+            "status_motivado": "Quem estiver Motivado ignora penalidades de terreno difícil e pode escolher +1 Respiração para ter Sinergia (beneficiando-se de bônus de sinergia em técnicas), desde que essa respiração faça parte da mesma família/grupo de descendência da Respiração Original."
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Localizar e Reportar",
+            "nome_romaji": "Ni no Kata Mitsukete Hōkoku Suru",
+            "tipo_manobra": "Ataque",
+            "descricao": "Pode ser usado tanto dentro quanto fora de combate. Ordena ao corvo que rode um perímetro de até 500m, localizando possíveis alvos e evitando emboscadas.",
+            "fora_de_combate": "Teste de 1d20 + SAB contra C.D. 10 fixo. Se bem-sucedido, retorna informações úteis para a investigação em progresso. Acertos críticos sempre localizam um Oni ou revelam uma grande pista.",
+            "dentro_de_combate": [
+                {
+                    "nivel": "1–2",
+                    "efeito": "Estende o bônus da passiva Vigília para todos os aliados no campo de batalha",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": "3–4",
+                    "efeito": "Igual ao anterior + permite trocar a ordem de iniciativa de todo o grupo conforme a vontade de cada um. Pode ser feito apenas uma vez por combate",
+                    "custo": "2 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Impor Limites",
+            "nome_romaji": "San no Kata Seigen o Kasu",
+            "tipo_manobra": "Completa",
+            "descricao": "Concentra-se na respiração para lançar uma técnica em área: um domo de 5m de raio a partir do Exterminador, formado por uma barragem de corvos criados pela ilusão da técnica. Os corvos voam para todos os lados causando confusão caótica.",
+            "efeito_base_todos_os_niveis": "O domo impede inimigos de entrar e aliados de sair até o fim da rodada, concedendo um turno de manutenção ou preparação aos que joguem após o usuário mas antes do fim da rodada.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_fdv_e_car": "+2",
+                    "bonus_furtividade": "+2",
+                    "efeito_extra": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_fdv_e_car": "+2",
+                    "bonus_furtividade": "+4",
+                    "efeito_extra": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_fdv_e_car": "+3",
+                    "bonus_furtividade": "+6",
+                    "efeito_extra": "Aliados curam 1 ponto de Exaustão",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_fdv_e_car": "+3",
+                    "bonus_furtividade": "Vantagem",
+                    "efeito_extra": "Aliados curam 1 ponto de Exaustão, Amedrontamento ou Atordoamento",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Isso é Meu!",
+            "nome_romaji": "Shi no Kata Kore wa Watashi no Mono Desu!",
+            "tipo_manobra": "Reação",
+            "descricao": "Quando o inimigo realiza um ataque contra o usuário, após a resolução normal de acerto vs. defesa e aplicação de dano, a miragem do corvo avança contra o inimigo em padrões imprevisíveis. Faça uma rolagem para tentar roubar uma arma que o inimigo empunhe.",
+            "recuperacao_da_arma": "O inimigo só pode recuperar a arma sendo bem-sucedido em um ataque corpo a corpo contra o usuário posteriormente, gastando uma Ação Única.",
+            "niveis": [
+                {
+                    "nivel": "1–2",
+                    "rolagem_para_roubo": "1d20 + CAR vs. defesa do inimigo",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": "3–4",
+                    "rolagem_para_roubo": "1d20 + CAR + FDV vs. defesa do inimigo",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Centro das Atenções",
+            "nome_romaji": "Go no Kata Chūmoku no Mato",
+            "tipo_manobra": "Única + Reação",
+            "descricao": "No seu turno, adote uma postura focada em ser extravagante e chamativa enquanto controla o fluxo sanguíneo e os batimentos cardíacos para melhorar suas técnicas. Quando certos aliados forem alvo de ataques, pode usar esta técnica como Reação desde que tenha sido usada como Ação Única anteriormente. Usar a Reação remove os bônus ganhos pela Ação Única.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito_acao_unica_ate_o_inicio_do_proximo_turno": "Não é possível usar!",
+                    "efeito_reacao_apos_acao_unica_ativa": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "efeito_acao_unica_ate_o_inicio_do_proximo_turno": "Todos (incluindo você) imunes a Exaustão",
+                    "efeito_reacao_apos_acao_unica_ativa": "Chama o ataque para si; o alvo original ganha uma Ação de Ataque de Oportunidade contra o inimigo antes do ataque se resolver",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito_acao_unica_ate_o_inicio_do_proximo_turno": "Todos imunes a Exaustão e Acertos Críticos",
+                    "efeito_reacao_apos_acao_unica_ativa": "Igual ao Nível 2 + o aliado ganha +3 de acerto (efeito de contato) no ataque de oportunidade",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito_acao_unica_ate_o_inicio_do_proximo_turno": "Todos imunes a Exaustão e Acertos Críticos + +3 em FDV e CAR",
+                    "efeito_reacao_apos_acao_unica_ativa": "Igual ao Nível 3",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Vitória Prometida de Yatagarasu",
+            "nome_romaji": "Roku no Kata Yatagarasu no Shōri",
+            "tipo_manobra": "Ataque",
+            "requisito": "Requer um Corvo Kasugai para ser executada.",
+            "descricao": "A forma final e mais poderosa da Respiração do Corvo. O corvo emite um chamado em uma frequência específica, a mesma frequência de ressonância da lâmina Nichirin, fazendo-a vibrar em harmonia e aumentando tremendamente seu poder de corte. Enquanto o chamado for mantido ou repetido, o bônus permanece ativo. A vibração ressonante transmite tensão às mãos e braços, impedindo o uso contínuo por combatentes inexperientes. A cor do brilho que cobre a lâmina varia conforme o corvo que a \"encanta\".",
+            "observacao": "O dano adicional é efeito de contato aplicável uma vez por ação.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_em_ataques_padrao": "Não é possível usar!",
+                    "custo_de_ativacao": null,
+                    "custo_por_turno_mantido": null
+                },
+                {
+                    "nivel": 2,
+                    "bonus_em_ataques_padrao": "+2d8 de dano + ignora Resistências inimigas",
+                    "custo_de_ativacao": "3 PDR",
+                    "custo_por_turno_mantido": "+1 PDR/turno"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_em_ataques_padrao": "+4d8 de dano + ignora Resistências inimigas",
+                    "custo_de_ativacao": "4 PDR",
+                    "custo_por_turno_mantido": "+2 PDR/turno"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_em_ataques_padrao": "+6d8 de dano + 1 ataque bônus + ignora Resistências",
+                    "custo_de_ativacao": "5 PDR",
+                    "custo_por_turno_mantido": "+3 PDR/turno"
+                }
+            ]
+        }
+    ]
+}

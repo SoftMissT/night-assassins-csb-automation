@@ -1,0 +1,21 @@
+{
+    "number": 11,
+    "name": "Oni da Realidade Distorcida",
+    "description": "Sua transformação não quebrou apenas o corpo. Quebrou a forma como o mundo é percebido ao seu redor. Você distorce distância, sombra, som, reflexo e presença. Inimigos não sabem se estão vendo você, uma lembrança, um clone ou o próprio medo tomando forma.",
+    "pdv": "17 + VIT",
+    "pdk": "20 + (FDV * 3)",
+    "passive": {
+        "name": "Espelho da Loucura",
+        "description": "No início do combate, escolha INT ou SAB como seu Atributo de Distorção. Uma vez por rodada, quando um ataque contra você errar, você pode criar 1 Clone Ilusório adjacente. Você pode manter um número máximo de Clones Ilusórios igual ao seu Atributo de Distorção. Clones Ilusórios: não possuem PDV; desaparecem se forem atingidos; não causam dano; não bloqueiam movimento; servem apenas para confundir ataques contra você. Quando uma criatura atacar você enquanto houver pelo menos 1 Clone Ilusório ativo, role 1d10. Se o resultado for igual ou menor que o número de Clones Ilusórios ativos, o ataque atinge um clone em vez de você. O clone atingido desaparece."
+    },
+    "abilities": [
+        {
+            "name": "Ruptura da Percepção",
+            "cost": "4 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "test": "SAB do alvo contra CD 10 + INT ou SAB do Oni",
+            "description": "Escolha uma criatura que possa ver. O Oni força o alvo a enxergar uma versão impossível do campo de batalha. Falha: o alvo fica Confuso até o início do próximo turno do Oni. Falha por 5 ou mais: além de Confuso, o alvo também fica Amedrontado até o início do próximo turno do Oni. Sucesso: o alvo resiste ao efeito. Criaturas sem mente consciente são imunes a esta habilidade."
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "name": "Monge",
+    "subtitle": "O Pilar Espiritual",
+    "quote": "A força que protege os outros não pode vir do ódio. O ódio acaba. A devoção não.",
+    "description": "O Monge não luta por vingança nem por glória. Luta porque há algo que precisa ser protegido. Essa clareza de propósito produz estabilidade. Uma mente sem ruído reage melhor, decide melhor e sustenta mais. O Monge é o último a cair porque é o primeiro a cuidar.",
+    "attributes": {
+        "pdv": "12 + VIT",
+        "pdr": "14 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Chama Interna",
+            "level": 1,
+            "description": "Duas vezes por combate, como Ação Especial, você pode gastar PDR para canalizar sua Respiração em cura ou purificação. Escolha um efeito: Toque Restaurador (gaste 3 PDR para restaurar 1d6 + FDV PDV de uma criatura adjacente); Purificação Menor (gaste 2 PDR para remover uma condição menor de uma criatura adjacente, como Envenenado, Cego, Surdo ou Amedrontado, desde que a condição não venha de uma fonte superior ou permanente); Autopreservação (gaste 4 PDR para restaurar 1d8 + FDV PDV em si mesmo). Você não pode usar Chama Interna no mesmo turno em que usa uma Técnica de Respiração ofensiva."
+        },
+        {
+            "name": "Mantra de Proteção",
+            "level": 6,
+            "description": "Uma vez por combate, quando você ou um aliado a até 3m sofrer dano, você pode usar sua Reação para entoar um mantra defensivo. Reduza o dano recebido em 1d6 + FDV. Se essa redução impedir que o alvo caia a 0 PDV, ele recebe +1 na Defesa até o início do próximo turno dele."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 9
+    }
+}

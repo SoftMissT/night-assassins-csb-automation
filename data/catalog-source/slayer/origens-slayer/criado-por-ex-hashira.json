@@ -1,0 +1,26 @@
+{
+    "name": "Criado por Ex-Hashira",
+    "subtitle": "O Legado Traumatizado",
+    "quote": "Ele era o melhor que eu já vi. E o que aconteceu com ele me ensinou mais do que qualquer técnica.",
+    "description": "Seu mestre era uma lenda antes de ser quebrado. O que sobrou dele — disciplina sem saúde, precisão sem esperança, método sem contexto — foi transferido para você. Parte de crescer é descobrir o que naquele treinamento era sabedoria e o que era apenas dor não processada. A dor ensina. O problema é que às vezes ensina as coisas erradas.",
+    "attributes": {
+        "pdv": "12 + VIT",
+        "pdr": "9 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Memória do Mestre",
+            "level": 1,
+            "description": "Às vezes, no meio do combate, seu corpo se move antes de você pensar. Não é instinto. É treinamento gravado fundo demais. Quando você rolar 1 natural em um teste de ataque, pode ignorar a falha crítica e rolar novamente o ataque. Se o novo ataque acertar, causa dano normal. Se o novo ataque errar, a falha crítica acontece normalmente. Você pode usar esta habilidade uma vez por combate. Além disso, quando estiver com metade dos seus PDV ou menos, você recebe +1 em testes de ataque com sua arma proficiente."
+        },
+        {
+            "name": "Forma Secreta",
+            "level": 6,
+            "description": "Uma vez por sessão, ao acertar um ataque com sua arma proficiente ou uma Técnica de Respiração, você pode declarar que executa uma técnica ensinada pelo seu antigo mestre. Esse ataque causa +2d6 de dano adicional. Após resolver o ataque, você sofre 1d4 de dano irredutível — esse dano representa o corpo repetindo um método que nunca foi feito para ser usado sem consequências. Se o ataque reduzir o alvo a 0 PDV, você recupera 1 PDR."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 4
+    }
+}

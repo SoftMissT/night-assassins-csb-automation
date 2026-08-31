@@ -1,0 +1,22 @@
+{
+    "name": "Marechi",
+    "subtitle": "O Sangue Raro",
+    "rollRange": "92-98",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Aroma Embriagante",
+            "effect": "+1 PDR máximo por nível (retroativo), Vantagem no Acerto contra Onis. Onis fracos até 3m testam SAB CD 12 ou ficam Distraídos até o fim do próximo turno (-1 Acerto contra outros alvos)."
+        },
+        {
+            "level": 6,
+            "name": "Sangue Denso",
+            "effect": "Resistência a dano Cortante. Sangrando visivelmente, Onis até 6m testam SAB CD 12 + sua FDV ou ficam Distraídos (Luas e Onis disciplinados testam com Vantagem)."
+        },
+        {
+            "level": 12,
+            "name": "Intoxicação Sanguínea",
+            "effect": "Se um Oni morder/ingerir/absorver seu sangue: testa VIT CD 10 + sua FDV; falha = Atordoado 1 rodada; sucesso = +2 de dano contra você por 1 rodada e fica obcecado, só podendo atacar você. Custo: abaixo de 75% PDV, Onis ganham +2 Acerto contra você e tendem a priorizá-lo; Onis poderosos podem sentir seu sangue a longa distância."
+        }
+    ]
+}

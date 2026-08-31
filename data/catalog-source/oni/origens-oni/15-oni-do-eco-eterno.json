@@ -1,0 +1,21 @@
+{
+    "number": 15,
+    "name": "Oni do Eco Eterno",
+    "description": "Você carrega vozes que nunca terminaram de morrer. Sua presença não é barulho comum. É luto transformado em som: nomes repetidos, últimas palavras, gritos antigos e sussurros que tornam difícil saber de onde o perigo vem.",
+    "pdv": "18 + VIT",
+    "pdk": "19 + (FDV * 3)",
+    "passive": {
+        "name": "Vozes Sem Fim",
+        "description": "Inimigos a até 9m recebem -1 em testes de SAB ligados à audição, percepção de movimento ou localização. Além disso, inimigos dentro dessa área não podem receber bônus de aliados por comandos verbais, gritos de aviso ou coordenação falada, a menos que passem em 1d20 + SAB contra CD 10 + FDV do Oni. Essa passiva não afeta criaturas surdas ou sem audição."
+    },
+    "abilities": [
+        {
+            "name": "Chamado dos Mortos",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "test": "FDV do alvo contra CD 10 + FDV do Oni",
+            "description": "Escolha uma criatura que possa ouvir você. As vozes ao redor repetem nomes, culpas ou lembranças que não pertencem totalmente ao alvo, mas ainda assim encontram rachaduras. Falha: o alvo fica Desorientado até o início do próximo turno do Oni. Falha por 5 ou mais: o alvo também sofre Surdez Parcial até o início do próximo turno do Oni. Sucesso: o alvo resiste ao efeito. Criaturas sem audição ou imunes a efeitos sonoros ignoram esta habilidade."
+        }
+    ]
+}

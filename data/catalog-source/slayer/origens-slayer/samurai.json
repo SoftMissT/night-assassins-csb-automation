@@ -1,0 +1,26 @@
+{
+    "name": "Samurai",
+    "subtitle": "Honra Acima de Tudo",
+    "quote": "A espada é apenas o braço visível da disciplina.",
+    "description": "O Samurai não é o guerreiro mais forte na sala. É o guerreiro que ainda está de pé quando todos os outros já decidiram recuar. O Bushidō não é apenas honra. É uma tecnologia de combate. A disciplina elimina o medo, e sem medo o corpo trabalha com clareza. Face a face, em terreno aberto, com tudo visível: ali o Samurai é soberano.",
+    "attributes": {
+        "pdv": "14 + VIT",
+        "pdr": "6 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Bushidō",
+            "level": 1,
+            "description": "Enquanto estiver lutando face a face contra um inimigo que possa ver você, usando uma espada como arma proficiente, você recebe +1 no Acerto. Além disso, você recebe vantagem em testes de resistência contra Medo, intimidação sobrenatural ou efeitos que tentem forçar sua fuga. Você perde o benefício de Bushidō contra um alvo se atacar pelas costas, a partir de furtividade ou usando uma vantagem que viole claramente o duelo direto."
+        },
+        {
+            "name": "Iaidō — O Golpe do Desembainhar",
+            "level": 6,
+            "description": "Uma vez por combate, apenas no seu primeiro turno, se sua espada estiver embainhada, você pode declarar um Iaidō antes de atacar. Faça um ataque com espada recebendo +2 no Acerto. Se acertar, maximize apenas o dado base de dano da arma — bônus fixos e dados adicionais são rolados normalmente. Este ataque não se acumula com Técnicas de Respiração. Após o Iaidō, sua espada permanece desembainhada."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 11
+    }
+}

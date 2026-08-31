@@ -1,0 +1,26 @@
+{
+    "name": "Descendente Perdido",
+    "subtitle": "O Sangue Antigo",
+    "quote": "Você não escolheu o sangue que carrega. Mas ele escolhe quando se manifestar.",
+    "description": "Há algo no sangue do Descendente Perdido que os Onis reconhecem antes dele mesmo. Talvez venha de um clã apagado, de uma linhagem caçada, de uma benção esquecida ou de uma maldição que sobreviveu por gerações. O Descendente não domina esse poder. Ele negocia com ele. E às vezes o sangue responde antes da razão.",
+    "attributes": {
+        "pdv": "12 + VIT",
+        "pdr": "10 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Ressonância Sanguínea",
+            "level": 1,
+            "description": "Seu sangue reage à presença de Onis poderosos. Quando um Oni relevante para a missão, especialmente um Oni de grande poder ou importância narrativa, estiver a até 30m, o Mestre pode informar que você sente uma perturbação no sangue. Essa sensação pode indicar: direção aproximada; intensidade relativa da ameaça; se a presença parece familiar, antiga ou anormal; se há mais de uma presença sobrenatural próxima. Essa detecção não revela identidade exata, localização precisa, ficha, nome, intenção ou fraquezas automaticamente. Além disso, uma vez por sessão, fora de combate, você pode usar Pulso Ancestral para forçar seu sangue a revelar mais sobre um Oni percebido pela Ressonância. Faça um teste de FDV contra CD 14. Em sucesso, escolha um: descobrir uma fraqueza narrativa ou mecânica do Oni; receber +1 no primeiro ataque contra esse Oni nesta missão; descobrir um traço do Kekkijutsu ou padrão de caça do Oni. Em sucesso crítico, escolha dois efeitos. Em falha, o Oni também sente sua presença e recebe +1 no primeiro ataque ou teste hostil contra você nesta missão. Em falha crítica, além do efeito da falha, você sofre 1d6 de dano irredutível."
+        },
+        {
+            "name": "Marca Latente",
+            "level": 6,
+            "description": "O sangue antigo resiste ao que o treinamento comum não alcança. Uma vez por combate, quando falhar em um teste de resistência contra Kekkijutsu, veneno sobrenatural, corrupção demoníaca ou efeito causado por sangue Oni, você pode rolar novamente o teste. Você deve aceitar o segundo resultado. Se o segundo resultado for sucesso, você também recupera 1 PDR. Se o segundo resultado for falha crítica, o sangue reage mal: você sofre 1d4 de dano irredutível."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 5
+    }
+}

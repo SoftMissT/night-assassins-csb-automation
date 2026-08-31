@@ -1,0 +1,21 @@
+{
+    "number": 8,
+    "name": "Oni da Corte Pálida",
+    "description": "Você nasceu da autoridade corrompida. Antes da transformação, já sabia mandar, julgar, manipular ou governar. Como Oni, sua presença não ameaça: ela decreta.",
+    "pdv": "18 + VIT",
+    "pdk": "18 + (FDV * 3)",
+    "passive": {
+        "name": "Aura de Majestade",
+        "description": "Inimigos a até 9m recebem -1 em rolagens de acerto contra você enquanto puderem ver ou ouvir sua presença. Criaturas Amedrontadas por você recebem -2 em vez de -1. Esta passiva não afeta criaturas sem mente consciente."
+    },
+    "abilities": [
+        {
+            "name": "Édito de Sangue",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "test": "FDV do alvo contra CD 10 + CAR do Oni",
+            "description": "Escolha uma criatura que possa ver e ouvir você. O Oni pronuncia uma ordem carregada de autoridade demoníaca. Falha: o alvo fica Distraído até o início do próximo turno do Oni. Falha por 5 ou mais: o alvo também sofre -2 na próxima rolagem de Defesa feita antes do início do próximo turno do Oni. Sucesso: o alvo resiste completamente."
+        }
+    ]
+}

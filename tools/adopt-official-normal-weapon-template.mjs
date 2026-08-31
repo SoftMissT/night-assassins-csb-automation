@@ -5,14 +5,17 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const officialPath = path.resolve(
     root,
-    '..',
-    '..',
-    '..',
-    'wiki',
-    'projects',
-    'MACRO-NA-FOUNDRY',
-    'templates',
-    'template-armas-normais.json'
+    process.argv[2] ??
+        path.join(
+            '..',
+            '..',
+            '..',
+            'wiki',
+            'projects',
+            'MACRO-NA-FOUNDRY',
+            'templates',
+            'template-armas-normais.json'
+        )
 );
 const targetPath = path.join(root, 'src', 'templates', 'items', 'slayer-weapon-template.json');
 
@@ -29,10 +32,12 @@ if (official?.system?.uniqueId !== 'NAWeaponTpl00001') {
 function guardCsbRollResult(node) {
     if (!node || typeof node !== 'object') return;
     if (typeof node.rollMessage === 'string' && node.rollMessage.includes('rollWeaponItem')) {
-        node.rollMessage = node.rollMessage.replace(
-            "return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem",
-            "await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem"
-        ).replace(";}%", ";return '';}%");
+        node.rollMessage = node.rollMessage
+            .replace(
+                "return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem",
+                "await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem"
+            )
+            .replace(';}%', ";return '';}%");
     }
     for (const value of Object.values(node)) guardCsbRollResult(value);
 }

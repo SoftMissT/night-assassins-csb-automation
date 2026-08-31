@@ -1,0 +1,166 @@
+{
+    "titulo": "Respiração das Sombras",
+    "aliases": ["Shadow Breathing", "Kage no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "origem": "A Respiração das Sombras nasceu de uma origem inesperada: um vampiro renegado que, em vez de se entregar à escuridão, escolheu se aliar aos caçadores de sua própria espécie. Sabendo que a Respiração da Luz não seria suficiente para enfrentar o mal que se aproximava, ele transmitiu seu conhecimento sombrio a um jovem guerreiro chamado Dragos Constantin, o primeiro humano a dominar essa arte poderosa e agressiva. Aurora Belomonte, capitã da ordem dos usuários da Respiração da Luz, viu em Dragos não apenas um aliado, mas também um amor proibido e impossível de se concretizar devido às suas posições. Apesar dos sentimentos profundos que compartilhavam, ambos sabiam que estavam destinados a lutar em lados opostos da mesma guerra: ele na escuridão, ela na luz. Mesmo assim, o amor que os unia serviu como lembrança de que, embora nascida de forças sombrias, a Respiração das Sombras poderia ser usada com nobreza, na luta contra o mal que ameaçava tudo o que ambos juraram proteger.",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Escuridão Eterna",
+            "nome_romaji": "Ichi no Kata Eien no Yami",
+            "tipo_manobra": "Única",
+            "descricao": "Até o final do próximo turno, o campo de batalha ganha um status de escuridão, ajudando o usuário a se camuflar nas sombras. Toda vez que acertar um ataque, a duração da escuridão aumenta +1 turno. É considerado efeito de contato aplicável apenas uma vez por ação.",
+            "niveis": [
+                { "nivel": 1, "bonus_acerto": "+2", "bonus_esquiva": null, "custo": "2 PDR" },
+                { "nivel": 2, "bonus_acerto": "+2", "bonus_esquiva": "+1", "custo": "2 PDR" },
+                { "nivel": 3, "bonus_acerto": "Vantagem", "bonus_esquiva": "+2", "custo": "3 PDR" },
+                { "nivel": 4, "bonus_acerto": "Vantagem", "bonus_esquiva": "+3", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Assassinato nas Sombras",
+            "nome_romaji": "Ni no Kata Shadoumada",
+            "tipo_manobra": "Ataque de Oportunidade",
+            "descricao": "Pode ser usada se o inimigo tentar fugir durante o combate, ou se estiver te atacando individualmente e mudar o foco para outro alvo repentinamente. Cria uma sombra material atrás do inimigo que aplica 2 ataques rápidos; cada um requer uma rolagem de acerto padrão.",
+            "niveis": [
+                { "nivel": 1, "dano_por_ataque": "2d4", "custo": "1 PDR" },
+                { "nivel": 2, "dano_por_ataque": "2d4 + DEX", "custo": "1 PDR" },
+                { "nivel": 3, "dano_por_ataque": "3d4 + DEX", "custo": "2 PDR" },
+                { "nivel": 4, "dano_por_ataque": "4d4 + DEX", "custo": "2 PDR" }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Dança das Lâminas",
+            "nome_romaji": "San no Kata Buredodansu",
+            "tipo_manobra": "Especial",
+            "descricao": "O usuário invoca um clone das sombras de si mesmo que dura 4 turnos. Ao acertar ataques padrão, a sombra causa dano extra igual à metade do dano causado. Clones podem ser acumulados até o máximo indicado. O custo de PDR é por invocação de uma sombra.",
+            "lore": "Dizem que o clone que surge da escuridão é, na verdade, a alma da primeira usuária da Respiração das Sombras e não do usuário atual.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "clones_maximos": 1,
+                    "comportamento_dos_clones": "Dano extra de ataques padrão (metade do dano)",
+                    "custo_por_clone": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "clones_maximos": 2,
+                    "comportamento_dos_clones": "Dano extra de ataques padrão (metade do dano)",
+                    "custo_por_clone": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "clones_maximos": 3,
+                    "comportamento_dos_clones": "Dano extra de ataques padrão (metade do dano)",
+                    "custo_por_clone": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "clones_maximos": 3,
+                    "comportamento_dos_clones": "Dano extra de ataques padrão e técnicas (metade do dano)",
+                    "custo_por_clone": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Medo do Escuro",
+            "nome_romaji": "Shi no Kata Kyofu no Yami",
+            "tipo_manobra": "Especial",
+            "requisito": "Só pode ser conjurada à noite ou com pouquíssima iluminação no ambiente.",
+            "descricao": "Invoca um fantasma da escuridão representando o maior medo do inimigo. O oponente testa SAB contra C.D. 10 + CAR do usuário. Se falhar, ficará amedrontado até o final de seu próximo turno.",
+            "restricao_de_uso": "Após o uso (passando ou falhando no teste), não pode ser usada novamente por 5 turnos.",
+            "tabela_custo": [
+                { "resultado_do_teste": "Inimigo falhou", "custo": "2 PDR" },
+                { "resultado_do_teste": "Inimigo passou", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Troca Mortal",
+            "nome_romaji": "Go no Kata Chimei-tekina Kokan",
+            "tipo_manobra": "Especial",
+            "descricao": "Faz um corte no próprio ombro deixando o sangue escorrer pela Nichirin, cobrindo-a com um aspecto das trevas. Uma sombra cerca a lâmina ou as munições e causa dano adicional nos ataques, durando um número de turnos igual ao CAR do usuário. O aspecto das trevas pode ser acumulativo, mas é considerado efeito de contato.",
+            "observacao": "O custo inclui PDR e PDV próprios sacrificados.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_adicional": "1d4 + DEX",
+                    "custo_de_pdr": "5 PDR",
+                    "custo_de_pdv": "1d4 PDV"
+                },
+                {
+                    "nivel": 2,
+                    "dano_adicional": "2d4 + DEX",
+                    "custo_de_pdr": "6 PDR",
+                    "custo_de_pdv": "1d6 PDV"
+                },
+                {
+                    "nivel": 3,
+                    "dano_adicional": "4d4 + DEX",
+                    "custo_de_pdr": "6 PDR",
+                    "custo_de_pdv": "1d8 PDV"
+                },
+                {
+                    "nivel": 4,
+                    "dano_adicional": "6d4 + DEX",
+                    "custo_de_pdr": "7 PDR",
+                    "custo_de_pdv": "1d8 PDV"
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Demônio Interior",
+            "nome_romaji": "Roku no Kata Uchinaru Akuma",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "5 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Adota uma postura totalmente agressiva; a sombra toma controle da alma e das ações do usuário. Só pode ser desativada no início de seus próprios turnos.",
+            "penalidade": "−4 em Esquiva e Bloqueio",
+            "bonus": "Rolagens de acerto e dano consideram 2× CAR"
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Buraco Negro",
+            "nome_romaji": "Shichi no Kata Burakkuhoru",
+            "tipo_manobra": "Completa",
+            "descricao": "Corre a uma velocidade incrível ao redor do inimigo, fazendo com que a escuridão de sua aura crie um buraco negro que suga a vitalidade de até 3 inimigos no epicentro. Se houver mais de três inimigos, os alvos são definidos à escolha do usuário. A rolagem de acerto é padrão com bônus igual ao Nível de Respiração.",
+            "aliados_em_risco": "Aliados também podem ser afetados pelo Buraco Negro se não passarem em um teste de esquiva com vantagem.",
+            "niveis": [
+                { "nivel": 1, "dano": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano": "10d12 + 6× CAR + 2× FDV", "custo": "8 PDR" },
+                { "nivel": 3, "dano": "12d12 + 8× CAR + 4× FDV", "custo": "9 PDR" },
+                { "nivel": 4, "dano": "14d12 + 10× CAR + 6× FDV", "custo": "10 PDR" }
+            ]
+        }
+    ],
+    "passiva": {
+        "nome": "Ceifador das Trevas",
+        "nome_romaji": "Dakuripa",
+        "disponibilidade": "Disponível apenas a partir do Nível 3 de personagem",
+        "descricao": "Todo inimigo finalizado usando o Buraco Negro fortalece o vínculo com as sombras, concedendo bônus permanentes cumulativos.",
+        "tabela_inimigos_finalizados": [
+            {
+                "inimigos_finalizados": 1,
+                "bonus_permanente_acumulado": "+1 de acerto em ataques e técnicas"
+            },
+            { "inimigos_finalizados": 2, "bonus_permanente_acumulado": "Anterior + +1 de CAR" },
+            {
+                "inimigos_finalizados": 3,
+                "bonus_permanente_acumulado": "Anterior + +2 de dano em ataques e técnicas"
+            },
+            {
+                "inimigos_finalizados": 4,
+                "bonus_permanente_acumulado": "Anterior + Troca Mortal passa a aplicar o modificador de CAR como dano extra também"
+            },
+            {
+                "inimigos_finalizados": "5+",
+                "bonus_permanente_acumulado": "Anterior + +1d12 no dano do Buraco Negro para cada inimigo já eliminado por Buraco Negro (bônus cresce indefinidamente)"
+            }
+        ]
+    }
+}

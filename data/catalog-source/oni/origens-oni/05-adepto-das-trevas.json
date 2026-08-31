@@ -1,0 +1,20 @@
+{
+    "number": 5,
+    "name": "Adepto das Trevas",
+    "description": "Você nasceu para a Arte de Sangue. Sua carne é útil, mas seu verdadeiro poder está no sangue profano que obedece antes mesmo de você entender completamente o que ele quer fazer.",
+    "pdv": "19 + VIT",
+    "pdk": "4 + FDV + (FDV × 3)",
+    "passive": {
+        "name": "Arte de Sangue",
+        "description": "Você começa com um Kekkijutsu já no Nível 1. Quando chegar ao Nível 3, em vez de aprender seu primeiro Kekkijutsu, você ganha uma técnica derivada, melhoria, forma alternativa ou ampliação temática do Kekkijutsu inicial, com aprovação do Mestre."
+    },
+    "abilities": [
+        {
+            "name": "Canalização Profana",
+            "cost": "2 PDK",
+            "action": "Ação Especial",
+            "duration": "até o fim do turno atual",
+            "description": "Ao usar Canalização Profana, escolha um dos efeitos abaixo para o próximo Kekkijutsu usado neste turno: recebe +1 na rolagem de acerto; aumenta a CD do Kekkijutsu em +1; reduz o custo do Kekkijutsu em 1 PDK, mínimo 1. Você só pode escolher um efeito por uso. Esta habilidade só pode ser usada 1 vez por turno."
+        }
+    ]
+}

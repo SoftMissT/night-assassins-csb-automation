@@ -489,7 +489,7 @@ export async function distributePool(pool, level, currentValues) {
             data-na-pool-select
             style="width:92px;"
           >
-            <option value="">—</option>
+            <option value="">Escolha</option>
             ${options}
           </select>
         </label>`;

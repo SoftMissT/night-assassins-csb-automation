@@ -1,0 +1,188 @@
+{
+    "titulo": "Respiração do Dragão",
+    "aliases": ["Dragon Breathing", "Ryuu no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "A Gula de Falcor",
+            "nome_romaji": "Ichi no Kata Farukōru no Ōkui",
+            "tipo_manobra": "Passiva e Ativação por Especial",
+            "descricao": "Todo ataque que acertar o inimigo aplica uma carga de Marca do Dragão, até um máximo de 6. Essas marcas podem ser consumidas para infligir dano. Todas as marcas são consumidas ao ativar.",
+            "tabela_niveis_1_e_2": [
+                { "marcas": 1, "dano": "1d4", "custo": "1 PDR" },
+                { "marcas": 2, "dano": "1d6", "custo": "2 PDR" },
+                { "marcas": 3, "dano": "2d4", "custo": "3 PDR" },
+                { "marcas": 4, "dano": "2d6", "custo": "3 PDR" },
+                { "marcas": 5, "dano": "2d6 + FDV", "custo": "3 PDR" },
+                { "marcas": 6, "dano": "2d6 + 2× FDV", "custo": "3 PDR" }
+            ],
+            "tabela_niveis_3_e_4": [
+                { "marcas": 1, "dano": "1d8", "custo": "1 PDR" },
+                { "marcas": 2, "dano": "2d6", "custo": "2 PDR" },
+                { "marcas": 3, "dano": "3d6", "custo": "3 PDR" },
+                { "marcas": 4, "dano": "4d6", "custo": "4 PDR" },
+                { "marcas": 5, "dano": "5d6 + FDV", "custo": "4 PDR" },
+                { "marcas": 6, "dano": "5d6 + 2× FDV", "custo": "4 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Bônus por 3+ Marcas Ativadas de Uma Vez",
+                "efeito": "Se ao menos 3 Marcas do Dragão forem ativadas simultaneamente, o usuário recebe +3m de deslocamento neste turno e não precisa gastar Ação Especial para realizar testes de Pulo e Manobras Aéreas. Esse bônus dura 2 turnos."
+            }
+        },
+        {
+            "forma": 2,
+            "nome_pt": "A Avareza de Smaug",
+            "nome_romaji": "Ni no Kata Sumaugu no Yoku",
+            "tipo_manobra": "Única",
+            "descricao": "Ativa a Aura do Dragão Smaug na Nichirin, fazendo com que custe 1 a menos no dado de ataque para obter um acerto crítico. A aura permanece ativa até o fim do combate e é acumulável, com um máximo de usos igual à FDV do usuário.",
+            "ilusao_de_voo": {
+                "descricao": "Com uma Ação Especial, pode realizar um teste de Pulo (DEX) para entrar no status de \"Ilusão de Voo\" até o final do próximo turno.",
+                "niveis": [
+                    {
+                        "nivel": 1,
+                        "cd_pulo": 12,
+                        "bonus_durante_ilusao_de_voo": "+1 de acerto",
+                        "custo": "2 PDR"
+                    },
+                    {
+                        "nivel": 2,
+                        "cd_pulo": 11,
+                        "bonus_durante_ilusao_de_voo": "+2 de acerto",
+                        "custo": "3 PDR"
+                    },
+                    {
+                        "nivel": 3,
+                        "cd_pulo": 10,
+                        "bonus_durante_ilusao_de_voo": "+3 de acerto",
+                        "custo": "3 PDR"
+                    },
+                    {
+                        "nivel": 4,
+                        "cd_pulo": 9,
+                        "bonus_durante_ilusao_de_voo": "+3 de acerto + +1 de esquiva ou bloqueio (à escolha)",
+                        "custo": "4 PDR"
+                    }
+                ]
+            }
+        },
+        {
+            "forma": 3,
+            "nome_pt": "A Luxúria de Draco",
+            "nome_romaji": "San no Kata Dorakozurasuto",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário assume a postura do Dragão Draco, recebendo bônus de Força durante seus 2 próximos turnos.",
+            "niveis": [
+                { "nivel": 1, "bonus_for": "+1", "custo": "2 PDR" },
+                { "nivel": 2, "bonus_for": "+2", "custo": "3 PDR" },
+                { "nivel": 3, "bonus_for": "+3", "custo": "4 PDR" },
+                { "nivel": 4, "bonus_for": "+4", "custo": "5 PDR" }
+            ],
+            "observacao": "Esse bônus pode ultrapassar a capacidade máxima de características de Exterminador."
+        },
+        {
+            "forma": 4,
+            "nome_pt": "A Ira de Tiamat",
+            "nome_romaji": "Shi no Kata Tiamato no Ikari",
+            "tipo_manobra": "Ataque",
+            "descricao": "Ao ser ativada durante um ataque, concede regeneração de vida no final dos próprios turnos durante os próximos 2 turnos. Não acumulativa.",
+            "niveis": [
+                { "nivel": 1, "regeneracao_por_turno": "1d4", "custo": "4 PDR" },
+                { "nivel": 2, "regeneracao_por_turno": "1d4 + VIT", "custo": "4 PDR" },
+                { "nivel": 3, "regeneracao_por_turno": "1d6 + VIT", "custo": "5 PDR" },
+                { "nivel": 4, "regeneracao_por_turno": "1d8 + VIT", "custo": "5 PDR" }
+            ],
+            "bonus_condicional": {
+                "nome": "Ilusão de Voo por Acerto",
+                "efeito": "Se acertar o golpe aplicando a regeneração, pode declarar com uma Ação Especial um teste de Pulo (DEX, C.D. 12) para entrar no status de \"Ilusão de Voo\", ganhando +1 de acerto até o final do próximo turno."
+            }
+        },
+        {
+            "forma": 5,
+            "nome_pt": "A Preguiça de Mushu",
+            "nome_romaji": "Go no Kata Mushū no Namakemono",
+            "tipo_manobra": "Especial",
+            "descricao": "Invoca uma labareda de fogo conforme o movimento da Nichirin, que vai em direção ao inimigo. Ele deve realizar um teste de esquiva com C.D. 12 + modificador de FDV do usuário para escapar. Caso não escape, não recebe dano mas sofre os debuffs indicados.",
+            "niveis": [
+                { "nivel": 1, "efeito": "1 nível de Exaustão", "custo": "4 PDR" },
+                { "nivel": 2, "efeito": "1 nível de Exaustão + perde 2 PDR", "custo": "5 PDR" },
+                { "nivel": 3, "efeito": "1 nível de Exaustão + perde 3 PDR", "custo": "6 PDR" },
+                { "nivel": 4, "efeito": "1 nível de Exaustão + perde 4 PDR", "custo": "7 PDR" }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "A Inveja de Rhaegal",
+            "nome_romaji": "Roku no Kata Raigaru no Netamochi",
+            "tipo_manobra": "Reação",
+            "custo_fixo": "3 PDR",
+            "descricao": "Pode ser conjurada quando um inimigo declara um ataque e erra. Inflige dano ao inimigo com o bafo de dragão que sai da Nichirin. Para acertar, usa uma rolagem de ataque padrão +2 de bônus.",
+            "niveis": [
+                { "nivel": 1, "dano": "1d4 + FDV" },
+                { "nivel": 2, "dano": "2d4 + FDV" },
+                { "nivel": 3, "dano": "3d4 + FDV + INT" },
+                { "nivel": 4, "dano": "4d4 + 2× INT" }
+            ]
+        },
+        {
+            "forma": 7,
+            "nome_pt": "A Vaidade de Drogon",
+            "nome_romaji": "Shichi no Kata Dorogon no Kyoei Kokoro",
+            "tipo_manobra": "Única",
+            "descricao": "O corpo fica encoberto de escamas de dragão, aumentando significativamente o Bloqueio até o final do próximo turno.",
+            "niveis": [
+                { "nivel": 1, "bonus_bloqueio": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "bonus_bloqueio": "FDV", "custo": "4 PDR" },
+                { "nivel": 3, "bonus_bloqueio": "FDV + 1", "custo": "5 PDR" },
+                { "nivel": 4, "bonus_bloqueio": "FDV + VIT", "custo": "6 PDR" }
+            ]
+        },
+        {
+            "forma": 8,
+            "nome_pt": "O Brilho do Último Dia",
+            "nome_romaji": "Hachi no Kata Saigo no Hi no Kagayaki",
+            "tipo_manobra": "Completa",
+            "custo_fixo": "10 PDR",
+            "requisitos": [
+                "Status de Ilusão de Voo do Dragão ativo",
+                "Disponível apenas a partir do Nível 3 de Respiração"
+            ],
+            "descricao": "O usuário desce dos céus em uma velocidade intensa que traz o calor do sol junto com ele, sob a vertigem de um céu repleto de dragões que anunciam o prelúdio do último dia da terra. O ataque possui dois momentos, ambos com rolagens independentes.",
+            "primeiro_momento": {
+                "rolagem_de_acerto": "1d20 + FOR + FDV (independente da arma). O alvo tem direito a bloqueio, esquiva ou reação.",
+                "reacao_que_anula_completamente": "Se o inimigo usar uma Reação que anule completamente este momento, o usuário recupera metade dos PDR gastos na técnica.",
+                "niveis": [
+                    { "nivel": 3, "dano_perfurante_ou_cortante": "10d8" },
+                    { "nivel": 4, "dano_perfurante_ou_cortante": "14d8" }
+                ]
+            },
+            "segundo_momento": {
+                "rolagem_de_acerto": "1d20 + DEX + SAB. O alvo tem direito a bloqueio, esquiva ou reação. Realizado independente de ter acertado ou não o 1º Momento.",
+                "niveis": [
+                    {
+                        "nivel": 3,
+                        "dano_de_sangramento": "DEX do usuário por turno",
+                        "duracao": "5 turnos",
+                        "exaustao": "2 pontos"
+                    },
+                    {
+                        "nivel": 4,
+                        "dano_de_sangramento": "DEX do usuário por turno",
+                        "duracao": "7 turnos",
+                        "exaustao": "2 pontos"
+                    }
+                ]
+            },
+            "sinergia": {
+                "nome": "Ativação de Marcas",
+                "descricao": "Se aliados próximos forem usuários de respirações com sinergia, acertar ambos os momentos permite a eles ativarem suas marcas imediatamente após a técnica ser finalizada, desde que estejam ao menos no Nível 10 de personagem.",
+                "respiracoes_com_sinergia": [
+                    "Respiração da Besta",
+                    "Respiração dos Sonhos",
+                    "Respiração da Lua"
+                ]
+            }
+        }
+    ]
+}

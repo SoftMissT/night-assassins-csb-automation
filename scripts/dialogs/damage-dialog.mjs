@@ -27,7 +27,7 @@ function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
 }
 
 function makeAcaoOpts(sel) {
-    return `<option value="">Nenhuma —</option>
+    return `<option value="">Nenhuma -</option>
     ${TIPOS_ACAO.filter((t) => t.damage && t.key !== 'epica')
         .map(
             (t) => `<option value="${t.key}" ${sel === t.key ? 'selected' : ''}>${t.label}</option>`
@@ -213,7 +213,7 @@ export async function openDamageDialog({
       <div class="na-hint" style="margin-top:2px;">Somado à chave <code>${resourceKey}</code>.</div>
     </div>
     <label class="na-label">Fórmula Total</label>
-    <div id="na-total-preview">—</div>
+    <div id="na-total-preview">-</div>
     <label class="na-critical-toggle">
       <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
       <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>

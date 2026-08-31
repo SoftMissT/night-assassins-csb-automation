@@ -1,0 +1,124 @@
+{
+    "titulo": "Respiração do Magma",
+    "aliases": ["Magma Breathing", "Maguma no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Erupção de Ódio",
+            "nome_romaji": "Ichi no Kata Funka ga Kirai",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "3 PDR",
+            "descricao": "Ao sofrer um efeito de status negativo, pode dar um grito de explosão para anular o status recebido e devolvê-lo ao inimigo com metade da eficácia (arredonda para baixo).",
+            "exemplo": "Sofreu atordoamento por 2 turnos → devolve atordoamento por 1 turno ao inimigo."
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Explosão Vulcânica",
+            "nome_romaji": "Ni no Kata Kazan Bakuhatsu",
+            "tipo_manobra": "Especial",
+            "descricao": "Dá um soco no chão e chama um jato de magma que sai de baixo do inimigo. O alvo deve passar em um teste de esquiva com C.D. 10 + FDV + FOR do usuário; bloqueio não é permitido. Caso não passe, recebe o dano indicado.",
+            "niveis": [
+                { "nivel": 1, "dano": "2d6 + FOR", "custo": "3 PDR" },
+                { "nivel": 2, "dano": "2d10 + FOR", "custo": "3 PDR" },
+                { "nivel": 3, "dano": "3d12 + FOR", "custo": "4 PDR" },
+                { "nivel": 4, "dano": "4d12 + FOR", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Rio de Lava",
+            "nome_romaji": "San no Kata Yogan Kawa",
+            "tipo_manobra": "Ataque",
+            "custo_fixo": "4 PDR",
+            "descricao": "Realiza três golpes horizontais seguidos com a Nichirin (ou disparos, se à distância) que mandam 3 ondas de calor de lava em direção ao inimigo. Cada onda requer uma rolagem de acerto vs. defesa padrão. O dano é acumulativo por onda acertada e aplica Dano de Ferida diminuído diretamente do PDV máximo do inimigo, não da vida atual.",
+            "tabela_ondas": [
+                { "ondas_acertadas": 1, "dano_total": "1d8 + FOR", "componente_de_ferida": "FOR" },
+                { "ondas_acertadas": 2, "dano_total": "2d8 + FOR", "componente_de_ferida": "FOR" },
+                { "ondas_acertadas": 3, "dano_total": "3d8 + FOR", "componente_de_ferida": "FOR" }
+            ],
+            "observacao_nivel_3": "A partir do Nível 3 de Respiração, acertar pelo menos 2 ondas anula as resistências do inimigo até o início do próximo turno do usuário do Magma."
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Cataclisma",
+            "nome_romaji": "Shi no Kata Dai Hendo",
+            "tipo_manobra": "Ataque",
+            "descricao": "Cria ondas de vibração de calor no ar que giram ao redor do usuário, centralizando-o como um sol e se espalhando em um raio de 3m. As ondas duram 3 turnos; a cada turno, o inimigo é obrigado a usar sua Ação Especial para testar VIT (C.D. 12 + FOR do usuário); caso não passe, recebe o dano indicado.",
+            "niveis": [
+                { "nivel": 1, "dano": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano": "4d8 + FDV (FDV = Dano de Ferida)", "custo": "7 PDR" },
+                { "nivel": 3, "dano": "5d8 + FDV (FDV = Dano de Ferida)", "custo": "7 PDR" },
+                { "nivel": 4, "dano": "6d8 + FDV (FDV = Dano de Ferida)", "custo": "8 PDR" }
+            ],
+            "observacao": "Aliados no campo de batalha também realizam o teste; se falharem, recebem apenas metade do dano, sem implicar status de Ferida."
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Proteção de Magma",
+            "nome_romaji": "Go no Kata Maguma Hogo",
+            "tipo_manobra": "Completa ou Reação",
+            "descricao": "Usa uma Ação Completa para proteger aliados com uma barreira de magma que bloqueia ataques recebidos; a barreira some individualmente após ter efeito. Pode defender ataques em área. Dura até o início do próximo turno. Para cada aliado além do primeiro que desejar receber a proteção, paga-se +1 PDR.",
+            "niveis": [
+                {
+                    "nivel": "1–2",
+                    "reducao_de_dano_por_aliado_protegido": "1d6 + FDV",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": "3–4",
+                    "reducao_de_dano_por_aliado_protegido": "2d6 + FDV",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Armadura do Rei / da Rainha",
+            "nome_romaji": "Roku no Kata Ō no Yoroi",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "3 PDR",
+            "requisitos": [
+                "VIT 3 ou mais e FDV 3 ou mais",
+                "Disponível apenas a partir do Nível 2 de Respiração"
+            ],
+            "descricao": "Pode ser conjurada como uma Ação Especial e dura apenas um turno. Encobre o usuário com uma camada de magma fluorescente que concede resistência a dano cortante e perfurante."
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Pressão Sufocante",
+            "nome_romaji": "Shichi no Kata Chissoku Atsu",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "1 PDR",
+            "descricao": "Após usar esta técnica, o próximo acerto bem-sucedido aplica 1 acúmulo de Status de Magma no inimigo (por tempo indeterminado). Ao acumular 3 Status de Magma, pode usar esta técnica novamente para estourar os acúmulos causando atordoamento no inimigo pelo próximo turno dele."
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Núcleo da Perdição",
+            "nome_romaji": "Hachi no Kata Unmei no Kaku",
+            "tipo_manobra": "Completa",
+            "descricao": "Quando os pontos de vida chegam abaixo de um determinado valor, o usuário se corta com a própria arma deixando que o magma entre em sua corrente sanguínea. Durante os próximos 8 turnos: perde 1 PDV por turno; não pode sofrer nenhum outro dano além deste; obtém acertos críticos a partir de 17 natural no dado de acerto.",
+            "condicoes_de_termino_antecipado": [
+                "O inimigo mais forte for derrotado",
+                "O usuário receber qualquer cura durante o período"
+            ],
+            "observacao": "Se os 8 turnos passarem sem derrotar o inimigo, o usuário cai desmaiado e impotente para continuar lutando.",
+            "niveis": [
+                { "nivel": 1, "pdv_minimo_para_ativar": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "pdv_minimo_para_ativar": "5 PDV", "custo": "8 PDR" },
+                { "nivel": 3, "pdv_minimo_para_ativar": "8 PDV", "custo": "9 PDR" },
+                { "nivel": 4, "pdv_minimo_para_ativar": "12 PDV", "custo": "10 PDR" }
+            ],
+            "sinergia": {
+                "nome": "Suporte sem Encerrar o Ciclo",
+                "descricao": "Se houver ao menos um aliado com sinergia próximo enquanto a técnica estiver ativa, curas realizadas por ele não encerrarão o ciclo de 8 turnos, mas impedirão a perda de 1 PDV no início do próximo turno do usuário causada pelo magma.",
+                "respiracoes_com_sinergia": [
+                    "Respiração das Chamas",
+                    "Respiração do Sol",
+                    "Respiração da Pedra"
+                ]
+            }
+        }
+    ]
+}

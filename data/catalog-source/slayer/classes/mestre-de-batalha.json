@@ -1,0 +1,43 @@
+{
+    "name": "Mestre de Batalha",
+    "oneLiner": "o Exterminador que vence no ataque básico repetido sem venenos, sem suporte, sem truques transformando cada golpe simples em pressão constante.",
+    "improves": "dano de ataque básico, aproveitamento de crítico, resistência física, contra-ataque, pressão sobre inimigo que erra ou bloqueia.",
+    "specialRules": [
+        {
+            "title": "O que conta como \"ataque básico\"",
+            "description": "Ataque com arma, golpe desarmado ou arma natural que usa rolagem de acerto e causa dano da arma/fixo não é Técnica de Respiração, Kekkijutsu, ou técnica que substitua o ataque da arma. Ataques extras de propriedades como Nitoryu/Ryōtō contam como básicos se forem só ataques da arma."
+        },
+        {
+            "title": "Arma proficiente",
+            "description": "Os bônus da especialização só valem com arma proficiente. Com arma não proficiente: sem FOR/DEX no acerto, sem os bônus da especialização, mas o dano fixo da arma continua normal."
+        }
+    ],
+    "ranks": [
+        {
+            "rank": "C",
+            "name": "Ataque Dilacerador",
+            "description": "+2 de dano em cada acerto de ataque básico com arma proficiente. Não vale para dano automático, Sangramento, Envenenamento, dano de terreno/aura, ou técnica que substitua o dano da arma."
+        },
+        {
+            "rank": "B",
+            "name": "Ataque Dilacerador Aprimorado",
+            "description": "O +2 vira +4 (substitui, não soma). Além disso: Pressão de Combate 1x/turno, ao acertar um alvo, seu próximo ataque básico contra esse mesmo alvo no turno ganha +1 no acerto. Perde-se ao trocar de alvo, ao fim do turno, ou se o próximo ataque for técnica. Não acumula consigo mesma."
+        },
+        {
+            "rank": "A",
+            "name": "Crítico Brutal",
+            "description": "Crítico com ataque básico proficiente aplica Sangramento: 1d4 de dano no início do turno do alvo, por metade de FOR ou DEX do usuário (à escolha, arredondado pra cima). Junto, escolha 1 Ferimento Tático: Tendão Rompido (desloc. -1,5m até o fim do próximo turno do alvo), Guarda Aberta (-1 Esquiva/Bloqueio no próximo ataque recebido), ou Impacto Profundo (+2 dano no crítico). Só um por crítico, não acumula, mas renova a duração se repetido."
+        },
+        {
+            "rank": "S",
+            "name": "Corpo de Guerra",
+            "description": "Uma única vez: role 2d6 e some ao PDV máximo. Passiva Aparar Instintivo: 1x/rodada, ao sofrer dano físico corpo a corpo, reduz em 1d6 + FOR ou DEX (coerente com a arma/defesa usada). Só dano físico não veneno, sangramento, área, ou dano automático. Não funciona Atordoado/Paralisado/sem reagir fisicamente. Aparar Perfeito: se o dano reduzido a 0, o atacante sofre -1 Esquiva/Bloqueio no próximo ataque até o início do próximo turno dele."
+        },
+        {
+            "rank": "SS",
+            "name": "Contraataque",
+            "description": "Reação, 1x/rodada: quando um inimigo erra ataque corpo a corpo contra você e está no alcance da sua arma, faça uma rolagem de ataque básico com arma proficiente contra ele. Acerta com 17+ no dado natural. Causa dano normal + bônus de Ataque Dilacerador Aprimorado; se crítico, aplica Crítico Brutal normalmente. Só funciona contra ataques corpo a corpo, não ativa Nitoryu/Ryōtō/Terceiro Corte, não permite ataque extra de outra fonte, não funciona Atordoado/Paralisado/impedido de atacar."
+        }
+    ],
+    "balanceNote": "simples de jogar, perigoso mantendo ritmo a força está em nunca parar de acertar, não em um golpe só."
+}

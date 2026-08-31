@@ -1,0 +1,21 @@
+{
+    "number": 12,
+    "name": "Oni da Tela do Submundo",
+    "description": "Você não mata por ódio. Mata porque acredita que a morte é alívio. Sua Arte não parece combate comum. Parece ritual, pintura, julgamento ou despedida. O campo ao seu redor fica pesado, silencioso e difícil de atravessar com vontade intacta.",
+    "pdv": "18 + VIT",
+    "pdk": "20 + (FDV *3)",
+    "passive": {
+        "name": "Atelier da Morte",
+        "description": "Inimigos a até 9m de você sentem o peso cerimonial da sua presença. Uma vez por rodada, quando uma criatura dentro dessa área declarar um ataque contra você, ela deve fazer 1d20 + FDV contra CD 10 + CAR do Oni. Falha: o ataque sofre Desvantagem. Sucesso: o ataque acontece normalmente. Criaturas Amedrontadas, Distraídas ou Desorientadas fazem esse teste com -1."
+    },
+    "abilities": [
+        {
+            "name": "Retrato da Alma",
+            "cost": "4 PDK",
+            "action": "Ação de Ataque",
+            "range": "12m",
+            "test": "ataque com FDV contra Defesa do alvo",
+            "description": "O Oni pinta, escreve ou marca a essência do alvo no ar. O corpo entende a sentença antes da mente. Acerto: causa 1d8 + FDV de Dano Necrótico. Além disso, o alvo recebe Regeneração Suprimida até o início do próximo turno do Oni. Se o alvo já estiver com Regeneração Suprimida, o dano aumenta em +1d6. Erro: nada acontece."
+        }
+    ]
+}

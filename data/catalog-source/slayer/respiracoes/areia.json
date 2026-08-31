@@ -1,0 +1,166 @@
+{
+    "titulo": "Respiração da Areia",
+    "aliases": ["Sand Breathing", "Suna no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "origem": "Nas terras áridas do Kuwait, floresceu a Respiração da Areia. Faruuk Erol, desprovido de talento natural, encontrou na areia sua aliada. Lapidando sua falta de jeito, ele transformou a areia em sua arma, dançando com os grãos como se fossem extensões de si mesmo. Assim, nas vastidões do deserto, Faruuk se tornou uma lenda, lembrando a todos que a determinação pode transformar até mesmo a mais árida das habilidades em algo grandioso. No entanto, como a ampulheta do tempo corre para todos, sua jornada chegou ao fim, envolto pela própria areia que ele tanto dominara, como se a morte o abraçasse em seus grãos dourados, lembrando-nos de que, no final, todos retornamos à terra que nos deu vida.",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Areia Movediça",
+            "nome_romaji": "Ichi no Kata Ryusa",
+            "tipo_manobra": "Ataque",
+            "descricao": "Faz com que o terreno abaixo do inimigo se torne areia movediça, restringindo suas ações até o início do próximo turno do usuário da areia. Essa restrição causa efeitos prejudiciais de acordo com a descrição a seguir. Para acertar a areia movediça, deve-se realizar um teste de acerto padrão contra a esquiva do inimigo; ele não pode usar bloqueio neste caso.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Restrição de Movimentos + vulnerabilidade parcial: ataques causam +30% de dano extra (arredonda para cima)",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Restrição de Movimentos + vulnerabilidade parcial: ataques causam +50% de dano extra (arredonda para cima)",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Restrição de Movimentos + vulnerabilidade parcial: ataques causam +70% de dano extra (arredonda para cima)",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Restrição de Movimentos + vulnerabilidade total a ataques que o acertarem",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Caixão de Areia",
+            "nome_romaji": "Ni no Kata Sandobokkusu",
+            "tipo_manobra": "Especial",
+            "descricao": "Faz com que a areia cerque o inimigo formando um caixão ao seu redor e suprimindo a areia em seguida para esmagá-lo.",
+            "nota_do_criador": "E sim, eu e você sabemos de onde vem o nome dessa técnica.",
+            "niveis": [
+                { "nivel": 1, "efeito": "2d6 + FDV de dano (concussão)", "custo": "2 PDR" },
+                { "nivel": 2, "efeito": "3d6 + FDV de dano (concussão)", "custo": "3 PDR" },
+                { "nivel": 3, "efeito": "5d6 + FDV de dano (concussão)", "custo": "4 PDR" },
+                { "nivel": 4, "efeito": "8d6 + FDV de dano (concussão)", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Poeira de Hórus",
+            "nome_romaji": "San no Kata Horusudasuto",
+            "tipo_manobra": "Ataque",
+            "descricao": "Envolve um dos braços do inimigo em Areia Especial que parece uma poeira fina, durante 3 turnos. Deve ser feita uma rolagem padrão de acerto contra a esquiva do inimigo para envolver o braço; ele não pode usar bloqueio. Qualquer ataque seguinte, seu ou de um aliado, que acerte o inimigo com 3 ou mais de diferença entre a rolagem de acerto vs. esquiva ou bloqueio do inimigo afetado, fará com que o braço seja decepado com o aperto da areia e o impacto do golpe, causando dano adicional.",
+            "niveis": [
+                { "nivel": 1, "dano_adicional": "2d4 extra", "custo": "2 PDR" },
+                { "nivel": 2, "dano_adicional": "2d8 extra", "custo": "3 PDR" },
+                { "nivel": 3, "dano_adicional": "4d6 extra", "custo": "3 PDR" },
+                { "nivel": 4, "dano_adicional": "4d8 extra", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Tempestade de Areia",
+            "nome_romaji": "Shi no Kata Sunaarashi",
+            "tipo_manobra": "Ataque",
+            "custo_fixo": "6 PDR",
+            "descricao": "Invoca uma tempestade de areia no campo de batalha que foca os ventos no inimigo, diminuindo sua esquiva e bloqueio em 1d4 durante um número de turnos igual à FDV do usuário. O usuário da Respiração da Areia dentro da tempestade fica invisível, fazendo com que rolagens de ataque padrão ou de alvo único contra ele sejam falhas até a tempestade ser dissipada. Ataques em área ainda podem acertá-lo. A tempestade acompanha o inimigo alvo, mantendo-o em um círculo de 15m de diâmetro.",
+            "condicao_de_dissipacao_antecipada": "Para dissipar a tempestade antes do fim dos turnos, o inimigo afetado deve causar dano ao usuário da areia em um único golpe de valor igual a 10 + VIT do exterminador da areia."
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Ira do Deserto",
+            "nome_romaji": "Go no Kata Sabaku no Ikari",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "5 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Ao executar esta técnica, o inimigo alvo deve rolar um teste de INT com dificuldade 12 + FDV do usuário da areia. Se for mal-sucedido, o inimigo se vê dentro de uma miragem em que o campo de batalha se torna um deserto inabitado. Durante a miragem (duração: 2 turnos), o usuário da areia realiza acertos críticos a partir de 17 natural nos dados de acerto.",
+            "sinergia": {
+                "nome": "Sinergia com Aliados",
+                "descricao": "Se houver um aliado usuário de uma respiração com sinergia, esse aliado receberá +5 de PDR temporário, que só pode ser gasto durante o período da miragem. Esse PDR pode ser concedido a um número de aliados com sinergia igual ao Nível de Respiração do usuário da areia.",
+                "respiracoes_com_sinergia": [
+                    "Respiração da Névoa",
+                    "Respiração do Vento",
+                    "Respiração do Sol / Dança do Deus do Fogo"
+                ]
+            },
+            "imunidade": "Se o inimigo for bem-sucedido no teste de INT, ficará imune à Ira do Deserto por 12 horas."
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Clima Rarefeito",
+            "nome_romaji": "Roku no Kata Mezurashi Tenki",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "3 PDR",
+            "descricao": "O usuário entra em modo de meditação supremo, sentindo as ondulações de areia no ar e identificando a posição de inimigos em um raio de até 1 km.",
+            "efeito_pratico": "Em testes de caça ou procura de onis, o usuário recebe +3 na rolagem."
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Portal de Anúbis",
+            "nome_romaji": "Shichi no Kata Anubisu no Potaru",
+            "tipo_manobra": "Reação",
+            "descricao": "Cria uma parede de areia na direção do ataque recebido, bloqueando qualquer Kekkijutsu inimigo lançado contra o usuário exclusivamente.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Conjurar a parede", "custo": "2 PDR" },
+                { "nivel": 3, "efeito": "Conjurar a parede", "custo": "1 PDR" },
+                {
+                    "nivel": 4,
+                    "efeito": "Conjurar a parede + recupera 1 PDR ao anular com sucesso um Kekkijutsu",
+                    "custo": "1 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Ampulheta do Caos",
+            "nome_romaji": "Hachi no Kata Kaosu Sunadokei",
+            "tipo_manobra": "Única",
+            "custo_fixo": "6 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Desenha uma ampulheta de areia no chão usando sua Nichirin, posicionando-se no meio dela. Enquanto estiver no interior, seus ataques passam a ser lançados à distância. O desenho só se desfaz se o usuário for forçado a sair da área por alguma força externa.",
+            "efeito_atacante_a_distancia": "Se o usuário for um atacante à distância, seus ataques padrão ou técnicas ofensivas ganham um bônus de Dano Concussivo igual a DEX ou FOR (à escolha do usuário).",
+            "condicao_de_saida_forcada": "O usuário só é forçado a sair da área da ampulheta se tomar um dano maior do que 7 + VIT em um único golpe."
+        },
+        {
+            "forma": 9,
+            "nome_pt": "A Calamidade do Faraó",
+            "nome_romaji": "Ku no Kata Farao no Sainan",
+            "tipo_manobra": "Especial",
+            "descricao": "Invoca o Ritual da Calamidade do Faraó na alma do exterminador da areia. Durante 6 turnos, todo o corpo do usuário se torna uma formação de areia, recebendo buffs e debuffs.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 3,
+                    "efeito": "+2 de esquiva + ataques aplicam 1 acúmulo de Mumificação. Contudo, recebe +30% a mais de dano por acerto (arredonda para cima)",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "+2 de esquiva + ataques aplicam 2 acúmulos de Mumificação. Contudo, recebe +30% a mais de dano por acerto (arredonda para cima)",
+                    "custo": "6 PDR"
+                }
+            ],
+            "status_mumificacao": {
+                "descricao": "Um inimigo que for acumulando o status de Mumificação terá uma visão deturpada e perturbadora de seu corpo sendo rodeado por faixas.",
+                "tabela": [
+                    {
+                        "acumulos": 2,
+                        "efeito": "Restrição de Movimentos + impossibilidade de usar bloqueio"
+                    },
+                    { "acumulos": 4, "efeito": "2 pontos de exaustão" },
+                    {
+                        "acumulos": 6,
+                        "efeito": "Vulnerável e sem possibilidade de defesa contra o próximo ataque que o acertar, qualquer que seja"
+                    }
+                ],
+                "execucao_instantanea": "Se o ataque contra um inimigo com 6 acúmulos de Mumificação causar dano necrótico ou implicar um dano total maior do que VIT × 10 do inimigo mumificado, ele morrerá instantaneamente, sem direito a qualquer tipo de teste."
+            }
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "number": 6,
+    "name": "Exterminador Corrompido",
+    "description": "Você era um Exterminador antes da queda. Ainda lembra das Formas, dos treinamentos, dos nomes dos antigos aliados e das fraquezas dos Onis. Agora está do outro lado. Um Exterminador só se torna Exterminador Corrompido se sobreviver ao Julgamento do Sangue com pelo menos 1 sucesso. Com 0 sucessos, ele vira um Oni selvagem comum, controlado pelo Mestre.",
+    "pdv": "30 + (VIT * 3) + (10 * Nível do Personagem no momento da Queda)",
+    "pdk": "PDR Máximo anterior + (Nível no momento da Queda * 2) + (FDV * 3)",
+    "passive": {
+        "name": "Respiração Profanada",
+        "description": "Você mantém suas técnicas de Respiração conhecidas. O custo dessas técnicas passa a ser pago com PDK em vez de PDR. As técnicas de Respiração Profanada causam o tipo de dano original da técnica e também Dano Necrótico. Divida o dano da forma mais simples possível. Se a divisão quebrar, arredonde a parte Necrótica para baixo."
+    },
+    "abilities": [
+        {
+            "name": "Memória do Caçador",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "duration": "até o fim do turno atual",
+            "description": "Escolha uma criatura que use Respiração ou uma arma que você conheça. Até o fim do turno, você recebe +2 na próxima rolagem contra esse alvo. Essa rolagem pode ser: ataque; Esquiva; Bloqueio; teste para resistir a uma técnica; teste para identificar padrão de combate. Se o alvo já foi seu aliado, mestre, aluno ou companheiro de missão, o bônus aumenta para +3. Esta habilidade só pode ser usada 1 vez por turno."
+        }
+    ]
+}

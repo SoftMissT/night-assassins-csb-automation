@@ -1,0 +1,173 @@
+{
+    "titulo": "Respiração do Lobo",
+    "aliases": ["Wolf Breathing", "Okami no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Força da Matilha",
+            "nome_romaji": "Ichi no Kata Pakku Kyōdō",
+            "tipo_manobra": "Especial",
+            "descricao": "Até o final do próximo turno, acrescente a característica de um aliado à sua escolha à sua própria característica correspondente. Os pontos são transferidos do aliado (não clonados); a característica do aliado é reduzida durante o período em que você os recebe. Pode pegar pontos de múltiplos aliados vivos, mas nunca o mesmo atributo duas vezes, independente do número de aliados.",
+            "niveis": [
+                { "nivel": 1, "maximo_por_aliado": "+1 ponto", "custo": "2 PDR" },
+                { "nivel": 2, "maximo_por_aliado": "+2 pontos", "custo": "3 PDR" },
+                { "nivel": 3, "maximo_por_aliado": "+3 pontos", "custo": "4 PDR" },
+                { "nivel": 4, "maximo_por_aliado": "+4 pontos", "custo": "5 PDR" }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Rasgando com os Dentes",
+            "nome_romaji": "Ni no Kata Ha de Hikisaku",
+            "tipo_manobra": "Única",
+            "descricao": "Quando acertar um acerto crítico, pode escolher ativar esta técnica para aplicar dano de hemorragia no inimigo, como sangramento.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "sangramento_por_turno": "1d4",
+                    "duracao": "2 turnos",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "sangramento_por_turno": "1d6",
+                    "duracao": "2 turnos",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "sangramento_por_turno": "1d6",
+                    "duracao": "3 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "sangramento_por_turno": "2d4",
+                    "duracao": "3 turnos",
+                    "custo": "2 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Faro de Sangue",
+            "nome_romaji": "San no Kata Chi no Faro",
+            "tipo_manobra": "Completa",
+            "custo_fixo": "3 PDR",
+            "descricao": "Pode ser usada tanto fora quanto dentro de combate, contra inimigos que estejam fugindo ou se escondendo. Ao ativar, o usuário sente o cheiro de um Oni em um raio de até 2 km, identificando sua posição e ganhando +2 de acerto no próximo ataque declarado contra esse alvo, além de dobrar a distância de deslocamento até alcançá-lo.",
+            "sinergia": {
+                "nome": "Sinergia com Aliados",
+                "descricao": "Se houver aliados com sinergia presentes, além dos bônus comuns, você e sua equipe ganham +1 de PDR por Nível de Respiração do usuário do Lobo, aumentando o máximo temporariamente ou recuperando PDR já gasto. Esse PDR extra só pode ser usado até que o alvo detectado seja eliminado.",
+                "respiracoes_com_sinergia": [
+                    "Respiração da Besta",
+                    "Respiração das Sombras",
+                    "Respiração da Lua"
+                ]
+            }
+        },
+        {
+            "forma": 4,
+            "nome_pt": "O Canto dos Lobos",
+            "nome_romaji": "Shi no Kata Okami no Uta",
+            "tipo_manobra": "Especial",
+            "descricao": "Uiva ou assobia para chamar o familiar Lobo Cinzento uma vez por combate para lutar ao seu lado. Ele tem seu próprio turno, rola iniciativa normalmente e age como qualquer personagem, mas no turno dele dispõe apenas das ações de Ataque e Movimento.",
+            "tabela_familiar": [
+                {
+                    "nivel": 1,
+                    "pdv": 20,
+                    "vit": 3,
+                    "for": 3,
+                    "dex": 3,
+                    "int": 2,
+                    "sab": 2,
+                    "fdv": 2,
+                    "car": 2,
+                    "ataque_perfurante": "1d4",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "pdv": 40,
+                    "vit": 4,
+                    "for": 4,
+                    "dex": 3,
+                    "int": 2,
+                    "sab": 2,
+                    "fdv": 2,
+                    "car": 2,
+                    "ataque_perfurante": "1d6",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "pdv": 60,
+                    "vit": 4,
+                    "for": 4,
+                    "dex": 3,
+                    "int": 2,
+                    "sab": 2,
+                    "fdv": 2,
+                    "car": 2,
+                    "ataque_perfurante": "1d8 + 1",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "pdv": 80,
+                    "vit": 4,
+                    "for": 4,
+                    "dex": 3,
+                    "int": 2,
+                    "sab": 2,
+                    "fdv": 2,
+                    "car": 2,
+                    "ataque_perfurante": "1d10 + 2",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Licantropia",
+            "nome_romaji": "Go no Kata Raikansuropi",
+            "tipo_manobra": "Especial",
+            "descricao": "Durante 1d4 turnos o usuário ganha o status de Licantropia, com bônus não acumulativos. Os olhos ficam parecidos com os de um predador, íris vermelha cintilante e dentes pontudos. Esta habilidade permite ultrapassar a capacidade máxima de características de Exterminadores/humanos.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_for_ou_dex": "+1",
+                    "bonus_vit_ou_fdv": "+1",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_for_ou_dex": "+2",
+                    "bonus_vit_ou_fdv": "+1",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_for_ou_dex": "+2",
+                    "bonus_vit_ou_fdv": "+2",
+                    "custo": "5 PDR"
+                },
+                { "nivel": 4, "bonus_for_ou_dex": "+3", "bonus_vit_ou_fdv": "+2", "custo": "5 PDR" }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Mordida Dupla",
+            "nome_romaji": "Roku no Kata Daburu Baito",
+            "tipo_manobra": "Passiva",
+            "descricao": "Toda vez que acertar um ataque padrão, pode atacar novamente usando esta técnica. A figura de um lobo mordendo ferozmente sai da Nichirin para aplicar o dano. A rolagem de acerto é padrão com +2 de bônus.",
+            "niveis": [
+                { "nivel": 1, "dano_bonus": "1d4 + 1", "custo": "2 PDR" },
+                { "nivel": 2, "dano_bonus": "2d4 + 2", "custo": "3 PDR" },
+                { "nivel": 3, "dano_bonus": "3d4 + FOR", "custo": "4 PDR" },
+                { "nivel": 4, "dano_bonus": "4d4 + FOR", "custo": "5 PDR" }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,265 @@
+{
+    "titulo": "Respiração da Besta",
+    "aliases": ["Beast Breathing", "Kedamono no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "presa": 1,
+            "nome_pt": "Perfurar e Extrair",
+            "nome_romaji": "Ichi no Kiba Ugachi Nuki",
+            "tipo_manobra": "Especial",
+            "descricao": "Apunhala o pescoço do alvo. O dano extra é aplicado no próximo ataque padrão que acertar neste turno.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Dano bônus igual a FOR", "custo": "1 PDR" },
+                { "nivel": 2, "efeito": "Dano bônus igual a FOR + 2", "custo": "2 PDR" },
+                { "nivel": 3, "efeito": "Dano bônus igual a FOR + FDV + 2", "custo": "3 PDR" },
+                {
+                    "nivel": 4,
+                    "efeito": "Dano bônus igual a FOR + FDV + 2. Ao acertar, pode gastar 1 PDR adicional para recuperar 3 PDV",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "presa": 2,
+            "nome_pt": "Rasgar",
+            "nome_romaji": "Ni no Kiba Kirisaki",
+            "tipo_manobra": "Ataque",
+            "descricao": "Um golpe duplo em forma de X no pescoço do alvo. Esse ataque é considerado um ataque padrão para diversos efeitos de contato que possam ser aplicados a ele.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Realiza um ataque que, se acertar, é crítico independente do resultado da rolagem",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao anterior + aplica sangramento igual à metade da FOR (arredonda para cima) durante 2 turnos",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + +1 na rolagem de acerto",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + atordoa o inimigo por 1 turno caso ele falhe em um teste de VIT com CD = 9 + FOR do usuário da Besta",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "presa": 3,
+            "nome_pt": "Rasgue e Devore",
+            "nome_romaji": "San no Kiba Kuizaki",
+            "tipo_manobra": "Especial",
+            "descricao": "Uma sequência de golpes simultâneos contra a garganta.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "No próximo ataque (padrão ou via técnica), você se cura em uma quantia igual ao dano causado. Se o inimigo não morrer, fica impossibilitado de usar esta técnica novamente neste combate",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao anterior + pode fazer um teste de SAB com dificuldade 16 para saber quanto de vida resta ao inimigo antes de utilizar a técnica",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "A dificuldade base do teste de Sabedoria vira 14",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + ao usar a técnica, ganhe um dos bônus a seguir até o final do próximo turno: +5m de deslocamento ou +2 em testes de bloqueio",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "presa": 4,
+            "nome_pt": "Triture em Pedaços",
+            "nome_romaji": "Shi no Kiba Kiri Komazaki",
+            "tipo_manobra": "Única",
+            "descricao": "Múltiplos golpes diagonais em uma fúria descontrolada. Ao utilizar, aumenta o número de ataques realizados durante uma ação específica.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Ganha 1 ataque padrão adicional ao usar a Ação de Ataque para realizar um Ataque Padrão exclusivamente",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Ganha 1 ataque padrão adicional ao usar a Ação de Ataque tanto para Ataque Padrão quanto para Técnica de Ataque",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Ganha 2 ataques padrões adicionais ao usar a Ação de Ataque tanto para Ataque Padrão quanto para Técnica de Ataque",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + +2 nas rolagens de acerto dos ataques adicionais exclusivamente",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "presa": 5,
+            "nome_pt": "Executor Maluco",
+            "nome_romaji": "Go no Kiba Kuruizaki",
+            "tipo_manobra": "Ataque",
+            "descricao": "Golpes simultâneos e horizontais que não discriminam aliados de inimigos.",
+            "combo_com_4a_presa": "Essa técnica pode ser utilizada com o efeito ativo da 4ª Presa. Além do ciclone de ataques da 5ª Presa, você também realizará ataques adicionais como novos ciclones, replicando o dano da 5ª Presa.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Todos em até 3m à esquerda e direita e 5m à frente (incluindo aliados) devem esquivar com CD = 10 + DEX ou FOR do usuário. Falha: 2d10 de dano cortante",
+                    "custo": "2 PDR"
+                },
+                { "nivel": 2, "efeito": "Dano: 3d10 + FOR", "custo": "3 PDR" },
+                {
+                    "nivel": 3,
+                    "efeito": "Dano: 5d10 + FOR + DEX. CD de esquiva: 12 + DEX ou FOR do usuário",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Dano: 6d10 + FOR + DEX. CD de esquiva: 14 + DEX ou FOR do usuário",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "presa": 6,
+            "nome_pt": "Presas Brutais",
+            "nome_romaji": "Roku no Kiba Ranguigami",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário tenta decapitar o alvo.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 3,
+                    "efeito": "Se o alvo tiver 25 ou menos de vida ao ser acertado, o mestre anuncia que a decapitação é possível. Pode então utilizar esta técnica para finalizá-lo",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "A vida mínima para utilizar esta técnica passa a ser 35",
+                    "custo": "5 PDR"
+                }
+            ],
+            "sinergia": {
+                "nome": "Cura por Sinergia",
+                "descricao": "Ao finalizar um inimigo com essa técnica, aliados com sinergia são curados em FDV + CAR do usuário da Besta.",
+                "respiracoes_com_sinergia": [
+                    "Respiração da Serpente",
+                    "Respiração do Lobo",
+                    "Respiração do Dragão",
+                    "Respiração da Raposa"
+                ]
+            }
+        },
+        {
+            "presa": 7,
+            "nome_pt": "Percepção Espacial",
+            "nome_romaji": "Shichi no Kiba Kuukan no Shikikaku",
+            "tipo_manobra": "Ataque",
+            "custo_fixo": "5 PDR",
+            "descricao": "Identifica a posição dos inimigos sentindo pequenos distúrbios no ar. Tão poderosa que pode rastrear todos os inimigos espalhados por uma montanha inteira.",
+            "area_de_percepcao": "2 km",
+            "tabela_situacao": [
+                {
+                    "situacao": "Área pouco povoada",
+                    "efeito": "Encontra qualquer Oni na área sem necessidade de teste de SAB ou INT"
+                },
+                {
+                    "situacao": "Área muito povoada",
+                    "efeito": "Realiza o teste padrão de SAB ou INT com +2 de bônus na rolagem"
+                }
+            ]
+        },
+        {
+            "presa": 8,
+            "nome_pt": "Investida Suína",
+            "nome_romaji": "Hachi no Kiba Bakuretsu Moshin",
+            "tipo_manobra": "Ataque",
+            "descricao": "Investe contra o oponente e então ataca. Permite usar a ação de ataque ignorando limitações de distância e com poderosos bônus. Usar essa técnica declara um ataque padrão para diversos efeitos de contato aplicáveis.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Ganha FDV como bônus nas rolagens de acerto dos ataques realizados com essa ação",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + recebe resistência contra ataques do inimigo atingido até o início de seu próximo turno",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + ao acertar, pode fazer um teste de VIT com CD = 8 + CAR + FOR do inimigo. Se passar, elimina sangramentos e/ou envenenamentos aplicados a você no momento do golpe",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "presa": 9,
+            "nome_pt": "Flexibilidade da Fera",
+            "nome_romaji": "Ku no Kiba Shin Unerizaki",
+            "tipo_manobra": "Única e/ou Reação",
+            "descricao": "Esta técnica possui duas variações independentes.",
+            "variacoes": [
+                {
+                    "nome": "Variação Ação Única",
+                    "efeito": "Desloca as articulações do braço para ganhar +1 nas rolagens de acerto até o fim do turno vigente.",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nome": "Variação Reação",
+                    "efeito": "Ao receber um acerto crítico de qualquer origem, pode gastar 2 PDR por acerto crítico recebido durante a rodada para transformar o dano crítico em dano padrão. Esse efeito dura do momento da ativação até o início de seu próximo turno."
+                }
+            ]
+        },
+        {
+            "presa": 10,
+            "nome_pt": "Presas Circulares",
+            "nome_romaji": "Juu no Kiba Enten Senga",
+            "tipo_manobra": "Especial",
+            "descricao": "Gira as espadas em um movimento circular como uma hélice, tanto para atacar quanto para defender. O dano adicional desta técnica é aplicado junto com o dado de ataque padrão; ou seja, para ativá-la é necessário primeiro acertar um ataque padrão com a ação de ataque.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_bonus_perfurante": "1d6",
+                    "bonus_defensivo": "+1 de Esquiva/Bloqueio até o próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_bonus_perfurante": "2d6",
+                    "bonus_defensivo": "+1 de Esquiva/Bloqueio até o próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_bonus_perfurante": "3d6",
+                    "bonus_defensivo": "+2 de Esquiva/Bloqueio até o próximo turno",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_bonus_perfurante": "4d6",
+                    "bonus_defensivo": "+2 de Esquiva/Bloqueio até o próximo turno",
+                    "custo": "3 PDR"
+                }
+            ],
+            "observacao": "O dano bônus é sempre do tipo perfurante, independente da arma utilizada."
+        }
+    ]
+}

@@ -1,0 +1,429 @@
+{
+    "titulo": "Respiração da Tormenta",
+    "aliases": ["Storm Breathing", "Arashi no Kokyu", "Arashi no Kokyū"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu", "tormenta"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva_especial": {
+        "nome": "Pétalas da Tormenta",
+        "nome_romaji": "Arashi no Hanabira",
+        "descricao": "As Pétalas da Tormenta representam pressão residual deixada no campo após cada técnica. Não são flores. São cortes invisíveis de ar comprimido.",
+        "maximo": 5,
+        "ganha_1_petala_quando": [
+            "Acerta uma técnica da Respiração da Tormenta.",
+            "Causa Dano Trovejante com uma técnica da Tormenta.",
+            "Atinge 2 ou mais inimigos com a mesma técnica.",
+            "Obtém Acerto Crítico com uma técnica da Tormenta.",
+            "Reduz um inimigo a 0 PDV com uma técnica da Tormenta."
+        ],
+        "limite_de_ganho": "2 Pétalas por rodada, salvo se uma técnica disser o contrário",
+        "perde_1_petala_quando": [
+            "Encerra o turno sem realizar ataque.",
+            "Sofre Dano Sonoro.",
+            "Fica Atordoado.",
+            "Fica Paralisado."
+        ],
+        "observacao": "Se ficar Inconsciente, perde todas as Pétalas."
+    },
+    "pressao_residual": {
+        "descricao": "Enquanto possuir Pétalas, o usuário adiciona dano extra à primeira técnica ofensiva da Tormenta que acertar no turno.",
+        "tabela": [
+            { "petalas_ativas": 1, "dano_extra": "+1d6 Impacto" },
+            { "petalas_ativas": 2, "dano_extra": "+2d6 Impacto" },
+            { "petalas_ativas": 3, "dano_extra": "+3d6 Impacto" },
+            { "petalas_ativas": 4, "dano_extra": "+4d6 Impacto" },
+            { "petalas_ativas": 5, "dano_extra": "+5d6 Impacto" }
+        ],
+        "observacao": "O dano da Pressão Residual não consome Pétalas e não é multiplicado em Acerto Crítico."
+    },
+    "gasto_de_petalas": {
+        "descricao": "Ao declarar uma técnica ofensiva da Tormenta, o usuário pode gastar Pétalas para aumentar o dano daquela técnica.",
+        "tabela": [
+            { "petalas_gastas": 1, "efeito": "+2d6 Impacto" },
+            { "petalas_gastas": 2, "efeito": "+3d8 Cortante" },
+            { "petalas_gastas": 3, "efeito": "+2d8 Trovejante" },
+            { "petalas_gastas": 5, "efeito": "Ativa o Olho da Tormenta" }
+        ],
+        "limite": "O gasto de Pétalas só pode ser feito 1 vez por rodada."
+    },
+    "estado_supremo_olho_da_tormenta": {
+        "nome": "Olho da Tormenta",
+        "nome_romaji": "Arashi no Me",
+        "tipo_manobra": "Única",
+        "requisito": "5 Pétalas",
+        "custo": "Consome todas as Pétalas",
+        "uso": "1 vez por combate",
+        "descricao": "O usuário se torna o centro da pressão cinética.",
+        "efeitos_durante_numero_de_rodadas_igual_ao_nivel_de_respiracao": [
+            "Todas as técnicas da Tormenta causam +2d8 Impacto.",
+            "A primeira técnica ofensiva que acertar no turno causa +1d8 Trovejante.",
+            "Inimigos adjacentes ao usuário no início do turno deles sofrem 2d6 Impacto.",
+            "O usuário fica imune a Empurrado e Derrubado.",
+            "Toda técnica da Tormenta que acertar empurra o alvo 1,5m."
+        ],
+        "custo_do_centro": "Ao final do Olho da Tormenta, o usuário sofre 1 ponto de Exaustão. Se usar o 8º Estilo durante o Olho da Tormenta, sofre 2 pontos de Exaustão e o estado termina após a resolução da técnica."
+    },
+    "regra_geral_cd_da_tormenta": {
+        "formula": "10 + Atributo da Tormenta + Nível de Respiração",
+        "atributo_da_tormenta": {
+            "descricao": "Ao aprender esta Respiração, escolha o Atributo da Tormenta.",
+            "opcoes": [
+                { "atributo": "DEX", "uso": "velocidade, entrada, corte em movimento" },
+                { "atributo": "FOR", "uso": "impacto bruto, compressão, ruptura" },
+                { "atributo": "VIT", "uso": "corpo-condutor, estabilidade sob pressão" }
+            ]
+        }
+    },
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Pressão de Entrada",
+            "nome_romaji": "Ichi no Kata Totsunyū no Atsuryoku",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Impacto",
+            "descricao": "O usuário avança em um passo explosivo. A onda de pressão chega antes da lâmina.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "4d8 + Atributo da Tormenta",
+                    "efeito": "Empurra 1,5m",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "5d8 + Atributo da Tormenta",
+                    "efeito": "Empurra 1,5m",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "6d8 + Atributo da Tormenta + 1d6 Trovejante",
+                    "efeito": "Empurra 3m",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "7d8 + Atributo da Tormenta + 1d8 Trovejante",
+                    "efeito": "Empurra 3m",
+                    "custo": "5 PDR"
+                }
+            ],
+            "petala": "Se acertar, ganha 1 Pétala da Tormenta.",
+            "colisao": "Se o alvo for empurrado contra obstáculo sólido, aplique o dano de colisão do status Empurrado."
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Corte de Vórtice",
+            "nome_romaji": "Ni no Kata Uzu no Kiriage",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Cortante + Impacto",
+            "descricao": "O usuário gira a lâmina em alta velocidade e transforma a pressão ao redor em lâminas de ar comprimido. Uma única rolagem de acerto é feita contra todos os inimigos na área. Cada alvo usa sua Defesa normalmente.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "4d8 Cortante + 2d6 Impacto + DEX",
+                    "area": "Raio de 3m",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "5d8 Cortante + 2d8 Impacto + DEX",
+                    "area": "Raio de 3m",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "6d8 Cortante + 3d8 Impacto + DEX",
+                    "area": "Raio de 4,5m",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "8d8 Cortante + 3d10 Impacto + DEX",
+                    "area": "Raio de 4,5m",
+                    "custo": "7 PDR"
+                }
+            ],
+            "resultado_teste_vit": [
+                { "resultado": "Sucesso", "efeito": "Sofre apenas o dano" },
+                { "resultado": "Falha", "efeito": "Fica Desequilibrado" }
+            ],
+            "petala": "Se atingir 2 ou mais inimigos, ganha 1 Pétala da Tormenta."
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Descarga Atmosférica",
+            "nome_romaji": "San no Kata Taiki Hōden",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Impacto + Trovejante",
+            "descricao": "O usuário libera uma linha de pressão ionizada. O ar explode junto com o golpe. Uma única rolagem de acerto é feita contra todos os inimigos na linha. Cada alvo usa sua Defesa normalmente.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "5d8 Impacto + 1d6 Trovejante",
+                    "linha": "9m",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "6d8 Impacto + 2d6 Trovejante",
+                    "linha": "12m",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "7d8 Impacto + 2d8 Trovejante",
+                    "linha": "12m",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "9d8 Impacto + 3d8 Trovejante",
+                    "linha": "15m",
+                    "custo": "7 PDR"
+                }
+            ],
+            "observacao": "O Dano Trovejante desta técnica não pode ser reduzido.",
+            "resultado_teste_vit": [
+                { "resultado": "Sucesso", "efeito": "Sem efeito adicional" },
+                { "resultado": "Falha", "efeito": "Sofre Surdez Parcial por 2 turnos" }
+            ],
+            "quebra_de_reflexo": "Inimigos atingidos por esta técnica não podem realizar Ataques de Oportunidade até o início do próximo turno do usuário.",
+            "petala": "Se atingir 2 ou mais inimigos, ganha 1 Pétala da Tormenta."
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Investida do Demônio",
+            "nome_romaji": "Shi no Kata Kijin no Totsunyū",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Impacto + Cortante",
+            "descricao": "O usuário avança em linha reta como uma rajada de pressão armada. A lâmina corta. O deslocamento arrebenta. Move-se em linha reta sem provocar Ataques de Oportunidade. Uma única rolagem de acerto é feita contra todos os inimigos atravessados.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "movimento": "Até 9m",
+                    "dano": "6d10 Impacto + Atributo da Tormenta",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "movimento": "Até 12m",
+                    "dano": "7d10 Impacto + 2d6 Cortante + Atributo da Tormenta",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "movimento": "Até 12m",
+                    "dano": "8d10 Impacto + 2d8 Cortante + Atributo da Tormenta",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "movimento": "Até 15m",
+                    "dano": "10d10 Impacto + 3d8 Cortante + Atributo da Tormenta",
+                    "custo": "8 PDR"
+                }
+            ],
+            "resultado_teste_vit": [
+                { "resultado": "Sucesso", "efeito": "Sofre apenas o dano" },
+                { "resultado": "Falha", "efeito": "Fica Derrubado" },
+                { "resultado": "Falha por 5 ou mais", "efeito": "Fica Derrubado e Desequilibrado" }
+            ],
+            "petala": "Se atingir 2 ou mais inimigos, ganha 1 Pétala da Tormenta."
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Grito da Tormenta",
+            "nome_romaji": "Go no Kata Arashi no Sakebi",
+            "tipo_manobra": "Especial",
+            "tipo_de_dano": "Impacto + Trovejante",
+            "descricao": "Não é voz. É pressão liberada em esfera. Esta técnica não exige rolagem de acerto. Todos os inimigos na área testam VIT contra a C.D. da Tormenta.",
+            "niveis": [
+                { "nivel": 1, "dano": "5d8 Impacto", "area": "Raio de 4,5m", "custo": "5 PDR" },
+                {
+                    "nivel": 2,
+                    "dano": "6d8 Impacto + 1d8 Trovejante",
+                    "area": "Raio de 4,5m",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "8d8 Impacto + 2d8 Trovejante",
+                    "area": "Raio de 6m",
+                    "custo": "8 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "10d8 Impacto + 3d8 Trovejante",
+                    "area": "Raio de 6m",
+                    "custo": "9 PDR"
+                }
+            ],
+            "resultado_teste": [
+                {
+                    "resultado": "Sucesso",
+                    "efeito": "Metade do Dano de Impacto + Dano Trovejante completo"
+                },
+                { "resultado": "Falha", "efeito": "Dano completo + Empurrado 3m" },
+                {
+                    "resultado": "Falha por 5 ou mais em Nível 3+",
+                    "efeito": "Dano completo + Empurrado 3m + Atordoado por 1 turno"
+                }
+            ],
+            "petala": "Se pelo menos um inimigo falhar no teste, ganha 1 Pétala da Tormenta."
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Barreira da Tormenta",
+            "nome_romaji": "Roku no Kata Arashi no Kekkai",
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de um ataque físico",
+            "tipo_de_dano": "Impacto",
+            "descricao": "O campo de pressão ao redor do usuário se comprime e explode de volta contra o atacante.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "reducao_de_dano": "6 + Atributo da Tormenta",
+                    "dano_no_atacante": "3d6 Impacto",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "reducao_de_dano": "8 + Atributo da Tormenta",
+                    "dano_no_atacante": "4d6 Impacto",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "reducao_de_dano": "10 + Atributo da Tormenta",
+                    "dano_no_atacante": "5d6 Impacto + 1d6 Cortante",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "reducao_de_dano": "12 + Atributo da Tormenta",
+                    "dano_no_atacante": "6d6 Impacto + 1d8 Cortante",
+                    "custo": "6 PDR"
+                }
+            ],
+            "observacao": "O dano no atacante só ocorre se ele estiver em alcance corpo a corpo.",
+            "defesa_perfeita": "Se a Redução de Dano zerar completamente o dano recebido: o atacante é Empurrado 1,5m; o usuário ganha 1 Pétala da Tormenta."
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Pressão Extrema",
+            "nome_romaji": "Shichi no Kata Goku Atsuryoku",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Impacto + Cortante",
+            "requisitos": [
+                "Disponível a partir do Nível 2 de Respiração",
+                "Requer 3 ou mais Pétalas",
+                "Gasta 2 Pétalas ao usar"
+            ],
+            "descricao": "A pressão residual acumulada se fecha sobre um único alvo. Não empurra. Comprime.",
+            "niveis": [
+                { "nivel": 1, "dano": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "dano": "9d10 Impacto + 2d8 Cortante + Atributo da Tormenta",
+                    "custo": "8 PDR + 2 Pétalas"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "11d10 Impacto + 3d8 Cortante + Atributo da Tormenta",
+                    "custo": "9 PDR + 2 Pétalas"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "13d10 Impacto + 4d8 Cortante + 1d8 Trovejante + Atributo da Tormenta",
+                    "custo": "10 PDR + 2 Pétalas"
+                }
+            ],
+            "resultado_teste_vit_se_acertar": [
+                { "resultado": "Sucesso", "efeito": "Sofre apenas o dano" },
+                { "resultado": "Falha", "efeito": "Fica Derrubado e Desequilibrado" },
+                {
+                    "resultado": "Falha por 5 ou mais",
+                    "efeito": "Fica Derrubado, Desequilibrado e Atordoado por 1 turno"
+                }
+            ],
+            "bonus_condicional": {
+                "nome": "Alvo Pressurizado",
+                "efeito": "Se o alvo já estava Derrubado, Desequilibrado ou foi Empurrado contra obstáculo neste turno, esta técnica causa +3d8 Impacto."
+            }
+        },
+        {
+            "estilo": 8,
+            "nome_pt": "O Que Sōken Fez no Final",
+            "nome_romaji": "Hachi no Kata Sōken no Saigo",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Impacto + Cortante + Trovejante",
+            "requisitos": [
+                "Disponível apenas no Nível 3 de Respiração ou superior",
+                "Uso máximo de 1 vez por combate"
+            ],
+            "descricao": "Por dois segundos, o campo fica em silêncio. A pressão desaparece. Então o espaço quebra. Uma única rolagem de acerto é feita contra todos os inimigos na área. Cada inimigo usa sua Defesa normalmente.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_area_externa": "Não é possível usar!",
+                    "nucleo_central": null,
+                    "area": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_area_externa": "Não é possível usar!",
+                    "nucleo_central": null,
+                    "area": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 3,
+                    "dano_area_externa": "10d10 Impacto + 4d8 Cortante",
+                    "nucleo_central": "+4d8 Trovejante",
+                    "area": "Raio 6m / Núcleo 3m",
+                    "custo": "12 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_area_externa": "12d10 Impacto + 6d8 Cortante",
+                    "nucleo_central": "+6d8 Trovejante",
+                    "area": "Raio 7,5m / Núcleo 3m",
+                    "custo": "14 PDR"
+                }
+            ],
+            "observacoes": [
+                "Inimigos dentro do Núcleo Central sofrem o dano da área externa + o dano Trovejante do núcleo.",
+                "O Dano Trovejante do núcleo não pode ser reduzido."
+            ],
+            "resultado_teste_vit": [
+                { "resultado": "Sucesso", "efeito": "Sofre apenas o dano" },
+                { "resultado": "Falha", "efeito": "Fica Derrubado" },
+                {
+                    "resultado": "Falha por 5 ou mais",
+                    "efeito": "Fica Derrubado e Atordoado por 1 turno"
+                },
+                {
+                    "resultado": "Falha no Núcleo em Nível 4",
+                    "efeito": "Fica Atordoado automaticamente"
+                }
+            ],
+            "custo_de_soken": "Após usar esta técnica, o usuário sofre 1 ponto de Exaustão. Se usada durante o Olho da Tormenta, sofre 2 pontos de Exaustão e o estado termina imediatamente.",
+            "ultima_pressao": "Se esta técnica reduzir pelo menos um inimigo a 0 PDV, o usuário recupera 2 Pétalas. Esse ganho ignora o limite de ganho por rodada."
+        }
+    ],
+    "sinergias": {
+        "trovao": "Se um aliado causar Dano Trovejante em um alvo, a próxima técnica da Tormenta contra esse alvo causa +1d8 Impacto.",
+        "vento": "Se um aliado empurrar, deslocar ou derrubar um inimigo, a próxima técnica da Tormenta contra esse alvo recebe +2 no teste de acerto.",
+        "macaco": "Se um aliado deixar o alvo Desorientado, Desequilibrado ou Derrubado, a próxima técnica da Tormenta contra esse alvo causa +1d8 Cortante.",
+        "tinta": "Sob efeito de Kanji Vermelho, a primeira técnica ofensiva da Tormenta no turno causa +1d8 Cortante. Sob efeito de Kanji Azul, o 1º e o 4º Estilo recebem +1,5m de deslocamento."
+    },
+    "notas_de_balanceamento": [
+        "Pétalas não substituem PDR: são recurso próprio. Aumentam dano, mas não pagam custo de técnica.",
+        "Dano Trovejante substitui o antigo Dano Verdadeiro: sempre que a técnica precisava de dano impossível de reduzir, foi usado Dano Trovejante.",
+        "Controle é secundário: Empurrado, Derrubado e Desequilibrado existem para representar a pressão cinética. O papel principal da Respiração continua sendo DPS bruto.",
+        "Fraqueza contra Dano Sonoro: sempre que sofrer Dano Sonoro, o usuário perde 1 Pétala. Se não tiver Pétalas, recebe −1 no próximo teste de acerto com técnica da Tormenta.",
+        "8º Estilo não é rotação: é finalizador. O custo de Exaustão existe para impedir uso irresponsável."
+    ],
+    "citacao_final": "O Trovão atinge. O Vento passa. A Tormenta fica no ar depois que os dois já deveriam ter terminado."
+}

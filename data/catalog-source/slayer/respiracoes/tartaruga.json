@@ -1,0 +1,533 @@
+{
+    "titulo": "Respiração da Tartaruga",
+    "nome_romaji": "Kame no Kokyū",
+    "kanji": "亀の呼吸",
+    "citacao": "A Tartaruga não foge da tempestade. Ela carrega o mundo nas costas até a tempestade passar.",
+    "descricao_geral": "A Respiração da Tartaruga é uma derivação rara da Respiração da Pedra. Da Pedra, herdou a estabilidade, a resistência e a recusa absoluta em ceder terreno. Mas onde a Pedra resiste como fortaleza, a Tartaruga resiste como serviço. A Tartaruga não busca velocidade. Não busca dano. Não busca glória. Ela busca que os aliados sobrevivam. O praticante da Tartaruga é o escudo que ninguém percebe durante a luta, mas todos lamentam quando cai. Sua função não é matar primeiro. É garantir que o grupo ainda esteja vivo para matar depois.",
+    "estrutura_padrao": "[ Nível de Respiração ] [ Efeito ] [ Custo de PDR ]",
+    "conversoes_de_atributo": [
+        { "termo_original": "Kūdō", "night_assassins": "PDR" },
+        { "termo_original": "ESPÍRITO", "night_assassins": "FDV" },
+        { "termo_original": "MENTE", "night_assassins": "INT, SAB ou CAR" },
+        { "termo_original": "CORPO", "night_assassins": "VIT, DEX ou FOR" },
+        { "termo_original": "Contundente", "night_assassins": "Concussão" }
+    ],
+    "atributo_de_carapaca": {
+        "descricao": "Ao aprender a Respiração da Tartaruga, escolha o Atributo de Carapaça do usuário.",
+        "opcoes": [
+            { "atributo": "VIT", "tema": "absorção, resistência corporal, dor e durabilidade" },
+            {
+                "atributo": "FOR",
+                "tema": "sustentação física, bloqueio pesado, ancoragem e impacto"
+            },
+            {
+                "atributo": "FDV",
+                "tema": "proteção espiritual, calma, perseverança e controle respiratório"
+            }
+        ],
+        "observacao": "Sempre que uma técnica pedir Atributo de Carapaça, use o atributo escolhido."
+    },
+    "funcao_mecanica": {
+        "papel_principal": "Tanque sacrificial",
+        "papel_secundario": "Suporte defensivo e controle territorial",
+        "atributos_chave": ["VIT", "FOR", "FDV"],
+        "recurso_interno": "Anéis",
+        "dano_comum": ["Concussão", "Impacto"],
+        "status_principais": [
+            "Derrubado",
+            "Empurrado",
+            "Restrição de Movimento",
+            "Desequilibrado",
+            "Atordoado"
+        ],
+        "fraqueza": "Combate solo, dano mental, dano sonoro, dano de ferida e inimigos que ignoram defesa"
+    },
+    "cd_da_tartaruga": "10 + Atributo de Carapaça + Nível de Respiração",
+    "observacao_cd": "Quando o efeito for físico, o alvo normalmente resiste com VIT ou FOR.",
+    "passiva_especial": {
+        "nome": "Anéis",
+        "nome_romaji": "Nenrin",
+        "kanji": "年輪",
+        "descricao": "Cada Anel representa uma camada da carapaça espiritual. A Tartaruga não fica mais forte atacando. Fica mais forte carregando impacto.",
+        "maximo_de_aneis": 5,
+        "ganha_1_anel_quando": [
+            "Absorve dano no lugar de um aliado.",
+            "Bloqueia com sucesso um ataque direcionado a um aliado adjacente.",
+            "Remove um status negativo de um aliado com uma Forma da Tartaruga.",
+            "Reduz dano recebido por um aliado através de uma Forma.",
+            "Impede que um aliado seja Derrubado, Empurrado ou afetado por Restrição de Movimento."
+        ],
+        "limite_de_ganho": "2 Anéis por rodada (a 6ª Forma pode ultrapassar esse limite quando especificado)",
+        "perde_aneis_quando": [
+            "Fica Inconsciente: perde todos.",
+            "Fica Atordoado: perde 2 Anéis.",
+            "Fica Paralisado: perde todos.",
+            "Sofre Dano Sonoro: perde 1 Anel.",
+            "Sofre Dano de Ferida: perde 2 Anéis.",
+            "Se afasta voluntariamente mais de 6m de todos os aliados: perde todos os Anéis."
+        ]
+    },
+    "recompensas_por_aneis": [
+        { "aneis": "1–5", "efeito": "+1 Redução de Dano físico por Anel." },
+        { "aneis": "3+", "efeito": "Aliados em até 3m recebem +1 Defesa." },
+        { "aneis": 5, "efeito": "Habilita Estado Supremo Genbu." }
+    ],
+    "reducao_de_dano_dos_aneis": {
+        "aplica_se_contra": [
+            "Cortante",
+            "Perfurante",
+            "Concussão",
+            "Impacto, exceto quando o efeito ignorar RD natural ou física"
+        ],
+        "nao_se_aplica_contra": [
+            "Dano Trovejante",
+            "Dano Sonoro",
+            "Dano de Ferida",
+            "Dano Necrótico",
+            "Sangramento",
+            "Envenenamento",
+            "efeitos que digam que não podem ser reduzidos"
+        ]
+    },
+    "estado_supremo_genbu": {
+        "nome": "Genbu",
+        "kanji": "玄武",
+        "tipo_manobra": "Ação Livre",
+        "requisito": "5 Anéis",
+        "custo": "Consome todos os Anéis",
+        "duracao": "Número de rodadas igual ao Nível de Respiração",
+        "uso": "1 vez por combate",
+        "descricao": "O usuário manifesta a carapaça de Genbu. Não é uma postura de vitória. É uma sentença: enquanto ele permanecer de pé, o grupo ainda respira.",
+        "efeitos_ativos": [
+            "Aliados em até 6m recebem Resistência a dano Cortante, Perfurante e Concussão.",
+            "Aliados em até 6m recebem +1 em testes de resistência físicos.",
+            "O usuário não pode Esquivar.",
+            "O usuário não pode realizar Ação de Ataque.",
+            "O usuário não pode usar Formas ofensivas.",
+            "O usuário ainda pode Bloquear.",
+            "O usuário ainda pode usar Reações defensivas da Tartaruga.",
+            "O usuário não pode se mover voluntariamente mais de 1,5m por turno."
+        ],
+        "peso_da_carapaca": {
+            "ao_final_recupera": "2d6 PDR",
+            "depois_sofre": "1 nível de Exaustão",
+            "condicao_termino_ruim": "Se Genbu terminar porque o usuário ficou Inconsciente, Paralisado ou foi removido do campo, ele não recupera PDR e sofre 2 níveis de Exaustão."
+        }
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Casco que Absorve o Mar",
+            "nome_romaji": "Ichi no Kata: Umi o Suikōmu Kōra",
+            "kanji": "一の型・海を吸い込む甲羅",
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de um ataque",
+            "funcao": "Bloqueio pessoal",
+            "descricao": "O usuário não para o golpe. Ele deixa a carapaça engolir o impacto como pedra engole onda.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_bloqueio": "+2",
+                    "reducao_de_dano_adicional": "FDV",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_bloqueio": "+4",
+                    "reducao_de_dano_adicional": "FDV + 2",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_bloqueio": "+6",
+                    "reducao_de_dano_adicional": "FDV + VIT",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_bloqueio": "+8",
+                    "reducao_de_dano_adicional": "FDV + VIT + 2",
+                    "custo": "4 PDR"
+                }
+            ],
+            "observacao": "Se o Bloqueio reduzir o dano final a 0, o usuário ganha +1 Anel."
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Barreira das Correntes Profundas",
+            "nome_romaji": "Ni no Kata: Shinkai no Nagare no Kekkai",
+            "kanji": "二の型・深海の流れの結界",
+            "tipo_manobra": "Reação",
+            "gatilho": "Aliado em até 3m ser alvo de ataque à distância",
+            "funcao": "Interceptação de projétil",
+            "descricao": "O usuário interpõe o próprio corpo entre o projétil e o aliado. A carapaça decide antes da mente.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Aliado recebe 0 dano; usuário recebe o ataque",
+                    "reducao_aplicada_ao_dano_do_usuario": "FDV",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual",
+                    "reducao_aplicada_ao_dano_do_usuario": "FDV + Atributo de Carapaça",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual",
+                    "reducao_aplicada_ao_dano_do_usuario": "2 × FDV + Atributo de Carapaça",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual",
+                    "reducao_aplicada_ao_dano_do_usuario": "2 × FDV + 2 × Atributo de Carapaça",
+                    "custo": "5 PDR"
+                }
+            ],
+            "observacoes": [
+                "O usuário recebe o dano restante no lugar do aliado.",
+                "Ao usar esta Forma, ganha +1 Anel."
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Braço que Segura o Céu que Cai",
+            "nome_romaji": "San no Kata: Ochiru Sora o Sasaeru Ude",
+            "kanji": "三の型・落ちる空を支える腕",
+            "tipo_manobra": "Reação",
+            "gatilho": "Aliado adjacente ser alvo de ataque corpo a corpo",
+            "funcao": "Interposição corpo a corpo",
+            "descricao": "Esta é a Forma mais importante da Tartaruga. Um aliado que morre agora não tem próximo turno.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Usuário recebe o ataque no lugar do aliado",
+                    "reducao_de_dano": "Atributo de Carapaça + FDV",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual",
+                    "reducao_de_dano": "Atributo de Carapaça + FDV + 3",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual",
+                    "reducao_de_dano": "2 × (Atributo de Carapaça + FDV)",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual + aliado recebe +2 Defesa até o fim da rodada",
+                    "reducao_de_dano": "2 × (Atributo de Carapaça + FDV)",
+                    "custo": "5 PDR"
+                }
+            ],
+            "observacoes": [
+                "Ao usar esta Forma, ganha +1 Anel.",
+                "Se o dano final recebido pelo usuário for reduzido a 0, ganha +1 Anel adicional."
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Corrente da Pedra que Ancora",
+            "nome_romaji": "Shi no Kata: Kakeru Ishi no Nagare",
+            "kanji": "四の型・掛ける石の流れ",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Concussão + Impacto",
+            "funcao": "Controle de área",
+            "descricao": "O usuário golpeia o chão com lâmina, escudo ou corpo, criando uma onda verde-azulada rente à terra. Não busca cortar. Busca ancorar.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_por_anel_atual": "1d6 por Anel, máximo 5d6",
+                    "area": "Raio de 3m",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_por_anel_atual": "1d8 por Anel, máximo 5d8",
+                    "area": "Raio de 3m",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_por_anel_atual": "1d8 por Anel, máximo 5d8",
+                    "area": "Raio de 4,5m",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_por_anel_atual": "1d10 por Anel, máximo 5d10",
+                    "area": "Raio de 4,5m",
+                    "custo": "6 PDR"
+                }
+            ],
+            "mecanica_de_acerto": "Faça uma única rolagem de ataque contra todos os inimigos na área. Cada inimigo se defende individualmente.",
+            "ancoragem": {
+                "teste": "VIT contra CD da Tartaruga",
+                "falha": "Sofrem Restrição de Movimento por 1 turno.",
+                "sucesso": "Deslocamento reduzido em 1,5m até o início do próximo turno.",
+                "observacoes": [
+                    "Aliados na área não são afetados.",
+                    "Aliados na área ficam imunes a Derrubado e Empurrado até o início do próximo turno do usuário.",
+                    "Se 2 ou mais inimigos forem afetados, o usuário ganha +1 Anel."
+                ]
+            }
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Escudo que Devolveu a Tempestade",
+            "nome_romaji": "Go no Kata: Arashi o Kaeshita Tate",
+            "kanji": "五の型・嵐を返した盾",
+            "tipo_manobra": "Reação",
+            "gatilho": "Receber dano de ataque corpo a corpo, projétil físico ou técnica física",
+            "funcao": "Redução e reflexão",
+            "tipo_de_dano_refletido": "Concussão",
+            "descricao": "Tai Chi puro. Não resistir à força. Redirecioná-la. O atacante sente a própria violência voltando.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "requisito": "1+ Anel",
+                    "reducao_de_dano": "Atributo de Carapaça + FDV",
+                    "dano_refletido": "Metade do dano reduzido",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "requisito": "2+ Anéis",
+                    "reducao_de_dano": "Atributo de Carapaça + 2 × FDV",
+                    "dano_refletido": "Metade do dano reduzido",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "requisito": "3+ Anéis",
+                    "reducao_de_dano": "2 × (Atributo de Carapaça + FDV)",
+                    "dano_refletido": "Metade do dano reduzido",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "requisito": "3+ Anéis",
+                    "reducao_de_dano": "2 × (Atributo de Carapaça + FDV)",
+                    "dano_refletido": "Metade do dano reduzido + Desequilibrado",
+                    "custo": "6 PDR"
+                }
+            ],
+            "observacoes_do_dano_refletido": [
+                "Não exige rolagem de ataque.",
+                "É Dano de Concussão.",
+                "Não pode exceder o dano realmente reduzido.",
+                "Não reflete Dano de Sangramento, Envenenamento, Ferida ou Necrótico.",
+                "No Nível 4, o atacante fica Desequilibrado."
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Corrente Ancestral da Carapaça",
+            "nome_romaji": "Roku no Kata: Kōra no Sosen no Nagare",
+            "kanji": "六の型・甲羅の祖先の流れ",
+            "tipo_manobra": "Especial",
+            "funcao": "Remoção e transferência de status",
+            "descricao": "A Tartaruga carrega o que o aliado não pode mais suportar. Não remove dor. Assume a dor.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Remove 1 status negativo de aliado adjacente; usuário recebe o status por 1 turno.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Remove 2 status negativos de aliado adjacente; usuário recebe os status por 1 turno.",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Remove todos os status negativos de 1 aliado em até 3m; usuário recebe cada um por 1 turno.",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Remove todos os status negativos de 1 aliado em até 3m; usuário não recebe os status.",
+                    "custo": "7 PDR"
+                }
+            ],
+            "status_removiveis": [
+                "Sangramento",
+                "Hemorragia",
+                "Envenenamento",
+                "Em Chamas",
+                "Derrubado",
+                "Desequilibrado",
+                "Desorientado",
+                "Distraído",
+                "Amedrontado",
+                "Fadiga Corporal",
+                "Fadiga Mental",
+                "Fadiga Espiritual",
+                "Ofegante",
+                "Restrição de Movimento",
+                "Atordoado, apenas no Nível 3 ou superior"
+            ],
+            "status_nao_removiveis": [
+                "Dano de Ferida",
+                "Dano Necrótico",
+                "amputação",
+                "Corrupção severa",
+                "morte",
+                "Paralisia, salvo autorização do Mestre",
+                "Sonhando, salvo se a origem for física ou respiratória"
+            ],
+            "observacao": "Ao usar esta Forma, o usuário ganha +2 Anéis (pode ultrapassar o limite normal por rodada, mas nunca ultrapassa o máximo de 5)."
+        },
+        {
+            "forma": 7,
+            "nome_pt": "A Pedra que Não Deixa Passar",
+            "nome_romaji": "Shichi no Kata: Tōsanai Ishi",
+            "kanji": "七の型・通さない石",
+            "tipo_manobra": "Reação",
+            "gatilho": "Aliado em até 3m sofrer controle ou deslocamento forçado",
+            "funcao": "Negação de controle",
+            "descricao": "O que ia mover o aliado encontra a pedra. A pedra não se move.",
+            "niveis": [
+                { "nivel": 1, "efeito_negado": "Derrubado ou Empurrado", "custo": "2 PDR" },
+                {
+                    "nivel": 2,
+                    "efeito_negado": "Derrubado, Empurrado ou Restrição de Movimento",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito_negado": "Qualquer efeito físico de controle ou deslocamento forçado",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito_negado": "Igual ao Nível 3; usuário testa para negar o mesmo efeito em si",
+                    "custo": "5 PDR"
+                }
+            ],
+            "observacao_nivel_4": "No Nível 4, se o mesmo efeito também afetaria o usuário, ele realiza teste de VIT ou FOR contra CD da fonte. Em sucesso, nega o efeito em si também.",
+            "bonus": "Ao usar esta Forma, ganha +1 Anel."
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Palma do Trovão Silencioso",
+            "nome_romaji": "Hachi no Kata: Shizuka na Kaminari no Te",
+            "kanji": "八の型・静かな雷の掌",
+            "tipo_manobra": "Completa",
+            "requisito": "3+ Anéis",
+            "tipo_de_dano": "Impacto",
+            "funcao": "Descarga ofensiva acumulada",
+            "descricao": "A única Forma realmente ofensiva da Tartaruga. O praticante passou a luta absorvendo força. Agora devolve tudo em um único ponto.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_base": "Não é possível usar",
+                    "aneis_gastos": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_base": "3d8 + FOR",
+                    "aneis_gastos": "até 3 Anéis",
+                    "custo": "5 PDR + X Anéis"
+                },
+                {
+                    "nivel": 3,
+                    "dano_base": "4d8 + FOR",
+                    "aneis_gastos": "até 4 Anéis",
+                    "custo": "6 PDR + X Anéis"
+                },
+                {
+                    "nivel": 4,
+                    "dano_base": "5d10 + FOR",
+                    "aneis_gastos": "até 5 Anéis",
+                    "custo": "7 PDR + X Anéis"
+                }
+            ],
+            "dano_extra_por_anel_gasto": [
+                { "nivel": 2, "dano_extra": "+1d8" },
+                { "nivel": 3, "dano_extra": "+1d8" },
+                { "nivel": 4, "dano_extra": "+1d10" }
+            ],
+            "observacao": "Declare quantos Anéis serão gastos antes da rolagem de ataque.",
+            "impacto_concentrado": {
+                "descricao": "O ataque ignora Redução de Dano proveniente de escudos ou barreiras.",
+                "teste": "VIT contra CD da Tartaruga",
+                "falha_por_5_ou_mais": "Fica Atordoado por 1 turno e Derrubado.",
+                "falha_normal": "Fica Derrubado.",
+                "sucesso": "Fica Desequilibrado."
+            }
+        },
+        {
+            "forma": 9,
+            "nome_pt": "A Tartaruga que Carrega o Mundo dos Caçadores",
+            "nome_romaji": "Ku no Kata: Karyūdotachi no Sekai o Seou Kame",
+            "kanji": "九の型・狩人たちの世界を背負う亀",
+            "tipo_manobra": "Completa",
+            "requisito": "3+ Anéis",
+            "funcao": "Zona suprema de sustentação",
+            "descricao": "Esta Forma define a Respiração da Tartaruga. O usuário não destroça inimigos. Ele cria o espaço onde os aliados conseguem sobreviver tempo suficiente para vencê-los.",
+            "niveis": [
+                { "nivel": 1, "area": "Não é possível usar", "duracao": null, "custo": null },
+                { "nivel": 2, "area": "Não é possível usar", "duracao": null, "custo": null },
+                { "nivel": 3, "area": "Raio de 6m", "duracao": "3 rodadas", "custo": "8 PDR" },
+                { "nivel": 4, "area": "Raio de 6m", "duracao": "4 rodadas", "custo": "9 PDR" }
+            ],
+            "efeitos_da_zona_ativa": [
+                "Aliados na área reduzem em 1 o custo de PDR de suas Formas, mínimo 1.",
+                "Aliados na área recebem +1 em testes de resistência.",
+                "Aliados na área recebem +1 Defesa enquanto estiverem adjacentes ao usuário.",
+                "Inimigos tratam a área como terreno difícil.",
+                "Inimigos que tentarem sair da área testam VIT contra CD da Tartaruga."
+            ],
+            "resultado_teste_saida": {
+                "falha": "Sofrem Restrição de Movimento por 1 turno.",
+                "sucesso": "Saem normalmente."
+            },
+            "sustentacao": {
+                "descricao": "Enquanto mantiver esta Forma, o usuário:",
+                "restricoes": [
+                    "Não pode usar Formas de Ação Completa.",
+                    "Não pode Esquivar.",
+                    "Pode Bloquear.",
+                    "Pode usar Reações defensivas da Tartaruga.",
+                    "Não pode se mover voluntariamente mais de 1,5m por turno."
+                ],
+                "termino": "A zona termina se o usuário ficar Inconsciente, Atordoado ou Paralisado."
+            }
+        }
+    ],
+    "sinergias": {
+        "pedra": "Quando um usuário da Pedra estiver adjacente ao usuário da Tartaruga, ambos recebem +1 em testes de VIT contra Derrubado, Empurrado ou Atordoado. Esse efeito só funciona enquanto ambos estiverem conscientes.",
+        "ameixeira": "A Ameixeira cuida, estabiliza e cura. A Tartaruga absorve, bloqueia e carrega impacto. Quando um aliado dentro de uma área da Ameixeira receber dano, o usuário da Tartaruga pode usar uma Reação defensiva para protegê-lo com +1 de Redução de Dano adicional. Esse efeito ocorre no máximo uma vez por rodada.",
+        "agua": "Quando um usuário da Água usar uma técnica defensiva em um aliado dentro de 3m da Tartaruga, a Tartaruga ganha +1 Anel se esse aliado não sofrer dano. Esse ganho respeita o limite normal de Anéis por rodada.",
+        "tubarao": "O Tubarão caça melhor quando alguém segura o campo. Enquanto estiver dentro da zona da 9ª Forma da Tartaruga, o Tubarão recebe +1 em ataques contra inimigos com Restrição de Movimento."
+    },
+    "notas_de_balanceamento": [
+        "A Tartaruga não é Ameixeira. A Ameixeira é suporte flexível, cura e controle. A Tartaruga é parede sacrificial. Ela protege passando o golpe por si primeiro.",
+        "Anéis recompensam proteger, não apanhar sozinho. A Tartaruga ganha Anéis principalmente ao proteger aliados. Se o inimigo ignorar o grupo e atacar apenas a Tartaruga, ela ainda aguenta muito, mas escala mais devagar. Esse é o ponto. Tanque bom força decisão, não exige que o inimigo seja burro.",
+        "Genbu é poderoso porque cobra presença total. Genbu concede Resistência física em área. Por isso o usuário: não pode Esquivar; não pode atacar; não pode usar Formas ofensivas; quase não se move; sofre Exaustão ao final. Ele vira muralha. Muralhas não perseguem.",
+        "Dano Sonoro e Dano de Ferida são ameaças reais. A Tartaruga é excelente contra dano físico. Não deve ser excelente contra tudo. Dano Sonoro, Dano de Ferida, Necrótico e efeitos mentais são formas legítimas de ameaçar o usuário.",
+        "A 8ª Forma é exceção ofensiva. A Palma do Trovão Silencioso permite dano alto, mas exige Anéis. Ao gastar Anéis, o usuário enfraquece Genbu, reduz sua RD passiva e adia a função principal. Essa é a escolha certa: bater agora ou manter todos vivos depois."
+    ],
+    "resumo_mecanico": [
+        { "elemento": "Anéis", "funcao": "Recurso interno defensivo" },
+        { "elemento": "Genbu", "funcao": "Estado supremo de proteção em área" },
+        { "elemento": "Casco que Absorve o Mar", "funcao": "Bloqueio pessoal" },
+        { "elemento": "Barreira das Correntes", "funcao": "Interceptação à distância" },
+        { "elemento": "Braço que Segura o Céu", "funcao": "Interposição corpo a corpo" },
+        { "elemento": "Corrente da Pedra", "funcao": "Controle de área" },
+        { "elemento": "Escudo que Devolveu", "funcao": "Reflexão de dano" },
+        { "elemento": "Corrente Ancestral", "funcao": "Remoção e transferência de status" },
+        { "elemento": "Pedra que Não Deixa Passar", "funcao": "Negação de controle" },
+        { "elemento": "Palma do Trovão Silencioso", "funcao": "Ataque acumulado" },
+        { "elemento": "Tartaruga que Carrega o Mundo", "funcao": "Zona de sustentação" }
+    ]
+}

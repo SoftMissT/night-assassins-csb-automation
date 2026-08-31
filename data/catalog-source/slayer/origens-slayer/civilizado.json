@@ -1,0 +1,26 @@
+{
+    "name": "Civilizado",
+    "subtitle": "O Mestre da Lábia",
+    "quote": "Antes de desembainhar a espada, a mente já terminou o combate.",
+    "description": "O Civilizado cresceu em ambientes onde força física raramente resolvia o problema. Uma palavra no momento certo, uma leitura precisa do interlocutor ou uma distração calculada podiam mudar o rumo de uma sala inteira. No campo de batalha, esse instinto não desaparece. Para o Civilizado, combate é apenas outra negociação — uma onde sangue substitui assinaturas.",
+    "attributes": {
+        "pdv": "10 + VIT",
+        "pdr": "5 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Rede de Informantes",
+            "level": 1,
+            "description": "Você começa com 2 Contatos criados junto ao Mestre. Cada Contato deve ter nome, área de atuação e uma razão para ainda falar com você. Escolha uma categoria para cada Contato: Submundo (contrabando, esconderijos, movimentação suspeita e rumores perigosos); Nobreza (eventos sociais, permissões, favores e influência política); Slayer Corps (missões antecipadas, patrulhas, registros e boatos internos); Mercado (itens raros, fornecedores, descontos e rotas comerciais); Povo (guias locais, abrigo, rumores de vila e sinais de desaparecimentos). Antes de uma missão, você pode consultar 1 Contato. Faça um teste social ou mental apropriado definido pelo Mestre contra CD 10. Em sucesso, o grupo recebe 1 informação útil sobre a missão — por exemplo: uma fraqueza conhecida do alvo; uma rota de entrada segura; uma pessoa envolvida; um perigo ambiental; uma pista sobre o comportamento do Oni; uma vantagem social antes do conflito. Em sucesso por 5 ou mais, além da informação, o grupo recebe +1 no primeiro teste relevante da missão, desde que esse teste use diretamente a informação obtida. Em falha, o Contato está indisponível, mal informado ou com medo. Em falha crítica, a consulta gera uma complicação: o alvo pode ser alertado, o Contato pode cobrar um favor, ou uma informação incompleta pode colocar o grupo em risco. Você só pode fazer 1 consulta por missão."
+        },
+        {
+            "name": "Controle de Multidão",
+            "level": 6,
+            "description": "Uma vez por combate, como Ação Especial, escolha um inimigo que possa ver ou ouvir você a até 9m. Você provoca, distrai, confunde ou manipula o alvo. Faça um teste social ou mental apropriado contra a resistência definida pelo Mestre. Em sucesso, escolha um efeito: Abrir Guarda (o próximo ataque de um aliado contra esse alvo recebe +2 no Acerto); Forçar Foco (o alvo sofre -2 no próximo ataque que fizer contra uma criatura que não seja você); Hesitação Calculada (o alvo não pode usar Reação até o início do próximo turno dele). Em falha, o alvo percebe a tentativa e recebe +1 no próximo teste contra você durante este combate. Criaturas sem mente racional, sem audição, sem linguagem corporal compreensível ou incapazes de serem provocadas podem ser imunes a esta habilidade, a critério do Mestre."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 2
+    }
+}

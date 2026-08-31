@@ -1,0 +1,116 @@
+{
+    "titulo": "Respiração da Madeira",
+    "aliases": ["Wood Breathing"],
+    "tags": ["respiração", "técnicas", "madeira"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] [ Efeito Aplicado ] [ Custo de PDR ]",
+    "narrativa": "Em Aokigahara, Hiroki Tanaka aprendeu que a floresta não precisa ser dominada, precisa ser ouvida. A Respiração da Madeira funciona assim: o praticante sincroniza cada ciclo de ar com o pulso das raízes, com o ritmo de crescimento que acontece devagar demais para qualquer um perceber sem treino. Hiroki caminhava entre os troncos centenários sem pressa, sem ansiedade. Com a mesma firmeza silenciosa de um carvalho que sobreviveu a tempestades que ninguém mais lembra.",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Energia da Natureza",
+            "nome_romaji": "Ichi no Kata: Shizen no Enerugī",
+            "tipo_manobra": "Especial",
+            "descricao": "Entra em estado de comunicação com a natureza ao redor e absorve energias vitais dos seres vivos, curando uma certa quantidade de pontos de vida.",
+            "niveis": [
+                { "nivel": 1, "cura": "1d4 + SAB pontos de vida", "custo": "3 PDR" },
+                { "nivel": 2, "cura": "1d6 + SAB pontos de vida", "custo": "3 PDR" },
+                { "nivel": 3, "cura": "2d4 + SAB pontos de vida", "custo": "4 PDR" },
+                { "nivel": 4, "cura": "2d6 + SAB pontos de vida", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Cedro da Alvorada",
+            "nome_romaji": "Ni no Kata: Donshida",
+            "tipo_manobra": "Ataque",
+            "descricao": "Ao ativar essa habilidade, da próxima vez que for acertado por um golpe inimigo, o inimigo pode ser enraizado caso falhe em um teste de Destreza com C.D = 8 + Modificador de SAB + Modificador de FOR do usuário da Respiração da Madeira. O Enraizamento da Madeira zera a esquiva e o bloqueio do inimigo preso, impedindo-o de usar qualquer um desses métodos de defesa. O efeito dura até ele receber um ataque ou até o início do próximo turno dele.",
+            "custo_fixo": "3 PDR"
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Escudo de Carvalho",
+            "nome_romaji": "San no Kata: Ōku Shirudo",
+            "tipo_manobra": "Reação",
+            "descricao": "Pode ser usada durante a reação para invocar um escudo de carvalho que protege um aliado ou a si mesmo de um ataque inimigo recém anunciado. Concede um bônus de bloqueio e deve ser ativada antes da rolagem de acerto do inimigo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_bloqueio": "+2 contra o ataque recém anunciado",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_bloqueio": "+3 contra o ataque recém anunciado",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_bloqueio": "+4 contra o ataque recém anunciado",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_bloqueio": "+5 contra o ataque recém anunciado",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Na Mira das Estacas",
+            "nome_romaji": "Shi no Kata: Jūjisen",
+            "tipo_manobra": "Especial + Ataque",
+            "descricao": "Lança uma chuva de estacas de madeira pontudas em direção ao inimigo. O inimigo rola 1d10 para determinar quantas estacas o atingem; nenhum outro teste de acerto ou defesa é aplicado além deste. Cada estaca acertada custa 1 PDR.",
+            "tabela_estacas": [
+                { "estacas": 1, "dano_perfurante": "1d8" },
+                { "estacas": 2, "dano_perfurante": "2d8" },
+                { "estacas": 3, "dano_perfurante": "4d8" },
+                { "estacas": 4, "dano_perfurante": "5d8" },
+                { "estacas": 5, "dano_perfurante": "6d8" },
+                { "estacas": 6, "dano_perfurante": "6d8 + SAB" },
+                { "estacas": 7, "dano_perfurante": "6d8 + SAB + FDV" },
+                { "estacas": 8, "dano_perfurante": "6d8 + 2× SAB + FDV" },
+                { "estacas": 9, "dano_perfurante": "6d8 + 2× SAB + 2× FDV" },
+                { "estacas": 10, "dano_perfurante": "10d8 + 2× SAB + 2× FDV" }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Árvore de Glicínia",
+            "nome_romaji": "Go no Kata: Fujinoki",
+            "tipo_manobra": "Completa",
+            "descricao": "Invoca uma Árvore de Glicínia no campo de batalha que aplica debuffs ao inimigo enquanto estiver ativa.",
+            "custo_fixo": "10 PDR",
+            "efeitos_ativos": [
+                "Deslocamento do inimigo reduzido à metade.",
+                "Desvantagem em testes de Esquivar e em testes de Resistência ou Defesa contra técnicas que envolvam VIT, FOR ou DEX.",
+                "Regeneração do inimigo reduzida à metade."
+            ],
+            "condicoes_de_destruicao": [
+                "O usuário da Respiração da Madeira chegar a menos de 10% de sua vida máxima ou morrer.",
+                "A árvore receber 50 pontos de dano."
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Fonte de Equilíbrio",
+            "nome_romaji": "Roku no Kata: Baransu no Minamoto",
+            "tipo_manobra": "Ataque",
+            "descricao": "Carrega uma poderosa força da natureza em um golpe preciso com o objetivo de derrubar o inimigo. Inimigos derrubados devem gastar a Ação Especial do turno para se levantar. Utiliza um teste de acerto padrão.",
+            "niveis": [
+                { "nivel": 1, "dano": "Não disponível", "custo": null },
+                { "nivel": 2, "dano": "4d8 de dano concussivo + derruba", "custo": "4 PDR" },
+                { "nivel": 3, "dano": "6d8 de dano concussivo + derruba", "custo": "5 PDR" },
+                { "nivel": 4, "dano": "8d8 de dano concussivo + derruba", "custo": "6 PDR" }
+            ]
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Sexto Sentido Natural",
+        "descricao": "Você tem +1 em todos os testes de Percepção e, uma vez por dia, pode evitar receber um ataque surpresa ou furtivo que iniciaria uma batalha.",
+        "sinergia": {
+            "descricao": "Se houver aliados próximos com sinergia com a Respiração da Madeira, você recebe Pontos de Vida Máximos extras em um valor igual a: Nível de Respiração × Número de Aliados com Sinergia Próximos.",
+            "respiracoes_com_sinergia": ["Água", "Flores", "Grama", "Luz"]
+        }
+    }
+}

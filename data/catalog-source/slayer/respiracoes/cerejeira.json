@@ -1,0 +1,297 @@
+{
+    "titulo": "Respiração da Cerejeira",
+    "aliases": ["Cherry Blossom Breathing", "Sakura no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "regra_opcional_enfeite_de_cabelo": "O usuário pode usar um enfeite de cabelo que representa uma flor de Árvore de Sakura. Enquanto ativo, concede a aliados próximos +1 em rolagens de Reação. O enfeite se quebra mediante a qualquer ataque crítico não defendido recebido pelo usuário. Após quebrado, só pode ser remanejado depois de um descanso completo em uma Casa de Glicínias ou Quartel General.",
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Círculo de Rosas / Prisão de Rosas",
+            "nome_romaji": "Ichi no Kata Bara no Wa",
+            "tipo_manobra": "Ataque",
+            "descricao": "O usuário focaliza sua respiração enquanto faz movimentos ao redor de um alvo para invocar um círculo de flores abaixo dele. O círculo produz efeitos diferentes conforme o alvo seja aliado ou inimigo.",
+            "restricoes": [
+                "Não é possível conjurar o círculo em si mesmo.",
+                "É possível manter múltiplos círculos simultâneos, mas não em alvos repetidos para acumular bônus/debuffs."
+            ],
+            "custo": "1 PDR × Nível de Respiração em que é utilizado",
+            "alvo_aliado_circulo_de_rosas": {
+                "niveis": [
+                    { "nivel": 1, "recuperacao_pdr_por_turno": "1 PDR", "duracao": "3 turnos" },
+                    { "nivel": 2, "recuperacao_pdr_por_turno": "2 PDR", "duracao": "3 turnos" },
+                    { "nivel": 3, "recuperacao_pdr_por_turno": "2 PDR", "duracao": "4 turnos" },
+                    { "nivel": 4, "recuperacao_pdr_por_turno": "3 PDR", "duracao": "4 turnos" }
+                ],
+                "observacao": "Recuperação de PDR ocorre no início do turno do aliado"
+            },
+            "alvo_inimigo_prisao_de_rosas": {
+                "niveis": [
+                    { "nivel": 1, "perda_pdr_por_turno": "1 PDR", "duracao": "3 turnos" },
+                    { "nivel": 2, "perda_pdr_por_turno": "2 PDR", "duracao": "3 turnos" },
+                    { "nivel": 3, "perda_pdr_por_turno": "2 PDR", "duracao": "4 turnos" },
+                    { "nivel": 4, "perda_pdr_por_turno": "3 PDR", "duracao": "4 turnos" }
+                ],
+                "observacao": "Perda de PDR ocorre no início do turno do inimigo"
+            }
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Natureza Efêmera",
+            "nome_romaji": "Ni no Kata Hakanai Seishitsu",
+            "tipo_manobra": "Especial",
+            "descricao": "O usuário lança uma onda de sakuras que voam com o vento à sua frente, formando um Corredor de Vento das Sakuras de 5m de comprimento × 2m de largura. Ataques que passem por ou se originem nessa área sofrem penalidades, e em níveis mais altos aliados dentro da área recebem bônus ofensivos.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "penalidade_acerto_inimigos": "−2",
+                    "bonus_acerto_aliados": null,
+                    "duracao": "Até o início do próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "penalidade_acerto_inimigos": "−3",
+                    "bonus_acerto_aliados": null,
+                    "duracao": "Até o início do próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "penalidade_acerto_inimigos": "−3",
+                    "bonus_acerto_aliados": "+1",
+                    "duracao": "Até o final do próximo turno",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "penalidade_acerto_inimigos": "−3",
+                    "bonus_acerto_aliados": "+2",
+                    "duracao": "Até o final do próximo turno",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Paralelos e Inevitáveis",
+            "nome_romaji": "San no Kata Rui-ji ni Tsuzuken-sei",
+            "tipo_manobra": "Única",
+            "descricao": "Desde que haja um aliado declarado como alvo secundário (você é o primário) a até 5m de distância, ambos estabelecem um vínculo ligado por flores de sakura com videiras espinhosas. As videiras se prendem ao pulso esquerdo de um e ao direito do outro, formando uma linha de espinhos de sakura entre ambos. Inimigos atravessados ou tocados pelo fio recebem dano sem necessidade de rolagem de acerto, apenas considerando a trajetória da linha.",
+            "observacao": "O vínculo se rompe se o limite máximo de alcance do fio for quebrado.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "alcance_do_fio": "5m",
+                    "dano_ao_tocar_o_fio": "1d6 perfurante",
+                    "custo_de_ativacao": "2 PDR",
+                    "custo_por_turno": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "alcance_do_fio": "6m",
+                    "dano_ao_tocar_o_fio": "1d6 perfurante + 1d4 cortante",
+                    "custo_de_ativacao": "2 PDR",
+                    "custo_por_turno": "1 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "alcance_do_fio": "8m",
+                    "dano_ao_tocar_o_fio": "2d6 perfurante + 1d4 cortante",
+                    "custo_de_ativacao": "3 PDR",
+                    "custo_por_turno": "1 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "alcance_do_fio": "10m",
+                    "dano_ao_tocar_o_fio": "2d6 perfurante + 2d4 cortante",
+                    "custo_de_ativacao": "3 PDR",
+                    "custo_por_turno": "1 PDR"
+                }
+            ],
+            "sinergia_com_aliados_vinculados": {
+                "descricao": "Se o aliado conectado pelo vínculo for usuário de uma respiração com sinergia com a Cerejeira, ele recebe bônus exclusivos cada vez que o fio de espinhos atingir um inimigo.",
+                "bonus_por_respiracao": [
+                    {
+                        "respiracao": "Respiração da Água",
+                        "bonus": "Reduz em 1 turno o tempo de recarga do 8º Estilo Força da Cascata, se estiver em recarga."
+                    },
+                    {
+                        "respiracao": "Respiração das Flores",
+                        "bonus": "Permite eclodir uma semente plantada anteriormente no inimigo atingido sem custo de PDR."
+                    },
+                    {
+                        "respiracao": "Respiração dos Insetos",
+                        "bonus": "O próximo uso de Dança da Libélula: Olho Hexagonal após o inimigo ser atingido ganha +1 de acerto em cada uma das 6 rolagens (+2 se o fio foi conjurado no Nível 3 ou 4)."
+                    },
+                    {
+                        "respiracao": "Respiração da Madeira",
+                        "bonus": "A cada inimigo atingido pelo fio, o usuário da Madeira recupera 1 PDR."
+                    },
+                    {
+                        "respiracao": "Respiração da Grama",
+                        "bonus": "A cada inimigo atingido pelo fio, o usuário da Grama ganha +1 na próxima rolagem de acerto (acumulativo até o Nível de Respiração utilizado pelo usuário da Cerejeira)."
+                    }
+                ]
+            }
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "A Maldição do Jardim",
+            "nome_romaji": "Shi no Kata Teien no Noroi",
+            "tipo_manobra": "Ataque",
+            "custo": "2 PDR × Nível de Respiração em que é conjurado",
+            "descricao": "O usuário esculpe o chão com sua arma corpo a corpo ou realiza disparos indiscriminados no solo, fazendo desabrocherem flores de sakura explosivas que causam dano em área. Aliados também podem ser atingidos pelas explosões, mas recebem apenas 1d6 de dano por explosão que os alcançar, caso não passem na C.D.",
+            "mecanica_movimento_inimigo": "Cada vez que um inimigo utilizar a ação de movimento, deve rolar 1d20 puro (sem soma de característica) para determinar sua sorte em esbarrar em uma flor explosiva.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "cd_para_evitar": "12+",
+                    "dano_concussivo": "2d6",
+                    "supressao": null
+                },
+                {
+                    "nivel": 2,
+                    "cd_para_evitar": "14+",
+                    "dano_concussivo": "4d6",
+                    "supressao": null
+                },
+                {
+                    "nivel": 3,
+                    "cd_para_evitar": "15+",
+                    "dano_concussivo": "4d6",
+                    "supressao": "Se FDV > VIT do inimigo (sem rolagem): toda explosão aplica Supressão"
+                },
+                {
+                    "nivel": 4,
+                    "cd_para_evitar": "15+",
+                    "dano_concussivo": "6d6",
+                    "supressao": "Se FDV + 2 > VIT do inimigo (sem rolagem): toda explosão aplica Supressão"
+                }
+            ],
+            "status_de_supressao": "Inimigos suprimidos não podem utilizar Kekkijutsus devido ao impacto físico e mental recebido. O status dura até o final do turno em que foi aplicado."
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Baile de Primavera",
+            "nome_romaji": "Go no Kata Supuringuburu",
+            "tipo_manobra": "Reação",
+            "descricao": "Esta técnica não é usada em resposta a ataques contra o usuário ou aliados; ela demonstra a proficiência do usuário em aproveitar mínimas aberturas criadas pelos aliados em seus ataques, complementando seus movimentos como uma dança a dois.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "gatilho": "Aliado acerta qualquer ataque padrão",
+                    "dano_ao_complementar": "1d4",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "gatilho": "Aliado acerta qualquer ataque padrão",
+                    "dano_ao_complementar": "2d4",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "gatilho": "Aliado acerta qualquer ataque padrão",
+                    "dano_ao_complementar": "3d4",
+                    "efeito_adicional": "Crítico → pode jogar o inimigo 2m para trás, desengajando-o de aliados (incluindo o usuário)",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "gatilho": "Aliado acerta qualquer ataque padrão",
+                    "dano_ao_complementar": "4d4",
+                    "efeito_adicional": "Crítico → pode jogar o inimigo 2m para trás + anula resistências do inimigo até o início do próximo turno dele",
+                    "custo": "2 PDR"
+                }
+            ],
+            "alcance": "Para realizar o ataque complementar, sempre considere o limite de alcance da sua arma."
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Renovação Total!",
+            "nome_romaji": "Roku no Kata Tōtaru Shinsei",
+            "tipo_manobra": "Passiva",
+            "descricao": "Um usuário da Respiração da Cerejeira é conhecido por não parar demais no campo de batalha. Como tudo se renova mais cedo ou mais tarde (uma flor tem que morrer para que outra desabroche), cada metro percorrido através das ações de movimento acumula impulso. Ao atingir certas distâncias acumuladas em batalha, o usuário começa a revigorar os sentidos.",
+            "observacao": "Os bônus subsequentes substituem os anteriores, não se acumulam.",
+            "tabela_distancia_acumulada": [
+                {
+                    "distancia": "20m",
+                    "estagio": "Você não me pega!",
+                    "bonus_esquiva": "+1",
+                    "bonus_deslocamento": "+2m",
+                    "efeito_extra": null
+                },
+                {
+                    "distancia": "40m",
+                    "estagio": "Melhor e Mais Rápido!",
+                    "bonus_esquiva": "+1",
+                    "bonus_deslocamento": "+3m",
+                    "efeito_extra": null
+                },
+                {
+                    "distancia": "60m",
+                    "estagio": "Inalcançável!",
+                    "bonus_esquiva": "+2",
+                    "bonus_deslocamento": "+3m",
+                    "efeito_extra": "Quando um inimigo for Suprimido, o aliado mais próximo pode testar VIT (C.D. 12+) para recuperar 1d6 PDV"
+                },
+                {
+                    "distancia": "80m",
+                    "estagio": "Vivendo e Vibrante!",
+                    "bonus_esquiva": "+2",
+                    "bonus_deslocamento": "+3m",
+                    "efeito_extra": "Quando um inimigo for Suprimido, o aliado mais próximo pode testar VIT (C.D. 10+) para recuperar 1d6 PDV"
+                },
+                {
+                    "distancia": "100m",
+                    "estagio": "Muito Adiante!",
+                    "bonus_esquiva": "+2",
+                    "bonus_deslocamento": "+4m",
+                    "efeito_extra": "Quando um inimigo for Suprimido, o aliado mais próximo pode testar VIT (C.D. 8+) para recuperar 1d6 PDV"
+                }
+            ]
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Nada Mais Importa!",
+            "nome_romaji": "Shichi no Kata Hoka ni wa Nani mo Kankei Arimasen!",
+            "tipo_manobra": "Completa",
+            "requisito": "Status de Inalcançável, Vivendo e Vibrante ou Muito Adiante (ver 6º Estilo)",
+            "descricao": "Carregando a plenitude da vida das cerejeiras e impulsionado pelos ventos, o usuário abre sua percepção espacial e dispara à distância ondas de um calor nostálgico que atingem e revigoram seus aliados.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "alcance": null,
+                    "cura_do_aliado": "Não é possível usar!",
+                    "efeito_adicional": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "alcance": "7m",
+                    "cura_do_aliado": "2d4 PDV + 1d4 PDR",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "alcance": "9m",
+                    "cura_do_aliado": "2d6 PDV + 1d6 PDR",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "alcance": "9m",
+                    "cura_do_aliado": "2d8 PDV + 1d8 PDR",
+                    "efeito_adicional": "Aumenta em 2d8 o dano da próxima técnica de respiração bem-sucedida do aliado que acertar um inimigo",
+                    "custo": "3 PDR"
+                }
+            ],
+            "limitacao_de_alvo": "O aliado alvo não pode ser alvo desta habilidade novamente até o fim do próximo turno do usuário da Cerejeira."
+        }
+    ]
+}

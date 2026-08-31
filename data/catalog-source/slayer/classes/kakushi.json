@@ -1,0 +1,39 @@
+{
+    "name": "Kakushi",
+    "oneLiner": "o Exterminador que garante que o grupo continue de pé não é o maior dano, nem o tanque; é quem mantém todo mundo vivo até o fim da luta.",
+    "improves": "cura direta, estabilização, retirada/reposicionamento, recuperação de PDR, resistência tática, incentivo ofensivo após cura.",
+    "specialRules": [
+        {
+            "title": "Alvos válidos e Kit de Campo",
+            "description": "Pode afetar você mesmo, aliados conscientes/inconscientes/a 0 PDV, ou companheiros aceitos pelo Mestre. Habilidades de toque exigem alcance de 1,5m, salvo exceção de cena aprovada pelo Mestre. Não funciona Atordoado, Paralisado, sem mover as mãos, ou separado do alvo por barreira total."
+        }
+    ],
+    "ranks": [
+        {
+            "rank": "C",
+            "name": "Amparar",
+            "description": "1x/rodada, Ação de Ataque: você ou aliado a 1,5m recupera INT ou SAB (à escolha) em PDV. Se o alvo estiver a 0 PDV, primeiro estabiliza e depois cura volta consciente se a cura passar de 0. Não causa dano, não remove status, não recupera PDR."
+        },
+        {
+            "rank": "B",
+            "name": "Amparar Aprimorado",
+            "description": "A cura sobe pra 3 + INT ou SAB (substitui Rank C). O aliado curado ganha +1 Esquiva ou Bloqueio (escolhido na hora de ser atacado) até o início do próximo turno dele. Você também identifica (sem remover) todos os status negativos visíveis no alvo curado."
+        },
+        {
+            "rank": "A",
+            "name": "Retirada Estratégica",
+            "description": "Pode usar Desengajar como Ação Especial em vez de Ação Completa. Retirada Assistida: um aliado adjacente a 1,5m se move junto até 1,5m sem provocar Ataque de Oportunidade (não atravessa inimigos/obstáculos/terreno difícil; não funciona se o aliado estiver Paralisado ou impossível de mover). Prioridade Médica: se usar isso pra chegar perto de um aliado com ≤50% PDV, o próximo Amparar nele até o fim do seu próximo turno ganha +2 de cura (não acumula)."
+        },
+        {
+            "rank": "S",
+            "name": "Injeção de Adrenalina",
+            "description": "1x/combate, Ação de Ataque: você ou aliado a 1,5m recupera VIT do alvo + INT ou SAB do Kakushi em PDR. Escolha um Pulso de Sobrevivência: Firmar o Corpo (+1 em testes de resistência física até o início do próximo turno), Clarear a Mente (+1 contra medo/confusão/controle mental) ou Levantar Agora (se o alvo estiver a 0 PDV, recupera 1 PDV antes do PDR). Não remove status, não cura PDV fora de Levantar Agora, não passa do PDR máximo, não funciona em alvo morto."
+        },
+        {
+            "rank": "SS",
+            "name": "Tatakaaaaeee!",
+            "description": "1x/rodada, ao curar um aliado com qualquer habilidade Kakushi: role 1d20 + CAR. Com 15+, a cura ganha +2 por ponto de CAR. Se passar, o aliado também ganha Vantagem no próximo teste (acerto, Esquiva, Bloqueio, resistência, escapar de Restrição, etc.) até o início do próximo turno dele. Não funciona ao se curar, não acumula com outro Tatakaaaaeee!, não vale em cura automática/aura/passiva."
+        }
+    ],
+    "balanceNote": "não deve curar mais que todo o dano do inimigo a função é evitar mortes súbitas e transformar uma rodada perdida em nova chance, não vencer a luta sozinho."
+}

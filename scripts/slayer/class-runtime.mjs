@@ -49,7 +49,7 @@ export async function applyMasterBattleLevelEleven(actor, level = null) {
     const total = Math.max(0, integer(roll.total));
     await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `${actor.name} — Corpo de Guerra: +${total} PDV máximo permanente`,
+        flavor: `${actor.name} Corpo de Guerra: +${total} PDV máximo permanente`,
     });
     await actor.update(mbPermanentPdvPatch(total), {
         naCsbAutomation: true,

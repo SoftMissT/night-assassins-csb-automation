@@ -1,0 +1,378 @@
+{
+    "titulo": "Respiração do Som",
+    "aliases": ["Sound Breathing", "Oto no Kokyu", "Oto no Kokyū"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva_partitura_musical": {
+        "nome": "Partitura Musical",
+        "nome_romaji": "Gakufu Ongaku",
+        "descricao": "A Respiração do Som transforma o combate em leitura de ritmo. Cada ataque é uma nota. Cada defesa é uma pausa. Cada erro do inimigo revela o próximo compasso. A Partitura Musical opera sobre dois pilares: Ouvido Absoluto e BPM.",
+        "ouvido_absoluto": {
+            "descricao": "O treinamento sensorial do usuário permite detectar vibrações no ar, no solo e em estruturas próximas.",
+            "efeitos": [
+                "Detecta criaturas Invisíveis, Ocultas ou em Furtividade dentro de 9m, desde que elas produzam som, vibração ou deslocamento físico.",
+                "Névoa, escuridão comum e ilusões puramente visuais não impedem essa detecção.",
+                "O usuário não pode sofrer Ataque de Surpresa de criaturas dentro desse alcance, desde que elas possam ser percebidas por som ou vibração."
+            ],
+            "limite": "O Ouvido Absoluto não revela criaturas Inalvejáveis, criaturas que não produzam som ou vibração, nem efeitos sobrenaturais que removam som e contato físico com o ambiente."
+        },
+        "antecipacao_cinestesica": {
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de um ataque",
+            "custo": "1 PDR",
+            "descricao": "O usuário lê a vibração do ataque antes do impacto. Faça um teste de SAB ou INT contra o resultado do teste de ataque do inimigo.",
+            "resultado": [
+                { "resultado": "Sucesso", "efeito": "O ataque inimigo recebe −4 no acerto" },
+                { "resultado": "Falha", "efeito": "Sem efeito" }
+            ],
+            "bonus": "Se o ataque errar por causa desta penalidade, o usuário ganha +20 BPM."
+        }
+    },
+    "sistema_de_bpm": {
+        "bpm_maximo": 200,
+        "descricao": "O usuário acumula BPM durante o combate. O BPM começa em 0 no início de cada combate.",
+        "zera_quando": ["Fica Inconsciente", "Fica Atordoado", "Termina o combate"],
+        "ganho_de_bpm": [
+            { "gatilho": "Início do turno do usuário", "bpm": "+5" },
+            { "gatilho": "Acertar ataque padrão ou técnica da Respiração do Som", "bpm": "+10" },
+            { "gatilho": "Esquivar ou Bloquear com sucesso", "bpm": "+15" },
+            { "gatilho": "Usar Antecipação Cinestésica com sucesso", "bpm": "+20" },
+            { "gatilho": "Obter Acerto Crítico com ataque ou técnica do Som", "bpm": "+50" }
+        ],
+        "perda_de_bpm": [
+            { "gatilho": "Sofrer dano direto em PDV", "bpm": "−15" },
+            { "gatilho": "Errar um ataque ou técnica da Respiração do Som", "bpm": "−30" },
+            { "gatilho": "Ficar Atordoado", "bpm": "Zera BPM" },
+            { "gatilho": "Ficar Inconsciente", "bpm": "Zera BPM" }
+        ]
+    },
+    "estados_de_ritmo": {
+        "descricao": "Os Estados de Ritmo são acumulativos. Cada estado inclui os efeitos dos anteriores.",
+        "aquecimento": { "faixa_bpm": "0–49", "efeitos": ["+1 em Defesa"] },
+        "ritmo_constante": {
+            "faixa_bpm": "50–99",
+            "efeitos": [
+                "+2 no acerto de ataques e técnicas do Som",
+                "+1d6 Trovejante em ataques bem-sucedidos (este dano não é multiplicado em Acerto Crítico)"
+            ]
+        },
+        "nightcore": {
+            "faixa_bpm": "100–149",
+            "efeitos": [
+                "+3m de Deslocamento",
+                "1 vez por turno, após usar uma técnica do Som, pode realizar 1 ataque padrão adicional (esse ataque adicional não pode ser outra técnica de Respiração)"
+            ]
+        },
+        "sinfonia_perfeita": {
+            "faixa_bpm": "150–199",
+            "efeitos": [
+                "Inimigos não recebem Vantagem contra o usuário",
+                "O usuário recebe Resistência a dano Cortante, Perfurante e Concussão"
+            ]
+        },
+        "a_partitura": {
+            "faixa_bpm": "200",
+            "efeitos": [
+                "Desbloqueia Tomorrowland",
+                "Enquanto não usar Tomorrowland, o primeiro ataque ou técnica do Som por turno ignora bônus de Defesa concedidos por técnicas defensivas"
+            ]
+        }
+    },
+    "sub_habilidades_da_partitura": {
+        "observacao": "As Sub-Habilidades da Partitura gastam BPM, não PDR, salvo quando especificado. BPM não substitui PDR.",
+        "tecnicas": [
+            {
+                "nome": "Defesa Sonora Estrondo",
+                "tipo_manobra": "Reação",
+                "gatilho": "Ser alvo de um ataque",
+                "custo": "15 BPM",
+                "descricao": "Cria uma barreira sônica instantânea. O usuário recebe +5 em Defesa. Se o ataque errar após esse bônus, o atacante sofre 2d8 Trovejante."
+            },
+            {
+                "nome": "Requiem: O Grande Final",
+                "tipo_manobra": "Única",
+                "custo": "35 BPM",
+                "descricao": "O usuário prepara o próximo compasso como finalização. O próximo ataque padrão ou técnica do Som usada neste turno causa dano máximo nos dados.",
+                "limite": "Requiem não pode ser usado com técnicas que já causem Exaustão automática, salvo permissão do Mestre.",
+                "bonus": "Se o inimigo for reduzido a 0 PDV com esse golpe, o usuário recupera 50 BPM."
+            },
+            {
+                "nome": "Sinfonia Explosiva",
+                "tipo_manobra": "Ataque",
+                "tipo_de_dano": "Trovejante + Fogo",
+                "custo": "40 BPM",
+                "descricao": "O usuário libera uma sequência explosiva em cone de 4,5m. Faça uma rolagem de acerto; cada alvo no cone usa sua Defesa normalmente.",
+                "dano": "4d8 Trovejante + 2d8 Fogo",
+                "teste_vit": "C.D. = 10 + DEX + FDV",
+                "resultado": [
+                    { "resultado": "Sucesso", "efeito": "Sofre apenas o dano" },
+                    { "resultado": "Falha", "efeito": "Fica Desorientado por 1 turno" }
+                ]
+            },
+            {
+                "nome": "Técnica Final: Tomorrowland",
+                "tipo_manobra": "Completa",
+                "requisito": "200 BPM",
+                "custo": "200 BPM",
+                "disponivel": "Nível 4 de Respiração",
+                "uso": "1 vez por combate",
+                "descricao": "O usuário executa o final da composição. Faça 6 ataques contra um único alvo, resolvidos individualmente.",
+                "tabela_ataques": [
+                    { "ataques": "1–2", "efeito": "Dano normal da arma" },
+                    { "ataques": "3–4", "efeito": "Dano normal da arma + 2d10 Trovejante" },
+                    { "ataques": "5–6", "efeito": "Acerto Crítico automático se acertarem" }
+                ],
+                "explosao_final": {
+                    "dano": "10d12 Trovejante",
+                    "teste_vit": "C.D. = 10 + DEX + FDV",
+                    "resultado": [
+                        { "resultado": "Sucesso", "efeito": "Metade do dano da explosão final" },
+                        { "resultado": "Falha", "efeito": "Dano completo da explosão final" }
+                    ]
+                },
+                "apos_uso": "BPM zera; o usuário sofre Exaustão Nível 4."
+            }
+        ]
+    },
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Rugido",
+            "nome_romaji": "Ichi no Kata Todoroki",
+            "tipo_manobra": "Única",
+            "descricao": "Levanta a espada acima da cabeça e golpeia com grande força, criando simultaneamente uma explosão com som semelhante a um trovão. Causa dano bônus no próximo ataque padrão. Para atacantes à distância, um projétil estrondoso acompanha o disparo. Ainda requer uma rolagem de acerto padrão.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_bonus": "1d4 Concussivo + 4 Trovejante",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_bonus": "1d4 Concussivo + 4 Trovejante",
+                    "efeito_adicional": "Inimigo testa VIT (C.D. 10 + DEX ou FOR); falha: Atordoado por 1 turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_bonus": "2d4 Concussivo + 6 Trovejante",
+                    "efeito_adicional": "C.D. do teste de VIT aumenta em +1",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_bonus": "2d4 Concussivo + 1d4 Cortante + 6 Trovejante",
+                    "efeito_adicional": "C.D. total: 12 + DEX ou FOR",
+                    "custo": "3 PDR"
+                }
+            ],
+            "observacao_dano_trovejante": "Não pode ser reduzido por nenhuma técnica ou Kekkijutsu. Pode ser anulado por técnicas que cancelem ataques recebidos, mas nunca terá seu valor diminuído por qualquer efeito."
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Silêncio",
+            "nome_romaji": "Ni no Kata Chinmoku",
+            "tipo_manobra": "Especial",
+            "descricao": "O usuário bloqueia todo e qualquer som em uma área de até 9m, centralizando-se nela. Não pode ser ativada novamente enquanto a conjuração atual estiver vigente.",
+            "duracao": "3 turnos",
+            "niveis": [
+                { "nivel": 1, "bonus_acerto_esquiva_bloqueio": "+1", "custo": "2 PDR" },
+                { "nivel": 2, "bonus_acerto_esquiva_bloqueio": "+2", "custo": "2 PDR" },
+                { "nivel": 3, "bonus_acerto_esquiva_bloqueio": "+3", "custo": "3 PDR" },
+                { "nivel": 4, "bonus_acerto_esquiva_bloqueio": "+4", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Resquício Sonoro",
+            "nome_romaji": "San no Kata Saundoremunanto",
+            "tipo_manobra": "Única",
+            "descricao": "Invoca clones de som indistinguíveis do usuário real. Ao ser atacado, role o dado correspondente ao número de clones ativos: resultado 1 ou máximo do dado → o usuário é atacado; qualquer outro resultado → o clone é atacado e destruído. A cada clone destruído, reduza o dado em 2 faces.",
+            "exemplo": "2 clones → 1d6; 1 clone → 1d4",
+            "defesa_dos_clones": "Igual à do usuário, com −4 de penalidade (−2 nos Níveis 3 e 4).",
+            "resultado_ao_destruir_clone": "O atacante testa VIT (C.D. 12): sucesso, sem efeito adicional; falha, sofre Dano Sonoro da explosão e recebe −3 em testes de SAB relacionados à audição até o fim do combate.",
+            "observacoes": [
+                "Clones não são acumuláveis.",
+                "Novos clones só podem ser conjurados após todos os anteriores serem destruídos.",
+                "Qualquer acerto bem-sucedido destrói um clone, independente do dano."
+            ],
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "clones": 2,
+                    "dado_de_deflexao": "1d6",
+                    "dano_sonoro_da_explosao": "1d4",
+                    "penalidade_defensiva_dos_clones": "−4",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "clones": 3,
+                    "dado_de_deflexao": "1d8",
+                    "dano_sonoro_da_explosao": "1d4",
+                    "penalidade_defensiva_dos_clones": "−4",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "clones": 4,
+                    "dado_de_deflexao": "1d10",
+                    "dano_sonoro_da_explosao": "1d4",
+                    "penalidade_defensiva_dos_clones": "−2",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "clones": 5,
+                    "dado_de_deflexao": "1d12",
+                    "dano_sonoro_da_explosao": "2d4",
+                    "penalidade_defensiva_dos_clones": "−2",
+                    "custo": "4 PDR"
+                }
+            ],
+            "observacao_dano_sonoro": "Não pode ser esquivado ou bloqueado. É possível resistir e tomar apenas metade se bem-sucedido em um teste de VIT (C.D. 10 + DEX + FDV do usuário)."
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Kyōzan Muken",
+            "nome_romaji": "Shi no Kata Kyōzan Muken",
+            "tipo_manobra": "Ataque ou Reação",
+            "descricao": "Esta técnica possui duas variações. A primeira transforma som em massacre de área. A segunda transforma loucura sonora em defesa perfeita.",
+            "variacao_1_sinos_da_morte_de_avici": {
+                "tipo_manobra": "Ataque",
+                "tipo_de_dano": "Sonoro",
+                "descricao": "Cria explosões sonoras semelhantes a sinos infernais em uma área de 8m, exceto o usuário. Todos no raio sofrem Desvantagem em ataques até o início do próximo turno do usuário, além de causar Dano Sonoro.",
+                "observacao": "Dano Sonoro não pode ser Esquivado ou Bloqueado. Para resistir e tomar metade do dano, o alvo testa VIT contra C.D. = 10 + DEX + FDV.",
+                "niveis": [
+                    {
+                        "nivel": 1,
+                        "dano_sonoro": "3d6",
+                        "cd_de_resistencia": "10 + DEX + FDV",
+                        "custo": "3 PDR"
+                    },
+                    {
+                        "nivel": 2,
+                        "dano_sonoro": "4d6",
+                        "cd_de_resistencia": "10 + DEX + FDV",
+                        "custo": "4 PDR"
+                    },
+                    {
+                        "nivel": 3,
+                        "dano_sonoro": "5d6",
+                        "cd_de_resistencia": "10 + DEX + FDV",
+                        "custo": "4 PDR"
+                    },
+                    {
+                        "nivel": 4,
+                        "dano_sonoro": "5d6",
+                        "cd_de_resistencia": "12 + DEX + FDV",
+                        "custo": "5 PDR"
+                    }
+                ],
+                "sinergia": {
+                    "nome": "Remoção de Status",
+                    "descricao": "Respirações com sinergia que estiverem no raio podem, em seu turno antes do cessar dos sinos, testar VIT contra C.D. = 15 − DEX do usuário do Som. Se passarem, removem um dos seguintes status negativos à escolha: 1 ponto de Exaustão; Restrição de Movimentos; Atordoamento.",
+                    "respiracoes_com_sinergia": [
+                        "Respiração do Trovão",
+                        "Respiração da Pedra",
+                        "Respiração da Luz"
+                    ]
+                }
+            },
+            "variacao_2_pico_da_loucura_sonora": {
+                "tipo_manobra": "Reação",
+                "gatilho": "Ser alvo de um ataque",
+                "descricao": "O usuário gira as lâminas em um vórtice defensivo de som, faísca e pressão. O usuário escolhe entre Bloqueio ou Esquiva no momento em que ativa a Reação.",
+                "niveis": [
+                    { "nivel": 1, "efeito": "+2 em Bloqueio ou Esquiva", "custo": "1 PDR" },
+                    { "nivel": 2, "efeito": "+4 em Bloqueio ou Esquiva", "custo": "3 PDR" },
+                    { "nivel": 3, "efeito": "+6 em Bloqueio ou Esquiva", "custo": "4 PDR" },
+                    { "nivel": 4, "efeito": "+8 em Bloqueio ou Esquiva", "custo": "6 PDR" }
+                ],
+                "bonus_defesa_no_compasso": "Se a defesa for bem-sucedida após o bônus desta técnica, o usuário ganha +15 BPM.",
+                "bonus_critico_defensivo": "Se a rolagem de Defesa for um Acerto Crítico, o atacante sofre 2d8 Trovejante (esse dano não pode ser reduzido)."
+            }
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Sinfonia das Cordas Estridentes",
+            "nome_romaji": "Go no Kata Meigen Sōsō",
+            "tipo_manobra": "Especial",
+            "descricao": "Realiza vários ataques giratórios que causam diversas explosões sonoras ao redor. Pode ser usada até 3 vezes no mesmo turno: uma com Ação de Ataque; uma com Ação Especial; uma com Ação de Movimento. Desde que as ações estejam disponíveis, o usuário paga o custo de PDR por cada ativação.",
+            "mecanica": "Escolha 3 alvos em até 9m. Eles testam VIT (C.D. 10 + DEX do usuário). Em caso de falha, recebem o Dano Sonoro. Adicionalmente, escolha 1 desses 3 alvos para receber também o Dano Padrão de acordo com a arma.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_sonoro_na_falha": "2d6",
+                    "dano_padrao_em_1_alvo": "1d8",
+                    "custo_por_uso": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_sonoro_na_falha": "3d6",
+                    "dano_padrao_em_1_alvo": "2d8",
+                    "custo_por_uso": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_sonoro_na_falha": "4d6",
+                    "dano_padrao_em_1_alvo": "3d8",
+                    "custo_por_uso": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_sonoro_na_falha": "4d6 + DEX",
+                    "dano_padrao_em_1_alvo": "3d8 + DEX",
+                    "custo_por_uso": "5 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Sinfonia Imortal",
+            "nome_romaji": "Roku no Kata Dedari Symphony",
+            "tipo_manobra": "Completa",
+            "descricao": "O usuário causa um som devastador tão alto que tanto ele quanto o alvo ficam surdos após o uso, mesmo que se regenerem. Para inimigos humanos, a surdez é permanente. Para Onis, ao se regenerarem ainda terão desvantagem permanente em testes de percepção relacionados à audição.",
+            "mecanica": "A rolagem de acerto com Vantagem é feita apenas para o Dano Cortante. O Dano Sonoro não exige rolagem de acerto. O defensor testa uma C.D. fixa para resistir.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_sonoro": "6d8",
+                    "dano_cortante_com_vantagem": "2d8",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano_sonoro": "8d8",
+                    "dano_cortante_com_vantagem": "4d8",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_sonoro": "10d8",
+                    "dano_cortante_com_vantagem": "6d8",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_sonoro": "22d8",
+                    "dano_cortante_com_vantagem": "8d8",
+                    "custo": "5 PDR"
+                }
+            ],
+            "passiva": {
+                "nome": "O Canto dos Pássaros",
+                "descricao": "A qualquer momento em um combate, mesmo sem ter conjurado o 6º Estilo, o usuário pode optar por conjurá-lo como uma Reação, anulando qualquer técnica ou Kekkijutsu que o tenha como alvo.",
+                "condicao": "A técnica ou Kekkijutsu alvo não pode ter Vantagem em um acerto contra o usuário, nem impor Desvantagem na sua defesa.",
+                "custo_adicional": "+2 PDR além do custo padrão da técnica."
+            }
+        }
+    ],
+    "notas_de_integracao": {
+        "partitura_musical": "Adiciona progressão de ritmo à Respiração do Som sem substituir os estilos existentes.",
+        "bpm": "É recurso próprio. Não substitui PDR.",
+        "kyozan_muken": "Agora possui duas variações: Sinos da Morte de Avīci, versão ofensiva original do Night Assassin's; e Pico da Loucura Sonora, versão defensiva trazida de Crônicas do Sol.",
+        "tomorrowland": "Técnica final da Partitura Musical. Só existe no Nível 4 de Respiração e exige 200 BPM."
+    }
+}

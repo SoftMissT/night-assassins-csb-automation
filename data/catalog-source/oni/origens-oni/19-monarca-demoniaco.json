@@ -1,0 +1,21 @@
+{
+    "number": 19,
+    "name": "Monarca Demoníaco",
+    "description": "Você não nasceu apenas para sobreviver. Nasceu para governar. Sua transformação demoníaca organizou a fome em autoridade. Outros monstros caçam. Você conquista, comanda e transforma o campo de batalha em território sob sua vontade. Mesmo recém-transformado, há algo em você que parece exigir obediência.",
+    "pdv": "22 + VIT",
+    "pdk": "20 + (FDV * 3)",
+    "passive": {
+        "name": "Autoridade Soberana",
+        "description": "No início do combate, escolha uma criatura inimiga que você possa ver. Ela se torna o Alvo do Decreto. Uma vez por rodada, quando você ou um aliado a até 9m acertar o Alvo do Decreto, o ataque causa +1 de dano. Se quem acertou for um Oni, servo, subordinado ou criatura sob seu comando direto, o bônus aumenta para +2 de dano. Você só pode ter um Alvo do Decreto por vez. Se o Alvo do Decreto cair a 0 PDV ou morrer, você pode escolher um novo alvo no início do seu próximo turno."
+    },
+    "abilities": [
+        {
+            "name": "Ordem do Monarca",
+            "cost": "4 PDK (3 PDK se o alvo for Oni, servo, subordinado ou criatura sob seu comando direto)",
+            "action": "Ação Especial",
+            "range": "9m",
+            "target": "você ou um aliado que possa ver, ouvir ou sentir sua presença",
+            "description": "Você impõe uma ordem carregada de autoridade demoníaca. Escolha um dos efeitos: o alvo recebe +2 na próxima rolagem de acerto contra o Alvo do Decreto; o alvo recebe +2 na próxima Esquiva ou Bloqueio antes do início do seu próximo turno; o alvo pode se mover 3m sem gerar Ataque de Oportunidade. Esta habilidade não concede ação extra. Ela apenas fortalece ou reposiciona uma peça sob sua autoridade."
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "name": "Tato Sensitivo",
+    "rollRange": "26-36",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Leitura de Impacto",
+            "effect": "+2 Bloqueio, +1 Esquiva. Ao bloquear/esquivar com sucesso de ataque corpo a corpo, o Mestre revela uma informação simples sobre o atacante (próximo golpe, cansaço, fraqueza na arma, tensão em membro, força bruta vs. técnica)."
+        },
+        {
+            "level": 6,
+            "name": "Percepção Tremossísmica",
+            "effect": "Sente vibrações no solo até 9m — número e posição aproximada de criaturas em contato com o chão, mesmo invisíveis/ocultas/no escuro (não funciona contra voadoras, suspensas ou em superfície instável). Bônus sobe pra +3 Bloqueio, +2 Esquiva."
+        },
+        {
+            "level": 12,
+            "name": "O Contra-Leitor",
+            "effect": "Após se defender 2x contra o mesmo inimigo no combate, a próxima Defesa contra ele vira \"Contra-Leitura\": feita com Vantagem; em sucesso, ganha Resistência ao dano físico desse ataque. Pode gastar 2 PDR pra devolver dano de Concussão igual à sua FOR. Custo: Dano Sonoro e Trovejante causam +1d4 contra você; armadura pesada dá -2 Bloqueio/Esquiva."
+        }
+    ]
+}

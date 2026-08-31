@@ -217,7 +217,7 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true, showDic
                     const speaker = globalThis.ChatMessage?.getSpeaker?.({ actor });
                     await roll.toMessage({
                         speaker,
-                        flavor: `<strong>Ganho de PDV Oni — Nível ${entry.level}</strong> (${entry.dice})`,
+                        flavor: `<strong>Ganho de PDV Oni Nível ${entry.level}</strong> (${entry.dice})`,
                     });
                     console.warn(`[NA-ONI-PDV] CHAT ROLL published=true level=${entry.level}`);
                 } catch (diceError) {
@@ -259,7 +259,7 @@ export async function rollOniPdvGain(actor, { level, onlyMissing = true, showDic
 /**
  * Automação da vida do Oni: garante que TODOS os ganhos aleatórios de PDV
  * (níveis 2–12) até o nível atual existam no ledger do Actor.
- * Idempotente — ganhos já persistidos NUNCA são rerrolados; só preenche
+ * Idempotente ganhos já persistidos NUNCA são rerrolados; só preenche
  * faltantes (ex.: criação direta em nível alto ou subida de nível).
  * @param {Actor} actor
  * @param {object} [options]

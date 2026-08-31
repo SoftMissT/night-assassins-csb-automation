@@ -1,0 +1,220 @@
+{
+    "titulo": "Respiração da Luz",
+    "aliases": ["Light Breathing", "Hikari no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva": {
+        "nome": "Reflexo Inalcançável",
+        "nome_romaji": "Tōtatsu Funōna Hansha",
+        "descricao": "O usuário da Luz tem uma movimentação fluida e inaudível. Olhos que tentem acompanhá-lo terão dificuldade nessa tarefa.",
+        "vantagem_em_esquiva": "O usuário tem vantagem em todos os testes de esquiva desde que pague 1 PDR por acerto para ter essa vantagem. Caso a técnica conjurada contra ele especifique que o alvo tem desvantagem, a vantagem é cancelada tornando a rolagem padrão. Caso não deseje pagar o PDR, ainda assim recebe +1 em rolagens de esquiva por Nível de Respiração.",
+        "deslocamento_bonus": "O usuário recebe deslocamento padrão bônus igual ao seu Nível de Respiração + 2 metros.",
+        "contraponto_debuff_de_treinamento": "Após a distribuição inicial de pontos de característica, o usuário da Luz recebe um debuff permanente de −1 em VIT."
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Corta-Luz",
+            "nome_romaji": "Ichi no Kata Raito Katto",
+            "tipo_manobra": "Especial",
+            "descricao": "O usuário desfere um ataque rápido que percorre uma distância máxima igual ao seu deslocamento. O ataque não causa dano, mas leva consigo um feixe de luz que ofusca a visão do inimigo, partindo em direção aos seus olhos.",
+            "cegueira_parcial": "Não é acumulativa. Aplica −2 em rolagens de acerto, percepção e destreza realizadas pelo personagem afetado.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Cegueira Parcial por 2 turnos", "custo": "2 PDR" },
+                { "nivel": 2, "efeito": "Cegueira Parcial por 3 turnos", "custo": "2 PDR" },
+                { "nivel": 3, "efeito": "Cegueira Parcial por 4 turnos", "custo": "3 PDR" },
+                {
+                    "nivel": 4,
+                    "efeito": "Cegueira Parcial por 4 turnos + o próximo aliado que declarar ataque contra esse inimigo terá vantagem no primeiro acerto",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Luminescência dos Justos",
+            "nome_romaji": "Ni no Kata Seigi no Kagayaki",
+            "tipo_manobra": "Reação",
+            "descricao": "Pode ser conjurada após um aliado ser acertado e receber dano de um ataque inimigo. Não pode ser conjurada em si mesmo. A imagem é de uma luz forte brilhando em torno do companheiro.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Recupera 1 PDR do aliado acertado", "custo": "1 PDR" },
+                { "nivel": 2, "efeito": "Recupera 2 PDR do aliado acertado", "custo": "1 PDR" },
+                {
+                    "nivel": 3,
+                    "efeito": "Recupera 2 PDR + 2 PDV do aliado acertado",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Recupera 2 PDR + 2 PDV do aliado acertado + diminui em 1 qualquer status de exaustão que ele esteja sob efeito",
+                    "custo": "2 PDR"
+                }
+            ],
+            "bonus_de_vida_baixa": "Se o aliado acertado estiver com menos de 50% de vida total no momento da conjuração, o usuário também concede a ele um bônus na próxima rolagem de esquiva ou bloqueio igual ao seu Nível de Respiração."
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Resplandecer",
+            "nome_romaji": "San no Kata Kagayaku",
+            "tipo_manobra": "Gatilho / Reação",
+            "descricao": "Após um aliado acertar um inimigo aplicando qualquer efeito de contato, o usuário da Luz pode utilizar esta técnica fora de seu próprio turno para conjurar um raio de luz extremamente forte que queima o inimigo como um ataque extra, complementando o ataque do companheiro.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Quebra resistências do inimigo",
+                    "duracao": "2 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Quebra resistências + −1 de bloqueio e esquiva do inimigo",
+                    "duracao": "2 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Quebra resistências + −1 de bloqueio e esquiva + impossibilita regeneração de vida por parte do inimigo",
+                    "duracao": "2 turnos",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Quebra resistências + −2 de bloqueio e esquiva + impossibilita regeneração de vida por parte do inimigo",
+                    "duracao": "2 turnos",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Clarificação",
+            "nome_romaji": "Shi no Kata Bunrui",
+            "tipo_manobra": "Ataque",
+            "descricao": "Declara uma sequência de golpes rápidos e inaudíveis contra um inimigo. O número de golpes é igual a DEX + CAR do usuário. Para acertar, use rolagens de acerto padrão com +2 de bônus, porém aplicando −2 de dano por acerto.",
+            "regra_par_impar": {
+                "par": "Recupera PDV",
+                "impar": "Pode causar efeito de contato por acerto"
+            },
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "recuperacao_pdv_acertos_pares": "Nível de Respiração",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "recuperacao_pdv_acertos_pares": "Nível de Respiração + INT ou SAB (à escolha)",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "recuperacao_pdv_acertos_pares": "Nível de Respiração + INT + SAB",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "recuperacao_pdv_acertos_pares": "Nível de Respiração + INT + SAB + CAR",
+                    "custo": "7 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Ponto de Vista",
+            "nome_romaji": "Go no Kata Shiten",
+            "tipo_manobra": "Movimento + Única",
+            "requisito": "Deve estar corpo a corpo com o inimigo",
+            "descricao": "Os olhos do usuário refletem um clarão momentâneo como um flash de luz que o confunde. Miragens surgirão para o inimigo, como se ele tivesse a visão deslocada de sua posição real, confundindo seus sentidos e fazendo-o desconfiar de seu próprio ponto de vista.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Teste de INT (C.D. 10 + INT ou SAB do usuário). Falha: o inimigo passa a rolar com 1d12 ao invés de 1d20 por 3 turnos",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "C.D. passa para 12 + INT ou SAB do usuário. O novo dado do inimigo é 1d10",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "C.D. passa para 14 + INT ou SAB do usuário. O novo dado do inimigo é 1d8",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Tudo é uma Questão de Perspectiva",
+            "nome_romaji": "Roku no Kata Subete wa Mikata no Mondai",
+            "tipo_manobra": "Completa + Especial + Única",
+            "descricao": "O usuário faz movimentos incessantes ao redor do campo de batalha, principalmente circulando os aliados. A visão de um vulto luminescente dá a impressão de um fantasma perseguindo-o, mas é apenas uma confusão mental causada nos inimigos. Ao conjurar, escolha um dos dois efeitos.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito_a_cura_necrotica": "Não é possível usar!",
+                    "efeito_b_reversao_de_criticos": "Não é possível usar!",
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "efeito_a_cura_necrotica": "Não é possível usar!",
+                    "efeito_b_reversao_de_criticos": "Não é possível usar!",
+                    "custo": null
+                },
+                {
+                    "nivel": 3,
+                    "efeito_a_cura_necrotica": "Aliados afetados por Dano Necrótico curam SAB + INT em PDV",
+                    "efeito_b_reversao_de_criticos": "Acertos críticos de inimigos viram erros críticos por 3 turnos",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito_a_cura_necrotica": "Aliados afetados por Dano Necrótico curam SAB + INT + CAR em PDV",
+                    "efeito_b_reversao_de_criticos": "Acertos críticos de inimigos viram erros críticos por 5 turnos",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Lampejo",
+            "nome_romaji": "Shichi no Kata Senkō",
+            "tipo_manobra": "Especial",
+            "descricao": "O usuário lança um lampejo de luz tão abrupto e impactante em direção ao inimigo à sua frente que causa uma impressão de infinidade reflexiva aos olhos do alvo.",
+            "condicao": "A troca de rolagem só é válida desde que os efeitos dessas rolagens ainda não tenham acontecido.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "janela_de_uso": "Até o início do próximo turno",
+                    "escopo_da_troca": "Rolagem do usuário ↔ rolagem do inimigo",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "janela_de_uso": "Até o fim do próximo turno",
+                    "escopo_da_troca": "Rolagem do usuário ↔ rolagem do inimigo",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "janela_de_uso": "Até o início do próximo turno",
+                    "escopo_da_troca": "Rolagem do usuário ou aliado ↔ rolagem do inimigo",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "janela_de_uso": "Até o fim do próximo turno",
+                    "escopo_da_troca": "Rolagem do usuário ou aliado ↔ rolagem do inimigo",
+                    "custo": "6 PDR"
+                }
+            ]
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Vertigem",
+        "testes_de_morte": "O usuário da Luz pode fazer testes de morte usando INT ou SAB à sua escolha, ao invés de VIT.",
+        "suporte_kakushi": "Se o usuário da Luz for um Kakushi, poderá dar suporte em testes de morte de aliados, concedendo-lhes +1 em suas rolagens desse tipo, desde que esteja presente na cena."
+    }
+}

@@ -1,0 +1,582 @@
+{
+    "titulo": "Respiração da Nevasca",
+    "nome_romaji": "Fubuki no Kokyū",
+    "kanji": "吹雪の呼吸",
+    "citacao": "Um floco isolado é frágil. A nevasca muda o mundo.",
+    "descricao_geral": "A Respiração da Nevasca é uma derivação híbrida da Respiração da Água e da Respiração do Vento. Da Água, herdou o fluxo, o redirecionamento, a defesa circular e a capacidade de transformar movimento em continuidade. Do Vento, herdou a pressão, os cortes amplos, o deslocamento agressivo e a violência acumulada de rajadas sucessivas. O resultado não é apenas frio: é uma técnica de combate baseada em mobilidade, controle de campo e pressão acumulada. A Nevasca não vence com um golpe. Ela desacelera o inimigo, corta sua rota de fuga, acumula Cristais de Gelo e então transforma o campo inteiro em uma lâmina.",
+    "estrutura_padrao": "[ Nível de Respiração ] [ Efeito ] [ Custo de PDR ]",
+    "passiva_especial": {
+        "nome": "Dança das Lâminas de Geada",
+        "descricao": "O usuário acumula Cristais de Gelo durante o combate. Os Cristais representam a pressão da nevasca se formando ao redor do campo: neve no chão, gelo na lâmina, ar congelado nos pulmões do inimigo e ritmo de movimento cada vez mais difícil de acompanhar.",
+        "maximo_cristais_de_gelo": 5,
+        "toque_gelido": {
+            "camada_1_hipotermia": {
+                "descricao": "Sempre que o usuário acertar um ataque ou técnica da Respiração da Nevasca, o alvo sofre Hipotermia até o início do próximo turno do usuário.",
+                "efeito": "Deslocamento máximo reduzido em -3m. Não empilha consigo mesma pela passiva. Técnicas específicas da Nevasca podem ampliar ou reaplicar esse efeito."
+            },
+            "camada_2_cristalizar": {
+                "descricao": "Uma vez por ação, quando o usuário acertar um alvo que já esteja com Hipotermia, causa dano adicional. Este dano é aplicado após o dano principal da técnica.",
+                "limite": "Cristalizar só pode ser aplicado uma vez por ação, mesmo que a técnica realize múltiplos ataques.",
+                "tabela": [
+                    { "nivel": 1, "dano_de_cristalizar": "+FDV de Dano Congelante" },
+                    { "nivel": 2, "dano_de_cristalizar": "+FDV + 1d4 de Dano Congelante" },
+                    { "nivel": 3, "dano_de_cristalizar": "+FDV + 1d6 de Dano Congelante" },
+                    { "nivel": 4, "dano_de_cristalizar": "+FDV + 1d8 de Dano Congelante" }
+                ]
+            },
+            "camada_3_critico_congelante": {
+                "descricao": "Críticos de técnicas da Respiração da Nevasca não dobram o dano final. Essa regra substitui o crítico padrão apenas para técnicas da Respiração da Nevasca.",
+                "efeitos": [
+                    "O alvo sofre Restrição de Movimento até o início do próximo turno dele.",
+                    "Se o alvo já estava com Hipotermia, o dano de Cristalizar é maximizado.",
+                    "O usuário ganha +1 Cristal de Gelo, respeitando o máximo de 5."
+                ]
+            }
+        }
+    },
+    "gerenciamento_de_cristais": {
+        "ganha_1_cristal_quando": [
+            "Acerta um alvo que já estava com Hipotermia.",
+            "Realiza Esquiva ou Bloqueio bem-sucedido.",
+            "Move pelo menos 4,5m no próprio turno e termina sem inimigos adjacentes.",
+            "Aplica Restrição de Movimento, Derrubado ou Flutuando com uma técnica da Nevasca."
+        ],
+        "limite_de_ganho": "2 Cristais por rodada (Crítico Congelante ignora esse limite e ainda pode conceder +1 Cristal)",
+        "perde_cristais_quando": [
+            "Recebe Dano de Fogo: perde 2 Cristais.",
+            "Fica Agarrado: perde 3 Cristais.",
+            "Fica Atordoado, Paralisado ou Inconsciente: perde todos os Cristais."
+        ]
+    },
+    "estados_da_geada": [
+        {
+            "cristais": 2,
+            "estado": "Passo Gélido",
+            "efeito": "+1,5m de Movimento. Não provoca Ataques de Oportunidade de alvos com Hipotermia."
+        },
+        {
+            "cristais": 4,
+            "estado": "Valsa Cortante",
+            "efeito": "1 vez por turno, ao atravessar o espaço de um inimigo, causa 1d6 de Dano Congelante automático."
+        },
+        {
+            "cristais": 5,
+            "estado": "Olho da Tempestade",
+            "efeito": "Cristalizar aumenta em +1 dado. Habilita Rajada da Nevasca."
+        }
+    ],
+    "olho_da_tempestade": {
+        "descricao": "Enquanto estiver com 5 Cristais, o dano de Cristalizar aumenta em +1 dado.",
+        "tabela": [
+            { "nivel": 1, "dano_de_cristalizar": "+FDV + 1d4" },
+            { "nivel": 2, "dano_de_cristalizar": "+FDV + 1d6" },
+            { "nivel": 3, "dano_de_cristalizar": "+FDV + 1d8" },
+            { "nivel": 4, "dano_de_cristalizar": "+FDV + 1d10" }
+        ]
+    },
+    "rajada_da_nevasca": {
+        "tipo_manobra": "Ação Livre",
+        "requisito": "5 Cristais de Gelo",
+        "custo": "Consome todos os Cristais",
+        "duracao": "Até o final do turno atual",
+        "descricao": "O usuário libera toda a pressão acumulada e entra brevemente em Zero Absoluto.",
+        "efeitos": [
+            "A próxima Ação de Ataque feita neste turno realiza 3 ataques separados.",
+            "Cada ataque aplica normalmente Hipotermia e demais efeitos da técnica usada.",
+            "Cristalizar ainda respeita o limite de 1 vez por ação.",
+            "O deslocamento do usuário é dobrado até o fim do turno.",
+            "O usuário pode atravessar o espaço de inimigos livremente.",
+            "Ao final do turno, sofre 1 nível de Exaustão.",
+            "O usuário não pode ganhar Cristais no próximo turno."
+        ]
+    },
+    "cd_da_nevasca": "10 + FDV + Nível de Respiração",
+    "status_especificos": {
+        "cegueira_parcial": {
+            "efeito": "-2 em rolagens de acerto e defesa que dependam de visão",
+            "duracao_padrao": "1 turno"
+        },
+        "flutuando": {
+            "descricao": "O alvo é lançado ao ar ou perde contato estável com o chão.",
+            "efeitos": [
+                "Não pode se deslocar.",
+                "Não pode usar Ação de Movimento.",
+                "Sofre Desvantagem em testes de DEX.",
+                "Ataques corpo a corpo contra ele recebem +2 no acerto."
+            ],
+            "duracao_padrao": "Até o início do próximo turno do alvo"
+        }
+    },
+    "sistema_de_fluxo": {
+        "descricao": "Fluxos são encadeamentos da Respiração da Nevasca. Eles não são Formas independentes; são consequências naturais de uma Forma anterior.",
+        "regras": [
+            "Um Fluxo só pode ser ativado imediatamente após a Forma indicada.",
+            "O Fluxo não consome ação.",
+            "O custo é pago em Fôlego de Combate ou Cristais de Gelo.",
+            "Apenas 1 Fluxo pode ser usado por turno.",
+            "Errar a Forma requisito não impede o Fluxo, salvo se o Fluxo exigir acerto."
+        ]
+    },
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Corte de Vendaval Gelado",
+            "nome_romaji": "Ichi no Kata: Hyōfu Giri",
+            "kanji": "一の型・氷風斬り",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Cortante + Congelante",
+            "descricao": "O usuário avança sem desacelerar e desfere um corte horizontal coberto por névoa congelada. Se acertar, aplica Hipotermia. No Nível 3 ou superior, o alvo também sofre Cegueira Parcial por 1 turno.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "2d8 + DEX",
+                    "efeito": "Se moveu 3m antes do ataque, +2 no acerto",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "3d8 + DEX",
+                    "efeito": "Igual ao anterior",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "4d8 + DEX",
+                    "efeito": "Igual ao anterior + Cegueira Parcial",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "5d8 + DEX",
+                    "efeito": "Igual ao anterior + Cegueira Parcial",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Roda de Turbilhão Glacial",
+            "nome_romaji": "Ni no Kata: Hyōka Rin",
+            "kanji": "二の型・氷花輪",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Perfurante + Congelante",
+            "descricao": "O usuário gira a arma em um vórtice defensivo e finaliza com uma estocada perfurante. Se o alvo estiver com Hipotermia, ele realiza um teste de VIT contra CD da Nevasca; falha: fica Atordoado por 1 turno.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "3d8 + DEX",
+                    "efeito": "Ignora Redução de Dano física até o limite de FDV",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "4d8 + DEX",
+                    "efeito": "Igual ao anterior",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "5d8 + DEX",
+                    "efeito": "Igual ao anterior + teste de VIT contra Atordoamento",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "6d8 + DEX",
+                    "efeito": "Igual ao anterior + +2 em Bloqueio até o próximo turno",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Barreira da Lua Cheia",
+            "nome_romaji": "San no Kata: Getsu Heki",
+            "kanji": "三の型・月壁",
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de um ataque ou proteger aliado adjacente",
+            "descricao": "O usuário cria um domo circular de vento congelante para repelir o impacto. O usuário escolhe aplicar o bônus em Esquiva ou Bloqueio.",
+            "niveis": [
+                { "nivel": 1, "bonus_defesa": "+2", "reducao_de_dano": 4, "custo": "2 PDR" },
+                { "nivel": 2, "bonus_defesa": "+4", "reducao_de_dano": 7, "custo": "3 PDR" },
+                { "nivel": 3, "bonus_defesa": "+6", "reducao_de_dano": 10, "custo": "4 PDR" },
+                { "nivel": 4, "bonus_defesa": "+8", "reducao_de_dano": 14, "custo": "5 PDR" }
+            ],
+            "efeito_dano_zerado": "Se o dano final for reduzido a 0, escolha um: recupera 1 PDR; ganha 1 Cristal; move 1,5m sem provocar Ataque de Oportunidade.",
+            "efeito_bloqueio_adjacente": "Se o atacante estiver adjacente e o bloqueio for bem-sucedido, o usuário pode gastar 1 Cristal para realizar um Ataque de Oportunidade com Vantagem."
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Saque da Nevasca",
+            "nome_romaji": "Shi no Kata: Petaru Doriru",
+            "kanji": "四の型・ペタルドリル",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Perfurante + Congelante",
+            "descricao": "O usuário avança em linha como uma broca de gelo e atravessa todos no caminho. Faça uma rolagem de ataque contra cada inimigo na linha.",
+            "niveis": [
+                { "nivel": 1, "dano": "4d8 + DEX", "linha": "4,5m", "custo": "4 PDR" },
+                { "nivel": 2, "dano": "6d8 + DEX", "linha": "6m", "custo": "5 PDR" },
+                { "nivel": 3, "dano": "8d8 + DEX", "linha": "7,5m", "custo": "6 PDR" },
+                { "nivel": 4, "dano": "10d8 + DEX", "linha": "9m", "custo": "7 PDR" }
+            ],
+            "efeitos": [
+                "O usuário termina o movimento no final da linha.",
+                "Alvos atingidos sofrem Hipotermia automaticamente.",
+                "Durante o movimento, o usuário é imune a Derrubado e Empurrado.",
+                "Se atingir pelo menos 2 inimigos, ganha +1 Cristal."
+            ],
+            "fluxo": {
+                "nome": "Fluxo Dezembro",
+                "nome_romaji": "Ryuha: Shimotsuki",
+                "kanji": "流派・霜月",
+                "requisito": "Usar imediatamente após a 4ª Forma",
+                "custo": "3 Fôlego de Combate",
+                "tipo_de_dano": "Congelante",
+                "descricao": "Ao tocar o chão no fim da investida, o usuário explode estilhaços de gelo ao redor. Faça uma única rolagem de ataque contra todos os inimigos na área. Inimigos atingidos realizam teste de VIT contra CD da Nevasca; falha: ficam Derrubados.",
+                "tabela_dano_raio_3m": [
+                    { "nivel": 1, "dano": "2d6" },
+                    { "nivel": 2, "dano": "3d6" },
+                    { "nivel": 3, "dano": "4d6" },
+                    { "nivel": 4, "dano": "5d6" }
+                ]
+            }
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Dança da Lua e Gelo",
+            "nome_romaji": "Go no Kata: Gekhyō no Mai",
+            "kanji": "五の型・月氷の舞",
+            "tipo_manobra": "Especial",
+            "tipo_de_dano": "Cortante + Congelante",
+            "descricao": "Três cortes ascendentes rápidos, feitos para lançar o inimigo ao ar. Cada ataque exige uma rolagem separada. Se os 3 ataques acertarem o mesmo alvo, ele realiza teste de VIT contra CD da Nevasca; falha: fica Flutuando até o início do próximo turno dele.",
+            "niveis": [
+                { "nivel": 1, "ataques": 3, "dano_por_acerto": "1d8 + DEX", "custo": "4 PDR" },
+                { "nivel": 2, "ataques": 3, "dano_por_acerto": "1d10 + DEX", "custo": "5 PDR" },
+                { "nivel": 3, "ataques": 3, "dano_por_acerto": "2d6 + DEX", "custo": "6 PDR" },
+                { "nivel": 4, "ataques": 3, "dano_por_acerto": "2d8 + DEX", "custo": "7 PDR" }
+            ],
+            "fluxo": {
+                "nome": "Fluxo Corrida do Luar",
+                "nome_romaji": "Ryuha: Gekkō Hashiri",
+                "kanji": "流派・月光走り",
+                "requisito": "Usar imediatamente após a 5ª Forma",
+                "custo": "2 Cristais de Gelo",
+                "descricao": "O usuário transforma o recuo dos cortes em deslocamento lateral explosivo.",
+                "efeitos": [
+                    "Move 4,5m em qualquer direção sem provocar Ataques de Oportunidade.",
+                    "Se atravessar o espaço de um inimigo, causa 2d6 de Dano Congelante automático.",
+                    "Cada inimigo só pode sofrer esse dano uma vez por uso."
+                ]
+            }
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Labirinto de Gelo",
+            "nome_romaji": "Roku no Kata: Hyōketsu Meikyū",
+            "kanji": "六の型・氷結迷宮",
+            "tipo_manobra": "Movimento + Especial",
+            "tipo": "Controle de Campo",
+            "duracao": "3 turnos",
+            "descricao": "O usuário risca o chão com a lâmina e cria uma arena de gelo cortante. Ao ativar, escolha: Estático (a área permanece no local) ou Móvel (a área acompanha o usuário).",
+            "niveis": [
+                { "nivel": 1, "area": "Não é possível usar", "efeito": null, "custo": null },
+                {
+                    "nivel": 2,
+                    "area": "Raio de 4,5m",
+                    "efeito": "Terreno difícil + dano leve",
+                    "custo": "5 PDR + 2 Fôlego"
+                },
+                {
+                    "nivel": 3,
+                    "area": "Raio de 6m",
+                    "efeito": "Igual + pressão congelante",
+                    "custo": "6 PDR + 3 Fôlego"
+                },
+                {
+                    "nivel": 4,
+                    "area": "Raio de 7,5m",
+                    "efeito": "Igual + gelo cortante",
+                    "custo": "7 PDR + 3 Fôlego"
+                }
+            ],
+            "efeitos_da_area": [
+                "O usuário recebe +3m de Movimento.",
+                "Inimigos tratam a área como terreno difícil.",
+                "Inimigos que começarem o turno na área sofrem Hipotermia.",
+                "Inimigos que tentarem sair da área testam VIT contra CD 14 + Nível de Respiração; falha: ficam Derrubados."
+            ],
+            "dano_do_labirinto": {
+                "descricao": "Quando um inimigo cair, for empurrado ou atravessar mais de 3m dentro do Labirinto, sofre dano Congelante. Esse dano só pode ocorrer uma vez por turno por inimigo.",
+                "tabela": [
+                    { "nivel": 2, "dano_congelante": "2d6" },
+                    { "nivel": 3, "dano_congelante": "3d6" },
+                    { "nivel": 4, "dano_congelante": "4d6" }
+                ]
+            }
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Vórtice Absoluto",
+            "nome_romaji": "Shichi no Kata: Zettai Uzumaki",
+            "kanji": "七の型・絶対渦巻き",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Congelante + Impacto",
+            "descricao": "O usuário cria uma rajada circular reversa, puxando inimigos para o centro da nevasca. Todos os inimigos no alcance do Puxão realizam teste de VIT contra CD da Nevasca; falha: são puxados até ficarem adjacentes ao usuário.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d6 + FDV", "puxao": "3m", "custo": "3 PDR" },
+                { "nivel": 2, "dano": "4d6 + FDV", "puxao": "4,5m", "custo": "4 PDR" },
+                { "nivel": 3, "dano": "5d6 + FDV", "puxao": "6m", "custo": "5 PDR" },
+                { "nivel": 4, "dano": "6d6 + FDV", "puxao": "9m", "custo": "6 PDR" }
+            ],
+            "colisao": "Se dois inimigos puxados colidirem, cada um sofre 2d6 de Dano de Impacto adicional.",
+            "bonus_condicional": "Se pelo menos um inimigo for puxado, o usuário ganha +1 Cristal."
+        },
+        {
+            "estilo": 8,
+            "nome_pt": "Ceifador da Geada",
+            "nome_romaji": "Hachi no Kata: Shimo no Karite",
+            "kanji": "八の型・霜の刈り手",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Congelante",
+            "requisito": "Alvo com Hipotermia, Derrubado, Restrição de Movimento ou Flutuando",
+            "descricao": "O usuário condensa todos os Cristais na arma e desfere um golpe descendente. Ao usar esta Forma, o usuário deve consumir todos os Cristais acumulados. Para cada Cristal consumido: +1d10 de Dano Congelante. Se consumir 5 Cristais, a rolagem de ataque recebe Vantagem.",
+            "niveis": [
+                { "nivel": 1, "dano_base": "4d8 + FDV", "custo": "5 PDR" },
+                { "nivel": 2, "dano_base": "5d10 + FDV", "custo": "6 PDR" },
+                { "nivel": 3, "dano_base": "7d10 + FDV", "custo": "8 PDR" },
+                { "nivel": 4, "dano_base": "9d10 + FDV", "custo": "10 PDR" }
+            ],
+            "estilhacar": "Se este golpe reduzir o alvo a 0 PDV, todos os inimigos a 1,5m sofrem 3d6 de Dano Congelante automático."
+        },
+        {
+            "estilo": 9,
+            "nome_pt": "Ilusão de Granizo",
+            "nome_romaji": "Ku no Kata: Mizore Ashi",
+            "kanji": "九の型・霙足",
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de um ataque",
+            "descricao": "O usuário desaparece em uma nuvem de neve e deixa uma estátua de gelo no próprio lugar.",
+            "niveis": [
+                { "nivel": 1, "bonus_esquiva": "+2", "dano_da_estatua": "1d6", "custo": "2 PDR" },
+                { "nivel": 2, "bonus_esquiva": "+3", "dano_da_estatua": "2d6", "custo": "3 PDR" },
+                { "nivel": 3, "bonus_esquiva": "+6", "dano_da_estatua": "3d6", "custo": "4 PDR" },
+                { "nivel": 4, "bonus_esquiva": "+8", "dano_da_estatua": "4d6", "custo": "5 PDR" }
+            ],
+            "efeito_esquiva_bem_sucedida": [
+                "O usuário pode mover até 3m.",
+                "Cria uma estátua de gelo com 1 PDV no espaço original.",
+                "A estátua dura até o início do próximo turno do usuário.",
+                "Se destruída, explode e causa o dano indicado ao atacante.",
+                "O atacante sofre Hipotermia automaticamente."
+            ],
+            "observacao": "Usar esta Forma impede a perda de Cristais por dano até o início do próximo turno."
+        },
+        {
+            "estilo": 10,
+            "nome_pt": "Enterro de Avalanche",
+            "nome_romaji": "Jū no Kata: Petaru Bureido",
+            "kanji": "十の型・ペタルブレイド",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Congelante + Impacto",
+            "descricao": "O usuário libera uma onda cônica de gelo, vento e pressão. Todos os inimigos na área realizam teste de VIT contra CD da Nevasca. A área afetada se torna terreno difícil por 3 rodadas. Se atingir 3 ou mais inimigos, o usuário ganha +1 Cristal.",
+            "niveis": [
+                { "nivel": 1, "dano": "6d6 + FDV", "area": "Cone de 6m", "custo": "5 PDR" },
+                { "nivel": 2, "dano": "8d6 + FDV", "area": "Cone de 9m", "custo": "6 PDR" },
+                { "nivel": 3, "dano": "10d6 + FDV", "area": "Cone de 12m", "custo": "8 PDR" },
+                { "nivel": 4, "dano": "12d6 + FDV", "area": "Cone de 15m", "custo": "10 PDR" }
+            ],
+            "resultado_teste": {
+                "falha": "Recebem dano total e Restrição de Movimento por 1 turno.",
+                "sucesso": "Recebem metade do dano e Hipotermia."
+            }
+        },
+        {
+            "estilo": 11,
+            "nome_pt": "Coração de Gelo",
+            "nome_romaji": "Jū Ichi no Kata: Hyōnagi",
+            "kanji": "十一の型・氷凪",
+            "tipo_manobra": "Especial",
+            "tipo": "Recuperação e Purificação",
+            "custo": "5 PDR + 3 Cristais",
+            "descricao": "O usuário reduz a própria temperatura corporal, desacelera o sangue e sela feridas com gelo. Esta técnica só afeta o próprio usuário. Ela não pode restaurar Dano de Ferida, Dano Necrótico ou perda permanente de atributo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "recuperacao": "2d6 + VIT PDV",
+                    "efeito": "Remove Sangramento ou Hemorragia"
+                },
+                {
+                    "nivel": 2,
+                    "recuperacao": "3d6 + VIT PDV",
+                    "efeito": "Igual + remove Envenenamento"
+                },
+                {
+                    "nivel": 3,
+                    "recuperacao": "4d6 + VIT PDV",
+                    "efeito": "Igual + remove Em Chamas"
+                },
+                {
+                    "nivel": 4,
+                    "recuperacao": "5d6 + VIT PDV",
+                    "efeito": "Igual + remove Amedrontado ou Confusão"
+                }
+            ]
+        },
+        {
+            "estilo": 12,
+            "nome_pt": "Dente do Dragão",
+            "nome_romaji": "Jū Ni no Kata: Ryūtō",
+            "kanji": "十二の型・龍刀",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Perfurante + Congelante",
+            "alcance": "6m",
+            "descricao": "Uma estocada simples levada à precisão absoluta. A ponta da arma parece alcançar mais longe do que deveria.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d6 + DEX", "custo": "2 PDR" },
+                { "nivel": 2, "dano": "4d6 + DEX", "custo": "3 PDR" },
+                { "nivel": 3, "dano": "5d6 + DEX", "custo": "4 PDR" },
+                { "nivel": 4, "dano": "6d6 + DEX", "custo": "5 PDR" }
+            ],
+            "efeitos": [
+                "Tem Vantagem contra Bloqueio.",
+                "Crítico natural ocorre em 18–20.",
+                "Em crítico, além do Crítico Congelante, o alvo não pode usar Reação até o início do próximo turno dele."
+            ],
+            "bonus_condicional": "Se o alvo já estava com Hipotermia, adiciona +1d6 de Dano Congelante."
+        },
+        {
+            "estilo": 13,
+            "nome_pt": "Névoa Espectral",
+            "nome_romaji": "Jū San no Kata: Tsuiseki",
+            "kanji": "十三の型・追跡",
+            "tipo_manobra": "Especial",
+            "tipo": "Postura de Mobilidade",
+            "custo": "3 PDR para ativar + 2 PDR por turno para manter",
+            "duracao": "Até ser encerrada, ficar Ofegante, ficar com 0 PDR ou perder consciência",
+            "descricao": "O usuário desliza pelo campo como uma silhueta azulada, sempre um passo fora do alcance.",
+            "efeitos_ativos": [
+                "+4 em Defesa contra Ataques de Oportunidade.",
+                "+1,5m de Movimento.",
+                "Se mover pelo menos 4,5m e atacar no mesmo turno, o primeiro ataque causa +2d6 de Dano de Impacto.",
+                "Se terminar o turno sem inimigos adjacentes, ganha +1 Cristal."
+            ],
+            "observacao": "No Nível 4 de Respiração, o bônus de Movimento aumenta para +3m."
+        },
+        {
+            "estilo": 14,
+            "nome_pt": "Domínio do Zero Absoluto",
+            "nome_romaji": "Jū Shi no Kata: Zettai Reikaku",
+            "kanji": "十四の型・絶対零覚",
+            "tipo_manobra": "Completa",
+            "tipo": "Domínio de Campo",
+            "requisito": "Nível de Respiração 3 ou maior e 5 Cristais acumulados",
+            "duracao": "3 rodadas",
+            "descricao": "O usuário crava a arma no chão e transforma o ambiente em um campo congelado sob seu controle.",
+            "niveis": [
+                { "nivel": 1, "area": "Não é possível usar", "efeito": null, "custo": null },
+                { "nivel": 2, "area": "Não é possível usar", "efeito": null, "custo": null },
+                { "nivel": 3, "area": "Raio de 9m", "efeito": "Domínio parcial", "custo": "9 PDR" },
+                {
+                    "nivel": 4,
+                    "area": "Raio de 12m",
+                    "efeito": "Domínio completo",
+                    "custo": "10 PDR"
+                }
+            ],
+            "efeitos_do_dominio": [
+                "O usuário gera +1 Cristal no início de cada turno.",
+                "Inimigos que começarem o turno na área sofrem Hipotermia automaticamente.",
+                "O usuário recebe Redução de Dano igual à FDV contra danos que possam ser reduzidos.",
+                "Inimigos dentro da área têm o deslocamento reduzido em -3m.",
+                "O chão conta como terreno difícil para inimigos."
+            ],
+            "frio_penetrante": {
+                "descricao": "No início do turno de cada inimigo dentro da área, ele realiza teste de VIT contra CD da Nevasca.",
+                "falha": "Sofre 3d6 de Dano Congelante no Nível 3 ou 4d6 de Dano Congelante no Nível 4.",
+                "sucesso": "Não sofre o dano, mas mantém Hipotermia."
+            },
+            "observacao": "Ao final do Domínio, o usuário sofre 1 nível de Exaustão."
+        },
+        {
+            "estilo": 15,
+            "nome_pt": "O Dragão Levanta a Cabeça",
+            "nome_romaji": "Jū Go no Kata: Hiryū no Atama",
+            "kanji": "十五の型・飛龍の頭",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Perfurante + Congelante",
+            "requisito": "Nível de Respiração 3 ou maior",
+            "uso": "1 vez por combate",
+            "custo": "8 PDR + 4 Fôlego de Combate",
+            "descricao": "O usuário declara uma estocada direta. Essa é a mentira. No instante em que o alvo compromete a defesa contra o vetor anunciado, a lâmina muda de direção. A ponta sobe, curva ou atravessa por um ângulo impossível. A técnica usa a defesa do inimigo contra ele.",
+            "fase_1_declaracao": {
+                "descricao": "Ao declarar esta Forma, escolha um alvo. Antes da rolagem de ataque, o alvo deve escolher uma resposta: Bloqueio, Esquiva ou Nenhuma defesa ativa. Depois disso, o usuário escolhe quantos Cristais consumir."
+            },
+            "dano_base": [
+                { "nivel": 1, "dano": "Não é possível usar" },
+                { "nivel": 2, "dano": "Não é possível usar" },
+                { "nivel": 3, "dano": "8d10 + DEX + FDV" },
+                { "nivel": 4, "dano": "10d10 + DEX + FDV" }
+            ],
+            "dano_por_cristal_consumido": "+1d8 de Dano Congelante (se consumir 5 Cristais, o ataque recebe Vantagem)",
+            "fase_2_resolucao": {
+                "se_bloqueio": [
+                    "O ataque ignora Bloqueio, Aparar e bônus de postura defensiva.",
+                    "Faça rolagem de ataque normal.",
+                    "Se acertar, o alvo testa VIT contra CD da Nevasca.",
+                    "Em falha, fica Derrubado."
+                ],
+                "se_esquiva": [
+                    "O usuário recebe +4 no ataque.",
+                    "Se acertar, causa +2d8 de Dano Congelante adicional.",
+                    "Se o alvo já estava com Hipotermia, também sofre Restrição de Movimento por 1 turno."
+                ],
+                "se_nenhuma_defesa": [
+                    "Faça rolagem de ataque normal.",
+                    "Se acertar, aplica Restrição de Movimento automaticamente por 1 turno.",
+                    "Se consumir 3 ou mais Cristais, também aplica Hipotermia mesmo se errar."
+                ]
+            },
+            "leitura_do_dragao": [
+                { "cristais_consumidos": "1–2", "efeito": "+1d6 de Dano Congelante" },
+                {
+                    "cristais_consumidos": "3–4",
+                    "efeito": "+2d6 de Dano Congelante + Hipotermia automática"
+                },
+                {
+                    "cristais_consumidos": 5,
+                    "efeito": "+3d6 de Dano Congelante + alvo não pode usar Reação até o início do próximo turno dele"
+                }
+            ],
+            "dragao_acordado": {
+                "condicao": "Uma vez por combate, se esta Forma acertar consumindo 5 Cristais, o usuário pode declarar Dragão Acordado.",
+                "efeitos": [
+                    "O alvo fica Flutuando.",
+                    "O usuário pode ativar imediatamente um Fluxo conhecido sem pagar Cristais ou Fôlego.",
+                    "O usuário sofre 1 nível de Exaustão após o Fluxo."
+                ]
+            }
+        }
+    ],
+    "sinergias": {
+        "agua": "Quando um usuário da Respiração da Água estiver em campo, ele pode gastar 2 PDR quando o usuário da Nevasca aplicar Hipotermia em um alvo. O próximo ataque da Água contra esse alvo recebe +INT de dano.",
+        "vento": "Quando um usuário da Respiração do Vento empurrar ou deslocar um inimigo com Hipotermia, o usuário da Nevasca pode ganhar +1 Cristal. Esse efeito só pode ocorrer uma vez por rodada.",
+        "nevoa": "Se um inimigo estiver com Cegueira Parcial causada pela Nevasca, usuários da Respiração da Névoa recebem +2 em testes de furtividade ou reposicionamento contra esse alvo.",
+        "neve": "Se existir Respiração da Neve na mesa, técnicas de Neve contra alvos com Hipotermia causada pela Nevasca causam +1d6 de Dano Congelante, uma vez por turno."
+    },
+    "notas_de_balanceamento": [
+        "A Nevasca é uma Respiração de pressão, não de explosão gratuita. Ela possui dano alto, mas exige ritmo: aplicar Hipotermia; manter mobilidade; acumular Cristais; gastar Cristais no momento certo. Se o usuário for preso, queimado, atordoado ou cercado, a Respiração perde força.",
+        "Cristalizar é limitado por ação. Isso impede que técnicas de múltiplos ataques, como a 5ª Forma ou Rajada da Nevasca, multipliquem dano adicional de forma descontrolada.",
+        "O crítico da Nevasca troca dano por controle. Críticos não dobram dano; eles congelam, travam e alimentam Cristais. Isso mantém a identidade da Respiração sem competir diretamente com Respirações explosivas como Chamas e Trovão.",
+        "Fogo é o contra natural. Dano de Fogo remove Cristais. Isso cria um ponto de falha claro e impede que a Nevasca seja dominante em toda situação.",
+        "A 15ª Forma é propositalmente perigosa. O Dragão Levanta a Cabeça é técnica de leitura, não só dano. Ela força o alvo a declarar defesa e pune a escolha errada. Por isso tem: uso limitado a 1 vez por combate; custo misto de PDR + Fôlego; requisito de Nível de Respiração 3; consumo opcional de Cristais; Exaustão no Dragão Acordado."
+    ],
+    "resumo_mecanico": [
+        { "elemento": "Hipotermia", "funcao": "Reduz mobilidade e abre Cristalizar" },
+        { "elemento": "Cristalizar", "funcao": "Dano bônus contra alvo já afetado" },
+        { "elemento": "Cristais", "funcao": "Recurso interno da Respiração" },
+        { "elemento": "Rajada da Nevasca", "funcao": "Explosão de mobilidade e multiataque" },
+        { "elemento": "Fluxos", "funcao": "Encadeamentos pagos com Fôlego ou Cristais" },
+        { "elemento": "Fogo", "funcao": "Contra natural da Respiração" },
+        { "elemento": "Água + Vento", "funcao": "Base temática e mecânica da Nevasca" }
+    ]
+}

@@ -1,0 +1,241 @@
+{
+    "titulo": "Respiração da Raposa",
+    "aliases": ["Fox Breathing", "Kitsune no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "passiva": {
+        "nome": "Olhos Escarlate",
+        "nome_romaji": "Hiiro no Me",
+        "descricao": "Os olhos de um usuário desta respiração sempre terão um tom avermelhado quase alaranjado. Esses olhos permitem ver através das almas das pessoas, concedendo instintos quase supremos de sobrevivência e percepção.",
+        "bonus": [
+            "+2 em testes que envolvam Sabedoria e Inteligência para fins de Percepção usando os olhos",
+            "+1 de PDR Máximo no Nível 1",
+            "Imunidade a ataques surpresa físicos"
+        ],
+        "contraponto_sensibilidade_a_luz": "Os olhos, apesar de poderosos, são sensíveis a qualquer alteração repentina de luz ou focos que desviem sua atenção da íris. Isso ocasiona −1 em rolagens de acerto de qualquer técnica de ataque ou ataque padrão."
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Cauda da Primavera",
+            "nome_romaji": "Ichi no Kata Tobimushi",
+            "tipo_manobra": "Ataque",
+            "descricao": "Em um ataque horizontal em forma de cone, alveja até 3 alvos inimigos à frente com uma onda calorosa de efeito psíquico atordoante.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito_nos_inimigos": "1 ponto de exaustão em até 2 alvos por 3 turnos",
+                    "efeito_nos_aliados": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito_nos_inimigos": "1 ponto de exaustão em até 2 alvos por 3 turnos",
+                    "efeito_nos_aliados": "Remove 1 ponto de exaustão de aliados afetados",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito_nos_inimigos": "2 pontos de exaustão em até 2 alvos por 3 turnos",
+                    "efeito_nos_aliados": "Remove 1 ponto de exaustão + cura sangramento e envenenamento de aliados afetados",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito_nos_inimigos": "2 pontos de exaustão em até 3 alvos por 3 turnos",
+                    "efeito_nos_aliados": "Remove 2 pontos de exaustão + cura sangramento e envenenamento de aliados afetados",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Cauda Solar",
+            "nome_romaji": "Ni no Kata Sōrātēru",
+            "tipo_manobra": "Especial",
+            "descricao": "A visão de uma cauda grande saindo do usuário iluminando de forma radiante o ambiente em um tom dourado traz uma sensação quente e nostálgica para si e seus aliados. Pode ser usada tanto dentro quanto fora de batalha.",
+            "niveis": [
+                { "nivel": 1, "cura": "1d4 de PDV", "alvos": "Si + 1 aliado", "custo": "2 PDR" },
+                {
+                    "nivel": 2,
+                    "cura": "1d4 + 2 de PDV",
+                    "alvos": "Si + 1 aliado",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "cura": "1d4 + FDV + 2 de PDV",
+                    "alvos": "Si + 1 aliado",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "cura": "1d4 + FDV + 2 de PDV",
+                    "alvos": "Si + até 2 aliados",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Cauda do Outono",
+            "nome_romaji": "San no Kata Aki no Shippo",
+            "tipo_manobra": "Reação",
+            "custo_fixo": "3 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Nega o efeito de um Kekkijutsu de alvo único lançado contra um aliado. A visão é de uma raposa branca que surge engolindo o Kekkijutsu inimigo; quanto maior o Kekkijutsu, maior a raposa.",
+            "uso_em_si_mesmo": "Pode ser usado em si mesmo pagando +1 PDR além do custo padrão."
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Cauda Lunar",
+            "nome_romaji": "Shi no Kata Tsuki no O",
+            "tipo_manobra": "Passiva & Única",
+            "descricao": "Passivamente, mesmo fora de batalha, pode cobrir um aliado com um manto de aura quase invisível que traz uma sensação serena e tranquilizadora. Enquanto protegido pelo manto, o indivíduo recebe PDV e PDR Máximos adicionais. Como uma Ação Única, pode trocar o manto de indivíduo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_pdr_e_pdv_maximos": "+2",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_pdr_e_pdv_maximos": "+3",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_pdr_e_pdv_maximos": "+5",
+                    "efeito_adicional": null,
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_pdr_e_pdv_maximos": "+6",
+                    "efeito_adicional": "Possibilita o indivíduo ser alvo da 9ª Forma O Canto Final da Raposa",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Cauda do Inverno",
+            "nome_romaji": "Go no Kata Fuyu no Shippo",
+            "tipo_manobra": "Completa",
+            "descricao": "Usa todas as ações do turno para dar um dash super rápido (com possibilidade de curvas para desviar de obstáculos) até um aliado, ficando costas com costas e garantindo um escudo de aura protetora. O escudo dura até o início de seu próximo turno, até o aliado se mover para fora do alcance, ou até um dos dois receber um ataque bem-sucedido. O ataque recebido por um anula o escudo de ambos.",
+            "limitacao": "O escudo só anula ataques físicos ou à distância; não protege contra Kekkijutsus.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "protecao": "Nega o próximo dano que receberiam",
+                    "bonus_ofensivo_a_escolha_de_um_dos_dois": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "protecao": "Nega o próximo dano que receberiam",
+                    "bonus_ofensivo_a_escolha_de_um_dos_dois": "+2 na rolagem de acerto do próximo ataque ou técnica",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "protecao": "Nega o próximo dano que receberiam",
+                    "bonus_ofensivo_a_escolha_de_um_dos_dois": "Vantagem na rolagem de acerto do próximo ataque ou técnica",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "protecao": "Nega o próximo dano que receberiam",
+                    "bonus_ofensivo_a_escolha_de_um_dos_dois": "Vantagem na rolagem de acerto + possibilita o indivíduo ser alvo da 9ª Forma O Canto Final da Raposa",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Cauda da Sacerdotisa",
+            "nome_romaji": "Roku no Kata Miko no Shippo",
+            "tipo_manobra": "Movimento",
+            "custo_fixo": "1 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "requisito": "Já ter usado a Respiração da Recuperação durante o combate atual.",
+            "descricao": "Abdica da Ação de Movimento do turno para controlar seu fluxo de sangue e pensamentos, ganhando um uso extra da Respiração da Recuperação mesmo que já a tenha utilizado. Pode ser usada um número de vezes por combate igual a FDV ÷ 2 (arredonda para cima)."
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Cauda do Profeta",
+            "nome_romaji": "Shichi no Kata Yogen-sha no Shippo",
+            "tipo_manobra": "Ataque",
+            "descricao": "Em um ataque de fúria incontrolável, 7 caudas saem das costas do usuário e começam a atacar descontroladamente um inimigo específico, podendo acertar aliados em corpo a corpo com ele também. Dura 3 turnos fixos, consumindo as ações de ataque nesses 3 turnos. Não pode ser interrompida para usar outra Ação de Ataque, a menos que o usuário fique sem PDV.",
+            "mecanica": "As caudas requerem uma rolagem de acerto por turno, mas têm vantagem contra Bloqueio e somam FDV como bônus nas rolagens. A cada acerto, o inimigo fica com Restrição de Movimentos por 1 turno, além do dano.",
+            "custo_pos_uso": "Ao final da técnica, o usuário recebe 1 ponto de exaustão.",
+            "niveis": [
+                { "nivel": 1, "dano_por_turno": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "dano_por_turno": "6d10", "custo": "6 PDR" },
+                { "nivel": 3, "dano_por_turno": "9d10", "custo": "6 PDR" },
+                { "nivel": 4, "dano_por_turno": "12d10", "custo": "6 PDR" }
+            ]
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Cauda dos Espíritos",
+            "nome_romaji": "Hachi no Kata Seirei no Shippo",
+            "tipo_manobra": "Ataque",
+            "descricao": "A visão de uma cauda espiritual e enevoada ligando o corpo do usuário ao de um aliado pode ser vista apenas pelos dois. Enquanto ligados, ambos ganham bônus em certos testes. Bônus não acumulativos. Pode remover a cauda espiritual ou transferi-la a outro indivíduo usando a técnica novamente.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_acerto": "+1",
+                    "bonus_dano_por_acerto": "+1",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_acerto": "+2",
+                    "bonus_dano_por_acerto": "+1",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_acerto": "+2",
+                    "bonus_dano_por_acerto": "+2",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_acerto": "+2",
+                    "bonus_dano_por_acerto": "+2",
+                    "efeito_adicional": "Você e o aliado ganham +1 em testes de C.D para resistir ou se defender de técnicas sem esquiva ou bloqueio",
+                    "custo": "2 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 9,
+            "nome_pt": "O Canto Final da Raposa",
+            "nome_romaji": "Ku no Kata Kitsune no Saigo no Uta",
+            "tipo_manobra": "Completa",
+            "custo_fixo": "5 PDR",
+            "requisitos": [
+                "Disponível apenas no Nível 4 de Respiração",
+                "Ter usado anteriormente neste combate a 4ª Forma Cauda Lunar ou a 5ª Forma Cauda do Inverno em um aliado que esteja caído com zero ou menos pontos de vida"
+            ],
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!" },
+                { "nivel": 2, "efeito": "Não é possível usar!" },
+                { "nivel": 3, "efeito": "Não é possível usar!" },
+                { "nivel": 4, "efeito": "Ver descrição da técnica mais nobre" }
+            ],
+            "a_tecnica_mais_nobre": {
+                "descricao": "Ditada como a técnica mais nobre e digna já criada entre os Caçadores de Demônios, esta forma foi criada pela cultivadora original da Respiração da Raposa em um ato esperançoso de trazer vida a alguém que se foi em batalha ao seu lado. O usuário ajoelha-se ao lado do aliado morto e realiza um ato de sacrifício final, doando sua própria alma aos espíritos da aura da Kyuubi, a Raposa Guardiã, em troca de trazer o companheiro de volta em completa restauração.",
+                "consequencia": "O usuário da Respiração da Raposa morrerá sem chance de teste de morte, tendo sua alma sugada pela Kyuubi.",
+                "resultado": "O aliado retorna com PDV e PDR cheios e +3 em todas as rolagens que realizar até o fim do combate."
+            }
+        }
+    ]
+}

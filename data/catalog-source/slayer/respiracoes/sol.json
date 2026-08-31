@@ -1,0 +1,396 @@
+{
+    "titulo": "Respiração do Sol / Dança do Deus do Fogo",
+    "aliases": ["Sun Breathing", "Hinokami Kagura", "Dança do Deus do Fogo"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Valsa",
+            "nome_romaji": "Hinokami Kagura Enbu",
+            "tipo_manobra": "Completa",
+            "descricao": "Avança e desfere um único golpe de alta potência que libera fortes chamas. Para usuários à distância, é um disparo concentrado que deve ser feito em corpo a corpo para maximizar o acerto.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Avança até o alvo. Testa FDV (C.D. 10+); sucesso: +3 no acerto e o dano é crítico automaticamente. Falha no acerto: esquiva e bloqueio −3 até o início do próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao anterior + bônus de acerto passa a +5 ao passar no teste de FDV",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + pode optar por um segundo teste de FDV (mesma C.D.); sucesso: dano triplicado ao invés de duplicado com o crítico",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + se passar no segundo teste, dano é quadruplicado e acerto tem +7. Custo: 1 nível de Exaustão por 5 turnos",
+                    "custo": "4 PDR"
+                }
+            ],
+            "variacao": {
+                "nome": "Valsa Veloz",
+                "nome_romaji": "Enbu Issen",
+                "requisito": "Ter presenciado pessoalmente um usuário do Trovão usando Hekireki Issen.",
+                "niveis": [
+                    { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                    {
+                        "nivel": "2–3",
+                        "efeito": "Pode fazer um teste de DEX (C.D. 12+); sucesso: além dos bônus da Valsa normal, ganha +3d6 de dano adicional. Falha: não fica desprevenido, mas recebe 5 de dano do próprio calor",
+                        "custo": "5 PDR"
+                    },
+                    {
+                        "nivel": 4,
+                        "efeito": "Igual ao anterior + dano adicional passa a +5d6",
+                        "custo": "5 PDR"
+                    }
+                ]
+            }
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Céu Azul",
+            "nome_romaji": "Hinokami Kagura Heki-ra no Ten",
+            "tipo_manobra": "Especial + Única",
+            "descricao": "Corpo a Corpo: O usuário gira o corpo verticalmente para criar um corte em 360 graus. À Distância: Um projétil que dispara para o ar pintando o céu em chamas e cai sobre o inimigo em seguida. Acrescenta FDV na rolagem de acerto do ataque padrão ou técnica deste turno, além do dano indicado.",
+            "niveis": [
+                { "nivel": 1, "dano_adicional": "1d4 + FOR ou DEX", "custo": "2 PDR" },
+                { "nivel": 2, "dano_adicional": "2d4 + FOR ou DEX", "custo": "2 PDR" },
+                { "nivel": 3, "dano_adicional": "3d6 + FOR ou DEX", "custo": "3 PDR" },
+                { "nivel": 4, "dano_adicional": "5d6 + FOR ou DEX", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Espelho Carmesim Ardente",
+            "nome_romaji": "Hinokami Kagura Retsujitsu Kokyō",
+            "tipo_manobra": "Ataque",
+            "requisito": "O inimigo estar com pelo menos 1 nível de Exaustão.",
+            "descricao": "O usuário realiza dois golpes horizontais, um à frente e outro atrás, bloqueando inimigos em ambos os lados com cortes potentes. Usa a ação de ataque para preparar uma defesa sólida.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_bloqueio": "+3",
+                    "efeito_adicional": "Inimigos que errarem ficam vulneráveis ao próximo ataque do usuário",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_bloqueio": "+3",
+                    "efeito_adicional": "Igual ao anterior + se mesmo assim for acertado, recebe apenas metade do dano",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_bloqueio": "+5",
+                    "efeito_adicional": "Igual ao anterior",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_bloqueio": "+7",
+                    "efeito_adicional": "Igual ao anterior + no próximo ataque contra o inimigo vulnerável, acrescenta FDV no acerto",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Arco Íris Parhelion",
+            "nome_romaji": "Hinokami Kagura Gen'nichi Kō",
+            "tipo_manobra": "Reação",
+            "custo_fixo": "2 PDR",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Ao ser atacado, pode usar a reação para iludir o inimigo com imagens posteriores em alta velocidade. Faça um teste de FDV contra um teste de SAB do alvo (se o alvo tiver SAB 3 ou mais, recebe −2 no teste).",
+            "tabela_resultado": [
+                {
+                    "resultado": "Usuário vence",
+                    "consequencia": "Pode usar a 5ª Forma Variação 1 instantaneamente contra o alvo"
+                },
+                {
+                    "resultado": "Empate",
+                    "consequencia": "Recebe o dano, mas executa um contra-ataque padrão com desvantagem imediatamente"
+                },
+                {
+                    "resultado": "Usuário perde",
+                    "consequencia": "Recebe os golpes com +2 de dano por acerto bem-sucedido do inimigo"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Carruagem de Fogo",
+            "nome_romaji": "Hinokami Kagura Kasha",
+            "tipo_manobra": "Consulte a variação",
+            "descricao": "Esta técnica possui duas variações com requisitos distintos.",
+            "variacoes": [
+                {
+                    "nome": "Variação 1 - Após Parhelion",
+                    "requisito": "Ter usado a 4ª Forma Parhelion e vencido o teste de FDV.",
+                    "descricao": "O usuário ataca o inimigo distraído com a imagem falsa do Exterminador em rápida sucessão.",
+                    "niveis": [
+                        { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                        {
+                            "nivel": 2,
+                            "efeito": "Único ataque com vantagem; se acertar, dano é crítico e metade do dano total (arredonda para cima) é Dano de Ferida",
+                            "custo": "3 PDR"
+                        },
+                        {
+                            "nivel": 3,
+                            "efeito": "Igual ao anterior + +2 na rolagem de acerto",
+                            "custo": "3 PDR"
+                        },
+                        {
+                            "nivel": 4,
+                            "efeito": "Igual ao anterior + bônus de dano igual à FDV",
+                            "custo": "3 PDR"
+                        }
+                    ]
+                },
+                {
+                    "nome": "Variação 2 - Mortal por Cima",
+                    "tipo_manobra": "Especial + Ataque",
+                    "custo_fixo": "7 PDR",
+                    "requisito": "O inimigo estar enraizado, atordoado, vulnerável, com movimento restringido ou com 3+ pontos de Exaustão.",
+                    "niveis": [
+                        { "nivel": "1–2", "efeito": "Não é possível usar!" },
+                        {
+                            "nivel": "3–4",
+                            "efeito": "Único ataque com vantagem e crítico. Pode aceitar 1 ponto de Exaustão para ganhar +2d8 de dano bônus (máximo 5 pontos → +10d8)"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Sol Queimador de Ossos",
+            "nome_romaji": "Hinokami Kagura Shakkotsu En'yō",
+            "tipo_manobra": "Única",
+            "descricao": "A Nichirin brilha em uma chama tão forte que atrapalha a visão dos inimigos. Realiza um movimento circular criando um vórtice frontal de chamas.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_base": "+2 de Esquiva e Bloqueio por 2 turnos + Vantagem no próximo acerto deste turno",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_base": "Igual ao anterior",
+                    "efeito_adicional": "Testa FDV (C.D. 16); se passar e o acerto com vantagem acertar: +2d4 de dano adicional",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_base": "Igual ao anterior",
+                    "efeito_adicional": "C.D. do teste de FDV passa para 14",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_base": "Igual ao anterior",
+                    "efeito_adicional": "Se causar mais de 15 de dano e estiver com 1+ nível de Exaustão, perde 1 nível de Exaustão",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Lança do Girassol",
+            "nome_romaji": "Hinokami Kagura Yōkatotsu",
+            "tipo_manobra": "Reação ou Ataque",
+            "descricao": "Uma estocada ou disparo carregado em chamas. Metade do dano causado (arredonda para cima) é aplicado como Dano de Ferida.",
+            "variacao_de_reacao": "O ataque carregado parte em direção ao ataque recebido, anulando-o completamente. No próximo turno, o usuário não poderá realizar Ação de Ataque nem qualquer técnica que dependa de uma.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "2d6 + FDV (com vantagem)",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                { "nivel": 2, "dano": "3d6 + FDV", "efeito_adicional": null, "custo": "2 PDR" },
+                { "nivel": 3, "dano": "4d6 + FDV", "efeito_adicional": null, "custo": "3 PDR" },
+                {
+                    "nivel": 4,
+                    "dano": "5d6 + FDV",
+                    "efeito_adicional": "O Oni não pode realizar técnicas ou habilidades de cura por 3 turnos",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Névoa de Chama Ardente",
+            "nome_romaji": "Hinokami Kagura Hirin Kagerō",
+            "tipo_manobra": "Única",
+            "descricao": "Um ataque envolto em chamas cria calor suficiente para gerar uma vertigem ilusória, confundindo o inimigo. O próximo ataque não requer rolagem de acerto vs. esquiva ou bloqueio; em vez disso, força o inimigo a testar SAB ou INT.",
+            "niveis": [
+                { "nivel": 1, "cd_teste_inimigo": "12 + FDV", "custo": "2 PDR" },
+                { "nivel": 2, "cd_teste_inimigo": "14 + FDV", "custo": "2 PDR" },
+                { "nivel": 3, "cd_teste_inimigo": "16 + FDV", "custo": "3 PDR" },
+                {
+                    "nivel": 4,
+                    "cd_teste_inimigo": "16 + FDV + ao ser acertado, recebe 1 nível de Exaustão",
+                    "custo": "3 PDR"
+                }
+            ],
+            "observacao": "Se a C.D. padrão for maior que 20 e o ataque acertar, o dano é aplicado como Dano de Ferida."
+        },
+        {
+            "forma": 9,
+            "nome_pt": "Transformação do Sol Potente",
+            "nome_romaji": "Hinokami Kagura Shayō Tenshin",
+            "tipo_manobra": "Especial + Movimento",
+            "descricao": "Gira o corpo para baixo e desfere um corte vertical de cabeça para baixo. Difícil de esquivar ou bloquear, mas deixa o usuário vulnerável pela manobra.",
+            "niveis": [
+                {
+                    "nivel": "1–2",
+                    "bonus_acerto": "+3",
+                    "penalidade_esquiva_bloqueio": "−3 até o início do próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": "3–4",
+                    "bonus_acerto": "+4",
+                    "penalidade_esquiva_bloqueio": "−2 até o início do próximo turno",
+                    "custo": "2 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 10,
+            "nome_pt": "Raio Brilhante de Graça",
+            "nome_romaji": "Hinokami Kagura Kiki Onkō",
+            "tipo_manobra": "Completa",
+            "custo": "4 PDR",
+            "requisitos": [
+                "DEX ou FOR 3 ou mais",
+                "Pelo menos 1 aliado presente na batalha",
+                "Nível 3 de Respiração"
+            ],
+            "descricao": "Após um salto (teste de DEX, C.D. 13), desce em espiral criando um cataclisma de chamas que atinge todos no campo de batalha. Todos (exceto o usuário) realizam um teste de esquiva ou bloqueio contra uma rolagem de acerto do usuário com vantagem.",
+            "tabela_resultado": [
+                {
+                    "quem_e_atingido": "Inimigos",
+                    "resultado_da_defesa": "Passou",
+                    "dano": "Metade"
+                },
+                {
+                    "quem_e_atingido": "Inimigos",
+                    "resultado_da_defesa": "Falhou",
+                    "dano": "2d10 + 1d10 por ponto de FDV do usuário"
+                },
+                { "quem_e_atingido": "Aliados", "resultado_da_defesa": "Passou", "dano": "Nenhum" },
+                { "quem_e_atingido": "Aliados", "resultado_da_defesa": "Falhou", "dano": "Nenhum" }
+            ]
+        },
+        {
+            "forma": 11,
+            "nome_pt": "Dança Solar da Auréola do Dragão",
+            "nome_romaji": "Hinokami Kagura Nichium no Ryū Kaburimai",
+            "tipo_manobra": "Completa",
+            "descricao": "Avança até o inimigo ignorando limitações de distância em um zigue-zague rápido enquanto o chão queima atrás do usuário. Não pode acertar o mesmo inimigo mais de 3 vezes, mas pode alternar entre alvos.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_por_golpe": "Não é possível usar!",
+                    "bonus_progressivo_por_acerto": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_por_golpe": "Não é possível usar!",
+                    "bonus_progressivo_por_acerto": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 3,
+                    "dano_por_golpe": "2d10 (6 ataques)",
+                    "bonus_progressivo_por_acerto": "+FDV no dano do próximo ataque a cada acerto",
+                    "custo": "8 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_por_golpe": "2d12 (6 ataques)",
+                    "bonus_progressivo_por_acerto": "+FDV + +1 em todos os acertos",
+                    "custo": "8 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 12,
+            "nome_pt": "Chama da Valsa",
+            "nome_romaji": "Hinokami Kagura Waltz Enbu",
+            "tipo_manobra": "Única",
+            "descricao": "Dois golpes, um corte horizontal seguido de um vertical (ou dois disparos rápidos nos ombros, para usuários à distância). O próximo ataque padrão (sem técnica de ataque) ganha 1 ataque adicional.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_acerto_e_dano": "+2 acerto e +2 dano",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_acerto_e_dano": "+2 acerto e +2 dano",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_acerto_e_dano": "+4 acerto e +4 dano",
+                    "efeito_adicional": null,
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_acerto_e_dano": "+4 acerto e +4 dano",
+                    "efeito_adicional": "Se pelo menos 1 acerto for crítico: sangramento igual a FDV por 2 turnos",
+                    "custo": "1 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 13,
+            "nome_pt": "A Valsa Completa",
+            "nome_romaji": "Jū San no Kata",
+            "tipo_manobra": "Usa todas as ações de 3 turnos a partir da ativação",
+            "custo_fixo": "12 PDR",
+            "requisitos": ["FDV 6 ou 7", "Disponível apenas no Nível 4 de Respiração"],
+            "descricao": "O usuário performa todas as 12 formas em sucessão para aumentar efetividade e precisão, ignorando a fadiga. Deve ser usada como último recurso contra inimigos colossais.",
+            "bonus_durante_os_3_turnos": [
+                "+4 de Esquiva e Bloqueio",
+                "+2 em qualquer teste de FDV"
+            ],
+            "teste_de_continuidade": {
+                "descricao": "A cada início de turno (incluindo o 1º), faça um teste de FDV (C.D. 12).",
+                "sucesso": "A técnica continua normalmente.",
+                "falha": "Escolha entre tomar 2 níveis de Exaustão para continuar, ou parar a técnica.",
+                "observacao": "Se receber qualquer ataque bem-sucedido durante os 3 turnos, refaça o teste com a mesma mecânica de parar ou continuar."
+            },
+            "sequencia": {
+                "primeiro_turno": {
+                    "formas_usadas": "1ª (Enbu) → 2ª (Heki-ra no Ten) → 3ª (Retsujitsu Kokyō) → 4ª (Gen'nichi Kō)",
+                    "descricao": "Conecte a 1ª Forma Enbu sem gastar PDR. Se errar o ataque, pode tomar 1 ponto de Exaustão para transformar o erro em acerto e continuar. Anuncie então a 2ª Forma Heki-ra no Ten e faça uma rolagem de acerto. Se bem-sucedido, o alvo será compelido a atacar o usuário; anuncie então o uso da 3ª Forma Retsujitsu Kokyō, seguido imediatamente da 4ª Forma Gen'nichi Kō. Aguarde o 2º turno."
+                },
+                "segundo_turno": {
+                    "formas_usadas": "5ª (Kasha V1) → 6ª (Shakkotsu En'yō) → 7ª (Yōkatotsu) → 8ª (Hirin Kagerō)",
+                    "descricao": "Conecte a 5ª Forma Kasha (Variação 1). Se errar, tome 1 ponto de Exaustão para continuar. Sendo bem-sucedido, use a 6ª Forma Shakkotsu En'yō; seus bônus defensivos ajudarão a executar melhor a 7ª Forma Yōkatotsu.",
+                    "ponto_critico": "Se errar a 7ª Forma, a execução da 13ª Forma é interrompida totalmente; não há como continuar.",
+                    "continuacao": "Sendo bem-sucedido na 7ª Forma, use a 8ª Forma Hirin Kagerō; se errar, tome 1 ponto de Exaustão para transformar em acerto. Aguarde o 3º turno."
+                },
+                "terceiro_turno": {
+                    "formas_usadas": "9ª (Shayō Tenshin) → 10ª (Kiki Onkō) → 11ª (Nichium no Ryū Kaburimai) → 12ª (Waltz Enbu) → Conclusão",
+                    "descricao": "Inicie com a 9ª Forma Shayō Tenshin e faça um ataque. Se errar, pague 10 PDV para transformar em acerto. Prossiga para a 10ª Forma Kiki Onkō; ignore o requisito de estar furtivo, mas ainda é necessário ter ao menos um aliado vivo no campo. A técnica pode continuar independente de o inimigo passar ou não na rolagem de esquiva ou bloqueio.",
+                    "decisao_11a_forma": "Use então a 11ª Forma Nichium no Ryū Kaburimai aplicando todos os 6 ataques em um único alvo (sem alternar): 2 ou mais acertos → prossiga para a 12ª Forma. 1 acerto ou nenhum → a 13ª Forma termina incompleta aqui.",
+                    "conclusao": "Sendo bem-sucedido, inicie a 12ª Forma Waltz Enbu, que concede seus bônus e dois ataques padrão. Se ambos acertarem, o usuário explode em fúria flamejante causando instantaneamente 50d10 de dano ao alvo, encerrando assim a Valsa Completa."
+                }
+            }
+        }
+    ]
+}

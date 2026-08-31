@@ -1,0 +1,22 @@
+{
+    "number": 18,
+    "name": "Vampiro de Linhagem",
+    "description": "Você não é apenas um Oni faminto. Sua transformação refinou a sede em linhagem, elegância e domínio. Para você, sangue não é só alimento. É herança, vínculo, dívida e autoridade. Você caça como nobre. Você bebe como rito.",
+    "pdv": "19 + VIT",
+    "pdk": "20 + (FDV * 3)",
+    "passive": {
+        "name": "Sangue Nobre",
+        "description": "Quando acertar uma mordida contra uma criatura viva, você recupera +1 PDK adicional além da recuperação normal de PDK por alimentação em combate. Se o alvo estiver com Sangramento, recupera +2 PDK adicionais em vez de +1. Além disso, você recebe +1 em testes de CAR contra criaturas que já tenham visto sua verdadeira forma vampírica e sobrevivido."
+    },
+    "abilities": [
+        {
+            "name": "Comando Hemático",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "target": "uma criatura viva que esteja sangrando, ferida ou que tenha sofrido dano seu neste combate",
+            "test": "FDV do alvo contra CD 10 + CAR do Oni",
+            "description": "Você força o sangue do alvo a hesitar dentro do próprio corpo. Falha: o alvo fica Distraído até o início do próximo turno do Oni. Falha por 5 ou mais: além de Distraído, o alvo não pode usar Reação até o início do próximo turno do Oni. Sucesso: o alvo resiste ao efeito. Criaturas sem sangue ou sem corpo físico são imunes a esta habilidade."
+        }
+    ]
+}

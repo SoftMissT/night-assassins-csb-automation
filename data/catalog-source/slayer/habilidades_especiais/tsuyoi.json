@@ -1,0 +1,23 @@
+{
+    "name": "Tsuyoi",
+    "subtitle": "O Inabalável",
+    "rollRange": "81-91",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Constituição de Ferro",
+            "effect": "+2 PDV máximo por nível (retroativo), +1 VIT e +1 FOR permanentes."
+        },
+        {
+            "level": 6,
+            "name": "Limiar de Dor Invertido",
+            "effect": "Abaixo de 50% PDV: +1 de dano em todos os ataques (abaixo de 25%: +3). Bônus de vida sobe pra +3 PDV/nível, retroativo."
+        },
+        {
+            "level": 12,
+            "name": "Recusa Biológica",
+            "effect": "1x/combate, ao chegar a 0 PDV: teste VIT CD 15; sucesso = fica com 1 PDV, +2 Acerto/Defesa/resistência por 2 rodadas. Bônus de vida sobe pra +4 PDV/nível, retroativo. Custo: fugir ou recusar um desafio ligado ao seu valor central dá -2 Acerto/Defesa até restaurar a honra ou enfrentar consequência equivalente."
+        }
+    ],
+    "note": "No nível 1 ao 5: +2 PDV máximo por nível (retroativo). No nível 6 ao 12: +3 PDV/nível, retroativo."
+}

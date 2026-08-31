@@ -1,0 +1,502 @@
+{
+    "titulo": "Respiração das Estrelas",
+    "nome_romaji": "Hoshi no Kokyū",
+    "kanji": "星の呼吸",
+    "citacao": "As estrelas não se movem até você. Você apenas percebe tarde demais que já estava dentro da órbita delas.",
+    "descricao_geral": "A Respiração das Estrelas é uma Respiração suprema, nascida no espaço impossível entre Sol e Lua. Ela não é fusão simples. O Sol é presença absoluta. A Lua é distância, intuição e ausência calculada. As Estrelas são o intervalo entre os dois: pontos de luz independentes, conectados por trajetórias que só o praticante consegue ler. Diferente dos registros originais de longa distância, esta versão da Respiração das Estrelas é uma Respiração melee. A distância não é mais medida em metros. É medida em ângulo, ritmo, órbita, rastro, aproximação, o instante exato em que o inimigo entende que já foi cercado por luz. O praticante das Estrelas luta em corpo a corpo como se cada golpe fosse um ponto celeste. Cada deslocamento traça uma linha. Cada corte cria uma constelação. Cada erro do inimigo revela que ele não estava lutando contra uma pessoa. Estava lutando contra um céu inteiro.",
+    "estrutura_padrao": "[ Nível de Respiração ] [ Efeito ] [ Custo de PDR ]",
+    "conversoes_de_atributo": [
+        { "termo_original": "Kūdō", "night_assassins": "PDR" },
+        { "termo_original": "ESPÍRITO", "night_assassins": "FDV" },
+        { "termo_original": "MENTE", "night_assassins": "INT, SAB ou CAR" },
+        { "termo_original": "CORPO", "night_assassins": "VIT, DEX ou FOR" }
+    ],
+    "dano_radiante": {
+        "descricao": "A Respiração das Estrelas usa Dano Radiante, que representa luz concentrada, calor branco, pressão luminosa e cortes que deixam rastros de brilho no espaço.",
+        "regras": [
+            "Pode ser Esquivado.",
+            "Pode ser Bloqueado.",
+            "Pode ser reduzido por Redução de Dano, salvo se a técnica disser o contrário.",
+            "Não é Dano Solar.",
+            "Não ativa automaticamente fraquezas solares de Onis.",
+            "Não suprime regeneração de Oni, salvo quando uma Forma declarar esse efeito.",
+            "Não é Dano Verdadeiro."
+        ],
+        "ignora_rd_fisica": "Quando uma Forma disser que o Dano Radiante ignora RD física, ela ignora apenas Redução de Dano contra Cortante, Perfurante, Concussão ou Impacto."
+    },
+    "funcao_mecanica": {
+        "papel_principal": "Duelista supremo melee",
+        "papel_secundario": "Burst, reposicionamento, controle luminoso e pressão orbital",
+        "atributos_chave": ["FDV", "DEX", "SAB"],
+        "recurso_interno": "Constelações",
+        "dano_principal": "Radiante",
+        "dano_secundario": ["Cortante", "Impacto"],
+        "status_principais": [
+            "Cegueira Parcial",
+            "Desorientado",
+            "Desequilibrado",
+            "Derrubado",
+            "Atordoado"
+        ],
+        "fraqueza": "Controle de movimento, escuridão absoluta ritual, anti-luz, dano sonoro, gasto alto de PDR"
+    },
+    "cd_das_estrelas": "10 + FDV + Nível de Respiração",
+    "observacao_cd": "Quando o efeito for físico, o alvo normalmente resiste com VIT ou DEX. Quando o efeito for sensorial, mental ou espiritual, o alvo resiste com SAB ou FDV.",
+    "passiva_especial": {
+        "nome": "Lucidez Estelar",
+        "subnome": "Constelações",
+        "kanji": "星座",
+        "descricao": "Cada golpe, passo e rastro de luz cria um ponto estelar no campo. O praticante enxerga essas linhas como um mapa celeste sobreposto ao combate.",
+        "maximo_de_constelacoes": 7,
+        "persistencia": "Constelações persistem até o fim do combate.",
+        "perde_todas_quando": [
+            "Fica Inconsciente.",
+            "Fica Atordoado.",
+            "Fica Paralisado.",
+            "Fica Cego por uma fonte inimiga.",
+            "Sob escuridão absoluta ritual ou sobrenatural que bloqueie luz espiritual, a critério do Mestre."
+        ],
+        "ganha_1_constelacao_quando": [
+            "Acerta uma Forma das Estrelas em corpo a corpo.",
+            "Acerta um inimigo após mover pelo menos 3m no mesmo turno.",
+            "Acerta um inimigo que esteja Cego, Desorientado, Desequilibrado, Derrubado ou Atordoado.",
+            "Termina o turno adjacente a um inimigo e não sofre dano corpo a corpo até o início do próximo turno.",
+            "Usa uma Reação das Estrelas e o ataque inimigo erra."
+        ],
+        "limite_de_ganho": "2 Constelações por rodada (a Supernova e Formas específicas podem ultrapassar esse limite apenas quando declararem isso)"
+    },
+    "recompensas_de_constelacoes": [
+        {
+            "constelacoes": "2+",
+            "efeito": "O alcance corpo a corpo das Formas das Estrelas aumenta em +1,5m."
+        },
+        {
+            "constelacoes": "4+",
+            "efeito": "Uma vez por turno, o primeiro ataque Radiante ignora 2 pontos de RD física."
+        },
+        {
+            "constelacoes": "6+",
+            "efeito": "Ataques das Estrelas contra alvos com Cegueira Parcial, Desorientado ou Desequilibrado recebem +2 no acerto."
+        },
+        { "constelacoes": 7, "efeito": "Habilita Estado Supremo Supernova." }
+    ],
+    "rastros_de_luz": {
+        "descricao": "Algumas Formas deixam Rastros de Luz no campo. Um Rastro de Luz dura até o início do próximo turno do usuário.",
+        "efeito": "A primeira vez que um inimigo atravessar ou terminar o turno sobre um Rastro de Luz, sofre 1d4 de Dano Radiante (1d6 no Nível de Respiração 4).",
+        "limite": "Um mesmo inimigo só sofre dano de Rastros de Luz uma vez por rodada."
+    },
+    "estado_supremo_supernova": {
+        "nome": "Supernova",
+        "nome_romaji": "Chōshinsei",
+        "kanji": "超新星",
+        "tipo_manobra": "Ação Livre",
+        "requisito": "7 Constelações",
+        "custo": "Consome todas as Constelações",
+        "duracao": "Até o fim do próximo turno do usuário",
+        "uso": "1 vez por combate",
+        "descricao": "A luz acumulada colapsa para dentro do corpo do praticante. Por um instante, ele não empunha uma lâmina. Ele é a estrela.",
+        "ativacao": "Ao ativar Supernova, o usuário pode se mover até 9m sem provocar Ataques de Oportunidade. Esse movimento pode atravessar espaços ocupados por inimigos, mas deve terminar em um espaço livre. Todos os inimigos pelos quais o usuário passar adjacente sofrem 2d8 de Dano Radiante (uma vez por inimigo).",
+        "efeitos_ativos": [
+            "Todos os ataques das Estrelas causam +FDV de Dano Radiante.",
+            "O usuário recebe +2 em Esquiva.",
+            "O alcance corpo a corpo das Formas das Estrelas aumenta em +1,5m.",
+            "O primeiro ataque bem-sucedido do usuário em cada turno aplica Cegueira Parcial por 1 turno.",
+            "O usuário não pode ganhar Constelações."
+        ],
+        "colapso_da_luz": {
+            "padrao": "Quando Supernova termina, o usuário sofre Cegueira Parcial por 1 rodada.",
+            "excecao": "Se durante a Supernova o usuário reduziu um inimigo a 0 PDV, sofre apenas −2 em ataques que dependam de visão até o início do próximo turno."
+        }
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Brilho Anterior",
+            "nome_romaji": "Ichi no Kata: Sente no Hikari",
+            "kanji": "一の型・先手の光",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Radiante + Cortante",
+            "funcao": "Abertura melee e golpe que chega antes da leitura inimiga",
+            "descricao": "A lâmina acende antes do movimento terminar. O inimigo não reage ao golpe. Reage à luz que já passou.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d8 + FDV", "efeito": "+1 no acerto", "custo": "2 PDR" },
+                { "nivel": 2, "dano": "4d8 + FDV", "efeito": "+2 no acerto", "custo": "3 PDR" },
+                {
+                    "nivel": 3,
+                    "dano": "5d8 + FDV",
+                    "efeito": "+2 no acerto; aplica Cegueira Parcial em crítico",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "6d8 + FDV",
+                    "efeito": "+2 no acerto; aplica Cegueira Parcial ao acertar",
+                    "custo": "5 PDR"
+                }
+            ],
+            "observacoes": [
+                "Se o usuário moveu pelo menos 3m antes desta Forma, ganha +1 Constelação ao acertar.",
+                "Se o alvo já estiver com Cegueira Parcial, Desorientado ou Desequilibrado, o dano recebe +1d8 de Dano Radiante."
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Ponto Falso",
+            "nome_romaji": "Ni no Kata: Kyoiten",
+            "kanji": "二の型・虚点",
+            "tipo_manobra": "Especial",
+            "funcao": "Reposicionamento melee, finta e rastro",
+            "descricao": "O usuário cria um ponto de luz onde deveria estar. O corpo já está em outro ângulo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "movimento": "4,5m",
+                    "efeito": "Não provoca Ataques de Oportunidade.",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "movimento": "6m",
+                    "efeito": "Igual + próximo ataque recebe +1 no acerto.",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "movimento": "7,5m",
+                    "efeito": "Igual + deixa Rastro de Luz no trajeto.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "movimento": "9m",
+                    "efeito": "Igual + pode atravessar espaço de inimigo.",
+                    "custo": "4 PDR"
+                }
+            ],
+            "observacoes": [
+                "Se o movimento terminar adjacente a um inimigo diferente daquele do início do movimento, o usuário ganha +1 Constelação.",
+                "No Nível 4, se atravessar o espaço de um inimigo, esse inimigo testa SAB contra CD das Estrelas; falha: fica Desorientado por 1 turno; sucesso: sem efeito adicional."
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Mapa Ilegível",
+            "nome_romaji": "San no Kata: Yomenai Chizu",
+            "kanji": "三の型・読めない地図",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Radiante + Cortante",
+            "funcao": "Sequência melee de ângulos múltiplos",
+            "descricao": "Três cortes surgem de direções incompatíveis. O inimigo tenta entender o mapa. O mapa não foi feito para ele.",
+            "niveis": [
+                { "nivel": 1, "ataques": 3, "dano_por_ataque": "1d8 + FDV", "custo": "3 PDR" },
+                { "nivel": 2, "ataques": 3, "dano_por_ataque": "1d10 + FDV", "custo": "4 PDR" },
+                { "nivel": 3, "ataques": 3, "dano_por_ataque": "2d6 + FDV", "custo": "5 PDR" },
+                { "nivel": 4, "ataques": 3, "dano_por_ataque": "2d8 + FDV", "custo": "6 PDR" }
+            ],
+            "observacao": "Cada ataque exige rolagem separada. Os ataques podem atingir o mesmo alvo ou alvos diferentes dentro do alcance corpo a corpo da Forma.",
+            "saturacao_celeste": {
+                "teste": "SAB contra CD das Estrelas, se 2 ou mais ataques acertarem o mesmo alvo",
+                "falha": "Fica Desorientado por 1 turno.",
+                "sucesso": "Sem efeito adicional.",
+                "observacoes": [
+                    "No Nível 3 ou superior, se os 3 ataques acertarem o mesmo alvo, ele fica também Desequilibrado.",
+                    "Se os 3 ataques acertarem, o usuário ganha +1 Constelação."
+                ]
+            }
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Luz Curvada",
+            "nome_romaji": "Shi no Kata: Magariru Hikari",
+            "kanji": "四の型・曲がる光",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Radiante",
+            "requisito": "2+ Constelações",
+            "funcao": "Ignorar guarda, escudo e ângulo defensivo",
+            "descricao": "A luz não golpeia onde a lâmina está. Golpeia onde a defesa não existe.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "3d10 + FDV",
+                    "efeito": "Ignora 2 de RD física.",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "4d10 + FDV",
+                    "efeito": "Ignora 3 de RD física.",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "5d10 + FDV",
+                    "efeito": "Ignora 4 de RD física; +2 contra Bloqueio.",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "6d10 + FDV",
+                    "efeito": "Ignora 5 de RD física; +2 contra Bloqueio.",
+                    "custo": "6 PDR"
+                }
+            ],
+            "observacoes": [
+                "Se o alvo usar Bloqueio contra esta Forma e ainda for atingido, testa VIT contra CD das Estrelas; falha: fica Desequilibrado; sucesso: sem efeito adicional.",
+                "Se acertar um alvo que estava sob Cobertura, Escudo ou postura defensiva, o usuário ganha +1 Constelação."
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Recuo Estelar",
+            "nome_romaji": "Go no Kata: Hoshi no Taihi",
+            "kanji": "五の型・星の退避",
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de ataque corpo a corpo",
+            "funcao": "Esquiva orbital e contra-abertura",
+            "descricao": "A distância ainda é escudo. Mas agora ela existe dentro do corpo a corpo. O praticante não foge. Ele sai da linha e permanece em órbita.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "movimento_reativo": "1,5m",
+                    "bonus_esquiva": "+2",
+                    "custo": "2 PDR"
+                },
+                { "nivel": 2, "movimento_reativo": "3m", "bonus_esquiva": "+3", "custo": "3 PDR" },
+                { "nivel": 3, "movimento_reativo": "3m", "bonus_esquiva": "+5", "custo": "4 PDR" },
+                { "nivel": 4, "movimento_reativo": "4,5m", "bonus_esquiva": "+7", "custo": "5 PDR" }
+            ],
+            "observacoes": [
+                "Se a Esquiva for bem-sucedida, o usuário pode deixar um Rastro de Luz no espaço de origem.",
+                "No Nível 3 ou superior, se a Esquiva for bem-sucedida, o próximo ataque do usuário contra o atacante recebe +2 no acerto.",
+                "Se o ataque inimigo errar por causa desta Reação, o usuário ganha +1 Constelação."
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Estrela Cadente",
+            "nome_romaji": "Roku no Kata: Nagareboshi",
+            "kanji": "六の型・流れ星",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Radiante + Impacto",
+            "requisito": "3+ Constelações",
+            "funcao": "Carga melee inevitável",
+            "descricao": "O usuário marca um inimigo com luz. No turno seguinte, cai sobre ele. A estrela cadente não decide se vai cair. Decide apenas onde.",
+            "declaracao": "Ao usar esta Forma, escolha um alvo visível a até 9m. O usuário entra em carga até o início do próximo turno. Enquanto carrega: recebe Redução de Dano igual à FDV; não pode usar Ação de Ataque; pode usar Reações defensivas; não perde a marca se o alvo se mover.",
+            "execucao": "No início do próximo turno do usuário, antes de sua ação normal, ele pode se mover até o alvo marcado sem provocar Ataques de Oportunidade e realizar o golpe.",
+            "niveis": [
+                { "nivel": 1, "dano": "5d8 + FDV", "efeito": null, "custo": "5 PDR" },
+                {
+                    "nivel": 2,
+                    "dano": "6d8 + FDV",
+                    "efeito": "Alvo testa VIT ou fica Derrubado",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "7d8 + FDV",
+                    "efeito": "Alvo testa VIT ou fica Derrubado e Desequilibrado",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "8d8 + FDV",
+                    "efeito": "Alvo testa VIT ou fica Atordoado e Derrubado",
+                    "custo": "8 PDR"
+                }
+            ],
+            "observacoes": [
+                "Se o alvo estiver com Cegueira Parcial, Desorientado ou Desequilibrado, esta Forma recebe Vantagem.",
+                "Se acertar, o usuário ganha +1 Constelação."
+            ]
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Constelação Nova",
+            "nome_romaji": "Shichi no Kata: Shin Seiza",
+            "kanji": "七の型・新星座",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Radiante",
+            "requisito": "4+ Constelações",
+            "funcao": "Gastar Constelações em explosão melee",
+            "descricao": "O usuário ativa todas as linhas de luz ao redor do alvo. Uma constelação que não existia antes nasce no espaço entre os cortes. E explode.",
+            "observacao": "Esta Forma consome todas as Constelações atuais antes da rolagem.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "Constelações gastas × 1d8 + FDV",
+                    "area": "Alvo único",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "Constelações gastas × 1d10 + FDV",
+                    "area": "Alvo único",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "Constelações gastas × 1d10 + 2 × FDV",
+                    "area": "Alvo + inimigos adjacentes sofrem metade",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "Constelações gastas × 1d12 + 2 × FDV",
+                    "area": "Alvo + inimigos em raio 3m sofrem metade",
+                    "custo": "8 PDR"
+                }
+            ],
+            "resolucao": "O alvo principal recebe o dano completo. Inimigos secundários testam DEX contra CD das Estrelas: sucesso, sofrem metade do dano secundário; falha, sofrem o dano secundário completo.",
+            "recuperacao_de_constelacoes": "Se esta Forma reduzir o alvo principal a 0 PDV, o usuário recupera 2 Constelações. No Nível 4, se foram consumidas 7 Constelações, recupera 3 Constelações em vez de 2."
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Olho do Céu",
+            "nome_romaji": "Hachi no Kata: Tenkū no Me",
+            "kanji": "八の型・天空の目",
+            "tipo_manobra": "Especial",
+            "requisito": "5+ Constelações",
+            "duracao": "Número de rodadas igual ao Nível de Respiração",
+            "funcao": "Percepção absoluta em combate próximo",
+            "descricao": "O usuário inverte as linhas de luz. Os rastros deixam de marcar caminho. Passam a olhar.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "area": "Raio 6m",
+                    "efeito": "Revela invisíveis, ocultos e camuflados na área.",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "area": "Raio 9m",
+                    "efeito": "Igual + ignora penalidades de escuridão.",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "area": "Raio 12m",
+                    "efeito": "Igual + ataques do usuário contra revelados recebem +2.",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "area": "Raio 15m",
+                    "efeito": "Igual + aliados escolhidos também veem os alvos revelados.",
+                    "custo": "8 PDR"
+                }
+            ],
+            "efeitos_enquanto_ativo": [
+                "Inimigos revelados não recebem benefícios de Invisibilidade contra o usuário.",
+                "Inimigos revelados não podem se beneficiar de Furtividade em ataques contra o usuário.",
+                "O primeiro ataque do usuário por turno contra um inimigo revelado causa +1d8 de Dano Radiante."
+            ],
+            "observacao": "Se revelar pelo menos um inimigo oculto, o usuário ganha +1 Constelação."
+        },
+        {
+            "forma": 9,
+            "nome_pt": "Luz Póstuma",
+            "nome_romaji": "Ku no Kata: Zanshō no Hikari",
+            "kanji": "九の型・残照の光",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Radiante",
+            "requisito": "6+ Constelações",
+            "funcao": "Finalização melee de precisão absoluta",
+            "descricao": "O usuário não avança. A luz que seus golpes deixaram para trás avança por ele. Um ponto. Uma linha. Um fim.",
+            "observacao": "Esta Forma exige que o usuário esteja a alcance corpo a corpo do alvo. Consome todas as Constelações atuais antes da rolagem.",
+            "niveis": [
+                { "nivel": 1, "dano": "Constelações × 1d10 + 4d8 + FDV", "custo": "7 PDR" },
+                { "nivel": 2, "dano": "Constelações × 2d8 + 5d8 + FDV", "custo": "8 PDR" },
+                { "nivel": 3, "dano": "Constelações × 2d10 + 5d8 + FDV", "custo": "9 PDR" },
+                { "nivel": 4, "dano": "Constelações × 3d8 + 6d10 + FDV", "custo": "10 PDR" }
+            ],
+            "observacoes": [
+                "Esta Forma não pode ser Bloqueada. O alvo ainda pode Esquivar.",
+                "Se o alvo estiver Cego, Atordoado, Paralisado, Derrubado ou com Restrição de Movimento, o ataque recebe Vantagem.",
+                "No Nível 4, se esta Forma for usada durante Supernova e acertar, o alvo sofre Regeneração Suprimida até o fim do próximo turno dele."
+            ]
+        },
+        {
+            "forma": 10,
+            "nome_pt": "Impacto Galáctico",
+            "nome_romaji": "Jū no Kata: Ginga no Shōgeki",
+            "kanji": "十の型・銀河の衝撃",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Radiante + Impacto",
+            "requisito": "5+ Constelações",
+            "funcao": "Explosão melee em área",
+            "descricao": "O praticante comprime todas as linhas de luz em um único ponto do corpo. Punho, lâmina, joelho, pé não importa. Quando atinge o chão, o inimigo ou o próprio espaço, a constelação colapsa. O som vem depois. O dano já aconteceu.",
+            "observacao": "Esta Forma consome todas as Constelações atuais. Como parte da Forma, o usuário pode saltar até 6m sem provocar Ataques de Oportunidade. A explosão ocorre no ponto de pouso.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "Constelações × 1d8 + 3d10",
+                    "area": "Raio 3m",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "Constelações × 1d10 + 3d10",
+                    "area": "Raio 4,5m",
+                    "custo": "8 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "Constelações × 2d8 + 4d10",
+                    "area": "Raio 4,5m",
+                    "custo": "9 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "Constelações × 2d10 + 5d10",
+                    "area": "Raio 6m",
+                    "custo": "10 PDR"
+                }
+            ],
+            "resultado_teste_vit": {
+                "falha": "Sofrem dano completo e ficam Derrubados.",
+                "sucesso": "Sofrem metade do dano e não ficam Derrubados.",
+                "observacao": "No Nível 3 ou superior, inimigos que falharem por 5 ou mais ficam também Atordoados por 1 turno."
+            },
+            "zona_de_luz_colapsada": {
+                "condicao": "No Nível 4, o ponto de impacto permanece como Zona de Luz Colapsada por 2 rodadas.",
+                "area": "Raio de 3m ao redor do ponto de impacto",
+                "efeito": "A primeira vez que um inimigo entrar ou começar o turno dentro da zona, sofre 2d8 de Dano Radiante (no máximo uma vez por inimigo por rodada)."
+            },
+            "custo_apos_uso": "Após usar esta Forma, o usuário sofre Cegueira Parcial por 1 rodada. Se usou esta Forma durante Supernova, sofre também 1 nível de Exaustão."
+        }
+    ],
+    "sinergias": {
+        "sol": "Quando um usuário do Sol causar Regeneração Suprimida, Cegueira Parcial ou qualquer efeito de luz em um Oni, o próximo ataque Radiante das Estrelas contra esse alvo recebe +1d8 de Dano Radiante. Esse efeito ocorre no máximo uma vez por turno.",
+        "lua": "Quando um usuário da Lua aplicar Confusão, Desorientado, Cegueira Parcial ou efeito ilusório em um alvo, o usuário das Estrelas ganha +1 Constelação se acertar esse alvo até o fim da rodada. Esse ganho respeita o limite normal de Constelações por rodada.",
+        "trovao": "Quando um usuário do Trovão acertar um ataque com Dano Trovejante, o próximo ataque melee das Estrelas contra o mesmo alvo recebe +2 no acerto.",
+        "tinta": "Se o usuário das Estrelas estiver sob efeito de Kanji Amarelo, a 1ª Forma e a 9ª Forma ampliam crítico natural para 19–20. Se estiver sob efeito de Kanji Azul, a 2ª Forma aumenta seu movimento em +1,5m."
+    },
+    "fraquezas_estruturais": [
+        "Controle de movimento: a Respiração das Estrelas precisa de órbita. Restrição de Movimento, Paralisia, Atordoamento e terreno fechado reduzem drasticamente sua geração de Constelações.",
+        "Escuridão absoluta: escuridão comum não basta, mas efeitos rituais, demoníacos ou sobrenaturais que bloqueiem luz espiritual podem impedir Rastros de Luz, Olho do Céu e geração por efeitos visuais.",
+        "Custo alto de PDR: Estrelas é tier supremo. Isso significa impacto alto e custo alto. Se o usuário gastar tudo cedo, vira apenas um espadachim brilhante com problemas respiratórios.",
+        "Supernova cobra visão: a Supernova é devastadora, mas o preço é claro a luz também queima quem a carrega. Cegueira Parcial depois do ápice é parte da identidade, não detalhe cosmético."
+    ],
+    "notas_de_balanceamento": [
+        "Esta versão é melee: toda Forma foi ajustada para corpo a corpo, alcance curto, órbita, avanço, reposicionamento ou explosão próxima. A identidade original de luz, Constelações e Supernova foi preservada. O eixo de distância foi substituído por trajetória melee impossível.",
+        "Dano Radiante é oficial dentro desta Respiração: não é Dano Solar, não suprime regeneração de Oni por padrão, não ignora RD por padrão. Só faz isso quando a Forma declarar explicitamente.",
+        "Constelações têm teto alto porque o custo também é alto: o máximo 7 permite picos enormes, mas muitas Formas consomem todas as Constelações. O jogador precisa escolher entre manter bônus passivos, explodir dano, ativar Supernova, guardar para Luz Póstuma ou controlar área com Impacto Galáctico.",
+        "A Respiração é suprema, mas não gratuita: tem ferramentas fortes demais para ser comum. Por isso sofre com PDR alto, dependência de acerto, consumo total de recurso, cegueira pós-ápice e vulnerabilidade a controle de movimento."
+    ],
+    "resumo_mecanico": [
+        { "elemento": "Dano Radiante", "funcao": "Dano principal da Respiração" },
+        { "elemento": "Constelações", "funcao": "Recurso interno de luz acumulada" },
+        { "elemento": "Rastros de Luz", "funcao": "Controle leve de espaço" },
+        { "elemento": "Supernova", "funcao": "Estado Supremo" },
+        { "elemento": "Brilho Anterior", "funcao": "Abertura melee" },
+        { "elemento": "Ponto Falso", "funcao": "Reposicionamento e finta" },
+        { "elemento": "Mapa Ilegível", "funcao": "Multiataque orbital" },
+        { "elemento": "Luz Curvada", "funcao": "Ignora guarda e RD física" },
+        { "elemento": "Recuo Estelar", "funcao": "Esquiva orbital" },
+        { "elemento": "Estrela Cadente", "funcao": "Carga inevitável" },
+        { "elemento": "Constelação Nova", "funcao": "Burst por recurso" },
+        { "elemento": "Olho do Céu", "funcao": "Revelação e percepção" },
+        { "elemento": "Luz Póstuma", "funcao": "Finalização melee" },
+        { "elemento": "Impacto Galáctico", "funcao": "Explosão em área" }
+    ]
+}

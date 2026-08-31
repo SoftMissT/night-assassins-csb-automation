@@ -1,0 +1,21 @@
+{
+    "name": "Olfato Sobrenatural",
+    "rollRange": "59-69",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Nariz de Predador",
+            "effect": "Vantagem em rastreamento por cheiro. Detecta Onis até 30m (direção/distância aproximada). Identifica estado emocional pelo cheiro (SAB CD 12)."
+        },
+        {
+            "level": 6,
+            "name": "Cheiro do Intervalo",
+            "effect": "Detecção sobe pra 60m. Antes de atacar um alvo que consegue cheirar, gasta 1 PDR pra farejar a defesa dele (revela se é melhor em Esquiva ou Bloqueio; em Oni, revela estado da regeneração). Próximo ataque contra ele ganha +1 Acerto."
+        },
+        {
+            "level": 12,
+            "name": "A Linha do Intervalo",
+            "effect": "Detecção sobe pra 100m. 1x/combate, ao atacar alvo detectado pelo cheiro, declara \"Linha do Intervalo\": ignora cobertura parcial, posição defensiva, fumaça leve, escuridão parcial e distrações visuais; contra Oni, +1d6 de dano se acertar. Reconhece se um Oni é comum, Lua Inferior ou Lua Superior pelo cheiro. Custo: sangue intenso, fumaça, veneno gasoso ou 3+ Onis podem sobrecarregar teste VIT CD 14; falha dá Desvantagem em Percepção por cheiro e -1 Acerto por 1 rodada."
+        }
+    ]
+}

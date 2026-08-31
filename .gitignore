@@ -43,7 +43,6 @@ arrumei umas coisas oq vc acha.json
 fvtt-Actor-*.json
 
 # Dados locais do Foundry
-/Data/
 /worlds/
 *.db
 *.sqlite

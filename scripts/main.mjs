@@ -114,7 +114,9 @@ import {
     resolveSlayerDerivedBonuses,
 } from './derived-bonus-service.mjs';
 import {
+    exportDiagnosticJournal,
     openDiagnosticJournal,
+    openDiagnosticManager,
     openDiagnosticReportDialog,
     registerDiagnosticCollector,
 } from './diagnostic-journal.mjs';
@@ -310,7 +312,9 @@ Hooks.once('ready', async () => {
                 regenerate: useOniRegeneration,
             },
             actorKind,
+            exportDiagnosticJournal,
             openDiagnosticJournal,
+            openDiagnosticManager,
             openDiagnosticReportDialog,
             syncMacros: syncCanonicalMacros,
             openLevelOne: createLevelOneValues,

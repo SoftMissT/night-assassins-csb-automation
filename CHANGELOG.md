@@ -1,8 +1,19 @@
 # Changelog
 
+## v0.11.47 — 2026-08-30
+
+- Adicionado gerenciador GM com ações para registrar erro, abrir o Journal e exportar todas as páginas em Markdown ou JSON.
+- Exportação usa `foundry.utils.saveDataToFile`, inclui páginas anteriores e aguarda a fila de gravação antes do download.
+- Macro `Night Assassins Diagnóstico de Erros` passa a abrir o novo gerenciador.
+- Adotado o novo export oficial da ficha Slayer, com abas e cards atualizados de Origem, Classe e Habilidades Especiais.
+- Preservados os 48 campos hidden, o dropdown de Acerto, a escolha do nível 14 e as integrações de Marca, PDV/PDR e containers de Items.
+- Revalidado o template oficial de armas normais e regenerados Katana, Double Blade, Manoplas/Soqueiras e Cutelos Gêmeos.
+- Fontes de catálogo reorganizadas por Slayer/Oni, incluindo Origens, Classes, Habilidades Especiais e Respirações.
+- Corrigido o rótulo do Compendium de templates e mantido Dice So Nice como dependência obrigatória.
+
 ## 0.11.45 - 2026-08-30
 
-- Slayer N14 — Hashira de Elite: corrigido o gatilho da escolha ao alcançar o nível 14.
+- Slayer N14 Hashira de Elite: corrigido o gatilho da escolha ao alcançar o nível 14.
 - Adicionado DialogV2 comparando os valores atuais e finais antes da escolha permanente.
 - Opção PDV aplica `VIT × 3` ao total final de PDV.
 - Opção PDR aplica `FDV × 2` ao total final de PDR.
@@ -914,7 +925,8 @@
 - Vida e Morte agora exige nível 1, sete snapshots N1 positivos e PDV total positivo antes de reagir a updates.
 - 2 regressões novas; suíte completa `920/920`, 166 suítes, 6,82s.
 - Runtime Foundry v14 e release permanecem pendentes.
-## v0.11.46 — 2026-08-30
+
+## v0.11.46 2026-08-30
 
 - Consolidação do hotfix de combate Oni/Slayer: ações, crítico como dano final e fila Dice So Nice aguardada.
 - Regeneração Oni integrada ao runtime e à macro de ações.

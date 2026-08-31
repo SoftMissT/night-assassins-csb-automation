@@ -1,0 +1,21 @@
+{
+    "number": 3,
+    "name": "Rastreador de Sangue",
+    "description": "Você já sabia encontrar o que fugia antes da transformação. Como Oni, seus sentidos se tornaram fome organizada. Sangue, medo, suor e passos contam histórias que os outros não conseguem ouvir.",
+    "pdv": "20 + VIT",
+    "pdk": "1 + FDV + (FDV × 3)",
+    "passive": {
+        "name": "Guiado pelo Medo",
+        "description": "Quando caçar em cidades ou vilarejos à noite, recebe +2 em testes para encontrar humanos. Além disso, um acerto crítico no teste de caça permite encontrar um Marechi automaticamente."
+    },
+    "abilities": [
+        {
+            "name": "Faro da Presa Ferida",
+            "cost": "2 PDK",
+            "action": "Ação Especial",
+            "range": "12m",
+            "target": "uma criatura que o Oni possa ver ou que tenha sofrido dano neste combate",
+            "description": "O Oni fixa o cheiro, o ritmo da respiração e o medo do alvo. Até o início do próximo turno do Oni, o próximo ataque contra esse alvo recebe +2 na rolagem de acerto. Se o alvo sair da linha de visão antes disso, o Oni ainda sabe a direção geral para onde ele foi até o fim da rodada. Esta habilidade não revela automaticamente criaturas Invisíveis ou Inalvejáveis. Ela apenas preserva o rastro."
+        }
+    ]
+}

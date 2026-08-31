@@ -1,0 +1,41 @@
+{
+    "name": "Marca do Destino",
+    "rollRange": "100",
+    "quote": "Você nasceu com uma marca que não deveria existir. Ela não foi conquistada. Ela estava esperando o dia em que seu corpo entendesse o que ela significa.",
+    "description": "A Marca do Destino é uma Habilidade Especial rara. Ela representa um corpo naturalmente compatível com a Marca do Caçador, mas essa compatibilidade só se torna perfeita se o personagem também possuir a Origem Descendente Perdido.",
+    "levels": [
+        {
+            "level": 1,
+            "name": "A Marca Dorme",
+            "effect": "Escolha 1 atributo: VIT, DEX, FOR, SAB, INT, FDV ou CAR. Esse atributo recebe +2 permanente. A marca pulsa quando há Onis próximos em até 9m, mas não revela direção, distância ou quantidade. Você apenas sente que algo demoníaco está perto."
+        },
+        {
+            "level": 6,
+            "name": "A Marca Acorda",
+            "effect": "O bônus do atributo escolhido sobe para +3 permanente. Você detecta Onis em até 15m, sabendo a direção geral e a potência relativa: fraco, perigoso ou esmagador. 1 vez por sessão, ao falhar em um teste de resistência contra Oni, Kekkijutsu, medo demoníaco, veneno demoníaco ou efeito mental demoníaco, você pode rolar novamente. Deve aceitar o segundo resultado."
+        },
+        {
+            "level": 12,
+            "name": "A Marca Fala",
+            "effect": "Você se torna naturalmente compatível com o despertar da Marca do Caçador. A CD do Teste de Força de Vontade para despertar a Marca do Caçador cai para 14. A rolagem de expectativa de vida da Marca do Caçador recebe +15. Sua detecção de Onis sobe para 30m, revelando direção exata, distância aproximada e se o Oni é comum, Lua Inferior ou Lua Superior."
+        }
+    ],
+    "visibleMarkCost": {
+        "title": "Custo — A Marca é Visível",
+        "description": "A partir do Nível 12, sua Marca fica impossível de esconder em momentos de tensão, combate ou presença demoníaca forte. Onis poderosos podem reconhecer você como uma ameaça especial. O Mestre pode fazer Onis importantes: priorizarem você em combate; tentarem capturar você; recuarem para avisar outro Oni; atacarem seus aliados para desestabilizar você; mudarem de fase ou estratégia mais cedo. A Marca do Destino não é discreta. Ela anuncia que você nasceu para matar algo que ainda não morreu."
+    },
+    "hunterMarkInteraction": {
+        "title": "Interação com a Marca do Caçador",
+        "description": "Quando você despertar a Marca do Caçador, aplique os efeitos abaixo: o Teste de Força de Vontade para despertar a Marca do Caçador tem CD 14; a rolagem de expectativa de vida recebe +15; o atributo escolhido na Marca do Destino se torna automaticamente o Atributo da Cicatriz da Marca do Caçador; sempre que você queimar anos de vida para gerar Dano de Marca, o primeiro ataque feito com esse dano recebe +1d12 adicional de Dano Necrótico de Marca. Esse +1d12 adicional acontece apenas uma vez por ativação da Marca do Caçador."
+    },
+    "curseNotRemoved": {
+        "title": "Importante — Marca do Destino Sozinha Não Remove a Maldição",
+        "description": "Se você possui apenas Marca do Destino, você ainda sofre a Maldição dos 25 ao despertar a Marca do Caçador. A Marca do Destino melhora sua compatibilidade, mas não torna seu corpo perfeito. Você nasceu marcado. Mas ainda não nasceu completo."
+    },
+    "bornMarkedException": {
+        "title": "Exceção — Nascido Marcado",
+        "requirement": "Descendente Perdido + Marca do Destino",
+        "description": "Se o personagem possuir Descendente Perdido e Marca do Destino, ele se torna um Nascido Marcado. Nesse caso: não sofre a Maldição dos 25; desperta a Marca do Caçador automaticamente na primeira cena adequada; pode ativar a Marca do Caçador sem pagar o custo mínimo de 1 Ano de Vida; usa 1d20 em vez de 1d12 para Dano Necrótico de Marca quando decide queimar anos; o primeiro Ano de Vida queimado em cada combate não causa dano necrótico de retorno; sua detecção de Onis com a Marca do Caçador ativa sobe para 60m; Luas Superiores reconhecem imediatamente que ele não é um marcado comum. O Nascido Marcado não é alguém que recebeu a Marca. É alguém que nasceu compatível com ela."
+    },
+    "tableRule": "A Marca do Destino deve ser tratada como uma habilidade rara e perigosa. Ela dá poder permanente, mas também cria atenção narrativa. Quanto mais ela desperta, mais o mundo demoníaco percebe que aquele personagem existe."
+}

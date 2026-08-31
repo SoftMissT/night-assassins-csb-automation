@@ -22,12 +22,15 @@ export function parseUserPoisonState(raw) {
                   remainingTurns: Math.max(0, integer(entry?.remainingTurns)),
                   rank: String(entry?.rank ?? 'C'),
               }))
-              .filter((entry) => entry.sourceActorUuid && entry.damage > 0 && entry.remainingTurns > 0)
+              .filter(
+                  (entry) => entry.sourceActorUuid && entry.damage > 0 && entry.remainingTurns > 0
+              )
         : [];
     return {
         instances,
         lastContactActionBySource:
-            source?.lastContactActionBySource && typeof source.lastContactActionBySource === 'object'
+            source?.lastContactActionBySource &&
+            typeof source.lastContactActionBySource === 'object'
                 ? { ...source.lastContactActionBySource }
                 : {},
         healingSuppressed: source?.healingSuppressed === true,

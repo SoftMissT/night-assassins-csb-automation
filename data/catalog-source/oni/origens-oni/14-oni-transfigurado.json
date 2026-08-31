@@ -1,0 +1,21 @@
+{
+    "number": 14,
+    "name": "Oni Transfigurado",
+    "description": "Você rejeitou a estabilidade da própria forma. Seu corpo não é uma anatomia fixa, mas uma proposta em constante mutação. Bocas, olhos, juntas, ossos e músculos surgem onde são necessários. Golpes certeiros falham porque o ponto vital que deveriam atingir já não está mais ali.",
+    "pdv": "24 + VIT",
+    "pdk": "16 + (FDV * 3)",
+    "passive": {
+        "name": "Anatomia Amorfa",
+        "description": "Acertos críticos contra você ainda acertam automaticamente, mas não dobram o dano final. Essa passiva não funciona contra: Dano Solar; Lâmina Carmesim; Dano de Ferida; efeitos que ignorem regeneração demoníaca. Além disso, uma vez por rodada, quando sofrer dano Cortante, Perfurante ou Concussão, você pode reduzir o dano final em 1 + VIT."
+    },
+    "abilities": [
+        {
+            "name": "Membros Extensíveis",
+            "cost": "3 PDK",
+            "action": "Ação de Ataque",
+            "range": "6m",
+            "test": "ataque com FOR ou DEX contra Defesa do alvo",
+            "description": "Você reconstrói braços, garras, ossos ou tendões em tempo real para atacar além do alcance normal. Acerto: causa o dano normal do seu ataque desarmado. Além disso, escolha um efeito: puxa o alvo 3m em sua direção; empurra o alvo 3m; deixa o alvo Desequilibrado até o próximo ataque recebido. Erro: nada acontece."
+        }
+    ]
+}

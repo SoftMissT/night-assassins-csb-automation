@@ -1,0 +1,339 @@
+{
+    "titulo": "Respiração da Lua",
+    "aliases": ["Moon Breathing", "Tsuki no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Lua Negra, Palácio Vespertino",
+            "nome_romaji": "Ichi no Kata Yamidzuki · Yoi no Miya",
+            "tipo_manobra": "Passiva & Reação",
+            "descricao": "Sempre que um combate for se iniciar, pode escolher se vai lutar a sério ou considerar aquela luta um \"treininho de inverno\".",
+            "opcao_lutar_a_serio": "Saca a espada da bainha e recebe +1 de acerto até o final do combate e +1 no teste de iniciativa se usar SAB ao invés de DEX.",
+            "opcao_treininho_de_inverno": "Começa automaticamente em último no teste de iniciativa, sem necessidade de rolagem, mas também sem poder receber ataques surpresa. A cada final de turno, pode guardar a espada na bainha com uma Ação Única, possibilitando o uso desta técnica como Reação.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito_reacao": "Rolagem de ataque vs. ataque. Se perder: toma o dano normalmente. Se ganhar: causa 2d6 de dano cortante e não recebe o dano do inimigo (contra-ataque no lugar de esquiva ou bloqueio)",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito_reacao": "Igual ao anterior + +1 de bônus na rolagem de acerto",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito_reacao": "Igual ao anterior + acrescenta CAR na rolagem de acerto",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito_reacao": "Igual ao anterior + o dano vira 3d6",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Flor de Pérola Lunar",
+            "nome_romaji": "Ni no Kata Shuka no Rōgetsu",
+            "tipo_manobra": "Especial",
+            "descricao": "Uma barragem de lâminas em formato de meia-lua que saem da Nichirin em direção a um ataque declarado contra o usuário, como forma de proteção e reflexão de dano. Pode ser usada para buffar ações de defesa e melhorar a reação da 1ª Forma.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_bloqueio": "+2",
+                    "bonus_acerto_1a_forma": "+1",
+                    "duracao": "Até o início do próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_bloqueio": "+2",
+                    "bonus_acerto_1a_forma": "+2",
+                    "duracao": "Até o início do próximo turno",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_bloqueio": "+3",
+                    "bonus_acerto_1a_forma": "+2",
+                    "duracao": "Até o início do próximo turno",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_bloqueio": "+3",
+                    "bonus_acerto_1a_forma": "+3",
+                    "duracao": "Até o início do próximo turno",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Lua Repugnante de Correntes",
+            "nome_romaji": "San no Kata Enkidzuki Tsugari",
+            "tipo_manobra": "Ataque",
+            "descricao": "Faz 4 movimentos horizontais alternados com a Nichirin, de forma que luas crescentes se formam à frente do usuário, causando grande destruição em uma pequena área. Só atinge inimigos em corpo a corpo ou a uma distância menor do que 5 metros. O inimigo não pode usar esquiva, apenas bloqueio contra um acerto com +2 de bônus.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d10 + CAR ou SAB", "custo": "3 PDR" },
+                { "nivel": 2, "dano": "4d10 + CAR ou SAB", "custo": "3 PDR" },
+                { "nivel": 3, "dano": "5d10 + CAR ou SAB", "custo": "4 PDR" },
+                { "nivel": 4, "dano": "6d10 + modificador de CAR ou SAB", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Brilho Distante",
+            "nome_romaji": "Shi no Kata Tōi Akaru-sa",
+            "tipo_manobra": "Nenhum",
+            "descricao": "Permite trocar um tipo de Ação ainda não gasta por um tipo de Ação já utilizada no turno. Por exemplo: se usou uma Ação de Ataque com a 3ª Forma mas ainda não gastou a Ação Especial, pode trocá-la por outra Ação de Ataque para realizar outra técnica ou um ataque padrão.",
+            "restricao": "A mesma técnica de respiração não pode ser usada duas vezes no mesmo turno, mesmo com o auxílio desta forma. Ações Livres e de Reação não podem ser trocadas.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Uso normal", "custo": "4 PDR" },
+                { "nivel": 3, "efeito": "Uso normal", "custo": "3 PDR" },
+                {
+                    "nivel": 4,
+                    "efeito": "Uso normal + pode fazer um teste de FDV com dificuldade 14: se passar, custa 2 PDR ao invés de 3",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Espírito da Lua, A Curva da Calamidade",
+            "nome_romaji": "Go no Kata Geppaku Saika",
+            "tipo_manobra": "Ataque",
+            "descricao": "Faz vários cortes curvos em camadas uns sobre os outros, criando um vórtice circular de cortes de espada, perfurações de disparos e lâminas de lua crescente. Este ataque não pode ser esquivado, apenas bloqueado. A rolagem de acerto tem +3 de bônus e pode atingir até 3 inimigos ao redor, cada um com direito à própria defesa. Não pode acertar mais de uma vez o mesmo alvo.",
+            "niveis": [
+                { "nivel": 1, "dano": "FDV + DEX", "custo": "3 PDR" },
+                { "nivel": 2, "dano": "Anterior + 1d8", "custo": "3 PDR" },
+                { "nivel": 3, "dano": "Anterior + 3d8", "custo": "3 PDR" },
+                { "nivel": 4, "dano": "Anterior + 5d8", "custo": "4 PDR" }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Noite Perpétua, Lua Solitária Incessante",
+            "nome_romaji": "Roku no Kata Tokoyo Kogetsu · Muken",
+            "tipo_manobra": "Completa",
+            "descricao": "Lança uma enxurrada selvagem de cortes em forma de meia-lua vários metros à frente na vertical. Poderosa o suficiente para aplicar sangramento severo em quem for atingido. Para acertar, role acerto + modificador de FDV contra a defesa (esquiva ou bloqueio) do inimigo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_cortante": "Não é possível usar!",
+                    "sangramento": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_cortante": "4d12",
+                    "sangramento": "2d4 por 2 turnos",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_cortante": "6d12",
+                    "sangramento": "2d6 por 2 turnos",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_cortante": "8d12",
+                    "sangramento": "2d8 por 2 turnos",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Espelho do Infortúnio, ao Luar",
+            "nome_romaji": "Shichi no Kata Yakkyō · Dzukibae",
+            "tipo_manobra": "Ataque",
+            "descricao": "Balança a Nichirin em uma forma ampliada de si em um poderoso golpe frontal em estilo crescente, criando cortes multidirecionais de longo alcance no solo. Pode atingir até 6 alvos, não podendo acertar o mesmo mais de uma vez. É realizada uma única rolagem de acerto com vantagem contra as esquivas ou bloqueios de todos os alvos.",
+            "niveis": [
+                { "nivel": 1, "dano_por_alvo_atingido": "DEX", "custo": "2 PDR" },
+                { "nivel": 2, "dano_por_alvo_atingido": "Anterior + SAB", "custo": "2 PDR" },
+                { "nivel": 3, "dano_por_alvo_atingido": "Anterior + CAR", "custo": "3 PDR" },
+                { "nivel": 4, "dano_por_alvo_atingido": "Anterior + FDV", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Cauda do Dragão da Lua",
+            "nome_romaji": "Hachi no Kata Getsuryū Rinbi",
+            "tipo_manobra": "Especial",
+            "descricao": "Usa uma versão gigantesca da arma e cria uma barra em forma de crescente enorme que diminui lentamente, gerando dezenas de lâminas de meia-lua que varrem o campo. Esta técnica é usada para buffar esplendorosamente um ataque padrão; não pode ser usada para buffar outra técnica de ataque.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Acrescenta ao próximo ataque padrão um número de d12 igual à sua SAB",
+                    "custo": "4 PDR"
+                },
+                { "nivel": 3, "efeito": "Anterior + +3 de acerto", "custo": "5 PDR" },
+                { "nivel": 4, "efeito": "Os dados que eram d12 viram d20", "custo": "6 PDR" }
+            ]
+        },
+        {
+            "forma": 9,
+            "nome_pt": "Lua Minguante",
+            "nome_romaji": "Ku no Kata Kudaridzuki · Renmen",
+            "tipo_manobra": "Única",
+            "descricao": "Cria um fluxo de cortes verticais e horizontais em forma de crescente de longo alcance, junto com várias lâminas de lua crescente com a versão ampliada da arma. Cria um efeito de campo.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "Cria o Domínio da Lua Minguante por 6 turnos. Todo início de turno, inimigos dentro do domínio rolam DEX ou INT (C.D. 12) para escapar das luas. Falha: 1d6 de dano de ferida + 1 ponto de exaustão",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior, porém a falha causa 2 pontos de exaustão",
+                    "custo": "7 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior, porém o dano de ferida vira 2d4",
+                    "custo": "7 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 10,
+            "nome_pt": "Cortes de Perfuração, Lua através das Folhas de Bambu",
+            "nome_romaji": "Jū no Kata Senmenzan · Ragetsu",
+            "tipo_manobra": "Completa",
+            "descricao": "Cria uma torção de longo alcance com três camadas, repleta de lâminas de lua com a versão ampliada da arma.",
+            "requisito": "Só pode ser usada no turno 5 ou 6 de atividade do Domínio da Lua Minguante criado pela 9ª Forma.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 3,
+                    "efeito": "Estende a duração do Domínio em +3 turnos e os danos de ferida passam a ser críticos",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + o C.D para evitar os ataques do domínio aumenta para 12 + FDV",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 11,
+            "nome_pt": "Brilho Distante",
+            "nome_romaji": "Ju Ichi no Kata Tōi Akaru-sa",
+            "tipo_manobra": "Passiva & Única",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "passiva": "Para cada inimigo no campo de batalha, recebe +1 de PDR desde o teste de iniciativa. Quando um inimigo é derrotado, perde 1 de PDR.",
+            "acao_unica": "Pode gastar de uma vez todos os PDR acumulados passivamente por esta forma, somando esse valor ao acerto de uma técnica de ataque ou de um ataque padrão."
+        },
+        {
+            "forma": 12,
+            "nome_pt": "Íris do Céu Noturno",
+            "nome_romaji": "Ju Ni no Kata Yozora no Airisu",
+            "tipo_manobra": "Reação",
+            "descricao": "Uma Reação Suprema, extremamente eficaz. Pode gastar qualquer quantidade de PDR para diminuir esse mesmo número da rolagem de acerto de um inimigo ao declarar o uso de uma técnica de ataque ou ataque padrão. Para ser bem-sucedido, faça um teste de FDV com vantagem contra o acerto do inimigo.",
+            "limitacao": "Só pode ser usada uma vez por combate.",
+            "recompensa": "Ao término do combate, se a técnica foi usada com sucesso, some +1 PDR ao seu número máximo de PDR permanentemente."
+        },
+        {
+            "forma": 13,
+            "nome_pt": "Colar da Princesa da Lua",
+            "nome_romaji": "Ju San no Kata Tsuki no Ōjo no Nekkuresu",
+            "tipo_manobra": "Completa",
+            "custo_fixo": "10 PDR",
+            "requisitos": [
+                "Disponível apenas no Nível 4 de Respiração",
+                "Somente se estiver com menos de 20 pontos de vida"
+            ],
+            "descricao": "Usa uma Ação Completa para dar um giro de velocidade surreal no campo de batalha com a Nichirin apontada para o inimigo. Realiza um ataque de uma posição do círculo determinada pela rolagem de 1d12, como se formasse uma lua com ponteiros ao circulá-lo, mantendo-o no epicentro. Para acertar, rola uma jogada de acerto padrão contra o bloqueio do inimigo; ele não pode usar esquiva.",
+            "tabela_1d12": [
+                { "resultado": 1, "dano": "3d6" },
+                { "resultado": 2, "dano": "6d6" },
+                { "resultado": 3, "dano": "9d9" },
+                { "resultado": 4, "dano": "12d6" },
+                { "resultado": 5, "dano": "15d6" },
+                { "resultado": 6, "dano": "20d6" },
+                { "resultado": 7, "dano": "25d6" },
+                { "resultado": 8, "dano": "30d6" },
+                { "resultado": 9, "dano": "35d6" },
+                { "resultado": 10, "dano": "40d6" },
+                { "resultado": 11, "dano": "45d6" },
+                { "resultado": 12, "dano": "50d6" }
+            ]
+        },
+        {
+            "forma": 14,
+            "nome_pt": "Catástrofe, Lua Crescente de Tenman",
+            "nome_romaji": "Jū Shi no Kata Kyōhen · Tenman Sengetsu",
+            "tipo_manobra": "Ataque",
+            "descricao": "Usa uma versão gigantesca da arma e cria um vórtice caótico de poderosos golpes omnidirecionais de longo alcance que destroem tudo preso em seu raio. O vórtice aumenta conforme o modificador de FDV.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 3,
+                    "efeito": "Até 2 inimigos devem fazer teste de esquiva contra acerto + FDV. Falha: 12d4 de dano + ficam amedrontados até o final de seu próximo turno",
+                    "custo": "6 PDR"
+                },
+                { "nivel": 4, "efeito": "Igual ao anterior + dano vira 16d4", "custo": "7 PDR" }
+            ]
+        },
+        {
+            "forma": 15,
+            "nome_pt": "Sacrifício do Duque da Lua",
+            "nome_romaji": "Ju Go no Kata Tsuki no Kōshaku no Gisei",
+            "tipo_manobra": "Todas do Turno, exceto Reação",
+            "custo_fixo": "20 PDR",
+            "requisitos": [
+                "Ter escolhido lutar a sério na passiva da 1ª Forma",
+                "Mínimo de 4 em FDV e DEX",
+                "Disponível apenas no Nível 4 de Respiração"
+            ],
+            "descricao": "O usuário entra em estado de meditação supremo, desligando-se por 1 segundo do campo de batalha, fechando os olhos e respirando profundamente. Então saca a arma e confia em seu instinto para um ataque voraz, abrindo mão de sua guarda completamente para atravessar o inimigo com um golpe mortal. Escolha um inimigo. Esse inimigo pode realizar imediatamente qualquer ataque padrão ou técnica de ataque contra o usuário sem chance de defesa. Receba o ataque enquanto dispara em um dash mortal em direção ao inimigo.",
+            "tabela_resultado_teste_vit_inimigo": [
+                {
+                    "resultado": "Passou (C.D. 12 + DEX)",
+                    "consequencia": "Recebe ¼ da vida atual do usuário como dano"
+                },
+                {
+                    "resultado": "Falhou (C.D. 12 + DEX)",
+                    "consequencia": "Recebe metade da vida atual do usuário como dano + perde buffs de características temporários"
+                }
+            ]
+        },
+        {
+            "forma": 16,
+            "nome_pt": "Arco da Lua, Meia-Lua",
+            "nome_romaji": "Jū Roku no Kata Gekkō · Katawaredzuki",
+            "tipo_manobra": "Especial + Ataque",
+            "requisitos": [
+                "Mínimo de 5 em FDV",
+                "Disponível apenas nos Níveis 3 e 4 de Respiração"
+            ],
+            "descricao": "Cria uma enxurrada de cortes crescentes descendo de um alcance extremamente longo e amplo, resultando em um poderoso golpe de seis ondas caindo sobre os oponentes. O ataque é poderoso o suficiente para criar várias crateras em miniatura no ponto de impacto.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 3,
+                    "efeito": "Role 6 acertos com +3 de bônus contra todos no campo de batalha (incluindo aliados no alcance). Cada alvo pode usar 6 testes de esquiva ou bloqueio. Esquiva: cada acerto recebido causa 2d8 de dano perfurante. Bloqueio: cada acerto recebido causa 1d6 perfurante + 1 nível de exaustão. Ao falhar nos 6 bloqueios: a arma do inimigo quebra (ou todos os danos perfurantes são tratados como críticos se desarmado)",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + bônus nos acertos passa de +3 para +5",
+                    "custo": "8 PDR"
+                }
+            ]
+        }
+    ]
+}

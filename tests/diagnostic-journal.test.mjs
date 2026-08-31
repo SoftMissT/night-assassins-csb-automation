@@ -4,6 +4,7 @@ setupFoundryMocks();
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+    buildDiagnosticExport,
     diagnosticJournalOwnership,
     isNightAssassinsDiagnostic,
 } from '../scripts/diagnostic-journal.mjs';
@@ -46,5 +47,41 @@ describe('diagnostic-journal', () => {
             ],
         };
         assert.deepEqual(diagnosticJournalOwnership(), { default: 0, 'gm-a': 3, 'gm-b': 3 });
+    });
+
+    it('exporta todas as páginas do Journal em Markdown', () => {
+        const journal = {
+            name: 'NA Registro de Erros',
+            pages: {
+                contents: [
+                    { id: 'a', name: '2026-08-30 Sessão', text: { markdown: '# Erro A\nDetalhes' } },
+                    { id: 'b', name: '2026-08-31 Sessão', text: { content: '# Erro B\nStack' } },
+                ],
+            },
+        };
+        const result = buildDiagnosticExport(journal, {
+            format: 'markdown',
+            generatedAt: '2026-08-31T12:00:00.000Z',
+        });
+        assert.match(result, /2026-08-30 Sessão/);
+        assert.match(result, /# Erro A/);
+        assert.match(result, /2026-08-31 Sessão/);
+        assert.match(result, /# Erro B/);
+    });
+
+    it('exporta JSON estruturado sem perder páginas', () => {
+        const journal = {
+            name: 'NA Registro de Erros',
+            pages: [{ id: 'a', name: 'Sessão', text: { markdown: 'conteúdo' } }],
+        };
+        const result = JSON.parse(
+            buildDiagnosticExport(journal, {
+                format: 'json',
+                generatedAt: '2026-08-31T12:00:00.000Z',
+            })
+        );
+        assert.equal(result.schema, 'night-assassins-diagnostic-v1');
+        assert.equal(result.pages.length, 1);
+        assert.equal(result.pages[0].markdown, 'conteúdo');
     });
 });

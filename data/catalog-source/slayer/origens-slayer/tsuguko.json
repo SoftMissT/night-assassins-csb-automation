@@ -1,0 +1,26 @@
+{
+    "name": "Tsuguko",
+    "subtitle": "Herdeiro do Pilar",
+    "quote": "Ser escolhido por um Hashira não é um privilégio. É um peso com nome.",
+    "description": "O Tsuguko não é apenas um aprendiz. É a continuação viva de uma técnica que levou décadas para ser refinada. O treinamento é brutal porque precisa ser. Se o Hashira cair, alguém deve carregar o estilo adiante. E esse alguém é você.",
+    "attributes": {
+        "pdv": "12 + VIT",
+        "pdr": "16 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Herança Viva",
+            "level": 1,
+            "description": "Escolha, junto ao Mestre, um Hashira mentor ou legado equivalente ligado à sua Respiração. Uma vez por combate, quando executar uma Técnica de Respiração da linhagem ensinada por esse mentor, você recebe +1 no Acerto. Se essa for a primeira vez na missão que você usa uma Técnica de Respiração de um nível recém-desbloqueado, o bônus aumenta para +2 no Acerto. Esse benefício representa memória muscular, correção brutal e repetição exaustiva. Não é improviso. É legado."
+        },
+        {
+            "name": "Sucessão Perfeita",
+            "level": 6,
+            "description": "Uma vez por sessão, ao executar uma Técnica de Respiração da sua linhagem, você pode reduzir o custo dela para 0 PDR. Se a técnica acertar ou cumprir seu efeito principal, ela funciona normalmente. Se a técnica errar ou falhar completamente, você sofre dano irredutível igual ao custo original da técnica. Você não pode usar Sucessão Perfeita em uma técnica criada livremente por Versatilidade Criativa, a menos que o Mestre aprove que ela pertence ao legado do seu Hashira."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 12
+    }
+}

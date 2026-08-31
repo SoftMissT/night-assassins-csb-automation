@@ -1,0 +1,21 @@
+{
+    "number": 4,
+    "name": "Gênio do Mal",
+    "description": "Você transformou a fome em método. Onde outros Onis atacam por impulso, você observa, calcula e força o inimigo a cometer o erro certo.",
+    "pdv": "20 + VIT",
+    "pdk": "2 + FDV + (FDV × 3)",
+    "passive": {
+        "name": "Racionalidade",
+        "description": "Uma vez por combate, você pode analisar o ambiente e descobrir um ponto de vantagem narrativo do cenário, sem teste. Após isso, recebe +3 na próxima rolagem ligada diretamente a essa análise. Se essa rolagem ultrapassar 20, mesmo sem 20 natural ou margem natural de crítico, ela causa dano crítico. Se essa rolagem também for um crítico natural ou crítico pela margem da arma, você pode quebrar a arma do oponente com esse ataque, além de causar o dano."
+    },
+    "abilities": [
+        {
+            "name": "Cálculo Predatório",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "12m",
+            "test": "INT do Oni contra CD 8 + SAB do alvo",
+            "description": "Escolha uma criatura que possa ver. O Oni observa postura, respiração, ritmo e vício de defesa do alvo. Sucesso: até o início do próximo turno do Oni, o próximo ataque do Oni contra esse alvo recebe +2 na rolagem de acerto. Sucesso por 5 ou mais: além do +2, o alvo fica Desequilibrado contra esse ataque. Falha: o alvo não sofre efeito."
+        }
+    ]
+}

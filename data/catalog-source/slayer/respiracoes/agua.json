@@ -1,0 +1,227 @@
+{
+    "titulo": "Respiração da Água",
+    "aliases": ["Water Breathing", "Mizu no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "regra_opcional_mascara_de_porcelana": "Como regra opcional, o usuário da Respiração da Água pode escolher usar uma máscara entalhada de porcelana fina. Essa máscara concede +1 de PDR quando lutar contra inimigos de nível de personagem maior que o seu, ao iniciar a luta. Porém, concede +1 em rolagens que eles realizarem para tentar te encontrar, antes da batalha iniciar.",
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Barra de Superfície da Água",
+            "nome_romaji": "Ichi no Kata Minamo Giri",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário gera um impulso de força concentrado, que ganha velocidade suficiente para criar um corte de água, causando dano adicional em seu próximo ataque bem-sucedido. Não é considerado um efeito de contato!",
+            "niveis": [
+                { "nivel": 1, "efeito": "1d6 de dano adicional", "custo": "1 PDR" },
+                { "nivel": 2, "efeito": "2d6 de dano adicional", "custo": "2 PDR" },
+                { "nivel": 3, "efeito": "3d6 de dano adicional", "custo": "3 PDR" },
+                { "nivel": 4, "efeito": "4d6 de dano adicional", "custo": "3 PDR" }
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Roda D'Água",
+            "nome_romaji": "Ni no Kata Mizu Guruma",
+            "tipo_manobra": "Ataque ou Especial",
+            "descricao": "O usuário pula e gira no ar enquanto libera um ataque que flui em um movimento circular, pegando efeito com o giro. Para realizar essa técnica, você deve primeiramente realizar um teste de DEX para pular da maneira correta exigida pela técnica e tirar 12+ no teste. A falha no teste do pulo não acarreta em gasto de PDR da técnica. Se passar, realize um ataque padrão com Vantagem e os bônus indicados.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Acrescente bônus de INT no dano + 2d6. O inimigo pode bloquear ou esquivar, mas em ambos os casos recebe metade do dano se passar",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao nível anterior, porém o dano bônus extra vira 3d6",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao nível anterior, porém o dano bônus extra vira 4d6",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao nível anterior, porém o bônus de INT é dobrado",
+                    "custo": "4 PDR"
+                }
+            ],
+            "combo": "Essa técnica pode ser realizada como Ação Especial caso seja utilizada em combo com o 1º Estilo, ou pagando 1 PDR a mais."
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Dança da Corrente Rápida",
+            "nome_romaji": "San no Kata Ryuryu Mai",
+            "tipo_manobra": "Completa",
+            "requisito": "Estar em um local aberto",
+            "descricao": "O usuário faz movimentos contínuos com sua arma, de maneira que imita as ondas na superfície da água, podendo acertar até 3 alvos. A rolagem para acertar cada ataque é uma rolagem de acerto padrão. Não pode acertar mais de uma vez o mesmo alvo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Adiciona INT no dano de cada alvo acertado",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Adiciona INT no dano e acerto a cada alvo",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Adiciona INT no dano e acerto a cada alvo + 1",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Adiciona INT no dano e acerto a cada alvo + 2",
+                    "custo": "3 PDR"
+                }
+            ],
+            "combo": "Essa técnica pode ser realizada como Ação de Ataque caso seja utilizada em combo com o 9º Estilo."
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Maré Impressionante",
+            "nome_romaji": "Shi no Kata Uchisio",
+            "tipo_manobra": "Especial",
+            "requisito_trigger": "Pode ser ativada mediante uma situação específica.",
+            "descricao": "O usuário realiza diversos ataques consecutivos (narrativamente falando, mecanicamente conta como um ataque só) enquanto torce o corpo de maneira fluida, imitando uma forte maré.",
+            "efeito_todos_os_niveis": "Quando finalizar um inimigo ou realizar um acerto crítico, pode usar essa técnica para efetuar imediatamente outro ataque padrão em outro inimigo que esteja próximo, em uma distância máxima igual ao seu deslocamento padrão. A técnica pode ser reativada utilizando o mesmo trigger sucessivamente, pagando o custo de PDR.",
+            "custo": "1 PDR"
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Chuva Misericordiosa de um Dia Seco",
+            "nome_romaji": "Go no Kata Kanten no Jiu",
+            "tipo_manobra": "Especial",
+            "requisito": "Inimigo rendido ou atordoado. Considera-se inimigo rendido um alvo que se recuse a lutar ou esteja incapacitado de realizar todas as suas ações do turno.",
+            "disponibilidade": "Disponível apenas a partir do Nível 2 de Respiração",
+            "descricao": "Um golpe digno e misericordioso contra um alvo que tenha se rendido ou esteja incapacitado de se defender (atordoado). O ataque é automaticamente crítico.",
+            "efeito": "Causa um ataque crítico sem necessidade de rolagem. Não custa PDR, porém se o ataque finalizar o inimigo, você recupera uma quantidade de PDR igual ao seu Nível de Respiração."
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Torção de Hidromassagem",
+            "nome_romaji": "Roku no Kata Nejire Uzu",
+            "tipo_manobra": "Ataque",
+            "descricao": "O usuário torce ferozmente o corpo em um giro para cima enquanto ataca, criando um redemoinho que corta tudo o que estiver à sua volta. Para acertar é necessária uma rolagem de acerto padrão, independente do número de alvos. Se estiver submerso em água, você ganha +3 na rolagem de acerto.",
+            "atencao_aliados": "Se houver aliados próximos, eles também podem ser acertados, tendo que obrigatoriamente rolar esquiva ou bloqueio assim como os inimigos. Porém, eles ganham um bônus na esquiva ou bloqueio igual à característica de DEX do Usuário da Respiração da Água.",
+            "niveis": [
+                { "nivel": 1, "efeito": "8d6 + DEX de dano", "custo": "4 PDR" },
+                { "nivel": 2, "efeito": "10d6 + DEX de dano", "custo": "4 PDR" },
+                { "nivel": 3, "efeito": "12d6 + DEX de dano", "custo": "5 PDR" },
+                { "nivel": 4, "efeito": "14d6 + DEX de dano", "custo": "6 PDR" }
+            ]
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Gota de Chuva Penetrante",
+            "nome_romaji": "Shichi no Kata Shizuku wa Mondzuki",
+            "tipo_manobra": "Reação",
+            "descricao": "Quando o inimigo declarar um ataque contra você, antes de sua rolagem de acerto, você pode indicar que fará um bloqueio. Essa rolagem de bloqueio ganha um bônus igual ao seu modificador de INT. Esse bônus se mantém contra todos os ataques declarados contra você naquela ação do inimigo, sendo muito eficaz contra ataques múltiplos de uma única ação, como os provenientes de alguns Kekkijutsus e técnicas.",
+            "niveis": [
+                {
+                    "nivel": "1 e 2",
+                    "efeito": "Bloqueio ganha bônus na rolagem igual à sua INT contra o ataque indicado a você",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": "3 e 4",
+                    "efeito": "Ganha o bônus padrão e, se for bem-sucedido no bloqueio, poderá usar imediatamente o 6º Estilo (Nejire Uzu) pagando apenas metade do custo de PDR dessa técnica*",
+                    "custo": "2 PDR"
+                }
+            ],
+            "condicao_nivel_3_4": "Apenas se você ainda tiver disponível sua ação de ataque."
+        },
+        {
+            "estilo": 8,
+            "nome_pt": "Força da Cascata",
+            "nome_romaji": "Hachi no Kata Takitsubo",
+            "tipo_manobra": "Completa",
+            "recarga": "Essa técnica não pode ser usada novamente pelos próximos 3 turnos.",
+            "descricao": "O usuário acerta o alvo verticalmente com a força de uma cachoeira.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "2× Modificador de INT + 4d6 de dano. Anula as resistências do inimigo pelos próximos 2 turnos",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao Nvl 1 + se acertar, o inimigo deve fazer um teste de VIT com dificuldade igual ao seu acerto ou ficará atordoado 1 turno",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao Nvl 2 + ganha INT de dano bônus para cada d6 crítico nos dados de rolagem de dano",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao Nvl 3 + a rolagem de acerto tem vantagem",
+                    "custo": "6 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 9,
+            "nome_pt": "Respingos de Água",
+            "nome_romaji": "Ku no Kata Suiryu Shibuki",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário adquire uma movimentação fluida ao utilizar essa técnica, minimizando o tempo de pouso quando pular ou pisar sobre superfícies, permitindo que ganhe velocidade e melhor movimentação, principalmente em lugares com pouco espaço.",
+            "niveis": [
+                {
+                    "nivel": "1 e 2",
+                    "efeito": "Pelos próximos 2 turnos, +1 em testes de esquiva",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": "3 e 4",
+                    "efeito": "Pelos próximos 2 turnos, +3 em testes de esquiva",
+                    "custo": "4 PDR"
+                }
+            ],
+            "efeito_adicional": "Além dos bônus indicados acima, o usuário da Respiração da Água sob efeito de Suiryu Shibuki terá sucesso automático no teste de pulo de Mizu Guruma e ganha velocidade de deslocamento bônus igual ao seu Nível de Respiração.",
+            "extensao_do_efeito": "Enquanto o bônus de esquiva de Ku no Kata Suiryu Shibuki estiver ativo, você pode gastar uma Ação Única no seu turno para conjurar esta habilidade pelo custo de 1 PDR. O bônus de esquiva não aumenta, nem sua duração, porém ao ativá-lo, permite imediatamente que um usuário aliado de outra respiração ative uma técnica com tipo de manobra Especial.",
+            "respiracoes_de_sinergia": [
+                "Respiração das Flores",
+                "Respiração da Grama",
+                "Respiração da Madeira"
+            ]
+        },
+        {
+            "estilo": 10,
+            "nome_pt": "O Dragão da Mudança",
+            "nome_romaji": "Ju no Kata Seisei Ruten",
+            "tipo_manobra": "Completa",
+            "descricao": "Um ataque contínuo que aumenta o poder a cada rotação, criando uma forte barragem de água em formato de dragão. Você deve \"carregar\" o ataque por no mínimo um turno. A cada turno carregando enquanto focaliza sua respiração, você somará um dado de dano e 1× o modificador conforme os níveis abaixo.",
+            "exemplo_de_carregamento": "3 turnos carregando com Nível 2 de Respiração = 3d8 de dano + 3× modificador de INT. Um turno conta como carregado no início dele. Portanto: no turno 1 começa a carregar; no início do turno 2 há 1 acúmulo; no início do turno 3 há 2 acúmulos, e assim por diante.",
+            "exaustao": "Após usar a técnica carregada por mais de um turno, o usuário recebe 2 pontos de exaustão até o final do combate.",
+            "niveis": [
+                { "nivel": 1, "efeito_por_turno_carregado": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito_por_turno_carregado": "1d8 + INT", "custo": "3 PDR" },
+                { "nivel": 3, "efeito_por_turno_carregado": "2d6 + INT", "custo": "4 PDR" },
+                { "nivel": 4, "efeito_por_turno_carregado": "3d6 + INT", "custo": "5 PDR" }
+            ],
+            "combo_com_9o_estilo": "Caso execute o 10º Estilo sob os bônus do 9º Estilo, você acumula +1 dado de dano por turno. O exterminador está limitado a executar essa técnica junto ao 9º Estilo um número de vezes igual ao seu Nível de Respiração. Ao finalizar o combo, faça um teste de Vitalidade ou Força de Vontade (à sua escolha), com C.D. igual a 10 + número de turnos que o ataque foi carregado. Se não passar, recebe +1 de exaustão para cada Nível de Respiração utilizado na execução do 10º Estilo dessa forma."
+        },
+        {
+            "estilo": 11,
+            "nome_pt": "Calmaria",
+            "nome_romaji": "Ju Ichi no Kata Nagi",
+            "tipo_manobra": "Reação",
+            "descricao": "Criado pelo Hashira da Água, Giyu Tomioka, o usuário interrompe todos os seus movimentos e adota uma postura de habilidade que anula qualquer tipo de ataque recebido. Conforme o exterminador ganha níveis de respiração, será possível utilizá-la mais de uma vez por dia.",
+            "niveis": [
+                { "nivel": 1, "usos_por_dia": "Não é possível usar!", "custo_por_uso": null },
+                { "nivel": 2, "usos_por_dia": "Uma vez por dia", "custo_por_uso": "4 PDR" },
+                { "nivel": 3, "usos_por_dia": "Duas vezes ao dia", "custo_por_uso": "4 PDR" },
+                { "nivel": 4, "usos_por_dia": "Três vezes ao dia", "custo_por_uso": "4 PDR" }
+            ]
+        }
+    ],
+    "ideias_para_criacao_e_aperfeicoamento_de_tecnicas": [
+        "Para mais dano: uma técnica ou variação que cause dano escalando com a porcentagem de vida perdida do alvo. Um usuário da água consegue explorar com inteligência os pontos fracos de um inimigo enfraquecido por dano recebido anteriormente.",
+        "Para mais efeitos e utilidade: uma técnica ou variação que tenha sinergia com as respirações de Flores, Grama e Madeira, capaz de causar efeitos conjuntos ou fortalecer técnicas dessas respirações.",
+        "Para mais defesas: uma técnica ou variação que possa ser usada ao receber um efeito ou status negativo, através de uma rolagem de Força de Vontade ou Inteligência bem-sucedida, que minimize ou neutralize o efeito recebido."
+    ]
+}

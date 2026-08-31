@@ -1,0 +1,26 @@
+{
+    "name": "Isolado",
+    "subtitle": "O Sobrevivente Primal",
+    "quote": "A floresta não tem mestre. Ela só tem o topo. E eu estou nele.",
+    "description": "O Isolado não aprendeu com doutrinas, academias ou mestres. Ele foi criado entre feras, rochas, frio, fome e território. Seu corpo não foi treinado. Foi forjado. Ele não luta por ideais refinados. Luta porque o mundo sempre foi uma disputa por espaço, comida, sangue e sobrevivência. Para o Isolado, treinamento formal é coisa de quem teve tempo demais para ter medo.",
+    "attributes": {
+        "pdv": "16 + VIT",
+        "pdr": "4 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Pele Grossa",
+            "level": 1,
+            "description": "Seu corpo endureceu nos lugares onde mais apanhou. Sempre que sofrer dano físico, reduza o dano recebido em 2. Essa redução se aplica a cortes, perfurações, impactos, mordidas, garras, quedas e outros danos corporais diretos. Esta redução não se aplica contra: dano elemental; venenos; Kekkijutsu; dano espiritual, mental ou sobrenatural; efeitos que não causem dano físico direto."
+        },
+        {
+            "name": "Segundo Fôlego",
+            "level": 6,
+            "description": "Uma vez por combate, quando um ataque reduziria seus PDV a 0 ou menos, você pode usar sua Reação para se manter de pé. Você permanece com 1 PDV e recebe +2 no próximo ataque corpo a corpo que fizer até o fim do seu próximo turno. Após usar Segundo Fôlego, você sofre -2 na Defesa até o fim do seu próximo turno. Esta habilidade não funciona se o dano recebido for massivo o bastante para ultrapassar seu limite de morte imediata, a critério das regras da mesa."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 7
+    }
+}

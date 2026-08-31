@@ -1,0 +1,30 @@
+{
+    "number": 9,
+    "name": "Oni da Maré Negra",
+    "description": "Você não pertence totalmente à terra nem ao mar. O sangue demoníaco se misturou a algo profundo, úmido e antigo. Em terreno seco, você ainda é perigoso. Em água, lama ou chuva, você vira ambiente.",
+    "pdv": "20 + VIT",
+    "pdk": "17 + (FDV * 3)",
+    "passive": {
+        "name": "Natureza Anfíbia",
+        "description": "Você não sofre penalidades de terreno em água, lama, areia molhada ou superfícies escorregadias. Além disso, enquanto estiver em terreno úmido, molhado ou aquático, recebe +1 em Esquiva. Se sofrer dano Solar, Fogo ou dano causado por Lâmina Nichirin, perde esse bônus de +1 em Esquiva até o início do seu próximo turno."
+    },
+    "abilities": [
+        {
+            "name": "Maré de Caça",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "duration": "até o início do próximo turno",
+            "description": "Escolha uma das formas abaixo.",
+            "options": [
+                {
+                    "name": "Mar Calmo",
+                    "description": "Até o início do próximo turno, você recebe +2 em Bloqueio. Além disso, o próximo ataque corpo a corpo que acertar você antes do início do seu próximo turno causa -2 de dano final."
+                },
+                {
+                    "name": "Mar Violento",
+                    "description": "Até o início do próximo turno, seu próximo ataque corpo a corpo recebe +2 na rolagem de acerto. Se esse ataque acertar, você pode empurrar o alvo 3m. Se o alvo colidir com obstáculo sólido, sofre 1d6 de dano de Concussão."
+                }
+            ]
+        }
+    ]
+}

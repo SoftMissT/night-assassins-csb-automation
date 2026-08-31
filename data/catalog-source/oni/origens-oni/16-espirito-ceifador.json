@@ -1,0 +1,22 @@
+{
+    "number": 16,
+    "name": "Espírito Ceifador",
+    "description": "Você nasceu perto demais da morte. Coveiro, carrasco, médico de guerra, sacerdote funerário, sobrevivente de massacre ou alguém que passou tempo demais contando cadáveres. O sangue demoníaco não criou em você uma fome comum. Criou um ofício. Você não caça como animal. Você registra nomes.",
+    "pdv": "20 + VIT",
+    "pdk": "18 + (FDV * 3)",
+    "passive": {
+        "name": "Nome no Registro",
+        "description": "No início do combate, escolha uma criatura viva que você possa ver. Essa criatura se torna o Nome Registrado. Contra o Nome Registrado, você recebe +1 em rolagens de acerto. Se o Nome Registrado estiver com metade ou menos do PDV máximo, o bônus aumenta para +2 em rolagens de acerto. Você só pode ter um Nome Registrado por vez. Se o Nome Registrado cair a 0 PDV ou morrer, você pode escolher outro Nome Registrado no início do seu próximo turno."
+    },
+    "abilities": [
+        {
+            "name": "Chamada do Além",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "target": "Nome Registrado",
+            "test": "FDV do alvo contra CD 10 + FDV do Oni",
+            "description": "Você chama o nome espiritual do alvo. Por um instante, ele sente como se a própria morte tivesse reconhecido sua presença. Falha: o alvo fica Desorientado até o início do próximo turno do Oni. Falha por 5 ou mais: além de Desorientado, o alvo não pode usar Reação até o início do próximo turno do Oni. Sucesso: o alvo resiste ao efeito. Se o Oni acertar o Nome Registrado no mesmo turno em que ele falhou nesse teste, o ataque causa +1d6 de Dano Necrótico."
+        }
+    ]
+}

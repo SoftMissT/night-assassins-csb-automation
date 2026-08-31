@@ -1,0 +1,30 @@
+{
+    "number": 13,
+    "name": "Oni de Outras Terras",
+    "description": "Você veio de fora do padrão que os Caçadores conhecem. Seu corpo, sua técnica e sua forma de pensar não seguem a lógica dos Onis locais. Você vence porque aparece onde não deveria estar, ataca por ângulos errados e transforma distância em erro do inimigo.",
+    "pdv": "18 + VIT",
+    "pdk": "19 + (FDV * 3)",
+    "passive": {
+        "name": "Dissonância Atmosférica",
+        "description": "Inimigos a até 6m de você recebem -1 em testes de SAB ligados à percepção, leitura de movimento ou previsão de ataque. Além disso, uma vez por rodada, quando um inimigo entra nessa área pela primeira vez, ele deve fazer 1d20 + SAB contra CD 10 + INT do Oni. Falha: o alvo fica Desorientado até o início do próximo turno dele. Sucesso: o alvo resiste."
+    },
+    "abilities": [
+        {
+            "name": "Fenda do Outro Mundo",
+            "cost": "3 PDK",
+            "action": "Ação Especial ou Reação",
+            "range": "9m",
+            "description": "Escolha um dos efeitos abaixo.",
+            "options": [
+                {
+                    "name": "Salto Impossível",
+                    "description": "Você se teletransporta para um ponto visível a até 9m. Esse deslocamento não gera Ataque de Oportunidade."
+                },
+                {
+                    "name": "Corte Redirecionado",
+                    "description": "Quando for alvo de um ataque corpo a corpo, ataque à distância ou técnica que use rolagem de acerto, você pode usar sua Reação para distorcer a trajetória. Role 1d20 + INT contra CD 10 + SAB do atacante. Sucesso: o ataque sofre -2 na rolagem de acerto. Sucesso por 5 ou mais: além disso, você pode se mover 3m sem gerar Ataque de Oportunidade. Falha: o ataque acontece normalmente."
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,445 @@
+{
+    "titulo": "Respiração da Ameixeira",
+    "nome_romaji": "Maehwa no Kokyū",
+    "kanji": "梅花の呼吸",
+    "citacao": "A ameixeira não vence o inverno por ser mais forte que ele. Vence porque decide não quebrar.",
+    "descricao_geral": "A Respiração da Ameixeira é uma derivação da Respiração da Água, nascida como sub-ramo da Respiração das Flores. Da Água, herdou o fluxo, a adaptação e a defesa circular. Das Flores, herdou a delicadeza precisa, a proteção dos frágeis e a ideia de que beleza não é ausência de força. A Ameixeira não é uma Respiração feita para perseguir o inimigo. Ela é feita para segurar terreno, proteger aliados, restaurar fôlego e transformar resistência em vantagem coletiva. Diferente da Pedra, que resiste por rigidez, a Ameixeira resiste por enraizamento. Ela cede o mínimo necessário para não quebrar e faz o grupo sobreviver junto.",
+    "estrutura_padrao": "[ Nível de Respiração ] [ Efeito ] [ Custo de PDR ]",
+    "funcao_mecanica": {
+        "papel_principal": "Suporte defensivo",
+        "papel_secundario": "Controle de campo e cura de combate",
+        "atributos_chave": ["FDV", "VIT", "CAR"],
+        "recurso_interno": "Raízes",
+        "dano_comum": ["Concussão", "Cortante", "Perfurante"],
+        "fraqueza": "Mobilidade forçada, empurrões, queda, isolamento e dano explosivo"
+    },
+    "passiva_especial": {
+        "nome": "Raízes da Resiliência",
+        "descricao": "O usuário cria raízes espirituais no campo de batalha. Essas raízes não são plantas reais. São pressão de postura, respiração firme, presença protetora e controle do espaço ao redor.",
+        "maximo_de_raizes": 5,
+        "solo_sagrado": {
+            "descricao": "Se o usuário não usar sua Ação de Movimento no próprio turno, recebe +1 em Defesa até o início do próximo turno.",
+            "observacao": "Esse bônus pode ser usado em Esquiva ou Bloqueio."
+        },
+        "interposicao": {
+            "descricao": "Aliados diretamente atrás do usuário, em relação à fonte do ataque, recebem Cobertura da Ameixeira.",
+            "cobertura_da_ameixeira": "Enquanto o usuário estiver entre um aliado e um inimigo, o aliado recebe +1 em Defesa contra ataques vindos daquela direção. Esse bônus não acumula com outra Cobertura da Ameixeira."
+        }
+    },
+    "gerenciamento_de_raizes": {
+        "ganha_1_raiz_quando": [
+            "Termina o turno sem se mover voluntariamente mais de 1,5m.",
+            "Usa uma Reação da Ameixeira para proteger um aliado e o ataque falha.",
+            "Um aliado a até 3m sofre dano.",
+            "Cura um aliado com uma Forma da Ameixeira.",
+            "Um inimigo falha em um teste causado por uma Forma da Ameixeira."
+        ],
+        "limite_de_ganho": "2 Raízes por rodada",
+        "perde_raizes_quando": [
+            "É Empurrado: perde 2 Raízes.",
+            "É Derrubado: perde 2 Raízes.",
+            "Move-se voluntariamente mais de 1,5m sem usar uma Forma da Ameixeira: perde todas as Raízes.",
+            "Fica Atordoado, Paralisado ou Inconsciente: perde todas as Raízes."
+        ]
+    },
+    "estagios_de_crescimento": [
+        {
+            "raizes": "2+",
+            "estagio": "Enraizamento",
+            "efeito": "Vantagem em testes de VIT contra ser movido à força. Aliados adjacentes recebem +1 Defesa."
+        },
+        {
+            "raizes": "4+",
+            "estagio": "Casca Espiritual",
+            "efeito": "Redução de Dano 2 contra dano físico. Pode usar Compartilhar Vigor."
+        },
+        {
+            "raizes": "5",
+            "estagio": "Florescer Invernal",
+            "efeito": "Raio de 3m ao redor do usuário vira terreno difícil para inimigos. Habilita a 12ª Forma."
+        }
+    ],
+    "compartilhar_vigor": {
+        "tipo_manobra": "Especial",
+        "requisito": "4+ Raízes",
+        "custo": "1 Raiz",
+        "descricao": "O usuário cura um aliado adjacente. Essa cura não remove status.",
+        "tabela_cura": [
+            { "nivel": 1, "cura": "1d4 + FDV" },
+            { "nivel": 2, "cura": "1d6 + FDV" },
+            { "nivel": 3, "cura": "1d8 + FDV" },
+            { "nivel": 4, "cura": "1d10 + FDV" }
+        ]
+    },
+    "cd_da_ameixeira": "10 + FDV + Nível de Respiração",
+    "status_enraizado": {
+        "descricao": "Um personagem Enraizado não pode se deslocar nem usar Ação de Movimento.",
+        "pode_ainda": ["atacar", "usar técnicas", "defender-se", "usar Reação, se possuir"],
+        "remocao": "Dura conforme a técnica que aplicou ou termina se o alvo gastar uma Ação Completa e passar em teste de VIT contra CD da Ameixeira."
+    },
+    "vinculo_das_irmas": {
+        "descricao": "A Ameixeira e a Nevasca nasceram do mesmo inverno. Quando uma praticante da Respiração da Ameixeira estiver no mesmo grupo que uma praticante da Respiração da Nevasca, ambas podem usar o seguinte vínculo.",
+        "protecao_da_tempestade": {
+            "descricao": "Uma vez por combate, quando a praticante da Nevasca ativar Rajada da Nevasca, a praticante da Ameixeira pode gastar 1 Raiz como Reação. Até o início do próximo turno da Nevasca, cria uma zona protetora de 3m ao redor dela.",
+            "efeito_na_zona": "A praticante da Nevasca recebe +2 em Defesa. Além disso, o primeiro dano recebido por ela nesse intervalo é reduzido em FDV da Ameixeira + Nível de Respiração da Ameixeira."
+        },
+        "as_raizes_conhecem_a_tempestade": {
+            "descricao": "Quando a Ameixeira usar uma Forma de cura em uma praticante da Nevasca, a cura recebe +FDV da Ameixeira. Esse bônus não custa Raiz adicional."
+        }
+    },
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "Dança da Ameixeira de Somei",
+            "nome_romaji": "Ichi no Kata: Somei no Mai",
+            "kanji": "一の型・染井の舞",
+            "tipo_manobra": "Reação",
+            "gatilho": "Um aliado adjacente ser alvo de ataque",
+            "funcao": "Proteção direta",
+            "descricao": "O usuário interpõe a lâmina entre o aliado e o golpe.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_defesa_ao_aliado": "+2",
+                    "reducao_de_dano_se_acertar": 2,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_defesa_ao_aliado": "+4",
+                    "reducao_de_dano_se_acertar": 4,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_defesa_ao_aliado": "+6",
+                    "reducao_de_dano_se_acertar": 6,
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_defesa_ao_aliado": "+8",
+                    "reducao_de_dano_se_acertar": 8,
+                    "custo": "5 PDR"
+                }
+            ],
+            "efeito_se_errar": "Se o ataque errar após o bônus desta Forma, o aliado protegido recebe +2 no próximo ataque até o fim do próximo turno dele. Se o ataque errar, o usuário ganha +1 Raiz."
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Quebra do Caule",
+            "nome_romaji": "Ni no Kata: Kuki Kudaki",
+            "kanji": "二の型・茎砕き",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Concussão",
+            "funcao": "Controle de mobilidade",
+            "descricao": "Um golpe baixo contra articulações, base ou postura.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "2d6 + FDV",
+                    "efeito": "Reduz deslocamento em 1,5m",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "dano": "3d6 + FDV",
+                    "efeito": "Reduz deslocamento em 3m",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "4d6 + FDV",
+                    "efeito": "Reduz deslocamento em 4,5m",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "5d6 + FDV",
+                    "efeito": "Alvo fica Enraizado por 1 turno",
+                    "custo": "5 PDR"
+                }
+            ],
+            "bonus_condicional": "Se o alvo já estiver com deslocamento reduzido por qualquer fonte, o golpe causa +1d6 de Dano de Concussão."
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Redemoinho de Raízes Duplas",
+            "nome_romaji": "San no Kata: Futae Ne no Uzumaki",
+            "kanji": "三の型・二重根の渦巻き",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Cortante",
+            "funcao": "Controle em área pequena",
+            "descricao": "O usuário gira com a lâmina baixa, liberando cortes rente ao solo. Faça uma única rolagem de ataque contra todos os inimigos na área. Cada inimigo se defende individualmente. Esta Forma não afeta aliados.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d6", "area": "Raio de 3m", "custo": "3 PDR" },
+                { "nivel": 2, "dano": "4d6", "area": "Raio de 3m", "custo": "4 PDR" },
+                { "nivel": 3, "dano": "5d6", "area": "Raio de 3m", "custo": "5 PDR" },
+                { "nivel": 4, "dano": "6d6", "area": "Raio de 4,5m", "custo": "6 PDR" }
+            ],
+            "resultado_teste_vit": {
+                "falha": "Ficam Derrubados.",
+                "sucesso": "Sofrem apenas o dano."
+            },
+            "bonus_condicional": "Se pelo menos um inimigo for Derrubado, o usuário ganha +1 Raiz."
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Salto da Raiz Profunda",
+            "nome_romaji": "Shi no Kata: Shin no Ne",
+            "kanji": "四の型・真の根",
+            "tipo_manobra": "Movimento",
+            "funcao": "Reposicionamento protetor",
+            "descricao": "A Ameixeira não se move para fugir. Ela se move para estar onde precisa proteger. Esta é a única Forma de movimento que não zera as Raízes acumuladas.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "movimento": "9m",
+                    "efeito_no_pouso": "Inimigos adjacentes sofrem -1 no próximo ataque",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "movimento": "12m",
+                    "efeito_no_pouso": "Inimigos adjacentes sofrem -2 no próximo ataque",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "movimento": "15m",
+                    "efeito_no_pouso": "Igual + aliados adjacentes recebem +1 Defesa",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "movimento": "18m",
+                    "efeito_no_pouso": "Igual + usuário ganha 1 Raiz ao pousar próximo de aliado",
+                    "custo": "5 PDR"
+                }
+            ],
+            "efeitos_adicionais": [
+                "Ignora terreno difícil durante o salto.",
+                "Deve terminar o movimento adjacente a um aliado, inimigo ou ponto estratégico definido pelo Mestre.",
+                "Não zera as Raízes."
+            ]
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Emaranhado de Mil Raízes",
+            "nome_romaji": "Go no Kata: Sen no Ne no Motsure",
+            "kanji": "五の型・千の根の縺れ",
+            "tipo_manobra": "Especial",
+            "funcao": "Prender inimigos",
+            "descricao": "O usuário finca a arma no chão e faz raízes espirituais prenderem os pés dos inimigos.",
+            "niveis": [
+                { "nivel": 1, "alvos": "1 alvo a até 6m", "custo": "2 PDR" },
+                { "nivel": 2, "alvos": "2 alvos a até 6m", "custo": "3 PDR" },
+                { "nivel": 3, "alvos": "3 alvos a até 9m", "custo": "4 PDR" },
+                { "nivel": 4, "alvos": "Todos os inimigos em raio de 4,5m", "custo": "6 PDR" }
+            ],
+            "resultado_teste_vit": {
+                "falha": "Fica Enraizado por 1 turno.",
+                "sucesso": "Deslocamento reduzido em 1,5m até o fim do próximo turno."
+            },
+            "bonus_condicional": "Se pelo menos um inimigo ficar Enraizado, o usuário ganha +1 Raiz."
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Esmagamento Gêmeo",
+            "nome_romaji": "Roku no Kata: Sōgo Assatsu",
+            "kanji": "六の型・双合圧殺",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Concussão",
+            "funcao": "Quebrar defesa",
+            "descricao": "Dois golpes pesados em sequência, feitos para abrir guarda. Faça dois testes de ataque separados.",
+            "niveis": [
+                { "nivel": 1, "dano_por_golpe": "2d6", "custo": "3 PDR" },
+                { "nivel": 2, "dano_por_golpe": "3d6", "custo": "4 PDR" },
+                { "nivel": 3, "dano_por_golpe": "4d6", "custo": "5 PDR" },
+                { "nivel": 4, "dano_por_golpe": "5d6", "custo": "6 PDR" }
+            ],
+            "quebra_guarda": {
+                "descricao": "Se o primeiro ataque for defendido com Bloqueio, o segundo ataque ignora bônus de escudo, postura defensiva ou técnica que aumente Bloqueio.",
+                "efeito_ambos_golpes": "Se ambos os golpes acertarem, o alvo sofre -2 em Bloqueio até o início do próximo turno dele."
+            }
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Tempestade de Pétalas Cortantes",
+            "nome_romaji": "Shichi no Kata: Hanabira no Arashi",
+            "kanji": "七の型・花弁の嵐",
+            "tipo_manobra": "Reação",
+            "gatilho": "Ser alvo de um ataque corpo a corpo ou proteger aliado adjacente",
+            "tipo_de_dano": "Cortante",
+            "funcao": "Defesa punitiva",
+            "descricao": "O usuário gira a lâmina e cria um domo de cortes em forma de pétalas.",
+            "niveis": [
+                { "nivel": 1, "bonus_defesa": "+2", "dano_no_atacante": "2d4", "custo": "3 PDR" },
+                { "nivel": 2, "bonus_defesa": "+3", "dano_no_atacante": "2d6", "custo": "4 PDR" },
+                { "nivel": 3, "bonus_defesa": "+5", "dano_no_atacante": "2d8", "custo": "5 PDR" },
+                { "nivel": 4, "bonus_defesa": "+7", "dano_no_atacante": "2d10", "custo": "6 PDR" }
+            ],
+            "observacao": "O dano no atacante só ocorre se o ataque inimigo errar por causa do bônus desta Reação. Se o usuário proteger um aliado com esta Forma e o ataque errar, ganha +1 Raiz."
+        },
+        {
+            "forma": 8,
+            "nome_pt": "Perfurador de Solo",
+            "nome_romaji": "Hachi no Kata: Tsuchi Ugachi",
+            "kanji": "八の型・土穿ち",
+            "tipo_manobra": "Ataque",
+            "tipo_de_dano": "Perfurante",
+            "funcao": "Punir alvo travado",
+            "descricao": "Uma estocada baixa e ascendente que perfura por baixo da guarda. Ignora Resistência ou Redução de Dano fornecida por armadura.",
+            "niveis": [
+                { "nivel": 1, "dano": "2d8 + FDV", "custo": "2 PDR" },
+                { "nivel": 2, "dano": "3d8 + FDV", "custo": "3 PDR" },
+                { "nivel": 3, "dano": "4d8 + FDV", "custo": "4 PDR" },
+                { "nivel": 4, "dano": "5d8 + FDV", "custo": "5 PDR" }
+            ],
+            "bonus_condicional": "Se o alvo estiver Enraizado, Derrubado ou com deslocamento reduzido, o ataque recebe +2 no acerto.",
+            "raiz_no_ponto_vital": "Ao declarar esta Forma, o usuário pode gastar 2 Raízes. Se o ataque acertar, ele é considerado crítico automático."
+        },
+        {
+            "forma": 9,
+            "nome_pt": "Colheita de Raízes Vermelhas",
+            "nome_romaji": "Ku no Kata: Akai Ne no Shūkaku",
+            "kanji": "九の型・赤い根の収穫",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Concussão",
+            "funcao": "Drenagem e cura em área",
+            "descricao": "Raízes vermelhas emergem em cone, ferindo inimigos e convertendo o impacto em vigor para aliados. Faça uma única rolagem de ataque contra todos os inimigos no cone. Cada inimigo se defende individualmente.",
+            "niveis": [
+                { "nivel": 1, "dano": "3d6 + FDV", "area": "Cone de 4,5m", "custo": "5 PDR" },
+                { "nivel": 2, "dano": "4d6 + FDV", "area": "Cone de 4,5m", "custo": "6 PDR" },
+                { "nivel": 3, "dano": "5d6 + FDV", "area": "Cone de 6m", "custo": "7 PDR" },
+                { "nivel": 4, "dano": "6d6 + FDV", "area": "Cone de 6m", "custo": "8 PDR" }
+            ],
+            "cura": {
+                "descricao": "Para cada inimigo atingido, o usuário escolhe um aliado dentro do cone para recuperar 2 PDV por Nível de Respiração.",
+                "limite": "Um mesmo aliado pode receber essa cura mais de uma vez, até o máximo de FDV + VIT do usuário."
+            },
+            "observacoes": [
+                "Inimigos atingidos não podem recuperar PDV até o início do próximo turno deles.",
+                "Se atingir 2 ou mais inimigos, o usuário ganha +1 Raiz."
+            ]
+        },
+        {
+            "forma": 10,
+            "nome_pt": "Chuva de Néctar Curativo",
+            "nome_romaji": "Jū no Kata: Kanro no Ame",
+            "kanji": "十の型・甘露の雨",
+            "tipo_manobra": "Especial",
+            "funcao": "Cura direta",
+            "descricao": "O usuário espalha uma energia suave que fecha feridas e estabiliza o corpo de um aliado.",
+            "alcance": "Aliado adjacente",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "cura": "2d6 + FDV",
+                    "efeito_adicional": "Remove Sangramento",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "cura": "3d6 + FDV",
+                    "efeito_adicional": "Remove Sangramento ou Envenenamento",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "cura": "4d6 + FDV",
+                    "efeito_adicional": "Igual + remove Amedrontado",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "cura": "5d6 + FDV",
+                    "efeito_adicional": "Igual + remove 1 nível de Exaustão uma vez por combate",
+                    "custo": "6 PDR"
+                }
+            ],
+            "bonus_opcional": "O usuário pode gastar 1 Raiz para aumentar a cura em +CAR.",
+            "restricao": "Esta Forma não pode restaurar Dano de Ferida, Dano Necrótico, membros perdidos ou perda permanente de atributo."
+        },
+        {
+            "forma": 11,
+            "nome_pt": "Pomar Eterno",
+            "nome_romaji": "Jū Ichi no Kata: Eien no Kajuen",
+            "kanji": "十一の型・永遠の果樹園",
+            "tipo_manobra": "Completa",
+            "duracao": "3 rodadas",
+            "funcao": "Zona de proteção",
+            "descricao": "O usuário cria uma rede de raízes espirituais ao redor do campo.",
+            "condicoes_de_termino": [
+                "Mover-se voluntariamente mais de 1,5m.",
+                "Ficar Inconsciente.",
+                "Ficar Atordoado.",
+                "Sofrer dano igual ou maior que metade do próprio PDV máximo em um único golpe."
+            ],
+            "niveis": [
+                { "nivel": 1, "area": "Raio de 3m", "custo": "5 PDR + 1 Raiz" },
+                { "nivel": 2, "area": "Raio de 4,5m", "custo": "6 PDR + 1 Raiz" },
+                { "nivel": 3, "area": "Raio de 6m", "custo": "7 PDR + 2 Raízes" },
+                { "nivel": 4, "area": "Raio de 9m", "custo": "8 PDR + 2 Raízes" }
+            ],
+            "efeitos_do_pomar": {
+                "aliados_dentro_da_area": [
+                    "Redução de Dano 2 contra dano físico.",
+                    "+1 em Defesa.",
+                    "Imunidade ao status Amedrontado."
+                ],
+                "inimigos_dentro_da_area": [
+                    "Terreno difícil.",
+                    "-1 em ataques contra alvos que não sejam o usuário da Ameixeira."
+                ],
+                "nivel_4": "A Redução de Dano dos aliados aumenta para 3."
+            }
+        },
+        {
+            "forma": 12,
+            "nome_pt": "Colheitora de Raízes Ancestrais",
+            "nome_romaji": "Jū Ni no Kata: Kodai Ne no Karite",
+            "kanji": "十二の型・古代根の刈り手",
+            "tipo_manobra": "Completa",
+            "tipo_de_dano": "Concussão",
+            "requisito": "5 Raízes acumuladas",
+            "custo": "9 PDR + 5 Fôlego de Combate + consome todas as Raízes",
+            "funcao": "Controle máximo de área",
+            "descricao": "Raízes ancestrais emergem do solo e esmagam todos os inimigos próximos. Faça uma única rolagem de ataque contra todos os inimigos na área. Cada inimigo se defende individualmente.",
+            "niveis": [
+                { "nivel": 1, "dano": "Não é possível usar", "area": null },
+                { "nivel": 2, "dano": "5d10 + FDV", "area": "Raio de 4,5m" },
+                { "nivel": 3, "dano": "7d10 + FDV", "area": "Raio de 6m" },
+                { "nivel": 4, "dano": "9d10 + FDV", "area": "Raio de 7,5m" }
+            ],
+            "resultado_teste_vit": {
+                "falha": "Ficam Paralisados por 1 turno.",
+                "sucesso": "Ficam Enraizados por 1 turno."
+            },
+            "florescimento_final": "Depois da resolução da técnica, o usuário escolhe até 3 aliados dentro da área. Cada aliado escolhido recupera 2d6 + FDV de PDV.",
+            "rebote": "Após usar esta Forma, o usuário sofre 1 nível de Exaustão. Além disso, não pode ganhar Raízes até o fim do próximo turno."
+        }
+    ],
+    "sinergias": {
+        "respiracao_da_nevasca_vinculo_das_irmas": "A Nevasca cria pressão móvel. A Ameixeira cria proteção fixa. Quando a Nevasca atingir 5 Cristais, a Ameixeira pode usar Proteção da Tempestade conforme descrito no Vínculo das Irmãs. Quando a Ameixeira curar a Nevasca, a cura recebe +FDV.",
+        "respiracao_da_agua": "Quando um usuário da Água estiver dentro do Pomar Eterno, ele pode gastar 1 PDR ao usar uma Reação defensiva. Se fizer isso, recebe +1 em Bloqueio ou Esquiva.",
+        "respiracao_das_flores": "Quando um usuário das Flores atingir um inimigo Enraizado pela Ameixeira, pode escolher um: causar +1d6 de Dano Cortante; remover 1 status menor de um aliado adjacente; ganhar +1 no próximo teste de CAR. Esse efeito ocorre no máximo 1 vez por turno.",
+        "respiracao_da_neve": "Contra inimigos Enraizados pela Ameixeira, técnicas da Neve recebem +2 no acerto."
+    },
+    "notas_de_balanceamento": [
+        "A Ameixeira é suporte, não explosão. Ela tem dano suficiente para funcionar, mas seu valor principal está em: proteger aliados; reduzir dano; curar durante combate; impedir deslocamento inimigo; criar zonas seguras.",
+        "Movimento é o custo real. A Respiração inteira depende de permanecer firme. Mover-se mais de 1,5m sem usar a 4ª Forma zera as Raízes. Isso impede que a Ameixeira vire suporte móvel sem fraqueza.",
+        "A cura é média e limitada. A cura da Ameixeira é confiável, mas não faz milagres. Ela não restaura: Dano de Ferida; Dano Necrótico; membros perdidos; atributos permanentes; morte definitiva.",
+        "Raízes são recurso defensivo e ofensivo. Gastar Raízes permite curar melhor, garantir crítico ou ativar técnicas fortes. Mas gastar demais atrasa o Florescer Invernal e impede a 12ª Forma.",
+        "A 12ª Forma é o botão de sacrifício. Ela exige: 5 Raízes; PDR alto; Fôlego de Combate; Ação Completa; Exaustão; perda temporária da capacidade de gerar Raízes. O efeito é forte porque o custo é real."
+    ],
+    "resumo_mecanico": [
+        { "elemento": "Raízes", "funcao": "Recurso interno defensivo" },
+        { "elemento": "Solo Sagrado", "funcao": "Recompensa ficar parado" },
+        { "elemento": "Interposição", "funcao": "Proteção posicional" },
+        { "elemento": "Compartilhar Vigor", "funcao": "Cura leve por Raiz" },
+        { "elemento": "Pomar Eterno", "funcao": "Zona defensiva" },
+        { "elemento": "Colheitora de Raízes", "funcao": "Controle máximo e cura em área" },
+        { "elemento": "Fraqueza principal", "funcao": "Ser forçado a se mover" }
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "name": "Audição Sobrenatural",
+    "rollRange": "37-47",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Ouvido Absoluto",
+            "effect": "+2 Percepção auditiva, +2 em testes sociais por voz (mentira, intenção, medo, hesitação). Percebe inimigos invisíveis/ocultos pelo som até 9m (direção aproximada)."
+        },
+        {
+            "level": 6,
+            "name": "Escuta do Espírito",
+            "effect": "Bônus sobe pra +3/+3. 1x/cena, ouve a condição espiritual de uma criatura (ferida, mentindo, amedrontada, prestes a atacar, Oni preparando Kekkijutsu audível, aliado quase sem PDR)."
+        },
+        {
+            "level": 12,
+            "name": "Frequência do Medo",
+            "effect": "Detecção sobe pra 18m. 1x/combate, ao ouvir um ataque contra você ou aliado, usa Reação: +3 na Defesa contra esse ataque. Pode gastar 1 PDR pra estender Amedrontado em +1 rodada. Custo: Dano Sonoro causa +1d4 contra você; ambientes muito ruidosos podem dar Desvantagem em SAB/INT/CAR."
+        }
+    ]
+}

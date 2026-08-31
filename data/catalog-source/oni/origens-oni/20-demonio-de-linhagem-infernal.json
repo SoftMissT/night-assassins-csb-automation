@@ -1,0 +1,21 @@
+{
+    "number": 20,
+    "name": "Demônio de Linhagem Infernal",
+    "description": "Você não é apenas um Oni. Sua transformação organizou a fome em pacto, hierarquia e linhagem infernal. Você enxerga aliados como membros de uma casa. Inimigos como peças fora do tabuleiro. E o campo de batalha como um salão onde sua autoridade deve ser reconhecida.",
+    "pdv": "21 + VIT",
+    "pdk": "20 + (FDV * 3)",
+    "passive": {
+        "name": "Casa Infernal",
+        "description": "No início do combate, escolha 1 aliado a até 9m. Esse aliado se torna sua Peça Infernal. Uma vez por rodada, quando sua Peça Infernal acertar uma criatura que você já atacou neste combate, ela causa +1 de dano. Se a Peça Infernal for Oni, servo, familiar, criatura pactuada ou subordinado direto, o bônus aumenta para +2 de dano. Você só pode ter 1 Peça Infernal por vez. Se a Peça Infernal cair a 0 PDV, você pode escolher outra no início do seu próximo turno."
+    },
+    "abilities": [
+        {
+            "name": "Ordem da Peça",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "target": "sua Peça Infernal",
+            "description": "Você fortalece a função da sua Peça Infernal até o início do seu próximo turno. Escolha um efeito: a Peça recebe +2 na próxima rolagem de acerto; a Peça recebe +2 na próxima Esquiva ou Bloqueio; a Peça pode se mover 3m sem gerar Ataque de Oportunidade. Esta habilidade não concede ação extra. Ela apenas fortalece ou reposiciona sua Peça Infernal."
+        }
+    ]
+}

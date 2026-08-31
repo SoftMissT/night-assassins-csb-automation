@@ -1,0 +1,26 @@
+{
+    "name": "Corsário",
+    "subtitle": "Bandeira Negra",
+    "quote": "Honra não para sangramento. Areia nos olhos sim.",
+    "description": "O Corsário não veio de academia, clã ou mestre. Veio de conveses ensanguentados, apostas ruins e noites em que sobreviver valia mais do que lutar bonito. Ele não é necessariamente o mais forte, o mais rápido ou o mais técnico. Ele é o mais disposto a transformar qualquer abertura em vantagem. O Corsário luta com armas curtas, lâminas leves, armas improvisadas, pistolas especiais da mesa, correntes, cordas, ganchos e qualquer coisa que possa virar ameaça antes que o inimigo perceba.",
+    "attributes": {
+        "pdv": "14 + VIT",
+        "pdr": "7 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Jūken-Ryū — A Arte do Golpe Sujo",
+            "level": 1,
+            "description": "Uma vez por turno, quando acertar um ataque corpo a corpo com uma arma curta, leve, flexível, improvisada ou ataque desarmado, você pode reduzir parte do dano causado para aplicar um Golpe Sujo. Escolha um dos efeitos: Areia nos Olhos (reduza o dano em 2; o alvo sofre -2 no próximo teste de ataque que fizer até o fim do próximo turno dele); Joelhada Baixa (reduza o dano em 1; o deslocamento do alvo é reduzido em 3m até o fim do próximo turno dele); Cotovelada no Plexo (reduza o dano em 3; o alvo não pode usar Reações até o fim do próximo turno dele); Cabeçada (reduza o dano em 3; o alvo faz um teste de resistência física contra CD 10 + FOR, em falha fica Cambaleante até o fim do próximo turno dele); Cambaleante (o alvo sofre -2 na Defesa). Golpe Sujo não funciona contra criaturas sem anatomia vulnerável, sem sistema nervoso reconhecível ou que sejam imunes narrativamente ao tipo de interferência aplicada. Esta habilidade não se aplica a Técnicas de Respiração."
+        },
+        {
+            "name": "Pólvora",
+            "level": 6,
+            "description": "Você aprende a transformar caos, dor e oportunidade em pressão de combate. No início de cada combate, sua Pólvora começa em 0. Você pode acumular até 3 cargas de Pólvora. Você ganha 1 carga de Pólvora quando: aplica um Golpe Sujo com sucesso; sofre dano de um inimigo, no máximo uma vez por rodada; reduz um inimigo a 0 PDV. Uma vez por rodada, como Ação Livre, você pode gastar Pólvora para escolher um efeito: 1 Pólvora — Aposta Rápida (role novamente um teste que você acabou de fazer; o segundo resultado é obrigatório e deve ser usado antes do Mestre narrar as consequências); 2 Pólvoras — Canhão Curto (seu próximo ataque corpo a corpo neste turno causa +1d6 de dano); 3 Pólvoras — Tudo ou Nada (após acertar um ataque corpo a corpo, cause +1d6 de dano adicional e empurre o alvo 3m; se o alvo colidir com uma parede, objeto sólido ou outra criatura, ele sofre mais 1d4 de dano contundente). Toda Pólvora não utilizada é perdida ao fim do combate."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 3
+    }
+}

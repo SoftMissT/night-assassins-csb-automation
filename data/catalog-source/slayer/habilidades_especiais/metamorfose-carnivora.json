@@ -1,0 +1,21 @@
+{
+    "name": "Metamorfose Carnívora",
+    "rollRange": "70-80",
+    "levels": [
+        {
+            "level": 1,
+            "name": "Dentes da Fera",
+            "effect": "Ação de Ataque: 1d20 + FOR ou DEX pra morder um alvo adjacente. Acerto causa 1d4 + FOR de dano Perfurante. Se morder um Oni e causar dano: consome carne demoníaca, ganha +1 numa Característica à escolha até o fim do combate, e Resistência a Envenenamento por 1h. Não acumula no mesmo combate."
+        },
+        {
+            "level": 6,
+            "name": "Assimilação",
+            "effect": "Mordida sobe pra 1d6 + FOR. Ao morder Oni e causar dano, além do bônus de Característica, absorve 1 propriedade demoníaca por 3 rodadas (escolha uma): Força (+2 dano físico), Regeneração (recupera 2 PDV no início do turno), Carapaça (RD 2 contra dano físico) ou Instinto (+1 Acerto contra o Oni mordido). Só mantém uma ativa por vez."
+        },
+        {
+            "level": 12,
+            "name": "Roubo de Sangue",
+            "effect": "Mordida sobe pra 1d8 + FOR. 1x/sessão, ao morder Oni poderoso e causar dano: teste VIT CD 18; sucesso = usa uma habilidade básica do Kekkijutsu desse Oni até o fim da cena (aprovação do Mestre; não pode copiar habilidade central demais, instantaneamente letal, invulnerabilidade, Paralisia automática ou regeneração completa; custo em PDV). Falha = 1d8 de dano Necrótico. Maldição: com sangue intenso em combate, ou ao usar a Mordida contra Oni, teste SAB CD 14 (CD 16 no Nível 3); falha obriga a atacar o alvo sangrando/demoníaco mais próximo."
+        }
+    ]
+}

@@ -1,0 +1,311 @@
+{
+    "titulo": "Respiração das Flores",
+    "aliases": ["Flower Breathing", "Hana no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "estilo": 1,
+            "nome_pt": "Sementes Acopladas / Crescimento Desenfreado",
+            "nome_romaji": "Ichi no Kata Ketsugō sa reta Shushi",
+            "tipo_manobra": "Especial",
+            "descricao": "Quando acerta um inimigo com ataque padrão ou técnica de ataque, pode gastar 1 PDR para acoplar uma semente ao alvo. São 3 tipos disponíveis. O máximo é uma semente por acerto bem-sucedido; após acertar, você decide automaticamente se planta ou não, sem rolagem.",
+            "eclosao": "A qualquer momento após o turno em que foi plantada, pode gastar uma Ação de Ataque para fazer as sementes desabrocharem. O custo de PDR da ativação = número de sementes ativadas (ex.: ativar 2 de 3 plantadas custa 2 PDR). Se receber uma Ação Especial extra por Sinergia de outra Respiração, pode eclodir uma única semente usando essa Ação Especial ao invés da Ação de Ataque.",
+            "tipos_de_semente": [
+                {
+                    "tipo": 1,
+                    "nome": "Cipó Florido",
+                    "duracao": "Número de turnos igual ao CAR do usuário",
+                    "efeitos_acumulativos": [
+                        { "sementes": 1, "efeito": "Esquivas do alvo reduzidas em −2" },
+                        {
+                            "sementes": 2,
+                            "efeito": "Anterior + Desvantagem em qualquer técnica ou ataque usando Ação de Ataque padrão"
+                        },
+                        {
+                            "sementes": 3,
+                            "efeito": "Anterior + Restrição de Movimentos (impossibilita Ação de Movimento)"
+                        },
+                        {
+                            "sementes": 4,
+                            "efeito": "Status Atordoado; deve gastar sua Ação Completa para escapar testando FOR (C.D. 17); falha: efeito persiste no próximo turno. Encerra automaticamente ao fim da duração"
+                        }
+                    ]
+                },
+                {
+                    "tipo": 2,
+                    "nome": "Espinhos Sufocantes",
+                    "duracao": "Enquanto os espinhos estiverem acoplados",
+                    "efeitos_acumulativos": [
+                        {
+                            "sementes": 1,
+                            "efeito": "Ao eclodir: 1d6 de dano perfurante + 1d4 por turno enquanto acoplado. Para retirar: teste de FOR (C.D. 13)"
+                        },
+                        { "sementes": 2, "efeito": "Anterior + dano ao eclodir passa a 2d6" },
+                        {
+                            "sementes": 3,
+                            "efeito": "Anterior + adicione o modificador de SAB à C.D. de retirada dos espinhos"
+                        },
+                        {
+                            "sementes": 4,
+                            "efeito": "Alvo sufoca preso pelos espinhos até o pescoço. No 1º turno: 3d6 de dano + teste de VIT (C.D. 13 + SAB do usuário); falha: perde regeneração de PDV por 3 turnos. A partir do 2º turno: 3d4 de dano + teste de FOR (C.D. 12 + FDV do usuário) para se libertar; ao retirar: 2d4 de dano, mas fica imune à técnica pelas 12 horas seguintes"
+                        }
+                    ]
+                },
+                {
+                    "tipo": 3,
+                    "nome": "Girassol Atordoante",
+                    "duracao": "Número de turnos igual à FDV do usuário",
+                    "efeitos_acumulativos": [
+                        {
+                            "sementes": 1,
+                            "efeito": "O calor afeta os sentidos do alvo: −2 nas rolagens de acerto dele"
+                        },
+                        {
+                            "sementes": 2,
+                            "efeito": "Anterior + todo turno o alvo testa VIT (C.D. 8 + SAB + FDV do usuário); falha: perde as Ações de Ataque e Movimento (vômito pelo calor)"
+                        },
+                        {
+                            "sementes": 3,
+                            "efeito": "Anterior + a penalidade de −2 também se aplica às rolagens de defesa do alvo"
+                        },
+                        {
+                            "sementes": 4,
+                            "efeito": "Anterior + a C.D. do teste de VIT aumenta em +2"
+                        }
+                    ]
+                }
+            ],
+            "regras_gerais_das_sementes": [
+                "Pode eclodir mais de um tipo de semente simultaneamente, desde que pague os custos por semente.",
+                "Se o usuário for mestre de um único tipo, suas sementes podem aplicar CAR como dano de veneno uma vez por Ação de Ataque ao eclodirem. O veneno dura 2 turnos do inimigo."
+            ]
+        },
+        {
+            "estilo": 2,
+            "nome_pt": "Espírito Divino de Umê",
+            "nome_romaji": "Ni no Kata Mikage Ume",
+            "tipo_manobra": "Especial",
+            "descricao": "Uma técnica de ataque que concede defesa, usando uma série de golpes rotativos.",
+            "versao_principal_acao_especial": {
+                "niveis": [
+                    {
+                        "nivel": 1,
+                        "penalidade_ataque": "−2",
+                        "bonus_esquiva_ou_bloqueio": "+2",
+                        "custo": "1 PDR"
+                    },
+                    {
+                        "nivel": 2,
+                        "penalidade_ataque": "−2",
+                        "bonus_esquiva_ou_bloqueio": "+3",
+                        "custo": "1 PDR"
+                    },
+                    {
+                        "nivel": 3,
+                        "penalidade_ataque": "−3",
+                        "bonus_esquiva_ou_bloqueio": "+4",
+                        "custo": "2 PDR"
+                    },
+                    {
+                        "nivel": 4,
+                        "penalidade_ataque": "−3",
+                        "bonus_esquiva_ou_bloqueio": "+5",
+                        "custo": "2 PDR"
+                    }
+                ],
+                "eclosao_por_defesa_bem_sucedida": "Se utilizar esta técnica e for bem-sucedido em uma esquiva ou bloqueio usando o bônus ganho, pode gastar 1 PDR para eclodir uma única semente à sua escolha acoplada no inimigo, como uma Reação."
+            },
+            "variacao_de_reacao": {
+                "observacao": "Anunciada antes da rolagem de acerto do inimigo; não permite ativar sementes.",
+                "niveis": [
+                    { "nivel": "1–2", "bonus_esquiva_ou_bloqueio": "+3", "custo": "4 PDR" },
+                    { "nivel": "3–4", "bonus_esquiva_ou_bloqueio": "+4", "custo": "4 PDR" }
+                ]
+            }
+        },
+        {
+            "estilo": 3,
+            "nome_pt": "Farpas Mortais",
+            "nome_romaji": "San no Kata Chimei-tekina Hahen",
+            "tipo_manobra": "Especial",
+            "custo_fixo": "1 PDR",
+            "descricao": "Lança farpas com espinhos contra o inimigo. O dano base é 1d4 por acerto, com +1d4 extra por Nível de Respiração acima do 1.",
+            "variacoes": [
+                {
+                    "variacao": "Corpo a Corpo",
+                    "aplicacao": "Realiza um ataque à distância com a Ação de Ataque neste turno, causando 1d4 (+1d4/nível acima do 1) de dano adicional"
+                },
+                {
+                    "variacao": "À Distância",
+                    "aplicacao": "Ao atingir o alvo com um projétil, farpas explodem causando o mesmo dano adicional"
+                }
+            ],
+            "combo_antecedente_tsuguko": {
+                "descricao": "Ao acertar um ataque padrão buffado com esta técnica, pode gastar uma Ação Única livre para declarar outro ataque padrão que considera o mesmo buff (custo: +1 PDR). Para este novo ataque, a rolagem é acerto padrão + CAR.",
+                "bonus": "Se acertar, pode gastar 5 PDR para aplicar automaticamente 2 sementes de um único tipo (à sua escolha) do 1º Estilo; as sementes desabrocham imediatamente ao serem implantadas."
+            }
+        },
+        {
+            "estilo": 4,
+            "nome_pt": "Manto de Cártamo",
+            "nome_romaji": "Shi no Kata Benihana Goromo",
+            "tipo_manobra": "Única",
+            "descricao": "Um único golpe que se curva e torce imitando um manto. Pode usar a 1ª variação, a 2ª, ou ambas (pagando os custos de cada uma).",
+            "corpo_a_corpo": [
+                {
+                    "variacao": "1ª",
+                    "efeito": "+2 na rolagem de acerto no Ataque Padrão ou Técnica de Ataque neste turno. Não é efeito de contato aplicável mais de uma vez por ação",
+                    "custo": "1 PDR"
+                },
+                {
+                    "variacao": "2ª",
+                    "efeito": "Inimigo testa FOR Bruta contra C.D. 8 + DEX + SAB do usuário; falha: cai no chão (levantar custa uma Ação de Ataque)",
+                    "custo": "2 PDR"
+                }
+            ],
+            "a_distancia": [
+                {
+                    "variacao": "1ª",
+                    "efeito": "Fertilizante: ao errar um ataque, força o alvo a testar Esquiva (C.D. 10 + DEX + SAB do usuário); falha: 1d6 de dano (explosão de fertilizantes de glicínia)",
+                    "custo": "1 PDR"
+                },
+                {
+                    "variacao": "2ª",
+                    "efeito": "+2 na rolagem de acerto no Ataque Padrão ou Técnica de Ataque neste turno. Não é efeito de contato aplicável mais de uma vez por ação",
+                    "custo": "1 PDR"
+                }
+            ]
+        },
+        {
+            "estilo": 5,
+            "nome_pt": "Peônias da Futilidade",
+            "nome_romaji": "Go no Kata Ada no Shukuyaku",
+            "tipo_manobra": "Ataque",
+            "descricao": "Uma enxurrada de nove ataques graciosos e consecutivos que fluem e entrelaçam-se entre si. Os ataques permitem aplicar efeitos de contato mais de uma vez durante sua execução. Sementes do 1º Estilo podem ser aplicadas a cada acerto, mas não podem ser eclodidas neste mesmo turno.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 2, "efeito": "Não é possível usar!", "custo": null },
+                { "nivel": 3, "efeito": "9 ataques com vantagem nos 3 últimos", "custo": "8 PDR" },
+                { "nivel": 4, "efeito": "9 ataques com vantagem nos 5 últimos", "custo": "9 PDR" }
+            ]
+        },
+        {
+            "estilo": 6,
+            "nome_pt": "Pêssego de Roda",
+            "nome_romaji": "Roku no Kata Uzumono",
+            "tipo_manobra": "Reação",
+            "custo": "1 PDR por uso",
+            "descricao": "Ao se defender com sucesso de um ataque (passando em rolagem de esquiva ou bloqueio), gira em torno do próprio peso para efetuar um único ataque de oportunidade.",
+            "limite_de_usos": "Pode ser usado um número de vezes por reação igual ao seu CAR. Exemplo: inimigo declara 5 ataques, CAR = 3 → se evadir de 3, pode realizar até 3 ataques de oportunidade.",
+            "semente_gratuita_por_critico": "Se obtiver um acerto crítico como ataque de oportunidade com esta técnica, pode aplicar 1 semente de qualquer tipo sem pagar o custo de 1 PDR para acoplar. Limitado a uma vez por uso do 6º Estilo."
+        },
+        {
+            "estilo": 7,
+            "nome_pt": "Beleza Escondida nas Rosas",
+            "nome_romaji": "Shichi no Kata Bara no Utsukushi-sa",
+            "tipo_manobra": "Ataque",
+            "custo": "1 PDR",
+            "descricao": "Faz um teste de CAR vs. SAB do inimigo. Se passar, o alvo fica Encantado.",
+            "tabela_contexto": [
+                { "contexto": "Fora do combate", "rolagem": "Teste de CAR com vantagem" },
+                { "contexto": "Durante o combate", "rolagem": "Teste de CAR padrão (sem vantagem)" }
+            ],
+            "status_encantado": "O alvo torna-se amigável por 3 turnos. Onis tendem a fugir ou não atacar; humanos ficam atraídos pelo usuário. O primeiro ataque contra o alvo encantado tem vantagem, mas o charme é quebrado ao acertar, e o alvo torna-se imune a este estilo permanentemente (apenas para o usuário que o utilizou contra ele)."
+        },
+        {
+            "estilo": "Final",
+            "nome_pt": "Olhos de Lírios Escarlates Equinociais",
+            "nome_romaji": "Tsui no Kata Higan Shugan",
+            "tipo_manobra": "Única",
+            "descricao": "O usuário leva sua visão cinética ao limite; sua percepção do tempo muda, tudo ao redor parece mais devagar. A pressão rompe os vasos sanguíneos dos olhos, fazendo-os sangrar e ficar vermelhos. Ao final da técnica, pode causar cegueira parcial ou total.",
+            "beneficios_enquanto_ativa": {
+                "duracao": "1 a 10 turnos",
+                "efeitos": [
+                    "+1 Ação adicional por turno (Ataque, Especial, Única, Movimento ou Reação, à sua escolha)",
+                    "+3 em rolagens de Esquiva",
+                    "+3m de deslocamento",
+                    "Vantagem em testes de Destreza que não sejam rolagens de ataque ou defesa",
+                    "Imunidade a dano de queda",
+                    "Vantagem nos primeiros 2 ataques após ativar"
+                ]
+            },
+            "maleficios_por_turno_de_uso_continuo": [
+                {
+                    "turno_ativo": 1,
+                    "chance_cegueira_total": "15%",
+                    "chance_cegueira_parcial": "50%",
+                    "exaustao": "1 ponto",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 2,
+                    "chance_cegueira_total": "20%",
+                    "chance_cegueira_parcial": "55%",
+                    "exaustao": "1 ponto",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 3,
+                    "chance_cegueira_total": "22%",
+                    "chance_cegueira_parcial": "60%",
+                    "exaustao": "2 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 4,
+                    "chance_cegueira_total": "28%",
+                    "chance_cegueira_parcial": "80%",
+                    "exaustao": "3 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 5,
+                    "chance_cegueira_total": "33%",
+                    "chance_cegueira_parcial": "100%",
+                    "exaustao": "3 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 6,
+                    "chance_cegueira_total": "36%",
+                    "chance_cegueira_parcial": "100%",
+                    "exaustao": "3 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 7,
+                    "chance_cegueira_total": "36%",
+                    "chance_cegueira_parcial": "100%",
+                    "exaustao": "4 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 8,
+                    "chance_cegueira_total": "50%",
+                    "chance_cegueira_parcial": "100%",
+                    "exaustao": "4 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 9,
+                    "chance_cegueira_total": "80%",
+                    "chance_cegueira_parcial": "100%",
+                    "exaustao": "4 pontos",
+                    "efeito_extra": null
+                },
+                {
+                    "turno_ativo": 10,
+                    "chance_cegueira_total": "100%",
+                    "chance_cegueira_parcial": "100%",
+                    "exaustao": "4 pontos",
+                    "efeito_extra": "Teste de VIT (C.D. 19); falha: cai para 0 PDV"
+                }
+            ],
+            "efeitos_de_cegueira": {
+                "cegueira_total": "−5 em rolagens de acerto, percepção e qualquer teste de Destreza.",
+                "cegueira_parcial": "−2 em rolagens de acerto, percepção e Destreza."
+            }
+        }
+    ]
+}

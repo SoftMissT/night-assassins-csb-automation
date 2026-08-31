@@ -1,0 +1,26 @@
+{
+    "name": "Ninja",
+    "subtitle": "A Sombra Silenciosa",
+    "quote": "Você não precisa ser mais forte. Você precisa que ele nunca saiba que você estava lá.",
+    "description": "O Ninja não compete em força. Compete em informação. Ele controla quando o combate começa, de onde vem o primeiro golpe e quanto tempo o inimigo demora para entender o que aconteceu. Quando a sombra decide se revelar, o que vem não é silêncio. É espetáculo.",
+    "attributes": {
+        "pdv": "13 + VIT",
+        "pdr": "14 + FDV"
+    },
+    "abilities": [
+        {
+            "name": "Passo Fantasma",
+            "level": 1,
+            "description": "Você ignora terreno difícil nos primeiros 3m de deslocamento do seu turno. Além disso, pode escalar superfícies simples, saltar entre apoios próximos e ignorar dano de queda de até 6m, desde que haja uma forma plausível de reduzir o impacto. Uma vez por combate, você pode usar Desengajar ou Ficar Furtivo como Ação Livre."
+        },
+        {
+            "name": "Ponto Cego",
+            "level": 6,
+            "description": "Uma vez por rodada, ao acertar um ataque com arma leve, curta, arremessável ou ataque desarmado, você causa +1d6 de dano adicional se pelo menos uma das condições abaixo for verdadeira: o alvo ainda não agiu neste combate; você estava Furtivo; o alvo está Surpreso; o alvo está Flanqueado; você atacou a partir de posição elevada ou ângulo inesperado. Esta habilidade não se aplica a Técnicas de Respiração."
+        }
+    ],
+    "rollChance": {
+        "dice": "d12",
+        "value": 10
+    }
+}

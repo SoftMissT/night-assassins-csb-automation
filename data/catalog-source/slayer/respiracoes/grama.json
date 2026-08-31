@@ -1,0 +1,222 @@
+{
+    "titulo": "Respiração da Grama",
+    "aliases": ["Grass Breathing", "Kusa no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "forma": 1,
+            "nome_pt": "O Som das Folhas Secas",
+            "nome_romaji": "Ichi no Kata Kansōshita Ha no Oto",
+            "tipo_manobra": "Única",
+            "descricao": "Como uma Ação Única, sempre que usar uma forma de respiração que não seja do tipo Ação Única, poderá deixá-la mais poderosa. Os efeitos variam conforme o tipo de manobra potencializada.",
+            "efeitos_por_tipo": [
+                { "tipo": "Ataque", "efeito": "Acrescenta envenenamento no dado se acertar" },
+                {
+                    "tipo": "Reação",
+                    "efeito": "Concede vantagem não acumulativa no próximo ataque padrão ou técnica de ataque contra a fonte que te atacou"
+                },
+                { "tipo": "Ação Especial", "efeito": "Recupera PDV" }
+            ],
+            "observacoes": [
+                "Esses efeitos só acontecem se o ataque acertar, a reação for bem-sucedida ou a ação especial surtir resultado.",
+                "Você só pode usar a variação de Reação se não tiver usado nenhuma Ação Única no seu último turno.",
+                "O Envenenamento é considerado Efeito de Contato."
+            ],
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "envenenamento": "1d4 por 1 turno",
+                    "reacao_bonus_acerto": "Vantagem",
+                    "recuperacao_pdv": "1 PDV",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "envenenamento": "1d4 por 2 turnos",
+                    "reacao_bonus_acerto": "Vantagem + +1 na rolagem",
+                    "recuperacao_pdv": "2 PDV",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "envenenamento": "1d4 por 3 turnos",
+                    "reacao_bonus_acerto": "Vantagem + +2 na rolagem",
+                    "recuperacao_pdv": "3 PDV",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "envenenamento": "1d4 por 4 turnos",
+                    "reacao_bonus_acerto": "Vantagem + +3 na rolagem",
+                    "recuperacao_pdv": "4 PDV",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 2,
+            "nome_pt": "Choque Natural",
+            "nome_romaji": "Ni no Kata Shizen Shokku",
+            "tipo_manobra": "Ataque",
+            "descricao": "Realiza um ataque ainda considerado ataque padrão, porém envolto em raízes verdes com um tom fluorescente de brumas. Se bater a base de crítico diminuída, acertará mesmo que não passe a defesa do inimigo.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Reduz em 1 o número natural necessário para crítico em relação ao padrão da arma",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Reduz em 2 o número natural necessário para crítico em relação ao padrão da arma",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Reduz em 3 o número natural necessário para crítico em relação ao padrão da arma",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Reduz em 4 o número natural necessário para crítico em relação ao padrão da arma",
+                    "custo": "3 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 3,
+            "nome_pt": "Parede de Proteção",
+            "nome_romaji": "San no Kata Bōgo Kabe",
+            "tipo_manobra": "Reação",
+            "descricao": "Ao receber um ataque que não seja um Kekkijutsu, o usuário dá um dash levantando uma poeira verde envolta em aura, como se formasse uma parede de folhas que o protege.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "+1 de Esquiva ou Bloqueio à sua escolha",
+                    "custo": "1 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Igual ao Nível 1 + se não conseguir bloquear ou esquivar, recebe apenas metade do dano",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao Nível 2 + bônus de Esquiva ou Bloqueio passa a ser +2",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Bloqueio automático contra o ataque, sem necessidade de rolagem de Esquiva, Bloqueio ou teste de C.D.",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "forma": 4,
+            "nome_pt": "Vórtice",
+            "nome_romaji": "Shi no Kata Borutekkusu",
+            "tipo_manobra": "Especial",
+            "descricao": "Ao obter um acerto crítico, pode conjurar esta técnica e enraizar o inimigo, causando restrição de movimentos. A restrição acaba caso o inimigo restringido receba qualquer tipo e quantidade de dano.",
+            "niveis": [
+                { "nivel": "Níveis 1–2", "duracao_da_restricao": "1 turno", "custo": "2 PDR" },
+                { "nivel": "Níveis 3–4", "duracao_da_restricao": "2 turnos", "custo": "3 PDR" }
+            ],
+            "passiva": {
+                "nome": "Terreno Natural",
+                "efeito": "Sempre que estiver lutando em terrenos de grama, floresta ou campos, você terá +2 em testes de iniciativa e +2 de PDR máximo."
+            }
+        },
+        {
+            "forma": 5,
+            "nome_pt": "Nostalgia",
+            "nome_romaji": "Go no Kata Natsukashisa",
+            "tipo_manobra": "Completa",
+            "descricao": "Usa uma Ação Completa para realizar uma meditação natural profunda, que deve durar até o início do próximo turno para surtir efeito. A meditação é cancelada caso o usuário receba qualquer tipo de dano (incluindo envenenamentos, sangramentos etc.).",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "recuperacao_ao_final_da_meditacao": "2 PDR + 2 PDV",
+                    "custo": "— PDR"
+                },
+                {
+                    "nivel": 2,
+                    "recuperacao_ao_final_da_meditacao": "5 PDR + 5 PDV",
+                    "custo": "— PDR"
+                },
+                {
+                    "nivel": 3,
+                    "recuperacao_ao_final_da_meditacao": "7 PDR + 7 PDV",
+                    "custo": "— PDR"
+                },
+                {
+                    "nivel": 4,
+                    "recuperacao_ao_final_da_meditacao": "10 PDR + 10 PDV",
+                    "custo": "— PDR"
+                }
+            ]
+        },
+        {
+            "forma": 6,
+            "nome_pt": "Rajada de Espinhos",
+            "nome_romaji": "Roku no Kata Toge no Bakufū",
+            "tipo_manobra": "Ataque",
+            "descricao": "Lança uma rajada de 5 espinhos pontiagudos da Nichirin que partem em arcos diferentes para acertar o inimigo em um só momento. É realizada uma rolagem de acerto para cada espinho.",
+            "regras_dos_espinhos": [
+                "Acertos críticos causam 150% de dano (e não 200%), arredondando para cima.",
+                "Se o inimigo usar Bloqueio, terá −2 na defesa.",
+                "Efeito de Contato: 3+ espinhos acertados → 3 acertos aplicam o efeito; menos de 3 → apenas 1 acerto aplica; mais de 3 → apenas 3 aplicam."
+            ],
+            "niveis": [
+                { "nivel": 1, "dano_por_espinho": "1d6", "custo": "2 PDR" },
+                { "nivel": 2, "dano_por_espinho": "1d6 + DEX", "custo": "3 PDR" },
+                { "nivel": 3, "dano_por_espinho": "2d4 + DEX", "custo": "3 PDR" },
+                { "nivel": 4, "dano_por_espinho": "2d6 + DEX", "custo": "4 PDR" }
+            ],
+            "sinergia": {
+                "nome": "Sinergia com Aliados",
+                "descricao": "Se houver aliados próximos com sinergia, cada espinho acertado recupera o uso de Respiração da Recuperação de um aliado que já a tenha usado neste combate.",
+                "respiracoes_com_sinergia": [
+                    "Respiração das Flores",
+                    "Respiração dos Insetos",
+                    "Respiração da Madeira",
+                    "Respiração da Luz"
+                ]
+            }
+        },
+        {
+            "forma": 7,
+            "nome_pt": "Terra Devastada",
+            "nome_romaji": "Shichi no Kata Arechi",
+            "tipo_manobra": "Especial e/ou Única",
+            "descricao": "Pode ser usada como Ação Especial, Ação Única, ou uma junção das duas. Um disparo ou golpe com a Nichirin (ou sua munição) contra o chão devasta o solo, provocando a ira da natureza que impulsiona o usuário durante a batalha através de impulsos de um terremoto intenso que faz o campo de luta entrar em colapso.",
+            "combo": "Ao combinar as duas ações para realizar a técnica, além dos efeitos descritos, você também ganha +2 de acerto e +2 de esquiva ou bloqueio durante os próximos 3 turnos. Não acumulativo.",
+            "niveis": [
+                { "nivel": 1, "efeito": "Não é possível usar!", "custo": null },
+                {
+                    "nivel": 2,
+                    "efeito": "8d4 de dano por turno contra inimigos em qualquer lugar do campo. 2 turnos",
+                    "custo": "5 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "8d6 de dano por turno contra inimigos em qualquer lugar do campo. 3 turnos",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "8d8 de dano por turno contra inimigos em qualquer lugar do campo. 4 turnos",
+                    "custo": "7 PDR"
+                }
+            ]
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Planície da Tranquilidade",
+        "testes_de_morte": "O usuário da Respiração da Grama pode fazer testes de morte usando CAR ao invés de VIT.",
+        "rerrolagem_fora_de_combate": "Pode pagar 3 PDR para rerolar um único teste feito fora de combate, uma vez por sessão, caso não goste do resultado.",
+        "auxilio_as_forcas_da_natureza": "Pode realizar testes de FDV (C.D. 12) para pedir às forças da Natureza que ajudem aliados com sinergia em testes de morte. Se passar, esses aliados terão +1 na rolagem de morte. Considera-se um teste de FDV para cada aliado caído.",
+        "penalidade_ausencia_de_natureza": "Quando em cenário considerado pelo mestre como muito distante ou com ausência total de natureza, o usuário terá −2 de PDR Máximo e −2 em testes de iniciativa.",
+        "resistencia_e_vulnerabilidade": "O usuário da Grama tem resistência natural contra um tipo de dano à sua escolha entre: Cortante, Perfurante ou Concussivo. Em contrapartida, tem vulnerabilidade contra dano necrótico."
+    }
+}

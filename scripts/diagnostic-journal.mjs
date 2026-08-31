@@ -162,6 +162,62 @@ function sessionPageName() {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} Sessão`;
 }
 
+function journalPages(journal) {
+    const pages = journal?.pages?.contents ?? journal?.pages ?? [];
+    return Array.from(pages).map((page) => ({
+        id: page.id ?? page._id ?? null,
+        name: page.name ?? 'Página sem nome',
+        markdown: page.text?.markdown ?? page.text?.content ?? '',
+    }));
+}
+
+function exportTimestamp(date = new Date()) {
+    return date.toISOString().replaceAll(':', '-').replace(/\.\d{3}Z$/, 'Z');
+}
+
+export function buildDiagnosticExport(journal, { format = 'markdown', generatedAt } = {}) {
+    const timestamp = generatedAt ?? new Date().toISOString();
+    const pages = journalPages(journal);
+    if (format === 'json') {
+        return JSON.stringify(
+            {
+                schema: 'night-assassins-diagnostic-v1',
+                generatedAt: timestamp,
+                journal: journal?.name ?? JOURNAL_NAME,
+                pages,
+            },
+            null,
+            2
+        );
+    }
+    return [
+        '# Night Assassins Diagnóstico — Exportação',
+        '',
+        `**Gerado:** ${timestamp}`,
+        '',
+        ...pages.flatMap((page) => [`# ${page.name}`, '', page.markdown.trim(), '']),
+    ]
+        .join('\n')
+        .trimEnd()
+        .concat('\n');
+}
+
+export async function exportDiagnosticJournal(format = 'markdown') {
+    if (!game.user?.isGM)
+        return ui.notifications.warn('O Journal de diagnóstico é exclusivo do GM.');
+    await writeQueue;
+    const journal = await ensureJournal();
+    await ensureSessionPage(journal);
+    const normalized = format === 'json' ? 'json' : 'markdown';
+    const data = buildDiagnosticExport(journal, { format: normalized });
+    const stamp = exportTimestamp();
+    const extension = normalized === 'json' ? 'json' : 'md';
+    const mime = normalized === 'json' ? 'application/json' : 'text/markdown';
+    foundry.utils.saveDataToFile(data, mime, `night-assassins-diagnostico-${stamp}.${extension}`);
+    ui.notifications.info(`Diagnóstico exportado em ${extension.toUpperCase()}.`);
+    return data;
+}
+
 async function ensureSessionPage(journal) {
     const name = sessionPageName();
     const existing = journal.pages?.find?.((page) => page.name === name);
@@ -270,4 +326,42 @@ export async function openDiagnosticReportDialog() {
     enqueueWrite(event);
     await writeQueue;
     return openDiagnosticJournal();
+}
+
+export async function openDiagnosticManager() {
+    if (!game.user?.isGM)
+        return ui.notifications.warn('O Journal de diagnóstico é exclusivo do GM.');
+    return foundry.applications.api.DialogV2.wait({
+        window: { title: 'Night Assassins — Diagnóstico' },
+        content: '<p>Registre, abra ou exporte o Journal de diagnóstico.</p>',
+        buttons: [
+            {
+                action: 'report',
+                icon: 'fa-solid fa-bug',
+                label: 'Registrar erro',
+                default: true,
+                callback: async () => openDiagnosticReportDialog(),
+            },
+            {
+                action: 'open',
+                icon: 'fa-solid fa-book-open',
+                label: 'Abrir Journal',
+                callback: async () => openDiagnosticJournal(),
+            },
+            {
+                action: 'markdown',
+                icon: 'fa-solid fa-file-lines',
+                label: 'Exportar Markdown',
+                callback: async () => exportDiagnosticJournal('markdown'),
+            },
+            {
+                action: 'json',
+                icon: 'fa-solid fa-file-code',
+                label: 'Exportar JSON',
+                callback: async () => exportDiagnosticJournal('json'),
+            },
+            { action: 'cancel', icon: 'fa-solid fa-xmark', label: 'Cancelar' },
+        ],
+        rejectClose: false,
+    });
 }

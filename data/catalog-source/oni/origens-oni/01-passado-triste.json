@@ -1,0 +1,21 @@
+{
+    "number": 1,
+    "name": "Passado Triste",
+    "description": "Você se tornou Oni após uma perda, abandono, humilhação ou sofrimento profundo. A transformação não foi glória. Foi uma segunda chance deformada.",
+    "pdv": "22 + VIT",
+    "pdk": "2 + FDV + (FDV × 3)",
+    "passive": {
+        "name": "Provocar Misericórdia",
+        "description": "Você pode fazer testes de caça usando CAR. Além disso, uma vez por combate, ao receber dano que reduziria você a 0 PDV, pode fazer um teste de CAR contra o resultado de acerto que causou o dano. Sucesso: fica com 1 PDV."
+    },
+    "abilities": [
+        {
+            "name": "Lamento Vivo",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "test": "FDV do alvo contra CD 10 + CAR do Oni",
+            "description": "Escolha uma criatura que possa ver. O Oni manifesta a dor que restou de sua vida humana, forçando o alvo a encarar culpa, pena ou hesitação. Falha: o alvo fica Amedrontado até o início do próximo turno do Oni. Se o alvo já estiver Amedrontado, ele fica Distraído em vez disso. Sucesso: o alvo resiste ao efeito."
+        }
+    ]
+}

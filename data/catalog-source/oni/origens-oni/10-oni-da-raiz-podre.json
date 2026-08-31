@@ -1,0 +1,21 @@
+{
+    "number": 10,
+    "name": "Oni da Raiz Podre",
+    "description": "Você não é apenas um Oni. É um pedaço de ambiente corrompido que aprendeu a andar. Sua carne parece madeira podre, metal oxidado, raízes negras e óleo escuro. Onde você pisa, o terreno começa a morrer.",
+    "pdv": "23 + VIT",
+    "pdk": "16 + (FDV * 3)",
+    "passive": {
+        "name": "Pele de Casca Férrea",
+        "description": "Você recebe -2 de dano final contra danos Cortante, Perfurante e Concussão. Essa redução não se aplica contra dano Fogo, Solar, Ácido ou dano causado por Lâmina Nichirin. Se sofrer dano de Fogo, você recebe +1d4 de dano adicional."
+    },
+    "abilities": [
+        {
+            "name": "Jardim Maldito",
+            "cost": "4 PDK",
+            "action": "Ação Completa",
+            "area": "raio de 6m centrado em você",
+            "duration": "3 rodadas",
+            "description": "Raízes negras, fungos e matéria apodrecida tomam o campo. A área se torna Terreno Difícil para inimigos. A primeira vez por rodada que um inimigo iniciar o turno dentro da área ou entrar nela, ele deve fazer 1d20 + VIT contra CD 10 + FDV do Oni. Falha: o alvo sofre 1d4 de dano Venenoso. Falha por 5 ou mais: além do dano, o alvo fica com Restrição de Movimentos até o início do próximo turno dele. Aliados do Oni não são afetados pelo terreno, se o Oni permitir."
+        }
+    ]
+}

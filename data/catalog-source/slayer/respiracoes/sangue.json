@@ -1,0 +1,262 @@
+{
+    "titulo": "Respiração do Sangue",
+    "aliases": ["Blood Breathing", "Chi no Kokyu"],
+    "tags": ["respiração", "técnicas", "combate", "kimetsu"],
+    "estrutura_padrao": "[ Nível de Respiração Requerido ] - [ Efeito Aplicado ] - [ Custo de PDR ]",
+    "tecnicas": [
+        {
+            "pacto": 1,
+            "nome_pt": "Coagulação Sanguínea",
+            "nome_romaji": "Saisho no Kyotei Ketsueki Gyōko",
+            "tipo_manobra": "Especial",
+            "descricao": "Faz um corte na mão e o sangue desce pela arma, fazendo-a brilhar em um tom vermelho fluorescente. Ao acertar o inimigo com um ataque padrão, causa dano extra. O buff dura 2 turnos, não é acumulativo e é considerado efeito de contato aplicável uma vez por ação.",
+            "niveis": [
+                { "nivel": 1, "dano_extra": "1d8", "custo": "1 PDR" },
+                { "nivel": 2, "dano_extra": "2d8", "custo": "2 PDR" },
+                { "nivel": 3, "dano_extra": "3d8", "custo": "3 PDR" },
+                { "nivel": 4, "dano_extra": "4d8", "custo": "4 PDR" }
+            ],
+            "fortalecimento_do_pacto": "Além do custo de PDR, pode pagar um custo idêntico em PDV na conjuração. Ao fazer isso, além do dano extra, ganha pelo mesmo número de turnos um bônus de bloqueio igual à VIT."
+        },
+        {
+            "pacto": 2,
+            "nome_pt": "Hemodiálise",
+            "nome_romaji": "Dai ni Kyotei Ketsueki Tōseki",
+            "tipo_manobra": "Ataque ou Única (à escolha)",
+            "descricao": "Limpa o sangue de substâncias tóxicas, renovando o fluxo de células.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "efeito": "Remove status de envenenamentos ativos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "efeito": "Remove status de envenenamentos e sangramentos ativos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "efeito": "Igual ao anterior + remove 1 efeito negativo aplicado via Kekkijutsu ou técnica",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "efeito": "Igual ao anterior + remove 1 nível de Exaustão",
+                    "custo": "3 PDR"
+                }
+            ],
+            "observacao": "A partir do Nível 3 de Respiração, pode também ser conjurada como Reação, além do uso normal como Ação de Ataque no próprio turno."
+        },
+        {
+            "pacto": 3,
+            "nome_pt": "Dose de Hemorragia",
+            "nome_romaji": "Dai San Kyotei Shukketsu-ryō",
+            "tipo_manobra": "Única",
+            "descricao": "A precisão dos golpes ou disparos em pontos fracos atinge veias e artérias importantes, causando dano contínuo de sangramento. Efeito não acumulativo e considerado efeito de contato. Após acertar um ataque padrão ou técnica de ataque, aplica o dano normalmente e em seguida faz uma rolagem de acerto padrão + CAR contra uma rolagem de bloqueio padrão + VIT do inimigo. Se bem-sucedido, aplica o sangramento indicado.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "sangramento_por_turno": "1d6",
+                    "duracao": "2 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "sangramento_por_turno": "2d6",
+                    "duracao": "2 turnos",
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "sangramento_por_turno": "3d6",
+                    "duracao": "2 turnos",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "sangramento_por_turno": "3d6",
+                    "duracao": "3 turnos",
+                    "custo": "3 PDR"
+                }
+            ],
+            "observacao": "A partir do Nível 2 de Respiração, metade do dano de sangramento causado no início do turno do inimigo afetado é acumulada para a Passiva Especial Aura de Sangue."
+        },
+        {
+            "pacto": 4,
+            "nome_pt": "Drenagem",
+            "nome_romaji": "Dai Shi Kyotei Haisui",
+            "tipo_manobra": "Especial",
+            "custo_fixo_por_ativacao": "3 PDR",
+            "descricao": "Ao ativar, o próximo ataque drena a vida do inimigo ao acertar, fortalecendo a Nichirin. Acumula Stacks que aumentam os bônus conforme os acertos. Se passar um turno sem acertar qualquer ataque, todos os Stacks são perdidos.",
+            "tabela_stacks": [
+                { "stacks": 1, "bonus_de_dano_por_acerto": "VIT do inimigo" },
+                { "stacks": 2, "bonus_de_dano_por_acerto": "VIT do inimigo + 2" },
+                {
+                    "stacks": 3,
+                    "bonus_de_dano_por_acerto": "VIT do inimigo + 4 (efeito de contato uma vez por ação)"
+                }
+            ]
+        }
+    ],
+    "passiva_especial": {
+        "nome": "Aura de Sangue",
+        "descricao": "Toda vez que aplicar um Stack com o 4º Pacto Drenagem, recebe +1 ponto de Aura de Sangue passivamente (um manto vermelho espectral forma-se ao redor do usuário). Pontos também são acumulados via 3º Pacto Dose de Hemorragia conforme descrito. Os bônus são cumulativos e persistem até o final do combate.",
+        "tabela_pontos": [
+            { "pontos": 10, "bonus": "+1 VIT temporário" },
+            { "pontos": 20, "bonus": "Anterior + +2 de Esquiva ou Bloqueio (à escolha)" },
+            { "pontos": 35, "bonus": "Anteriores + recupera PDV igual a VIT × 2 instantaneamente" },
+            {
+                "pontos": 50,
+                "bonus": "Anteriores (sem recuperar PDV novamente) + recupera PDR igual a FDV × 2 instantaneamente"
+            }
+        ]
+    },
+    "tecnicas_avancadas": [
+        {
+            "pacto": 5,
+            "nome_pt": "Gotas de Sangue",
+            "nome_romaji": "Dai Go Kyotei Chi no Shizuku",
+            "tipo_manobra": "Completa",
+            "descricao": "Uma chuva de sangue cai no campo de batalha, trazendo regeneração celular a todos os aliados atingidos e ao próprio usuário.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "cura_todos_aliados_mais_usuario": "Não é possível usar!",
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "cura_todos_aliados_mais_usuario": "1d4 + 2 de PDV",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "cura_todos_aliados_mais_usuario": "2d4 + 3 de PDV",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "cura_todos_aliados_mais_usuario": "2d6 + 4 de PDV",
+                    "custo": "5 PDR"
+                }
+            ],
+            "sinergia": {
+                "nome": "Recuperação de PDR",
+                "descricao": "Aliados com sinergia atingidos pela chuva também recuperam 1 PDR cada.",
+                "respiracoes_com_sinergia": [
+                    "Respiração da Água",
+                    "Respiração do amor",
+                    "Respiração do Veneno",
+                    "Respiração da Luz"
+                ]
+            }
+        },
+        {
+            "pacto": 6,
+            "nome_pt": "Genética Aprimorada",
+            "nome_romaji": "Dai Roku Kyotei Kyōka sa reta Iden-gaku",
+            "tipo_manobra": "Especial",
+            "descricao": "Dobra o fluxo de cada célula do corpo; as veias pulsam e ficam evidentes sob a pele, aumentando a capacidade muscular de se mover e aguentar pressões físicas. Os bônus duram um número de turnos igual à VIT do usuário. Não acumulativos com a própria técnica.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "bonus_esquiva_ou_bloqueio": "+1",
+                    "reducao_de_dano_por_acerto": "+1",
+                    "efeito_adicional": null,
+                    "custo": "2 PDR"
+                },
+                {
+                    "nivel": 2,
+                    "bonus_esquiva_ou_bloqueio": "+2",
+                    "reducao_de_dano_por_acerto": "+2",
+                    "efeito_adicional": null,
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "bonus_esquiva_ou_bloqueio": "+2",
+                    "reducao_de_dano_por_acerto": "+2",
+                    "efeito_adicional": "Imunidade a novas condições de Vulnerável e Pontos de Exaustão durante o período",
+                    "custo": "3 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "bonus_esquiva_ou_bloqueio": "+2",
+                    "reducao_de_dano_por_acerto": "+2",
+                    "efeito_adicional": "Igual ao anterior + dobra o deslocamento padrão (em metros)",
+                    "custo": "4 PDR"
+                }
+            ]
+        },
+        {
+            "pacto": 7,
+            "nome_pt": "Supressão",
+            "nome_romaji": "Dai Shichi Kyotei Yokusei",
+            "tipo_manobra": "Ataque",
+            "requisito": "Ter executado um ataque padrão ou técnica bem-sucedida no último turno.",
+            "descricao": "Oferenda do próprio sangue à Nichirin em troca de manipular o sangue do último inimigo acertado, fazendo-o vazar pelos ferimentos. Além do custo de PDR, paga 2 PDV para utilizar. Ganha um bônus na rolagem de acerto igual à FDV.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano": "Não é possível usar!",
+                    "efeito_adicional": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano": "4d12",
+                    "efeito_adicional": "Inimigo testa VIT (C.D. 12 + CAR do usuário); falha: amedrontado por 3 turnos",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano": "6d12",
+                    "efeito_adicional": "Mesmo teste de VIT e C.D.",
+                    "custo": "4 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano": "6d12",
+                    "efeito_adicional": "Mesmo teste de VIT e C.D. + inimigo recebe 1 ponto de Exaustão + usuário ganha 5 pontos de Aura de Sangue",
+                    "custo": "5 PDR"
+                }
+            ]
+        },
+        {
+            "pacto": 8,
+            "nome_pt": "O Último Sacrifício",
+            "nome_romaji": "Dai Hachi Kyotei Saigo no Gisei",
+            "tipo_manobra": "Completa",
+            "requisitos": ["Ter no mínimo 5 PDV", "VIT 3 ou maior"],
+            "descricao": "Um sacrifício desesperado por uma grande recompensa. Corta os pulsos e o sangue jorra formando uma esfera que explode em um núcleo atingindo todos os inimigos no campo de batalha.",
+            "niveis": [
+                {
+                    "nivel": 1,
+                    "dano_aos_inimigos": "Não é possível usar!",
+                    "consequencia_para_o_usuario": null,
+                    "custo": null
+                },
+                {
+                    "nivel": 2,
+                    "dano_aos_inimigos": "10d20",
+                    "consequencia_para_o_usuario": "PDV zerado → teste de morte",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 3,
+                    "dano_aos_inimigos": "12d20",
+                    "consequencia_para_o_usuario": "PDV zerado → teste de morte com vantagem",
+                    "custo": "6 PDR"
+                },
+                {
+                    "nivel": 4,
+                    "dano_aos_inimigos": "12d20 + 4× FOR ou DEX (à escolha)",
+                    "consequencia_para_o_usuario": "Fica com 1 PDV e desmaiado pelo resto da batalha",
+                    "custo": "6 PDR"
+                }
+            ],
+            "excecao": "Se o usuário tiver 50 pontos de Aura de Sangue no momento da ativação, conjura a técnica sem morrer ou desmaiar; fica com 3 PDV ao final."
+        }
+    ]
+}

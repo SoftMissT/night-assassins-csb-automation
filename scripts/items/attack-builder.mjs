@@ -269,8 +269,8 @@ export async function openAttackBuilder(actor) {
         content: `<div class="na-attack-builder">
       <p>Escolha as fontes do ataque. As parcelas permanecem separadas para crítico, resistência e Ferida.</p>
       <label>Arma / Perfil</label>
-      <select name="weaponKey">${optionsHtml(model.weapons, 'Sem arma —')}</select>
-      ${model.ownerKind === 'oni' ? `<label>Ataque Demoníaco</label><select name="innateKey">${optionsHtml(model.innate, 'Sem ataque desarmado —')}</select>` : `<label>Forma de Respiração</label><select name="breathingKey">${optionsHtml(model.breathing, 'Sem Respiração —')}</select>`}
+      <select name="weaponKey">${optionsHtml(model.weapons, 'Sem arma')}</select>
+      ${model.ownerKind === 'oni' ? `<label>Ataque Demoníaco</label><select name="innateKey">${optionsHtml(model.innate, 'Sem ataque desarmado')}</select>` : `<label>Forma de Respiração</label><select name="breathingKey">${optionsHtml(model.breathing, 'Sem Respiração')}</select>`}
     </div>`,
         buttons: [
             {

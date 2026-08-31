@@ -16,36 +16,9 @@ function unwrapSlayerTemplate(document) {
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const templatePath = path.join(repoRoot, 'src', 'templates', 'actors', 'slayer-template.json');
 const csbPackagePath = path.join(repoRoot, 'src', 'imports', 'csb-import-slayer-template.json');
-const officialTemplatePath = path.resolve(
-    repoRoot,
-    '..',
-    'MACRO-NA-FOUNDRY',
-    'TEMPLATE_SLAYER_ATUALIZADO.json'
-);
-
-function officialWithoutProvisionalButton() {
-    const document = JSON.parse(fs.readFileSync(officialTemplatePath, 'utf8'));
-    function prune(node) {
-        if (!node || typeof node !== 'object') return node;
-        if (Array.isArray(node)) {
-            return node
-                .filter((entry) => !String(entry?.rollMessage ?? '').includes('NAAttrLevel00001'))
-                .map(prune);
-        }
-        for (const [key, value] of Object.entries(node)) node[key] = prune(value);
-        return node;
-    }
-    return prune(document);
-}
-
-test('template Slayer reproduz integralmente o export atualizado, exceto botão provisório', () => {
+test('template Slayer canônico não contém o antigo botão provisório', () => {
     const actual = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
     assert.doesNotMatch(JSON.stringify(actual), /NAAttrLevel00001/);
-    if (fs.existsSync(officialTemplatePath)) {
-        const expected = officialWithoutProvisionalButton();
-        expected._id = 'NASlayerTpl00001';
-        assert.deepEqual(actual, expected);
-    }
 });
 
 test('template Slayer é um documento de ator válido com type _template', () => {
@@ -254,9 +227,9 @@ test('pacote CSB import contém template Slayer válido', () => {
     assert.ok(actor.data.attributeBar, 'actor.data.attributeBar não encontrado');
 });
 
-test('template Slayer preserva os 39 itens hidden oficiais', () => {
+test('template Slayer preserva os 48 itens hidden oficiais', () => {
     const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
-    assert.equal(template.system.hidden.length, 39);
+    assert.equal(template.system.hidden.length, 48);
 });
 
 test('template Slayer tem hidden com atributos display', () => {

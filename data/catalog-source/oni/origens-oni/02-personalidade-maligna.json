@@ -1,0 +1,21 @@
+{
+    "number": 2,
+    "name": "Personalidade Maligna",
+    "description": "Você já preferia o caos antes da transformação. O sangue de Muzan não criou sua crueldade: apenas tirou dela as últimas limitações humanas.",
+    "pdv": "16 + VIT",
+    "pdk": "3 + FDV + (FDV × 3)",
+    "passive": {
+        "name": "Fúria do Mal",
+        "description": "Quando causar um acerto crítico em um Exterminador, role 1d20 + CAR. Se o resultado for maior que 15, o alvo fica Amedrontado pelos próximos 2 turnos."
+    },
+    "abilities": [
+        {
+            "name": "Prazer Cruel",
+            "cost": "3 PDK",
+            "action": "Ação Especial",
+            "range": "9m",
+            "test": "FDV do alvo contra CD 10 + CAR do Oni",
+            "description": "Escolha uma criatura que tenha sofrido dano neste combate. O Oni explora a dor do alvo com palavras, gestos ou presença assassina. Falha: o alvo fica Amedrontado até o início do próximo turno do Oni. Se o alvo já estiver Amedrontado, o próximo ataque do Oni contra ele antes do fim do turno recebe +2 na rolagem de acerto. Sucesso: o alvo resiste ao efeito."
+        }
+    ]
+}

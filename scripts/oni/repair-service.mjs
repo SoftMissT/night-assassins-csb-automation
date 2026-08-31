@@ -1,14 +1,14 @@
 /**
- * @fileoverview Repair de Actors Oni legados (P0 — reconstrução da ficha).
+ * @fileoverview Repair de Actors Oni legados (P0 reconstrução da ficha).
  *
  * A ficha Oni foi reestruturada (novas abas, Fôlego/Marca removidos, dropdown
  * de Classe migrado para Especialização). Actors que já existem no mundo do
- * Operador foram criados com o template ANTIGO — este serviço migra os dados
+ * Operador foram criados com o template ANTIGO este serviço migra os dados
  * deles para o esquema novo, SEM apagar nada e SEM curar/restaurar PDV/PDK
  * para o máximo só porque o template mudou.
  *
  * Idempotente: marca cada Actor migrado com a flag `oniRepairVersion` e pula
- * quem já está na versão atual. GM-only — chamado uma vez por Actor na
+ * quem já está na versão atual. GM-only chamado uma vez por Actor na
  * inicialização do mundo (ver scripts/main.mjs, hook "ready").
  */
 import { MODULE_ID } from '../constants.mjs';
@@ -38,7 +38,7 @@ function integer(value) {
 
 /**
  * Calcula o patch de migração de um Actor Oni legado sem mutar nada.
- * Função pura — usada tanto pelo runtime (Actor real) quanto pelos testes
+ * Função pura usada tanto pelo runtime (Actor real) quanto pelos testes
  * (fixture simples com `{ system: { props } }`).
  * @param {{system:{props:object}}} actorLike
  * @returns {{needsRepair:boolean, patch:object, preserved:object}}
@@ -64,8 +64,8 @@ export function planOniRepair(actorLike) {
 
     // 2. PDV/PDK atual: NUNCA restaurar para o máximo. O ledger de dano
     // (pdv_oni_dano_tomado / pdv_oni_curado / pdv_oni_extra e os equivalentes
-    // de PDK) permanece com as MESMAS keys no template novo — não é
-    // renomeado — então o valor atual computado (pdv_oni_atual_num /
+    // de PDK) permanece com as MESMAS keys no template novo não é
+    // renomeado então o valor atual computado (pdv_oni_atual_num /
     // pdk_oni_atual_num) já é preservado automaticamente pela própria
     // continuidade das keys. Aqui só registramos o snapshot para auditoria/
     // teste; nenhuma escrita é feita nesses campos.
@@ -85,7 +85,7 @@ export function planOniRepair(actorLike) {
 }
 
 /**
- * Aplica o repair a um Actor Oni real do Foundry. Idempotente — pula Actors
+ * Aplica o repair a um Actor Oni real do Foundry. Idempotente pula Actors
  * já marcados com a versão atual de repair.
  * @param {Actor} actor
  * @returns {Promise<{repaired:boolean, skipped:boolean, preserved:object}>}

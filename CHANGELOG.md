@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.11.52 — 2026-09-01
+
+- Adotado o template oficial de arma Slayer v0.3.1 runtime-safe, preservando o layout aprovado e o contrato `NAWeaponTpl00001`.
+- Adicionado painel invisível `arma_runtime_data` para o CSB preservar perfis de ataque, dano, tipos, mecânicas, fórmulas por rank e munição dos Items.
+- Removido o histórico de edição destrutivo do export, evitando que reloads eliminem propriedades mecânicas.
+- Tornado idempotente o importador do template oficial, sem duplicar `return ''` nas chamadas CSB.
+- Validado o catálogo gerado: a Katana mantém dois perfis de ataque tanto em array quanto em JSON.
+- Validação local: 954/954 testes, 168 suítes e zero falhas. O clique em `ROLAR ATAQUE DA ARMA` com Item novo do Compendium permanece como gate no Foundry v14.
+
 ## v0.11.51 — 2026-09-01
 
 - Adotados integralmente os exports oficiais mais recentes das fichas Slayer, Oni, NPC e Oni Minion fornecidos pelo operador.

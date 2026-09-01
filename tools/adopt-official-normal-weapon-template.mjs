@@ -32,12 +32,13 @@ if (official?.system?.uniqueId !== 'NAWeaponTpl00001') {
 function guardCsbRollResult(node) {
     if (!node || typeof node !== 'object') return;
     if (typeof node.rollMessage === 'string' && node.rollMessage.includes('rollWeaponItem')) {
-        node.rollMessage = node.rollMessage
-            .replace(
-                "return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem",
-                "await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem"
-            )
-            .replace(';}%', ";return '';}%");
+        node.rollMessage = node.rollMessage.replace(
+            "return await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem",
+            "await game.modules.get('night-assassins-csb-automation')?.api?.rollWeaponItem"
+        );
+        if (!/return\s+'';/.test(node.rollMessage)) {
+            node.rollMessage = node.rollMessage.replace(/;}%$/, ";return '';}%");
+        }
     }
     for (const value of Object.values(node)) guardCsbRollResult(value);
 }

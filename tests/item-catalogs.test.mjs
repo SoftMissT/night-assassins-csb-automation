@@ -276,13 +276,34 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /linkedEntity/);
         assert.doesNotMatch(serialized, /itemUuid:entity\.uuid/);
         assert.match(serialized, /na-sheet-text/);
-        // O template visual normal é o export oficial do operador. Dados mecânicos
-        // pertencem a cada Item e ao serviço de rolagem, não a um painel duplicado.
-        assert.doesNotMatch(serialized, /arma_runtime_data/);
-        assert.doesNotMatch(serialized, /arma_perfis_resumo/);
+        // O export runtime-safe mantém uma única componente por key. O painel é
+        // invisível, mas força o CSB a preservar as props mecânicas do Item.
+        const runtimePanel = template.system.body.contents.find(
+            (component) => component.key === 'arma_runtime_data'
+        );
+        assert.ok(runtimePanel, 'painel runtime-safe deve existir');
+        assert.equal(runtimePanel.visibilityFormula, 'false');
+        const runtimeKeys = new Set(runtimePanel.contents.map((component) => component.key));
+        for (const key of [
+            'arma_dano_dados',
+            'arma_dano_fixo',
+            'arma_dano_atributo',
+            'arma_dano_atributo_json',
+            'arma_tipos_dano',
+            'arma_tipos_dano_json',
+            'arma_atributo_acerto_json',
+            'arma_perfis_ataque_json',
+            'arma_mecanicas_json',
+            'arma_formulas_por_rank_json',
+            'arma_municao_capacidade',
+            'arma_municao_atual',
+        ]) {
+            assert.ok(runtimeKeys.has(key), `${key} deve ser preservada pelo template`);
+        }
+        assert.match(serialized, /arma_perfis_resumo/);
         assert.doesNotMatch(serialized, /arma_atributos_resumo/);
-        assert.doesNotMatch(serialized, /arma_tipos_dano_resumo/);
-        assert.doesNotMatch(serialized, /arma_modo_uso/);
+        assert.match(serialized, /arma_tipos_dano_resumo/);
+        assert.match(serialized, /arma_modo_uso/);
         assert.match(serialized, /startWithHit/);
         assert.match(serialized, /return '';/);
         assert.doesNotMatch(serialized, /arma_rank_ss_formula|arma_imagem_vertical/);

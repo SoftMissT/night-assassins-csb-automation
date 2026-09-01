@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.11.54 — 2026-09-01
+
+- Normalizados os campos visuais das armas normais: alcance, propriedades, requisito e tipo deixam de exibir marcadores Markdown literais no CSB.
+- Separados o parágrafo narrativo (`descricao`) e a habilidade (`arma_regra_completa`), evitando a repetição de propriedades, alcance, crítico e dano dentro da descrição.
+- Adicionadas fontes explícitas para Katana, Double Blade, Cutelos Gêmeos e Manoplas/Soqueiras, com sincronizador restrito aos campos visuais e sem alterar perfis ou mecânicas avançadas.
+- Corrigida a Macro DANO para encaminhar apenas Actor/UUID e `builder: true`, garantindo a abertura do Attack Builder sem absorver o restante do `scope` do CSB.
+- O sincronizador de macros agora atualiza documentos antigos pelo ID canônico mesmo quando perderam as flags de origem.
+- Adicionada a macro administrativa GM **Diagnosticar Armas Duplicadas**, que apenas lista Documents repetidos e exige confirmação individual antes de excluir qualquer Item.
+- Reparo de armas protegido por regressão de idempotência: dez execuções preservam a mesma quantidade de Items.
+- Armas Especiais, críticos, perfis Nitoryu/Morote e regras avançadas permaneceram inalterados.
+- Validação local: 966/966 testes, 170 suítes e zero falhas.
+
 ## v0.11.53 — 2026-09-01
 
 - Corrigido o fluxo compartilhado de armas normais nas fichas Slayer e NPC: Acerto usa o crítico efetivo do perfil e encaminha a decisão ao follow-up de Dano.

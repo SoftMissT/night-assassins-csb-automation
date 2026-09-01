@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { extractWeaponRankFormulas } from '../scripts/weapon-service.mjs';
+import { normalizeNormalWeaponProps } from '../scripts/weapon-catalog-normalization.mjs';
 import { markdownToFoundryHtml } from './compendium-catalog-utils.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -102,7 +103,8 @@ const documents = [...sourceDocuments, specialWeaponTemplate].map((document) => 
     if (document.type === '_equippableItemTemplate' && document._id === specialWeaponTemplate._id)
         return specialWeaponTemplate;
     if (document.type !== 'equippableItem') return document;
-    const props = document.system?.props ?? {};
+    const rawProps = document.system?.props ?? {};
+    const props = normalizeNormalWeaponProps(rawProps);
     const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
     const specialWeapon =
         String(props.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';

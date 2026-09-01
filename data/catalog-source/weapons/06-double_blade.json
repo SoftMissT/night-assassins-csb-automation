@@ -1,0 +1,13 @@
+{
+    "name": "Double Blade",
+    "system": {
+        "props": {
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Ryōtō",
+            "arma_requisito": "",
+            "arma_tipo": "Corpo a corpo",
+            "descricao": "Uma espada com estilo mais ocidental, com duas lâminas, uma em cada lado.",
+            "arma_regra_completa": "Pode acertar duas vezes na mesma ação padrão de ataque. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
+        }
+    }
+}

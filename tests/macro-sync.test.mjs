@@ -60,4 +60,37 @@ describe('macro-sync', () => {
         game.user.isGM = false;
         assert.deepEqual(await syncCanonicalMacros(), { created: 0, updated: 0, skipped: 0 });
     });
+
+    it('atualiza pelo ID canônico mesmo quando a Macro antiga perdeu as flags', async () => {
+        const updated = [];
+        const document = {
+            id: 'NADamageRoll0001',
+            name: 'Night Assassins Rolagem de Dano',
+            uuid: 'Compendium.na.damage',
+            toObject: () => ({
+                name: 'Night Assassins Rolagem de Dano',
+                type: 'script',
+                scope: 'global',
+                command: 'rollDamage({ actorUuid: macroArgs.actorUuid, builder: true })',
+            }),
+        };
+        globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, OBSERVER: 2 } };
+        globalThis.Macro = {
+            createDocuments: async () => assert.fail('não deve criar uma Macro duplicada'),
+            updateDocuments: async (data) => updated.push(...data),
+        };
+        game.user.isGM = true;
+        game.folders = { find: () => ({ id: 'folder-na' }) };
+        game.macros = {
+            contents: [{ id: 'NADamageRoll0001', name: 'Macro antiga', folder: 'folder-na', flags: {} }],
+        };
+        game.packs = new Map([[CANONICAL_MACRO_PACK_ID, { getDocuments: async () => [document] }]]);
+
+        const result = await syncCanonicalMacros();
+
+        assert.equal(result.updated, 1);
+        assert.equal(result.created, 0);
+        assert.equal(updated[0]._id, 'NADamageRoll0001');
+        assert.match(updated[0].command, /builder:\s*true/u);
+    });
 });

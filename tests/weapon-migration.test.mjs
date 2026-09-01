@@ -7,6 +7,7 @@ import {
     weaponRepairChanges,
 } from '../scripts/weapon-migration.mjs';
 import { normalizeWeaponTechnique } from '../scripts/items/item-technique-normalizers.mjs';
+import { readFile } from 'node:fs/promises';
 
 const armedItem = {
     id: 'abc123',
@@ -106,6 +107,45 @@ describe('weapon-migration', () => {
     it('retorna vazio sem Actors no ambiente de testes', async () => {
         const result = await repairSlayerWeaponItems({ canonicalWeapons: [] });
         assert.deepEqual(result, { actors: 0, items: 0 });
+    });
+
+    it('é estritamente idempotente e nunca duplica um Cutelos após dez reparos', async () => {
+        const cutelos = {
+            id: 'cutelos-1',
+            name: 'Cutelos Gêmeos',
+            ownership: { default: 0 },
+            system: {
+                template: 'runtime-template',
+                props: {
+                    inventario_categoria: 'arma',
+                    arma_nome: 'Cutelos Gêmeos',
+                    arma_perfis_ataque: [{ nome: 'Ataque Base', dano_fixo: 4, critico: 20 }],
+                },
+            },
+        };
+        const actor = {
+            items: [cutelos],
+            async updateEmbeddedDocuments(type, updates) {
+                assert.equal(type, 'Item');
+                for (const update of updates) {
+                    const item = this.items.find((entry) => entry.id === update._id);
+                    for (const [path, value] of Object.entries(update)) {
+                        if (path.startsWith('system.props.')) item.system.props[path.slice(13)] = value;
+                        if (path === 'ownership') item.ownership = value;
+                    }
+                }
+            },
+        };
+        for (let iteration = 0; iteration < 10; iteration += 1) {
+            await repairSlayerWeaponItems({ actors: [actor], canonicalWeapons: [] });
+            assert.equal(actor.items.filter((item) => item.name === 'Cutelos Gêmeos').length, 1);
+        }
+    });
+
+    it('repair não contém nenhum caminho de criação de Item', async () => {
+        const source = await readFile(new URL('../scripts/weapon-migration.mjs', import.meta.url), 'utf8');
+        assert.doesNotMatch(source, /createEmbeddedDocuments\(\s*['"]Item['"]/u);
+        assert.doesNotMatch(source, /createDocuments\s*\(/u);
     });
 
     it('reidrata perfil e crítico pelo nome mesmo com template remapeado pelo CSB', async () => {

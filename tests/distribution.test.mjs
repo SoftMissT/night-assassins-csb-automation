@@ -195,6 +195,7 @@ describe('module distribution', () => {
             'na-resp-usar-forma.js',
             'na-gerenciar-vida-morte.js',
             'na-corrigir-armas.js',
+            'na-diagnosticar-armas-duplicadas.js',
             'na-corrigir-respiracoes.js',
         ];
 
@@ -213,8 +214,12 @@ describe('module distribution', () => {
             'utf8'
         );
         assert.match(damageMacro, /actorUuid:\s*macroArgs\.actorUuid/u);
+        assert.match(damageMacro, /macroArgs\.actor\?\.documentName\s*===\s*'Actor'/u);
         assert.match(damageMacro, /builder:\s*true/u);
         assert.doesNotMatch(damageMacro, /rollDamage\(macroArgs\)/u);
+        for (const forbidden of ['formulaBase', 'fixo', 'attrs', 'attr', 'entradas', 'weaponProfiles']) {
+            assert.doesNotMatch(damageMacro, new RegExp(`macroArgs\\.${forbidden}`, 'u'));
+        }
     });
 });
 

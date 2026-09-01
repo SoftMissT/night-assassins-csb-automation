@@ -87,6 +87,11 @@ const macros = [
         name: 'Night Assassins Corrigir Armas dos Caçadores',
     },
     {
+        id: 'NAWeaponDiag0001',
+        file: 'na-diagnosticar-armas-duplicadas.js',
+        name: 'Night Assassins Diagnosticar Armas Duplicadas',
+    },
+    {
         id: 'NABreathRepair01',
         file: 'na-corrigir-respiracoes.js',
         name: 'Night Assassins Corrigir Respirações dos Caçadores',
@@ -115,6 +120,7 @@ for (const [index, macro] of macros.entries()) {
             default: [
                 'Night Assassins Controle GM',
                 'Night Assassins Diagnóstico de Erros',
+                'Night Assassins Diagnosticar Armas Duplicadas',
             ].includes(macro.name)
                 ? 0
                 : 2,

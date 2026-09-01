@@ -253,6 +253,20 @@ describe('catálogo de armas Slayer', () => {
             'FOR',
         ]);
         assert.deepEqual(JSON.parse(cutelos.system.props.arma_tipos_dano_json), ['cortante']);
+        for (const weapon of weapons) {
+            const props = weapon.system.props;
+            for (const key of [
+                'arma_alcance',
+                'arma_propriedades',
+                'arma_requisito',
+                'arma_tipo',
+            ]) {
+                assert.doesNotMatch(String(props[key] ?? ''), /^\*|\*$/u, `${weapon.name}.${key}`);
+            }
+            assert.doesNotMatch(props.descricao, /<li>\s*(?:Propriedades|Alcance|Crítico|Dano)\s*:/iu);
+        }
+        assert.equal(cutelos.system.props.descricao, '<p>Duas lâminas em formato de cutelos e com cabos padrão estilo katanas, unidos por uma corrente que permite manobras ofensivas e defensivas.</p>');
+        assert.match(cutelos.system.props.arma_regra_completa, /usar suas Reações/u);
         const cutelosMechanics = JSON.parse(cutelos.system.props.arma_mecanicas_json);
         const parry = cutelosMechanics.find((mechanic) => mechanic.id === 'aparar_corrente');
         assert.deepEqual(parry, {
@@ -334,6 +348,8 @@ describe('catálogo de armas Slayer', () => {
         assert.doesNotMatch(specialSerialized, /arma_rank_d_formula|arma_rank_ss_formula/);
         assert.match(specialSerialized, /DANO POR RANK/);
         assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
+        const abilityTitles = JSON.stringify(template.system.body).match(/Habilidade/gu) ?? [];
+        assert.equal(abilityTitles.length, 1, 'template normal deve exibir Habilidade uma única vez');
     });
 
     it('publica passivas sem botão de ativação manual', async () => {

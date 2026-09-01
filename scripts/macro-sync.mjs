@@ -38,6 +38,8 @@ export async function syncCanonicalMacros() {
 
     const documents = await pack.getDocuments();
     const existingBySource = new Map();
+    const existingById = new Map(game.macros.contents.map((macro) => [macro.id, macro]));
+    const existingByName = new Map(game.macros.contents.map((macro) => [macro.name, macro]));
     for (const macro of game.macros.contents) {
         const sourceId =
             macro.getFlag?.(MODULE_ID, 'sourceId') ??
@@ -48,7 +50,10 @@ export async function syncCanonicalMacros() {
     const updates = [];
     const missing = [];
     for (const document of documents) {
-        const existing = existingBySource.get(document.uuid);
+        const existing =
+            existingBySource.get(document.uuid) ??
+            existingById.get(document.id) ??
+            existingByName.get(document.name);
         if (!existing) {
             missing.push(document);
             continue;

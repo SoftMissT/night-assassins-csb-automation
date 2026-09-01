@@ -1,0 +1,13 @@
+{
+    "name": "Cutelos Gêmeos",
+    "system": {
+        "props": {
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Morote",
+            "arma_requisito": "",
+            "arma_tipo": "Corpo a corpo",
+            "descricao": "Duas lâminas em formato de cutelos e com cabos padrão estilo katanas, unidos por uma corrente que permite manobras ofensivas e defensivas.",
+            "arma_regra_completa": "Você pode usar suas Reações para aparar ataques físicos realizados contra você ou contra aliados, realizando um teste de acerto C.D 16 ao invés de realizar uma rolagem de defesa padrão. Sendo assim, você pode reduzir o dano desses ataques em uma quantidade igual ao dano de sua arma (4) + Metade de sua INT ou SAB."
+        }
+    }
+}

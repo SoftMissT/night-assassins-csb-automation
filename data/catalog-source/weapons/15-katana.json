@@ -1,0 +1,13 @@
+{
+    "name": "Katana",
+    "system": {
+        "props": {
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Nitoryu & Morote",
+            "arma_requisito": "",
+            "arma_tipo": "Corpo a corpo",
+            "descricao": "A arma padrão da maioria dos exterminadores.",
+            "arma_regra_completa": ""
+        }
+    }
+}

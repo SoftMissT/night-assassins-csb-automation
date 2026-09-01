@@ -8,6 +8,7 @@ if (!moduleApi?.rollDamage) {
 const macroArgs = typeof scope !== 'undefined' ? (scope ?? {}) : {};
 await moduleApi.rollDamage({
     actorUuid: macroArgs.actorUuid,
+    actor: macroArgs.actor?.documentName === 'Actor' ? macroArgs.actor : undefined,
     builder: true,
 });
 return '';

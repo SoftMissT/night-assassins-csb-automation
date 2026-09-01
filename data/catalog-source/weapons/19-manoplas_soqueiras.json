@@ -1,0 +1,13 @@
+{
+    "name": "Manoplas / Soqueiras",
+    "system": {
+        "props": {
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Ryōtō / Nitoryu",
+            "arma_requisito": "",
+            "arma_tipo": "Corpo a corpo",
+            "descricao": "Duas soqueiras gêmeas, empunhadas em formato de luvas.",
+            "arma_regra_completa": "Acertos críticos concedem +1 de acerto na sua ação de ataque e um ataque extra em sequência. Críticos consecutivos podem continuar aplicando esse efeito, formando uma barragem de socos nos melhores casos. Porém, o dano de cada soco extra conseguido dessa forma é igual a 1 + DEX ou FOR, e não o dano padrão da arma."
+        }
+    }
+}

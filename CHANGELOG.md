@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.11.50 — 2026-09-01
+
+- **Rollback corretivo integral:** runtime, fórmulas, templates, CSS, catálogos executáveis, testes e pipeline restaurados exatamente à baseline funcional `v0.11.47` (`f3884ee`).
+- Removidas da distribuição todas as alterações não autorizadas das versões `v0.11.48` e `v0.11.49`, incluindo consumíveis HonMoon, alterações de chamadas gerais, inventário adicional na ficha Slayer, Aparar dos Cutelos e skin nova de armas.
+- A tag `v0.11.49` permanece somente como histórico; ela foi criada antes do rollback completo e não deve ser usada.
+- Fontes brutas locais de armas e especializações não participam do `module.zip` e não alteram o runtime.
+- Validação local: 950/950 testes, 167 suítes, zero falhas; comparação estrutural confirma identidade com `v0.11.47` fora de versão/changelog.
+
 ## v0.11.47 — 2026-08-30
 
 - Adicionado gerenciador GM com ações para registrar erro, abrir o Journal e exportar todas as páginas em Markdown ou JSON.

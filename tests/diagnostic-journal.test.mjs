@@ -3,6 +3,7 @@ setupFoundryMocks();
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
     buildDiagnosticExport,
     diagnosticJournalOwnership,
@@ -10,6 +11,12 @@ import {
 } from '../scripts/diagnostic-journal.mjs';
 
 describe('diagnostic-journal', () => {
+    it('não depende de foundry.utils.deepEqual, ausente no Foundry v14', () => {
+        const source = fs.readFileSync('scripts/diagnostic-journal.mjs', 'utf8');
+        assert.doesNotMatch(source, /foundry\.utils\.deepEqual/u);
+        assert.match(source, /foundry\.utils\?\.saveDataToFile\s*\?\?\s*globalThis\.saveDataToFile/u);
+    });
+
     it('aceita somente mensagens atribuíveis ao módulo', () => {
         assert.equal(isNightAssassinsDiagnostic('[NA-ONI-PDV] ROLL FAILED'), true);
         assert.equal(

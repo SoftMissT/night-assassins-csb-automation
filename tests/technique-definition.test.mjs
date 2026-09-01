@@ -11,6 +11,18 @@ import {
 } from '../scripts/items/item-technique-normalizers.mjs';
 
 describe('TechniqueDefinition', () => {
+    it('aceita NPC no mesmo contrato mecânico compartilhado', () => {
+        const result = validateTechniqueDefinition({
+            id: 'weapon:npc:test',
+            name: 'Arma NPC',
+            sourceFamily: 'weapon',
+            ownerKind: 'npc',
+            damage: [{ id: 'base', fixed: 5, types: ['cortante'] }],
+        });
+        assert.equal(result.ok, true);
+        assert.equal(result.definition.ownerKind, 'npc');
+    });
+
     it('normaliza custos, alvo, acerto, dano, status e ciclo', () => {
         const result = validateTechniqueDefinition({
             id: 'test:technique',

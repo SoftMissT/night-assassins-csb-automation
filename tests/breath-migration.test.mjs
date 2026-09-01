@@ -62,6 +62,19 @@ describe('breath-migration', () => {
         assert.ok(patch.flags['night-assassins-csb-automation'].breathRepaired);
     });
 
+    it('preserva o ID runtime remapeado pelo CSB ao reparar uma Forma', () => {
+        const embedded = {
+            id: 'runtime-form',
+            name: canonicalForm.name,
+            system: {
+                template: 'RuntimeBreathTpl42',
+                props: { forma_id: 'chamas_02', respiracao_nome: 'Chamas' },
+            },
+        };
+        const patch = breathingItemPatch(embedded, canonicalForm);
+        assert.equal(patch.system.template, 'RuntimeBreathTpl42');
+    });
+
     it('é idempotente: item já canônico não gera patch', () => {
         assert.equal(breathingItemPatch(canonicalForm, canonicalForm), null);
     });

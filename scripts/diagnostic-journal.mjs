@@ -140,6 +140,12 @@ export function diagnosticJournalOwnership() {
     return ownership;
 }
 
+function sameOwnership(left = {}, right = {}) {
+    const leftEntries = Object.entries(left).sort(([a], [b]) => a.localeCompare(b));
+    const rightEntries = Object.entries(right).sort(([a], [b]) => a.localeCompare(b));
+    return JSON.stringify(leftEntries) === JSON.stringify(rightEntries);
+}
+
 async function ensureJournal() {
     if (!isPrimaryGm()) return null;
     let journal = game.journal?.getName?.(JOURNAL_NAME) ?? null;
@@ -151,7 +157,7 @@ async function ensureJournal() {
     } else {
         const ownership = diagnosticJournalOwnership();
         const current = journal.ownership?.toObject?.() ?? journal.ownership ?? {};
-        if (!foundry.utils.deepEqual(current, ownership)) await journal.update({ ownership });
+        if (!sameOwnership(current, ownership)) await journal.update({ ownership });
     }
     return journal;
 }
@@ -213,7 +219,12 @@ export async function exportDiagnosticJournal(format = 'markdown') {
     const stamp = exportTimestamp();
     const extension = normalized === 'json' ? 'json' : 'md';
     const mime = normalized === 'json' ? 'application/json' : 'text/markdown';
-    foundry.utils.saveDataToFile(data, mime, `night-assassins-diagnostico-${stamp}.${extension}`);
+    const saveData = foundry.utils?.saveDataToFile ?? globalThis.saveDataToFile;
+    if (typeof saveData !== 'function')
+        throw new Error('A API de download do Foundry não está disponível neste cliente.');
+    await Promise.resolve(
+        saveData(data, mime, `night-assassins-diagnostico-${stamp}.${extension}`)
+    );
     ui.notifications.info(`Diagnóstico exportado em ${extension.toUpperCase()}.`);
     return data;
 }
@@ -331,6 +342,15 @@ export async function openDiagnosticReportDialog() {
 export async function openDiagnosticManager() {
     if (!game.user?.isGM)
         return ui.notifications.warn('O Journal de diagnóstico é exclusivo do GM.');
+    const run = async (operation) => {
+        try {
+            return await operation();
+        } catch (error) {
+            console.error(`[${MODULE_ID}] Falha no gerenciador de diagnóstico.`, error);
+            ui.notifications.error(error?.message || 'Falha no gerenciador de diagnóstico.');
+            return null;
+        }
+    };
     return foundry.applications.api.DialogV2.wait({
         window: { title: 'Night Assassins — Diagnóstico' },
         content: '<p>Registre, abra ou exporte o Journal de diagnóstico.</p>',
@@ -340,25 +360,25 @@ export async function openDiagnosticManager() {
                 icon: 'fa-solid fa-bug',
                 label: 'Registrar erro',
                 default: true,
-                callback: async () => openDiagnosticReportDialog(),
+                callback: async () => run(() => openDiagnosticReportDialog()),
             },
             {
                 action: 'open',
                 icon: 'fa-solid fa-book-open',
                 label: 'Abrir Journal',
-                callback: async () => openDiagnosticJournal(),
+                callback: async () => run(() => openDiagnosticJournal()),
             },
             {
                 action: 'markdown',
                 icon: 'fa-solid fa-file-lines',
                 label: 'Exportar Markdown',
-                callback: async () => exportDiagnosticJournal('markdown'),
+                callback: async () => run(() => exportDiagnosticJournal('markdown')),
             },
             {
                 action: 'json',
                 icon: 'fa-solid fa-file-code',
                 label: 'Exportar JSON',
-                callback: async () => exportDiagnosticJournal('json'),
+                callback: async () => run(() => exportDiagnosticJournal('json')),
             },
             { action: 'cancel', icon: 'fa-solid fa-xmark', label: 'Cancelar' },
         ],

@@ -208,6 +208,13 @@ describe('module distribution', () => {
         );
         assert.match(hitMacro, /moduleApi\.rollHit/);
         assert.doesNotMatch(hitMacro, /new Dialog\(|ApplicationV1/);
+        const damageMacro = await readFile(
+            new URL('../macros/na_roll_damage.js', import.meta.url),
+            'utf8'
+        );
+        assert.match(damageMacro, /actorUuid:\s*macroArgs\.actorUuid/u);
+        assert.match(damageMacro, /builder:\s*true/u);
+        assert.doesNotMatch(damageMacro, /rollDamage\(macroArgs\)/u);
     });
 });
 

@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { repairSlayerWeaponItems, weaponRepairChanges } from '../scripts/weapon-migration.mjs';
+import {
+    canonicalWeaponForItem,
+    rehydrateSlayerWeaponItem,
+    repairSlayerWeaponItems,
+    weaponRepairChanges,
+} from '../scripts/weapon-migration.mjs';
+import { normalizeWeaponTechnique } from '../scripts/items/item-technique-normalizers.mjs';
 
 const armedItem = {
     id: 'abc123',
@@ -41,16 +47,10 @@ describe('weapon-migration', () => {
     it('é idempotente: após aplicar, não gera novo patch', () => {
         const first = weaponRepairChanges(armedItem);
         assert.ok(first);
-        const appliedProps = {
-            ...armedItem.system.props,
-            arma_perfis_ataque_json: first['system.props.arma_perfis_ataque_json'],
-            arma_mecanicas_json: first['system.props.arma_mecanicas_json'],
-            arma_perfis_resumo: first['system.props.arma_perfis_resumo'],
-            arma_tipos_dano_resumo: first['system.props.arma_tipos_dano_resumo'],
-            arma_atributos_resumo: first['system.props.arma_atributos_resumo'],
-            arma_tipos_dano: first['system.props.arma_tipos_dano'],
-            arma_dano_atributo: first['system.props.arma_dano_atributo'],
-        };
+        const appliedProps = { ...armedItem.system.props };
+        for (const [path, value] of Object.entries(first)) {
+            if (path.startsWith('system.props.')) appliedProps[path.slice('system.props.'.length)] = value;
+        }
         assert.equal(
             weaponRepairChanges({
                 ...armedItem,
@@ -97,14 +97,84 @@ describe('weapon-migration', () => {
                 },
             },
         ];
-        const result = await repairSlayerWeaponItems({ actors });
+        const result = await repairSlayerWeaponItems({ actors, canonicalWeapons: [] });
         assert.equal(result.actors, 1);
         assert.equal(result.items, 1);
         assert.equal(calls, 1);
     });
 
     it('retorna vazio sem Actors no ambiente de testes', async () => {
-        const result = await repairSlayerWeaponItems();
+        const result = await repairSlayerWeaponItems({ canonicalWeapons: [] });
         assert.deepEqual(result, { actors: 0, items: 0 });
+    });
+
+    it('reidrata perfil e crítico pelo nome mesmo com template remapeado pelo CSB', async () => {
+        const canonical = {
+            ...armedItem,
+            id: 'catalog-double-blade',
+            name: 'Double Blade',
+            system: {
+                template: 'NAWeaponTpl00001',
+                props: {
+                    ...armedItem.system.props,
+                    arma_nome: 'Double Blade',
+                    arma_critico: 19,
+                    arma_dano_fixo: 5,
+                    arma_perfis_ataque: [
+                        {
+                            nome: 'Ryōtō',
+                            modo: 'ryoto',
+                            dano_fixo: 5,
+                            critico: 19,
+                            tipos_dano: ['cortante', 'perfurante'],
+                            atributos: [],
+                        },
+                    ],
+                },
+            },
+        };
+        const updates = [];
+        const embedded = {
+            id: 'embedded-double-blade',
+            name: 'Double Blade',
+            parent: { documentName: 'Actor' },
+            ownership: { default: 2 },
+            system: {
+                template: 'DPHpPEzWtkoFHzdQ',
+                props: {
+                    inventario_categoria: 'arma',
+                    arma_nome: 'Double Blade',
+                    arma_critico: 20,
+                    arma_perfis_ataque_json: '[]',
+                },
+            },
+            async update(patch, options) {
+                updates.push({ patch, options });
+            },
+        };
+
+        assert.equal(canonicalWeaponForItem(embedded, [canonical]), canonical);
+        assert.equal(
+            await rehydrateSlayerWeaponItem(embedded, { canonicalWeapons: [canonical] }),
+            true
+        );
+        assert.equal(updates.length, 1);
+        assert.equal(updates[0].patch['system.props.arma_critico'], 19);
+        const profiles = JSON.parse(updates[0].patch['system.props.arma_perfis_ataque_json']);
+        assert.equal(profiles[0].critico, 19);
+        const normalized = normalizeWeaponTechnique({
+            ...embedded,
+            system: {
+                ...embedded.system,
+                props: {
+                    ...embedded.system.props,
+                    arma_critico: updates[0].patch['system.props.arma_critico'],
+                    arma_perfis_ataque_json:
+                        updates[0].patch['system.props.arma_perfis_ataque_json'],
+                },
+            },
+        });
+        assert.equal(normalized.definition.attack.critical.threshold, 19);
+        assert.equal(updates[0].options.naWeaponRehydrate, true);
     });
 });

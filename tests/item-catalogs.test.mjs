@@ -238,7 +238,15 @@ describe('catálogo de armas Slayer', () => {
             'textFields do CSB recebem texto; o array canônico permanece no campo _json'
         );
         const cutelos = weapons.find((item) => item.name === 'Cutelos Gêmeos');
+        const doubleBlade = weapons.find((item) => item.name === 'Double Blade');
+        const katana = weapons.find((item) => item.name === 'Katana');
+        const manoplas = weapons.find((item) => item.name === 'Manoplas / Soqueiras');
+        assert.equal(doubleBlade.system.props.arma_critico, 19);
+        assert.equal(katana.system.props.arma_critico, 20);
+        assert.equal(manoplas.system.props.arma_critico, 20);
+        assert.ok(manoplas.system.props.arma_perfis_ataque.every((profile) => profile.critico === 20));
         assert.equal(cutelos.system.props.arma_dano_fixo, 4);
+        assert.equal(cutelos.system.props.arma_critico, 20);
         assert.deepEqual(cutelos.system.props.arma_dano_atributo, 'DEX ou FOR');
         assert.deepEqual(JSON.parse(cutelos.system.props.arma_dano_atributo_json), [
             'DEX',

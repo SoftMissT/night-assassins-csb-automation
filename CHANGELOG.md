@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.11.53 — 2026-09-01
+
+- Corrigido o fluxo compartilhado de armas normais nas fichas Slayer e NPC: Acerto usa o crítico efetivo do perfil e encaminha a decisão ao follow-up de Dano.
+- A confirmação de Acerto agora informa arma, perfil, resultado natural, limiar crítico e se o golpe entrou na faixa crítica.
+- O botão DANO passa somente `actorUuid` e `builder: true`, garantindo a abertura do Attack Builder sem interpretar o escopo completo do CSB como dano explícito.
+- O reconhecimento e a sincronização de armas deixam de depender exclusivamente do ID estático do template; Items com IDs remapeados pelo CSB podem ser reconhecidos e reidratados pelo catálogo canônico.
+- Corrigidos os reparadores manuais de Armas e Respirações, incluindo preservação do template runtime remapeado.
+- Corrigidos abertura e exportação do Journal de diagnóstico no Foundry v14 sem depender de `foundry.utils.deepEqual` ou de uma única localização de `saveDataToFile`.
+- Atualizado o README com apresentação, requisitos, badges, instalação, estado das fichas, validações pendentes, compêndios e troubleshooting.
+- Armas Especiais permanecem fora do escopo desta versão.
+- Validação local: 961/961 testes, 169 suítes e zero falhas; validação das armas normais em Actors reais Slayer/NPC permanece como gate no Foundry v14.
+
 ## v0.11.52 — 2026-09-01
 
 - Adotado o template oficial de arma Slayer v0.3.1 runtime-safe, preservando o layout aprovado e o contrato `NAWeaponTpl00001`.

@@ -301,8 +301,8 @@ export async function ensureWeaponUsageMode(item) {
 export function registerWeaponModeEngine() {
     Hooks.on('createItem', (item) => {
         if (item?.parent?.documentName !== 'Actor') return;
-        if (!['NAWeaponTpl00001', 'NASpecialWeaponTpl00001'].includes(item.system?.template))
-            return;
+        const props = item.system?.props ?? {};
+        if (props.inventario_categoria !== 'arma' && !props.arma_nome) return;
         if (weaponUsageModes(item.system?.props ?? {}).length < 2) return;
         setTimeout(() => void ensureWeaponUsageMode(item), 0);
     });

@@ -72,8 +72,9 @@ export function breathingItemPatch(item, canonical) {
   // loot etc.) não recebem ownership nem body por este caminho.
   const related = Boolean(canonical) || isBreathingLike(props) || chatSpam;
   if (!related) return null;
+  const runtimeTemplateId = String(item.system?.template ?? '').trim();
   const alreadyCanonical = !chatSpam && !ownershipFix
-    && item.system?.template === BREATH_TEMPLATE_ID
+    && Boolean(runtimeTemplateId)
     && props.inventario_categoria === "respiracao"
     && Boolean(props.forma_id)
     && Boolean(props.respiracao_nome)
@@ -93,7 +94,9 @@ export function breathingItemPatch(item, canonical) {
       name: canonical.name,
       img: canonical.img,
       system: {
-        template: canonical.system?.template ?? BREATH_TEMPLATE_ID,
+        // O CSB remapeia o ID do template quando ele entra no World. Forçar o
+        // ID estático do módulo quebra o vínculo de Items já importados.
+        template: runtimeTemplateId || canonical.system?.template || BREATH_TEMPLATE_ID,
         props: mergedProps,
         ...(chatSpam ? { body: item.system?.body } : {}),
       },
@@ -128,6 +131,7 @@ export function breathingItemPatch(item, canonical) {
  * @returns {Promise<{actors: number, items: number}>}
  */
 export async function repairBreathingItems({ actors = globalThis.game?.actors?.contents ?? [] } = {}) {
+  if (actors.length === 0) return { actors: 0, items: 0 };
   const pack = game.packs.get(PACK_ID);
   if (!pack) throw new Error(`Compendium ${PACK_ID} não encontrado.`);
 

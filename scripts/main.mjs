@@ -88,7 +88,10 @@ import {
     splitDamageTotal,
     validateTechniqueDefinition,
 } from './core/technique-definition.mjs';
-import { repairSlayerWeaponItems } from './weapon-migration.mjs';
+import {
+    registerWeaponSynchronizationEngine,
+    repairSlayerWeaponItems,
+} from './weapon-migration.mjs';
 import { repairBreathingItems } from './breath-migration.mjs';
 import {
     normalizeBreathingTechnique,
@@ -193,6 +196,7 @@ Hooks.once('ready', async () => {
         );
     }
     registerAdvancedStatesEngine();
+    registerWeaponSynchronizationEngine();
     registerWeaponModeEngine();
 
     // Manutenções mundiais nunca rodam no boot. Elas atualizam Actors/Items e

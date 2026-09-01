@@ -112,6 +112,46 @@ describe('attack-builder', () => {
         assert.deepEqual(result.entradas[0].tiposDano, ['perfurante']);
     });
 
+    it('NPC usa o mesmo Builder com template remapeado e crítico do perfil', () => {
+        const actor = makeActor({ props: { npc_nome: 'Caçador NPC', for_display: 4 } });
+        actor.items = [
+            {
+                id: 'double-blade-npc',
+                uuid: 'Actor.npc.Item.double-blade-npc',
+                name: 'Double Blade',
+                parent: actor,
+                system: {
+                    template: 'DPHpPEzWtkoFHzdQ',
+                    props: {
+                        inventario_categoria: 'arma',
+                        arma_nome: 'Double Blade',
+                        arma_critico: 19,
+                        arma_perfis_ataque_json: JSON.stringify([
+                            {
+                                nome: 'Ryōtō',
+                                modo: 'ryoto',
+                                dano_fixo: 5,
+                                dano_dados: '',
+                                atributos: [],
+                                tipos_dano: ['cortante', 'perfurante'],
+                                critico: 19,
+                                ataques: 2,
+                            },
+                        ]),
+                    },
+                },
+            },
+        ];
+        const model = createAttackBuilderModel(actor);
+        assert.equal(model.ownerKind, 'npc');
+        assert.equal(model.weapons.length, 1);
+        assert.equal(model.weapons[0].definition.attack.critical.threshold, 19);
+        assert.equal(model.weapons[0].definition.attack.count, 2);
+        const result = buildAttackSelection(model, { weaponKey: model.weapons[0].key });
+        assert.equal(result.entradas.length, 2);
+        assert.ok(result.entradas.every((entry) => entry.fixo === 5));
+    });
+
     it('oferece ataques desarmados escalonados para Oni', () => {
         const actor = makeActor({
             props: { nome_oni: 'Akuma', nvl_num: 10, for_display: 6, dex_display: 5 },

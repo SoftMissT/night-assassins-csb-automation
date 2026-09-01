@@ -206,22 +206,29 @@ async function doRoll({
                 usedMetalReroll = true;
             }
         }
+        const natural = naturalD20(roll);
+        const inCriticalRange =
+            statusEffects.criticalAllowed !== false &&
+            weapon?.criticalDisabled !== true &&
+            natural >= criticalThreshold;
         const decision = await openHitConfirmationDialog({
             current: index + 1,
             maximum,
             total: roll.total,
             cdVal,
+            natural,
+            criticalThreshold,
+            critical: inCriticalRange,
+            weaponName: weapon?.name ?? '',
+            profileName: weapon?.profileName ?? '',
         });
         if (!decision || decision.stop) {
             interrupted = true;
             break;
         }
-        const natural = naturalD20(roll);
         const critical =
             decision.hit &&
-            statusEffects.criticalAllowed !== false &&
-            weapon?.criticalDisabled !== true &&
-            natural >= criticalThreshold;
+            inCriticalRange;
         attempts.push({
             roll,
             hit: decision.hit,

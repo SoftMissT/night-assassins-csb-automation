@@ -245,15 +245,35 @@ export async function openChainFormDialog({ chainable = [] } = {}) {
  * Confirma o resultado de uma tentativa antes de liberar a próxima.
  * @returns {Promise<{hit:boolean,continue:boolean}|null>}
  */
-export async function openHitConfirmationDialog({ current, maximum, total, cdVal = 0 }) {
+export async function openHitConfirmationDialog({
+    current,
+    maximum,
+    total,
+    cdVal = 0,
+    natural = 0,
+    criticalThreshold = 20,
+    critical = false,
+    weaponName = '',
+    profileName = '',
+}) {
     const isLast = current >= maximum;
     const cdResult =
         cdVal > 0
             ? `<span class="na-hit-cd ${total >= cdVal ? 'is-success' : 'is-failure'}">CD ${cdVal}: ${total >= cdVal ? 'superada' : 'não superada'}</span>`
             : '';
+    const weaponLabel = [weaponName, profileName].filter(Boolean).join(' — ');
+    const criticalResult = critical
+        ? '<strong class="na-hit-critical">🔥 ACERTO CRÍTICO</strong>'
+        : '<span class="na-hit-normal">Acerto normal</span>';
     const content = `<div class="na-csb-automation na-hit-confirm">
     <span class="na-hit-kicker">TENTATIVA ${current} DE ${maximum}</span>
+    ${weaponLabel ? `<h3>${weaponLabel}</h3>` : ''}
     <div class="na-hit-total"><small>RESULTADO</small><strong>${total}</strong></div>
+    <div class="na-hit-critical-summary">
+      <span>Natural: <strong>${natural}</strong></span>
+      <span>Crítico da arma: <strong>${criticalThreshold}+</strong></span>
+      ${criticalResult}
+    </div>
     ${cdResult}
     <p>${isLast ? 'Última tentativa. Confirme o resultado.' : 'Este ataque acertou? Você pode continuar ou encerrar a técnica agora.'}</p>
     ${isLast ? '' : `<label class="na-hit-stop"><input type="checkbox" name="na-hit-stop"><span>Encerrar a sequência depois deste resultado</span></label>`}

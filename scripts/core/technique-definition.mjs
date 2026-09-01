@@ -1,7 +1,7 @@
 export const TECHNIQUE_DEFINITION_VERSION = 1;
 
 export const SOURCE_FAMILIES = Object.freeze(['weapon', 'breathing', 'kekkijutsu', 'equipment']);
-export const OWNER_KINDS = Object.freeze(['slayer', 'oni', 'both']);
+export const OWNER_KINDS = Object.freeze(['slayer', 'oni', 'npc', 'both']);
 export const LIFECYCLE_SCOPES = Object.freeze([
     'instant',
     'turn',

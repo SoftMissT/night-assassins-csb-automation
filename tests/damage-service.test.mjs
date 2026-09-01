@@ -170,6 +170,39 @@ describe('damage-service', () => {
         Roll.create = previousRollCreate;
     });
 
+    it('aceita dano inteiramente fixo sem exigir dado rolável', async () => {
+        _dialogReturn = {
+            nome: 'Dano fixo',
+            pdrGasto: 0,
+            critical: false,
+            entradas: [
+                {
+                    dado: '',
+                    fixo: 5,
+                    selAttrs: [],
+                    selTiposDano: ['concussao'],
+                    tipoAcao: 'ataque',
+                },
+            ],
+        };
+        const formulas = [];
+        const previousCreate = Roll.create;
+        Roll.create = (formula) => {
+            formulas.push(formula);
+            return { evaluate: async () => ({ total: Number(formula), dice: [] }) };
+        };
+        let chatData;
+        ChatMessage.create = async (data) => (chatData = data);
+        game.user.targets = new Set();
+        try {
+            await rollDamage({ actor: makeActor(), skipActionConsumption: true });
+        } finally {
+            Roll.create = previousCreate;
+        }
+        assert.deepEqual(formulas, ['5']);
+        assert.match(chatData.flavor, /Total: 5<\/strong>/);
+    });
+
     it('mantém dano fixo e dano tipado de Metal em parcelas separadas', async () => {
         _dialogReturn = {
             nome: 'Golpe derivado',

@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.51 — 2026-09-01
+
+- Adotados integralmente os exports oficiais mais recentes das fichas Slayer, Oni, NPC e Oni Minion fornecidos pelo operador.
+- Sincronizado o pacote de importação manual do Slayer com o mesmo export oficial distribuído no Compendium.
+- Corrigida a fórmula de PDR atual do NPC para `(base + recuperado) - gasto`, sem alterar as demais fórmulas do export.
+- Corrigidas as keys internas de Bloqueio, Esquiva e Dano do Oni Minion para chamarem as macros correspondentes.
+- Dano puramente fixo, sem qualquer dado rolável, protegido por teste de regressão; o runtime de dano não precisou ser alterado.
+- Mecânicas de itens, armas e respirações permaneceram fora do escopo desta versão.
+- Validação local: 953/953 testes, 168 suítes e zero falhas.
+
 ## v0.11.50 — 2026-09-01
 
 - **Rollback corretivo integral:** runtime, fórmulas, templates, CSS, catálogos executáveis, testes e pipeline restaurados exatamente à baseline funcional `v0.11.47` (`f3884ee`).

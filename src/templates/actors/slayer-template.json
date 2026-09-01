@@ -34,14 +34,14 @@
                             "type": "tab",
                             "contents": [
                                 {
-                                    "key": "inventario_slayer_consumiveis",
+                                    "key": "",
                                     "colSpan": 1,
                                     "rowSpan": 1,
                                     "cssClass": "",
                                     "role": 0,
                                     "editRole": 0,
                                     "permission": 0,
-                                    "tooltip": "Consumíveis HonMoon e suprimentos carregados pelo Slayer.",
+                                    "tooltip": "",
                                     "visibilityFormula": "",
                                     "editableFormula": "",
                                     "escapeHTML": false,
@@ -393,14 +393,14 @@
                                     "titleStyle": "default"
                                 },
                                 {
-                                    "key": "",
+                                    "key": "inventario_slayer_consumiveis",
                                     "colSpan": 1,
                                     "rowSpan": 1,
                                     "cssClass": "",
                                     "role": 0,
                                     "editRole": 0,
                                     "permission": 0,
-                                    "tooltip": "",
+                                    "tooltip": "Consumíveis HonMoon e suprimentos carregados pelo Slayer.",
                                     "visibilityFormula": "",
                                     "editableFormula": "",
                                     "escapeHTML": false,
@@ -477,7 +477,9 @@
                                     "statusIcon": true,
                                     "nameAlign": "left",
                                     "nameLabel": "Consumível",
-                                    "templateFilter": ["NAConsumableTpl1"],
+                                    "templateFilter": [
+                                        "NAConsumableTpl1"
+                                    ],
                                     "itemFilterFormula": "equalText(item.inventario_categoria, 'consumivel')",
                                     "sortPredicates": []
                                 },
@@ -2747,7 +2749,9 @@
                                     "statusIcon": true,
                                     "nameAlign": "left",
                                     "nameLabel": "Arma",
-                                    "templateFilter": ["NAWeaponTpl00001"],
+                                    "templateFilter": [
+                                        "NAWeaponTpl00001"
+                                    ],
                                     "itemFilterFormula": "",
                                     "sortPredicates": []
                                 },
@@ -2832,7 +2836,9 @@
                                     "statusIcon": true,
                                     "nameAlign": "left",
                                     "nameLabel": "Forma",
-                                    "templateFilter": ["NABreathTpl00001"],
+                                    "templateFilter": [
+                                        "NABreathTpl00001"
+                                    ],
                                     "itemFilterFormula": "",
                                     "sortPredicates": []
                                 }

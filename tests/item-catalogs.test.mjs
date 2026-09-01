@@ -342,11 +342,14 @@ describe('catálogo de armas Slayer', () => {
             (document) => document._id === 'NASpecialWeaponTpl00001'
         );
         const specialSerialized = JSON.stringify(specialTemplate.system);
-        // Os 6 campos soltos arma_rank_d_formula..arma_rank_ss_formula eram "fantasmas": editáveis mas
-        // nunca lidos por extractWeaponRankFormulas() (weapon-service.mjs), que só parseia markdown de
-        // dentro de arma_regra_completa. Substituídos por um hint estático apontando pro formato real.
+        // Contrato v0.3.2: o template especial expõe áreas próprias para
+        // dupla alma, estado e regras, sem recuperar o hint Markdown antigo.
         assert.doesNotMatch(specialSerialized, /arma_rank_d_formula|arma_rank_ss_formula/);
-        assert.match(specialSerialized, /DANO POR RANK/);
+        assert.match(specialSerialized, /arma_especial_dupla_alma/);
+        assert.match(specialSerialized, /arma_especial_estado/);
+        assert.match(specialSerialized, /arma_especial_regras/);
+        assert.doesNotMatch(specialSerialized, /arma_especial_contexto_copy1/);
+        assert.doesNotMatch(specialSerialized, /arma_regra_completa_hint/);
         assert.doesNotMatch(serialized, /respiracao_nome|tipo_manobra|Usar Forma/);
         const abilityTitles = JSON.stringify(template.system.body).match(/Habilidade/gu) ?? [];
         assert.equal(abilityTitles.length, 1, 'template normal deve exibir Habilidade uma única vez');

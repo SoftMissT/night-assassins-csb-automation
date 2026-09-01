@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.55 — 2026-09-01
+
+- Adotado integralmente o template oficial de Arma Especial Slayer v0.3.2, preservando `_id` e `uniqueId` canônicos `NASpecialWeaponTpl00001`.
+- Adicionadas as áreas `arma_especial_dupla_alma`, `arma_especial_estado` e `arma_especial_regras`, além dos campos runtime-safe do novo contrato.
+- Removidos do template especial o componente legado `arma_regra_completa_hint` e qualquer vestígio de `arma_especial_contexto_copy1`.
+- Adicionados componentes CSS reutilizáveis e escopados em `.na-sheet` para atributos, badges duais, perfis e conteúdo enriquecido de Armas Especiais, com fallback para clientes sem `color-mix()`.
+- Atualizado o teste estrutural para validar o contrato v0.3.2 em vez do texto visível legado `DANO POR RANK`.
+- Validação local: 966/966 testes, 170 suítes e zero falhas.
+- O template antigo já existente no World não é substituído automaticamente; após instalar a versão, o GM deve reimportar o novo template pelo Compendium.
+
 ## v0.11.54 — 2026-09-01
 
 - Normalizados os campos visuais das armas normais: alcance, propriedades, requisito e tipo deixam de exibir marcadores Markdown literais no CSB.

@@ -1,0 +1,77 @@
+{
+    "_id": "e3dec2190752a701",
+    "_key": "!items!e3dec2190752a701",
+    "name": "Tetsubo",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/tetsubo_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Tetsubo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 7,
+            "arma_dano_atributo": [],
+            "arma_tipos_dano": ["concussivo"],
+            "arma_critico": 19,
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Concussão / Morote",
+            "arma_requisito": "",
+            "descricao": "Uma arma pesada e forte que deve ser usada com duas mãos e se parece com um porrete.\n\n- Propriedades:Concussão / Morote\n- Alcance:1,5m\n- Crítico:19 Natural\n- Dano:7 / Concussivo\n\nHabilidade\nAcertos críticos aplicam +2 de dano bônus, após o cálculo do crítico.",
+            "arma_ordem": 26,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "7 / Concussivo",
+                    "dano_fixo": 7,
+                    "dano_dados": "",
+                    "atributos": [],
+                    "tipos_dano": ["concussivo"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "concussao",
+                    "kind": "attack-attribute",
+                    "attribute": "FOR",
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Acertos críticos aplicam +2 de dano bônus, após o cálculo do crítico."
+                }
+            ],
+            "arma_propriedades_chaves": ["concussao", "morote"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 2600000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

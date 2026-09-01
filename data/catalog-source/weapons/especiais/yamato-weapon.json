@@ -1,0 +1,447 @@
+{
+    "_id": "b6e0c83df19a4d72",
+    "_key": "!items!b6e0c83df19a4d72",
+    "name": "Yamato The Rift-Walker's Legacy",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/yamato_the_rift_walkers_legacy_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Yamato The Rift-Walker's Legacy",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 7,
+            "arma_dano_atributo": ["FDV"],
+            "arma_acerto_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 18,
+            "arma_critico_texto": "18 Natural / 16 Natural em Postura Iai",
+            "arma_alcance": "1,5m físico / 12m em Cortes Dimensionais",
+            "arma_propriedades": "Acuidade / Morote / Vínculo de Herança",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Forseti",
+            "arma_demonio": "Yamata no Orochi",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Contra-ataque",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Katana dimensional de herança. Cortes que atravessam espaço, postura Iai e lâminas espectrais. Forseti responde com precisão, alcance, deslocamento dimensional e contra-ataque. Yamata no Orochi responde com dano, Sangramento, multiplicação de cortes e possessão.",
+            "arma_ordem": 107,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Corte Físico",
+                    "formula_texto": "7 + FDV + dado evolutivo / Cortante",
+                    "dano_fixo": 7,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FDV",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 18
+                },
+                {
+                    "nome": "Corte Dimensional",
+                    "formula_texto": "7 + FDV + dado evolutivo / Cortante",
+                    "dano_fixo": 7,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FDV",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "12m",
+                    "critico": 18
+                },
+                {
+                    "nome": "Postura Iai",
+                    "formula_texto": "7 + FDV + dado evolutivo / Cortante",
+                    "dano_fixo": 7,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FDV",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m físico / 12m se habilidade permitir",
+                    "critico": 16
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "7 + FDV + 1d6 / Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "7 + FDV + 1d8 / Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "7 + FDV + 1d10 / Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "7 + FDV + 1d12 / Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "7 + FDV + 2d6 / Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "7 + FDV + 2d8 / Cortante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Vínculo de Herança",
+                "descricao": "Yamato não usa força bruta como fonte principal de dano. Ela corta melhor quanto mais firme for a vontade do portador.",
+                "acerto": "por ter Acuidade, Yamato usa FOR ou DEX nas rolagens de acerto",
+                "dano": "por causa de Vínculo de Herança, Yamato usa FDV no dano",
+                "morote": "se o portador for proficiente e empunhar Yamato com as duas mãos, o bônus de FDV entra inteiro no dano",
+                "cortes_dimensionais": {
+                    "alcance": "12m",
+                    "descricao": "Cortes Dimensionais são ataques feitos a até 12m. Eles só existem quando uma habilidade da Yamato permite. Um Corte Dimensional ainda é um ataque com a arma, mas não exige contato físico direto."
+                }
+            },
+            "arma_postura_iai": {
+                "descricao": "A Postura Iai representa a lâmina parcialmente recolhida, intenção contida e corte liberado no instante exato.",
+                "condicao_entrada": "só pode entrar em Postura Iai se não usar Ação de Movimento voluntária no turno",
+                "efeitos": [
+                    "o próximo ataque com Yamato recebe Vantagem",
+                    "o crítico da Yamato passa para 16 Natural",
+                    "o benefício vale para apenas 1 ataque por turno"
+                ],
+                "perda": [
+                    "se o ataque não for realizado até o fim do turno, a Postura Iai se perde",
+                    "movimento voluntário quebra a Postura Iai"
+                ],
+                "nao_quebra": "movimento forçado por inimigos não quebra a Postura Iai"
+            },
+            "arma_despertar": {
+                "estado_selado": "Lâmina Herdada",
+                "primeiro_despertar": "Fenda do Herdeiro",
+                "despertar_verdadeiro": "Legado do Andarilho da Fenda",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "forseti": {
+                    "nome": "Veredito Entre Cortes",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Yamato antes do fim do turno recebe +2 no acerto e pode atingir um alvo a até 12m. O efeito se perde se você não atacar no mesmo turno.",
+                    "observacao": "este efeito não aumenta dano. Forseti nunca aumenta dano bruto."
+                },
+                "orochi": {
+                    "nome": "Oito Gargantas",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Yamato antes do fim do turno recebe o Dano Bônus de Orochi conforme suas Marcas do Demônio. Se acertar, o alvo sofre Sangramento 2 por 1 turno.",
+                    "custo": "usar Oito Gargantas cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Orochi nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_orochi": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Orochi é dano direto do golpe e dobra em crítico. O Sangramento não dobra em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Lâmina da Perfeição",
+                    "base": "enquanto Yamato estiver desperta, ataques com ela ignoram 3 pontos de Redução de Dano. Também desbloqueia a Postura Iai.",
+                    "forseti": "ao entrar em Postura Iai, você recebe +1 no próximo ataque com Yamato neste turno",
+                    "orochi": "ao acertar em Postura Iai, se o alvo já sofreu dano de Yamato neste combate, ele sofre Sangramento 1 por 1 turno"
+                },
+                "C": {
+                    "nome": "Shoshin: Lâminas Convocadas",
+                    "tecnica_liberada": "Shoshin",
+                    "tipo": "Ação Única",
+                    "base": "você invoca 3 lâminas espectrais. Elas permanecem até serem usadas ou até o fim da cena. Uma vez por turno de inimigo, quando uma criatura a até 6m agir, você pode disparar 1 lâmina espectral contra ela. A lâmina usa acerto fixo 10 + FDV. Se atingir a Defesa do alvo, causa FDV / Cortante.",
+                    "restricoes": [
+                        "não causam crítico",
+                        "não recebem bônus de dano evolutivo",
+                        "não ativam Postura Iai",
+                        "não ativam efeitos de contato",
+                        "não aplicam status, exceto se Orochi responder"
+                    ],
+                    "forseti": "você pode disparar uma lâmina contra um inimigo a até 9m em vez de 6m",
+                    "orochi": "a lâmina que acertar aplica Sangramento 1 por 1 turno"
+                },
+                "B": {
+                    "nome": "Corte do Julgamento",
+                    "tecnica_liberada": "Corte do Julgamento",
+                    "tipo": "Ação de Ataque",
+                    "alcance": "12m",
+                    "alvo": "1 criatura visível",
+                    "base": "você realiza um corte dimensional contra um alvo a até 12m. Faça uma rolagem de acerto com Yamato. Se acertar, o alvo sofre o dano atual da arma: 7 + FDV + dado evolutivo do Rank / Cortante. Se estiver em Postura Iai, o alvo também sofre Sangramento 2 por 1 turno.",
+                    "forseti": "o Corte do Julgamento recebe +1 no acerto",
+                    "orochi": "o Corte do Julgamento soma o Dano Bônus de Orochi e paga o custo de Ferida da tabela"
+                },
+                "A": {
+                    "nome": "Mushin: Corte de Espírito",
+                    "tecnica_liberada": "Mushin",
+                    "tipo": "Ação Especial",
+                    "base": "até o fim do turno, seu próximo Corte do Julgamento recebe +2 no acerto. Se o alvo tentar Bloquear e você superar a Defesa dele por 5 ou mais, o bônus de FDV no dano desse ataque se torna irredutível.",
+                    "forseti": "após o Corte do Julgamento, você pode se mover 3m sem provocar Ataque de Oportunidade",
+                    "orochi": "se o Corte do Julgamento acertar, o alvo fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "S": {
+                    "nome": "Zanshin: Veredito de Retorno",
+                    "tecnica_liberada": "Zanshin",
+                    "tipo": "Reação",
+                    "requisito": "estar em Postura Iai",
+                    "base": "você pode usar sua Reação para realizar um Corte do Julgamento contra um inimigo que erra um ataque contra você, entra no seu alcance físico ou sai do seu alcance físico sem Desengajar. Esse Corte do Julgamento usa o dano atual da arma.",
+                    "forseti": "o Zanshin é feito com Vantagem",
+                    "orochi": "Orochi não concede esta Reação. Se Orochi estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Fudōshin: Corte Dimensional",
+                    "tecnica_liberada": "Fudōshin",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "raio de 6m",
+                    "ponto_de_origem": "ponto visível a até 12m",
+                    "base": "você corta o espaço inteiro ao redor de um ponto visível. Faça uma rolagem de acerto com Yamato contra cada inimigo na área. Cada alvo atingido sofre o dano atual da arma: 7 + FDV + 2d8 / Cortante. Alvos com metade ou menos dos PDV máximos ficam Vulneráveis contra o próximo ataque que receberem. Se você estiver em Postura Iai, receba +2 no acerto contra todos os alvos dessa técnica.",
+                    "forseti": "após resolver o Fudōshin, você pode se mover até 3m sem provocar Ataque de Oportunidade",
+                    "orochi": "você pode ativar Oito Gargantas junto do Fudōshin sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Alvos atingidos também sofrem Sangramento 2 por 2 turnos."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Orochi domina. Use efeitos de Orochi. Forseti dorme fundo.",
+                    "4-8": "Orochi favorecido. Use efeitos de Orochi. Forseti desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Forseti ou Orochi.",
+                    "13-17": "Forseti favorecido. Use efeitos de Forseti. Orochi desperta apenas pelo gatilho.",
+                    "18-20": "Forseti domina. Use efeitos de Forseti. Orochi dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Forseti": "precisão, alcance, deslocamento dimensional e contra-ataque",
+                    "Orochi": "dano, Sangramento, multiplicação de cortes e pressão"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador fica com metade ou menos dos PDV máximos.",
+                    "15-38": "O portador causa ou sofre um crítico.",
+                    "39-57": "Um aliado cai a 0 PDV dentro de 12m.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue na Bainha",
+                "passos": [
+                    "segurar Yamato com a lâmina parcialmente desembainhada",
+                    "cortar a própria palma",
+                    "deixar o sangue correr pelo fio e pela bainha",
+                    "recolher a lâmina lentamente",
+                    "declarar o que precisa separar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue sela a bainha.\nForseti, julga o intervalo.\nOrochi, abre as oito gargantas.\nQue a distância se curve.\nQue o corte encontre o que está além.\nYamato, separa o mundo."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar o que precisa separar",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Forseti",
+                "efeito": "quando Forseti desperta como lado adormecido, ele permite usar uma vez o efeito de Forseti do seu Rank atual, mesmo que Orochi seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Yamata no Orochi",
+                "efeito": "quando Orochi desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva ou contra-ataque limpo",
+                    "prioriza o alvo já ferido por Yamato",
+                    "usa Cortes Dimensionais se houver alvo a até 12m",
+                    "tenta aplicar Sangramento",
+                    "ignora posicionamento seguro",
+                    "não protege aliados",
+                    "corta para multiplicar feridas, não para encerrar o combate com precisão"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue na Bainha normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "forseti_adormecido": "Forseti concede apenas um efeito de Forseti do Rank atual e volta a dormir",
+                "orochi_adormecido": "Orochi tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Oito Gargantas causa 1 Dano de Ferida.",
+                "3-4": "Oito Gargantas causa 1 Dano de Ferida e Orochi sussurra até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Orochi é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Yamato",
+                "primeiro_fragmento_simbiose": "Fenda",
+                "segundo_fragmento_unificacao": "Veredito",
+                "nome_verdadeiro": "Yamato, Legado do Andarilho da Fenda"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Separa o mundo, Yamato.",
+                "liberacao_verdadeira": "Corta o intervalo, Yamato, Legado do Andarilho da Fenda."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (7 + FDV + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Orochi dobra, porque é dano direto do golpe. Sangramento e Vulnerável não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: katana de herança, dano evolutivo e propriedades.",
+                "Ritual: corta a mão, banha lâmina e bainha, recolhe Yamato e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Postura Iai: sem movimento voluntário, próximo ataque com Vantagem e crítico 16.",
+                "Forseti: precisão, alcance, movimento dimensional e contra-ataque.",
+                "Orochi: dano, Sangramento, oito cortes e possessão.",
+                "Nome Verdadeiro: desbloqueia o Legado do Andarilho da Fenda."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10700000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

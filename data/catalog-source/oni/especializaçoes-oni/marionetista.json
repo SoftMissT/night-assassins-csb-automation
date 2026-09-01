@@ -1,0 +1,88 @@
+{
+    "id": "marionetista",
+    "name": "Marionetista",
+    "function": "Controle de movimento, Restrição de Movimentos, Manipulação de posição, Armadilhas, Servos ou bonecos menores, Controle de campo, Debuff físico",
+    "primaryAttributes": ["dex", "int", "car", "fdv"],
+    "levels": {
+        "1": {
+            "name": "Fios Finos",
+            "effect": "Passiva: Você recebe +1 em testes de DEX ou INT para: amarrar prender manipular objetos pequenos criar armadilhas simples perceber tensão em cordas, linhas ou fios Além disso, pode produzir fios demoníacos finos o bastante para uso narrativo simples, como deixar marcas, puxar objetos leves ou prender pequenos mecanismos. Esses fios não causam dano em combate sem uma habilidade que diga isso."
+        },
+        "2": {
+            "name": "Dedos de Marionete",
+            "effect": "Passiva: Você pode manipular objetos leves a até 3m usando fios, cabelos, veias, sangue endurecido ou tendões demoníacos. Exemplos válidos: puxar uma chave fechar uma porta leve derrubar um objeto pequeno acionar um mecanismo simples erguer uma arma leve caída no chão Esta habilidade não permite realizar ataques, desarmar inimigos ou ativar técnicas à distância sem uma habilidade específica."
+        },
+        "3": {
+            "name": "Fios de Controle",
+            "effect": "Ativa: Custo: 2 PDK Ação: Ação Especial Alcance: 9m Alvo: uma criatura que você possa ver Teste: DEX do alvo contra CD 10 + DEX ou INT do Oni Você lança fios demoníacos para prender membros, tornozelos, braços, arma ou centro de massa do alvo. Falha: o alvo sofre Restrição de Movimentos até o início do próximo turno dele. Sucesso: o alvo evita ou rompe os fios antes que eles travem seu movimento. Criaturas sem corpo físico ou sem pontos de ancoragem podem ser imunes, a critério do Mestre."
+        },
+        "4": {
+            "name": "Tensão Cruel",
+            "effect": "Passiva: Uma vez por turno, quando você causar dano a uma criatura sob Restrição de Movimentos causada por você, cause: +1 de dano Esse dano é do mesmo tipo do ataque usado."
+        },
+        "5": {
+            "name": "Puxão Cruel",
+            "effect": "Modificador: Custo: 1 PDK Gatilho: uma criatura falha contra seus Fios de Controle Limite: 1 vez por rodada Você puxa os fios no instante em que eles fecham. Além da Restrição de Movimentos, mova o alvo até: 3m Esse movimento pode aproximar, afastar, deslocar lateralmente ou expor o alvo. Não pode arremessar o alvo diretamente para morte automática, mas pode colocá-lo em terreno perigoso, linha de ataque ou posição desfavorável. Se o alvo colidir com obstáculo sólido, aplica-se a regra de Empurrado, se o Mestre considerar apropriado."
+        },
+        "6": {
+            "name": "Fio Defensivo",
+            "effect": "Reação: Custo: 2 PDK Ação: Reação Gatilho: você é alvo de um ataque físico à distância ou ataque corpo a corpo visível Você usa fios como tensão defensiva, desviando parcialmente a trajetória do golpe. Receba: +1 em Esquiva ou Bloqueio contra esse ataque Se o ataque errar, você pode mover-se 1,5m sem gerar Ataque de Oportunidade."
+        },
+        "7": {
+            "name": "Corpo Suspenso",
+            "effect": "Passiva: Uma vez por rodada, quando uma criatura sob Restrição de Movimentos causada por você for atingida por um ataque seu, o ataque causa: +1d6 de dano Esse dano é do mesmo tipo do ataque usado. Se a criatura estiver suspensa, presa contra uma parede ou parcialmente erguida pelos fios, ela também sofre -1 na próxima rolagem de ataque antes do início do próximo turno dela."
+        },
+        "8": {
+            "name": "Armadilha de Fios",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação Especial Área: círculo de 3m em um ponto a até 9m Duração: 2 rodadas Teste: DEX do alvo contra CD 10 + INT do Oni Você prepara uma zona de fios quase invisíveis. A primeira criatura inimiga que entrar na área pela primeira vez na rodada ou iniciar o turno dentro dela deve fazer o teste. Falha: sofre Restrição de Movimentos até o início do próximo turno dela. Falha por 5 ou mais: também fica Desequilibrada contra o próximo ataque recebido. Sucesso: atravessa a área sem ser presa. A armadilha pode ser percebida com teste de SAB contra CD 10 + INT do Oni."
+        },
+        "9": {
+            "name": "Teatro de Fios Menor",
+            "effect": "Ativa: Custo: 5 PDK Ação: Ação Completa Área: raio de 3m centrado em um ponto a até 9m Duração: 2 rodadas Teste: DEX dos alvos contra CD 10 + DEX ou INT do Oni Você cria uma zona de fios cortantes, tensos e móveis. Inimigos que iniciarem o turno dentro da área ou entrarem nela pela primeira vez na rodada fazem o teste. Falha: sofrem Restrição de Movimentos até o início do próximo turno deles. Falha por 5 ou mais: além disso, sofrem 1d6 de dano Cortante. Sucesso: movem-se normalmente. A área é considerada terreno difícil para inimigos enquanto durar."
+        },
+        "10": {
+            "name": "Fios Cortantes",
+            "effect": "Passiva: Quando uma criatura falhar por 5 ou mais contra Fios de Controle, Armadilha de Fios ou Teatro de Fios Menor, ela sofre: 1d6 de dano Cortante Esse dano só pode acontecer 1 vez por rodada contra a mesma criatura."
+        },
+        "11": {
+            "name": "Marionete Menor",
+            "effect": "Ativa: Custo: 5 PDK Ação: Ação Especial Alcance: toque ou 3m Alvo: uma criatura reduzida a 0 PDV, inconsciente, morta recentemente ou corpo sem resistência ativa Duração: até o fim da cena Limite: 1 Marionete Menor por vez Você prende fios em músculos, ossos ou articulações e move o corpo como ferramenta simples. A Marionete Menor pode executar uma função simples no turno dela: mover-se até metade do deslocamento bloquear passagem proteger o Oni, concedendo +1 na próxima Defesa dele realizar um ataque simples corpo a corpo acionar objeto ou obstáculo simples Ela não pode usar: Kekkijutsu Respiração Ação Única Ação Lendária técnicas complexas habilidades de chefe memórias ou decisões próprias O Mestre define valores simples para a Marionete conforme o nível da cena."
+        },
+        "12": {
+            "name": "Aprimoramento de Controle",
+            "effect": "Bônus Permanente: Escolha um benefício: +1 DEX ou +1 INT Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "13": {
+            "name": "Teatro de Fios",
+            "effect": "Aprimoramento: Seu Teatro de Fios Menor evolui. Quando usar essa habilidade, a área passa a ser: raio de 6m A duração passa a ser: 3 rodadas Além disso, uma vez por rodada, quando uma criatura falhar no teste contra o Teatro de Fios, você pode escolher um efeito adicional: mover o alvo 1,5m aplicar -1 na próxima Defesa do alvo impedir Reação do alvo até o início do próximo turno dele Escolha apenas um efeito."
+        },
+        "14": {
+            "name": "Fios Invisíveis",
+            "effect": "Passiva: Seus fios se tornam difíceis de perceber em condições favoráveis. Inimigos recebem -1 em testes de SAB para detectar seus fios quando houver: escuridão fumaça chuva multidão distração terreno visualmente poluído combate caótico Além disso, o primeiro inimigo que falhar em perceber seus fios em uma cena fica Distraído até receber dano ou até o início do próximo turno dele."
+        },
+        "15": {
+            "name": "Estrangulamento",
+            "effect": "Ativa: Custo: 6 PDK Ação: Ação Especial Alcance: 9m Alvo: uma criatura sob Restrição de Movimentos causada por você Teste: VIT do alvo contra CD 10 + DEX ou INT do Oni Você fecha fios ao redor do pescoço, peito, membros ou centro de massa do alvo. Falha: o alvo sofre: 2d6 de dano de Concussão Além disso, fica Desorientado até o início do próximo turno dele. Falha por 5 ou mais: também fica Derrubado. Sucesso: sofre metade do dano e não recebe status. Criaturas sem anatomia vulnerável a compressão podem sofrer apenas metade do dano, a critério do Mestre."
+        },
+        "16": {
+            "name": "Rede Demoníaca",
+            "effect": "Aprimoramento: Quando usar Fios de Controle, você pode gastar +2 PDK para afetar até 2 alvos. Condições: os dois alvos devem estar a até 3m um do outro ambos devem estar dentro do alcance da habilidade cada alvo faz seu próprio teste Se ambos falharem, você pode aplicar Puxão Cruel em apenas um deles sem custo adicional."
+        },
+        "17": {
+            "name": "Marionete Quebrada",
+            "effect": "Ativa: Custo: 10 PDK Ação: Ação Especial Alcance: 12m Alvo: uma criatura viva sob Restrição de Movimentos causada por você Teste: FDV do alvo contra CD 10 + CAR do Oni Limite: 1 vez por combate Você força os fios a atravessarem reflexos, articulações e medo. Falha: escolha uma ação simples que o alvo executa imediatamente: mover-se até metade do deslocamento largar um item empunhado ficar Derrubado atacar uma criatura adjacente com ataque padrão perder a próxima Reação Sucesso: o alvo resiste. Esta habilidade não pode forçar: Ação Única Kekkijutsu Respiração suicídio ataque contra si mesmo uso de item raro habilidade de chefe decisão narrativa complexa Chefes ou personagens centrais podem receber +3 nesse teste, a critério do Mestre."
+        },
+        "18": {
+            "name": "Controle de Cena",
+            "effect": "Passiva: Enquanto seu Teatro de Fios estiver ativo, você recebe: +2 em testes contra movimento forçado +2 em testes para manter Restrição de Movimentos causada por você Além disso, inimigos dentro do Teatro de Fios sofrem -1 em testes para escapar de Restrição de Movimentos causada por você."
+        },
+        "19": {
+            "name": "Família de Fios",
+            "effect": "Aprimoramento: Você pode manter até: 2 Marionetes Menores simultâneas Além disso, quando uma Marionete Menor for destruída, você pode usar sua Reação e gastar 3 PDK para fazê-la explodir em fios cortantes. Criaturas inimigas adjacentes à Marionete destruída devem fazer: 1d20 + DEX contra CD 10 + INT do Oni Falha: sofrem 2d6 de dano Cortante. Sucesso: sofrem metade do dano. Essa explosão não afeta você."
+        },
+        "20": {
+            "name": "Palco da Marionete Suprema",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Marionetista. Durante a duração, recebe: +2 DEX +2 INT alcance de Fios de Controle aumenta para 12m Teatro de Fios aumenta para raio de 9m inimigos sob Restrição de Movimentos causada por você sofrem -2 em Defesa inimigos sob Restrição de Movimentos causada por você não podem usar Reação Além disso, uma vez durante esta forma, você pode usar Comando de Marionete Suprema. Custo: 8 PDK Ação: Ação Especial Alcance: 12m Alvo: uma criatura viva sob Restrição de Movimentos causada por você Teste: FDV do alvo contra CD 10 + CAR do Oni Falha: escolha dois efeitos: o alvo se move até metade do deslocamento o alvo larga um item empunhado o alvo fica Derrubado o alvo perde a próxima Ação de Movimento o alvo faz um ataque padrão contra uma criatura adjacente o alvo fica Distraído até receber dano ou até o início do próximo turno dele Sucesso: escolha apenas um efeito menor: o alvo perde a próxima Reação o alvo sofre -1 na próxima Defesa o alvo se move 1,5m Esta forma termina imediatamente se o Oni sofrer Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha ou Carmesim, ou uma condição narrativa que rompa todos os fios demoníacos do campo."
+        }
+    }
+}

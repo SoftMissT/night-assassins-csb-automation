@@ -1,0 +1,483 @@
+{
+    "_id": "9f3e1c7a2b804d65",
+    "_key": "!items!9f3e1c7a2b804d65",
+    "name": "Impurity Arms Punhos Gêmeos de Kegare",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/impurity_arms_punhos_gemeos_de_kegare_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Impurity Arms Punhos Gêmeos de Kegare",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": ["FOR"],
+            "arma_acerto_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["concussao", "cortante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural / 18 Natural com Ruína Astral Parcial",
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Ryōtō / Pacto de Kegare",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Anúbis",
+            "arma_demonio": "Apep",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Dois braços corrompidos integrados ao corpo. Punhos de rocha, garras e instinto astral. Anúbis responde com defesa, contenção da corrupção, estabilidade corporal e resistência contra possessão. Apep responde com dano, Vulnerável, Sangramento, Dano de Ferida e ruptura astral.",
+            "arma_ordem": 115,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Punhos de Rocha",
+                    "formula_texto": "5 + FOR + dado evolutivo / Concussão",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Garras de Kegare",
+                    "formula_texto": "5 + FOR + dado evolutivo / Cortante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Guarda Cruzada",
+                    "formula_texto": "5 + FOR + dado evolutivo / Concussão",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Ruína Astral Parcial",
+                    "formula_texto": "5 + FOR + dado evolutivo / Concussão ou Cortante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussao", "cortante"],
+                    "alcance": "1,5m",
+                    "critico": 18
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "5 + FOR + 1d6 / Concussão ou Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "5 + FOR + 1d8 / Concussão ou Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "5 + FOR + 1d10 / Concussão ou Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "5 + FOR + 1d12 / Concussão ou Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "5 + FOR + 2d6 / Concussão ou Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "5 + FOR + 2d8 / Concussão ou Cortante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Pacto de Kegare",
+                "descricao": "Impurity Arms são integradas ao corpo. Elas não podem ser largadas como arma comum e não podem ser desarmadas por efeitos simples de queda de arma.",
+                "formas_de_impedir_uso": [
+                    "prender os braços",
+                    "selar a corrupção",
+                    "mutilar o membro",
+                    "aplicar efeito específico de contenção"
+                ],
+                "acerto": "por ter Acuidade, Impurity Arms podem usar FOR ou DEX nas rolagens de acerto",
+                "dano": "o dano usa FOR, porque a arma depende de impacto corporal, massa corrompida, punhos de rocha e garras ancoradas no corpo",
+                "ryoto": {
+                    "descricao": "ao usar os dois braços em uma Ação de Ataque, o portador pode atacar com ambos",
+                    "primeiro_ataque": "normal",
+                    "segundo_ataque": "não soma FOR ou DEX na rolagem de acerto",
+                    "dano": "ambos usam o dano atual da arma, salvo se uma técnica disser o contrário"
+                },
+                "corrupcao_integrada": {
+                    "descricao": "enquanto Impurity Arms estiverem despertas, efeitos que testem controle, possessão ou despertar usam Força de Vontade",
+                    "anubis": "pode melhorar esses testes",
+                    "apep": "tenta transformá-los em falha útil"
+                }
+            },
+            "arma_despertar": {
+                "estado_selado": "Talismãs Fechados",
+                "primeiro_despertar": "Kegare Revelado",
+                "despertar_verdadeiro": "Dois Braços do Caos Solar",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "anubis": {
+                    "nome": "Peso do Coração",
+                    "tipo": "Ação Especial",
+                    "efeitos": [
+                        "receba +2 na próxima Defesa antes do início do seu próximo turno",
+                        "ou receba +2 no próximo Teste de Despertar antes do fim da cena"
+                    ],
+                    "condicional": "se você estiver com metade ou menos dos PDV máximos, recebe ambos os efeitos",
+                    "observacao": "este efeito não aumenta dano. Anúbis nunca aumenta dano bruto."
+                },
+                "apep": {
+                    "nome": "Astral Disaster",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Impurity Arms antes do fim do turno recebe o Dano Bônus de Apep conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se o alvo já estiver Vulnerável, ele também sofre +1 Dano de Ferida.",
+                    "custo": "usar Astral Disaster cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Apep nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_apep": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Apep é dano direto do golpe e dobra em crítico. Vulnerável, Sangramento, Restrição de Movimentos e Dano de Ferida não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Star Revealment Talismans",
+                    "tecnica_liberada": "Star Revealment Talismans",
+                    "tipo": "Ação Única",
+                    "base": "você ativa os talismãs dos braços até o fim do Despertar atual. Enquanto os talismãs estiverem ativos, ao atacar com Impurity Arms, escolha uma forma.",
+                    "formas": {
+                        "punhos_de_rocha": {
+                            "tipo_dano": "Concussão",
+                            "efeito": "se superar a Defesa por 5 ou mais, o alvo sofre -1 Defesa até o início do próximo turno dele"
+                        },
+                        "garras_de_kegare": {
+                            "tipo_dano": "Cortante",
+                            "efeito": "se superar a Defesa por 5 ou mais, o alvo sofre Sangramento 1 por 1 turno"
+                        },
+                        "guarda_cruzada": {
+                            "tipo_dano": "Concussão",
+                            "efeito": "sem bônus ofensivo; você recebe +1 Defesa até o início do seu próximo turno"
+                        }
+                    },
+                    "anubis": "ao escolher Guarda Cruzada, receba também +1 no próximo Teste de Despertar antes do fim da cena",
+                    "apep": "se Garras de Kegare aplicarem Sangramento, o golpe causa +1 dano fixo"
+                },
+                "C": {
+                    "nome": "Avanço Exorcista",
+                    "tecnica_liberada": "Avanço Exorcista",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até 3m, ignorando Terreno Difícil durante esse deslocamento. Se terminar o movimento com um inimigo dentro de 1,5m, seu próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "anubis": "você recebe +1 no próximo Teste de Despertar antes do fim da cena",
+                    "apep": "o bônus de +1 no acerto só pode ser usado contra o inimigo mais ferido dentro do seu alcance. Se acertar, cause +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Combo de Kegare",
+                    "tecnica_liberada": "Combo de Kegare",
+                    "tipo": "Ação de Ataque",
+                    "requisito": "usar os dois braços",
+                    "base": "faça dois ataques usando a propriedade Ryōtō. Primeiro ataque normal. Segundo ataque não soma FOR ou DEX na rolagem de acerto. Cada ataque que acertar causa o dano atual da arma: 5 + FOR + dado evolutivo do Rank / Concussão ou Cortante. Se os dois ataques acertarem o mesmo alvo, escolha um efeito: o alvo fica Vulnerável contra o próximo ataque que receber; ou o alvo sofre Sangramento 2 por 1 turno. O Vulnerável não afeta o golpe que aplicou esse status.",
+                    "anubis": "se os dois ataques acertarem, você recebe +1 Defesa até o início do seu próximo turno",
+                    "apep": "se o alvo já estiver Vulnerável, o segundo golpe causa +1 dano fixo"
+                },
+                "A": {
+                    "nome": "Ruína Astral Parcial",
+                    "tecnica_liberada": "Ruína Astral Parcial",
+                    "tipo": "Ação Especial",
+                    "base": "seu próximo ataque com Impurity Arms antes do fim do turno recebe +2 no acerto e crítico 18 Natural. Se acertar, empurre o alvo 1,5m. Se superar a Defesa do alvo por 5 ou mais, ele sofre Restrição de Movimentos até o início do próximo turno dele.",
+                    "anubis": "até o fim do turno, você ignora Restrição de Movimentos aplicada em si",
+                    "apep": "se o ataque acertar, o alvo fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "S": {
+                    "nome": "Balança Contra o Caos",
+                    "tecnica_liberada": "Balança Contra o Caos",
+                    "tipo": "Reação",
+                    "base": "quando você ou um aliado adjacente for alvo de um ataque, role 1d20 + FOR. Se igualar ou superar o acerto inimigo, você defende o ataque. Se falhar por 4 ou menos, reduza o dano recebido em 5 + FOR.",
+                    "anubis": "receba +1 na rolagem de Balança Contra o Caos",
+                    "apep": "Apep não concede esta Reação. Se Apep estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Astral Disaster: Dois Braços do Caos Solar",
+                    "tecnica_liberada": "Astral Disaster Dois Braços do Caos Solar",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "até 2 inimigos dentro de 1,5m",
+                    "base": "faça uma rolagem de acerto separada contra até 2 inimigos dentro do alcance. Cada alvo atingido sofre o dano atual da arma: 5 + FOR + 2d8 / Concussão ou Cortante. Para cada alvo atingido, escolha um efeito: o alvo fica Vulnerável contra o próximo ataque que receber; ou o alvo sofre Sangramento 2 por 1 turno. Se você atingir dois ataques durante esta técnica, faça imediatamente um Teste de Despertar. Este teste representa os braços tentando ultrapassar os talismãs.",
+                    "anubis": "receba +2 nesse Teste de Despertar obrigatório",
+                    "apep": "você pode ativar Astral Disaster junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o alvo já estiver Vulnerável, ele sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Apep domina. Use efeitos de Apep. Anúbis dorme fundo.",
+                    "4-8": "Apep favorecido. Use efeitos de Apep. Anúbis desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Anúbis ou Apep.",
+                    "13-17": "Anúbis favorecido. Use efeitos de Anúbis. Apep desperta apenas pelo gatilho.",
+                    "18-20": "Anúbis domina. Use efeitos de Anúbis. Apep dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Anúbis": "defesa, contenção da corrupção, estabilidade corporal e resistência contra possessão",
+                    "Apep": "dano, Vulnerável, Sangramento, Dano de Ferida e ruptura corporal"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador fica com metade ou menos dos PDV máximos.",
+                    "15-38": "O portador acerta dois golpes Ryōtō no mesmo alvo.",
+                    "39-57": "O portador reduz um inimigo a 0 PDV ou um aliado cai a 0 PDV dentro de 3m.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue nos Talismãs",
+                "passos": [
+                    "expor os talismãs dos dois braços",
+                    "cortar a própria palma",
+                    "passar sangue do punho ao ombro do braço direito",
+                    "repetir no braço esquerdo",
+                    "declarar o que precisa conter ou destruir",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue pesa os selos.\nAnúbis, segura meu coração.\nApep, abre o caos sob a pele.\nQue os punhos não devorem o corpo.\nQue as garras encontrem o impuro.\nImpurity Arms, despertem."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar o que precisa conter ou destruir",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Anúbis",
+                "efeito": "quando Anúbis desperta como lado adormecido, ele permite usar uma vez o efeito de Anúbis do seu Rank atual, mesmo que Apep seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Apep",
+                "efeito": "quando Apep desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva",
+                    "prioriza alvos Vulneráveis",
+                    "tenta aplicar Vulnerável ou Sangramento",
+                    "usa os dois braços sempre que possível",
+                    "ignora contenção, cautela e preservação corporal",
+                    "não recua se ainda puder atacar",
+                    "transforma os braços em caos solar, não em técnica de exorcista"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue nos Talismãs normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "anubis_adormecido": "Anúbis concede apenas um efeito de Anúbis do Rank atual e volta a dormir",
+                "apep_adormecido": "Apep tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Astral Disaster causa 1 Dano de Ferida.",
+                "3-4": "Astral Disaster causa 1 Dano de Ferida e os talismãs dos braços tremem até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Apep é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Impurity Arms",
+                "primeiro_fragmento_simbiose": "Kegare",
+                "segundo_fragmento_unificacao": "Balança Solar",
+                "nome_verdadeiro": "Impurity Arms, Dois Braços da Balança Contra o Caos Solar"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Revelem-se, Impurity Arms.",
+                "liberacao_verdadeira": "Pesem o caos, Impurity Arms, Dois Braços da Balança Contra o Caos Solar."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (5 + FOR + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Apep dobra, porque é dano direto do golpe. Vulnerável, Sangramento, Restrição de Movimentos, Dano de Ferida, bônus de Defesa e bônus em Teste de Despertar não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: braços corrompidos integrados, dano evolutivo e Ryōtō.",
+                "Ritual: corta a mão, banha os talismãs dos dois braços e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Star Revealment Talismans: libera Punhos de Rocha, Garras de Kegare e Guarda Cruzada.",
+                "Anúbis: defesa, contenção, estabilidade e resistência contra possessão.",
+                "Apep: Vulnerável, Sangramento, Dano de Ferida e possessão.",
+                "Nome Verdadeiro: desbloqueia Dois Braços da Balança Contra o Caos Solar."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 11500000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

@@ -1,0 +1,467 @@
+{
+    "_id": "a91f42d8c7e30b65",
+    "_key": "!items!a91f42d8c7e30b65",
+    "name": "Êxtase Tesoura da Névoa Sagrada",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/extase_tesoura_da_nevoa_sagrada_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Êxtase Tesoura da Névoa Sagrada",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 6,
+            "arma_dano_atributo": ["FOR"],
+            "arma_acerto_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "1,5m fechada / 3m em cone de corte",
+            "arma_propriedades": "Acuidade / Morote / Alcance Variável",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Xochiquetzal",
+            "arma_demonio": "Ah Puch",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Tesoura de corte espiritual. Decomposição, costura e ceifa da forma viva. Xochiquetzal responde com defesa, preservação, costura e contenção da decadência. Ah Puch responde com Sangramento, decomposição, Dano de Ferida e possessão.",
+            "arma_ordem": 108,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Tesoura Fechada",
+                    "formula_texto": "6 + FOR + dado evolutivo / Cortante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Tesoura Aberta",
+                    "formula_texto": "6 + FOR + dado evolutivo / Cortante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "cone de 3m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Corte Cirúrgico",
+                    "formula_texto": "6 + FOR + dado evolutivo / Cortante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "6 + FOR + 1d6 / Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "6 + FOR + 1d8 / Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "6 + FOR + 1d10 / Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "6 + FOR + 1d12 / Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "6 + FOR + 2d6 / Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "6 + FOR + 2d8 / Cortante"
+                }
+            },
+            "arma_formas_de_corte": {
+                "tesoura_fechada": {
+                    "alcance": "1,5m",
+                    "efeito_base": "corte direto e preciso"
+                },
+                "tesoura_aberta": {
+                    "alcance": "cone de 3m",
+                    "efeito_base": "alcança um alvo dentro do cone; não aumenta número de alvos sozinha"
+                },
+                "corte_cirurgico": {
+                    "alcance": "1,5m",
+                    "efeito_base": "busca ponto frágil; melhora efeitos de Sangramento por Rank"
+                },
+                "observacao": "o cone de 3m só atinge múltiplos inimigos quando uma habilidade disser isso"
+            },
+            "arma_propriedade_especial": {
+                "nome": "Alcance Variável",
+                "descricao": "Êxtase pode alternar entre corte fechado e abertura em cone.",
+                "acerto": "por ter Acuidade, Êxtase pode usar FOR ou DEX nas rolagens de acerto",
+                "dano": "o dano da arma usa FOR, conforme o vínculo físico da tesoura",
+                "morote": "se o portador for proficiente e empunhar Êxtase com as duas mãos, o bônus de FOR entra inteiro no dano",
+                "cone_de_corte": {
+                    "alcance": "3m",
+                    "descricao": "representa a abertura das lâminas em cone",
+                    "regra_padrao": "por padrão, um ataque em cone ainda escolhe 1 alvo dentro da área",
+                    "multialvo": "habilidades como Snip Snip e Cortador da Criação permitem atingir múltiplos alvos"
+                }
+            },
+            "arma_cargas_de_costura": {
+                "disponivel_a_partir": "Rank B",
+                "maximo": 4,
+                "descricao": "as Cargas representam fios espirituais, marcas de corte e pontos de sutura invisíveis deixados no ar pela arma",
+                "ganho": "enquanto Êxtase estiver desperta, ao acertar um ataque com a arma, ganhe +1 Carga de Costura",
+                "uso": "na próxima Defesa feita por você antes do fim do Despertar, todas as Cargas acumuladas são consumidas",
+                "efeito": "cada Carga consumida concede +1 na rolagem de Defesa",
+                "observacao": "com 4 Cargas, alguns efeitos de Rank ficam mais fortes"
+            },
+            "arma_despertar": {
+                "estado_selado": "Tesoura Adormecida",
+                "primeiro_despertar": "Névoa Sagrada",
+                "despertar_verdadeiro": "Cortador da Forma Viva",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "xochiquetzal": {
+                    "nome": "Flor que Não Murcha",
+                    "tipo": "Ação Especial",
+                    "alvo": "você ou 1 aliado dentro de 3m",
+                    "efeito": "o alvo recebe +2 na próxima Defesa feita antes do início do seu próximo turno. Se o alvo estiver sofrendo Sangramento, reduza o valor desse Sangramento em 1.",
+                    "restricoes": [
+                        "não cura PDV",
+                        "não remove Sangramento completamente, a menos que o valor chegue a 0",
+                        "não aumenta dano"
+                    ],
+                    "observacao": "Xochiquetzal nunca aumenta dano bruto"
+                },
+                "ah_puch": {
+                    "nome": "Toque da Decadência",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Êxtase antes do fim do turno recebe o Dano Bônus de Ah Puch conforme suas Marcas do Demônio. Se acertar, o alvo sofre Sangramento 2 por 1 turno. Se o alvo já estiver sofrendo Sangramento, também sofre +1 Dano de Ferida.",
+                    "custo": "usar Toque da Decadência cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Ah Puch nunca melhora Reação defensiva"
+                }
+            },
+            "arma_dano_bonus_ah_puch": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Ah Puch é dano direto do golpe e dobra em crítico. Sangramento e Dano de Ferida não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Névoa Encantada",
+                    "base": "ao atacar com Êxtase, escolha uma forma de corte",
+                    "formas": {
+                        "tesoura_fechada": {
+                            "efeito": "ataque a 1,5m recebe +1 no acerto"
+                        },
+                        "tesoura_aberta": {
+                            "efeito": "ataque pode atingir 1 alvo em cone de 3m, sem bônus"
+                        },
+                        "corte_cirurgico": {
+                            "efeito": "se superar a Defesa do alvo por 5 ou mais, aplica Sangramento 1 por 1 turno"
+                        }
+                    },
+                    "xochiquetzal": "uma vez por rodada, após usar Tesoura Fechada, receba +1 na próxima Defesa antes do início do seu próximo turno",
+                    "ah_puch": "quando Corte Cirúrgico aplicar Sangramento, cause +1 dano fixo no mesmo golpe"
+                },
+                "C": {
+                    "nome": "Passo da Costureira",
+                    "tecnica_liberada": "Passo da Costureira",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até 3m, ignorando Terreno Difícil durante esse deslocamento. Se terminar o movimento com um inimigo no alcance de Êxtase, seu próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "xochiquetzal": "esse movimento não provoca Ataque de Oportunidade de inimigos com alcance menor que 3m",
+                    "ah_puch": "o bônus de +1 no acerto só se aplica se você terminar o movimento mais perto de um alvo já ferido. Se acertar esse alvo, cause +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Mil Agulhas",
+                    "tecnica_liberada": "Mil Agulhas",
+                    "base": "enquanto Êxtase estiver desperta, ao acertar um ataque com a arma, ganhe +1 Carga de Costura. Máximo: 4 Cargas. Na sua próxima Defesa, consuma todas as Cargas acumuladas. Cada Carga consumida concede +1 na Defesa. Se você estiver com 4 Cargas e acertar um ataque com Êxtase, o alvo sofre Sangramento 2 por 1 turno. Após aplicar esse Sangramento, perca as 4 Cargas.",
+                    "xochiquetzal": "se consumir 4 Cargas em uma Defesa, receba +1 Defesa adicional nessa rolagem",
+                    "ah_puch": "se aplicar o Sangramento de 4 Cargas contra um alvo que já estava sangrando, cause +1 dano fixo no golpe"
+                },
+                "A": {
+                    "nome": "Snip Snip",
+                    "tecnica_liberada": "Snip Snip",
+                    "tipo": "Ação de Ataque",
+                    "area": "cone de 3m",
+                    "alvos": "até 2 inimigos no cone",
+                    "base": "faça uma rolagem de acerto separada contra cada alvo. Cada alvo atingido sofre o dano atual da arma: 6 + FOR + dado evolutivo do Rank / Cortante. Você pode gastar até 2 Cargas de Costura ao usar Snip Snip. Cada Carga gasta concede +1 no acerto contra um dos alvos.",
+                    "xochiquetzal": "um aliado dentro de 3m recebe +1 Defesa até o início do seu próximo turno",
+                    "ah_puch": "o primeiro alvo atingido sofre Sangramento 2 por 1 turno"
+                },
+                "S": {
+                    "nome": "Forma Preservada",
+                    "tecnica_liberada": "Forma Preservada",
+                    "tipo": "Reação",
+                    "base": "quando você for alvo de um ataque, role 1d20 + FOR. Se igualar ou superar o acerto inimigo, você defende o ataque. Se falhar por 4 ou menos, reduza o dano recebido em 6 + metade de FOR.",
+                    "xochiquetzal": "receba +1 na rolagem de Forma Preservada",
+                    "ah_puch": "Ah Puch não concede esta Reação. Se Ah Puch estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Cortador da Criação: Êxtase Final",
+                    "tecnica_liberada": "Cortador da Criação Êxtase Final",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "cone de 3m",
+                    "base": "faça uma rolagem de acerto contra cada inimigo no cone. Cada alvo atingido sofre o dano atual da arma: 6 + FOR + 2d8 / Cortante. Depois resolva: alvos que já estavam sangrando sofrem +1 Dano de Ferida; alvos que não estavam sangrando sofrem Sangramento 2 por 1 turno.",
+                    "xochiquetzal": "escolha você ou 1 aliado dentro de 3m. O alvo remove Sangramento 1 ou recebe +2 Defesa até o início do próximo turno dele.",
+                    "ah_puch": "você pode ativar Toque da Decadência junto do Êxtase Final sem gastar Ação Especial, mas ainda paga o Dano de Ferida. O primeiro alvo já sangrando sofre +1 Dano de Ferida adicional."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Ah Puch domina. Use efeitos de Ah Puch. Xochiquetzal dorme fundo.",
+                    "4-8": "Ah Puch favorecido. Use efeitos de Ah Puch. Xochiquetzal desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Xochiquetzal ou Ah Puch.",
+                    "13-17": "Xochiquetzal favorecida. Use efeitos de Xochiquetzal. Ah Puch desperta apenas pelo gatilho.",
+                    "18-20": "Xochiquetzal domina. Use efeitos de Xochiquetzal. Ah Puch dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Xochiquetzal": "defesa, preservação, deslocamento leve e contenção de Sangramento",
+                    "Ah Puch": "dano, Sangramento, decomposição e Dano de Ferida"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador aplica Sangramento com Êxtase.",
+                    "15-38": "O portador acerta um alvo que já estava sangrando.",
+                    "39-57": "Uma criatura dentro de 3m é reduzida a 0 PDV.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue Entre as Lâminas",
+                "passos": [
+                    "abrir Êxtase diante do próprio corpo",
+                    "cortar a palma da mão",
+                    "deixar o sangue pingar entre as duas lâminas",
+                    "fechar a tesoura uma vez, sem tocar inimigo",
+                    "declarar o que deseja preservar ou decompor",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue cai entre as lâminas.\nXochiquetzal, preserva a flor da forma.\nAh Puch, abre a névoa da decadência.\nQue o fio costure o que deve viver.\nQue o corte desfaça o que deve morrer.\nÊxtase, desperta."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar o que deseja preservar ou decompor",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Xochiquetzal",
+                "efeito": "quando Xochiquetzal desperta como lado adormecido, ela permite usar uma vez o efeito de Xochiquetzal do seu Rank atual, mesmo que Ah Puch seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Ah Puch",
+                "efeito": "quando Ah Puch desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva",
+                    "prioriza alvos sangrando",
+                    "tenta aplicar Dano de Ferida",
+                    "usa a Tesoura Aberta se puder atingir mais de um inimigo",
+                    "ignora preservação de aliados",
+                    "não busca finalização limpa",
+                    "corta para decompor, não para vencer rápido"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue Entre as Lâminas normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "xochiquetzal_adormecida": "Xochiquetzal concede apenas um efeito de Xochiquetzal do Rank atual e volta a dormir",
+                "ah_puch_adormecido": "Ah Puch tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Toque da Decadência causa 1 Dano de Ferida.",
+                "3-4": "Toque da Decadência causa 1 Dano de Ferida e Ah Puch deixa a névoa da arma instável até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Ah Puch é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Êxtase",
+                "primeiro_fragmento_simbiose": "Flor",
+                "segundo_fragmento_unificacao": "Névoa",
+                "nome_verdadeiro": "Êxtase, Tesoura da Flor e da Névoa Sagrada"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Abre a névoa, Êxtase.",
+                "liberacao_verdadeira": "Costura e ceifa, Êxtase, Tesoura da Flor e da Névoa Sagrada."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (6 + FOR + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Ah Puch dobra, porque é dano direto do golpe. Sangramento, Dano de Ferida e bônus de Defesa não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: tesoura espiritual, dano evolutivo e formas de corte.",
+                "Ritual: corta a mão, deixa o sangue cair entre as lâminas e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Alcance Variável: fechada em 1,5m ou aberta em cone de 3m.",
+                "Cargas de Costura: acumulam em acertos e viram Defesa.",
+                "Xochiquetzal: preservação, defesa, costura e redução de Sangramento.",
+                "Ah Puch: decomposição, Sangramento, Dano de Ferida e possessão.",
+                "Nome Verdadeiro: desbloqueia o Cortador da Forma Viva."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10800000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

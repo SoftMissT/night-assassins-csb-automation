@@ -108,8 +108,6 @@ import {
     useOniRegeneration,
 } from './oni/regeneration-runtime.mjs';
 import { registerWeaponModeEngine } from './weapon-service.mjs';
-import { useCutelosParry } from './weapon-reaction-service.mjs';
-import { useConsumableItem } from './consumable-service.mjs';
 import {
     derivedBonusSummary,
     openDerivedBonusAudit,
@@ -146,43 +144,12 @@ Hooks.once('init', () => {
 });
 
 /**
- * Marca fichas Actor e Item Night Assassins com classes de skin dedicadas.
+ * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
  * @param {Application} app
  * @param {JQuery|HTMLElement} html
  * @returns {void}
  */
 function tagNightAssassinsSheet(app, html) {
-    const root = html?.[0] ?? html;
-    const appRoot = app?.element?.[0] ?? app?.element;
-    const isHtmlElement = (value) =>
-        typeof globalThis.HTMLElement !== 'undefined' && value instanceof globalThis.HTMLElement;
-    const el = isHtmlElement(root) ? root : null;
-    const appEl = isHtmlElement(appRoot)
-        ? appRoot
-        : (el?.closest?.('.app, .application') ?? el);
-    const targets = [appEl, el];
-
-    const item =
-        app?.item ??
-        (app?.document?.documentName === 'Item' ? app.document : null) ??
-        (app?.object?.documentName === 'Item' ? app.object : null);
-    const itemTemplate = item?.system?.template;
-    const itemClass =
-        itemTemplate === 'NAWeaponTpl00001'
-            ? 'na-weapon-sheet'
-            : itemTemplate === 'NASpecialWeaponTpl00001'
-              ? 'na-special-weapon-sheet'
-              : itemTemplate === 'NAConsumableTpl1'
-                ? 'na-consumable-sheet'
-              : null;
-    if (itemClass) {
-        for (const target of targets) {
-            target?.classList?.add('na-item-sheet');
-            target?.classList?.add(itemClass);
-        }
-        return;
-    }
-
     const actor = app?.actor;
     if (!actor?.system?.props) return;
 
@@ -192,8 +159,14 @@ function tagNightAssassinsSheet(app, html) {
     const kind = actorKind(actor);
     if (!kind) return;
 
+    const root = html?.[0] ?? html;
+    const el = root instanceof HTMLElement ? root : null;
+    const appEl =
+        app?.element instanceof HTMLElement
+            ? app.element
+            : (el?.closest?.('.app, .application') ?? el);
     const kindClass = `na-${kind.replaceAll('_', '-')}-sheet`;
-    for (const target of targets) {
+    for (const target of [appEl, el]) {
         target?.classList?.add('na-sheet');
         target?.classList?.add(kindClass);
     }
@@ -227,10 +200,8 @@ Hooks.once('ready', async () => {
     // disponíveis na API para execução manual e consciente pelo GM.
     Hooks.on('renderActorSheet', tagNightAssassinsSheet);
     Hooks.on('renderActorSheetV2', tagNightAssassinsSheet);
-    Hooks.on('renderItemSheet', tagNightAssassinsSheet);
-    Hooks.on('renderItemSheetV2', tagNightAssassinsSheet);
     Hooks.on('renderApplicationV2', (app, element) => {
-        tagNightAssassinsSheet(app, element);
+        if (app?.actor) tagNightAssassinsSheet(app, element);
     });
 
     if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
@@ -269,8 +240,6 @@ Hooks.once('ready', async () => {
             rollHit,
             rollDamage: rollDamagePublic,
             rollWeaponItem: rollWeaponItemPublic,
-            useCutelosParry,
-            useConsumableItem,
             useKekkijutsuItem,
             reloadWeaponItem,
             repairBreathingItems,

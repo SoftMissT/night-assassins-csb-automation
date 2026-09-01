@@ -1,0 +1,88 @@
+{
+    "id": "espadachim_profano",
+    "name": "Espadachim Profano",
+    "function": "Duelista armado, Cortes de precisão, Contra-ataque, Pressão com arma vinculada, Dano Cortante ou Perfurante, Dano Necrótico em níveis médios e altos, Execução contra alvos feridos",
+    "primaryAttributes": ["dex", "for", "int", "fdv"],
+    "levels": {
+        "1": {
+            "name": "Arma Vinculada",
+            "effect": "Passiva: Escolha uma arma corpo a corpo. Essa arma se torna sua Arma Vinculada. Enquanto empunhar sua Arma Vinculada, você recebe: +1 em rolagens de acerto com essa arma Se a arma for destruída, roubada ou perdida, você pode vincular uma nova arma após uma cena de alimentação, manutenção ou ritual de sangue. Você só pode ter uma Arma Vinculada por vez."
+        },
+        "2": {
+            "name": "Postura de Corte",
+            "effect": "Passiva: Você recebe +1 em testes de DEX, FOR ou INT para: manter a arma empunhada resistir a desarme identificar abertura em guarda armada manter postura após bloquear Além disso, quando estiver empunhando sua Arma Vinculada, recebe +1 em testes contra ser Desequilibrado por ataques corpo a corpo."
+        },
+        "3": {
+            "name": "Corte Profano",
+            "effect": "Passiva: Uma vez por turno, quando acertar um ataque com sua Arma Vinculada, você pode causar: +1 de dano Necrótico Esse dano representa sangue demoníaco infiltrado na lâmina. Como Dano Necrótico não pode ser curado em batalha, este bônus não aumenta automaticamente com crítico."
+        },
+        "4": {
+            "name": "Sangue na Lâmina",
+            "effect": "Ativa: Custo: 1 PDK Ação: livre, ao acertar um ataque com Arma Vinculada Limite: 1 vez por turno Você alimenta a lâmina com sangue demoníaco no instante do corte. O ataque causa: +1d4 de dano Cortante ou Perfurante O tipo de dano deve combinar com a arma usada."
+        },
+        "5": {
+            "name": "Corte de Reação",
+            "effect": "Reação: Custo: 2 PDK Ação: Reação Gatilho: uma criatura erra um ataque corpo a corpo contra você Alcance: alcance da sua Arma Vinculada Você responde no espaço deixado pela falha. Faça um ataque padrão com sua Arma Vinculada contra o atacante. Esse ataque não pode ativar outro contra-ataque."
+        },
+        "6": {
+            "name": "Lâmina Persistente",
+            "effect": "Passiva: Sua Arma Vinculada conta como arma demoníaca para superar resistência a dano físico comum. Além disso, ataques com sua Arma Vinculada ignoram 1 ponto de RD física comum. Essa habilidade não ignora RD contra: Dano Solar Lâmina Nichirin Glicínia técnicas específicas de bloqueio absoluto barreiras sobrenaturais superiores"
+        },
+        "7": {
+            "name": "Fenda Cortante",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação Especial Duração: até o fim do turno atual Você estende o corte com sangue demoníaco condensado. Até o fim do turno, o próximo ataque com sua Arma Vinculada recebe: +1,5m de alcance Se o ataque acertar, causa +1d4 de dano Cortante ou Perfurante."
+        },
+        "8": {
+            "name": "Duelista Profano",
+            "effect": "Passiva: Uma vez por rodada, depois de acertar uma criatura com sua Arma Vinculada, você recebe: +1 em Esquiva ou Bloqueio contra o próximo ataque dessa criatura O bônus dura até o início do seu próximo turno."
+        },
+        "9": {
+            "name": "Técnica Profana",
+            "effect": "Passiva: Uma vez por turno, quando acertar um ataque com sua Arma Vinculada, causa: +1d6 de dano Necrótico Esse efeito substitui o bônus de Corte Profano, não acumula com ele. Como Dano Necrótico não pode ser curado em batalha, esse dano adicional só pode acontecer 1 vez por turno."
+        },
+        "10": {
+            "name": "Corte de Sangue Menor",
+            "effect": "Ativa: Custo: 4 PDK Ação: Ação de Ataque Área: linha de 6m Teste: DEX dos alvos contra CD 10 + DEX ou FDV do Oni Você projeta um corte de sangue condensado em linha reta. Falha: o alvo sofre: 1d8 + FDV de dano Cortante Sucesso: sofre metade do dano. Esse ataque não aplica bônus da Arma Vinculada, a menos que uma habilidade diga o contrário."
+        },
+        "11": {
+            "name": "Desarme Cruel",
+            "effect": "Passiva: Uma vez por rodada, quando acertar um ataque crítico com sua Arma Vinculada, pode forçar o alvo a fazer: 1d20 + FOR ou DEX contra CD 10 + DEX do Oni Falha: o alvo larga um item empunhado à escolha do Mestre ou do Oni, se fizer sentido na cena. Sucesso: mantém o item. Criaturas que não usam armas ou itens empunhados ignoram este efeito."
+        },
+        "12": {
+            "name": "Aprimoramento de Lâmina",
+            "effect": "Bônus Permanente: Escolha um benefício: +1 DEX ou +1 FOR Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "13": {
+            "name": "Corte de Sangue",
+            "effect": "Ativa: Custo: 6 PDK Ação: Ação de Ataque Área: linha de 9m Teste: DEX dos alvos contra CD 10 + DEX ou FDV do Oni Você libera um corte de sangue amplo, mais denso e mais difícil de evitar. Falha: o alvo sofre: 2d8 + FDV de dano Cortante ou Necrótico Sucesso: sofre metade do dano. Escolha o tipo de dano ao usar a habilidade. Se escolher Necrótico, esta habilidade não pode receber dano adicional de Técnica Profana no mesmo uso."
+        },
+        "14": {
+            "name": "Fio Impossível",
+            "effect": "Passiva: Uma vez por rodada, quando acertar um ataque com sua Arma Vinculada, você ignora até: 2 pontos de RD física comum Além disso, ataques contra alvos Desequilibrados, Distraídos ou Desorientados ignoram até 3 pontos de RD física comum em vez de 2. Essa habilidade não ignora resistência ou imunidade narrativa superior."
+        },
+        "15": {
+            "name": "Corte de Execução",
+            "effect": "Passiva: Uma vez por turno, quando acertar uma criatura com metade ou menos do PDV máximo usando sua Arma Vinculada, causa: +1d8 de dano Cortante Se o alvo estiver Desequilibrado ou Distraído, o dano adicional pode ser Necrótico em vez de Cortante."
+        },
+        "16": {
+            "name": "Guarda Profana",
+            "effect": "Reação: Custo: 4 PDK Ação: Reação Gatilho: você é alvo de um ataque corpo a corpo ou ataque físico à distância enquanto empunha sua Arma Vinculada Você usa a arma como eixo defensivo, desviando o golpe no limite. Receba: +2 em Bloqueio Se o Bloqueio for bem-sucedido por 5 ou mais, você pode se mover 1,5m sem gerar Ataque de Oportunidade."
+        },
+        "17": {
+            "name": "Arma Viva",
+            "effect": "Ativa: Custo: 5 PDK Ação: Ação Especial Alvo: sua Arma Vinculada Você regenera, reconstrói ou invoca novamente sua Arma Vinculada a partir de sangue, osso, carne ou metal contaminado. Use esta habilidade para: reparar a arma se ela foi danificada recuperar a arma se ela foi arrancada ou perdida na cena recriar a arma se ela foi destruída A arma reaparece em sua mão ou em um ponto a até 3m. Esta habilidade não funciona se a arma foi destruída por Dano Solar decisivo, purificação narrativa absoluta ou condição específica do Mestre."
+        },
+        "18": {
+            "name": "Lâmina Antirregeneração",
+            "effect": "Ativa: Custo: 7 PDK Ação: livre, ao acertar ataque com Arma Vinculada Limite: 1 vez por combate O corte carrega uma forma concentrada de sangue profano que impede fechamento imediato da carne. O alvo deve fazer: 1d20 + VIT contra CD 10 + FDV do Oni Falha: recebe Regeneração Suprimida até o início do próximo turno do Oni. Falha por 5 ou mais: além disso, a próxima cura recebida pelo alvo antes do fim da cena é reduzida pela metade. Sucesso: o alvo sofre apenas o dano normal do ataque."
+        },
+        "19": {
+            "name": "Lâmina de Execução",
+            "effect": "Ativa: Custo: 12 PDK Ação: Ação de Ataque Alcance: alcance da Arma Vinculada Teste: ataque com DEX ou FOR contra Defesa do alvo Limite: 1 vez por combate Você realiza um corte destinado a encerrar o corpo do alvo. Acerto: causa o dano normal da arma +: 4d10 de dano Cortante Se o alvo estiver com metade ou menos do PDV máximo, escolha um efeito adicional: o alvo recebe Regeneração Suprimida até o início do próximo turno do Oni o alvo fica Desequilibrado contra o próximo ataque recebido o alvo sofre -2 na próxima Defesa antes do início do próximo turno dele Escolha apenas um efeito. Erro: o PDK é gasto e o corte falha."
+        },
+        "20": {
+            "name": "Espada Demoníaca Suprema",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Espadachim Profano. Durante a duração, sua Arma Vinculada se torna uma extensão perfeita do seu corpo demoníaco. Você recebe: +2 DEX +2 FOR +2 em ataques com Arma Vinculada +2d8 de dano Cortante uma vez por turno ignora resistência física comum não pode ser desarmado por meios comuns Além disso, uma vez durante esta forma, quando acertar um ataque com Arma Vinculada, você pode transformar o corte em Execução Profana. O alvo deve fazer: 1d20 + VIT contra CD 10 + FDV do Oni Falha: recebe Regeneração Suprimida por 2 rodadas. Falha por 5 ou mais: além disso, o dano adicional de +2d8 desta forma se torna Necrótico. Sucesso: sofre o dano normalmente, mas não recebe Regeneração Suprimida. Esta forma termina imediatamente se o Oni sofrer Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha ou Carmesim, ou uma condição narrativa que destrua a Arma Vinculada."
+        }
+    }
+}

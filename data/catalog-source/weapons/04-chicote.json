@@ -1,0 +1,79 @@
+{
+    "_id": "f390242b117665ae",
+    "_key": "!items!f390242b117665ae",
+    "name": "Chicote",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/chicote_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Chicote",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 3,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 20,
+            "arma_alcance": " 3m",
+            "arma_propriedades": " Manejável",
+            "arma_requisito": "",
+            "descricao": "O chicote é uma arma útil, de distância variável.\n\n- Propriedades: Manejável\n- Alcance: 3m\n- Crítico: 20 Natural\n- Dano: 3 + Metade da DEX (arredondado para baixo se necessário) / Cortante\n\nHabilidade\nSeu crítico não causa dano dobrado, mas agarra o inimigo, forçando-o a fazer um teste de FOR e tirar 15+ para conseguir se soltar no início do seu próximo turno. Se ele não passar no teste, perde a próxima ação de ataque. Essa prisão dura apenas um turno do inimigo.",
+            "arma_ordem": 4,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "3 + Metade da DEX (arredondado para baixo se necessário) / Cortante",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "3m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Seu crítico não causa dano dobrado, mas agarra o inimigo, forçando-o a fazer um teste de FOR e tirar 15+ para conseguir se soltar no início do seu próximo turno. Se ele não passar no teste, perde a próxima ação de ataque. Essa prisão dura apenas um turno do inimigo."
+                }
+            ],
+            "arma_propriedades_chaves": ["manejavel"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 400000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

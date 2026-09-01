@@ -1,0 +1,381 @@
+{
+    "_id": "f04b9a7c2d6e8135",
+    "_key": "!items!f04b9a7c2d6e8135",
+    "name": "Imperator's Edge Estandarte das Cem Legiões",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/imperators_edge_estandarte_das_cem_legioes_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Imperator's Edge Estandarte das Cem Legiões",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 6,
+            "arma_dano_atributo": ["FOR"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural / 18 Natural enquanto Iluminado",
+            "arma_alcance": "3m",
+            "arma_propriedades": "Sōjutsu / Morote / Precisão",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Mitra",
+            "arma_demonio": "Marduk",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Lança ornamentada de comando. Formação militar, luz e estado Iluminado. Mitra responde com precisão, defesa, proteção de aliados, disciplina e manutenção do estado Iluminado. Marduk responde com dano, Vulnerável, medo, imposição e quebra de defesa.",
+            "arma_ordem": 109,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ponta da Lança",
+                    "formula_texto": "6 + FOR + dado evolutivo / Perfurante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "3m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Ataque Iluminado",
+                    "formula_texto": "6 + FOR + dado evolutivo / Perfurante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "3m",
+                    "critico": 18
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "6 + FOR + 1d6 / Perfurante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "6 + FOR + 1d8 / Perfurante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "6 + FOR + 1d10 / Perfurante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "6 + FOR + 1d12 / Perfurante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "6 + FOR + 2d6 / Perfurante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "6 + FOR + 2d8 / Perfurante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Ponta da Legião",
+                "descricao": "Imperator's Edge é mais forte quando luta na distância ideal.",
+                "distancia_ideal": "exatamente 3m",
+                "regra_distancia": "sempre que uma habilidade mencionar a 3m, o alvo precisa estar dentro do alcance total da lança, não adjacente",
+                "acumulos_ponta_da_legiao": {
+                    "gatilho": "enquanto Imperator's Edge estiver desperta, quando você acertar um ataque contra um alvo a exatamente 3m, ganhe +1 acúmulo de Ponta da Legião",
+                    "maximo": 3,
+                    "efeito_ao_chegar_no_maximo": "ao alcançar 3 acúmulos, você entra em estado Iluminado"
+                }
+            },
+            "arma_estado_iluminado": {
+                "descricao": "o estado Iluminado representa a formação perfeita: a ponta no lugar certo, o corpo no eixo certo e a luz da lança atravessando a linha inimiga",
+                "efeitos": [
+                    "seu próximo ataque com Imperator's Edge recebe +1 no acerto",
+                    "o crítico da arma passa para 18 Natural nesse ataque"
+                ],
+                "consumo": "após esse ataque acertar ou errar, o estado Iluminado é consumido",
+                "mitra": "pode preservar Iluminado",
+                "marduk": "pode transformar Iluminado em ordem violenta contra o alvo"
+            },
+            "arma_despertar": {
+                "estado_selado": "Estandarte Recolhido",
+                "primeiro_despertar": "Juramento das Cem Legiões",
+                "despertar_verdadeiro": "Mandato das Cem Legiões",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "mitra": {
+                    "nome": "Juramento Sob a Luz",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Imperator's Edge antes do fim do turno recebe +2 no acerto. Se esse ataque for contra um alvo a exatamente 3m, ele conta como 2 acertos de Ponta da Legião para alcançar Iluminado.",
+                    "observacao": "este efeito não aumenta dano. Mitra nunca aumenta dano bruto."
+                },
+                "marduk": {
+                    "nome": "Ordem Sobre o Caos Morto",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Imperator's Edge antes do fim do turno recebe o Dano Bônus de Marduk conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se você estiver Iluminado, o alvo também fica Amedrontado por 1 turno.",
+                    "custo": "usar Ordem Sobre o Caos Morto cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Marduk nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_marduk": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Marduk é dano direto do golpe e dobra em crítico. Vulnerável e Amedrontado não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Ponta da Legião",
+                    "base": "enquanto Imperator's Edge estiver desperta, acertar um ataque contra alvo a exatamente 3m gera +1 acúmulo de Ponta da Legião. Com 3 acúmulos, você entra em Iluminado.",
+                    "mitra": "quando entrar em Iluminado, o estado não é perdido se o próximo ataque errar. Ele permanece até você acertar ou até o fim do seu próximo turno.",
+                    "marduk": "ao consumir Iluminado em um acerto, o alvo sofre -1 Defesa até o início do próximo turno dele."
+                },
+                "C": {
+                    "nome": "Marcha das Cem Legiões",
+                    "tecnica_liberada": "Marcha das Cem Legiões",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até seu deslocamento normal ignorando Terreno Difícil. Se terminar o movimento com um inimigo a exatamente 3m, seu próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "mitra": "um aliado dentro de 3m recebe +1 Defesa até o início do próximo turno dele",
+                    "marduk": "o bônus de +1 no acerto só pode ser usado contra o inimigo mais perigoso dentro do alcance da lança, definido pelo Mestre"
+                },
+                "B": {
+                    "nome": "Brilho Iluminado",
+                    "tecnica_liberada": "Brilho Iluminado",
+                    "tipo": "Ação de Ataque",
+                    "alvo": "1 criatura a exatamente 3m",
+                    "base": "faça um ataque com Imperator's Edge. Se acertar, causa o dano atual da arma: 6 + FOR + dado evolutivo do Rank / Perfurante. Por estar a exatamente 3m, esse ataque gera +1 acúmulo de Ponta da Legião. Se você estiver Iluminado, escolha um dos efeitos antes do ataque: atacar com Vantagem; ou o alvo sofre -1 Defesa contra este ataque.",
+                    "mitra": "você pode escolher o efeito de Iluminado depois da rolagem, mas antes da Defesa final ser resolvida",
+                    "marduk": "se consumir Iluminado neste ataque e acertar, o alvo fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "A": {
+                    "nome": "Estandarte Solar",
+                    "tecnica_liberada": "Estandarte Solar",
+                    "tipo": "Ação Especial",
+                    "base": "seu próximo ataque com Imperator's Edge antes do fim do turno recebe +2 no acerto. Esse ataque conta como Ponta da Legião mesmo se o alvo estiver a 1,5m. Se o alvo estiver a exatamente 3m e você superar a Defesa dele por 5 ou mais, receba +1 acúmulo adicional de Ponta da Legião.",
+                    "mitra": "um aliado dentro de 3m recebe +1 no próximo ataque antes do início do seu próximo turno",
+                    "marduk": "se você estiver Iluminado quando usar Estandarte Solar, o alvo fica Amedrontado por 1 turno se o ataque acertar"
+                },
+                "S": {
+                    "nome": "Juramento da Linha de Frente",
+                    "tecnica_liberada": "Juramento da Linha de Frente",
+                    "tipo": "Reação",
+                    "base": "quando você ou um aliado a até 3m for alvo de um ataque, role 1d20 + FOR. Se igualar ou superar o acerto inimigo, você defende o ataque. Se falhar por 4 ou menos, reduza o dano recebido em 6 + FOR.",
+                    "mitra": "receba +1 na rolagem de Juramento da Linha de Frente",
+                    "marduk": "Marduk não concede esta Reação. Se Marduk estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Mandato do Imperator",
+                    "tecnica_liberada": "Mandato do Imperator",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "até 3 inimigos em arco de 3m",
+                    "base": "faça uma rolagem de acerto separada contra cada alvo. Cada alvo atingido sofre o dano atual da arma: 6 + FOR + 2d8 / Perfurante. Se você estiver Iluminado, alvos atingidos sofrem -1 Defesa até o início do próximo turno deles. Se atingir 2 ou mais alvos, um aliado dentro de 3m recebe +2 Defesa até o início do próximo turno dele.",
+                    "mitra": "usar Mandato do Imperator não consome Iluminado",
+                    "marduk": "você pode ativar Ordem Sobre o Caos Morto junto do Mandato do Imperator sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o primeiro alvo atingido já estiver Vulnerável, ele sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Marduk domina. Use efeitos de Marduk. Mitra dorme fundo.",
+                    "4-8": "Marduk favorecido. Use efeitos de Marduk. Mitra desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Mitra ou Marduk.",
+                    "13-17": "Mitra favorecido. Use efeitos de Mitra. Marduk desperta apenas pelo gatilho.",
+                    "18-20": "Mitra domina. Use efeitos de Mitra. Marduk dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Mitra": "precisão, defesa, proteção de aliados, disciplina e manutenção do estado Iluminado",
+                    "Marduk": "dano, Vulnerável, medo, imposição e quebra de defesa"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador conquista o estado Iluminado.",
+                    "15-38": "Um aliado dentro de 3m sofre acerto crítico.",
+                    "39-57": "O portador acerta um crítico enquanto está Iluminado.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue no Estandarte",
+                "passos": [
+                    "apoiar a base da lança no chão",
+                    "cortar a própria palma",
+                    "deixar o sangue escorrer pela haste",
+                    "erguer a lança como um estandarte",
+                    "declarar quem ou qual linha não deve cair",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue ergue o estandarte.\nMitra, sela o juramento sob a luz.\nMarduk, ordena o caos diante da lança.\nCem legiões, uma linha.\nUma ordem, uma ponta.\nImperator's Edge, avance."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar quem ou qual linha não deve cair",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Mitra",
+                "efeito": "quando Mitra desperta como lado adormecido, ele permite usar uma vez o efeito de Mitra do seu Rank atual, mesmo que Marduk seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Marduk",
+                "efeito": "quando Marduk desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva",
+                    "prioriza o inimigo mais perigoso",
+                    "tenta aplicar Vulnerável",
+                    "mantém distância de 3m sempre que possível",
+                    "ignora recuo de aliados se isso comprometer a ordem da linha",
+                    "transforma Iluminado em punição, não em proteção",
+                    "ataca para subjugar, não para inspirar"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue no Estandarte normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "mitra_adormecido": "Mitra concede apenas um efeito de Mitra do Rank atual e volta a dormir",
+                "marduk_adormecido": "Marduk tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Ordem Sobre o Caos Morto causa 1 Dano de Ferida.",
+                "3-4": "Ordem Sobre o Caos Morto causa 1 Dano de Ferida e Marduk impõe sua voz até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Marduk é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Imperator's Edge",
+                "primeiro_fragmento_simbiose": "Legião",
+                "segundo_fragmento_unificacao": "Mandato",
+                "nome_verdadeiro": "Imperator's Edge, Mandato Solar das Cem Legiões"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Ergue a linha, Imperator's Edge.",
+                "liberacao_verdadeira": "Comanda a luz, Imperator's Edge, Mandato Solar das Cem Legiões."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (6 + FOR + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Marduk dobra, porque é dano direto do golpe. Vulnerável, Amedrontado, Iluminado, perda de Defesa e bônus de Defesa não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: lança-estandarte, alcance 3m, dano evolutivo e propriedades.",
+                "Ritual: corta a mão, banha haste e estandarte, paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Ponta da Legião: acertos a 3m acumulam Iluminado.",
+                "Iluminado: +1 acerto e crítico 18 no próximo ataque.",
+                "Mitra: precisão, defesa, aliados, avanço disciplinado e luz.",
+                "Marduk: Vulnerável, medo, ordem violenta e possessão.",
+                "Nome Verdadeiro: desbloqueia o Mandato Solar das Cem Legiões."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10900000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

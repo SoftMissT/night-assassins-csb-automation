@@ -1,0 +1,94 @@
+{
+    "_id": "c146d2971de2e463",
+    "_key": "!items!c146d2971de2e463",
+    "name": "Katana Serrilhada",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/katana_serrilhada_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Katana Serrilhada",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": ["FOR"],
+            "arma_tipos_dano": ["cortante", "perfurante"],
+            "arma_critico": 20,
+            "arma_alcance": " 1,5m",
+            "arma_propriedades": " Acuidade / Nitoryu & Ryoto",
+            "arma_requisito": "",
+            "descricao": "Uma ou duas katanas com a lâmina trabalhada ou moldada para um serrilhamento, a fim de esmerilhar alvos ao invés de cortá-los.\n\nCondição Especial\nPor ser uma katana cerrada, contrariando o uso normal de uma katana, após suas missões você precisa reparar sua lâmina seja você mesmo ou consultando um ferreiro. Caso seja você mesmo, realize um teste de 1d20 + DEX + SAB, com dificuldade igual a 10. O tempo de aplicação do reparo é de 1 hora.\n\n- Propriedades: Acuidade / Nitoryu & Ryoto\n- Alcance: 1,5m\n- Crítico: 20 Natural\n- Dano: 5 se for Nitoryu / 7 se for Ryoto / Cortante e Perfurante\n\nHabilidade\nQuando rolar um crítico natural, você realiza um teste de FOR com C.D 14 para desmembrar um membro do Oni, que poderá ser recuperado por ele com uma Ação Única ou Especial no seu próximo turno. Essa habilidade só pode ser usada um número de vezes igual ao nível de respiração do usuário. Enquanto não recuperar o membro retirado, o Oni tem -2 em rolagens de acerto.",
+            "arma_ordem": 17,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "5 se for Nitoryu / 7 se for Ryoto / Cortante e Perfurante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1.0,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante", "perfurante"],
+                    "alcance": "1,5m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "nitoryu",
+                    "kind": "dual-wield"
+                },
+                {
+                    "id": "ryoto",
+                    "kind": "integrated-double-attack",
+                    "attacks": 2,
+                    "secondAttribute": false
+                },
+                {
+                    "id": "condicao_especial",
+                    "kind": "weapon-ability",
+                    "label": "Condição Especial",
+                    "text": "Por ser uma katana cerrada, contrariando o uso normal de uma katana, após suas missões você precisa reparar sua lâmina seja você mesmo ou consultando um ferreiro. Caso seja você mesmo, realize um teste de 1d20 + DEX + SAB, com dificuldade igual a 10. O tempo de aplicação do reparo é de 1 hora."
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Quando rolar um crítico natural, você realiza um teste de FOR com C.D 14 para desmembrar um membro do Oni, que poderá ser recuperado por ele com uma Ação Única ou Especial no seu próximo turno. Essa habilidade só pode ser usada um número de vezes igual ao nível de respiração do usuário. Enquanto não recuperar o membro retirado, o Oni tem -2 em rolagens de acerto."
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade", "nitoryu", "ryoto"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1700000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

@@ -1,0 +1,71 @@
+{
+    "_id": "9e836f1dc32a44c1",
+    "_key": "!items!9e836f1dc32a44c1",
+    "name": "Ono & Mangual",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/ono_e_mangual_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Ono & Mangual",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 7,
+            "arma_dano_atributo": [],
+            "arma_tipos_dano": ["cortante", "concussivo"],
+            "arma_critico": 20,
+            "arma_alcance": " 2,5m",
+            "arma_propriedades": " Morote",
+            "arma_requisito": "4+ de FOR",
+            "descricao": "Um conjunto formado por um mangual e um grande machado ligados por uma corrente de espessura considerável para manejar seu balanço.\n\n- Requisito: 4+ de FOR\n- Propriedades: Morote\n- Alcance: 2,5m\n- Crítico: 20 Natural\n- Dano: 7 / 3 Cortante e 4 Concussivo\n\nHabilidade\nQuando realizar um movimento de respiração que use a Ação de Ataque, você pode utilizar o seu mangual: seu alcance é estendido em +5m (totalizando 7,5m), seu dano se torna totalmente Concussivo e é somado um dano bônus igual a metade da sua FOR. Tempo de recarga: três turnos.",
+            "arma_ordem": 22,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "7 / 3 Cortante e 4 Concussivo",
+                    "dano_fixo": 7,
+                    "dano_dados": "",
+                    "atributos": [],
+                    "tipos_dano": ["cortante", "concussivo"],
+                    "alcance": "2,5m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Quando realizar um movimento de respiração que use a Ação de Ataque, você pode utilizar o seu mangual: seu alcance é estendido em +5m (totalizando 7,5m), seu dano se torna totalmente Concussivo e é somado um dano bônus igual a metade da sua FOR. Tempo de recarga: três turnos."
+                }
+            ],
+            "arma_propriedades_chaves": ["morote"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 2200000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

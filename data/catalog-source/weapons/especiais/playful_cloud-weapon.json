@@ -1,0 +1,363 @@
+{
+    "_id": "7b830215a18ad40c",
+    "_key": "!items!7b830215a18ad40c",
+    "name": "Playful Cloud Sansetsukon da Nuvem Irônica",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/playful_cloud_sansetsukon_da_nuvem_ironica_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Playful Cloud Sansetsukon da Nuvem Irônica",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["concussao"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "1,5m compacto / 3m articulado",
+            "arma_propriedades": "Manejável / Sōjutsu / Alcance Variável",
+            "arma_entidade": "Erlang Shen",
+            "arma_demonio": "Xing Tian",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Contra-ataque",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Sansetsukon de três segmentos. Cadência, continuidade e pressão sem pausa. Erlang Shen responde com mobilidade, precisão, leitura de abertura e contra-ataque. Xing Tian responde com dano, Vulnerável, Dano de Ferida e possessão ofensiva.",
+            "arma_ordem": 104,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Postura Compacta",
+                    "formula_texto": "5 + DEX + dado evolutivo / Concussão",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Postura Articulada",
+                    "formula_texto": "5 + DEX + dado evolutivo / Concussão",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "3m",
+                    "critico": 19
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "formula": "5 + DEX + 1d6 / Concussão"
+                },
+                "C": {
+                    "nivel": 4,
+                    "formula": "5 + DEX + 1d8 / Concussão"
+                },
+                "B": {
+                    "nivel": 6,
+                    "formula": "5 + DEX + 1d10 / Concussão"
+                },
+                "A": {
+                    "nivel": 8,
+                    "formula": "5 + DEX + 1d12 / Concussão"
+                },
+                "S": {
+                    "nivel": 11,
+                    "formula": "5 + DEX + 2d6 / Concussão"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "formula": "5 + DEX + 2d8 / Concussão"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Alcance Variável",
+                "posturas": {
+                    "compacta": {
+                        "alcance": "1,5m",
+                        "funcao": "pressão curta, controle de corpo, precisão"
+                    },
+                    "articulada": {
+                        "alcance": "3m",
+                        "funcao": "alcance, ângulo, punição de entrada e saída"
+                    }
+                },
+                "acerto": "por ser Manejável, usa DEX nas rolagens de acerto",
+                "dano": "usa DEX, porque depende de giro, encaixe, timing e controle dos três segmentos",
+                "sojutsu": "quando usada em postura articulada, conta como arma de haste curta articulada e pode punir entrada e saída de alcance quando uma habilidade permitir"
+            },
+            "arma_cadencia": {
+                "maximo": 2,
+                "ganho": "sempre que acertar um ataque com Playful Cloud enquanto ela estiver desperta, ganhe +1 stack de Cadência",
+                "efeito": "cada stack concede +1 no acerto com Playful Cloud",
+                "perda": [
+                    "passar um turno sem acertar com Playful Cloud",
+                    "passar um turno sem atacar",
+                    "trocar de arma",
+                    "ficar Atordoado",
+                    "a cena terminar"
+                ],
+                "observacao": "as stacks pertencem ao ritmo do portador, não a um alvo específico"
+            },
+            "arma_habilidades_basais_despertar": {
+                "erlang_shen": {
+                    "nome": "Terceiro Olho do Guerreiro",
+                    "tipo": "Ação Especial",
+                    "efeito": "o próximo ataque com Playful Cloud antes do fim do turno recebe +2 no acerto. Se o ataque for feito contra um alvo a 3m, ignora penalidades de instabilidade, posição ruim, obstrução parcial e terreno irregular que atrapalhe o golpe. Este efeito não aumenta dano."
+                },
+                "xing_tian": {
+                    "nome": "Golpe sem Cabeça",
+                    "tipo": "Ação Especial",
+                    "efeito": "o próximo ataque com Playful Cloud antes do fim do turno recebe o Dano Bônus de Xing Tian conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se o alvo já estiver Vulnerável, ele também sofre +1 Dano de Ferida. Usar Golpe sem Cabeça cobra Dano de Ferida conforme a tabela de Marcas."
+                }
+            },
+            "arma_dano_bonus_xing_tian": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Xing Tian é dano direto do golpe e dobra em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Cadência de Balanço",
+                    "base": "Sempre que acertar um ataque com Playful Cloud, ganhe +1 stack de Cadência. Máximo: 2 stacks. Cada stack concede +1 no acerto com Playful Cloud.",
+                    "erlang_shen": "Com 1 ou mais stacks de Cadência, ataques a 3m ignoram penalidade de posição ruim.",
+                    "xing_tian": "Com 2 stacks de Cadência, o próximo ataque com Playful Cloud causa +1 dano fixo."
+                },
+                "C": {
+                    "nome": "Passo de Três Segmentos",
+                    "tecnica_liberada": "Passo de Três Segmentos",
+                    "tipo": "Ação de Movimento",
+                    "base": "Você se move até 3m e escolhe uma postura. Postura Compacta: alcance 1,5m e próximo ataque antes do fim do turno recebe +1 no acerto. Postura Articulada: alcance 3m, sem bônus, habilita alcance ampliado.",
+                    "erlang_shen": "Se escolher Postura Articulada, esse movimento ignora Terreno Difícil.",
+                    "xing_tian": "Se terminar o movimento a 1,5m de um inimigo, seu próximo ataque contra ele antes do fim do turno causa +1 dano fixo se acertar."
+                },
+                "B": {
+                    "nome": "Impacto em Corrente",
+                    "tecnica_liberada": "Impacto em Corrente",
+                    "tipo": "Ação de Ataque",
+                    "alvo": "1 criatura dentro do alcance da postura usada",
+                    "base": "Faça um ataque com Playful Cloud. Se acertar, causa o dano atual da arma: 5 + DEX + dado evolutivo do Rank / Concussão. Se tiver 1 ou mais stacks de Cadência, um segundo inimigo dentro do seu alcance sofre dano igual a DEX / Concussão. Esse dano secundário não faz rolagem de ataque, não causa crítico, não aplica status, não recebe Dano Bônus de Xing Tian e não conta como acerto para ganhar Cadência.",
+                    "erlang_shen": "Se o alvo principal estiver a 3m, o ataque principal recebe +1 no acerto.",
+                    "xing_tian": "Se superar a Defesa do alvo principal por 5 ou mais, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "A": {
+                    "nome": "Quebra de Ritmo",
+                    "tecnica_liberada": "Quebra de Ritmo",
+                    "tipo": "Ação Especial",
+                    "base": "Seu próximo ataque com Playful Cloud antes do fim do turno recebe +2 no acerto. Se acertar, o alvo sofre -1 Defesa até o início do próximo turno dele. Se o alvo já estiver Vulnerável, em vez de sofrer -1 Defesa, ele sofre Restrição de Movimentos até o início do próximo turno dele.",
+                    "erlang_shen": "Após resolver o ataque, você pode se mover 1,5m sem provocar Ataque de Oportunidade do alvo atingido.",
+                    "xing_tian": "Se o ataque acertar, cause +1 dano fixo."
+                },
+                "S": {
+                    "nome": "Olho que Vê a Brecha",
+                    "tecnica_liberada": "Olho que Vê a Brecha",
+                    "tipo": "Reação",
+                    "base": "Você pode fazer um ataque com Playful Cloud contra um inimigo que entra no seu alcance, sai do seu alcance sem Desengajar ou erra um ataque corpo a corpo contra você. Se acertar, causa o dano atual da arma.",
+                    "erlang_shen": "O contra-ataque é feito com Vantagem.",
+                    "xing_tian": "Xing Tian não concede esta Reação. Se Xing Tian estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Nuvem Brincalhona: Torvelinho de Três Corpos",
+                    "tecnica_liberada": "Nuvem Brincalhona Torvelinho de Três Corpos",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "inimigos dentro de 3m",
+                    "base": "Faça uma rolagem de acerto separada contra cada inimigo dentro de 3m. Cada alvo atingido sofre o dano atual da arma: 5 + DEX + 2d8 / Concussão. Para cada alvo atingido, escolha: o alvo fica Vulnerável contra o próximo ataque que receber; ou o alvo sofre -1 Defesa até o início do próximo turno dele. O Vulnerável não afeta o golpe que aplicou esse status. Se tiver 2 stacks de Cadência, o primeiro alvo atingido sofre ambos os efeitos. Após resolver a técnica, perca todas as stacks de Cadência.",
+                    "erlang_shen": "Após resolver a técnica, você pode se mover até 3m sem provocar Ataque de Oportunidade.",
+                    "xing_tian": "Você pode ativar Golpe sem Cabeça junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o primeiro alvo atingido já estiver Vulnerável, ele sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Xing Tian domina. Use efeitos de Xing Tian. Erlang Shen dorme fundo.",
+                    "4-8": "Xing Tian favorecido. Use efeitos de Xing Tian. Erlang Shen desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Erlang Shen ou Xing Tian.",
+                    "13-17": "Erlang Shen favorecido. Use efeitos de Erlang Shen. Xing Tian desperta apenas pelo gatilho.",
+                    "18-20": "Erlang Shen domina. Use efeitos de Erlang Shen. Xing Tian dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Erlang Shen": "mobilidade, precisão, leitura de abertura e contra-ataque",
+                    "Xing Tian": "dano, Vulnerável, Dano de Ferida e pressão irracional"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "Você erra um ataque depois de ter acertado com Playful Cloud no turno anterior.",
+                    "15-38": "Você sofre dano enquanto o inimigo tinha vantagem de posição contra você.",
+                    "39-57": "Um inimigo sobrevive à sua sequência e contra-ataca antes do início do seu próximo turno.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue nos Três Segmentos",
+                "passos": [
+                    "segurar Playful Cloud em postura compacta",
+                    "cortar a própria palma",
+                    "passar sangue no primeiro segmento",
+                    "girar a arma e marcar o segundo segmento",
+                    "abrir a postura articulada e marcar o terceiro",
+                    "declarar que a sequência não será interrompida",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "pacto_completo": "Meu sangue gira nos três corpos.\nErlang Shen, abre o terceiro olho da brecha.\nXing Tian, golpeia sem cabeça e sem pausa.\nQue a cadência não quebre.\nQue o erro vire abertura.\nPlayful Cloud, desperta."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar que a sequência não será interrompida",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro"
+                }
+            },
+            "arma_despertar": {
+                "estado_selado": "Três Segmentos Quietos",
+                "primeiro_despertar": "Nuvem Brincalhona",
+                "despertar_verdadeiro": "Torvelinho de Três Corpos",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Playful Cloud",
+                "primeiro_fragmento_simbiose": "Terceiro Olho",
+                "segundo_fragmento_unificacao": "Três Corpos",
+                "nome_verdadeiro": "Playful Cloud, Nuvem dos Três Corpos e do Terceiro Olho"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Gira sem pausa, Playful Cloud.",
+                "liberacao_verdadeira": "Vê a brecha e golpeia sem cabeça, Playful Cloud, Nuvem dos Três Corpos e do Terceiro Olho."
+            },
+            "arma_marcas_demonio": {
+                "0": "Dano Bônus +1, CD base, 0 Ferida.",
+                "1-2": "Dano Bônus +2, CD base +2, 1 Ferida.",
+                "3-4": "Dano Bônus +3, CD base +4, 1 Ferida.",
+                "5-6": "Dano Bônus +4, CD base +6, 2 Ferida.",
+                "7+": "Dano Bônus +5, CD base +8, 2 Ferida."
+            },
+            "arma_possessao": {
+                "entidade": "Xing Tian",
+                "efeito": "quando Xing Tian desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva ou contra-ataque limpo",
+                    "prioriza continuar atacando",
+                    "ignora recuo seguro",
+                    "tenta manter ou recuperar Cadência",
+                    "prioriza alvos Vulneráveis",
+                    "não troca para postura defensiva",
+                    "não interrompe sequência para proteger aliados",
+                    "luta como corpo sem cabeça, não como guerreiro racional"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_emprestimo": {
+                "entidade": "Erlang Shen",
+                "efeito": "quando Erlang Shen desperta como lado adormecido, ele permite usar uma vez o efeito de Erlang Shen do Rank atual, mesmo que Xing Tian seja o dominante; depois volta a dormir"
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (5 + DEX + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Xing Tian dobra, porque é dano direto do golpe. O +1 dano fixo de Xing Tian também dobra, se estiver no golpe crítico. Vulnerável, Dano de Ferida, Restrição de Movimentos, penalidade de Defesa, Cadência e deslocamentos não dobram. O dano secundário de Impacto em Corrente não causa crítico.",
+            "arma_resumo_rapido": [
+                "Estado Selado: sansetsukon de três segmentos, dano evolutivo e alcance variável.",
+                "Ritual: corta a mão, marca os três segmentos e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Cadência: acertos acumulam até 2 stacks; cada stack dá +1 acerto.",
+                "Compacta: 1,5m, pressão curta.",
+                "Articulada: 3m, alcance e controle.",
+                "Erlang Shen: leitura, mobilidade, precisão e contra-ataque.",
+                "Xing Tian: dano, Vulnerável, Dano de Ferida e possessão ofensiva.",
+                "Nome Verdadeiro: desbloqueia Torvelinho de Três Corpos."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10400000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

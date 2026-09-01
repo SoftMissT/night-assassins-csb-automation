@@ -1,0 +1,452 @@
+{
+    "_id": "b3f06d2a8c941e75",
+    "_key": "!items!b3f06d2a8c941e75",
+    "name": "Boosted Gear Manoplas do Imperador Dragão Vermelho",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/boosted_gear_manoplas_do_imperador_dragao_vermelho_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Boosted Gear Manoplas do Imperador Dragão Vermelho",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_dano_atributo_multiplicador": {
+                "FOR": 0.5,
+                "DEX": 0.5
+            },
+            "arma_acerto_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["concussao"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Ryōtō / Longinus Dracônico",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Sarasvati",
+            "arma_demonio": "Vritra",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Contra-ataque",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Manoplas dracônicas duplas. Boost para acumular, Divide para enfraquecer, Balance Breaker para quebrar. Sarasvati responde com fluxo, redistribuição, Marca Divide, mobilidade e contra-ataque. Vritra responde com acúmulo, dano, Vulnerável, Sobrecarga, Dano de Ferida e ruptura dracônica.",
+            "arma_ordem": 114,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Manopla Dracônica",
+                    "formula_texto": "4 + metade de FOR ou DEX + dado evolutivo / Concussão",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Balance Breaker",
+                    "formula_texto": "4 + metade de FOR ou DEX + 2d8 + 2 por Carga Boost gasta / Concussão",
+                    "dano_fixo": 4,
+                    "dano_dados": "2d8",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "4 + metade de FOR ou DEX + 1d6 / Concussão"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "4 + metade de FOR ou DEX + 1d8 / Concussão"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "4 + metade de FOR ou DEX + 1d10 / Concussão"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "4 + metade de FOR ou DEX + 1d12 / Concussão"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "4 + metade de FOR ou DEX + 2d6 / Concussão"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "4 + metade de FOR ou DEX + 2d8 / Concussão"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Longinus Dracônico",
+                "descricao": "Boosted Gear trabalha em três comandos centrais: Boost para acumular poder, Divide para enfraquecer ou redistribuir poder, e Breaker para gastar tudo de uma vez.",
+                "comandos_centrais": {
+                    "boost": "acumular poder",
+                    "divide": "enfraquecer ou redistribuir poder",
+                    "breaker": "gastar tudo de uma vez"
+                },
+                "acerto": "por ter Acuidade, Boosted Gear pode usar FOR ou DEX nas rolagens de acerto",
+                "dano": "o dano da arma usa metade de FOR ou DEX, porque as manoplas dependem tanto de força física quanto de ritmo, encaixe e impacto curto",
+                "ryoto": {
+                    "descricao": "ao usar as duas manoplas em uma Ação de Ataque, o portador pode atacar com ambas",
+                    "primeiro_ataque": "normal",
+                    "segundo_ataque": "não soma FOR ou DEX na rolagem de acerto",
+                    "dano": "ambos usam o dano atual da arma, salvo se uma técnica disser o contrário"
+                }
+            },
+            "arma_cargas_boost": {
+                "maximo": 3,
+                "descricao": "as Cargas representam poder dracônico acumulado nos núcleos das manoplas",
+                "ganho": [
+                    "Boost",
+                    "Dragon Shot Combo",
+                    "decisões do Mestre em cenas de treino, colapso ou superação"
+                ],
+                "gasto": "antes de atacar com Boosted Gear, você pode gastar Cargas conforme a habilidade permitir",
+                "critico": "Cargas gastas em dano fixo são dano direto do golpe e dobram em crítico"
+            },
+            "arma_marca_divide": {
+                "descricao": "Marca Divide representa Sarasvati cortando o fluxo de força do alvo",
+                "efeitos": [
+                    "a próxima Defesa do alvo contra um ataque antes do início do seu próximo turno sofre -1",
+                    "após essa Defesa, a Marca Divide desaparece",
+                    "a marca não acumula consigo mesma"
+                ],
+                "observacao": "Marca Divide não causa dano. Se uma habilidade disser Marca Divide adicional ou -1 Defesa adicional, esse efeito soma com a penalidade da Marca Divide."
+            },
+            "arma_sobrecarga": {
+                "gatilho": "se você iniciar seu turno com 3 Cargas Boost e terminar o turno sem gastar nenhuma Carga",
+                "efeitos": [
+                    "perca todas as Cargas Boost",
+                    "sofra -1 em rolagens de acerto com Boosted Gear até o fim do seu próximo turno"
+                ],
+                "sarasvati": "tenta redistribuir antes da quebra",
+                "vritra": "prefere deixar o motor dracônico explodir para frente"
+            },
+            "arma_despertar": {
+                "estado_selado": "Manoplas Adormecidas",
+                "primeiro_despertar": "Boosted Gear",
+                "despertar_verdadeiro": "Balance Breaker",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "sarasvati": {
+                    "nome": "Divide Flow",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Boosted Gear antes do fim do turno recebe +2 no acerto. Se acertar, o alvo recebe Marca Divide.",
+                    "observacao": "este efeito não aumenta dano. Sarasvati nunca aumenta dano bruto."
+                },
+                "vritra": {
+                    "nome": "Juggernaut Drive",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Boosted Gear antes do fim do turno recebe o Dano Bônus de Vritra conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se você tiver 3 Cargas Boost quando acertar esse ataque, o alvo também sofre +1 Dano de Ferida.",
+                    "custo": "usar Juggernaut Drive cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Vritra nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_vritra": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Vritra é dano direto do golpe e dobra em crítico. Vulnerável, Marca Divide e Dano de Ferida não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Boost",
+                    "tecnica_liberada": "Boost",
+                    "tipo": "Ação Única",
+                    "base": "após acertar um ataque com Boosted Gear, você pode usar sua Ação Única para ganhar +1 Carga Boost. Máximo: 3 Cargas. Antes de atacar com Boosted Gear, você pode gastar 1 Carga Boost para receber +1 dano fixo naquele ataque.",
+                    "sarasvati": "quando ganharia 1 Carga Boost, você pode escolher não ganhar a Carga e aplicar Marca Divide no alvo atingido",
+                    "vritra": "se estiver com 3 Cargas Boost, seu próximo ataque com Boosted Gear causa +1 dano fixo adicional"
+                },
+                "C": {
+                    "nome": "Dragon Step",
+                    "tecnica_liberada": "Dragon Step",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até 3m, ignorando Terreno Difícil durante esse deslocamento. Se terminar o movimento com um inimigo dentro de 1,5m, seu próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "sarasvati": "você pode transferir esse +1 no acerto para um aliado adjacente. O aliado deve usar o bônus antes do início do seu próximo turno.",
+                    "vritra": "o bônus de +1 no acerto só pode ser usado contra o inimigo mais ferido dentro do seu alcance. Se acertar, cause +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Dragon Shot Combo",
+                    "tecnica_liberada": "Dragon Shot Combo",
+                    "tipo": "Ação de Ataque",
+                    "requisito": "empunhar as duas manoplas",
+                    "base": "faça dois ataques usando a propriedade Ryōtō. Primeiro ataque normal. Segundo ataque não soma FOR ou DEX na rolagem de acerto. Cada ataque que acertar causa o dano atual da arma: 4 + metade de FOR ou DEX + dado evolutivo do Rank / Concussão. Se os dois ataques acertarem o mesmo alvo, escolha um efeito: ganhe +1 Carga Boost sem gastar Ação Única; ou aplique Marca Divide no alvo. Esse benefício só pode acontecer 1 vez por turno.",
+                    "sarasvati": "se escolher Marca Divide, você também recebe +1 Defesa até o início do seu próximo turno",
+                    "vritra": "se os dois ataques acertarem o mesmo alvo, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "A": {
+                    "nome": "Transfer / Divide",
+                    "tecnica_liberada": "Transfer / Divide",
+                    "tipo": "Ação Especial",
+                    "base": "você pode gastar até 2 Cargas Boost. Para cada Carga gasta, escolha um efeito: um aliado dentro de 3m recebe +1 no próximo acerto antes do início do seu próximo turno; um aliado dentro de 3m recebe +1 Defesa até o início do seu próximo turno; ou um inimigo atingido por Boosted Gear desde o início do seu turno recebe Marca Divide.",
+                    "sarasvati": "você pode gastar até 3 Cargas Boost em vez de 2",
+                    "vritra": "você não pode escolher efeitos que beneficiem aliados. Para cada Carga gasta, escolha apenas: +1 dano fixo no próximo ataque contra inimigo já ferido ou Marca Divide em inimigo atingido por você."
+                },
+                "S": {
+                    "nome": "Dragon Counter Flow",
+                    "tecnica_liberada": "Dragon Counter Flow",
+                    "tipo": "Reação",
+                    "base": "quando um inimigo erra um ataque corpo a corpo contra você, você pode realizar um contra-ataque com Boosted Gear. Se acertar, causa o dano atual da arma. Se tiver 1 ou mais Cargas Boost, você pode gastar 1 Carga antes do contra-ataque para escolher um efeito: +1 no acerto desse contra-ataque; ou, se acertar, aplicar Marca Divide.",
+                    "sarasvati": "se você usou Transfer / Divide desde o fim do seu último turno, este contra-ataque é feito com Vantagem",
+                    "vritra": "Vritra não concede esta Reação. Se Vritra estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Balance Breaker: Sekiryūtei no Yoroi",
+                    "tecnica_liberada": "Balance Breaker Sekiryūtei no Yoroi",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "requisito": "Boosted Gear desperta e pelo menos 1 Carga Boost",
+                    "base": "você manifesta a armadura dracônica vermelha até o fim do Despertar atual e desfere uma quebra de impacto com as duas manoplas. Escolha até 2 inimigos dentro de 1,5m. Faça uma rolagem de acerto separada contra cada alvo. Você gasta de 1 a 3 Cargas Boost. Cada alvo atingido sofre 4 + metade de FOR ou DEX + 2d8 + 2 por Carga Boost gasta / Concussão. Se gastar 2 ou mais Cargas, alvos atingidos sofrem -1 Defesa até o início do próximo turno deles. Se gastar 3 Cargas, escolha uma manifestação.",
+                    "manifestacoes": {
+                        "asas_vermelhas": "o primeiro alvo atingido fica Vulnerável contra o próximo ataque que receber",
+                        "asas_brancas": "o primeiro alvo atingido recebe Marca Divide e sofre -1 Defesa adicional até o início do próximo turno dele"
+                    },
+                    "sarasvati": "um aliado dentro de 3m recebe +2 Defesa até o início do próximo turno dele",
+                    "vritra": "você pode ativar Juggernaut Drive junto do Balance Breaker sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o primeiro alvo atingido já estiver Vulnerável, ele sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Vritra domina. Use efeitos de Vritra. Sarasvati dorme fundo.",
+                    "4-8": "Vritra favorecido. Use efeitos de Vritra. Sarasvati desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Sarasvati ou Vritra.",
+                    "13-17": "Sarasvati favorecida. Use efeitos de Sarasvati. Vritra desperta apenas pelo gatilho.",
+                    "18-20": "Sarasvati domina. Use efeitos de Sarasvati. Vritra dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Sarasvati": "fluxo, redistribuição, Marca Divide, mobilidade e contra-ataque",
+                    "Vritra": "dano, Vulnerável, Sobrecarga, Dano de Ferida e ruptura"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador chega a 3 Cargas Boost.",
+                    "15-38": "O portador causa ou sofre um crítico enquanto possui 1 ou mais Cargas Boost.",
+                    "39-57": "O portador está com metade ou menos dos PDV máximos e possui 2 ou mais Cargas Boost.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue nos Núcleos Carmesins",
+                "passos": [
+                    "vestir as duas manoplas",
+                    "cortar a própria palma",
+                    "pressionar o sangue no núcleo da manopla direita",
+                    "pressionar o sangue no núcleo da manopla esquerda",
+                    "declarar o que precisa aumentar, dividir ou quebrar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue acende os núcleos.\nSarasvati, deixa o poder fluir.\nVritra, prende o dragão no punho.\nQue a força aumente.\nQue a força se divida.\nBoosted Gear, desperta."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar o que precisa aumentar, dividir ou quebrar",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Sarasvati",
+                "efeito": "quando Sarasvati desperta como lado adormecido, ela permite usar uma vez o efeito de Sarasvati do seu Rank atual, mesmo que Vritra seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Vritra",
+                "efeito": "quando Vritra desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva ou contra-ataque limpo",
+                    "prioriza o alvo mais ferido em alcance",
+                    "tenta chegar a 3 Cargas Boost ou gastar todas em dano",
+                    "aplica Vulnerável sempre que possível",
+                    "ignora redistribuição para aliados",
+                    "não recua se ainda puder atacar",
+                    "transforma fluxo em obstrução, impacto e esmagamento"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue nos Núcleos Carmesins normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "sarasvati_adormecida": "Sarasvati concede apenas um efeito de Sarasvati do Rank atual e volta a dormir",
+                "vritra_adormecido": "Vritra tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Juggernaut Drive causa 1 Dano de Ferida.",
+                "3-4": "Juggernaut Drive causa 1 Dano de Ferida e Vritra mantém os núcleos das manoplas pulsando até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Vritra é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Boosted Gear",
+                "primeiro_fragmento_simbiose": "Imperador Vermelho",
+                "segundo_fragmento_unificacao": "Fluxo Partido",
+                "nome_verdadeiro": "Boosted Gear, Fluxo Partido do Imperador Dragão Vermelho"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Aumenta, Boosted Gear.",
+                "liberacao_verdadeira": "Quebre o limite, Boosted Gear, Fluxo Partido do Imperador Dragão Vermelho."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (4 + metade de FOR ou DEX + 1d10 + bônus diretos aplicáveis) × 2. Dano fixo de Cargas Boost dobra, porque é dano direto do golpe. O Dano Bônus de Vritra dobra, porque é dano direto do golpe. Vulnerável, Marca Divide, Dano de Ferida, bônus de Defesa e penalidade de Defesa não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: manoplas duplas, dano evolutivo, Ryōtō e impacto curto.",
+                "Ritual: corta a mão, acende os dois núcleos com sangue e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Boost: acumula até 3 Cargas.",
+                "Divide: aplica Marca Divide e enfraquece a próxima Defesa do alvo.",
+                "Balance Breaker: armadura dracônica vermelha e quebra de limite.",
+                "Sarasvati: fluxo, redistribuição, aliados, Marca Divide e contra-ataque.",
+                "Vritra: dano, Vulnerável, Juggernaut Drive, Sobrecarga e possessão.",
+                "Nome Verdadeiro: desbloqueia o Fluxo Partido do Imperador Dragão Vermelho."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 11400000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

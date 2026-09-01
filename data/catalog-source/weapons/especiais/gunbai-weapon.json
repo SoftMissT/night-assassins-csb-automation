@@ -1,0 +1,454 @@
+{
+    "_id": "6b2e90f1a47c8d35",
+    "_key": "!items!6b2e90f1a47c8d35",
+    "name": "Gumbai Leque do Pilar Quebrado",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/gumbai_leque_do_pilar_quebrado_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Gumbai Leque do Pilar Quebrado",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": ["DEX"],
+            "arma_acerto_atributo": ["DEX"],
+            "arma_tipos_dano": ["concussao", "cortante"],
+            "arma_critico": 20,
+            "arma_critico_texto": "20 Natural",
+            "arma_alcance": "1,5m corpo a corpo / 4,5m em arco de comando",
+            "arma_propriedades": "Manejável / Morote / Comando de Campo",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Guan Yin",
+            "arma_demonio": "Gong Gong",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Leque de comando tático. Zona de controle, reposicionamento de aliados e inclinação do campo. Guan Yin responde com defesa em área curta, leitura de campo, proteção de aliados e reposicionamento tático. Gong Gong responde com ruptura de campo, Vulnerável, empurrão, medo e colapso de posição.",
+            "arma_ordem": 116,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Postura Fechada",
+                    "formula_texto": "5 + DEX + dado evolutivo / Concussão ou Cortante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["concussao", "cortante"],
+                    "alcance": "1,5m",
+                    "critico": 20
+                },
+                {
+                    "nome": "Postura Aberta",
+                    "formula_texto": "5 + DEX + dado evolutivo / Concussão ou Cortante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["concussao", "cortante"],
+                    "alcance": "arco de 4,5m",
+                    "critico": 20
+                },
+                {
+                    "nome": "Postura de Guarda",
+                    "formula_texto": "5 + DEX + dado evolutivo / Concussão ou Cortante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["concussao", "cortante"],
+                    "alcance": "1,5m",
+                    "critico": 20
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "5 + DEX + 1d6 / Concussão ou Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "5 + DEX + 1d8 / Concussão ou Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "5 + DEX + 1d10 / Concussão ou Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "5 + DEX + 1d12 / Concussão ou Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "5 + DEX + 2d6 / Concussão ou Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "5 + DEX + 2d8 / Concussão ou Cortante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Comando de Campo",
+                "descricao": "Gumbai luta controlando área, linhas e posições.",
+                "acerto": "por ser Manejável, Gumbai usa DEX nas rolagens de acerto",
+                "dano": "o dano usa DEX, porque o leque depende de giro, abertura, ângulo, corte de borda, impacto lateral e leitura do campo",
+                "morote": "se o portador for proficiente e empunhar Gumbai com as duas mãos, o bônus de DEX entra inteiro no dano",
+                "alcance_de_comando": {
+                    "corpo_a_corpo": {
+                        "alcance": "1,5m",
+                        "uso": "leque fechado, impacto direto, borda cortante"
+                    },
+                    "arco_de_comando": {
+                        "alcance": "4,5m",
+                        "uso": "leque aberto, varredura, vento de campo e reposicionamento"
+                    },
+                    "regra_multialvo": "ataques em arco só atingem múltiplos alvos quando uma habilidade disser isso"
+                }
+            },
+            "arma_posturas_do_leque": {
+                "postura_fechada": {
+                    "alcance": "1,5m",
+                    "efeito": "+1 no acerto"
+                },
+                "postura_aberta": {
+                    "alcance": "arco de 4,5m",
+                    "efeito": "sem bônus; permite efeitos de arco"
+                },
+                "postura_de_guarda": {
+                    "alcance": "1,5m",
+                    "efeito": "sem bônus ofensivo; +1 no próximo Bloqueio antes do início do próximo turno"
+                }
+            },
+            "arma_despertar": {
+                "estado_selado": "Leque Fechado",
+                "primeiro_despertar": "Comando Sob o Céu",
+                "despertar_verdadeiro": "Queda do Pilar Celeste",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "guan_yin": {
+                    "nome": "Mil Braços Sob o Céu",
+                    "tipo": "Ação Especial",
+                    "alvo": "até 2 aliados dentro de 4,5m",
+                    "efeito": "cada aliado escolhido recebe +1 na próxima Defesa feita antes do início do seu próximo turno. Além disso, cada aliado escolhido pode se mover 1,5m sem provocar Ataque de Oportunidade.",
+                    "restricoes": [
+                        "não causa dano",
+                        "não aumenta dano",
+                        "não força o movimento do aliado",
+                        "não pode mover o aliado para terreno impossível"
+                    ],
+                    "observacao": "Guan Yin nunca aumenta dano bruto."
+                },
+                "gong_gong": {
+                    "nome": "Pilar Buzhou Quebrado",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque em arco com Gumbai antes do fim do turno recebe o Dano Bônus de Gong Gong conforme suas Marcas do Demônio. Se acertar pelo menos um alvo, o primeiro alvo atingido fica Vulnerável contra o próximo ataque que receber.",
+                    "custo": "usar Pilar Buzhou Quebrado cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Gong Gong nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_gong_gong": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Gong Gong é dano direto do golpe e dobra em crítico. Vulnerável, Amedrontado, Restrição de Movimentos, deslocamentos e bônus de Defesa não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Leque de Comando",
+                    "base": "ao atacar com Gumbai, escolha uma postura",
+                    "posturas": {
+                        "postura_fechada": {
+                            "efeito": "ataque corpo a corpo a 1,5m recebe +1 no acerto"
+                        },
+                        "postura_aberta": {
+                            "efeito": "ataque em arco de 4,5m; sem bônus"
+                        },
+                        "postura_de_guarda": {
+                            "efeito": "sem bônus ofensivo; você recebe +1 no próximo Bloqueio antes do início do seu próximo turno"
+                        }
+                    },
+                    "guan_yin": "quando usar Postura de Guarda, um aliado adjacente também recebe +1 no próximo Bloqueio antes do início do seu próximo turno",
+                    "gong_gong": "quando acertar em Postura Aberta, o primeiro alvo atingido sofre -1 Defesa até o início do próximo turno dele se você superar por 5 ou mais"
+                },
+                "C": {
+                    "nome": "Ordem de Reposicionamento",
+                    "tecnica_liberada": "Ordem de Reposicionamento",
+                    "tipo": "Ação de Movimento",
+                    "alvo": "1 aliado dentro de 4,5m",
+                    "base": "escolha 1 aliado dentro do alcance de comando. Esse aliado pode se mover 1,5m sem gastar ação e sem provocar Ataque de Oportunidade. O aliado pode recusar o movimento.",
+                    "guan_yin": "você pode escolher até 2 aliados dentro de 4,5m",
+                    "gong_gong": "o movimento só pode aproximar o aliado de um inimigo, objetivo de conflito ou zona perigosa. Se o aliado terminar adjacente a um inimigo, ele recebe +1 no próximo acerto contra esse inimigo antes do início do seu próximo turno."
+                },
+                "B": {
+                    "nome": "Vento de Guerra",
+                    "tecnica_liberada": "Vento de Guerra",
+                    "tipo": "Ação de Ataque",
+                    "area": "arco de 4,5m",
+                    "alvos": "até 2 inimigos no arco",
+                    "base": "faça uma rolagem de acerto separada contra cada alvo. Cada alvo atingido sofre o dano atual da arma: 5 + DEX + dado evolutivo do Rank / Concussão ou Cortante. Se os dois ataques acertarem, escolha um dos alvos atingidos. Esse alvo sofre -1 Defesa até o início do próximo turno dele.",
+                    "guan_yin": "um aliado dentro de 4,5m recebe +1 Defesa até o início do seu próximo turno",
+                    "gong_gong": "o primeiro alvo atingido fica Amedrontado por 1 turno"
+                },
+                "A": {
+                    "nome": "Inclinação do Campo",
+                    "tecnica_liberada": "Inclinação do Campo",
+                    "tipo": "Ação Especial",
+                    "zona": "4,5m ao seu redor",
+                    "base": "seu próximo ataque com Gumbai antes do fim do turno recebe +2 no acerto. Se esse ataque acertar, você pode empurrar o alvo 1,5m. Esse empurrão não pode mover o alvo para terreno impossível, mas pode tirá-lo de cobertura, flanco, zona de proteção ou alcance ideal.",
+                    "guan_yin": "quando empurrar um inimigo, você também pode puxar 1 aliado dentro de 4,5m em 1,5m sem provocar Ataque de Oportunidade",
+                    "gong_gong": "se superar a Defesa do alvo por 5 ou mais, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "S": {
+                    "nome": "Mil Braços, Um Comando",
+                    "tecnica_liberada": "Mil Braços, Um Comando",
+                    "tipo": "Reação",
+                    "alcance_de_protecao": "aliados dentro de 4,5m",
+                    "base": "quando você ou um aliado dentro de 4,5m for alvo de um ataque, role 1d20 + DEX. Se igualar ou superar o acerto inimigo, você defende o ataque. Se falhar por 4 ou menos, reduza o dano recebido em 5 + DEX.",
+                    "guan_yin": "receba +1 na rolagem de Mil Braços, Um Comando",
+                    "gong_gong": "Gong Gong não concede esta Reação. Se Gong Gong estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Queda do Pilar Celeste",
+                    "tecnica_liberada": "Queda do Pilar Celeste",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "raio de 4,5m em ponto visível dentro de 6m",
+                    "base": "você abre o Gumbai completamente e inclina o campo como se o pilar do céu tivesse quebrado. Faça uma rolagem de acerto separada contra cada inimigo na área. Cada alvo atingido sofre o dano atual da arma: 5 + DEX + 2d8 / Concussão. Para cada alvo atingido, escolha um efeito: o alvo fica Vulnerável contra o próximo ataque que receber; ou o alvo sofre Restrição de Movimentos até o início do próximo turno dele. O Vulnerável não afeta o golpe que aplicou esse status.",
+                    "guan_yin": "até 2 aliados dentro de 4,5m podem se mover 3m sem provocar Ataque de Oportunidade",
+                    "gong_gong": "você pode ativar Pilar Buzhou Quebrado junto da Queda do Pilar Celeste sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Um alvo que receber Vulnerável também fica Amedrontado por 1 turno."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Gong Gong domina. Use efeitos de Gong Gong. Guan Yin dorme fundo.",
+                    "4-8": "Gong Gong favorecido. Use efeitos de Gong Gong. Guan Yin desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Guan Yin ou Gong Gong.",
+                    "13-17": "Guan Yin favorecida. Use efeitos de Guan Yin. Gong Gong desperta apenas pelo gatilho.",
+                    "18-20": "Guan Yin domina. Use efeitos de Guan Yin. Gong Gong dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Guan Yin": "defesa em área, leitura de campo, proteção de aliados e reposicionamento",
+                    "Gong Gong": "dano, Vulnerável, colapso de posição, medo e quebra de formação"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "Dois ou mais inimigos entram no alcance de comando de 4,5m no mesmo turno.",
+                    "15-38": "Um aliado dentro de 4,5m sofre um acerto crítico.",
+                    "39-57": "Você falha em proteger um aliado dentro do alcance de comando.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue no Leque de Guerra",
+                "passos": [
+                    "segurar Gumbai fechado com as duas mãos",
+                    "cortar a própria palma",
+                    "passar o sangue pela base e pelas hastes do leque",
+                    "abrir o leque até o arco completo",
+                    "declarar qual linha, aliado ou campo precisa comandar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue abre o leque de guerra.\nGuan Yin, estende mil braços sob o céu.\nGong Gong, quebra o pilar que sustenta o campo.\nQue aliados encontrem abrigo.\nQue inimigos percam o chão.\nGumbai, desperta."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar qual campo precisa comandar",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Guan Yin",
+                "efeito": "quando Guan Yin desperta como lado adormecido, ela permite usar uma vez o efeito de Guan Yin do seu Rank atual, mesmo que Gong Gong seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Gong Gong",
+                "efeito": "quando Gong Gong desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva",
+                    "prioriza ataques em arco",
+                    "tenta atingir múltiplos inimigos",
+                    "empurra inimigos para posições ruins",
+                    "ignora reposicionamento defensivo de aliados",
+                    "tenta aplicar Vulnerável ou Amedrontado",
+                    "quebra a linha de batalha mesmo que isso deixe o portador exposto",
+                    "luta como desastre, não como comandante"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue no Leque de Guerra normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "guan_yin_adormecida": "Guan Yin concede apenas um efeito de Guan Yin do Rank atual e volta a dormir",
+                "gong_gong_adormecido": "Gong Gong tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Pilar Buzhou Quebrado causa 1 Dano de Ferida.",
+                "3-4": "Pilar Buzhou Quebrado causa 1 Dano de Ferida e o campo parece inclinado ao redor do portador até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Gong Gong é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Gumbai",
+                "primeiro_fragmento_simbiose": "Mil Braços",
+                "segundo_fragmento_unificacao": "Pilar Quebrado",
+                "nome_verdadeiro": "Gumbai, Leque dos Mil Braços e do Pilar Quebrado"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Abra o campo, Gumbai.",
+                "liberacao_verdadeira": "Inclina o céu, Gumbai, Leque dos Mil Braços e do Pilar Quebrado."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (5 + DEX + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Gong Gong dobra, porque é dano direto do golpe. Vulnerável, Amedrontado, Restrição de Movimentos, deslocamentos, empurrões, redução de dano e bônus de Defesa não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: leque de guerra, dano evolutivo, arco curto e posturas.",
+                "Ritual: corta a mão, abre o leque com sangue e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Postura Fechada: 1,5m e +1 acerto.",
+                "Postura Aberta: arco de 4,5m.",
+                "Postura de Guarda: +1 no próximo Bloqueio.",
+                "Guan Yin: defesa em área, proteção, mil braços e reposicionamento tático.",
+                "Gong Gong: Vulnerável, medo, colapso de campo e possessão destrutiva.",
+                "Nome Verdadeiro: desbloqueia Queda do Pilar Celeste."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 11600000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

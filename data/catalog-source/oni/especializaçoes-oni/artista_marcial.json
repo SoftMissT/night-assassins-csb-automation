@@ -1,0 +1,88 @@
+{
+    "id": "artista_marcial",
+    "name": "Artista Marcial",
+    "function": "Duelista corpo a corpo, ataques desarmados, leitura de postura, contra-ataque, pressão contínua, dano de Concussão/Impacto e controle por Desequilibrado/Desorientado",
+    "primaryAttributes": ["for", "dex", "sab", "fdv"],
+    "levels": {
+        "1": {
+            "name": "Postura Predatória",
+            "effect": "+1 em ataques desarmados contra criaturas que já atacaram você neste combate; 1x/rodada contra a mesma criatura"
+        },
+        "2": {
+            "name": "Base Marcial",
+            "effect": "+1 em testes de FOR/DEX para resistir a Caído, Desequilibrado, Empurrado, agarrões e derrubadas; levantar de Derrubado custa 1,5m"
+        },
+        "3": {
+            "name": "Punhos Demoníacos",
+            "effect": "ataques desarmados podem causar Concussão ou Necrótico à escolha; contam como demoníacos contra resistência física comum"
+        },
+        "4": {
+            "name": "Ritmo de Combate",
+            "effect": "1x/rodada ao errar desarmado: +1 no próximo desarmado contra o mesmo alvo até o fim do próximo turno; perde se trocar de alvo"
+        },
+        "5": {
+            "name": "Leitura de Postura",
+            "effect": "2 PDK, Reação ao ser alvo de ataque corpo a corpo visível: +2 em Esquiva ou Bloqueio contra esse ataque"
+        },
+        "6": {
+            "name": "Golpe de Centro",
+            "effect": "1x/turno ao acertar desarmado contra alvo Desequilibrado, Derrubado ou Desorientado: +1d4 Concussão"
+        },
+        "7": {
+            "name": "Marca de Duelo",
+            "effect": "3 PDK, Ação Especial, 9m, 3 rodadas: marca 1 criatura visível; contra ela +1 desarmado e +1 Esquiva vs corpo a corpo; só 1 marca ativa"
+        },
+        "8": {
+            "name": "Corpo em Movimento",
+            "effect": "1x/rodada após acertar desarmado: move 1,5m sem Ataque de Oportunidade, mantendo ou melhorando posição corpo a corpo"
+        },
+        "9": {
+            "name": "Pressão Marcial",
+            "effect": "ao acertar 2 ataques desarmados contra a mesma criatura na cena: -1 na próxima Defesa dela contra você até o início do próximo turno dela; não acumula"
+        },
+        "10": {
+            "name": "Contra-Golpe",
+            "effect": "3 PDK, Reação quando criatura erra corpo a corpo contra você: causa FOR Concussão; se for Marca de Duelo, FOR+1d6; sem rolagem de ataque"
+        },
+        "11": {
+            "name": "Quebra-Ritmo",
+            "effect": "4 PDK, Ação Especial corpo a corpo; SAB vs CD 10+SAB do alvo; sucesso Desorientado até início do turno dele; sucesso 5+ também Desequilibrado contra o próximo ataque"
+        },
+        "12": {
+            "name": "Aprimoramento Marcial",
+            "effect": "+1 FOR ou +1 DEX permanente, respeitando o limite máximo de atributos da Classe de Onis"
+        },
+        "13": {
+            "name": "Golpe de Pressão",
+            "effect": "3 PDK, livre ao acertar desarmado, 1x/turno: +1d8 Concussão; se o alvo estiver Desequilibrado, +1d10 Concussão"
+        },
+        "14": {
+            "name": "Instinto de Duelo",
+            "effect": "contra Marca de Duelo: +2 Esquiva vs corpo a corpo; se ela errar corpo a corpo contra você, próximo desarmado contra ela recebe +1 acerto"
+        },
+        "15": {
+            "name": "Sequência Demoníaca",
+            "effect": "1x/turno após acertar desarmado: próximo desarmado contra a mesma criatura até o fim do próximo turno recebe +1 acerto; se acertar, +1d6 Concussão"
+        },
+        "16": {
+            "name": "Domínio Corporal",
+            "effect": "efeitos físicos de derrubar, empurrar, agarrar, mover ou desequilibrar você sofrem -2 rolagem/CD; +2 vs Restrição física; não protege controle mental/paralisia espiritual"
+        },
+        "17": {
+            "name": "Espírito de Combate",
+            "effect": "contra criatura superior: +1 FDV vs medo, intimidação e controle; com metade ou menos do PDV máximo, desarmado vs Marca de Duelo +1d8 Concussão 1x/turno"
+        },
+        "18": {
+            "name": "Onda de Impacto",
+            "effect": "6 PDK, livre ao usar Golpe de Pressão, 1x/rodada: criatura extra a 3m testa VIT vs CD 10+FOR; falha 1d8 Impacto e Desequilibrada; sucesso metade e sem Desequilibrado"
+        },
+        "19": {
+            "name": "Aniquilação Marcial",
+            "effect": "12 PDK, Ação Completa, alvo Marca de Duelo, ataque FOR/DEX vs Defesa, 1x/combate: acerto dano normal +4d8 Concussão; se alvo Desequilibrado/Desorientado/Amedrontado ou com metade PDV, +5d8; erro gasta PDK"
+        },
+        "20": {
+            "name": "Forma Suprema do Punho",
+            "effect": "15 PDK, Ação Completa, 3 rodadas, 1x/combate: +2 FOR, +2 DEX, +2 desarmado, +1d8 Concussão, imune Desequilibrado/Derrubado; 1x vs Marca pode converter adicional em Impacto e forçar VIT vs CD 10+FOR, falha Atordoado; termina por Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha/Carmesim ou destruição narrativa do centro marcial"
+        }
+    }
+}

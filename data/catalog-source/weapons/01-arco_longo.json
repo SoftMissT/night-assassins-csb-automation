@@ -1,0 +1,117 @@
+{
+    "_id": "679344f09606f39e",
+    "_key": "!items!679344f09606f39e",
+    "name": "Arco Longo",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/arco_longo_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Arco Longo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 3,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 20,
+            "arma_alcance": "** 20m",
+            "arma_propriedades": "** Municiada 1 / Manejável / Precisão",
+            "arma_requisito": "",
+            "descricao": "Um arco de distância variável, preciso e letal para caçadores experientes.\n\n- Propriedades: Municiada 1 / Manejável / Precisão\n- Alcance: 20m\n- Aljava: Capacidade de 12 flechas\n- Crítico: 20 Natural\n- Dano até 5m: 3 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n- Dano até 10m: 4 + Metade da DEX (arredondado para baixo se necessário) se tiver no mínimo 3 de DEX, ganha +1 de acerto / Perfurante\n- Dano até 20m: 5 + Metade da DEX (arredondado para baixo se necessário) se tiver no mínimo 4 de DEX, ganha +1 de acerto / Perfurante",
+            "arma_ordem": 1,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "até 5m",
+                    "formula_texto": "3 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "20m",
+                    "critico": 20
+                },
+                {
+                    "nome": "até 10m",
+                    "formula_texto": "4 + Metade da DEX (arredondado para baixo se necessário) se tiver no mínimo 3 de DEX, ganha +1 de acerto / Perfurante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "20m",
+                    "critico": 20
+                },
+                {
+                    "nome": "até 20m",
+                    "formula_texto": "5 + Metade da DEX (arredondado para baixo se necessário) se tiver no mínimo 4 de DEX, ganha +1 de acerto / Perfurante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "20m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "À distância",
+            "arma_mecanicas": [
+                {
+                    "id": "municiada",
+                    "kind": "ammunition",
+                    "capacity": 12
+                },
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "precisao",
+                    "kind": "aim",
+                    "action": "especial"
+                }
+            ],
+            "arma_propriedades_chaves": ["municiada 1", "manejavel", "precisao"],
+            "arma_municao_capacidade": 12,
+            "arma_municao_atual": 12
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 100000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

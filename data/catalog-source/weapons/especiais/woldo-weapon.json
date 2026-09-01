@@ -1,0 +1,396 @@
+{
+    "_id": "a6c3f91e0d74b825",
+    "_key": "!items!a6c3f91e0d74b825",
+    "name": "Woldo Lua do Exílio",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/woldo_lua_do_exilio_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Woldo Lua do Exílio",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 6,
+            "arma_dano_atributo": ["DEX"],
+            "arma_acerto_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural / 18 Natural com Caminho do Pavilhão Lunar",
+            "arma_alcance": "3m",
+            "arma_propriedades": "Acuidade / Morote / Sōjutsu",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Chang’e",
+            "arma_demonio": "Imugi",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Contra-ataque",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Haste de varredura. Espaçamento, dança, quebra de superioridade e corte de foco. Chang’e responde com movimento leve, controle de distância, precisão elegante e contra-ataque. Imugi responde com dano, Distraído, Dano de Ferida e quebra de foco.",
+            "arma_ordem": 113,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Lua Crescente de Guarda",
+                    "formula_texto": "6 + DEX + dado evolutivo / Cortante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "3m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Caminho do Pavilhão Lunar",
+                    "formula_texto": "6 + DEX + dado evolutivo / Cortante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "3m",
+                    "critico": 18
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "6 + DEX + 1d6 / Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "6 + DEX + 1d8 / Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "6 + DEX + 1d10 / Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "6 + DEX + 1d12 / Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "6 + DEX + 2d6 / Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "6 + DEX + 2d8 / Cortante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Lua de Varredura",
+                "descricao": "Woldo controla o combate pela largura do corte.",
+                "acerto": "por ter Acuidade, Woldo pode usar FOR ou DEX nas rolagens de acerto",
+                "dano": "o dano da arma usa DEX, porque a Woldo depende de giro, ângulo, passo e controle da haste",
+                "morote": "se o portador for proficiente e empunhar Woldo com as duas mãos, o bônus de DEX entra inteiro no dano",
+                "distancia_de_exilio": {
+                    "alcance": "3m",
+                    "descricao": "a distância ideal da Woldo é 3m; a arma é mais forte quando o inimigo está perto o bastante para ser cortado, mas longe o bastante para não dominar o corpo do portador"
+                }
+            },
+            "arma_despertar": {
+                "estado_selado": "Lua Baixa",
+                "primeiro_despertar": "Dança da Lua Fria",
+                "despertar_verdadeiro": "Corte do Céu Baixo",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "chang_e": {
+                    "nome": "Passo do Palácio Lunar",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Woldo antes do fim do turno recebe +2 no acerto. Até o fim do turno, você ignora Terreno Difícil. Se esse ataque errar, você pode se mover 1,5m sem provocar Ataque de Oportunidade.",
+                    "observacao": "este efeito não aumenta dano. Chang’e nunca aumenta dano bruto."
+                },
+                "imugi": {
+                    "nome": "Pérola Roubada",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Woldo antes do fim do turno recebe o Dano Bônus de Imugi conforme suas Marcas do Demônio. Se acertar, o alvo fica Distraído. Enquanto Distraído, o alvo não pode usar Reação, ataques contra ele têm Vantagem, e o status termina quando ele sofre dano ou no início do turno dele. Se o alvo já estiver Distraído, ele também sofre +1 Dano de Ferida.",
+                    "custo": "usar Pérola Roubada cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Imugi nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_imugi": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Imugi é dano direto do golpe e dobra em crítico. Distraído e Dano de Ferida não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Lua Crescente de Guarda",
+                    "base": "enquanto Woldo estiver desperta, ataques feitos contra alvos a exatamente 3m recebem +1 no acerto. Se acertar um ataque com Woldo, você pode ajustar sua posição em 1,5m. Esse ajuste não pode atravessar terreno impossível.",
+                    "chang_e": "o ajuste de 1,5m não provoca Ataque de Oportunidade do alvo atingido",
+                    "imugi": "se o ajuste terminar mantendo o alvo a 3m, seu próximo ataque contra ele antes do fim do próximo turno causa +1 dano fixo"
+                },
+                "C": {
+                    "nome": "Passo da Lua Fria",
+                    "tecnica_liberada": "Passo da Lua Fria",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até seu deslocamento normal ignorando Terreno Difícil. Se terminar o movimento com um inimigo a exatamente 3m, seu próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "chang_e": "esse movimento não provoca Ataque de Oportunidade de inimigos com alcance menor que 3m",
+                    "imugi": "o bônus de +1 no acerto só se aplica se você se mover em direção ao alvo. Se acertar, cause +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Arco da Lua Partida",
+                    "tecnica_liberada": "Arco da Lua Partida",
+                    "tipo": "Ação de Ataque",
+                    "alvo": "1 criatura a até 3m",
+                    "base": "faça um ataque com Woldo. Se acertar, causa o dano atual da arma: 6 + DEX + dado evolutivo do Rank / Cortante. Se superar a Defesa do alvo por 5 ou mais, escolha um efeito: um segundo inimigo adjacente ao alvo principal sofre dano igual a DEX / Cortante; ou o alvo principal sofre Restrição de Movimentos até o início do próximo turno dele.",
+                    "chang_e": "após resolver o ataque, você pode se mover 1,5m sem provocar Ataque de Oportunidade do alvo principal",
+                    "imugi": "se o ataque acertar, o alvo principal fica Distraído"
+                },
+                "A": {
+                    "nome": "Caminho do Pavilhão Lunar",
+                    "tecnica_liberada": "Caminho do Pavilhão Lunar",
+                    "tipo": "Ação Especial",
+                    "alvo": "1 criatura a até 3m",
+                    "base": "seu próximo ataque com Woldo contra esse alvo antes do fim do turno recebe +2 no acerto e crítico 18 Natural. Se superar a Defesa do alvo por 5 ou mais, ele sofre Restrição de Movimentos até o início do próximo turno dele.",
+                    "chang_e": "você recebe +1 Defesa até o início do seu próximo turno",
+                    "imugi": "se o alvo já estiver Distraído e o ataque acertar, cause +1 dano fixo"
+                },
+                "S": {
+                    "nome": "Corte da Órbita Baixa",
+                    "tecnica_liberada": "Corte da Órbita Baixa",
+                    "tipo": "Reação",
+                    "base": "você pode realizar um ataque com Woldo contra um inimigo que erra um ataque corpo a corpo contra você ou sai do seu alcance sem Desengajar. Role o ataque normalmente com Woldo. Se acertar, causa o dano atual da arma.",
+                    "chang_e": "o Corte da Órbita Baixa é feito com Vantagem",
+                    "imugi": "Imugi não concede esta Reação. Se Imugi estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Lua do Exílio: Corte do Céu Baixo",
+                    "tecnica_liberada": "Lua do Exílio Corte do Céu Baixo",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "arco de 3m",
+                    "base": "faça uma rolagem de acerto separada contra cada inimigo no arco. Cada alvo atingido sofre o dano atual da arma: 6 + DEX + 2d8 / Cortante. Para cada alvo atingido, escolha um efeito: o alvo sofre Restrição de Movimentos até o início do próximo turno dele; ou o alvo fica Distraído.",
+                    "chang_e": "após resolver a técnica, você pode se mover até 3m sem provocar Ataque de Oportunidade",
+                    "imugi": "você pode ativar Pérola Roubada junto do Corte do Céu Baixo sem gastar Ação Especial, mas ainda paga o Dano de Ferida. O primeiro alvo já Distraído sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Imugi domina. Use efeitos de Imugi. Chang’e dorme fundo.",
+                    "4-8": "Imugi favorecido. Use efeitos de Imugi. Chang’e desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Chang’e ou Imugi.",
+                    "13-17": "Chang’e favorecida. Use efeitos de Chang’e. Imugi desperta apenas pelo gatilho.",
+                    "18-20": "Chang’e domina. Use efeitos de Chang’e. Imugi dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Chang’e": "movimento leve, controle de distância, precisão elegante e contra-ataque",
+                    "Imugi": "dano, Distraído, Dano de Ferida e quebra de foco"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "Um inimigo sai do seu alcance sem ser impedido, punido ou reposicionado.",
+                    "15-38": "Você sofre Restrição de Movimentos ou erra um ataque contra alvo já ferido por Woldo.",
+                    "39-57": "Um inimigo reduz um aliado a 0 PDV dentro de 6m.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue Sob a Lua Baixa",
+                "passos": [
+                    "apoiar a haste no chão",
+                    "cortar a própria palma",
+                    "passar o sangue pela curva da lâmina",
+                    "girar a Woldo uma vez ao redor do corpo sem atacar",
+                    "declarar o que precisa exilar, afastar ou derrubar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue traça a lua baixa.\nChang’e, abre o caminho do exílio.\nImugi, rouba a pérola do foco.\nQue a dança afaste a força.\nQue o corte derrube a superioridade.\nWoldo, desperta."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar o que precisa exilar ou afastar",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Chang’e",
+                "efeito": "quando Chang’e desperta como lado adormecido, ela permite usar uma vez o efeito de Chang’e do seu Rank atual, mesmo que Imugi seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Imugi",
+                "efeito": "quando Imugi desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva ou contra-ataque limpo",
+                    "prioriza alvos Distraídos",
+                    "tenta roubar Reações antes de causar dano alto",
+                    "avança para manter inimigos dentro de 3m",
+                    "ignora segurança se puder quebrar o foco do alvo",
+                    "não protege aliados se houver alvo vulnerável à confusão",
+                    "luta como uma serpente que ainda não virou dragão e odeia lembrar disso"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue Sob a Lua Baixa normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "chang_e_adormecida": "Chang’e concede apenas um efeito de Chang’e do Rank atual e volta a dormir",
+                "imugi_adormecido": "Imugi tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Pérola Roubada causa 1 Dano de Ferida.",
+                "3-4": "Pérola Roubada causa 1 Dano de Ferida e Imugi deixa o foco do portador instável até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Imugi é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Woldo",
+                "primeiro_fragmento_simbiose": "Lua do Exílio",
+                "segundo_fragmento_unificacao": "Pérola Baixa",
+                "nome_verdadeiro": "Woldo, Lua do Exílio e da Pérola Baixa"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Exila a distância, Woldo.",
+                "liberacao_verdadeira": "Rouba a órbita, Woldo, Lua do Exílio e da Pérola Baixa."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (6 + DEX + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Imugi dobra, porque é dano direto do golpe. Distraído, Restrição de Movimentos, Dano de Ferida, bônus de Defesa e deslocamento não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: haste lunar, alcance 3m, dano evolutivo e Sōjutsu.",
+                "Ritual: corta a mão, traça sangue na curva da lâmina e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Chang’e: movimento leve, distância, precisão e contra-ataque.",
+                "Imugi: Distraído, dano, Dano de Ferida e possessão.",
+                "Lua Crescente de Guarda: acerto a 3m e reposicionamento.",
+                "Nome Verdadeiro: desbloqueia o Corte do Céu Baixo."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 11300000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

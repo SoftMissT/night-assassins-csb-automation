@@ -1,0 +1,531 @@
+{
+  "_id": "5a1cc42b0532c642",
+  "_key": "!items!5a1cc42b0532c642",
+  "name": "Cérbero",
+  "type": "equippableItem",
+  "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Cerberus_icon.webp",
+  "system": {
+    "template": "NAWeaponTpl00001",
+    "props": {
+      "inventario_categoria": "arma",
+      "arma_categoria": "especial",
+      "arma_nome": "Cérbero",
+      "arma_tipo": "Corpo a Corpo",
+      "arma_dano_dados": "",
+      "arma_dano_fixo": 4,
+      "arma_dano_atributo": [
+        "FOR",
+        "DEX"
+      ],
+      "arma_tipos_dano": [
+        "concussivo",
+        "perfurante",
+        "cortante"
+      ],
+      "arma_critico": 20,
+      "arma_critico_texto": "20 Natural",
+      "arma_alcance": "1,5m / 3m",
+      "arma_propriedades": "Acuidade / Morote / Sōjutsu *(apenas nas formas com alcance 3m)*",
+      "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+      "arma_entidade": "Hécate",
+      "arma_demonio": "Cérbero",
+      "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+      "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+      "arma_reacao_entidade": "Contra-ataque",
+      "arma_dano_bonus_texto": "nenhum separado; o dado evolutivo faz parte do dano da arma",
+      "descricao": "Arma especial de três formas feita para guardar passagens: Nunchaku, Tridente e Mangual. Hécate responde com passagem, controle e contra-ataque; Cérbero responde com punição, bloqueio, medo e possessão.",
+      "arma_ordem": 101,
+      "arma_perfis_ataque": [
+        {
+          "nome": "Nunchaku",
+          "formula_texto": "4 + FOR ou DEX + dado evolutivo / Concussão",
+          "dano_fixo": 4,
+          "dano_dados": "",
+          "atributos": [
+            {
+              "key": "FOR",
+              "multiplicador": 1,
+              "escolha": true
+            },
+            {
+              "key": "DEX",
+              "multiplicador": 1,
+              "escolha": true
+            }
+          ],
+          "tipos_dano": [
+            "concussivo"
+          ],
+          "alcance": "1,5m",
+          "critico": 20
+        },
+        {
+          "nome": "Tridente",
+          "formula_texto": "4 + FOR ou DEX + dado evolutivo / Perfurante",
+          "dano_fixo": 4,
+          "dano_dados": "",
+          "atributos": [
+            {
+              "key": "FOR",
+              "multiplicador": 1,
+              "escolha": true
+            },
+            {
+              "key": "DEX",
+              "multiplicador": 1,
+              "escolha": true
+            }
+          ],
+          "tipos_dano": [
+            "perfurante"
+          ],
+          "alcance": "3m",
+          "critico": 20
+        },
+        {
+          "nome": "Mangual Concussão",
+          "formula_texto": "5 + FOR ou DEX + dado evolutivo / Concussão",
+          "dano_fixo": 5,
+          "dano_dados": "",
+          "atributos": [
+            {
+              "key": "FOR",
+              "multiplicador": 1,
+              "escolha": true
+            },
+            {
+              "key": "DEX",
+              "multiplicador": 1,
+              "escolha": true
+            }
+          ],
+          "tipos_dano": [
+            "concussivo"
+          ],
+          "alcance": "3m",
+          "critico": 20
+        },
+        {
+          "nome": "Mangual Cortante",
+          "formula_texto": "5 + FOR ou DEX + dado evolutivo / Cortante",
+          "dano_fixo": 5,
+          "dano_dados": "",
+          "atributos": [
+            {
+              "key": "FOR",
+              "multiplicador": 1,
+              "escolha": true
+            },
+            {
+              "key": "DEX",
+              "multiplicador": 1,
+              "escolha": true
+            }
+          ],
+          "tipos_dano": [
+            "cortante"
+          ],
+          "alcance": "3m",
+          "critico": 20
+        }
+      ],
+      "arma_formas": [
+        {
+          "nome": "Nunchaku",
+          "dano_base": 4,
+          "tipo_dano": [
+            "concussivo"
+          ],
+          "alcance": "1,5m",
+          "funcao": "pressão curta, quebra de ritmo, defesa próxima",
+          "usa_sojutsu": false
+        },
+        {
+          "nome": "Tridente",
+          "dano_base": 4,
+          "tipo_dano": [
+            "perfurante"
+          ],
+          "alcance": "3m",
+          "funcao": "guarda, avanço, controle de passagem",
+          "usa_sojutsu": true
+        },
+        {
+          "nome": "Mangual",
+          "dano_base": 5,
+          "tipo_dano": [
+            "concussivo",
+            "cortante"
+          ],
+          "alcance": "3m",
+          "funcao": "punição ampla, arco, área curta",
+          "usa_sojutsu": true
+        }
+      ],
+      "arma_dado_evolutivo_por_rank": {
+        "D": {
+          "nivel": 2,
+          "dado_evolutivo": "1d6"
+        },
+        "C": {
+          "nivel": 4,
+          "dado_evolutivo": "1d8"
+        },
+        "B": {
+          "nivel": 6,
+          "dado_evolutivo": "1d10"
+        },
+        "A": {
+          "nivel": 8,
+          "dado_evolutivo": "1d12"
+        },
+        "S": {
+          "nivel": 11,
+          "dado_evolutivo": "2d6"
+        },
+        "SS": {
+          "nivel": 12,
+          "dado_evolutivo": "2d8"
+        }
+      },
+      "arma_dano_por_rank": {
+        "D": {
+          "nivel": 2,
+          "dado_evolutivo": "1d6",
+          "formas": {
+            "nunchaku": "4 + FOR ou DEX + 1d6 / Concussão",
+            "tridente": "4 + FOR ou DEX + 1d6 / Perfurante",
+            "mangual": "5 + FOR ou DEX + 1d6 / Concussão ou Cortante"
+          }
+        },
+        "C": {
+          "nivel": 4,
+          "dado_evolutivo": "1d8",
+          "formas": {
+            "nunchaku": "4 + FOR ou DEX + 1d8 / Concussão",
+            "tridente": "4 + FOR ou DEX + 1d8 / Perfurante",
+            "mangual": "5 + FOR ou DEX + 1d8 / Concussão ou Cortante"
+          }
+        },
+        "B": {
+          "nivel": 6,
+          "dado_evolutivo": "1d10",
+          "formas": {
+            "nunchaku": "4 + FOR ou DEX + 1d10 / Concussão",
+            "tridente": "4 + FOR ou DEX + 1d10 / Perfurante",
+            "mangual": "5 + FOR ou DEX + 1d10 / Concussão ou Cortante"
+          }
+        },
+        "A": {
+          "nivel": 8,
+          "dado_evolutivo": "1d12",
+          "formas": {
+            "nunchaku": "4 + FOR ou DEX + 1d12 / Concussão",
+            "tridente": "4 + FOR ou DEX + 1d12 / Perfurante",
+            "mangual": "5 + FOR ou DEX + 1d12 / Concussão ou Cortante"
+          }
+        },
+        "S": {
+          "nivel": 11,
+          "dado_evolutivo": "2d6",
+          "formas": {
+            "nunchaku": "4 + FOR ou DEX + 2d6 / Concussão",
+            "tridente": "4 + FOR ou DEX + 2d6 / Perfurante",
+            "mangual": "5 + FOR ou DEX + 2d6 / Concussão ou Cortante"
+          }
+        },
+        "SS": {
+          "nivel": 12,
+          "dado_evolutivo": "2d8",
+          "formas": {
+            "nunchaku": "4 + FOR ou DEX + 2d8 / Concussão",
+            "tridente": "4 + FOR ou DEX + 2d8 / Perfurante",
+            "mangual": "5 + FOR ou DEX + 2d8 / Concussão ou Cortante"
+          }
+        }
+      },
+      "arma_efeitos_por_rank": {
+        "D": {
+          "nome": "Primeiro Portão",
+          "hecate": "Uma vez por rodada, quando um inimigo entra no alcance da arma, você pode usar sua Reação da Entidade para contra-atacar. Some o Valor de Vínculo no acerto.",
+          "cerbero": "Uma vez por rodada, ao acertar um inimigo que entrou, saiu ou atravessou seu alcance neste turno, some o Valor de Vínculo como dano fixo."
+        },
+        "C": {
+          "nome": "Entrada Negada",
+          "hecate": "Se seu contra-ataque da Entidade acertar, o deslocamento do alvo termina imediatamente.",
+          "cerbero": "Se acertar um alvo que atravessou seu alcance, ele fica Desequilibrado."
+        },
+        "B": {
+          "nome": "Mordida de Guarda",
+          "hecate": "Após acertar o contra-ataque da Entidade, você pode se mover 1,5m sem provocar Ataque de Oportunidade.",
+          "cerbero": "Se acertar um alvo já Desequilibrado por Cérbero, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+        },
+        "A": {
+          "nome": "Correntes do Portão",
+          "hecate": "Durante o Despertar, aliados que atravessarem sua área protegida recebem +1 em Defesa até o início do próximo turno deles.",
+          "cerbero": "Uma vez durante o Despertar, ao acertar um inimigo, ele faz Teste de Vitalidade CD 10 + Valor de Vínculo. Em falha, sofre Restrição de Movimentos até o início do próximo turno dele."
+        },
+        "S": {
+          "nome": "Três Caminhos / Três Mandíbulas",
+          "hecate": "Escolha até 3 aliados dentro de 3m. Até o início do seu próximo turno, eles podem se mover através da sua área protegida sem provocar Ataque de Oportunidade.",
+          "cerbero": "Uma vez durante o Despertar, escolha até 3 inimigos dentro do alcance da arma. Faça uma rolagem de acerto separada contra cada um. Cada alvo atingido sofre o dano completo da forma usada."
+        },
+        "SS": {
+          "nome": "Portão do Hades",
+          "hecate": "Enquanto o Despertar estiver ativo, quando um inimigo entrar no seu alcance, você pode contra-atacar. Se acertar, o deslocamento dele termina. Após esse contra-ataque, você pode mover 1,5m.",
+          "cerbero": "Enquanto o Despertar estiver ativo, o primeiro inimigo que você acertar em cada rodada fica Amedrontado por 1 turno. Se ele já estiver Desequilibrado ou Vulnerável por Cérbero, também sofre Restrição de Movimentos até o início do próximo turno dele."
+        }
+      },
+      "arma_testes": {
+        "lado_dominante": [
+          {
+            "resultado": "1–3",
+            "funcionamento": "Cérbero domina. Use efeitos de Cérbero. Hécate dorme fundo."
+          },
+          {
+            "resultado": "4–8",
+            "funcionamento": "Cérbero favorecido. Use efeitos de Cérbero. Hécate desperta apenas pelo gatilho."
+          },
+          {
+            "resultado": "9–12",
+            "funcionamento": "Equilíbrio instável. Ao realizar o Ritual, escolha Hécate ou Cérbero."
+          },
+          {
+            "resultado": "13–17",
+            "funcionamento": "Hécate favorecida. Use efeitos de Hécate. Cérbero desperta apenas pelo gatilho."
+          },
+          {
+            "resultado": "18–20",
+            "funcionamento": "Hécate domina. Use efeitos de Hécate. Cérbero dorme fundo."
+          }
+        ],
+        "intensidade_vinculo": [
+          {
+            "intensidade": "Vínculo Frágil",
+            "valor": 1
+          },
+          {
+            "intensidade": "Vínculo Fraco",
+            "valor": 2
+          },
+          {
+            "intensidade": "Vínculo Comum",
+            "valor": 3
+          },
+          {
+            "intensidade": "Vínculo Forte",
+            "valor": 4
+          },
+          {
+            "intensidade": "Vínculo Profundo",
+            "valor": 5
+          },
+          {
+            "intensidade": "Vínculo Absoluto",
+            "valor": 6
+          }
+        ],
+        "gatilho_lado_adormecido": [
+          {
+            "resultado": "3–14",
+            "gatilho": "Um inimigo entra ou sai do seu alcance sem Desengajar."
+          },
+          {
+            "resultado": "15–38",
+            "gatilho": "Você ou um aliado protegido sofre acerto crítico."
+          },
+          {
+            "resultado": "39–57",
+            "gatilho": "Um inimigo atravessa sua guarda e fere alguém que você declarou proteger."
+          },
+          {
+            "resultado": "58–60",
+            "gatilho": "Gatilho oculto do Mestre, ligado ao abandono de um juramento de guarda."
+          }
+        ],
+        "despertar_forcado_cd": [
+          {
+            "intensidade": "Frágil",
+            "cd": 11
+          },
+          {
+            "intensidade": "Fraco",
+            "cd": 13
+          },
+          {
+            "intensidade": "Comum",
+            "cd": 15
+          },
+          {
+            "intensidade": "Forte",
+            "cd": 17
+          },
+          {
+            "intensidade": "Profundo",
+            "cd": 19
+          },
+          {
+            "intensidade": "Absoluto",
+            "cd": 21
+          }
+        ]
+      },
+      "arma_ritual": {
+        "nome": "Sangue no Limiar",
+        "custo": "reduza seus PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+        "regras_sangue_pacto": [
+          "não é dano comum",
+          "não pode ser reduzido por RD",
+          "não pode ser transferido",
+          "não pode ser pago com PDR",
+          "não pode ser anulado",
+          "não pode reduzir abaixo de 1 PDV",
+          "não ativa efeitos de sofrer dano de inimigo",
+          "não pode ser curado enquanto a arma estiver desperta"
+        ],
+        "pacto_completo": "Meu sangue abre a fechadura.\nHécate, mostra a passagem.\nCérbero, guarda o limiar.\nTrês bocas. Três estradas. Um juramento.\nNinguém atravessa sem pagar."
+      },
+      "arma_integracao": {
+        "Dualidade": {
+          "duracao": "2 rodadas",
+          "exigencia": "Pacto completo em voz alta",
+          "limite": "1 vez por combate"
+        },
+        "Simbiose": {
+          "duracao": "3 rodadas",
+          "exigencia": "duas linhas do Pacto",
+          "limite": "1 vez por combate",
+          "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+        },
+        "Unificação": {
+          "duracao": "3 rodadas",
+          "exigencia": "nome da arma + declarar o que protege",
+          "limite": "1 vez por combate",
+          "bonus": "1x/combate permite despertar o lado adormecido sem teste quando o gatilho acontece"
+        },
+        "Identidade": {
+          "duracao": "4 rodadas",
+          "exigencia": "declarar a intenção do Pacto",
+          "limite": "1 vez por combate",
+          "bonus": "pode usar o Despertar Verdadeiro"
+        }
+      },
+      "arma_nome_verdadeiro": {
+        "nome_selado": "Cérbero",
+        "primeiro_fragmento_simbiose": "Limiar",
+        "segundo_fragmento_unificacao": "Encruzilhada",
+        "nome_verdadeiro_identidade": "Cérbero do Limiar da Encruzilhada"
+      },
+      "arma_comandos_liberacao": {
+        "inicial": "Guarda o limiar, Cérbero.",
+        "verdadeira": "Fecha as três estradas, Cérbero do Limiar da Encruzilhada."
+      },
+      "arma_marcas_demonio": [
+        {
+          "marcas": "0",
+          "efeito": "Sem custo adicional."
+        },
+        {
+          "marcas": "1–2",
+          "efeito": "Quando Cérbero aplicar Vulnerável, você sofre 1 Dano de Ferida."
+        },
+        {
+          "marcas": "3–4",
+          "efeito": "Quando Cérbero aplicar Vulnerável ou Restrição de Movimentos, você sofre 1 Dano de Ferida."
+        },
+        {
+          "marcas": "5–6",
+          "efeito": "O custo sobe para 2 Dano de Ferida."
+        },
+        {
+          "marcas": "7+",
+          "efeito": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Cérbero é feito com Desvantagem."
+        }
+      ],
+      "arma_critico_regra": "O dano da forma atual entra no crítico normalmente: (dano base + FOR ou DEX + dado evolutivo + bônus diretos aplicáveis) × 2. Status não dobram.",
+      "arma_resumo_rapido": {
+        "estado_selado": "usa três formas, dano evolutivo e propriedades",
+        "ritual": "corta a mão, banha a arma em sangue e paga 90% dos PDV atuais",
+        "pacto": "reza que acorda a arma",
+        "primeiro_despertar": "acorda o lado dominante",
+        "lado_adormecido": "só desperta por gatilho ou Despertar Forçado",
+        "nome_verdadeiro": "desbloqueia o Despertar Verdadeiro",
+        "hecate": "passagem, controle, contra-ataque",
+        "cerbero": "punição, bloqueio, medo e possessão"
+      },
+      "arma_mecanicas": [
+        {
+          "id": "acuidade",
+          "kind": "attack-attribute-choice",
+          "attributes": [
+            "FOR",
+            "DEX"
+          ],
+          "requiresProficiency": true
+        },
+        {
+          "id": "morote",
+          "kind": "two-handed-full-attribute-damage",
+          "attributes": [
+            "FOR",
+            "DEX"
+          ],
+          "requiresProficiency": true
+        },
+        {
+          "id": "sojutsu",
+          "kind": "reach-control",
+          "onlyForms": [
+            "Tridente",
+            "Mangual"
+          ],
+          "requiresRangeMeters": 3
+        },
+        {
+          "id": "three-forms",
+          "kind": "weapon-form-choice",
+          "forms": [
+            "Nunchaku",
+            "Tridente",
+            "Mangual"
+          ]
+        },
+        {
+          "id": "awakening",
+          "kind": "entity-demon-awakening",
+          "entity": "Hécate",
+          "demon": "Cérbero",
+          "reaction": "Contra-ataque"
+        }
+      ],
+      "arma_propriedades_chaves": [
+        "acuidade",
+        "morote",
+        "sojutsu",
+        "arma especial",
+        "tres formas",
+        "despertar"
+      ],
+      "arma_regra_completa": "## Cérbero\n\n**Propriedade:** Acuidade  \n**Propriedade 2:** Morote  \n**Propriedade 3:** Sōjutsu *(apenas nas formas com alcance 3m)*  \n**Tipo de arma:** Corpo a Corpo  \n**Crítico:** 20 Natural  \n**Dano Bônus:** nenhum separado; o dado evolutivo faz parte do dano da arma  \n**Entidade:** Hécate  \n**Demônio:** Cérbero  \n**Lado Dominante:** definido pelo Teste 1 da Cerimônia  \n**Gatilho de Despertar:** definido pelo Teste 3 da Cerimônia  \n**Reação da Entidade:** Contra-ataque  \n\n---\n\n# DESCRIÇÃO DA ARMA\n\nCérbero é uma arma de três formas, feita para guardar passagens.\n\nFechada, parece um **nunchaku pesado de Nichirin**, com elos curtos, empunhaduras reforçadas e três marcas em forma de presas próximas à corrente central.\n\nEstendida, seus segmentos se travam em um **tridente de guarda**, abrindo três pontas como uma boca metálica diante do inimigo.\n\nDestravada, a haste se separa em corrente e lâmina, tornando-se um **mangual de lâmina**, feito para punir quem tenta atravessar o espaço do portador.\n\nA arma não foi feita para caçar.\n\nFoi feita para dizer **não**.\n\nQuando Hécate responde, os elos se movem com precisão silenciosa, como se a arma soubesse onde cada passo deveria terminar.\n\nQuando Cérbero responde, o metal range como dentes. A arma pesa para frente. Ela não quer vencer o inimigo. Quer impedir que ele passe.\n\n---\n\n# FORMAS DA ARMA\n\nAntes de atacar, escolha a forma usada.\n\n| Forma        | Dano Base |     Tipo de Dano      | Alcance |                     Função                     |\n| ------------ | :-------: | :-------------------: | :-----: | :--------------------------------------------: |\n| **Nunchaku** |     4     |       Concussão       |  1,5m   | pressão curta, quebra de ritmo, defesa próxima |\n| **Tridente** |     4     |      Perfurante       |   3m    |      guarda, avanço, controle de passagem      |\n| **Mangual**  |     5     | Concussão ou Cortante |   3m    |        punição ampla, arco, área curta         |\n\nPor ter **Acuidade**, a arma usa **FOR ou DEX**.  \nPor ter **Morote**, se o portador for proficiente e usar as duas mãos, o atributo escolhido entra inteiro no dano.  \nAs formas **Tridente** e **Mangual** usam a parte de controle de **Sōjutsu**.\n\n---\n\n# ESTADOS DA ARMA\n\n## Estado Selado Cérbero Adormecido\n\nEsta é a forma base da arma.\n\nA Cérbero ainda pode alternar entre:\n\n- Nunchaku;\n- Tridente;\n- Mangual.\n\nNeste estado, ela usa apenas:\n\n- dano da forma;\n- propriedades da arma;\n- dado evolutivo do Rank;\n- efeitos normais de técnicas que usem a arma.\n\nNenhum efeito de Hécate ou Cérbero fica ativo no Estado Selado.\n\nA arma é poderosa, mas ainda está dormindo.\n\n---\n\n## Primeiro Despertar Guarda do Limiar\n\nO Primeiro Despertar acontece quando o portador realiza o **Ritual de Despertar: Sangue no Limiar** e recita o **Pacto de Acordar**.\n\nAo despertar, a arma libera o lado definido pelo **Teste 1 Lado Dominante**.\n\n- Se Hécate domina, a arma desperta como controle, passagem e contra-ataque.\n- Se Cérbero domina, a arma desperta como punição, dano e bloqueio.\n- Se houver Equilíbrio Instável, o portador escolhe qual lado chama ao realizar o ritual.\n\nO lado adormecido não acorda junto.\n\nEle só desperta pelo **Gatilho do Teste 3** ou por tentativa de **Despertar Forçado**.\n\n---\n\n## Despertar Verdadeiro Nome do Portão\n\nO Despertar Verdadeiro só pode ser usado depois que o portador descobre o **Nome Verdadeiro da Arma**.\n\nEsse estado não é só mais poder.\n\nÉ domínio.\n\nO portador deixa de chamar apenas Cérbero ou Hécate.  \nEle chama o limiar completo: a passagem, a chave e o cão.\n\nEnquanto estiver no Despertar Verdadeiro:\n\n- o lado dominante continua liderando;\n- uma vez durante o despertar, o portador pode usar um efeito do lado adormecido do mesmo Rank;\n- se o lado adormecido for Cérbero, usar esse efeito concede +1 Marca do Demônio ao fim da cena;\n- se o lado adormecido for Hécate, ela concede o efeito sem possessão.\n\n**Requisito mínimo:** Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro.  \n**Uso perfeito:** Rank SS e Estágio de Identidade.\n\n---\n\n# DANO POR RANK\n\n## Rank D Nível 2\n\n**Nunchaku:** `4 + FOR ou DEX + 1d6 / Concussão`  \n**Tridente:** `4 + FOR ou DEX + 1d6 / Perfurante`  \n**Mangual:** `5 + FOR ou DEX + 1d6 / Concussão ou Cortante`\n\n## Rank C Nível 4\n\n**Nunchaku:** `4 + FOR ou DEX + 1d8 / Concussão`  \n**Tridente:** `4 + FOR ou DEX + 1d8 / Perfurante`  \n**Mangual:** `5 + FOR ou DEX + 1d8 / Concussão ou Cortante`\n\n## Rank B Nível 6\n\n**Nunchaku:** `4 + FOR ou DEX + 1d10 / Concussão`  \n**Tridente:** `4 + FOR ou DEX + 1d10 / Perfurante`  \n**Mangual:** `5 + FOR ou DEX + 1d10 / Concussão ou Cortante`\n\n## Rank A Nível 8\n\n**Nunchaku:** `4 + FOR ou DEX + 1d12 / Concussão`  \n**Tridente:** `4 + FOR ou DEX + 1d12 / Perfurante`  \n**Mangual:** `5 + FOR ou DEX + 1d12 / Concussão ou Cortante`\n\n## Rank S Nível 11\n\n**Nunchaku:** `4 + FOR ou DEX + 2d6 / Concussão`  \n**Tridente:** `4 + FOR ou DEX + 2d6 / Perfurante`  \n**Mangual:** `5 + FOR ou DEX + 2d6 / Concussão ou Cortante`\n\n## Rank SS Nível 12\n\n**Nunchaku:** `4 + FOR ou DEX + 2d8 / Concussão`  \n**Tridente:** `4 + FOR ou DEX + 2d8 / Perfurante`  \n**Mangual:** `5 + FOR ou DEX + 2d8 / Concussão ou Cortante`\n\n---\n\n# TESTE 1 LADO DOMINANTE\n\nO lado dominante define qual resposta da arma funciona normalmente.\n\n| Resultado | Funcionamento                                                                        |\n| :-------: | ------------------------------------------------------------------------------------ |\n|    1–3    | **Cérbero domina.** Use efeitos de Cérbero. Hécate dorme fundo.                      |\n|    4–8    | **Cérbero favorecido.** Use efeitos de Cérbero. Hécate desperta apenas pelo gatilho. |\n|   9–12    | **Equilíbrio instável.** Ao realizar o Ritual, escolha Hécate ou Cérbero.            |\n|   13–17   | **Hécate favorecida.** Use efeitos de Hécate. Cérbero desperta apenas pelo gatilho.  |\n|   18–20   | **Hécate domina.** Use efeitos de Hécate. Cérbero dorme fundo.                       |\n\n---\n\n# TESTE 2 INTENSIDADE DO VÍNCULO\n\nO Teste 2 gera o **Valor de Vínculo**.\n\n| Intensidade      | Valor de Vínculo |\n| ---------------- | :--------------: |\n| Vínculo Frágil   |        +1        |\n| Vínculo Fraco    |        +2        |\n| Vínculo Comum    |        +3        |\n| Vínculo Forte    |        +4        |\n| Vínculo Profundo |        +5        |\n| Vínculo Absoluto |        +6        |\n\n**Hécate** usa o Valor de Vínculo em controle, acerto, movimento e passagem.  \n**Cérbero** usa o Valor de Vínculo em dano, pressão e punição.\n\n---\n\n# RITUAL DE DESPERTAR: SANGUE NO LIMIAR\n\nPara acordar a Cérbero, o portador deve pagar vida.\n\nO ritual exige que o usuário corte a própria mão e deixe o sangue escorrer pela empunhadura, pelos elos e pelas pontas da arma até que o metal reconheça o sacrifício.\n\nNão é um gesto simbólico.\n\nA arma precisa beber sangue suficiente para entender que há algo valioso a ser guardado.\n\n## Como realizar o ritual\n\nO portador deve:\n\n1. tocar a própria mão na lâmina, corrente ou ponta do tridente;\n2. cortar a palma da mão;\n3. deixar o sangue correr pela arma;\n4. declarar o que está protegendo;\n5. recitar o **Pacto de Acordar**.\n\n## Custo\n\nAo realizar o ritual, reduza seus **PDV atuais para 10% do valor atual**, arredondado para cima.\n\nO restante é pago como **Sangue de Pacto**.\n\nEm termos práticos: o portador paga aproximadamente **90% dos PDV atuais**.\n\n| PDV atual antes do ritual | PDV após o ritual | PDV pago |\n| :-----------------------: | :---------------: | :------: |\n|            100            |        10         |    90    |\n|            80             |         8         |    72    |\n|            55             |         6         |    49    |\n|            37             |         4         |    33    |\n|            21             |         3         |    18    |\n|            10             |         1         |    9     |\n\n## Regras do Sangue de Pacto\n\nO Sangue de Pacto:\n\n- não é dano comum;\n- não pode ser reduzido por RD;\n- não pode ser transferido para outro alvo;\n- não pode ser pago com PDR;\n- não pode ser anulado;\n- não pode reduzir o portador abaixo de 1 PDV;\n- não ativa efeitos que dependem de “sofrer dano de inimigo”;\n- não pode ser curado enquanto a arma estiver desperta.\n\nSe o portador cair a 0 PDV por outro motivo enquanto a arma estiver desperta, Cérbero permanece acordada até o fim da rodada atual.\n\nDepois disso, ela volta ao Estado Selado.\n\n---\n\n# PACTO DE ACORDAR\n\nO Pacto é recitado apenas durante o ritual.\n\nEle não é uma habilidade por Rank.  \nEle não é uma ação separada.  \nEle é a chave que acorda a arma.\n\n## Pacto Completo\n\n> “Meu sangue abre a fechadura.  \n> Hécate, mostra a passagem.  \n> Cérbero, guarda o limiar.  \n> Três bocas. Três estradas. Um juramento.  \n> Ninguém atravessa sem pagar.”\n\nApós recitar o Pacto, a arma desperta conforme o lado dominante definido pelo Teste 1.\n\n---\n\n# DURAÇÃO DO DESPERTAR POR INTEGRAÇÃO\n\n## Dualidade\n\nA arma ainda é outro ser.\n\n**Duração:** 2 rodadas.  \n**Exigência:** o Pacto completo deve ser recitado em voz alta.  \n**Limite:** 1 vez por combate.\n\nO lado dominante desperta.  \nO lado adormecido só aparece pelo Gatilho do Teste 3.\n\n---\n\n## Simbiose\n\nA arma reconhece a intenção por trás do sangue.\n\n**Duração:** 3 rodadas.  \n**Exigência:** o portador pode recitar apenas duas linhas do Pacto.  \n**Limite:** 1 vez por combate.\n\nReceba +1 no Teste de Despertar contra o lado adormecido.\n\n---\n\n## Unificação\n\nA arma decide junto.\n\n**Duração:** 3 rodadas.  \n**Exigência:** o portador pode recitar apenas o nome da arma e declarar o que está protegendo.  \n**Limite:** 1 vez por combate.\n\nUma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste.\n\n- Se for Hécate, recebe Empréstimo.\n- Se for Cérbero, usa o efeito de Cérbero do Rank atual sem Possessão, mas ganha +1 Marca do Demônio ao fim da cena.\n\n---\n\n## Identidade\n\nA arma é extensão do corpo.\n\n**Duração:** 4 rodadas.  \n**Exigência:** o portador não precisa falar a reza em voz alta. Basta declarar a intenção do Pacto.  \n**Limite:** 1 vez por combate.\n\nO portador pode usar o **Despertar Verdadeiro**.\n\nNesse estado, uma vez durante o despertar, ele pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar.\n\nSe esse lado for Cérbero, ainda recebe +1 Marca do Demônio ao fim da cena.\n\n---\n\n# EFEITOS DO DESPERTAR POR RANK\n\nOs efeitos abaixo funcionam apenas enquanto a arma estiver desperta.\n\nO lado ativo é definido pelo Teste 1.\n\nEm **Equilíbrio Instável**, o portador escolhe qual lado responde ao realizar o Ritual.\n\n---\n\n## Rank D Primeiro Portão\n\n| Hécate responde | Cérbero responde |\n|---|---|\n| Uma vez por rodada, quando um inimigo entra no alcance da arma, você pode usar sua Reação da Entidade para contra-atacar. Some o Valor de Vínculo no acerto. | Uma vez por rodada, ao acertar um inimigo que entrou, saiu ou atravessou seu alcance neste turno, some o Valor de Vínculo como dano fixo. |\n\n---\n\n## Rank C Entrada Negada\n\n| Hécate responde | Cérbero responde |\n|---|---|\n| Se seu contra-ataque da Entidade acertar, o deslocamento do alvo termina imediatamente. | Se acertar um alvo que atravessou seu alcance, ele fica **Desequilibrado**. |\n\n---\n\n## Rank B Mordida de Guarda\n\n| Hécate responde | Cérbero responde |\n|---|---|\n| Após acertar o contra-ataque da Entidade, você pode se mover 1,5m sem provocar Ataque de Oportunidade. | Se acertar um alvo já **Desequilibrado** por Cérbero, ele fica **Vulnerável** contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status. |\n\n---\n\n## Rank A Correntes do Portão\n\n| Hécate responde | Cérbero responde |\n|---|---|\n| Durante o Despertar, aliados que atravessarem sua área protegida recebem +1 em Defesa até o início do próximo turno deles. | Uma vez durante o Despertar, ao acertar um inimigo, ele faz **Teste de Vitalidade CD 10 + Valor de Vínculo**. Em falha, sofre **Restrição de Movimentos** até o início do próximo turno dele. |\n\n---\n\n## Rank S Três Caminhos / Três Mandíbulas\n\n| Hécate responde | Cérbero responde |\n|---|---|\n| Escolha até 3 aliados dentro de 3m. Até o início do seu próximo turno, eles podem se mover através da sua área protegida sem provocar Ataque de Oportunidade. | Uma vez durante o Despertar, escolha até 3 inimigos dentro do alcance da arma. Faça uma rolagem de acerto separada contra cada um. Cada alvo atingido sofre o dano completo da forma usada. |\n\n---\n\n## Rank SS Portão do Hades\n\n| Hécate responde | Cérbero responde |\n|---|---|\n| Enquanto o Despertar estiver ativo, quando um inimigo entrar no seu alcance, você pode contra-atacar. Se acertar, o deslocamento dele termina. Após esse contra-ataque, você pode mover 1,5m. | Enquanto o Despertar estiver ativo, o primeiro inimigo que você acertar em cada rodada fica **Amedrontado** por 1 turno. Se ele já estiver Desequilibrado ou Vulnerável por Cérbero, também sofre **Restrição de Movimentos** até o início do próximo turno dele. |\n\n---\n\n# TESTE 3 GATILHO DO LADO ADORMECIDO\n\nUse o resultado do Teste 3 da Cerimônia, adaptado à arma.\n\n| Resultado | Gatilho |\n|---:|---|\n| 3–14 | Um inimigo entra ou sai do seu alcance sem Desengajar. |\n| 15–38 | Você ou um aliado protegido sofre acerto crítico. |\n| 39–57 | Um inimigo atravessa sua guarda e fere alguém que você declarou proteger. |\n| 58–60 | Gatilho oculto do Mestre, ligado ao abandono de um juramento de guarda. |\n\nQuando o gatilho acontece, faça o Teste de Despertar conforme a Intensidade do Vínculo.\n\nSe o lado adormecido for **Hécate**, ela oferece Empréstimo.  \nSe o lado adormecido for **Cérbero**, ele tenta Possessão.\n\n---\n\n# EMPRÉSTIMO DE HÉCATE\n\nQuando Hécate desperta como lado adormecido, ela não toma controle.\n\nEla permite usar **uma vez** o efeito de Hécate do seu Rank atual, mesmo que Cérbero seja o dominante.\n\nDepois disso, volta a dormir.\n\n---\n\n# POSSESSÃO DE CÉRBERO\n\nQuando Cérbero desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno.\n\nDurante esse turno, Cérbero:\n\n- não recua;\n- não abandona o ponto protegido;\n- ataca quem atravessou a guarda;\n- tenta impedir passagem;\n- ignora pedidos de piedade;\n- não persegue alvo distante se ainda houver ameaça no limiar.\n\nAo fim da possessão, o portador ganha **+1 Marca do Demônio**.\n\n---\n\n# DESPERTAR FORÇADO DO LADO ADORMECIDO\n\nO portador pode tentar acordar o lado que dorme antes do gatilho acontecer.\n\nIsso é perigoso.\n\n## Custo\n\nO portador realiza o **Ritual de Sangue no Limiar** normalmente e, além disso, aceita que o lado adormecido tente responder.\n\nApós pagar o Sangue de Pacto, faça um **Teste de Força de Vontade**.\n\n| Intensidade | CD |\n|---|---:|\n| Frágil | 11 |\n| Fraco | 13 |\n| Comum | 15 |\n| Forte | 17 |\n| Profundo | 19 |\n| Absoluto | 21 |\n\n**Sucesso:** o lado adormecido desperta até o fim da cena.  \n**Falha:** o custo é pago, mas o despertar vem distorcido.\n\n- Se Hécate estava adormecida, ela concede apenas um efeito de Hécate do Rank atual e volta a dormir.\n- Se Cérbero estava adormecido, ele tenta Possessão imediatamente.\n\n---\n\n# MARCAS DO DEMÔNIO\n\nSempre que Cérbero possuir o portador, ganhe +1 Marca do Demônio.\n\n| Marcas | Efeito |\n|---:|---|\n| 0 | Sem custo adicional. |\n| 1–2 | Quando Cérbero aplicar **Vulnerável**, você sofre 1 Dano de Ferida. |\n| 3–4 | Quando Cérbero aplicar **Vulnerável** ou **Restrição de Movimentos**, você sofre 1 Dano de Ferida. |\n| 5–6 | O custo sobe para 2 Dano de Ferida. |\n| 7+ | O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Cérbero é feito com Desvantagem. |\n\n---\n\n# DESCOBRINDO O NOME VERDADEIRO\n\nA arma não entrega seu nome inteiro no começo.\n\nNo início, o portador conhece apenas o nome de combate.\n\n## Nome Selado\n\n**Cérbero**\n\nEsse é o nome da fera.\n\nNão é o nome completo da arma.\n\nCom esse nome, o portador pode usar o Estado Selado e o Primeiro Despertar.\n\n---\n\n## Primeiro Fragmento Simbiose\n\nQuando o portador alcança **Simbiose**, ele descobre que a arma não é apenas um cão.\n\nEla é um portão.\n\nO Mestre revela o primeiro fragmento:\n\n**“Limiar”**\n\nA partir daqui, o portador entende que a arma não quer matar tudo.\n\nEla quer decidir quem passa.\n\n---\n\n## Segundo Fragmento Unificação\n\nQuando o portador alcança **Unificação**, ele descobre que Hécate não é auxiliar da arma.\n\nEla é metade do nome.\n\nO Mestre revela o segundo fragmento:\n\n**“Encruzilhada”**\n\nA partir daqui, o portador pode buscar o Despertar Verdadeiro.\n\n---\n\n## Nome Verdadeiro Identidade\n\nQuando o portador alcança **Identidade**, ele aprende o nome inteiro.\n\n## Nome Verdadeiro da Arma\n\n**Cérbero do Limiar da Encruzilhada**\n\nEsse é o nome completo.\n\nNão é só o cão.  \nNão é só a deusa.  \nÉ o lugar onde os dois existem: o ponto onde alguém tenta atravessar e o mundo decide se permite.\n\nAo aprender o Nome Verdadeiro, o portador desbloqueia o **Despertar Verdadeiro Nome do Portão**.\n\n---\n\n# COMANDOS DE LIBERAÇÃO\n\n## Liberação Inicial\n\nUsada no Primeiro Despertar.\n\n> “Guarda o limiar, Cérbero.”\n\nEsse comando exige o Ritual de Sangue no Limiar.\n\n---\n\n## Liberação Verdadeira\n\nUsada no Despertar Verdadeiro.\n\n> “Fecha as três estradas, Cérbero do Limiar da Encruzilhada.”\n\nEsse comando exige:\n\n- Rank S ou superior;\n- Unificação ou Identidade;\n- Nome Verdadeiro descoberto;\n- Ritual de Sangue no Limiar pago.\n\n---\n\n# CRÍTICO\n\nO dano da forma atual entra no crítico normalmente.\n\nExemplo em Rank B usando Mangual:\n\n`5 + FOR ou DEX + 1d10`\n\nEm crítico:\n\n`(5 + FOR ou DEX + 1d10 + bônus diretos aplicáveis) × 2`\n\nStatus não dobram.\n\n---\n\n# RESUMO RÁPIDO\n\n**Estado Selado:** usa três formas, dano evolutivo e propriedades.  \n**Ritual:** corta a mão, banha a arma em sangue e paga 90% dos PDV atuais.  \n**Pacto:** é somente a reza que acorda a arma.  \n**Primeiro Despertar:** acorda o lado dominante.  \n**Lado Adormecido:** só desperta por gatilho ou Despertar Forçado.  \n**Nome Verdadeiro:** desbloqueia o Despertar Verdadeiro.  \n**Hécate:** passagem, controle, contra-ataque.  \n**Cérbero:** punição, bloqueio, medo e possessão.\n\n<!-- FLUCTLIGHT: OUTGOING HUB -->\n> [!info] Navegação\n> HUB pai: [[Itens/00 - Índice]]\n<!-- FLUCTLIGHT: OUTGOING HUB END -->"
+    }
+  },
+  "effects": [],
+  "folder": "1d69316b98fed3ee",
+  "sort": 10100000,
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "custom-system-builder": {
+      "unique": true
+    }
+  },
+  "_stats": {
+    "systemId": "custom-system-builder",
+    "systemVersion": "6.0.2",
+    "coreVersion": "14",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  }
+}

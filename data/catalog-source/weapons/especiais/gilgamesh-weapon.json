@@ -1,0 +1,434 @@
+{
+    "_id": "4af53a466b787bc9",
+    "_key": "!items!4af53a466b787bc9",
+    "name": "Gilgamesh Yoroi do Sol",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/gilgamesh_yoroi_do_sol_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Gilgamesh Yoroi do Sol",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_dano_atributo_multiplicador": "metade",
+            "arma_tipos_dano": ["concussao"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Ryōtō / Armadura Viva",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Utnapishtim",
+            "arma_demonio": "Enkidu",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Armadura ofensiva corporal. Punhos, cotovelos, joelhos e botas como arma integrada, com modos de combate. Utnapishtim responde com defesa corporal, resistência a impacto, estabilidade contra queda e proteção em curto alcance. Enkidu responde com dano, Vulnerável, pressão de combo e brutalidade corporal.",
+            "arma_ordem": 106,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Modo Demolidor",
+                    "formula_texto": "4 + metade de FOR ou DEX + dado evolutivo / Concussão",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Modo Muralha",
+                    "formula_texto": "4 + dado evolutivo / Concussão",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [],
+                    "tipos_dano": ["concussao"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "4 + metade de FOR ou DEX + 1d6 / Concussão"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "4 + metade de FOR ou DEX + 1d8 / Concussão"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "4 + metade de FOR ou DEX + 1d10 / Concussão"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "4 + metade de FOR ou DEX + 1d12 / Concussão"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "4 + metade de FOR ou DEX + 2d6 / Concussão"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "4 + metade de FOR ou DEX + 2d8 / Concussão"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Armadura Viva",
+                "descricao": "Gilgamesh é uma arma integrada ao corpo. Ela não pode ser desarmada como arma comum.",
+                "formas_de_impedir_uso": [
+                    "prender o corpo",
+                    "quebrar mobilidade",
+                    "selar a armadura",
+                    "aplicar Restrição de Movimentos",
+                    "usar efeito específico que impeça armas corporais"
+                ],
+                "acerto": "por ter Acuidade, Gilgamesh pode usar FOR ou DEX nas rolagens de acerto",
+                "dano": "usa metade de FOR ou DEX, porque mistura impacto físico, giro corporal, peso da armadura e encaixe técnico",
+                "ryoto": {
+                    "descricao": "ao usar punhos, joelhos, cotovelos ou botas em sequência, Gilgamesh pode funcionar como arma de Ryōtō",
+                    "primeiro_ataque": "normal",
+                    "segundo_ataque": "não soma FOR ou DEX na rolagem de acerto",
+                    "dano": "ambos usam o dano atual da arma, salvo se uma técnica disser o contrário"
+                }
+            },
+            "arma_modos_de_combate": {
+                "modo_muralha": {
+                    "descricao": "fecha a armadura em postura defensiva",
+                    "efeitos": [
+                        "+1 em Bloqueio ou Esquiva",
+                        "ataques com Gilgamesh não somam metade de FOR ou DEX no dano",
+                        "não pode receber Dano Bônus de Enkidu"
+                    ],
+                    "dano": "4 + dado evolutivo do Rank / Concussão",
+                    "utnapishtim_ativo": "o bônus de Bloqueio ou Esquiva aumenta para +2"
+                },
+                "modo_demolidor": {
+                    "descricao": "abre a armadura para impacto ofensivo",
+                    "efeitos": [
+                        "usa o dano normal da arma",
+                        "pode receber Dano Bônus de Enkidu",
+                        "sofre -1 Defesa"
+                    ],
+                    "dano": "4 + metade de FOR ou DEX + dado evolutivo do Rank / Concussão",
+                    "enkidu_ativo": "o primeiro ataque que acertar em Modo Demolidor a cada turno causa +1 dano fixo"
+                },
+                "troca_de_modo": "quando a arma desperta, escolha um modo inicial; depois disso, trocar de modo exige Ação Única"
+            },
+            "arma_pressao_de_combo": {
+                "disponivel_a_partir": "Rank B",
+                "maximo": 3,
+                "ganho": "quando você acerta dois ataques no mesmo alvo usando Gilgamesh, ganha +1 stack de Pressão de Combo contra aquele alvo",
+                "efeito": "cada stack concede +1 no acerto com Gilgamesh contra o mesmo alvo",
+                "perda": [
+                    "trocar de alvo",
+                    "errar um ataque contra o alvo marcado",
+                    "passar um turno sem atacar o alvo",
+                    "ficar Atordoado",
+                    "a cena terminar"
+                ]
+            },
+            "arma_despertar": {
+                "estado_selado": "Armadura Adormecida",
+                "primeiro_despertar": "Yoroi do Sol",
+                "despertar_verdadeiro": "Ascensão de Argila e Dilúvio",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "utnapishtim": {
+                    "nome": "Corpo que Sobrevive ao Dilúvio",
+                    "tipo": "Ação Especial",
+                    "efeito": "você recebe +2 na próxima rolagem de Bloqueio ou Esquiva feita antes do início do seu próximo turno. Se estiver em Modo Muralha e falhar essa Defesa por 4 ou menos, reduza o dano recebido em 4 adicional.",
+                    "observacao": "este efeito não causa dano. Utnapishtim nunca aumenta dano bruto."
+                },
+                "enkidu": {
+                    "nome": "Força que Rivaliza Deuses",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Gilgamesh antes do fim do turno recebe o Dano Bônus de Enkidu conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se o alvo já estiver Vulnerável, ele também sofre +1 Dano de Ferida.",
+                    "custo": "cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Enkidu nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_enkidu": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Enkidu é dano direto do golpe e dobra em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Alternância de Fluxo",
+                    "tecnica_liberada": "Alternância de Fluxo",
+                    "tipo": "Ação Única",
+                    "base": "você pode trocar entre Modo Muralha e Modo Demolidor",
+                    "modos": {
+                        "muralha": "+1 em Bloqueio ou Esquiva; sem metade de FOR ou DEX no dano; não recebe Dano Bônus de Enkidu",
+                        "demolidor": "dano normal da arma; pode receber Dano Bônus de Enkidu; sofre -1 Defesa"
+                    },
+                    "utnapishtim": "em Modo Muralha, o bônus de Bloqueio ou Esquiva aumenta para +2",
+                    "enkidu": "em Modo Demolidor, o primeiro ataque que acertar a cada turno causa +1 dano fixo"
+                },
+                "C": {
+                    "nome": "Avanço de Argila",
+                    "tecnica_liberada": "Avanço de Argila",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até 3m, ignorando Terreno Difícil durante esse deslocamento. Se terminar o movimento com um inimigo dentro de 1,5m, seu próximo ataque com Gilgamesh contra ele antes do fim do turno recebe +1 no acerto.",
+                    "utnapishtim": "esse movimento não provoca Ataque de Oportunidade de inimigos com alcance menor que 3m",
+                    "enkidu": "o bônus de +1 no acerto só pode ser usado contra o inimigo mais ferido dentro do seu alcance. Se acertar, cause +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Combo de Oitava",
+                    "tecnica_liberada": "Combo de Oitava",
+                    "tipo": "Ação de Ataque",
+                    "requisito": "usar o corpo armado de Gilgamesh",
+                    "base": "faça dois ataques usando a propriedade Ryōtō. Primeiro ataque normal. Segundo ataque não soma FOR ou DEX na rolagem de acerto. Cada ataque que acertar causa o dano atual da arma, conforme o modo ativo. Se os dois ataques acertarem o mesmo alvo, ganhe +1 stack de Pressão de Combo contra ele. Máximo: 3 stacks. Cada stack concede +1 no acerto com Gilgamesh contra esse mesmo alvo.",
+                    "utnapishtim": "ao ganhar uma stack de Pressão de Combo, você recebe +1 Defesa até o início do seu próximo turno",
+                    "enkidu": "ao alcançar 3 stacks contra um alvo, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "A": {
+                    "nome": "Impacto de Quebra-Postura",
+                    "tecnica_liberada": "Impacto de Quebra-Postura",
+                    "tipo": "Ação Especial",
+                    "base": "seu próximo ataque com Gilgamesh antes do fim do turno recebe +2 no acerto. Se superar a Defesa do alvo por 5 ou mais, escolha: o alvo sofre -1 Defesa até o início do próximo turno dele; ou o alvo sofre Desvantagem no próximo teste de FOR ou DEX feito antes do início do seu próximo turno. Se esse ataque for crítico, aplique os dois efeitos.",
+                    "utnapishtim": "até o fim do turno, você ignora Restrição de Movimentos aplicada em si",
+                    "enkidu": "se o ataque acertar, cause +1 dano fixo"
+                },
+                "S": {
+                    "nome": "Armadura Viva",
+                    "tecnica_liberada": "Armadura Viva",
+                    "tipo": "Reação",
+                    "base": "quando você for alvo de um ataque, role 1d20 + FOR ou DEX. Se igualar ou superar o acerto inimigo, reduza o dano recebido em 4 + metade de FOR ou DEX. Esta Reação não anula o golpe inteiro; representa a armadura absorvendo o impacto.",
+                    "utnapishtim": "a redução recebe +2 adicional. Se estiver em Modo Muralha, você pode usar esta Reação para proteger um aliado adjacente.",
+                    "enkidu": "Enkidu não concede esta Reação. Se Enkidu estiver dominante, esta técnica não pode ser usada."
+                },
+                "S_corpo_que_nao_afunda": {
+                    "nome": "Corpo que Não Afunda",
+                    "tecnica_liberada": "Corpo que Não Afunda",
+                    "tipo": "Reação",
+                    "limite": "1 vez por combate",
+                    "base": "quando você cairia a 0 PDV, pode usar esta Reação para ficar com 1 PDV. Após isso, receba Exaustão 1.",
+                    "utnapishtim": "após ficar com 1 PDV, receba +2 Defesa até o início do seu próximo turno",
+                    "enkidu": "Enkidu não concede esta Reação. Se Enkidu estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Punho Solar: Ascensão de Argila e Dilúvio",
+                    "tecnica_liberada": "Punho Solar Ascensão de Argila e Dilúvio",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "requisito": "pelo menos 1 stack de Pressão de Combo contra o alvo",
+                    "alvo": "1 criatura dentro de 1,5m",
+                    "base": "faça um ataque com Gilgamesh. Se acertar, o alvo sofre 4 + metade de FOR ou DEX + 2d8 + 2 por stack de Pressão de Combo / Concussão. Se tiver 3 stacks contra o alvo, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status. Após resolver o golpe, perca todas as stacks de Pressão de Combo contra esse alvo.",
+                    "utnapishtim": "após resolver a técnica, você recebe +2 Defesa até o início do seu próximo turno",
+                    "enkidu": "você pode ativar Força que Rivaliza Deuses junto do Punho Solar sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o alvo já estiver Vulnerável, ele sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Enkidu domina. Use efeitos de Enkidu. Utnapishtim dorme fundo.",
+                    "4-8": "Enkidu favorecido. Use efeitos de Enkidu. Utnapishtim desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Utnapishtim ou Enkidu.",
+                    "13-17": "Utnapishtim favorecido. Use efeitos de Utnapishtim. Enkidu desperta apenas pelo gatilho.",
+                    "18-20": "Utnapishtim domina. Use efeitos de Utnapishtim. Enkidu dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Utnapishtim": "defesa, resistência, estabilidade contra queda e sobrevivência",
+                    "Enkidu": "dano, Vulnerável, pressão corporal e ruptura"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador fica com metade ou menos dos PDV máximos.",
+                    "15-38": "O portador sofre dano corpo a corpo depois de errar um ataque.",
+                    "39-57": "O portador cairia a 0 PDV ou um aliado adjacente cai a 0 PDV.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue nas Placas Solares",
+                "passos": [
+                    "vestir ou expor a armadura",
+                    "cortar a própria palma",
+                    "marcar os dois punhos com sangue",
+                    "marcar joelhos, botas e peito",
+                    "tocar a máscara ou a testa com a mão ensanguentada",
+                    "declarar se irá sobreviver ou confrontar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue veste o sol.\nUtnapishtim, sustenta o corpo contra o dilúvio.\nEnkidu, ergue a argila contra os deuses.\nQue a armadura não afunde.\nQue o punho não recue.\nGilgamesh, desperta."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar se irá sobreviver ou confrontar",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Utnapishtim",
+                "efeito": "quando Utnapishtim desperta como lado adormecido, ele permite usar uma vez o efeito de Utnapishtim do seu Rank atual, mesmo que Enkidu seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Enkidu",
+                "efeito": "quando Enkidu desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva",
+                    "entra ou permanece em Modo Demolidor",
+                    "prioriza o alvo mais ferido em alcance",
+                    "tenta manter Pressão de Combo",
+                    "tenta aplicar Vulnerável",
+                    "ignora recuo defensivo",
+                    "não protege aliados se houver alvo marcado pela Pressão",
+                    "luta como rival, não como guardião"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue nas Placas Solares normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "utnapishtim_adormecido": "Utnapishtim concede apenas um efeito de Utnapishtim do Rank atual e volta a dormir",
+                "enkidu_adormecido": "Enkidu tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Força que Rivaliza Deuses causa 1 Dano de Ferida.",
+                "3-4": "Força que Rivaliza Deuses causa 1 Dano de Ferida e Enkidu força Modo Demolidor até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Enkidu é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Gilgamesh",
+                "primeiro_fragmento_simbiose": "Dilúvio",
+                "segundo_fragmento_unificacao": "Argila Solar",
+                "nome_verdadeiro": "Gilgamesh, Yoroi do Sol de Argila e Dilúvio"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Vista o sol, Gilgamesh.",
+                "liberacao_verdadeira": "Sobreviva ao dilúvio, Gilgamesh, Yoroi do Sol de Argila e Dilúvio."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B, Modo Demolidor: (4 + metade de FOR ou DEX + 1d10 + bônus diretos aplicáveis) × 2. Em Modo Muralha, o dano não soma metade de FOR ou DEX: 4 + 1d10. O Dano Bônus de Enkidu dobra, porque é dano direto do golpe. Vulnerável, Dano de Ferida, redução de dano, bônus de Defesa, Exaustão e Pressão de Combo não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: armadura ofensiva corporal, dano evolutivo e Ryōtō.",
+                "Ritual: corta a mão, marca punhos, joelhos, botas, peito e máscara, paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Modo Muralha: defesa alta, dano baixo.",
+                "Modo Demolidor: dano normal, pressão alta, defesa reduzida.",
+                "Utnapishtim: defesa corporal, sobrevivência, resistência a queda e proteção adjacente.",
+                "Enkidu: dano, Vulnerável, Pressão de Combo e possessão ofensiva.",
+                "Corpo que Não Afunda: 1 vez por combate, evita cair a 0 PDV.",
+                "Nome Verdadeiro: desbloqueia Ascensão de Argila e Dilúvio."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10600000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

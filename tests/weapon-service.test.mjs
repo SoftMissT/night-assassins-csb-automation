@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 import {
     extractWeaponRankFormulas,
@@ -152,22 +151,6 @@ describe('weapon-service', () => {
         );
         assert.equal(profiles[0].ataques, 2);
         assert.equal(profiles[1].ataques, 1);
-    });
-
-    it('normaliza o Ataque Base do source real dos Cutelos para exatamente um ataque', async () => {
-        const source = JSON.parse(
-            await readFile(
-                new URL(
-                    '../data/catalog-source/weapons/05-cutelos_gemeos.json',
-                    import.meta.url
-                ),
-                'utf8'
-            )
-        );
-        const [sourceProfile] = source.system.props.arma_perfis_ataque;
-        assert.equal(Object.hasOwn(sourceProfile, 'ataques'), false);
-        const [resolved] = weaponProfilesForActor(source.system.props, { nvl_num: 1 });
-        assert.equal(resolved.ataques, 1);
     });
 
     it('filtra perfis pelo modo persistido no Item', () => {

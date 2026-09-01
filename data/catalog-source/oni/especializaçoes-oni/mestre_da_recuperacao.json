@@ -1,0 +1,88 @@
+{
+    "id": "mestre_da_recuperacao",
+    "name": "Mestre da Recuperação",
+    "function": "Tanque regenerativo, Sobrevivência extrema, Recuperação de PDV, Recuperação de PDK, Resistência a desgaste físico, Recusa da morte",
+    "primaryAttributes": ["vit", "fdv", "for"],
+    "levels": {
+        "1": {
+            "name": "Carne Teimosa",
+            "effect": "Passiva: Você recebe +1 em testes de VIT contra: Sangramento Hemorragia Envenenamento efeitos corporais de desgaste Além disso, a primeira vez por combate que sofrer dano contínuo no início do turno, reduza esse dano em 1."
+        },
+        "2": {
+            "name": "Cicatrização Rápida",
+            "effect": "Passiva: A primeira vez por combate que você recuperar PDV por uma habilidade de regeneração própria, recupera +2 PDV. Esse bônus não se aplica a cura recebida de aliados, itens ou fontes externas."
+        },
+        "3": {
+            "name": "Recuperação Evoluída",
+            "effect": "Passiva: Sua Regeneração Oni recupera +2 PDV além da recuperação padrão quando for bem-sucedida. Essa habilidade preserva o núcleo original da Especialização Mestre da Recuperação."
+        },
+        "4": {
+            "name": "Sangue Coagulante",
+            "effect": "Passiva: Quando você sofrer Sangramento ou Hemorragia, reduza a duração do efeito em 1 rodada, mínimo 1. Além disso, você recebe +1 em testes de VIT para impedir perda de sangue, amputações parciais ou agravamento de feridas físicas."
+        },
+        "5": {
+            "name": "Imposição",
+            "effect": "Ativa: Custo: nenhum Ação: Ação Especial Alvo: você Teste: FDV, CD 12 Você força o próprio sangue demoníaco a produzir energia. Sucesso: recupera 3 PDK. Falha: nada acontece. Você não pode usar Imposição no mesmo turno em que usar Regeneração Oni. Essa habilidade preserva o núcleo original da Especialização."
+        },
+        "6": {
+            "name": "Nervos Reconectados",
+            "effect": "Passiva: Você recebe +1 em testes de VIT ou FDV contra: Paralisia Colapso Restrição de Movimentos Fratura efeitos que interrompam controle corporal Esse bônus só se aplica quando o efeito for físico ou biológico. Não funciona contra controle mental, espiritual ou ilusório."
+        },
+        "7": {
+            "name": "Regeneração Agressiva",
+            "effect": "Passiva: Quando usar Regeneração Oni com sucesso, seu próximo ataque desarmado antes do fim do seu próximo turno causa: +1d4 de dano Esse dano representa ossos fechando de forma irregular, músculos crescendo em excesso ou carne regenerada sendo usada como arma."
+        },
+        "8": {
+            "name": "Reserva Vital",
+            "effect": "Bônus Permanente: Você recebe: +5 PDV Máximo Esse bônus representa densidade de carne, sangue reserva e órgãos redundantes."
+        },
+        "9": {
+            "name": "Núcleo Regenerativo",
+            "effect": "Bônus Permanente: Escolha um benefício, uma única vez: +3 × FDV em PDK Máximo ou +5 × VIT em PDV Máximo Depois de escolhido, esse bônus não pode ser trocado. Essa habilidade preserva o núcleo original do Rank A da Especialização."
+        },
+        "10": {
+            "name": "Reanexação Instintiva",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação Especial Alvo: você Condição: o membro decepado precisa estar ao alcance Você reanexa um membro perdido, como braço, perna, mão ou parte do corpo. O membro volta funcional no início do seu próximo turno. Esta habilidade não permite reanexar a cabeça após uma decapitação válida. Também não funciona se a perda foi causada por: Dano Solar decisivo Lâmina Vermelha ou Carmesim Glicínia extrema efeito que impeça regeneração demoníaca"
+        },
+        "11": {
+            "name": "Carne que Aprende",
+            "effect": "Passiva: Uma vez por combate, depois de sofrer dano de um tipo específico duas vezes na mesma cena, você pode adaptar sua carne contra esse tipo de dano. Até o fim do combate, recebe: RD 2 contra esse tipo de dano Essa adaptação não funciona contra: Dano Solar Dano de Ferida Dano Trovejante Glicínia Lâmina Vermelha ou Carmesim efeitos que não podem ser reduzidos Você só pode manter uma adaptação por vez."
+        },
+        "12": {
+            "name": "Corpo Inacabável",
+            "effect": "Bônus Permanente: Escolha um benefício: +1 VIT ou +1 FDV Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "13": {
+            "name": "Regeneração Rancorosa",
+            "effect": "Reação: Custo: 5 PDK Ação: Reação Gatilho: você sofre dano e permanece com pelo menos 1 PDV após o dano Você responde ao ferimento regenerando de forma violenta. Recupera imediatamente: VIT + 1d6 PDV Essa habilidade não pode ser usada se o dano sofrido foi causado por: Dano Solar Lâmina Nichirin Lâmina Vermelha ou Carmesim Glicínia Dano de Ferida Dano Necrótico efeito que aplique Regeneração Suprimida"
+        },
+        "14": {
+            "name": "Ossos que Retornam",
+            "effect": "Ativa: Custo: 4 PDK Ação: Ação Especial Alvo: você Você força ossos, juntas e nervos a voltarem ao lugar. Escolha um efeito físico simples afetando você: Derrubado Desequilibrado Sangramento Hemorragia Envenenamento Esse efeito é removido. Esta habilidade não remove: Paralisia Colapso Fratura grave Corroído Regeneração Suprimida Dano de Ferida Dano Necrótico efeitos mentais ou espirituais"
+        },
+        "15": {
+            "name": "Sangue de Sobrevivência",
+            "effect": "Passiva: Uma vez por combate, quando ficar com metade ou menos do seu PDV máximo, recupera imediatamente: 2 PDK Além disso, a próxima Regeneração Oni que você usar neste combate recupera: +1d6 PDV Esse bônus é perdido se você sofrer Regeneração Suprimida antes de usar a regeneração."
+        },
+        "16": {
+            "name": "Corpo Sem Fim",
+            "effect": "Passiva: Quando usar Regeneração Oni com sucesso, você pode escolher um benefício adicional: remover Sangramento remover Hemorragia remover Envenenamento remover Desequilibrado reduzir em 1 rodada a duração de Restrição de Movimentos física Escolha apenas um benefício por uso. Esta habilidade não remove Regeneração Suprimida, Dano Solar, Dano de Ferida, Dano Necrótico, Colapso, Paralisia ou efeitos mentais."
+        },
+        "17": {
+            "name": "Recusa Biológica",
+            "effect": "Reação: Custo: 15 PDK Ação: Reação Gatilho: você seria reduzido a 0 PDV Limite: 1 vez por combate Você se recusa biologicamente a morrer. Em vez de cair, permanece com: 1 PDV Depois disso, pode usar Regeneração Oni imediatamente, sem gastar ação. Essa Regeneração Oni ainda precisa seguir todas as limitações normais. Esta habilidade não funciona contra: Dano Solar decisivo decapitação válida Lâmina Vermelha ou Carmesim Glicínia extrema Dano de Ferida suficiente para destruir o corpo condição narrativa específica do Mestre"
+        },
+        "18": {
+            "name": "Quase Imortal",
+            "effect": "Passiva: Se você iniciar seu turno com 25% ou menos do seu PDV máximo, recupera automaticamente: VIT PDV Esse efeito só acontece se, desde o início do seu turno anterior, você não tiver sofrido: Dano Solar Lâmina Nichirin Lâmina Vermelha ou Carmesim Glicínia Regeneração Suprimida Dano de Ferida Dano Necrótico Esse efeito só pode acontecer 1 vez por rodada."
+        },
+        "19": {
+            "name": "Coração Reserva",
+            "effect": "Passiva: Uma vez por combate, quando sofrer um acerto crítico, você pode transformar esse crítico em um acerto normal. O ataque ainda acerta. Apenas deixa de aplicar o efeito de crítico. Essa habilidade não funciona contra: Dano Solar Lâmina Vermelha ou Carmesim Dano de Ferida decapitação válida golpes narrativamente feitos para destruir o núcleo regenerativo"
+        },
+        "20": {
+            "name": "Imortalidade Imperfeita",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Mestre da Recuperação. Durante a duração, recebe: +2 VIT +2 FDV Regeneração Oni não exige teste Regeneração Oni recupera o valor máximo possível Imposição recupera +2 PDK adicional Além disso, uma vez por rodada, quando recuperar PDV por Regeneração Oni, escolha um efeito: remover um status físico simples permitido por Corpo Sem Fim receber RD 3 contra o próximo ataque físico comum recuperar +3 PDK Escolha apenas um efeito por rodada. Esta forma termina imediatamente se você sofrer: Dano Solar decisivo decapitação válida Lâmina Vermelha ou Carmesim Glicínia extrema Regeneração Suprimida aplicada por fonte superior condição narrativa específica capaz de impedir regeneração demoníaca Ao fim da forma, você recebe Fadiga Corporal até completar um descanso adequado ou consumir carne humana suficiente, a critério do Mestre."
+        }
+    }
+}

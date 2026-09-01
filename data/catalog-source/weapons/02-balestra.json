@@ -1,0 +1,107 @@
+{
+    "_id": "af0e06cabbfc4523",
+    "_key": "!items!af0e06cabbfc4523",
+    "name": "Balestra",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/balestra_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Balestra",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 20,
+            "arma_alcance": " 15m",
+            "arma_propriedades": " Municiada 1 / Manejável / Precisão",
+            "arma_requisito": "",
+            "descricao": "Semelhante a uma besta, composta por um arco montado horizontalmente em um suporte. Utiliza um mecanismo de disparo para lançar flechas ou virotes com precisão e força, sendo eficaz em combate a longa distância.\n\n- Propriedades: Municiada 1 / Manejável / Precisão\n- Alcance: 15m\n- Aljava: Capacidade de 8 flechas / dardos\n- Crítico: 20 Natural\n- Dano até 7m: 4 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n- Dano até 15m: 5 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n\nHabilidade\nApós cada disparo, para engatilhar outro dardo ou flecha é preciso gastar uma Ação Única. Ao utilizar a propriedade de Precisão para mirar, você ganha +1 de dano e +1 de acerto para cada turno que passar com a mira estabilizada acumulável, desde que use a Ação Especial de cada turno para manter a mira estabilizada.",
+            "arma_ordem": 2,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "até 7m",
+                    "formula_texto": "4 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "15m",
+                    "critico": 20
+                },
+                {
+                    "nome": "até 15m",
+                    "formula_texto": "5 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "15m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "À distância",
+            "arma_mecanicas": [
+                {
+                    "id": "municiada",
+                    "kind": "ammunition",
+                    "capacity": 8
+                },
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "precisao",
+                    "kind": "aim",
+                    "action": "especial"
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Após cada disparo, para engatilhar outro dardo ou flecha é preciso gastar uma Ação Única. Ao utilizar a propriedade de Precisão para mirar, você ganha +1 de dano e +1 de acerto para cada turno que passar com a mira estabilizada acumulável, desde que use a Ação Especial de cada turno para manter a mira estabilizada."
+                }
+            ],
+            "arma_propriedades_chaves": ["municiada 1", "manejavel", "precisao"],
+            "arma_municao_capacidade": 8,
+            "arma_municao_atual": 8
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 200000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

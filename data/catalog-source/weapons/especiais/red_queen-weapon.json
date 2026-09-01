@@ -1,0 +1,341 @@
+{
+    "_id": "8de33aa3753fb23a",
+    "_key": "!items!8de33aa3753fb23a",
+    "name": "Red Queen Motor Carmesim",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/red_queen_motor_carmesim_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Red Queen Motor Carmesim",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 6,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "1,5m",
+            "arma_propriedades": "Acuidade / Morote / Motor Exceed",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Haetae",
+            "arma_demonio": "Chiyou",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Espada com motor acelerador. Arma especial de combustão, superaquecimento e corte flamejante. Haetae responde com estabilidade, defesa, avanço seguro e controle do motor; Chiyou responde com dano, Sangramento, avanço violento, guerra e possessão.",
+            "arma_ordem": 103,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Red Queen",
+                    "formula_texto": "6 + DEX + dado evolutivo / Cortante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "6 + DEX + 1d6 / Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "6 + DEX + 1d8 / Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "6 + DEX + 1d10 / Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "6 + DEX + 1d12 / Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "6 + DEX + 2d6 / Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "6 + DEX + 2d8 / Cortante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Motor Exceed",
+                "descricao": "Enquanto Red Queen estiver desperta, ela pode acumular Cargas Exceed. As Cargas representam aceleração acumulada no motor: calor, sangue e pressão dentro da lâmina.",
+                "cargas_exceed": {
+                    "maximo": 3,
+                    "ganho": [
+                        "Motor Exceed",
+                        "Max-Act",
+                        "efeitos de Despertar",
+                        "decisões do Mestre em cenas de treinamento com a arma"
+                    ],
+                    "gasto": "antes de atacar com Red Queen, pode gastar Cargas Exceed conforme a habilidade usada",
+                    "critico": "Cargas gastas em dano fixo são dano direto do golpe e dobram em crítico"
+                },
+                "superaquecimento": {
+                    "gatilho": "se iniciar seu turno com 3 Cargas Exceed e terminar o turno sem gastar nenhuma Carga",
+                    "efeito": "perde todas as Cargas Exceed e sofre -1 em rolagens de acerto com Red Queen até o fim do próximo turno",
+                    "haetae": "pode controlar o Superaquecimento",
+                    "chiyou": "prefere transformar o erro em violência"
+                }
+            },
+            "arma_habilidades_basais_despertar": {
+                "haetae": {
+                    "nome": "Válvula do Guardião",
+                    "tipo": "Ação Especial",
+                    "efeito": "até o início do próximo turno, Red Queen não sofre Superaquecimento; além disso, você recebe +2 na próxima Defesa feita antes do início do próximo turno; se essa Defesa for contra um alvo já atingido por Red Queen neste combate, o bônus aumenta para +3; não causa dano; Haetae nunca aumenta dano bruto"
+                },
+                "chiyou": {
+                    "nome": "Motor da Guerra Nebulosa",
+                    "tipo": "Ação Especial",
+                    "efeito": "o próximo ataque com Red Queen antes do fim do turno recebe o Dano Bônus de Chiyou conforme Marcas do Demônio; se acertar, o alvo sofre Sangramento 2 por 1 turno; cobra Dano de Ferida conforme Marcas; Chiyou nunca melhora Reação defensiva"
+                }
+            },
+            "arma_dano_bonus_chiyou": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Chiyou é dano direto do golpe e dobra em crítico. O Sangramento não dobra em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Motor Exceed",
+                    "tecnica_liberada": "Motor Exceed",
+                    "tipo": "Ação Única",
+                    "base": "Após acertar um ataque com Red Queen, pode usar sua Ação Única para ganhar +1 Carga Exceed. Máximo: 3 Cargas. Antes de atacar com Red Queen, pode gastar 1 Carga Exceed para receber +1 dano fixo naquele ataque.",
+                    "haetae": "Uma vez por rodada, quando ganhar uma Carga Exceed, pode ignorar o primeiro risco de Superaquecimento até o início do próximo turno.",
+                    "chiyou": "Quando gastar uma Carga Exceed para causar dano, esse ataque também causa +1 Sangramento por 1 turno."
+                },
+                "C": {
+                    "nome": "Arranque Carmesim",
+                    "tecnica_liberada": "Arranque Carmesim",
+                    "tipo": "Ação de Movimento",
+                    "base": "Avança até 3m em linha reta, ignorando Terreno Difícil durante esse avanço. Se terminar o movimento com um inimigo no alcance de Red Queen, o próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "haetae": "Esse avanço não provoca Ataque de Oportunidade.",
+                    "chiyou": "O bônus de +1 no acerto só pode ser usado contra o inimigo mais próximo ao final do avanço. Se acertar, causa +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Exceed Slash",
+                    "tecnica_liberada": "Exceed Slash",
+                    "tipo": "Ação de Ataque",
+                    "base": "Pode gastar até 3 Cargas Exceed antes do ataque. Para cada Carga gasta, escolha +1 no acerto, +1 dano fixo ou Sangramento 1 por 1 turno. Benefícios podem ser repetidos.",
+                    "haetae": "Se gastar 3 Cargas em Exceed Slash, Red Queen não sofre Superaquecimento até o início do próximo turno.",
+                    "chiyou": "Todo Sangramento aplicado por Exceed Slash vira Sangramento 2 por 1 turno."
+                },
+                "A": {
+                    "nome": "Max-Act",
+                    "tecnica_liberada": "Max-Act",
+                    "base": "Uma vez por turno, quando acertar um ataque com Red Queen e superar a Defesa do alvo por 5 ou mais, ganha +1 Carga Exceed sem gastar Ação Única.",
+                    "haetae": "Pode gastar 1 Carga Exceed para cancelar o Superaquecimento quando ele aconteceria.",
+                    "chiyou": "Ao ativar Max-Act, o próximo ataque contra o mesmo alvo recebe +1 dano fixo."
+                },
+                "S": {
+                    "nome": "Válvula de Retorno",
+                    "tecnica_liberada": "Válvula de Retorno",
+                    "tipo": "Reação",
+                    "custo": "1 Carga Exceed",
+                    "base": "Quando for alvo de um ataque, gaste 1 Carga Exceed e role 1d20 + DEX. Se igualar ou superar o acerto inimigo, reduza o dano recebido em 6 + DEX.",
+                    "haetae": "A redução de dano recebe +2 adicional.",
+                    "chiyou": "Chiyou não concede esta Reação. Se Chiyou estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Overdrive: Rainha Vermelha",
+                    "tecnica_liberada": "Overdrive Rainha Vermelha",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "requisito": "Red Queen desperta e pelo menos 1 Carga Exceed",
+                    "base": "Gaste de 1 a 3 Cargas Exceed e faça um ataque com Red Queen. Se acertar, o alvo sofre dano atual da arma + 2 por Carga Exceed gasta. Se gastar 2 ou mais Cargas, o alvo sofre Sangramento 2 por 2 turnos. Se gastar 3 Cargas, o alvo fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status.",
+                    "haetae": "Red Queen não sofre Superaquecimento após o Overdrive. Além disso, remove 1 condição de Superaquecimento ativa em si.",
+                    "chiyou": "Pode ativar Motor da Guerra Nebulosa junto do Overdrive sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se acertar, o alvo também fica Amedrontado por 1 turno."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Chiyou domina. Use efeitos de Chiyou. Haetae dorme fundo.",
+                    "4-8": "Chiyou favorecido. Use efeitos de Chiyou. Haetae desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Haetae ou Chiyou.",
+                    "13-17": "Haetae favorecido. Use efeitos de Haetae. Chiyou desperta apenas pelo gatilho.",
+                    "18-20": "Haetae domina. Use efeitos de Haetae. Chiyou dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Haetae": "defesa, estabilidade, movimento seguro e controle do motor",
+                    "Chiyou": "dano, Sangramento, avanço e pressão"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "Red Queen chega a 3 Cargas Exceed.",
+                    "15-38": "O portador causa ou sofre um crítico enquanto possui 1 ou mais Cargas Exceed.",
+                    "39-57": "Red Queen entra em Superaquecimento enquanto há um aliado a até 3m.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue na Válvula",
+                "passos": [
+                    "segurar Red Queen com as duas mãos",
+                    "cortar a própria palma",
+                    "girar o acelerador da arma enquanto o sangue escorre",
+                    "declarar o que precisa atravessar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue acende o motor.\nHaetae, segura a chama.\nChiyou, rompe a marcha.\nQue a lâmina aqueça.\nQue o corte avance.\nRed Queen, acelera."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "pode recitar apenas o nome da arma e declarar o que precisa atravessar",
+                    "limite": "1 vez por combate",
+                    "efeito": "1 vez por combate, quando o gatilho do lado adormecido acontecer, pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "pode usar o Despertar Verdadeiro; 1 vez durante o despertar, pode usar efeito do lado adormecido do mesmo Rank sem Teste de Despertar"
+                }
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Red Queen",
+                "primeiro_fragmento_simbiose": "Coração",
+                "segundo_fragmento_unificacao": "Guarda e Guerra",
+                "nome_verdadeiro": "Red Queen, Coração Carmesim da Guarda e da Guerra"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Acelera, Red Queen.",
+                "liberacao_verdadeira": "Rompe a válvula, Red Queen, Coração Carmesim da Guarda e da Guerra."
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Motor da Guerra Nebulosa causa 1 Dano de Ferida.",
+                "3-4": "Motor da Guerra Nebulosa causa 1 Dano de Ferida e Chiyou mantém o motor instável até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Chiyou é feito com Desvantagem."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente: (6 + DEX + dado evolutivo + bônus diretos aplicáveis) × 2. Dano fixo de Cargas Exceed dobra, porque é dano direto do golpe. O Dano Bônus de Chiyou dobra, porque é dano direto do golpe. Sangramento, Amedrontado e Vulnerável não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: espada-motor, dano evolutivo e propriedades.",
+                "Ritual: corta a mão, banha a válvula do motor e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Cargas Exceed: acumulam aceleração; dão dano, acerto, Sangramento ou defesa conforme Rank.",
+                "Haetae: estabilidade, defesa, avanço seguro e controle de Superaquecimento.",
+                "Chiyou: dano, Sangramento, guerra, Superaquecimento e possessão.",
+                "Nome Verdadeiro: desbloqueia o Coração Carmesim."
+            ],
+            "arma_mecanicas": [
+                "arma especial evolutiva por Rank",
+                "dado evolutivo incorporado ao dano da arma",
+                "lado dominante definido por Teste 1",
+                "Valor de Vínculo definido por Teste 2",
+                "lado adormecido por gatilho do Teste 3 ou Despertar Forçado",
+                "Sangue de Pacto reduz PDV atuais para 10%",
+                "Cargas Exceed até 3",
+                "Superaquecimento se iniciar com 3 Cargas e terminar sem gastar nenhuma",
+                "Chiyou usa Marcas do Demônio e pode causar Dano de Ferida",
+                "Haetae não aumenta dano bruto"
+            ],
+            "arma_propriedades_chaves": ["Acuidade", "Morote", "Motor Exceed"]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10300000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

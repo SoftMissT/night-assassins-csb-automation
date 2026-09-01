@@ -1,0 +1,79 @@
+{
+    "_id": "39e9bb2e10bafada",
+    "_key": "!items!39e9bb2e10bafada",
+    "name": "Rapieira",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rapieira_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Rapieira",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 3,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 19,
+            "arma_alcance": " 1,5m",
+            "arma_propriedades": " Manejável",
+            "arma_requisito": "",
+            "descricao": "Espada longa, estreita e leve, projetada para golpes de estocada. Possui uma lâmina fina e uma guarda elaborada para proteger a mão.\n\n- Propriedades: Manejável\n- Alcance: 1,5m\n- Crítico: 19 Natural\n- Dano: 3 + Metade da DEX / Perfurante\n\nHabilidade\nVocê realiza um floreio contra seu alvo, usando sua Ação Especial. O inimigo deve realizar um teste de SAB com C.D igual a 10 + DEX do Exterminador. Caso o inimigo falhe, você recebe +2 em seu próximo teste de Reação, utilizável até o início do seu próximo turno.",
+            "arma_ordem": 23,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "3 + Metade da DEX / Perfurante",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Você realiza um floreio contra seu alvo, usando sua Ação Especial. O inimigo deve realizar um teste de SAB com C.D igual a 10 + DEX do Exterminador. Caso o inimigo falhe, você recebe +2 em seu próximo teste de Reação, utilizável até o início do seu próximo turno."
+                }
+            ],
+            "arma_propriedades_chaves": ["manejavel"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 2300000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

@@ -1,0 +1,94 @@
+{
+    "_id": "b9b0c95c889e7d5b",
+    "_key": "!items!b9b0c95c889e7d5b",
+    "name": "Kusarigama",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/kusarigama_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Kusarigama",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["cortante", "concussivo"],
+            "arma_critico": 20,
+            "arma_alcance": " 5m",
+            "arma_propriedades": " Acuidade / Morote / Ryoto",
+            "arma_requisito": "",
+            "descricao": "Uma esfera ligada a outra ponta de uma pequena foice ou lâmina através de uma corrente.\n\n- Propriedades: Acuidade / Morote / Ryoto\n- Alcance: 5m\n- Crítico: 20 Natural\n- Dano: 5 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Cortante e Concussivo, à escolha\n\nHabilidade\nPode acertar duas vezes no mesmo turno usando a ação padrão. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX.",
+            "arma_ordem": 18,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "5 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Cortante e Concussivo, à escolha",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1.0,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante", "concussivo"],
+                    "alcance": "5m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "ryoto",
+                    "kind": "integrated-double-attack",
+                    "attacks": 2,
+                    "secondAttribute": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Pode acertar duas vezes no mesmo turno usando a ação padrão. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade", "morote", "ryoto"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1800000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

@@ -1,0 +1,88 @@
+{
+    "id": "tecelao_de_sangue",
+    "name": "Tecelão de Sangue",
+    "function": "Especialista em Kekkijutsu, Controle de campo, Manipulação de custo em PDK, Aumento de CD, Efeitos secundários, Ritual de sangue, Pressão sobrenatural",
+    "primaryAttributes": ["fdv", "int", "sab", "car"],
+    "levels": {
+        "1": {
+            "name": "Sangue Metódico",
+            "effect": "Passiva: Você recebe +1 em testes de INT ou SAB para: identificar Kekkijutsu entender padrões demoníacos perceber selos de sangue analisar efeitos sobrenaturais de Onis Além disso, quando presenciar um Kekkijutsu pela primeira vez em uma cena, pode perguntar ao Mestre uma informação simples sobre ele: tipo de dano provável alcance aproximado se exige teste de resistência se cria área ou alvo único O Mestre responde de forma útil, mas não precisa revelar toda a técnica."
+        },
+        "2": {
+            "name": "Forma Estável",
+            "effect": "Passiva: Quando usar um Kekkijutsu, recebe +1 em testes para manter controle, concentração, forma ou duração da técnica. Além disso, uma vez por combate, se uma falha narrativa menor faria seu Kekkijutsu sair instável, você pode estabilizá-lo sem custo adicional. Isso não transforma erro de ataque em acerto."
+        },
+        "3": {
+            "name": "Canalização de Sangue",
+            "effect": "Modificador: Custo: nenhum Gatilho: você usa um Kekkijutsu Limite: 1 vez por turno Ao usar um Kekkijutsu, escolha um efeito: reduzir o custo em 1 PDK, mínimo 1 aumentar a CD em +1 receber +1 na rolagem de acerto do Kekkijutsu Escolha apenas um efeito por uso."
+        },
+        "4": {
+            "name": "Economia Profana",
+            "effect": "Passiva: Uma vez por combate, quando acertar um Kekkijutsu ou fizer uma criatura falhar no teste contra ele, você recupera: 1 PDK Essa recuperação não pode acontecer se o Kekkijutsu não teve custo em PDK."
+        },
+        "5": {
+            "name": "Selo de Ruptura",
+            "effect": "Modificador: Custo: 2 PDK Gatilho: uma criatura falha em um teste contra seu Kekkijutsu Limite: 1 vez por rodada Você grava um selo de sangue no erro do alvo. Escolha um efeito adicional até o início do próximo turno da criatura: Distraído Desorientado -1 na próxima Defesa Escolha apenas um efeito. Criaturas imunes a efeitos mentais ainda podem sofrer -1 na próxima Defesa, se o Kekkijutsu tiver componente físico ou espiritual."
+        },
+        "6": {
+            "name": "Traço de Sangue",
+            "effect": "Modificador: Custo: 1 PDK Gatilho: você usa um Kekkijutsu com alcance, linha, cone ou área Limite: 1 vez por turno Escolha um efeito compatível: alcance +3m linha +3m raio da área +1,5m Esse aumento não pode dobrar o tamanho original da técnica."
+        },
+        "7": {
+            "name": "Reescrever Forma",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação Especial Duração: até o fim do turno atual Você altera a lógica interna do próximo Kekkijutsu usado neste turno. Escolha um atributo entre: INT SAB CAR FDV Se fizer sentido com a descrição do Kekkijutsu, esse atributo pode substituir o atributo normalmente usado para CD ou rolagem da técnica. O Mestre pode negar substituições que não tenham lógica narrativa. Exemplo: uma ilusão pode usar INT ou CAR uma leitura predatória pode usar SAB uma explosão bruta de sangue pode usar FDV"
+        },
+        "8": {
+            "name": "Foco Hemático",
+            "effect": "Passiva: Você recebe +1 em testes de FDV para resistir a: Silenciado Suprimido interrupção de Kekkijutsu perda de controle da Arte de Sangue bloqueio espiritual de poder demoníaco Além disso, uma vez por cena, pode ignorar uma penalidade de -1 aplicada diretamente ao uso de um Kekkijutsu."
+        },
+        "9": {
+            "name": "Fórmula Carmesim",
+            "effect": "Bônus Permanente: Recebe: +1 FDV Além disso, escolha um: +1 INT +1 SAB +1 CAR Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "10": {
+            "name": "Efeito Secundário",
+            "effect": "Modificador: Custo: 2 PDK Gatilho: você acerta um Kekkijutsu ou uma criatura falha no teste contra ele Limite: 1 vez por rodada Escolha um efeito secundário simples: mover o alvo 1,5m reduzir o deslocamento do alvo em 1,5m até o início do próximo turno dele aplicar -1 na próxima rolagem de ataque do alvo aplicar -1 na próxima Esquiva do alvo O efeito escolhido precisa combinar com o tema do Kekkijutsu. Este modificador não causa dano adicional."
+        },
+        "11": {
+            "name": "Dupla Forma Menor",
+            "effect": "Modificador: Custo: 4 PDK Gatilho: você usa um Kekkijutsu Limite: 1 vez por rodada Depois de resolver o Kekkijutsu, aplique um efeito menor ligado ao mesmo tema da técnica: criar terreno difícil em 1,5m ao redor do alvo até o próximo turno mover o alvo 3m se ele falhou no teste receber +1 em Defesa contra o alvo afetado reduzir a próxima cura do alvo em -1 Escolha apenas um efeito. Esse modificador não pode causar dano adicional direto."
+        },
+        "12": {
+            "name": "Sangue Calculado",
+            "effect": "Passiva: Uma vez por combate, quando uma criatura passar no teste contra seu Kekkijutsu, você recupera: 2 PDK Além disso, até o fim do seu próximo turno, recebe +1 na próxima rolagem de acerto ou CD de Kekkijutsu contra essa mesma criatura."
+        },
+        "13": {
+            "name": "Dupla Forma",
+            "effect": "Modificador: Custo: 5 PDK Gatilho: você usa um Kekkijutsu Limite: 1 vez por rodada Depois de resolver o Kekkijutsu, aplique um efeito secundário maior ligado ao mesmo tema. Escolha um: mover o alvo 3m reduzir o deslocamento do alvo em 3m até o próximo turno dele aplicar -1 na próxima rolagem de ataque do alvo aumentar a duração de um efeito em +1 rodada aplicar Desequilibrado se o alvo falhou no teste por 5 ou mais Esse modificador não pode causar dano adicional direto."
+        },
+        "14": {
+            "name": "Geometria Profana",
+            "effect": "Passiva: Uma vez por rodada, quando usar um Kekkijutsu que afete área, linha, cone, zona, círculo ou múltiplos alvos, escolha um efeito: CD +1 alcance +3m área +1,5m um aliado dentro da área não é afetado Escolha apenas um efeito. Esse benefício não pode ser usado junto com Canalização de Sangue no mesmo Kekkijutsu."
+        },
+        "15": {
+            "name": "Selo Persistente",
+            "effect": "Modificador: Custo: 6 PDK Gatilho: um Kekkijutsu seu aplica um efeito com duração de 1 rodada Limite: 1 vez por combate A duração desse efeito aumenta em: +1 rodada Este modificador não pode prolongar: Atordoamento Paralisia Sonhando Suprimido efeitos de morte instantânea efeitos definidos pelo Mestre como não prolongáveis"
+        },
+        "16": {
+            "name": "Controle de Custo",
+            "effect": "Modificador: Custo: nenhum Gatilho: você usa um Kekkijutsu Limite: 1 vez por rodada Reduza o custo do Kekkijutsu em: 2 PDK O custo final nunca pode ser menor que 1 PDK. Você não pode usar Controle de Custo e a opção de redução de custo de Canalização de Sangue no mesmo Kekkijutsu."
+        },
+        "17": {
+            "name": "Liturgia Superior",
+            "effect": "Modificador: Custo: 4 PDK Gatilho: você usa um Kekkijutsu Supremo Limite: 1 vez por rodada Escolha um benefício: CD +1 custo -2 PDK, mínimo 1 alcance +6m duração +1 rodada Escolha apenas um. Se o Kekkijutsu Supremo errar completamente ou todos os alvos passarem no teste, você sofre 2 de dano Necrótico. Esse dano não pode ser curado em batalha."
+        },
+        "18": {
+            "name": "Rito de Domínio",
+            "effect": "Passiva: Quando usar Domínio Demoníaco, escolha um aprimoramento: raio +3m duração +1 rodada CD dos efeitos do Domínio +1 terreno difícil também reduz Esquiva dos inimigos em -1 Escolha apenas um aprimoramento por uso do Domínio. Além disso, enquanto estiver dentro do próprio Domínio, você recebe +1 em testes de FDV para manter Kekkijutsu ativo."
+        },
+        "19": {
+            "name": "Liturgia Suprema",
+            "effect": "Modificador: Custo: 12 PDK Gatilho: você usa um Kekkijutsu Supremo ou Absoluto Limite: 1 vez por combate Você força sua Arte de Sangue a alcançar uma forma ritual perfeita. Escolha dois efeitos: reduzir o custo em 3 PDK, mínimo 1 aumentar a CD em +2 aumentar o alcance em +6m aumentar a duração em +1 rodada ignorar resistência parcial ao tipo de dano da técnica permitir que um aliado dentro da área não seja afetado Se o Kekkijutsu errar completamente ou todos os alvos passarem no teste, você perde 5 PDK adicionais e sofre 1d6 de dano Necrótico. Esse dano não pode ser curado em batalha."
+        },
+        "20": {
+            "name": "Arte de Sangue Perfeita",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Tecelão de Sangue. Durante a duração, recebe: +2 FDV +2 INT, SAB ou CAR Kekkijutsu têm CD +1 o primeiro modificador de Kekkijutsu usado em cada rodada custa -2 PDK uma vez por rodada, pode aplicar Selo de Ruptura sem custo adicional Além disso, uma vez durante esta forma, ao usar um Kekkijutsu, você pode declarar Forma Perfeita. Quando fizer isso, escolha dois efeitos: CD +2 alcance +6m duração +1 rodada custo -3 PDK, mínimo 1 alvo sofre -2 no primeiro teste contra a técnica um aliado dentro da área ignora o efeito Se a Forma Perfeita falhar completamente, você sofre: 2d6 de dano Necrótico e fica Silenciado até o início do seu próximo turno. Esta forma termina imediatamente se o Oni sofrer Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha ou Carmesim, ou uma condição narrativa que interrompa sua Arte de Sangue."
+        }
+    }
+}

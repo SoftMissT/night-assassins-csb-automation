@@ -1,0 +1,88 @@
+{
+    "id": "nobre_de_sangue",
+    "name": "Nobre de Sangue",
+    "function": "Mordida, Recuperação de PDK, Controle social, Medo e presença, Servos temporários, Vínculo de sangue, Pressão contra alvos vivos",
+    "primaryAttributes": ["car", "fdv", "vit", "dex"],
+    "levels": {
+        "1": {
+            "name": "Sangue Aristocrático",
+            "effect": "Passiva: Você recebe +1 em testes de CAR para intimidar, seduzir, comandar ou negociar com humanos que conheçam sua natureza demoníaca. Além disso, quando uma criatura viva vê você se alimentar pela primeira vez em uma cena, ela sofre -1 no próximo teste de FDV contra uma habilidade sua de Nobre de Sangue."
+        },
+        "2": {
+            "name": "Mordida Elegante",
+            "effect": "Passiva: Uma vez por turno, quando acertar uma mordida contra uma criatura Distraída, Amedrontada, Desequilibrada ou com Restrição de Movimentos, causa: +1 de dano Se a mordida causar dano, você também recebe +1 no próximo teste de CAR contra esse alvo até o fim da cena."
+        },
+        "3": {
+            "name": "Mordida Aristocrática",
+            "effect": "Passiva: Quando acertar uma mordida contra uma criatura viva, recupera: +1 PDK adicional Se o alvo estiver sofrendo Sangramento, Hemorragia ou tiver sido ferido por você neste combate, recupera: +2 PDK adicionais Essa recuperação adicional só acontece 1 vez por turno."
+        },
+        "4": {
+            "name": "Olhar Predatório",
+            "effect": "Ativa: Custo: 2 PDK Ação: Ação Especial Alcance: 9m Alvo: uma criatura viva que possa ver você Teste: FDV do alvo contra CD 10 + CAR do Oni Você encara o alvo como propriedade ainda não reclamada. Falha: o alvo fica Amedrontado até o início do próximo turno dele. Falha por 5 ou mais: além disso, fica Distraído até receber dano ou até o início do próximo turno dele. Sucesso: o alvo resiste."
+        },
+        "5": {
+            "name": "Presença de Linhagem",
+            "effect": "Passiva: Inimigos vivos a até 6m recebem -1 em testes de FDV contra efeitos de: medo comando intimidação sedução predatória habilidades de Nobre de Sangue Criaturas que já sofreram sua mordida neste combate recebem -2 em vez de -1."
+        },
+        "6": {
+            "name": "Sangue Refinado",
+            "effect": "Passiva: Quando se alimentar de uma criatura viva importante para a cena, como líder, combatente relevante, Marechi, Exterminador ou alvo nomeado pelo Mestre, recupera: +1 PDK adicional Além disso, até o fim da cena, recebe +1 em testes de FDV contra medo, comando ou dominação. Esse bônus não acumula consigo mesmo."
+        },
+        "7": {
+            "name": "Comando Hemático",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação Especial Alcance: 9m Alvo: uma criatura viva que esteja ferida, sangrando ou tenha sofrido dano seu neste combate Teste: FDV do alvo contra CD 10 + CAR do Oni Você força o sangue do alvo a hesitar dentro do próprio corpo. Falha: o alvo fica Distraído até o início do próximo turno do Oni. Falha por 5 ou mais: além de Distraído, o alvo não pode usar Reação até o início do próximo turno do Oni. Sucesso: o alvo resiste. Criaturas sem sangue ou sem corpo físico são imunes a esta habilidade."
+        },
+        "8": {
+            "name": "Marca Rubra",
+            "effect": "Passiva: Quando acertar uma mordida ou causar dano com uma habilidade de Nobre de Sangue, pode marcar o alvo até o fim da cena. Você pode manter apenas 1 Marca Rubra por vez. Contra o alvo marcado, você recebe: +1 em testes de CAR +1 em testes para rastrear pelo cheiro do sangue Se marcar outro alvo, a marca anterior termina."
+        },
+        "9": {
+            "name": "Sangue Vinculante",
+            "effect": "Passiva: O alvo da sua Marca Rubra recebe -1 em testes de FDV contra suas habilidades de Nobre de Sangue. Se esse alvo já sofreu sua mordida no combate atual, a penalidade aumenta para: -2 Essa penalidade não se aplica contra habilidades que não sejam desta Especialização."
+        },
+        "10": {
+            "name": "Servo Menor",
+            "effect": "Ativa: Custo: 5 PDK Ação: Ação Especial Alcance: toque Alvo: uma criatura viva reduzida a 0 PDV, mas não morta Duração: até o fim da cena Limite: 1 vez por cena Você impõe uma ordem simples através do sangue. O alvo se torna um Servo Menor temporário. No turno dele, o Servo pode realizar apenas uma função simples: mover-se até metade do deslocamento proteger você, concedendo +1 na sua próxima Defesa atacar uma criatura adjacente com ataque simples bloquear passagem O Servo não pode usar técnicas complexas, Kekkijutsu, Respirações, Ação Única ou habilidades de chefe. O Mestre pode vetar criaturas importantes, chefes, personagens centrais ou alvos incompatíveis."
+        },
+        "11": {
+            "name": "Domínio da Voz",
+            "effect": "Passiva: O alcance das suas habilidades de Nobre de Sangue que usem CAR aumenta em: +3m Além disso, uma vez por rodada, quando uma criatura falhar em um teste de FDV contra uma habilidade sua de Nobre de Sangue, você recebe: +1 em sua próxima rolagem de CAR Esse bônus dura até o fim do seu próximo turno."
+        },
+        "12": {
+            "name": "Aprimoramento Nobre",
+            "effect": "Bônus Permanente: Escolha um benefício: +1 CAR ou +1 FDV Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "13": {
+            "name": "Linhagem Imponente",
+            "effect": "Passiva: Quando uma criatura falhar em um teste contra uma habilidade sua de Nobre de Sangue, ela sofre: -1 na próxima rolagem de ataque contra você Se essa criatura for o alvo da sua Marca Rubra, a penalidade aumenta para: -2 A penalidade dura até o início do próximo turno dela."
+        },
+        "14": {
+            "name": "Sangue de Progenitor Menor",
+            "effect": "Ativa: Custo: 4 PDK Ação: livre, ao acertar mordida Alvo: criatura viva mordida por você Limite: 1 vez por combate Você bebe fundo e força o sangue roubado a fortalecer sua presença. Além da recuperação normal da mordida, recupere: 1d4 PDK Se o alvo for sua Marca Rubra, você também recupera: VIT PDV Essa cura não funciona se você estiver sob Regeneração Suprimida."
+        },
+        "15": {
+            "name": "Corte Social",
+            "effect": "Passiva: Uma vez por rodada, quando aplicar Amedrontado, Distraído ou impedir Reação com uma habilidade de Nobre de Sangue, você pode se mover: 3m sem gerar Ataque de Oportunidade Esse movimento representa domínio de cena, aproximação predatória ou recuo elegante."
+        },
+        "16": {
+            "name": "Casa de Sangue",
+            "effect": "Passiva: No início de uma cena de combate, escolha um aliado, servo, subordinado ou criatura pactuada a até 9m. Esse alvo se torna sua Casa de Sangue até o fim da cena. Enquanto estiver a até 9m de você, ele recebe: +1 em Defesa +1 em testes de FDV contra medo Você só pode ter um membro da Casa de Sangue por vez."
+        },
+        "17": {
+            "name": "Servo de Sangue",
+            "effect": "Aprimoramento: Seu Servo Menor evolui para Servo de Sangue. Quando criar um Servo de Sangue, escolha uma função: Guardião concede +2 na próxima Defesa do Oni uma vez por rodada Caçador recebe +1 em ataques contra sua Marca Rubra Escudo pode bloquear passagem e impor terreno difícil adjacente Arauto aumenta em +1 a CD da próxima habilidade de CAR do Oni O Servo de Sangue ainda não pode usar Kekkijutsu, Respiração, Ação Única ou habilidades de chefe. Você só pode manter 1 Servo de Sangue por vez."
+        },
+        "18": {
+            "name": "Autoridade Hemática",
+            "effect": "Passiva: Criaturas que sofreram sua mordida neste combate sofrem: -2 em testes de FDV contra Comando Hemático Além disso, quando o alvo da sua Marca Rubra falhar contra Comando Hemático, escolha um efeito adicional: não pode usar Reação até o início do próximo turno do Oni sofre -2 na próxima rolagem de ataque contra você fica Amedrontado até o início do próximo turno dele Escolha apenas um efeito por uso."
+        },
+        "19": {
+            "name": "Trono Hemático",
+            "effect": "Ativa: Custo: 12 PDK Ação: Ação Completa Área: raio de 9m centrado em você Duração: 3 rodadas Limite: 1 vez por combate Você transforma o campo em salão de sangue, medo e hierarquia. Enquanto estiverem dentro da área, inimigos vivos sofrem: -1 em rolagens de ataque contra você -2 em testes de FDV contra suas habilidades de Nobre de Sangue Além disso, uma vez por rodada, quando uma criatura dentro da área sofrer sua mordida, ela deve fazer: 1d20 + FDV contra CD 10 + CAR do Oni Falha: fica Amedrontada até o início do próximo turno dela. Falha por 5 ou mais: além disso, fica Distraída até receber dano ou até o início do próximo turno dela. Sucesso: resiste ao efeito mental."
+        },
+        "20": {
+            "name": "Progenitor Demoníaco",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Nobre de Sangue. Durante a duração, recebe: +2 CAR +2 FDV mordidas recuperam +3 PDK adicionais habilidades de Nobre de Sangue têm CD +1 sua Marca Rubra pode afetar até 2 alvos ao mesmo tempo Além disso, uma vez por rodada, quando acertar uma mordida ou fizer uma criatura falhar contra uma habilidade sua de Nobre de Sangue, escolha um efeito: recuperar VIT PDV recuperar +2 PDK aplicar Amedrontado até o início do próximo turno do alvo impedir Reação do alvo até o início do próximo turno dele Escolha apenas um efeito por rodada. Se seu Trono Hemático estiver ativo durante esta forma, o raio dele aumenta para 12m. Esta forma termina imediatamente se você sofrer Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha ou Carmesim, ou uma condição narrativa que purifique ou rompa sua linhagem de sangue."
+        }
+    }
+}

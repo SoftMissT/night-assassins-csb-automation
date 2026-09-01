@@ -1,0 +1,88 @@
+{
+    "id": "soberano_demoniaco",
+    "name": "Soberano Demoníaco",
+    "function": "Comando de aliados, Vassalos, Presença demoníaca, Buffs táticos, Medo, Domínio de área, Servos menores, Controle hierárquico",
+    "primaryAttributes": ["car", "fdv", "int", "vit"],
+    "levels": {
+        "1": {
+            "name": "Presença Menor",
+            "effect": "Passiva: Você recebe +1 em testes de CAR para intimidar, comandar ou impor autoridade sobre: humanos comuns Onis mais fracos servos subordinados criaturas amedrontadas Esse bônus não funciona contra criaturas de patente superior, chefes importantes ou personagens que não reconheçam hierarquia demoníaca."
+        },
+        "2": {
+            "name": "Voz de Comando",
+            "effect": "Passiva: Aliados a até 6m que possam ouvir ou sentir sua presença recebem: +1 em testes de FDV contra Amedrontado Esse bônus só funciona contra medo, intimidação ou pressão psicológica. Não protege contra Paralisia, Colapso, dano físico ou controle mental profundo."
+        },
+        "3": {
+            "name": "Decreto Menor",
+            "effect": "Passiva: Uma vez por rodada, quando um aliado a até 9m acertar uma criatura que você atacou neste combate, esse aliado causa: +1 de dano Se o aliado for Oni, servo, subordinado direto ou criatura sob seu comando, o bônus aumenta para: +2 de dano Esse bônus só pode acontecer uma vez por rodada, mesmo que vários aliados acertem."
+        },
+        "4": {
+            "name": "Postura de Rei",
+            "effect": "Passiva: Você recebe +1 em testes de FDV contra: medo intimidação dominação Suprimido efeitos de comando sobrenatural Além disso, criaturas de nível inferior ao seu sofrem -1 no primeiro teste de CAR feito contra você em uma cena."
+        },
+        "5": {
+            "name": "Ordem de Campo",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação Especial Alcance: 9m Alvo: você ou um aliado que possa ver, ouvir ou sentir sua presença Duração: até o início do seu próximo turno Você emite uma ordem curta e carregada de autoridade demoníaca. Escolha um efeito: +2 na próxima rolagem de ataque +2 na próxima Esquiva +2 no próximo Bloqueio mover 3m sem gerar Ataque de Oportunidade Esta habilidade não concede ação extra. Ela apenas fortalece ou reposiciona uma peça já ativa no combate."
+        },
+        "6": {
+            "name": "Subordinado Favorecido",
+            "effect": "Passiva: No início de uma cena de combate, escolha um aliado, servo ou subordinado a até 9m. Esse alvo se torna seu Subordinado Favorecido até o fim da cena. Uma vez por rodada, quando o Subordinado Favorecido causar dano a uma criatura que você atacou neste combate, ele causa: +1 de dano Se ele estiver dentro de um Domínio criado por você, o bônus aumenta para: +2 de dano Você só pode ter um Subordinado Favorecido por vez."
+        },
+        "7": {
+            "name": "Comando Cruel",
+            "effect": "Passiva: Uma vez por rodada, quando seu Subordinado Favorecido reduzir uma criatura a 0 PDV, você recupera: 2 PDK Além disso, inimigos a até 6m que presenciarem a queda devem fazer: 1d20 + FDV contra CD 10 + CAR do Oni Falha: ficam Amedrontados até o início do próximo turno deles. Sucesso: resistem ao medo."
+        },
+        "8": {
+            "name": "Autoridade Visível",
+            "effect": "Passiva: Inimigos Amedrontados por você sofrem: -1 em rolagens de ataque contra você Além disso, se um inimigo Amedrontado por você errar um ataque contra você, seu próximo teste de CAR antes do fim do próximo turno recebe: +1 Esse bônus não acumula consigo mesmo."
+        },
+        "9": {
+            "name": "Vassalo Demoníaco",
+            "effect": "Passiva: No início de uma cena de combate, escolha um aliado, servo, subordinado ou criatura pactuada a até 9m. Esse alvo se torna seu Vassalo Demoníaco até o fim da cena. Enquanto o Vassalo estiver a até 9m de você: você recebe +1 em testes de CAR o Vassalo recebe +1 em Defesa o Vassalo recebe +1 em testes de FDV contra medo Você só pode ter um Vassalo Demoníaco por vez. O Vassalo Demoníaco pode ser o mesmo alvo de Subordinado Favorecido."
+        },
+        "10": {
+            "name": "Linha de Comando",
+            "effect": "Passiva: O alcance das suas habilidades de Soberano Demoníaco aumenta em: +3m Esse aumento se aplica apenas a habilidades desta Especialização que tenham alcance definido. Além disso, aliados sob seu comando ainda podem receber suas ordens mesmo sob barulho, fumaça, escuridão ou caos de combate, desde que estejam dentro do alcance e não estejam Silenciados, Inconscientes ou completamente isolados."
+        },
+        "11": {
+            "name": "Mandato de Sangue",
+            "effect": "Ativa: Custo: 4 PDK Ação: Ação Especial Alcance: 12m Alvo: um aliado, servo, subordinado ou Vassalo Demoníaco Duração: até o início do seu próximo turno Você sela uma ordem no sangue demoníaco do alvo. Escolha um efeito: o alvo pode repetir uma rolagem de ataque falha o alvo pode repetir uma Esquiva falha o alvo pode repetir um Bloqueio falho o alvo recebe +2 em um teste de FDV contra medo ou controle O alvo deve ficar com o segundo resultado. Esta habilidade não concede nova ação. Ela apenas modifica uma rolagem que o alvo já faria."
+        },
+        "12": {
+            "name": "Aprimoramento Soberano",
+            "effect": "Bônus Permanente: Escolha um benefício: +1 CAR ou +1 FDV Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "13": {
+            "name": "Domínio do Monarca Menor",
+            "effect": "Ativa: Custo: 6 PDK Ação: Ação Completa Área: raio de 6m centrado em você Duração: 2 rodadas Limite: 1 vez por combate Você impõe uma zona de autoridade demoníaca. Enquanto estiverem dentro da área: aliados sob seu comando recebem +1 em rolagens de ataque inimigos sofrem -1 em testes de FDV contra suas habilidades de Soberano Demoníaco você recebe +1 em testes de CAR A área não causa dano por si só. Ela representa pressão, hierarquia e domínio de presença."
+        },
+        "14": {
+            "name": "Medo Hierárquico",
+            "effect": "Passiva: No início do combate, inimigos de nível inferior ao seu a até 9m devem fazer: 1d20 + FDV contra CD 10 + CAR do Oni Falha: ficam Amedrontados por 1 turno. Sucesso: ficam imunes a Medo Hierárquico até o fim da cena. Criaturas de patente superior, chefes ou personagens centrais podem receber +3 nesse teste, a critério do Mestre."
+        },
+        "15": {
+            "name": "Vassalo Leal",
+            "effect": "Aprimoramento: Seu Vassalo Demoníaco recebe benefícios melhores enquanto estiver a até 9m de você: +2 em Defesa +2 em testes de FDV contra medo +1 em rolagens de ataque contra criaturas que você atacou neste combate Além disso, uma vez por rodada, quando seu Vassalo Demoníaco sofrer dano, você pode gastar 2 PDK para reduzir o dano final recebido por ele em: CAR Essa redução não se aplica contra Dano Solar, Dano de Ferida, Lâmina Vermelha/Carmesim ou efeitos que ignorem redução."
+        },
+        "16": {
+            "name": "Domínio do Monarca",
+            "effect": "Aprimoramento: Seu Domínio do Monarca Menor evolui. Quando usar a habilidade, ela passa a ter: raio de 9m duração de 3 rodadas Além disso, escolha um efeito adicional ao ativar o Domínio: aliados sob seu comando recebem +1 em Defesa inimigos sofrem -1 em rolagens de ataque contra você seu Vassalo Demoníaco recupera 2 PDK ou recurso equivalente inimigos Amedrontados dentro da área não podem usar Reação contra você Escolha apenas um efeito por uso."
+        },
+        "17": {
+            "name": "Exército Menor",
+            "effect": "Ativa: Custo: 10 PDK Ação: Ação Completa Alcance: 9m Duração: até o fim da cena Limite: 1 vez por combate Você convoca, desperta ou comanda até 2 Servos Menores. Eles podem ser: crias demoníacas cadáveres movidos por sangue sombras subordinadas humanos corrompidos fragmentos do seu Kekkijutsu Onis fracos sob seu domínio Cada Servo Menor possui uma função simples: Atacante pode fazer ataque simples Guardião concede +1 na próxima Defesa de um aliado adjacente Bloqueador ocupa espaço e dificulta passagem Perseguidor segue uma criatura marcada ou ferida Limite de ação dos servos: apenas 1 Servo Menor pode atacar por rodada servos não usam Ação Única servos não usam Kekkijutsu servos não usam técnicas complexas servos agem logo após o turno do Soberano O Mestre define valores simples de PDV, Defesa e dano conforme o nível da campanha."
+        },
+        "18": {
+            "name": "Autoridade de Lua Superior",
+            "effect": "Passiva: Enquanto seu Domínio do Monarca estiver ativo, inimigos dentro da área sofrem: -2 em testes de FDV contra suas habilidades de Soberano Demoníaco Além disso, uma vez por rodada, quando um inimigo falhar em um teste de FDV contra você dentro do Domínio, escolha um efeito: fica Distraído até receber dano ou até o início do próximo turno dele perde a próxima Reação sofre -1 na próxima rolagem de ataque sofre -1 na próxima Defesa Escolha apenas um efeito."
+        },
+        "19": {
+            "name": "Exército Abissal",
+            "effect": "Aprimoramento: Seu Exército Menor evolui. Quando usar essa habilidade, pode convocar até: 3 Servos Menores Além disso, escolha uma regra de formação: Muralha enquanto 2 servos estiverem adjacentes a você, você recebe +2 em Bloqueio Caçada servos causam +1 de dano contra inimigos Amedrontados por você Cerco inimigos adjacentes a 2 servos sofrem -1 em Defesa Arautos enquanto pelo menos 1 servo estiver ativo, suas habilidades de CAR recebem +1 na CD Escolha apenas uma formação por uso. Limite de ação dos servos: até 2 Servos Menores podem atacar por rodada nenhum servo pode usar Ação Única nenhum servo pode usar Kekkijutsu nenhum servo pode usar habilidades de chefe"
+        },
+        "20": {
+            "name": "Soberania Absoluta",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Soberano Demoníaco. Durante a duração, recebe: +2 CAR +2 FDV raio do Domínio do Monarca aumenta para 12m suas habilidades de Soberano Demoníaco têm CD +1 seu Vassalo Demoníaco recebe +2 em ataque e Defesa Servos Menores causam +1 de dano Além disso, uma vez por rodada, quando uma criatura inimiga dentro do seu Domínio cair a 0 PDV, escolha um efeito: você recupera 3 PDK seu Vassalo Demoníaco recupera 3 PDV um Servo Menor pode se mover 3m sem gerar Ataque de Oportunidade um inimigo dentro do Domínio deve testar FDV ou ficar Amedrontado por 1 turno Uma vez durante esta forma, você pode declarar um Decreto Final. Custo: 8 PDK Ação: Ação Especial Alcance: 12m Alvo: uma criatura que possa ver, ouvir ou sentir sua presença Teste: FDV do alvo contra CD 10 + CAR do Oni Falha: escolha dois efeitos: o alvo fica Amedrontado por 1 turno o alvo fica Distraído até receber dano ou até o início do próximo turno dele o alvo perde a próxima Reação o alvo sofre -2 na próxima Defesa o alvo não pode se aproximar voluntariamente de você até o início do próximo turno dele Sucesso: escolha apenas um efeito menor: o alvo sofre -1 na próxima rolagem de ataque o alvo sofre -1 no próximo teste de FDV contra você o alvo não pode usar Reação contra você até o início do próximo turno dele Esta forma termina imediatamente se o Oni sofrer Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha ou Carmesim, ou uma condição narrativa que quebre sua autoridade demoníaca."
+        }
+    }
+}

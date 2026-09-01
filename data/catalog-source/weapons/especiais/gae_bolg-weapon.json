@@ -1,0 +1,422 @@
+{
+    "_id": "e2f8b91c4a706d35",
+    "_key": "!items!e2f8b91c4a706d35",
+    "name": "Gáe Bolg Espinho do Destino Selado",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/gae_bolg_espinho_do_destino_selado_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Gáe Bolg Espinho do Destino Selado",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": ["FOR", "DEX", "FDV"],
+            "arma_dano_atributo_multiplicador": {
+                "FOR": 0.5,
+                "DEX": 0.5,
+                "FDV": 1
+            },
+            "arma_acerto_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural / 18 Natural com Domínio da Linha Fatal",
+            "arma_alcance": "3m",
+            "arma_propriedades": "Acuidade / Morote / Sōjutsu",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Sedna",
+            "arma_demonio": "Chernobog",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Contra-ataque",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Lança de haste. Domínio de distância, inevitabilidade e pressão de destino selado. Sedna responde com controle de distância, reposicionamento, alcance seguro e contra-ataque. Chernobog responde com dano, Vulnerável, Dano de Ferida, medo e condenação do alvo.",
+            "arma_ordem": 111,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Distância Fatal",
+                    "formula_texto": "5 + metade de FOR ou DEX + FDV + dado evolutivo / Perfurante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "FDV",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "3m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Alvo Selado",
+                    "formula_texto": "5 + metade de FOR ou DEX + FDV + dado evolutivo / Perfurante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos_dano": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        },
+                        {
+                            "key": "FDV",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "atributos_acerto": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "3m / 4,5m com Sedna em Domínio da Linha Fatal",
+                    "critico": 18
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "5 + metade de FOR ou DEX + FDV + 1d6 / Perfurante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "5 + metade de FOR ou DEX + FDV + 1d8 / Perfurante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "5 + metade de FOR ou DEX + FDV + 1d10 / Perfurante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "5 + metade de FOR ou DEX + FDV + 1d12 / Perfurante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "5 + metade de FOR ou DEX + FDV + 2d6 / Perfurante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "5 + metade de FOR ou DEX + FDV + 2d8 / Perfurante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Destino Selado",
+                "descricao": "Gáe Bolg não recompensa trocar de alvo. Ela recompensa insistir no coração certo.",
+                "acerto": "por ter Acuidade, Gáe Bolg pode usar FOR ou DEX nas rolagens de acerto",
+                "dano": "o dano físico usa metade de FOR ou DEX, porque a arma não depende só do impacto do corpo; o bônus principal vem de FDV, pois Gáe Bolg perfura melhor quando a vontade do portador não hesita",
+                "morote": "se empunhada com as duas mãos, a arma mantém estabilidade de haste e habilita seus efeitos de Sōjutsu; esta arma não transforma o bônus físico em atributo inteiro no dano, porque o dano completo já soma FDV como eixo espiritual",
+                "distancia_fatal": {
+                    "alcance": "3m",
+                    "descricao": "a distância ideal de Gáe Bolg é 3m",
+                    "regra": "sempre que uma habilidade mencionar alvo a 3m, o alvo precisa estar no alcance perfeito da lança"
+                }
+            },
+            "arma_despertar": {
+                "estado_selado": "Espinho Recolhido",
+                "primeiro_despertar": "Maré do Coração Selado",
+                "despertar_verdadeiro": "Coração Inevitável",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "sedna": {
+                    "nome": "Maré que Escolhe a Presa",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Gáe Bolg antes do fim do turno recebe +2 no acerto. Se o alvo estiver a exatamente 3m, você ignora penalidades de terreno instável nesse ataque.",
+                    "observacao": "este efeito não aumenta dano. Sedna nunca aumenta dano bruto."
+                },
+                "chernobog": {
+                    "nome": "Coração Já Condenado",
+                    "tipo": "Ação Especial",
+                    "efeito": "seu próximo ataque com Gáe Bolg antes do fim do turno recebe o Dano Bônus de Chernobog conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se superar a Defesa do alvo por 5 ou mais, ele também sofre +1 Dano de Ferida.",
+                    "custo": "usar Coração Já Condenado cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Chernobog nunca melhora Reação defensiva."
+                }
+            },
+            "arma_dano_bonus_chernobog": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Chernobog é dano direto do golpe e dobra em crítico. Vulnerável, Amedrontado e Dano de Ferida não dobram em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Ponta que Conhece o Coração",
+                    "base": "quando você acerta um alvo a exatamente 3m, recebe +1 no próximo ataque com Gáe Bolg contra o mesmo alvo. Esse bônus é perdido se você trocar de alvo.",
+                    "sedna": "se o alvo tentar se aproximar para sair da distância ideal, você recebe +1 no próximo contra-ataque contra ele",
+                    "chernobog": "o bônus também funciona contra alvo Vulnerável a menos de 3m"
+                },
+                "C": {
+                    "nome": "Passo da Maré Fria",
+                    "tecnica_liberada": "Passo da Maré Fria",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até 3m, ignorando Terreno Difícil durante esse deslocamento. Se terminar o movimento com um inimigo a exatamente 3m, seu próximo ataque contra ele antes do fim do turno recebe +1 no acerto.",
+                    "sedna": "esse movimento não provoca Ataque de Oportunidade de inimigos com alcance menor que 3m",
+                    "chernobog": "se o movimento for em direção a um alvo Vulnerável, o bônus de acerto aumenta para +2"
+                },
+                "B": {
+                    "nome": "Lança de Causa Reversa",
+                    "tecnica_liberada": "Lança de Causa Reversa",
+                    "tipo": "Ação de Ataque",
+                    "alvo": "1 criatura a exatamente 3m",
+                    "base": "faça um ataque com Gáe Bolg contra o alvo. Se acertar, causa o dano atual da arma: 5 + metade de FOR ou DEX + FDV + dado evolutivo do Rank / Perfurante. Se superar a Defesa do alvo por 5 ou mais, ele fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status.",
+                    "sedna": "após o ataque, você pode se mover 1,5m sem provocar Ataque de Oportunidade do alvo atingido",
+                    "chernobog": "se o alvo já estiver Vulnerável, este ataque soma o Dano Bônus de Chernobog e paga o custo de Ferida da tabela"
+                },
+                "A": {
+                    "nome": "Domínio da Linha Fatal",
+                    "tecnica_liberada": "Domínio da Linha Fatal",
+                    "tipo": "Ação Especial",
+                    "base": "você marca um alvo a exatamente 3m como Alvo Selado até o fim do turno. Seu próximo ataque com Gáe Bolg contra o Alvo Selado recebe +2 no acerto, crítico 18 Natural e o alvo não pode receber bônus de Defesa vindos de aliados, aura, cobertura leve ou intervenção externa contra esse ataque. Defesas próprias do alvo ainda funcionam normalmente.",
+                    "sedna": "você pode marcar um alvo a até 4,5m em vez de exatamente 3m",
+                    "chernobog": "se esse ataque for crítico, o alvo fica Amedrontado por 1 turno"
+                },
+                "S": {
+                    "nome": "Sentença de Aproximação",
+                    "tecnica_liberada": "Sentença de Aproximação",
+                    "tipo": "Reação",
+                    "base": "você pode fazer um ataque com Gáe Bolg contra um inimigo que entra no seu alcance de 3m, sai do seu alcance sem Desengajar ou erra um ataque corpo a corpo contra você. Esse ataque causa o dano normal da arma no Rank atual.",
+                    "sedna": "a Sentença de Aproximação é feita com Vantagem",
+                    "chernobog": "Chernobog não concede esta Reação. Se Chernobog estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Gáe Bolg: Coração Inevitável",
+                    "tecnica_liberada": "Gáe Bolg Coração Inevitável",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "alvo": "1 criatura a exatamente 3m",
+                    "base": "faça um ataque com Gáe Bolg. Se acertar, o alvo sofre 5 + metade de FOR ou DEX + FDV + 2d8 / Perfurante. O alvo fica Vulnerável contra o próximo ataque que receber. Se o alvo já estiver Vulnerável, ele também sofre +1 Dano de Ferida. Se esse ataque for crítico, o alvo sofre 2 Dano de Ferida em vez de 1. O Vulnerável não afeta o golpe que aplicou esse status.",
+                    "sedna": "se errar o ataque, você pode se mover até 3m sem provocar Ataque de Oportunidade",
+                    "chernobog": "você pode ativar Coração Já Condenado junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se acertar, o alvo também fica Amedrontado por 1 turno."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Chernobog domina. Use efeitos de Chernobog. Sedna dorme fundo.",
+                    "4-8": "Chernobog favorecido. Use efeitos de Chernobog. Sedna desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Sedna ou Chernobog.",
+                    "13-17": "Sedna favorecida. Use efeitos de Sedna. Chernobog desperta apenas pelo gatilho.",
+                    "18-20": "Sedna domina. Use efeitos de Sedna. Chernobog dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Sedna": "controle de distância, reposicionamento, alcance seguro e contra-ataque",
+                    "Chernobog": "dano, Vulnerável, Dano de Ferida e medo"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "Um inimigo entra no seu alcance de 3m.",
+                    "15-38": "Você acerta um alvo já Vulnerável.",
+                    "39-57": "Você declara em voz alta que vai matar um alvo antes de atacar.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue na Ponta do Destino",
+                "passos": [
+                    "apoiar a base da lança no chão",
+                    "cortar a própria palma",
+                    "fechar a mão ao redor da ponta sem recuar",
+                    "deixar o sangue correr pela lâmina e pela haste",
+                    "declarar o alvo, a presa ou o destino que precisa selar",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue sela a ponta.\nSedna, escolhe a presa pela maré.\nChernobog, fecha o coração condenado.\nQue a distância obedeça.\nQue a fuga chegue tarde.\nGáe Bolg, perfura o destino."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar qual destino precisa selar",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Sedna",
+                "efeito": "quando Sedna desperta como lado adormecido, ela permite usar uma vez o efeito de Sedna do seu Rank atual, mesmo que Chernobog seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Chernobog",
+                "efeito": "quando Chernobog desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva ou contra-ataque limpo",
+                    "prioriza alvos Vulneráveis",
+                    "tenta manter o alvo a 3m",
+                    "declara uma sentença antes de atacar, se possível",
+                    "usa Gáe Bolg para aplicar Vulnerável ou Dano de Ferida",
+                    "ignora pedidos de recuo",
+                    "não troca de alvo se ainda puder alcançar o coração condenado"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue na Ponta do Destino normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "sedna_adormecida": "Sedna concede apenas um efeito de Sedna do Rank atual e volta a dormir",
+                "chernobog_adormecido": "Chernobog tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Coração Já Condenado causa 1 Dano de Ferida.",
+                "3-4": "Coração Já Condenado causa 1 Dano de Ferida e Chernobog mantém a sombra da lança apontada ao alvo até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Chernobog é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Gáe Bolg",
+                "primeiro_fragmento_simbiose": "Espinho",
+                "segundo_fragmento_unificacao": "Destino Selado",
+                "nome_verdadeiro": "Gáe Bolg, Espinho do Destino Selado"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Sela a presa, Gáe Bolg.",
+                "liberacao_verdadeira": "Perfura a sentença, Gáe Bolg, Espinho do Destino Selado."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (5 + metade de FOR ou DEX + FDV + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Chernobog dobra, porque é dano direto do golpe. Vulnerável, Amedrontado e Dano de Ferida não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: lança de haste, alcance 3m, dano evolutivo e propriedades.",
+                "Ritual: corta a mão, segura a ponta da lança e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Destino Selado: recompensa insistir no mesmo alvo e lutar na distância perfeita.",
+                "Distância Fatal: alvo ideal a exatamente 3m.",
+                "Sedna: controle de distância, reposicionamento, alcance seguro e contra-ataque.",
+                "Chernobog: Vulnerável, Dano de Ferida, medo, condenação e possessão.",
+                "Nome Verdadeiro: desbloqueia Coração Inevitável."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 11100000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "14",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

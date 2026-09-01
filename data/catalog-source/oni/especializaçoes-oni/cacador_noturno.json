@@ -1,0 +1,88 @@
+{
+    "id": "cacador_noturno",
+    "name": "Caçador Noturno",
+    "function": "Rastreador, emboscador, executor de alvos feridos, mobilidade, perseguição, pressão contra alvos isolados e controle de fuga; forte contra criaturas vivas, feridas, rastreáveis ou pressionadas, mas limitado contra alvos sem cheiro, sem sangue, sem corpo físico, teletransporte perfeito, invisibilidade absoluta, rastros apagados sobrenaturalmente ou proteção narrativa",
+    "primaryAttributes": ["dex", "sab", "fdv", "for"],
+    "levels": {
+        "1": {
+            "name": "Faro Predatório",
+            "effect": "+2 em testes de SAB para rastrear criaturas feridas, sangrando, amedrontadas, exaustas ou com cheiro conhecido por até 24h; o Mestre pode reduzir/negar se o rastro for apagado por chuva intensa, fogo, água corrente, ambiente saturado ou efeito sobrenatural"
+        },
+        "2": {
+            "name": "Passos Baixos",
+            "effect": "durante a noite, em sombras densas ou ambiente escuro: +1 em testes de DEX para furtividade; o primeiro movimento em cena de emboscada não produz som perceptível para criaturas comuns se você não correr, quebrar objetos ou atravessar terreno barulhento"
+        },
+        "3": {
+            "name": "Ataque de Caça",
+            "effect": "1x/rodada, ao atacar criatura que se moveu pelo menos 6m desde o último turno dela: +1 na rolagem de acerto; também se aplica se o alvo estiver Amedrontado, Distraído ou Desorientado"
+        },
+        "4": {
+            "name": "Olhos da Noite",
+            "effect": "reduz penalidades por escuridão natural, penumbra, fumaça leve ou pouca visibilidade; +1 em testes de SAB para perceber criaturas escondidas durante a noite; não revela automaticamente criaturas Invisíveis ou Inalvejáveis"
+        },
+        "5": {
+            "name": "Passo de Abate",
+            "effect": "1x/rodada, ao acertar ataque corpo a corpo: move 3m sem gerar Ataque de Oportunidade para aproximar-se da presa, reposicionar-se, sair de alcance imediato ou bloquear rota de fuga"
+        },
+        "6": {
+            "name": "Cheiro do Medo",
+            "effect": "+1 em rolagens de ataque contra criaturas Amedrontadas; quando uma criatura falhar em teste contra medo a até 9m, você sabe a direção geral dela até o início do seu próximo turno"
+        },
+        "7": {
+            "name": "Emboscada Cruel",
+            "effect": "o primeiro ataque que acertar em uma cena contra criatura Distraída, Desorientada, Amedrontada, que ainda não agiu ou que não sabe sua posição exata causa +1d6 de dano do mesmo tipo do ataque"
+        },
+        "8": {
+            "name": "Rastro Impossível",
+            "effect": "pode rastrear mesmo em condições difíceis como chuva leve, multidão, telhados, ruas movimentadas, sangue parcialmente limpo, ocultação comum ou mudança brusca de direção; 1x/cena, ao falhar em rastreio, pode repetir e deve ficar com o segundo resultado"
+        },
+        "9": {
+            "name": "Presa Marcada",
+            "effect": "4 PDK, Ação Especial, 18m, 3 rodadas; marca uma criatura que possa ver, ouvir, farejar ou rastrear claramente; contra ela recebe +2 em testes de SAB para rastrear e +1 em rolagens de acerto; só pode ter uma Presa Marcada por vez"
+        },
+        "10": {
+            "name": "Corte de Retirada",
+            "effect": "1x/rodada, quando sua Presa Marcada se afastar voluntariamente de você, seu próximo ataque contra ela antes do fim do seu próximo turno causa +1d6; se acertar, ela sofre -1,5m de deslocamento até o início do próximo turno dela"
+        },
+        "11": {
+            "name": "Caçador Silencioso",
+            "effect": "o primeiro deslocamento de cada combate não gera ruído perceptível para criaturas comuns; se iniciar o combate escondido ou fora da linha de visão direta dos inimigos, recebe +1 na primeira rolagem de ataque do combate; não acumula com outros bônus de abertura da Especialização salvo regra específica"
+        },
+        "12": {
+            "name": "Aprimoramento Predatório",
+            "effect": "+1 DEX ou +1 SAB permanente, respeitando o limite máximo de atributos da Classe de Onis"
+        },
+        "13": {
+            "name": "Execução de Presa",
+            "effect": "1x/turno, ao acertar sua Presa Marcada enquanto ela estiver com metade ou menos do PDV máximo: +2d6 de dano; se ela estiver Distraída, Desorientada ou Amedrontada, aumenta para +2d8; o dano adicional é do mesmo tipo do ataque"
+        },
+        "14": {
+            "name": "Não Há Fuga",
+            "effect": "enquanto sua Presa Marcada estiver a até 18m, você sabe a direção geral dela mesmo sem linha de visão; se ela ficar Invisível, escondida ou tentar se ocultar, testa 1d20 + DEX ou SAB contra CD 10 + SAB do Oni; falha revela posição aproximada, sucesso revela apenas direção geral; não permite atacar automaticamente criatura Inalvejável"
+        },
+        "15": {
+            "name": "Emboscada Superior",
+            "effect": "Emboscada Cruel aumenta para +2d6; se o alvo também estiver com metade ou menos do PDV máximo, aumenta para +3d6; quando Emboscada Cruel causar dano, o alvo sofre -1 na próxima rolagem de ataque contra você antes do início do próximo turno dele"
+        },
+        "16": {
+            "name": "Predador Inalcançável",
+            "effect": "4 PDK, Reação quando você seria alvo de Ataque de Oportunidade ou ataque corpo a corpo durante deslocamento: +2 em Esquiva contra esse ataque; se superar por 5 ou mais, pode mover 1,5m adicional sem gerar Ataque de Oportunidade"
+        },
+        "17": {
+            "name": "Noite Sem Saída",
+            "effect": "10 PDK, Ação Especial, 18m, alvo Presa Marcada, 3 rodadas, 1x/combate; alvo testa FDV contra CD 10 + SAB do Oni; falha: -3m deslocamento, não se beneficia de invisibilidade contra você e não pode usar Desengajar gratuito contra você; falha por 5+ também fica Amedrontada até o início do próximo turno dela; sucesso resiste, mas continua marcado"
+        },
+        "18": {
+            "name": "Instinto de Abate",
+            "effect": "quando sua Presa Marcada cair a 0 PDV, você recupera 5 PDK; até o fim do seu próximo turno, recebe +1 em rolagens de ataque contra criaturas que tenham visto a queda da Presa Marcada"
+        },
+        "19": {
+            "name": "Massacre Silencioso",
+            "effect": "12 PDK, Reação, 1x/combate, quando reduz uma criatura a 0 PDV com ataque corpo a corpo: move até metade do deslocamento sem gerar Ataque de Oportunidade e depois pode fazer um ataque padrão corpo a corpo contra outra criatura ao alcance; esse ataque adicional não pode ativar Massacre Silencioso novamente"
+        },
+        "20": {
+            "name": "Predador Absoluto",
+            "effect": "15 PDK, Ação Completa, 3 rodadas, 1x/combate; recebe +2 DEX, +2 SAB, +3m deslocamento, +2 em testes para rastrear e +1 Esquiva; sua Presa Marcada sofre -2 Defesa contra seus ataques, não pode se esconder de você por meios comuns e não recebe cobertura parcial contra seus ataques corpo a corpo; 1x/rodada, ao acertar a Presa Marcada, causa +1d8 de dano adicional do mesmo tipo do ataque; termina por Dano Solar decisivo, decapitação válida, Glicínia extrema, Lâmina Vermelha/Carmesim ou condição narrativa que apague completamente o rastro da presa"
+        }
+    }
+}

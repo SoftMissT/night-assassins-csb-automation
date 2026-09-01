@@ -1,0 +1,429 @@
+{
+    "_id": "9ccb84fb050ce9a6",
+    "_key": "!items!9ccb84fb050ce9a6",
+    "name": "Correntes de Jade Ceifadoras de Chi",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/correntes_de_jade_ceifadoras_de_chi_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Correntes de Jade Ceifadoras de Chi",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "1,5m empunhadas / 5m com corrente",
+            "arma_propriedades": "Manejável / Ryōtō / Alcance Variável",
+            "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+            "arma_entidade": "Nüwa",
+            "arma_demonio": "Yan Wang",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+            "descricao": "Correntes de alcance variável. Retenção, roubo de essência e prisão de almas. Nüwa responde com defesa, restauração de forma, reposicionamento e proteção contra perda de controle. Yan Wang responde com Restrição de Movimentos, registro de almas, Dano de Ferida e julgamento.",
+            "arma_ordem": 105,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Forma Curta",
+                    "formula_texto": "4 + DEX + dado evolutivo / Cortante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Forma Estendida",
+                    "formula_texto": "4 + DEX + dado evolutivo / Cortante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "5m",
+                    "critico": 19
+                },
+                {
+                    "nome": "Forma de Enlace",
+                    "formula_texto": "4 + DEX + dado evolutivo / Cortante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "3m",
+                    "critico": 19
+                }
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "4 + DEX + 1d6 / Cortante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "4 + DEX + 1d8 / Cortante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "4 + DEX + 1d10 / Cortante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "4 + DEX + 1d12 / Cortante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "4 + DEX + 2d6 / Cortante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "4 + DEX + 2d8 / Cortante"
+                }
+            },
+            "arma_propriedade_especial": {
+                "nome": "Alcance Variável",
+                "descricao": "As Correntes de Jade alternam entre empunhadura curta, corrente estendida e enlace.",
+                "acerto": "por serem Manejáveis, usam DEX nas rolagens de acerto",
+                "dano": "o dano usa DEX, por depender de giro, tração, precisão de corrente e controle de distância",
+                "ryoto": {
+                    "descricao": "ao usar as duas correntes em uma Ação de Ataque, o portador pode atacar com ambas",
+                    "primeiro_ataque": "normal",
+                    "segundo_ataque": "não soma DEX na rolagem de acerto",
+                    "dano": "ambos usam o dano atual da arma, salvo se uma técnica disser o contrário"
+                },
+                "alcances": {
+                    "forma_curta": "1,5m",
+                    "forma_estendida": "5m",
+                    "forma_de_enlace": "3m"
+                },
+                "observacao": "ataques com a corrente ainda contam como ataques corpo a corpo com a arma"
+            },
+            "arma_registro_de_chi": {
+                "gatilho": "quando um alvo sob Restrição de Movimentos aplicada pelas Correntes de Jade cai a 0 PDV dentro de 5m",
+                "maximo": 2,
+                "restricoes": ["não cura o portador", "não concede dano automático"],
+                "efeitos_por_registro": [
+                    "+1 no acerto com as Correntes de Jade",
+                    "+1 Defesa até o início do próximo turno",
+                    "puxar-se 1,5m em direção a um alvo preso por Restrição de Movimentos, sem provocar Ataque de Oportunidade desse alvo"
+                ],
+                "nuwa": "usa o Registro para remendar posição",
+                "yan_wang": "usa o Registro como prova de que a alma já foi marcada"
+            },
+            "arma_despertar": {
+                "estado_selado": "Correntes Fechadas",
+                "primeiro_despertar": "Jade que Retém o Chi",
+                "despertar_verdadeiro": "Prisão das Almas Retidas",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_habilidades_basais_despertar": {
+                "nuwa": {
+                    "nome": "Pedras que Remendam o Céu",
+                    "tipo": "Ação Especial",
+                    "alvo": "você ou 1 aliado dentro de 3m",
+                    "efeito": "o alvo recebe +2 na próxima Defesa feita antes do início do seu próximo turno. Se o alvo estiver Amedrontado ou sob Restrição de Movimentos, ele pode encerrar um desses status no fim do turno atual.",
+                    "restricoes": [
+                        "não cura PDV",
+                        "não aumenta dano",
+                        "não remove Dano de Ferida",
+                        "não quebra controle mental pleno ou Possessão"
+                    ],
+                    "observacao": "Nüwa nunca aumenta dano bruto"
+                },
+                "yan_wang": {
+                    "nome": "Registro das Almas Tomadas",
+                    "tipo": "Ação Especial",
+                    "efeito": "o próximo ataque com as Correntes de Jade antes do fim do turno recebe o Dano Bônus de Yan Wang conforme suas Marcas do Demônio. Se acertar, o alvo sofre Restrição de Movimentos até o início do próximo turno dele. Se o alvo já estiver sob Restrição de Movimentos, ele também sofre +1 Dano de Ferida.",
+                    "custo": "cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Yan Wang nunca melhora Reação defensiva"
+                }
+            },
+            "arma_dano_bonus_yan_wang": {
+                "0": {
+                    "bonus": "+1",
+                    "custo": "0 Ferida"
+                },
+                "1-2": {
+                    "bonus": "+2",
+                    "custo": "1 Ferida"
+                },
+                "3-4": {
+                    "bonus": "+3",
+                    "custo": "1 Ferida"
+                },
+                "5-6": {
+                    "bonus": "+4",
+                    "custo": "2 Ferida"
+                },
+                "7+": {
+                    "bonus": "+5",
+                    "custo": "2 Ferida"
+                },
+                "critico": "O Dano Bônus de Yan Wang é dano direto do golpe e dobra em crítico."
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Correntes de Jade",
+                    "base": "ao atacar com as Correntes de Jade, escolha uma forma",
+                    "formas": {
+                        "forma_curta": {
+                            "alcance": "1,5m",
+                            "efeito": "+1 no acerto"
+                        },
+                        "forma_estendida": {
+                            "alcance": "5m",
+                            "efeito": "sem bônus"
+                        },
+                        "forma_de_enlace": {
+                            "alcance": "3m",
+                            "efeito": "se superar a Defesa por 5 ou mais, o alvo sofre -1 Defesa até o início do próximo turno dele"
+                        }
+                    },
+                    "nuwa": "uma vez por rodada, ao acertar com Forma de Enlace, você recebe +1 Defesa até o início do seu próximo turno",
+                    "yan_wang": "se Forma de Enlace aplicar -1 Defesa, o alvo também não pode se afastar voluntariamente mais de 1,5m de você até o início do próximo turno dele"
+                },
+                "C": {
+                    "nome": "Passo do Colecionador de Jade",
+                    "tecnica_liberada": "Passo do Colecionador de Jade",
+                    "tipo": "Ação de Movimento",
+                    "base": "você se move até 3m, ignorando Terreno Difícil durante esse deslocamento. Se terminar o movimento com um inimigo dentro de 5m, seu próximo ataque com Forma Estendida contra ele antes do fim do turno recebe +1 no acerto.",
+                    "nuwa": "esse movimento não provoca Ataque de Oportunidade de inimigos com alcance menor que 3m",
+                    "yan_wang": "o bônus de +1 no acerto só pode ser usado contra o inimigo com menor PDV atual dentro de 5m. Se acertar, cause +1 dano fixo."
+                },
+                "B": {
+                    "nome": "Laço do Chi Roubado",
+                    "tecnica_liberada": "Laço do Chi Roubado",
+                    "tipo": "Ação de Ataque",
+                    "requisito": "usar as duas correntes",
+                    "alcance": "até 5m",
+                    "base": "faça dois ataques usando Ryōtō. Primeiro ataque normal. Segundo ataque não soma DEX na rolagem de acerto. Cada ataque que acertar causa o dano atual da arma: 4 + DEX + dado evolutivo do Rank / Cortante. Se os dois ataques acertarem o mesmo alvo, ele sofre Restrição de Movimentos até o início do próximo turno dele.",
+                    "nuwa": "após resolver os ataques, você pode puxar-se 1,5m em direção ao alvo ou afastar-se 1,5m sem provocar Ataque de Oportunidade dele",
+                    "yan_wang": "se os dois ataques acertarem e aplicarem Restrição de Movimentos, o alvo também fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+                },
+                "A": {
+                    "nome": "Selo de Jade",
+                    "tecnica_liberada": "Selo de Jade",
+                    "tipo": "Ação Especial",
+                    "base": "seu próximo ataque com as Correntes de Jade antes do fim do turno recebe +2 no acerto. Se acertar, o alvo não pode receber bônus de Defesa vindos de aliados, cobertura leve, aura ou intervenção externa contra esse ataque. Defesas próprias do alvo ainda funcionam normalmente. Se superar a Defesa do alvo por 5 ou mais, escolha: o alvo fica Amedrontado por 1 turno; ou sofre Restrição de Movimentos até o início do próximo turno dele.",
+                    "nuwa": "você ou um aliado dentro de 3m recebe +1 Defesa até o início do próximo turno",
+                    "yan_wang": "se o alvo já estiver sob Restrição de Movimentos, esse ataque causa +1 dano fixo"
+                },
+                "S": {
+                    "nome": "Forma que Não Se Quebra",
+                    "tecnica_liberada": "Forma que Não Se Quebra",
+                    "tipo": "Reação",
+                    "alcance_de_protecao": "aliados dentro de 3m",
+                    "base": "quando você ou um aliado dentro de 3m for alvo de um ataque, role 1d20 + DEX. Se igualar ou superar o acerto inimigo, você defende o ataque. Se falhar por 4 ou menos, reduza o dano recebido em 4 + DEX.",
+                    "nuwa": "receba +1 na rolagem de Forma que Não Se Quebra",
+                    "yan_wang": "Yan Wang não concede esta Reação. Se Yan Wang estiver dominante, esta técnica não pode ser usada."
+                },
+                "SS": {
+                    "nome": "Prisões de Jade: Exército das Almas Retidas",
+                    "tecnica_liberada": "Prisões de Jade Exército das Almas Retidas",
+                    "tipo": "Ação Completa",
+                    "limite": "1 vez por combate",
+                    "area": "até 3 inimigos dentro de 5m",
+                    "base": "as correntes se multiplicam em ecos de jade e prendem o campo de batalha como um registro do submundo. Faça uma rolagem de acerto separada contra até 3 inimigos dentro de 5m. Cada alvo atingido sofre o dano atual da arma: 4 + DEX + 2d8 / Cortante. Para cada alvo atingido, escolha: o alvo fica Vulnerável contra o próximo ataque que receber; ou o alvo sofre Restrição de Movimentos até o início do próximo turno dele. O Vulnerável não afeta o golpe que aplicou esse status.",
+                    "nuwa": "até 2 aliados dentro de 3m encerram Amedrontado ou recebem +1 Defesa até o início do próximo turno deles",
+                    "yan_wang": "você pode ativar Registro das Almas Tomadas junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. O primeiro alvo atingido que já estava sob Restrição de Movimentos sofre +1 Dano de Ferida."
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Yan Wang domina. Use efeitos de Yan Wang. Nüwa dorme fundo.",
+                    "4-8": "Yan Wang favorecido. Use efeitos de Yan Wang. Nüwa desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Nüwa ou Yan Wang.",
+                    "13-17": "Nüwa favorecida. Use efeitos de Nüwa. Yan Wang desperta apenas pelo gatilho.",
+                    "18-20": "Nüwa domina. Use efeitos de Nüwa. Yan Wang dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Nüwa": "defesa, restauração de forma, reposicionamento e proteção contra perda de controle",
+                    "Yan Wang": "Restrição de Movimentos, registro de almas, Dano de Ferida e julgamento"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "O portador reduz um inimigo a 0 PDV.",
+                    "15-38": "O portador acerta um alvo que já estava sob Restrição de Movimentos.",
+                    "39-57": "Uma criatura dentro de 5m morre ou cai a 0 PDV.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_ritual": {
+                "nome": "Sangue nos Elos de Jade",
+                "passos": [
+                    "segurar as duas correntes",
+                    "cortar a própria palma",
+                    "deixar o sangue correr pela primeira corrente",
+                    "repetir na segunda corrente sem interromper o fluxo",
+                    "declarar quem deve ser protegido, preso ou julgado",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue pesa cada elo.\nNüwa, remenda a forma quebrada.\nYan Wang, abre o registro das almas.\nQue o jade prenda o chi.\nQue a corrente devolva ou condene.\nCorrentes de Jade, despertem."
+            },
+            "arma_integracao": {
+                "dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "unificacao": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome da arma e declarar quem deve ser protegido, preso ou julgado",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar"
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Nüwa",
+                "efeito": "quando Nüwa desperta como lado adormecido, ela permite usar uma vez o efeito de Nüwa do Rank atual, mesmo que Yan Wang seja o dominante; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Yan Wang",
+                "efeito": "quando Yan Wang desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "comportamento": [
+                    "não usa Reação defensiva",
+                    "prioriza alvos sob Restrição de Movimentos",
+                    "prioriza criaturas com menor PDV atual",
+                    "tenta registrar chi de alvos caindo a 0 PDV",
+                    "usa Forma Estendida para impedir fuga",
+                    "aplica Restrição de Movimentos sempre que possível",
+                    "não abandona uma alma já registrada",
+                    "luta como juiz, não como guerreiro"
+                ],
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue nos Elos de Jade normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "nuwa_adormecida": "Nüwa concede apenas um efeito de Nüwa do Rank atual e volta a dormir",
+                "yan_wang_adormecido": "Yan Wang tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": {
+                "0": "Sem custo adicional.",
+                "1-2": "Registro das Almas Tomadas causa 1 Dano de Ferida.",
+                "3-4": "Registro das Almas Tomadas causa 1 Dano de Ferida e os elos passam a sussurrar nomes até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Yan Wang é feito com Desvantagem."
+            },
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Correntes de Jade",
+                "primeiro_fragmento_simbiose": "Céu Remendado",
+                "segundo_fragmento_unificacao": "Registro das Almas",
+                "nome_verdadeiro": "Correntes de Jade, Registro do Céu Remendado e das Almas Retidas"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Prendam o chi, Correntes de Jade.",
+                "liberacao_verdadeira": "Registrem as almas, Correntes de Jade, Registro do Céu Remendado e das Almas Retidas."
+            },
+            "arma_critico_regra": "O dano atual da arma entra no crítico normalmente. Exemplo em Rank B: (4 + DEX + 1d10 + bônus diretos aplicáveis) × 2. O Dano Bônus de Yan Wang dobra, porque é dano direto do golpe. Restrição de Movimentos, Vulnerável, Amedrontado, Dano de Ferida, bônus de Defesa e Registro de Chi não dobram.",
+            "arma_resumo_rapido": [
+                "Estado Selado: correntes duplas, dano evolutivo, Ryōtō e alcance variável.",
+                "Ritual: corta a mão, banha os elos das duas correntes e paga 90% dos PDV atuais.",
+                "Pacto: é somente a reza que acorda a arma.",
+                "Primeiro Despertar: acorda o lado dominante.",
+                "Nüwa: defesa, restauração de forma, reposicionamento e controle contra perda.",
+                "Yan Wang: Restrição de Movimentos, registro de chi, Dano de Ferida e possessão.",
+                "Registro de Chi: eco limitado de inimigos presos que caem a 0 PDV.",
+                "Nome Verdadeiro: desbloqueia Prisões de Jade Exército das Almas Retidas."
+            ]
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 10500000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

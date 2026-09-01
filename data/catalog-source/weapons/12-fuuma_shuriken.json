@@ -1,0 +1,95 @@
+{
+    "_id": "843a8c40a9fd014a",
+    "_key": "!items!843a8c40a9fd014a",
+    "name": "Fuuma Shuriken",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/fuuma_shuriken_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Fuuma Shuriken",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 3,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 19,
+            "arma_alcance": " 1,5m corpo a corpo / 9m arremesso",
+            "arma_propriedades": " Manejável",
+            "arma_requisito": "3+ de DEX",
+            "descricao": "Uma shuriken com quatro pontas retráteis, cada lâmina com 30 centímetros. Quando retraída, torna-se uma arma de empunhadura única, semelhante a uma garra de quatro lâminas.\n\n- Requisito: 3+ de DEX\n- Propriedades: Manejável\n- Alcance: 1,5m corpo a corpo / 9m arremesso\n- Crítico: 19 Natural\n- Dano corpo a corpo: 3 + Metade da DEX / Cortante\n- Dano de arremesso: 4 + DEX / Cortante ou Perfurante, à escolha\n\nHabilidade\nAo custo de -2 na rolagem de acerto, você pode arremessá-la em modo bumerangue, fazendo com que a arma volte para você em um movimento de arco após o ataque. Caso seja arremessada sem essa propriedade, é necessário ir até o local onde a Fuuma Shuriken acertou o alvo e pegá-la de volta com uma Ação Única.",
+            "arma_ordem": 12,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "corpo a corpo",
+                    "formula_texto": "3 + Metade da DEX / Cortante",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "1,5m corpo a corpo / 9m arremesso",
+                    "critico": 19
+                },
+                {
+                    "nome": "arremesso",
+                    "formula_texto": "4 + DEX / Cortante ou Perfurante, à escolha",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1.0,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante", "perfurante"],
+                    "alcance": "1,5m corpo a corpo / 9m arremesso",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Híbrida",
+            "arma_mecanicas": [
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Ao custo de -2 na rolagem de acerto, você pode arremessá-la em modo bumerangue, fazendo com que a arma volte para você em um movimento de arco após o ataque. Caso seja arremessada sem essa propriedade, é necessário ir até o local onde a Fuuma Shuriken acertou o alvo e pegá-la de volta com uma Ação Única."
+                }
+            ],
+            "arma_propriedades_chaves": ["manejavel"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1200000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

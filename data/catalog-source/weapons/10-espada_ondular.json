@@ -1,0 +1,84 @@
+{
+    "_id": "7c6f37c03bd8769e",
+    "_key": "!items!7c6f37c03bd8769e",
+    "name": "Espada Ondular",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/espada_ondular_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Espada Ondular",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["cortante", "perfurante"],
+            "arma_critico": 20,
+            "arma_alcance": " 1,5m",
+            "arma_propriedades": " Manejável / Morote",
+            "arma_requisito": "",
+            "descricao": "Uma espada com design de lâmina recurvado que imita uma ondulação de padrão diferente a depender do ferreiro que a forjou. Geralmente lembra uma serpente.\n\n- Propriedades: Manejável / Morote\n- Alcance: 1,5m\n- Crítico: 20 Natural\n- Dano: 4 + DEX / Cortante & Perfurante\n\nHabilidade\nVocê pode dobrar o alcance padrão de sua arma para alcançar pontos vitais ou inesperados do inimigo. Fazendo isso, você recebe um bônus de +1 na rolagem de acerto (utilizável apenas em ataques padrão). Em contrapartida, você recebe -1 na sua próxima rolagem de defesa.",
+            "arma_ordem": 10,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "4 + DEX / Cortante & Perfurante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1.0,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante", "perfurante"],
+                    "alcance": "1,5m",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Você pode dobrar o alcance padrão de sua arma para alcançar pontos vitais ou inesperados do inimigo. Fazendo isso, você recebe um bônus de +1 na rolagem de acerto (utilizável apenas em ataques padrão). Em contrapartida, você recebe -1 na sua próxima rolagem de defesa."
+                }
+            ],
+            "arma_propriedades_chaves": ["manejavel", "morote"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1000000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

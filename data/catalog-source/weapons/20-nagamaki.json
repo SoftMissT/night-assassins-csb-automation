@@ -1,0 +1,88 @@
+{
+    "_id": "608d30af3ec4af73",
+    "_key": "!items!608d30af3ec4af73",
+    "name": "Nagamaki",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/nagamaki_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Nagamaki",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["cortante"],
+            "arma_critico": 19,
+            "arma_alcance": " 2m",
+            "arma_propriedades": " Acuidade / Morote",
+            "arma_requisito": "",
+            "descricao": "Um tipo de katana com cabo extra alongado.\n\n- Propriedades: Acuidade / Morote\n- Alcance: 2m\n- Crítico: 19 Natural\n- Dano: 4 + Metade da DEX (arredondado para baixo se necessário). Apesar de ter Acuidade e poder fazer o acerto com DEX ou FOR, o dano dela só escala com DEX. / Cortante\n\nHabilidade\nGanha a propriedade Nitoryu e perde a propriedade Pesada se você tiver 3 ou mais de FOR.",
+            "arma_ordem": 20,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "4 + Metade da DEX (arredondado para baixo se necessário). Apesar de ter Acuidade e poder fazer o acerto com DEX ou FOR, o dano dela só escala com DEX. / Cortante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1.0,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante"],
+                    "alcance": "2m",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Ganha a propriedade Nitoryu e perde a propriedade Pesada se você tiver 3 ou mais de FOR."
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade", "morote"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 2000000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

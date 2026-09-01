@@ -1,0 +1,90 @@
+{
+    "_id": "b9fdde24a9db6558",
+    "_key": "!items!b9fdde24a9db6558",
+    "name": "Escudo de Batalha",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/escudo_de_batalha_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Escudo de Batalha",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["FOR"],
+            "arma_tipos_dano": ["cortante", "concussivo"],
+            "arma_critico": 20,
+            "arma_alcance": " 1,5m corpo a corpo / 6,5m arremesso",
+            "arma_propriedades": " Morote",
+            "arma_requisito": "",
+            "descricao": "Um escudo alto e largo, com reforços em metal nichirin e lâminas em suas extremidades. Possui dois modelos: o descrito inicialmente, e um mais achatado, como um disco, que permite que seja lançado.\n\n- Propriedades: Morote\n- Alcance: 1,5m corpo a corpo / 6,5m arremesso\n- Crítico: 20\n- Crítico em Testes de Bloqueio: 19\n- Dano: 4 + Metade da FOR / Concussivo ou Cortante\n\nHabilidade 1 Defesa Concentrada\nEm uma quantidade de vezes igual ao Nível de Respiração do usuário por combate, você pode realizar a Defesa Concentrada usando sua Ação Especial + Ação Única: você adiciona seu dano atual (4 + ½ FOR) ao seu próximo teste de Bloqueio. Adicionalmente, caso não passe no teste de Defesa, você reduz o dano tomado do ataque do inimigo em uma quantidade igual ao dano padrão da arma sem modificador (4).\n\nHabilidade 2 (apenas versão de escudo alto)\nCaso obtenha um sucesso crítico nos testes de Bloqueio, você pode escolher um de seus aliados para receber +2 na sua próxima rolagem de acerto.\n\nHabilidade 3 (apenas versão de escudo arremessável)\nCom uma Ação Completa (Ataque + Movimento), você pode arremessar o escudo na direção de um inimigo dentro do seu alcance à distância (6,5m). O acerto é 1d20 + FOR, e o dano é o indicado pela arma. Para pegar o escudo após o arremesso, deve se mover até ele e utilizar uma Ação Única.",
+            "arma_ordem": 8,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "4 + Metade da FOR / Concussivo ou Cortante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["cortante", "concussivo"],
+                    "alcance": "1,5m corpo a corpo / 6,5m arremesso",
+                    "critico": 20
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Híbrida",
+            "arma_mecanicas": [
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "habilidade_1_defesa_concentrada",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade 1 Defesa Concentrada",
+                    "text": "Em uma quantidade de vezes igual ao Nível de Respiração do usuário por combate, você pode realizar a Defesa Concentrada usando sua Ação Especial + Ação Única: você adiciona seu dano atual (4 + ½ FOR) ao seu próximo teste de Bloqueio. Adicionalmente, caso não passe no teste de Defesa, você reduz o dano tomado do ataque do inimigo em uma quantidade igual ao dano padrão da arma sem modificador (4)."
+                },
+                {
+                    "id": "habilidade_2_apenas_versao_de_escudo_alto",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade 2 (apenas versão de escudo alto)",
+                    "text": "Caso obtenha um sucesso crítico nos testes de Bloqueio, você pode escolher um de seus aliados para receber +2 na sua próxima rolagem de acerto."
+                },
+                {
+                    "id": "habilidade_3_apenas_versao_de_escudo_arremessavel",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade 3 (apenas versão de escudo arremessável)",
+                    "text": "Com uma Ação Completa (Ataque + Movimento), você pode arremessar o escudo na direção de um inimigo dentro do seu alcance à distância (6,5m). O acerto é 1d20 + FOR, e o dano é o indicado pela arma. Para pegar o escudo após o arremesso, deve se mover até ele e utilizar uma Ação Única."
+                }
+            ],
+            "arma_propriedades_chaves": ["morote"],
+            "arma_critico_bloqueio": 19
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 800000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

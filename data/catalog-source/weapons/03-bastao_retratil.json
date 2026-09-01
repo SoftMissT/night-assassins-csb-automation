@@ -1,0 +1,83 @@
+{
+    "_id": "56b51ae096e652d5",
+    "_key": "!items!56b51ae096e652d5",
+    "name": "Bastão Retrátil",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/bastao_retratil_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Bastão Retrátil",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 3,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["concussivo"],
+            "arma_critico": 19,
+            "arma_alcance": " 1,5m padrão ou 3m se estendido",
+            "arma_propriedades": " Acuidade",
+            "arma_requisito": "",
+            "descricao": "Um bastão com um pequeno mecanismo no meio de sua haste, que permite a extensão e retração de uma das pontas, afetando seu comprimento.\n\n- Propriedades: Acuidade\n- Alcance: 1,5m padrão ou 3m se estendido\n- Crítico: 19 Natural\n- Dano: 3 + Metade da DEX ou FOR / Concussivo\n\nHabilidade\nUsando sua Ação Especial, você pode ativar a extensão da sua arma, dobrando seu alcance e lhe concedendo +2 em testes de pulo e acrobacias em geral até que o bastão seja retraído. Caso use durante o combate, pode ativar a extensão para acertar um inimigo que ainda não tenha visto você realizando essa ação de extensão. Sendo assim, ao declarar um teste de ataque padrão, você pode ativar a extensão na mesma ação e, caso acerte, o ataque é considerado crítico.",
+            "arma_ordem": 3,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "3 + Metade da DEX ou FOR / Concussivo",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1.0,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["concussivo"],
+                    "alcance": "1,5m padrão ou 3m se estendido",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Usando sua Ação Especial, você pode ativar a extensão da sua arma, dobrando seu alcance e lhe concedendo +2 em testes de pulo e acrobacias em geral até que o bastão seja retraído. Caso use durante o combate, pode ativar a extensão para acertar um inimigo que ainda não tenha visto você realizando essa ação de extensão. Sendo assim, ao declarar um teste de ataque padrão, você pode ativar a extensão na mesma ação e, caso acerte, o ataque é considerado crítico."
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 300000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

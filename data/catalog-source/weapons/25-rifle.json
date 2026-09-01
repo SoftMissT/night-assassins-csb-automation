@@ -1,0 +1,123 @@
+{
+    "_id": "2ba7a91b52fd72d5",
+    "_key": "!items!2ba7a91b52fd72d5",
+    "name": "Rifle",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rifle_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Rifle",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 6,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 18,
+            "arma_alcance": " 30m",
+            "arma_propriedades": "Municiada 1 / Manejável / Precisão",
+            "arma_requisito": "",
+            "descricao": "Uma arma de fogo poderosa e extremamente precisa na mão de um talentoso atirador.\n\n- Propriedades: Municiada 1 / Manejável / Precisão\n- Alcance: 30m\n- Estojo de Balas: Capacidade de 8 balas\n- Crítico: 18 Natural\n- Dano até 10m: 6 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n- Dano até 20m: 7 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n- Dano até 30m: 8 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n\nHabilidade\nGanha +2 na rolagem de ativação da propriedade de Precisão. Em contrapartida, deve gastar uma Ação Única ou Especial para recarregar após cada tiro, usando ou não a propriedade de Precisão.",
+            "arma_ordem": 25,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "até 10m",
+                    "formula_texto": "6 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 6,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "30m",
+                    "critico": 18
+                },
+                {
+                    "nome": "até 20m",
+                    "formula_texto": "7 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 7,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "30m",
+                    "critico": 18
+                },
+                {
+                    "nome": "até 30m",
+                    "formula_texto": "8 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 8,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "30m",
+                    "critico": 18
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "À distância",
+            "arma_mecanicas": [
+                {
+                    "id": "municiada",
+                    "kind": "ammunition",
+                    "capacity": 8
+                },
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "precisao",
+                    "kind": "aim",
+                    "action": "especial"
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Ganha +2 na rolagem de ativação da propriedade de Precisão. Em contrapartida, deve gastar uma Ação Única ou Especial para recarregar após cada tiro, usando ou não a propriedade de Precisão."
+                }
+            ],
+            "arma_propriedades_chaves": ["municiada 1", "manejavel", "precisao"],
+            "arma_municao_capacidade": 8,
+            "arma_municao_atual": 8
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 2500000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

@@ -1,0 +1,342 @@
+{
+  "_id": "05490e803944eded",
+  "_key": "!items!05490e803944eded",
+  "name": "Rebellion",
+  "type": "equippableItem",
+  "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rebellion_icon.webp",
+  "system": {
+    "template": "NAWeaponTpl00001",
+    "props": {
+      "inventario_categoria": "arma",
+      "arma_categoria": "especial",
+      "arma_nome": "Rebellion",
+      "arma_tipo": "Corpo a Corpo",
+      "arma_dano_dados": "",
+      "arma_dano_fixo": 7,
+      "arma_dano_atributo": [
+        "FOR"
+      ],
+      "arma_tipos_dano": [
+        "cortante",
+        "concussivo"
+      ],
+      "arma_critico": 19,
+      "arma_critico_texto": "19 Natural",
+      "arma_alcance": "2m",
+      "arma_propriedades": "Concussão / Morote / Pacto das Almas",
+      "arma_requisito": "Despertar Verdadeiro: Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro. Uso perfeito: Rank SS e Estágio de Identidade.",
+      "arma_entidade": "Isis",
+      "arma_demonio": "Fenrir",
+      "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+      "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+      "arma_reacao_entidade": "Defesa",
+      "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
+      "descricao": "Espadão dos Doze Caçadores mortos. Arma especial de sobrevivência, sangue e ascensão sob pressão. Isis responde com defesa, proteção e avanço seguro; Fenrir responde com dano, medo, ruptura e possessão.",
+      "arma_ordem": 102,
+      "arma_perfis_ataque": [
+        {
+          "nome": "Rebellion",
+          "formula_texto": "7 + FOR + dado evolutivo / Cortante ou Concussão",
+          "dano_fixo": 7,
+          "dano_dados": "",
+          "atributos": [
+            {
+              "key": "FOR",
+              "multiplicador": 1,
+              "escolha": false
+            }
+          ],
+          "tipos_dano": [
+            "cortante",
+            "concussivo"
+          ],
+          "alcance": "2m",
+          "critico": 19
+        }
+      ],
+      "arma_dado_evolutivo_por_rank": {
+        "D": "1d6",
+        "C": "1d8",
+        "B": "1d10",
+        "A": "1d12",
+        "S": "2d6",
+        "SS": "2d8"
+      },
+      "arma_dano_por_rank": {
+        "D": {
+          "nivel": 2,
+          "dado_evolutivo": "1d6",
+          "formula": "7 + FOR + 1d6 / Cortante ou Concussão"
+        },
+        "C": {
+          "nivel": 4,
+          "dado_evolutivo": "1d8",
+          "formula": "7 + FOR + 1d8 / Cortante ou Concussão"
+        },
+        "B": {
+          "nivel": 6,
+          "dado_evolutivo": "1d10",
+          "formula": "7 + FOR + 1d10 / Cortante ou Concussão"
+        },
+        "A": {
+          "nivel": 8,
+          "dado_evolutivo": "1d12",
+          "formula": "7 + FOR + 1d12 / Cortante ou Concussão"
+        },
+        "S": {
+          "nivel": 11,
+          "dado_evolutivo": "2d6",
+          "formula": "7 + FOR + 2d6 / Cortante ou Concussão"
+        },
+        "SS": {
+          "nivel": 12,
+          "dado_evolutivo": "2d8",
+          "formula": "7 + FOR + 2d8 / Cortante ou Concussão"
+        }
+      },
+      "arma_propriedade_especial": {
+        "nome": "Pacto das Almas",
+        "descricao": "Rebellion carrega doze ecos de caçadores mortos. Quando desperta, esses ecos se acumulam como Stacks de Despertar.",
+        "stacks_despertar": {
+          "maximo": 3,
+          "ganho": [
+            "ao concluir o Ritual de Sangue, se você estiver com metade ou menos dos PDV máximos, receba 1 stack",
+            "no início do seu turno, se estiver com metade ou menos dos PDV máximos, receba +1 stack"
+          ],
+          "duracao": "até o fim do Despertar ou até serem gastos por uma habilidade",
+          "efeito_base": "+1 em rolagens de acerto com Rebellion por stack",
+          "fenrir_ativo": "+1 dano fixo com Rebellion por stack",
+          "isis_restricao": "Isis nunca aumenta dano bruto"
+        }
+      },
+      "arma_habilidades_basais_despertar": {
+        "isis": {
+          "nome": "Véu dos Doze Mártires",
+          "tipo": "Ação Especial",
+          "efeito": "+2 na próxima rolagem de Bloqueio ou Esquiva antes do início do próximo turno; se estiver com metade ou menos dos PDV máximos, aumenta para +3; não causa dano"
+        },
+        "fenrir": {
+          "nome": "Gleipnir Rompida",
+          "tipo": "Ação Especial",
+          "efeito": "o próximo ataque com Rebellion antes do fim do turno recebe o Dano Bônus de Fenrir conforme Marcas do Demônio; se acertar, o alvo fica Amedrontado por 1 turno; cobra Dano de Ferida conforme Marcas; Fenrir nunca melhora Reação defensiva"
+        }
+      },
+      "arma_dano_bonus_fenrir": {
+        "0": {
+          "bonus": "+1",
+          "custo": "0 Ferida"
+        },
+        "1-2": {
+          "bonus": "+2",
+          "custo": "1 Ferida"
+        },
+        "3-4": {
+          "bonus": "+3",
+          "custo": "1 Ferida"
+        },
+        "5-6": {
+          "bonus": "+4",
+          "custo": "2 Ferida"
+        },
+        "7+": {
+          "bonus": "+5",
+          "custo": "2 Ferida"
+        },
+        "critico": "O Dano Bônus de Fenrir é dano direto do golpe e dobra em crítico."
+      },
+      "arma_efeitos_por_rank": {
+        "D": {
+          "nome": "Sangue dos Doze",
+          "isis": "Enquanto tiver pelo menos 1 stack de Despertar, some o Valor de Vínculo na próxima rolagem de Bloqueio ou Esquiva feita antes do início do seu próximo turno.",
+          "fenrir": "Cada stack de Despertar concede +1 dano fixo adicional com Rebellion, além do bônus de acerto dos stacks."
+        },
+        "C": {
+          "nome": "Stinger",
+          "tecnica_liberada": "Stinger",
+          "tipo": "Ação Especial",
+          "base": "Avança até 6m em linha reta, ignorando Terreno Difícil. O próximo ataque com Rebellion antes do fim do turno recebe Vantagem. Se superar a Defesa do alvo por 5 ou mais, empurra 1,5m e aplica Restrição de Movimentos até o início do próximo turno dele.",
+          "isis": "Após o avanço, pode terminar adjacente a um aliado; esse aliado recebe +1 Defesa até o início do próximo turno dele.",
+          "fenrir": "Se o ataque com Vantagem acertar, o alvo também fica Amedrontado por 1 turno."
+        },
+        "B": {
+          "nome": "Drive: Onda dos Mortos",
+          "tecnica_liberada": "Drive",
+          "tipo": "Ação de Ataque",
+          "area": "linha de 9m",
+          "base": "Libera uma onda de pressão com Rebellion. Faça uma rolagem de acerto contra cada alvo na linha. Cada alvo atingido sofre o dano atual da arma: 7 + FOR + dado evolutivo do Rank / Cortante ou Concussão. Com pelo menos 1 stack de Despertar, receba +1 no acerto do Drive.",
+          "isis": "Um aliado adjacente a você recebe +1 Defesa até o início do próximo turno dele.",
+          "fenrir": "Alvos atingidos pelo Drive ficam Amedrontados por 1 turno."
+        },
+        "A": {
+          "nome": "Defesa Instintiva dos Doze",
+          "tecnica_liberada": "Defesa Instintiva dos Doze",
+          "tipo": "Reação",
+          "base": "Quando for alvo de um ataque, role 1d20 + FOR. Se igualar ou superar o acerto inimigo, reduza o dano recebido em 7 + FOR + stacks de Despertar.",
+          "isis": "Pode usar esta Reação para proteger um aliado a até 2m. Se igualar ou superar o acerto inimigo, a redução se aplica ao dano que ele receberia.",
+          "fenrir": "Fenrir não concede esta Reação. Se Fenrir estiver dominante, esta técnica não pode ser usada."
+        },
+        "S": {
+          "nome": "Vanguarda dos Mártires",
+          "requisito": "3 stacks de Despertar",
+          "base": "Enquanto tiver 3 stacks, quando acertar um alvo com Rebellion, você e aliados adjacentes recebem +1 no acerto contra esse alvo até o início do seu próximo turno. Além disso, o Drive pode ser usado como cone de 4,5m em vez de linha de 9m.",
+          "isis": "Aliados adjacentes também recebem +1 Defesa enquanto a Vanguarda estiver ativa.",
+          "fenrir": "O primeiro alvo atingido pelo Drive fica Vulnerável contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status."
+        },
+        "SS": {
+          "nome": "Devil Trigger: Ascensão dos Doze",
+          "tipo": "Ação Completa",
+          "limite": "1 vez por combate",
+          "requisito": "Rebellion desperta e pelo menos 1 stack de Despertar",
+          "base": "Gaste de 1 a 3 stacks de Despertar e faça um ataque com Rebellion. Se acertar, o alvo sofre dano atual da arma + 2 por stack gasto. Para cada stack gasto, escolha um inimigo adjacente ao alvo principal; cada inimigo escolhido sofre dano igual a FOR como Concussão. Se gastar 3 stacks, o alvo principal fica Vulnerável contra o próximo ataque que receber.",
+          "isis": "Após resolver o golpe, remova 1 status negativo de si mesmo ou de um aliado adjacente.",
+          "fenrir": "Pode ativar Gleipnir Rompida junto da Ascensão dos Doze sem gastar Ação Especial, mas ainda paga o Dano de Ferida."
+        }
+      },
+      "arma_testes": {
+        "teste_1_lado_dominante": {
+          "1-3": "Fenrir domina. Use efeitos de Fenrir. Isis dorme fundo.",
+          "4-8": "Fenrir favorecido. Use efeitos de Fenrir. Isis desperta apenas pelo gatilho.",
+          "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Isis ou Fenrir.",
+          "13-17": "Isis favorecida. Use efeitos de Isis. Fenrir desperta apenas pelo gatilho.",
+          "18-20": "Isis domina. Use efeitos de Isis. Fenrir dorme fundo."
+        },
+        "teste_2_intensidade_vinculo": {
+          "Vínculo Frágil": "+1",
+          "Vínculo Fraco": "+2",
+          "Vínculo Comum": "+3",
+          "Vínculo Forte": "+4",
+          "Vínculo Profundo": "+5",
+          "Vínculo Absoluto": "+6"
+        },
+        "uso_do_vinculo": {
+          "Isis": "defesa, proteção, resistência e avanço seguro",
+          "Fenrir": "dano, medo, ruptura e pressão"
+        },
+        "teste_3_gatilho_lado_adormecido": {
+          "3-14": "O usuário fica com metade ou menos dos PDV máximos.",
+          "15-38": "O usuário sofre um crítico ou vê um aliado adjacente sofrer um crítico.",
+          "39-57": "O usuário cairia a 0 PDV, mas ainda não morreu.",
+          "58-60": "Gatilho oculto do Mestre."
+        },
+        "teste_de_despertar": {
+          "Vínculo Frágil": 11,
+          "Vínculo Fraco": 13,
+          "Vínculo Comum": 15,
+          "Vínculo Forte": 17,
+          "Vínculo Profundo": 19,
+          "Vínculo Absoluto": 21
+        }
+      },
+      "arma_ritual": {
+        "nome": "Sangue dos Doze",
+        "passos": [
+          "segurar Rebellion com as duas mãos",
+          "cortar a própria palma",
+          "arrastar o sangue pela lâmina",
+          "declarar por que ainda não pode cair",
+          "recitar o Pacto de Acordar"
+        ],
+        "custo": "reduz os PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+        "regras_sangue_de_pacto": [
+          "não é dano comum",
+          "não pode ser reduzido por RD",
+          "não pode ser transferido",
+          "não pode ser pago com PDR",
+          "não pode ser anulado",
+          "não pode reduzir o portador abaixo de 1 PDV",
+          "não ativa efeitos que dependem de sofrer dano de inimigo",
+          "não pode ser curado enquanto a arma estiver desperta"
+        ],
+        "pacto_completo": "Meu sangue chama os que não voltaram.\nDoze caçadores, uma lâmina.\nIsis, cobre os vivos.\nFenrir, rompe a corrente.\nRebellion, ergue-me onde eu deveria cair."
+      },
+      "arma_integracao": {
+        "dualidade": {
+          "duracao": "2 rodadas",
+          "exigencia": "Pacto completo recitado em voz alta",
+          "limite": "1 vez por combate"
+        },
+        "simbiose": {
+          "duracao": "3 rodadas",
+          "exigencia": "pode recitar apenas duas linhas do Pacto",
+          "limite": "1 vez por combate",
+          "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+        },
+        "unificacao": {
+          "duracao": "3 rodadas",
+          "exigencia": "pode recitar apenas o nome da arma e declarar por que ainda não pode cair",
+          "limite": "1 vez por combate",
+          "efeito": "1 vez por combate, quando o gatilho do lado adormecido acontecer, pode permitir o despertar sem teste"
+        },
+        "identidade": {
+          "duracao": "4 rodadas",
+          "exigencia": "não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+          "limite": "1 vez por combate",
+          "efeito": "pode usar o Despertar Verdadeiro; 1 vez durante o despertar, pode usar efeito do lado adormecido do mesmo Rank sem Teste de Despertar"
+        }
+      },
+      "arma_nome_verdadeiro": {
+        "nome_selado": "Rebellion",
+        "primeiro_fragmento_simbiose": "Doze",
+        "segundo_fragmento_unificacao": "Mártires",
+        "nome_verdadeiro": "Rebellion dos Doze Mártires"
+      },
+      "arma_comandos_liberacao": {
+        "liberacao_inicial": "Ergue-te, Rebellion.",
+        "liberacao_verdadeira": "Levanta os mortos, Rebellion dos Doze Mártires."
+      },
+      "arma_marcas_demonio": {
+        "0": "Sem custo adicional.",
+        "1-2": "Gleipnir Rompida causa 1 Dano de Ferida.",
+        "3-4": "Gleipnir Rompida causa 1 Dano de Ferida e Fenrir sussurra até o fim da cena.",
+        "5-6": "O custo sobe para 2 Dano de Ferida.",
+        "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Fenrir é feito com Desvantagem."
+      },
+      "arma_critico_regra": "O dano atual da arma entra no crítico normalmente: (7 + FOR + dado evolutivo + bônus diretos aplicáveis) × 2. Status não dobram. O Dano Bônus de Fenrir dobra, porque é dano direto do golpe.",
+      "arma_resumo_rapido": [
+        "Estado Selado: espadão pesado, dano evolutivo e propriedades.",
+        "Ritual: corta a mão, banha os doze sulcos da lâmina e paga 90% dos PDV atuais.",
+        "Pacto: é somente a reza que acorda a arma.",
+        "Primeiro Despertar: acorda o lado dominante.",
+        "Stacks de Despertar: surgem quando o portador está com metade ou menos dos PDV.",
+        "Isis: defesa, proteção, avanço seguro, aliados vivos.",
+        "Fenrir: dano, medo, ruptura, possessão.",
+        "Nome Verdadeiro: desbloqueia a Ascensão dos Doze."
+      ],
+      "arma_mecanicas": [
+        "arma especial evolutiva por Rank",
+        "dado evolutivo incorporado ao dano da arma",
+        "lado dominante definido por Teste 1",
+        "Valor de Vínculo definido por Teste 2",
+        "lado adormecido por gatilho do Teste 3 ou Despertar Forçado",
+        "Sangue de Pacto reduz PDV atuais para 10%",
+        "Stacks de Despertar até 3",
+        "Fenrir usa Marcas do Demônio e pode causar Dano de Ferida",
+        "Isis não aumenta dano bruto"
+      ],
+      "arma_propriedades_chaves": [
+        "Concussão",
+        "Morote",
+        "Pacto das Almas"
+      ]
+    }
+  },
+  "effects": [],
+  "folder": "1d69316b98fed3ee",
+  "sort": 10200000,
+  "ownership": {
+    "default": 2
+  },
+  "flags": {
+    "custom-system-builder": {
+      "unique": true
+    }
+  },
+  "_stats": {
+    "systemId": "custom-system-builder",
+    "systemVersion": "6.0.2",
+    "coreVersion": "14",
+    "createdTime": 0,
+    "modifiedTime": 0,
+    "lastModifiedBy": null
+  }
+}

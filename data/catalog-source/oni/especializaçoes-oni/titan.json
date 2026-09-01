@@ -1,0 +1,88 @@
+{
+    "id": "titan",
+    "name": "Titan",
+    "function": "Tanque físico, Brutamontes, Quebra-defesa, Controlador corpo a corpo, Dano de Concussão, Empurrão, queda e pressão física",
+    "primaryAttributes": ["for", "vit", "fdv", "dex"],
+    "levels": {
+        "1": {
+            "name": "Corpo Pesado",
+            "effect": "Passiva: Você recebe +1 em testes de FOR ou VIT para resistir a: empurrões quedas agarrões deslocamento forçado ser derrubado Além disso, quando for empurrado contra um obstáculo, reduz o dano de colisão em 1."
+        },
+        "2": {
+            "name": "Ossos Densos",
+            "effect": "Passiva: Você reduz em 2 o dano final recebido por: queda colisão impacto ambiental dano de Concussão causado por terreno Essa redução não se aplica contra ataques diretos de criaturas, técnicas ou Kekkijutsu."
+        },
+        "3": {
+            "name": "Esmagar",
+            "effect": "Passiva: Seus ataques desarmados passam a causar acerto crítico com: 19–20 natural no dado Essa habilidade preserva o núcleo original da Especialização Titan."
+        },
+        "4": {
+            "name": "Punhos de Massa",
+            "effect": "Passiva: Uma vez por turno, quando acertar um ataque desarmado corpo a corpo, você pode empurrar o alvo 1,5m. O alvo pode resistir com: 1d20 + FOR contra CD 10 + FOR do Oni Falha: é empurrado. Sucesso: não é empurrado. Se o alvo colidir com um obstáculo sólido, aplica normalmente a regra de Empurrado."
+        },
+        "5": {
+            "name": "Carregar",
+            "effect": "Ativa: Custo: 2 PDK Ação: Ação Especial Duração: até o fim do turno atual Você prepara uma investida brutal. Na sua próxima Ação de Movimento deste turno, se mover em linha reta, seu deslocamento passa a ser: 7 + DEX + FOR metros Se terminar esse movimento adjacente a um inimigo, seu próximo ataque desarmado contra ele neste turno recebe: +1 na rolagem de acerto"
+        },
+        "6": {
+            "name": "Pele Grossa",
+            "effect": "Passiva: Você recebe RD 1 contra dano: Cortante Perfurante Concussão Essa RD não se aplica contra: Dano Solar Lâmina Nichirin Lâmina Vermelha ou Carmesim Glicínia Dano de Ferida efeitos que ignorem regeneração demoníaca"
+        },
+        "7": {
+            "name": "Demolir",
+            "effect": "Passiva: Quando obtiver um crítico em Bloqueio ou Esquiva contra um ataque corpo a corpo, você pode fazer um contra-ataque desarmado contra o atacante como Reação. Esse contra-ataque é um ataque padrão. Ele não pode ativar outro contra-ataque."
+        },
+        "8": {
+            "name": "Brutalidade Crescente",
+            "effect": "Passiva: Uma vez por turno, seus ataques desarmados causam +1d4 de dano contra alvos que estejam: Caídos Desequilibrados com Restrição de Movimentos agarrados por você"
+        },
+        "9": {
+            "name": "Impacto",
+            "effect": "Ativa: Custo: variável Ação: livre, ao acertar um ataque Limite: até FDV PDK por ataque Quando acertar um ataque armado ou desarmado, pode gastar PDK para aumentar o dano final. Cada 1 PDK gasto adiciona: +1 de dano Esse efeito preserva o núcleo original da habilidade Impacto."
+        },
+        "10": {
+            "name": "Agarrão Monstruoso",
+            "effect": "Passiva: Você recebe +2 em testes de FOR para: agarrar manter uma criatura agarrada impedir movimento resistir a fuga de agarrão Além disso, criaturas agarradas por você sofrem -1 em testes para escapar."
+        },
+        "11": {
+            "name": "Arremesso Violento",
+            "effect": "Ativa: Custo: 3 PDK Ação: Ação de Ataque Alvo: uma criatura agarrada por você Teste: FOR do Oni contra FOR ou DEX do alvo Você arremessa uma criatura agarrada. Sucesso: o alvo é arremessado até 3m. Se colidir com obstáculo sólido, sofre: 1d6 de dano de Concussão Sucesso por 5 ou mais: além disso, o alvo fica Derrubado. Falha: o alvo não é arremessado. Criaturas maiores que você podem receber bônus no teste, a critério do Mestre."
+        },
+        "12": {
+            "name": "Massa Demoníaca",
+            "effect": "Bônus Permanente: Escolha um benefício: +1 FOR ou +1 VIT Esse aumento respeita o limite máximo de atributos da Classe de Onis."
+        },
+        "13": {
+            "name": "Corpo de Cerco",
+            "effect": "Passiva: Sua RD contra dano Cortante, Perfurante e Concussão aumenta para: RD 3 Essa RD substitui a RD de Pele Grossa, não acumula com ela. Essa RD não se aplica contra: Dano Solar Lâmina Nichirin Lâmina Vermelha ou Carmesim Glicínia Dano de Ferida Ácido efeitos que ignorem regeneração demoníaca"
+        },
+        "14": {
+            "name": "Quebra-Defesa",
+            "effect": "Passiva: Uma vez por rodada, quando acertar um ataque corpo a corpo contra um alvo que tenha usado Bloqueio contra esse ataque, você causa: +1d6 de dano de Concussão Se esse ataque causar dano, o alvo também sofre -1 no próximo Bloqueio feito antes do início do seu próximo turno."
+        },
+        "15": {
+            "name": "Passo Sísmico",
+            "effect": "Ativa: Custo: 5 PDK Ação: Ação Especial Área: raio de 3m ao redor de você Teste: DEX dos alvos contra CD 10 + FOR do Oni Você pisa no chão com força demoníaca suficiente para quebrar postura e terreno. Falha: o alvo fica Desequilibrado até o início do próximo turno dele. Falha por 5 ou mais: o alvo também fica Derrubado. Sucesso: o alvo mantém a postura. Criaturas que não estejam tocando o chão são imunes a esta habilidade."
+        },
+        "16": {
+            "name": "Muralha Viva",
+            "effect": "Reação: Custo: 4 PDK Ação: Reação Gatilho: você receberia dano físico de ataque, técnica ou Kekkijutsu Você endurece o corpo no instante do impacto. Reduza o dano final recebido em: VIT + FDV Essa redução não se aplica contra: Dano Solar Dano de Ferida Ácido Lâmina Vermelha ou Carmesim efeitos que ignorem redução de dano"
+        },
+        "17": {
+            "name": "Colosso de Sangue",
+            "effect": "Passiva: Enquanto estiver com metade ou menos do seu PDV máximo, seus ataques desarmados causam +1d8 de dano de Concussão uma vez por turno. Além disso, quando acertar um ataque desarmado nessa condição, pode escolher empurrar o alvo 3m em vez de 1,5m. O alvo ainda pode resistir normalmente com FOR."
+        },
+        "18": {
+            "name": "Força Antinatural",
+            "effect": "Passiva: Você recebe +3 em testes de FOR para feitos extremos de força física, como: quebrar portas reforçadas erguer portões arrancar correntes sustentar desabamentos romper contenções físicas mover objetos grandes demais para humanos comuns Além disso, uma vez por cena, pode realizar um feito de força impossível para um humano sem teste, desde que não resolva automaticamente um combate ou mate um chefe sem confronto."
+        },
+        "19": {
+            "name": "Queda do Colosso",
+            "effect": "Ativa: Custo: 10 PDK Ação: Ação de Ataque Alcance: corpo a corpo Teste: ataque com FOR contra Defesa do alvo Limite: 1 vez por combate Você concentra toda a massa demoníaca em um golpe de destruição absoluta. Acerto: causa o dano normal do ataque + 3d10 de dano de Concussão. Depois do impacto, criaturas inimigas a até 3m do alvo devem fazer: 1d20 + DEX contra CD 10 + FOR do Oni Falha: ficam Desequilibradas até o início do próximo turno delas. Falha por 5 ou mais: ficam Derrubadas em vez disso. Erro: o PDK é gasto, mas o golpe não causa dano adicional."
+        },
+        "20": {
+            "name": "Titã Absoluto",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Titan. Durante a duração, recebe: +2 FOR +2 VIT RD 5 contra Cortante, Perfurante e Concussão ataques desarmados empurram +1,5m adicional imunidade a Desequilibrado e Derrubado Além disso, uma vez durante essa forma, quando acertar um ataque desarmado, pode convertê-lo em Dano de Impacto. Se fizer isso, o alvo deve testar: 1d20 + VIT contra CD 10 + FOR do Oni Falha: o alvo fica Derrubado ou sofre Atordoamento até o início do próximo turno dele, à escolha do Oni. Sucesso: sofre apenas o dano normalmente. Esta forma termina imediatamente se o Oni for exposto a Dano Solar decisivo, decapitação válida ou condição narrativa que suprima sua regeneração demoníaca."
+        }
+    }
+}

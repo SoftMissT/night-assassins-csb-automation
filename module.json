@@ -1,97 +1,86 @@
 {
-  "id": "night-assassins-csb-automation",
-  "title": "Night Assassins — CSB Automation",
-  "description": "Automação de atributos, progressão e Habilidades Especiais de Night Assassins para Custom System Builder.",
-  "version": "0.11.49",
-  "socket": true,
-  "authors": [
-    {
-      "name": "SoftMissT",
-      "url": "https://github.com/SoftMissT"
-    }
-  ],
-  "compatibility": {
-    "minimum": "14",
-    "verified": "14"
-  },
-  "esmodules": [
-    "scripts/main.mjs"
-  ],
-  "styles": [
-    "styles/na-csb-automation.css"
-  ],
-  "languages": [
-    {
-      "lang": "pt-BR",
-      "name": "Português (Brasil)",
-      "path": "lang/pt-BR.json"
-    }
-  ],
-  "packs": [
-    {
-      "name": "night-assassins-macros",
-      "label": "Macros Night Assassins",
-      "path": "packs/night-assassins-macros",
-      "type": "Macro",
-      "system": "custom-system-builder"
-    },
-    {
-      "name": "night-assassins-templates-de-ficha",
-      "label": "Night Assassins — Templates de Ficha",
-      "path": "packs/night-assassins-templates-de-ficha",
-      "type": "Actor",
-      "system": "custom-system-builder"
-    },
-    {
-      "name": "night-assassins-respiracoes",
-      "label": "Night Assassin's Respirações",
-      "path": "packs/night-assassins-respiracoes",
-      "type": "Item",
-      "system": "custom-system-builder"
-    },
-    {
-      "name": "night-assassins-armas-slayer",
-      "label": "Night Assassin's Armas dos Caçadores",
-      "path": "packs/night-assassins-armas-slayer",
-      "type": "Item",
-      "system": "custom-system-builder"
-    },
-    {
-      "name": "night-assassins-consumiveis",
-      "label": "Night Assassin's Consumíveis HonMoon",
-      "path": "packs/night-assassins-consumiveis",
-      "type": "Item",
-      "system": "custom-system-builder"
-    },
-    {
-      "name": "night-assassins-arte",
-      "label": "Night Assassin's Arte",
-      "path": "packs/night-assassins-arte",
-      "type": "Item",
-      "system": "custom-system-builder"
-    }
-  ],
-  "relationships": {
-    "requires": [
-      {
-        "id": "dice-so-nice",
-        "type": "module"
-      }
-    ],
-    "systems": [
-      {
-        "id": "custom-system-builder",
-        "type": "system",
-        "compatibility": {
-          "minimum": "5.2.1"
+    "id": "night-assassins-csb-automation",
+    "title": "Night Assassins — CSB Automation",
+    "description": "Automação de atributos, progressão e Habilidades Especiais de Night Assassins para Custom System Builder.",
+    "version": "0.11.47",
+    "socket": true,
+    "authors": [
+        {
+            "name": "SoftMissT",
+            "url": "https://github.com/SoftMissT"
         }
-      }
-    ]
-  },
-  "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
-  "manifest": "https://raw.githubusercontent.com/SoftMissT/night-assassins-csb-automation/main/module.json",
-  "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.49/module.zip",
-  "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
-  "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
-  "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"
+    ],
+    "compatibility": {
+        "minimum": "14",
+        "verified": "14"
+    },
+    "esmodules": ["scripts/main.mjs"],
+    "styles": ["styles/na-csb-automation.css"],
+    "languages": [
+        {
+            "lang": "pt-BR",
+            "name": "Português (Brasil)",
+            "path": "lang/pt-BR.json"
+        }
+    ],
+    "packs": [
+        {
+            "name": "night-assassins-macros",
+            "label": "Macros Night Assassins",
+            "path": "packs/night-assassins-macros",
+            "type": "Macro",
+            "system": "custom-system-builder"
+        },
+        {
+            "name": "night-assassins-templates-de-ficha",
+            "label": "Night Assassins — Templates de Ficha",
+            "path": "packs/night-assassins-templates-de-ficha",
+            "type": "Actor",
+            "system": "custom-system-builder"
+        },
+        {
+            "name": "night-assassins-respiracoes",
+            "label": "Night Assassin's Respirações",
+            "path": "packs/night-assassins-respiracoes",
+            "type": "Item",
+            "system": "custom-system-builder"
+        },
+        {
+            "name": "night-assassins-armas-slayer",
+            "label": "Night Assassin's Armas dos Caçadores",
+            "path": "packs/night-assassins-armas-slayer",
+            "type": "Item",
+            "system": "custom-system-builder"
+        },
+        {
+            "name": "night-assassins-arte",
+            "label": "Night Assassin's Arte",
+            "path": "packs/night-assassins-arte",
+            "type": "Item",
+            "system": "custom-system-builder"
+        }
+    ],
+    "relationships": {
+        "requires": [
+            {
+                "id": "dice-so-nice",
+                "type": "module"
+            }
+        ],
+        "systems": [
+            {
+                "id": "custom-system-builder",
+                "type": "system",
+                "compatibility": {
+                    "minimum": "5.2.1"
+                }
+            }
+        ]
+    },
+    "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
+    "manifest": "https://raw.githubusercontent.com/SoftMissT/night-assassins-csb-automation/main/module.json",
+    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.47/module.zip",
+    "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
+    "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
+    "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"
 }

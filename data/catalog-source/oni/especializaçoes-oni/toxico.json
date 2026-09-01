@@ -1,0 +1,88 @@
+{
+    "id": "toxico",
+    "name": "Tóxico",
+    "function": "Dano contínuo, Veneno, Anti-cura, Debuff corporal, Controle por desgaste, Pressão contra regeneração",
+    "primaryAttributes": ["vit", "dex", "car", "fdv"],
+    "levels": {
+        "1": {
+            "name": "Sangue Irritante",
+            "effect": "Passiva: Criaturas que mordam, bebam ou ingeriam seu sangue sofrem: 1 de dano Venenoso Além disso, você recebe +1 em testes de VIT contra venenos comuns, doenças e toxinas narrativas."
+        },
+        "2": {
+            "name": "Pele Contaminada",
+            "effect": "Passiva: Quando uma criatura acertar você com ataque desarmado corpo a corpo, mordida ou agarrão direto, ela deve fazer: 1d20 + VIT contra CD 10 + VIT do Oni Falha: sofre 1 de dano Venenoso. Sucesso: nada acontece. Esse efeito só pode afetar a mesma criatura 1 vez por rodada."
+        },
+        "3": {
+            "name": "Decomposição",
+            "effect": "Passiva: Quando causar acerto crítico com ataque desarmado, suas garras, dentes ou sangue aplicam Envenenamento. O alvo sofre, no início do próximo turno dele: 3 de dano Venenoso Essa habilidade preserva o núcleo original da Especialização Tóxico."
+        },
+        "4": {
+            "name": "Veneno Persistente",
+            "effect": "Passiva: Todo dano Venenoso causado por você aumenta em: +1 Além disso, quando aplicar Envenenamento com uma habilidade desta Especialização, a duração mínima do Envenenamento é de 1 rodada, mesmo que o alvo tenha resistência parcial."
+        },
+        "5": {
+            "name": "Mordida Tóxica",
+            "effect": "Ativa: Custo: 2 PDK Ação: Ação de Ataque Alvo: uma criatura adjacente Teste: ataque de mordida com FOR ou DEX contra Defesa do alvo Você injeta veneno diretamente pela mordida. Acerto: causa o dano normal da mordida. Além disso, o alvo deve fazer: 1d20 + VIT contra CD 10 + VIT do Oni Falha: sofre Envenenamento por 2 rodadas, recebendo 1d4 de dano Venenoso no início de cada turno. Sucesso: não sofre Envenenamento."
+        },
+        "6": {
+            "name": "Resistência Venenosa",
+            "effect": "Passiva: Você recebe resistência contra dano Venenoso. Sempre que sofrer dano Venenoso, reduza esse dano pela metade, arredondando para cima. Essa habilidade preserva o núcleo original de resistência da Especialização Tóxico."
+        },
+        "7": {
+            "name": "Sangue Antídoto",
+            "effect": "Ativa: Custo: 2 PDK Ação: Ação Especial Alvo: você Você força seu sangue demoníaco a destruir toxinas externas. Remova de si mesmo um efeito comum de: Envenenamento doença simples toxina narrativa menor Essa habilidade não remove: Dano Solar Glicínia concentrada Dano de Ferida Regeneração Suprimida venenos especiais de chefe efeitos definidos pelo Mestre como superiores ao seu nível"
+        },
+        "8": {
+            "name": "Febre Demoníaca",
+            "effect": "Passiva: Criaturas sofrendo Envenenamento causado por você recebem: -1 em testes de VIT contra suas habilidades de Tóxico Além disso, se uma criatura envenenada por você estiver com metade ou menos do PDV máximo, ela também sofre: -1 em rolagens de ataque contra você"
+        },
+        "9": {
+            "name": "Contágio",
+            "effect": "Ativa: Custo: 4 PDK Ação: Ação Especial Alcance: 9m Alvo: uma criatura que tenha sofrido dano seu neste combate Teste: VIT do alvo contra CD 10 + CAR do Oni Você força o veneno já presente na ferida a se espalhar. Falha: o alvo sofre 1d6 de dano Venenoso no início do próximo turno dele. Falha por 5 ou mais: além do dano, o alvo fica Distraído até o início do próximo turno dele. Sucesso: o alvo resiste. Criaturas sem corpo orgânico são imunes a esta habilidade."
+        },
+        "10": {
+            "name": "Nuvem Pestilenta",
+            "effect": "Ativa: Custo: 5 PDK Ação: Ação Completa Área: raio de 3m em um ponto a até 9m Duração: 2 rodadas Teste: VIT dos alvos contra CD 10 + CAR do Oni Você expele sangue vaporizado, bile demoníaca ou miasma venenoso. Inimigos que iniciarem o turno dentro da área ou entrarem nela pela primeira vez na rodada fazem o teste. Falha: sofrem 1d6 de dano Venenoso. Falha por 5 ou mais: também ficam Desorientados até o início do próximo turno deles. Sucesso: sofrem metade do dano e não ficam Desorientados. Criaturas que não respiram ainda podem ser afetadas se tiverem corpo orgânico exposto, a critério do Mestre."
+        },
+        "11": {
+            "name": "Pulmões Pestilentos",
+            "effect": "Passiva: Você se torna imune a gases venenosos naturais, toxinas inaladas comuns e ambientes contaminados de origem comum. Além disso, enquanto estiver dentro da sua Nuvem Pestilenta, você recebe: +1 em Esquiva Esse bônus representa cobertura, cheiro sufocante e distorção visual causada pelo miasma."
+        },
+        "12": {
+            "name": "Mutação Pestilenta",
+            "effect": "Bônus Permanente: Recebe, uma única vez: +1 DEX +1 CAR Esse bônus respeita o limite máximo de atributos da Classe de Onis. Essa habilidade preserva o núcleo original do Rank A da Especialização Tóxico."
+        },
+        "13": {
+            "name": "Praga Corporal",
+            "effect": "Passiva: Quando uma criatura sofrer dano Venenoso causado por você, ela recebe -2 na próxima cura de PDV que receber antes do início do seu próximo turno. Se a criatura for um Oni ou possuir regeneração natural, essa penalidade também se aplica à regeneração. Esse efeito só pode afetar a mesma criatura 1 vez por rodada."
+        },
+        "14": {
+            "name": "Anti-Cura",
+            "effect": "Passiva: Uma vez por rodada, quando causar dano Venenoso a uma criatura, você pode forçá-la a fazer: 1d20 + VIT contra CD 10 + CAR do Oni Falha: o alvo recebe Regeneração Suprimida até o início do próximo turno dele. Sucesso: a cura não é suprimida. Essa habilidade não afeta criaturas sem regeneração, cura biológica ou corpo orgânico."
+        },
+        "15": {
+            "name": "Degradação Nervosa",
+            "effect": "Passiva: Criaturas sofrendo Envenenamento causado por você recebem: -1 em Esquiva Além disso, se uma criatura envenenada por você falhar por 5 ou mais em um teste de VIT contra uma habilidade sua de Tóxico, ela fica Desorientada até o início do próximo turno dela."
+        },
+        "16": {
+            "name": "Corpo Infecto",
+            "effect": "Reação: Custo: 4 PDK Ação: Reação Gatilho: uma criatura adjacente acerta você com ataque corpo a corpo Seu sangue espirra como toxina viva sobre o atacante. O atacante deve fazer: 1d20 + VIT contra CD 10 + VIT do Oni Falha: sofre 1d8 de dano Venenoso. Falha por 5 ou mais: também sofre Envenenamento por 2 rodadas, recebendo 1d4 de dano Venenoso no início de cada turno. Sucesso: sofre metade do dano e não fica Envenenado."
+        },
+        "17": {
+            "name": "Epidemia Demoníaca",
+            "effect": "Passiva: Uma vez por rodada, quando uma criatura falhar em um teste contra uma habilidade sua de Tóxico, escolha outro inimigo a até 3m dela. Esse segundo alvo deve fazer: 1d20 + VIT contra CD 10 + CAR do Oni Falha: sofre metade do dano Venenoso causado ao alvo original. Sucesso: não sofre efeito. Essa propagação não aplica status adicionais, apenas dano."
+        },
+        "18": {
+            "name": "Veneno de Lua Superior",
+            "effect": "Passiva: Suas habilidades de Tóxico ignoram resistência comum a dano Venenoso. Isso não ignora: imunidade absoluta proteção narrativa específica arte ou técnica criada para anular veneno criaturas sem corpo orgânico Além disso, seus efeitos de Envenenamento recebem: +1 rodada de duração Limite máximo normal: 3 rodadas, salvo se a técnica disser o contrário."
+        },
+        "19": {
+            "name": "Praga Demoníaca",
+            "effect": "Ativa: Custo: 10 PDK Ação: Ação Completa Área: raio de 6m centrado em você Duração: 3 rodadas Teste: VIT dos alvos contra CD 10 + CAR do Oni Limite: 1 vez por combate Você transforma o próprio corpo em núcleo de contaminação demoníaca. Inimigos que iniciarem o turno dentro da área ou entrarem nela pela primeira vez na rodada fazem o teste. Falha: sofrem 2d6 de dano Venenoso. Falha por 5 ou mais: além do dano, recebem Regeneração Suprimida até o início do próximo turno deles. Sucesso: sofrem metade do dano e não recebem Regeneração Suprimida. Enquanto esta habilidade durar, curas recebidas por inimigos dentro da área são reduzidas em -2."
+        },
+        "20": {
+            "name": "Pestilência Absoluta",
+            "effect": "Forma Suprema: Custo: 15 PDK Ação: Ação Completa Duração: 3 rodadas Limite: 1 vez por combate Você assume a forma máxima da Especialização Tóxico. Durante a duração, recebe: imunidade a dano Venenoso +2 VIT +2 CAR suas habilidades de Tóxico têm CD +1 dano Venenoso causado por você recebe +1d6 Além disso, uma vez por rodada, quando causar dano Venenoso a uma criatura, pode escolher um efeito adicional: aplicar Regeneração Suprimida até o início do próximo turno dela aplicar Distraído até o início do próximo turno dela reduzir a cura recebida por ela em -4 até o início do próximo turno dela Escolha apenas um efeito por ativação. Esta forma termina imediatamente se o Oni for exposto a Dano Solar decisivo, Glicínia em dose extrema, decapitação válida ou condição narrativa que purifique ou neutralize seu sangue demoníaco."
+        }
+    }
+}

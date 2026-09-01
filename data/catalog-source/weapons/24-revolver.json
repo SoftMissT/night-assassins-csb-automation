@@ -1,0 +1,118 @@
+{
+    "_id": "7f2c1b8e9ef8fa32",
+    "_key": "!items!7f2c1b8e9ef8fa32",
+    "name": "Revólver",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/revolver_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Revólver",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["DEX"],
+            "arma_tipos_dano": ["perfurante"],
+            "arma_critico": 22,
+            "arma_alcance": " 15m",
+            "arma_propriedades": "Municiada 6 / Manejável",
+            "arma_requisito": "",
+            "descricao": "Uma arma de fogo pequena, movida à pólvora, com mecanismo de disparo.\n\n- Propriedades: Municiada 6 / Manejável\n- Alcance: 15m\n- Cartucho de Munição: Capacidade de 12 balas\n- Crítico: apenas com 22+, tendo que haver um 20 Natural\n- Dano até 5m: 4 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n- Dano até 10m: 3 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n- Dano até 15m: 2 + Metade da DEX (arredondado para baixo se necessário) / Perfurante\n\nHabilidade\nPode dar mais de um tiro por ataque. O número máximo de tiros é igual à metade da sua DEX (arredondado para baixo se necessário). Cada tiro consecutivo recebe -1 de acerto na rolagem, de maneira que um terceiro tiro, por exemplo, tem -2 na rolagem de acerto.",
+            "arma_ordem": 24,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "até 5m",
+                    "formula_texto": "4 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "15m",
+                    "critico": 22
+                },
+                {
+                    "nome": "até 10m",
+                    "formula_texto": "3 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "15m",
+                    "critico": 22
+                },
+                {
+                    "nome": "até 15m",
+                    "formula_texto": "2 + Metade da DEX (arredondado para baixo se necessário) / Perfurante",
+                    "dano_fixo": 2,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": false
+                        }
+                    ],
+                    "tipos_dano": ["perfurante"],
+                    "alcance": "15m",
+                    "critico": 22
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "À distância",
+            "arma_mecanicas": [
+                {
+                    "id": "municiada",
+                    "kind": "ammunition",
+                    "capacity": 12
+                },
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Pode dar mais de um tiro por ataque. O número máximo de tiros é igual à metade da sua DEX (arredondado para baixo se necessário). Cada tiro consecutivo recebe -1 de acerto na rolagem, de maneira que um terceiro tiro, por exemplo, tem -2 na rolagem de acerto."
+                }
+            ],
+            "arma_propriedades_chaves": ["municiada 6", "manejavel"],
+            "arma_municao_capacidade": 12,
+            "arma_municao_atual": 12
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 2400000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

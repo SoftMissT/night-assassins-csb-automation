@@ -1,0 +1,89 @@
+{
+    "_id": "737e88553379add8",
+    "_key": "!items!737e88553379add8",
+    "name": "Ioiô de Lâmina",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/ioio_de_lamina_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Ioiô de Lâmina",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 3,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": ["cortante", "concussivo"],
+            "arma_critico": 19,
+            "arma_alcance": " 5m",
+            "arma_propriedades": " Acuidade / Ryōtō",
+            "arma_requisito": "",
+            "descricao": "Dois ioiôs pesados com extremidades afiadas, que podem ser usados como arma por usuários extremamente dedicados à sua maestria.\n\n- Propriedades: Acuidade / Ryōtō\n- Alcance: 5m\n- Crítico: 19 Natural\n- Dano: 3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Cortante ou Concussivo, à escolha\n\nHabilidade\nPode aplicar o dobro de efeitos de contato por ação.",
+            "arma_ordem": 13,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "3 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Cortante ou Concussivo, à escolha",
+                    "dano_fixo": 3,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1.0,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": ["cortante", "concussivo"],
+                    "alcance": "5m",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "ryoto",
+                    "kind": "integrated-double-attack",
+                    "attacks": 2,
+                    "secondAttribute": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Pode aplicar o dobro de efeitos de contato por ação."
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade", "ryoto"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1300000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

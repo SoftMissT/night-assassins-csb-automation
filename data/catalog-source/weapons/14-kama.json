@@ -1,0 +1,79 @@
+{
+    "_id": "37185103c7a704cb",
+    "_key": "!items!37185103c7a704cb",
+    "name": "Kama",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/kama_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Kama",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": [],
+            "arma_tipos_dano": ["cortante", "perfurante"],
+            "arma_critico": 19,
+            "arma_alcance": " 1,5m",
+            "arma_propriedades": " Manejável / Ryoto",
+            "arma_requisito": "",
+            "descricao": "Duas foices menores em lâmina, mas com cabos levemente estendidos.\n\n- Propriedades: Manejável / Ryoto\n- Alcance: 1,5m\n- Crítico: 19 Natural\n- Dano: 4 / Cortante & Perfurante\n\nHabilidade\nAtaques cujo resultado da rolagem de acerto supere o resultado da rolagem de defesa em uma quantidade de 3 ou mais aplicam sangramento igual a 1d4. Exemplo: Ataque 15 e Defesa 12. Esse sangramento dura apenas 1 turno do inimigo.",
+            "arma_ordem": 14,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "4 / Cortante & Perfurante",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [],
+                    "tipos_dano": ["cortante", "perfurante"],
+                    "alcance": "1,5m",
+                    "critico": 19
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "manejavel",
+                    "kind": "attack-attribute",
+                    "attribute": "DEX",
+                    "requiresProficiency": true,
+                    "freeAdjustMeters": 1.5
+                },
+                {
+                    "id": "ryoto",
+                    "kind": "integrated-double-attack",
+                    "attacks": 2,
+                    "secondAttribute": false
+                },
+                {
+                    "id": "habilidade",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade",
+                    "text": "Ataques cujo resultado da rolagem de acerto supere o resultado da rolagem de defesa em uma quantidade de 3 ou mais aplicam sangramento igual a 1d4. Exemplo: Ataque 15 e Defesa 12. Esse sangramento dura apenas 1 turno do inimigo."
+                }
+            ],
+            "arma_propriedades_chaves": ["manejavel", "ryoto"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1400000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

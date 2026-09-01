@@ -1,0 +1,100 @@
+{
+    "_id": "993f8aa072a7170d",
+    "_key": "!items!993f8aa072a7170d",
+    "name": "Foice",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/foice_icon.webp",
+    "system": {
+        "template": "NAWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_nome": "Foice",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 4,
+            "arma_dano_atributo": ["FOR", "DEX"],
+            "arma_tipos_dano": [],
+            "arma_critico": 18,
+            "arma_alcance": " 3,5m",
+            "arma_propriedades": " Acuidade / Morote",
+            "arma_requisito": "2+ de DEX e 2+ de FOR",
+            "descricao": "Uma grande foice com cabo e lâminas de tamanho contundente, para acertar alvos múltiplos ou mais distantes do que uma Kama faria.\n\n- Requisito: 2+ de DEX e 2+ de FOR\n- Propriedades: Acuidade / Morote\n- Alcance: 3,5m\n- Crítico: 18 Natural\n- Dano: 4 + Metade da DEX ou FOR\n\nHabilidade 1 Chegue mais perto\nAcertos críticos com ataques padrão permitem puxar o inimigo e trazê-lo para a distância corpo a corpo de 1 metro, ou jogá-lo para os lados (movendo seu corpo em 1 metro em qualquer direção), com exceção de empurrá-lo para mais distante.\n\nHabilidade 2 Com estilo\nTécnicas de ataque que tenham mais de uma instância de golpes (ex.: Hekireki Issen - Rokuren do Trovão, Enko das Chamas) permitem o ganho de +1 de acerto na execução, ao custo de metade do seu deslocamento na próxima ação de movimento.\n\nHabilidade 3 Decapitação\nAo eliminar um Oni com o golpe que zere seus pontos de vida, você pode inspirar confiança em seus aliados. Faça uma rolagem de CAR com C.D igual a 12. Se passar, todos os aliados terão +1 de acerto contra inimigos dentro do alcance da sua arma, até o início do seu próximo turno aplicável apenas ao primeiro acerto de cada um.",
+            "arma_ordem": 11,
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "4 + Metade da DEX ou FOR",
+                    "dano_fixo": 4,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "FOR",
+                            "multiplicador": 1.0,
+                            "escolha": true
+                        },
+                        {
+                            "key": "DEX",
+                            "multiplicador": 0.5,
+                            "escolha": true
+                        }
+                    ],
+                    "tipos_dano": [],
+                    "alcance": "3,5m",
+                    "critico": 18
+                }
+            ],
+            "arma_categoria": "basica",
+            "arma_tipo": "Corpo a corpo",
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": ["FOR", "DEX"],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "morote",
+                    "kind": "two-handed",
+                    "fullAttributeDamage": false
+                },
+                {
+                    "id": "habilidade_1_chegue_mais_perto",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade 1 Chegue mais perto",
+                    "text": "Acertos críticos com ataques padrão permitem puxar o inimigo e trazê-lo para a distância corpo a corpo de 1 metro, ou jogá-lo para os lados (movendo seu corpo em 1 metro em qualquer direção), com exceção de empurrá-lo para mais distante."
+                },
+                {
+                    "id": "habilidade_2_com_estilo",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade 2 Com estilo",
+                    "text": "Técnicas de ataque que tenham mais de uma instância de golpes (ex.: Hekireki Issen - Rokuren do Trovão, Enko das Chamas) permitem o ganho de +1 de acerto na execução, ao custo de metade do seu deslocamento na próxima ação de movimento."
+                },
+                {
+                    "id": "habilidade_3_decapitacao",
+                    "kind": "weapon-ability",
+                    "label": "Habilidade 3 Decapitação",
+                    "text": "Ao eliminar um Oni com o golpe que zere seus pontos de vida, você pode inspirar confiança em seus aliados. Faça uma rolagem de CAR com C.D igual a 12. Se passar, todos os aliados terão +1 de acerto contra inimigos dentro do alcance da sua arma, até o início do seu próximo turno aplicável apenas ao primeiro acerto de cada um."
+                }
+            ],
+            "arma_propriedades_chaves": ["acuidade", "morote"]
+        }
+    },
+    "effects": [],
+    "folder": "02e48b1127bca24a",
+    "sort": 1100000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

@@ -122,6 +122,7 @@ export async function hydrateSpecialWeaponItem(item) {
         'dupla_alma_vinculo_json',
         'dupla_alma_cerimonia_json',
         'dupla_alma_despertar_json',
+        'dupla_alma_despertar_runtime_json',
         'arma_marcas_demonio_tabela_json',
         'arma_especial_despertar_runtime_json',
     ];

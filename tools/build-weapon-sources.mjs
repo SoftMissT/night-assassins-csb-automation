@@ -266,6 +266,7 @@ const documents = [
                               props.dupla_alma_despertar_json.trim()
                                   ? props.dupla_alma_despertar_json
                                   : JSON.stringify(props.arma_despertar ?? {}),
+                          dupla_alma_despertar_runtime_json: '{}',
                           arma_especial_despertar_runtime_json: '{}',
                           arma_marcas_demonio_tabela_json: JSON.stringify({
                               bonus: props.arma_dano_bonus_orochi ?? {},

@@ -102,6 +102,12 @@ const macros = [
         name: 'Night Assassins Cerimônia de Vínculo',
         icon: 'na-marca-cacador_icon.webp',
     },
+    {
+        id: 'NADualSoulRes001',
+        file: 'na-resistir-despertar.js',
+        name: 'Night Assassins Resistir ao Despertar',
+        icon: 'na-gerenciar-resistencias_icon.webp',
+    },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

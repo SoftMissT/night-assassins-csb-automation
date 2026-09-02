@@ -1,4 +1,15 @@
 # Changelog
+## v0.11.64 — 2026-09-02
+- Adicionado o Teste genérico de Resistência ao Despertar para todas as Armas de Dupla Alma.
+- O runtime do evento passa a ser persistido separadamente em `dupla_alma_despertar_runtime_json`; a Cerimônia permanece imutável.
+- Em vínculos estáveis, o lado adormecido da Cerimônia é o desafiante do evento.
+- Em Equilíbrio Instável, nenhum lado é persistido como dominante ou adormecido; uma Roll real de 1d2 define `challengerKind` somente naquele evento.
+- O resultado do 1d2 é persistido como `challengerRoll` para auditoria.
+- O portador escolhe FOR ou VIT e realiza 1d20 + atributo contra a CD registrada pela Intensidade do Vínculo.
+- Somente falhas geram `pending: true`; sucessos preservam integralmente o vínculo.
+- Adicionados painel CSB nativo e macro Resistir ao Despertar.
+- Empréstimo, Possessão e Marcas permanecem fora deste slice e serão consumidores do evento em release posterior.
+
 ## v0.11.63 — 2026-09-02
 - Adicionado o Dual Soul Core genérico para a Cerimônia de Vínculo, sem conhecimento nominal de armas ou espíritos.
 - A Cerimônia passa a executar e persistir permanentemente Teste 1 (Lado Dominante), Teste 2 (Intensidade do Vínculo) e Teste 3 (Gatilho do lado adormecido).

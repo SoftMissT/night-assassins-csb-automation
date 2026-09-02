@@ -124,6 +124,11 @@ import {
     openDualSoulCeremony,
 } from './dual-soul-ceremony-service.mjs';
 import {
+    dualSoulAwakeningPending,
+    getDualSoulAwakeningRuntime,
+    openDualSoulAwakeningResistance,
+} from './dual-soul-awakening-resistance-service.mjs';
+import {
     awakenYamato,
     openSpecialWeaponAwakeningManager,
     registerSpecialWeaponAwakeningRuntime,
@@ -270,6 +275,9 @@ Hooks.once('ready', async () => {
             getDualSoulCeremonyState,
             dualSoulCeremonyCompleted,
             isDualSoulWeapon,
+            openDualSoulAwakeningResistance,
+            getDualSoulAwakeningRuntime,
+            dualSoulAwakeningPending,
             awakenYamato,
             openSpecialWeaponAwakeningManager,
             useKekkijutsuItem,

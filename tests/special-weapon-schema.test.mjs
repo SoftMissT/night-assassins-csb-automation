@@ -43,7 +43,7 @@ test('template especial mantém Marcas do Demônio como numberField', async () =
 test('todas as fontes especiais passam pelo contrato numérico do CSB', async () => {
     const schema = collectCsbFieldSchema(await loadTemplate());
     const sources = await loadSpecialSources();
-    assert.ok(sources.length >= 16);
+    assert.equal(sources.length, 17);
 
     for (const { file, document } of sources) {
         const sanitized = sanitizeSpecialWeaponProps(

@@ -118,6 +118,12 @@ import {
     useSpecialWeaponAbility,
 } from './special-weapon-service.mjs';
 import {
+    dualSoulCeremonyCompleted,
+    getDualSoulCeremonyState,
+    isDualSoulWeapon,
+    openDualSoulCeremony,
+} from './dual-soul-ceremony-service.mjs';
+import {
     awakenYamato,
     openSpecialWeaponAwakeningManager,
     registerSpecialWeaponAwakeningRuntime,
@@ -260,6 +266,10 @@ Hooks.once('ready', async () => {
             rollSpecialWeaponItem,
             openSpecialWeaponAbilities,
             useSpecialWeaponAbility,
+            openDualSoulCeremony,
+            getDualSoulCeremonyState,
+            dualSoulCeremonyCompleted,
+            isDualSoulWeapon,
             awakenYamato,
             openSpecialWeaponAwakeningManager,
             useKekkijutsuItem,

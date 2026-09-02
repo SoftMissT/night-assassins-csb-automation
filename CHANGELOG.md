@@ -1,4 +1,14 @@
 # Changelog
+## v0.11.63 — 2026-09-02
+- Adicionado o Dual Soul Core genérico para a Cerimônia de Vínculo, sem conhecimento nominal de armas ou espíritos.
+- A Cerimônia passa a executar e persistir permanentemente Teste 1 (Lado Dominante), Teste 2 (Intensidade do Vínculo) e Teste 3 (Gatilho do lado adormecido).
+- Migrado o `arma_testes` legado de Cérbero para o contrato canônico, preservando os textos e CDs já publicados.
+- Publicada a nova fonte canônica de Weal and Woe Lanças Gêmeas de Obsidiana Umbral, elevando o catálogo para exatamente 17 Armas Especiais.
+- O builder passa a publicar Weal and Woe com `NASpecialWeaponTpl00001`, pasta especial e seu ícone próprio.
+- O adapter da Yamato agora consome o resultado persistido da Cerimônia e não redefine mais `arma_lado_dominante`; Equilíbrio Instável permanece a única situação em que o ritual pergunta qual lado responde.
+- A duração do Primeiro Despertar da Yamato passa a ler `arma_especial_integracao`, separando Integração de Intensidade do Vínculo.
+- Adicionados painel CSB nativo e macro genérica para a Cerimônia de Vínculo, sem injeção de DOM.
+- Teste de Resistência ao Despertar, Empréstimo, Possessão e automação de Marcas permanecem para slices posteriores.
 
 ## v0.11.62 — 2026-09-02
 

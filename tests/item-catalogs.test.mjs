@@ -197,7 +197,7 @@ describe('catálogo de Respirações', () => {
 });
 
 describe('catálogo de armas Slayer', () => {
-    it('publica quatro armas normais e as dezesseis armas especiais oficiais', async () => {
+    it('publica quatro armas normais e as dezessete armas especiais oficiais', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         assert.equal(
             documents.filter((document) => String(document._key).startsWith('!folders!')).length,
@@ -226,6 +226,7 @@ describe('catálogo de armas Slayer', () => {
             'Playful Cloud Sansetsukon da Nuvem Irônica',
             'Rebellion',
             'Red Queen Motor Carmesim',
+            'Weal and Woe Lanças Gêmeas de Obsidiana Umbral',
             'Woldo Lua do Exílio',
             "Yamato The Rift-Walker's Legacy",
             'Êxtase Tesoura da Névoa Sagrada',
@@ -240,7 +241,7 @@ describe('catálogo de armas Slayer', () => {
         const normalWeapons = weapons.filter((item) => item.system.props.arma_categoria !== 'especial');
         const specialWeapons = weapons.filter((item) => item.system.props.arma_categoria === 'especial');
         assert.equal(normalWeapons.length, 4);
-        assert.equal(specialWeapons.length, 16);
+        assert.equal(specialWeapons.length, 17);
         assert.ok(normalWeapons.every((item) => item.system?.template === 'NAWeaponTpl00001'));
         assert.ok(
             specialWeapons.every(
@@ -396,7 +397,7 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
     });
 
-    it('publica os vinte ícones locais sem campo de arte vertical', async () => {
+    it('publica os vinte e um ícones locais sem campo de arte vertical', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         const weapons = documents.filter((document) => document.type === 'equippableItem');
         const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
@@ -404,7 +405,7 @@ describe('catálogo de armas Slayer', () => {
             item.img?.startsWith('modules/night-assassins-csb-automation/assets/icons/weapons/')
         );
         assert.equal(illustrated.length, 0);
-        assert.equal(customIcons.length, 20);
+        assert.equal(customIcons.length, 21);
         for (const item of customIcons) {
             const relativePath = item.img.replace('modules/night-assassins-csb-automation/', '../');
             await access(new URL(relativePath, import.meta.url));

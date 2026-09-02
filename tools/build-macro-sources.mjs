@@ -96,6 +96,12 @@ const macros = [
         file: 'na-corrigir-respiracoes.js',
         name: 'Night Assassins Corrigir Respirações dos Caçadores',
     },
+    {
+        id: 'NADualSoulCer001',
+        file: 'na-cerimonia-vinculo.js',
+        name: 'Night Assassins Cerimônia de Vínculo',
+        icon: 'na-marca-cacador_icon.webp',
+    },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

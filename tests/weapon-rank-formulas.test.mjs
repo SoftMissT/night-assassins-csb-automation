@@ -104,7 +104,7 @@ describe('geração sistêmica de fórmulas por Rank', () => {
         assert.equal(formulas.SS[0], '7 + FOR + 2d8 / Cortante ou Concussão');
     });
 
-    it('todas as dezesseis armas especiais preservam perfis e progressão D a SS', async () => {
+    it('todas as dezessete armas especiais preservam perfis e progressão D a SS', async () => {
         const directory = new URL('../build/compendium/armas-slayer/', import.meta.url);
         const files = (await readdir(directory)).filter((file) => file.endsWith('.json'));
         const documents = await Promise.all(
@@ -123,7 +123,7 @@ describe('geração sistêmica de fórmulas por Rank', () => {
                 document.system?.props?.arma_categoria === 'especial'
         );
 
-        assert.equal(specialWeapons.length, 16);
+        assert.equal(specialWeapons.length, 17);
         for (const weapon of specialWeapons) {
             const props = weapon.system.props;
             assert.ok(props.arma_perfis_ataque.length > 0, `${weapon.name} deve possuir perfil`);

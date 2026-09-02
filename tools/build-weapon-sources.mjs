@@ -59,6 +59,7 @@ const PUBLISHED_SPECIAL_WEAPONS = new Set([
     'Playful Cloud Sansetsukon da Nuvem Irônica',
     'Rebellion',
     'Red Queen Motor Carmesim',
+    'Weal and Woe Lanças Gêmeas de Obsidiana Umbral',
     'Woldo Lua do Exílio',
     "Yamato The Rift-Walker's Legacy",
 ]);
@@ -77,6 +78,7 @@ const SPECIAL_WEAPON_ICON_BY_NAME = Object.freeze({
     'Playful Cloud Sansetsukon da Nuvem Irônica': 'Playful_Cloud_Ironical_Sansetsukon_icon.webp',
     Rebellion: 'Rebellion_icon.webp',
     'Red Queen Motor Carmesim': 'Red_Queen_Crimson_Engine_icon.webp',
+    'Weal and Woe Lanças Gêmeas de Obsidiana Umbral': 'Weal_and_Woe_Twin_Spears_icon.webp',
     'Woldo Lua do Exílio': 'katana_icon.webp',
     "Yamato The Rift-Walker's Legacy": 'Yamato_Rift_Walkers_Legacy_icon.webp',
 });

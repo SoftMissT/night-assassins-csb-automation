@@ -144,6 +144,26 @@ export function normalizeYamatoSide(value = '') {
     return '';
 }
 
+export function currentYamatoSide(itemProps = {}) {
+    const runtime = structured(
+        itemProps.arma_especial_despertar_runtime_json,
+        {}
+    );
+
+    const runtimeSide =
+        normalizeYamatoSide(
+            runtime.side
+        );
+
+    if (runtimeSide) {
+        return runtimeSide;
+    }
+
+    return normalizeYamatoSide(
+        itemProps.arma_lado_dominante
+    );
+}
+
 export function isSpecialWeaponAwakened(itemProps = {}) {
     const state = normalizeText(itemProps.arma_especial_estado_atual);
     return Boolean(state) && !state.startsWith('selad');
@@ -206,32 +226,6 @@ async function payWound(actor, amount) {
     return cost;
 }
 
-async function chooseYamatoSide(item) {
-    const current = normalizeYamatoSide(item.system?.props?.arma_lado_dominante);
-    if (current) return current;
-    const choice = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Yamato — Lado ativo' },
-        content:
-            '<div class="na-csb-automation"><p>Defina qual lado está ativo neste despertar.</p></div>',
-        modal: true,
-        rejectClose: false,
-        buttons: [
-            { action: 'forseti', label: 'Forseti', callback: () => 'forseti' },
-            { action: 'orochi', label: 'Yamata no Orochi', callback: () => 'orochi' },
-            { action: 'cancel', label: 'Cancelar', callback: () => null },
-        ],
-    });
-    if (!choice) return '';
-    await item.update(
-        {
-            'system.props.arma_lado_dominante':
-                choice === 'forseti' ? 'Forseti' : 'Yamata no Orochi',
-        },
-        { naCsbAutomation: true, naSpecialWeapon: true }
-    );
-    return choice;
-}
-
 function abilityButton(action, label) {
     return {
         action,
@@ -292,7 +286,7 @@ export async function openSpecialWeaponAbilities(options = {}) {
         );
 
     const rank = slayerWeaponRank(actor.system?.props ?? {});
-    const side = normalizeYamatoSide(localProps.arma_lado_dominante);
+    const side = currentYamatoSide(localProps);
     const state = String(localProps.arma_especial_estado_atual ?? 'Selada');
     const marks = Math.max(0, Math.trunc(Number(localProps.arma_marcas_demonio) || 0));
     const basal =
@@ -437,8 +431,14 @@ export async function useSpecialWeaponAbility(options = {}) {
             'Yamato está Selada. Defina Primeiro Despertar ou Despertar Verdadeiro antes de usar habilidades do despertar.'
         );
 
-    const side = await chooseYamatoSide(item);
-    if (!side) return null;
+    const side = currentYamatoSide(
+        item.system?.props ?? {}
+    );
+
+    if (!side)
+        return ui.notifications?.warn?.(
+            'A Yamato não possui lado ativo válido. Conclua a Cerimônia e realize o despertar.'
+        );
     const marks = Math.max(0, Math.trunc(Number(item.system?.props?.arma_marcas_demonio) || 0));
     const orochi = yamatoOrochiBonusState(marks);
 

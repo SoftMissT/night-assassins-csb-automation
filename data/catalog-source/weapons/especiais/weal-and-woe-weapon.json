@@ -1,0 +1,336 @@
+{
+    "_id": "0c806f39dc4e8972",
+    "_key": "!items!0c806f39dc4e8972",
+    "name": "Weal and Woe Lanças Gêmeas de Obsidiana Umbral",
+    "type": "equippableItem",
+    "img": "modules/night-assassins-csb-automation/assets/icons/weapons/Weal_and_Woe_Twin_Spears_icon.webp",
+    "system": {
+        "template": "NASpecialWeaponTpl00001",
+        "props": {
+            "inventario_categoria": "arma",
+            "arma_categoria": "especial",
+            "arma_nome": "Weal and Woe Lanças Gêmeas de Obsidiana Umbral",
+            "arma_tipo": "Corpo a Corpo",
+            "arma_dano_dados": "",
+            "arma_dano_fixo": 5,
+            "arma_dano_atributo": [
+                "DEX"
+            ],
+            "arma_tipos_dano": [
+                "perfurante"
+            ],
+            "arma_critico": 19,
+            "arma_critico_texto": "19 Natural",
+            "arma_alcance": "2m",
+            "arma_propriedades": "Acuidade / Ryōtō / Vínculo Gêmeo",
+            "arma_requisito": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro.",
+            "arma_entidade": "Cástor",
+            "arma_demonio": "Pólux",
+            "arma_lado_dominante": "definido pelo Teste 1 da Cerimônia",
+            "arma_gatilho_despertar": "definido pelo Teste 3 da Cerimônia",
+            "arma_reacao_entidade": "Defesa",
+            "arma_dano_bonus_texto": "dado evolutivo do Rank, incorporado ao dano da arma",
+            "arma_perfis_ataque": [
+                {
+                    "nome": "Ataque Base",
+                    "formula_texto": "5 + DEX / Perfurante",
+                    "dano_fixo": 5,
+                    "dano_dados": "",
+                    "atributos": [
+                        {
+                            "key": "DEX",
+                            "multiplicador": 1
+                        }
+                    ],
+                    "tipos_dano": [
+                        "perfurante"
+                    ],
+                    "alcance": "2m",
+                    "critico": 19
+                }
+            ],
+            "arma_dano_por_rank": {
+                "D": {
+                    "nivel": 2,
+                    "dado_evolutivo": "1d6",
+                    "formula": "5 + DEX + 1d6 / Perfurante"
+                },
+                "C": {
+                    "nivel": 4,
+                    "dado_evolutivo": "1d8",
+                    "formula": "5 + DEX + 1d8 / Perfurante"
+                },
+                "B": {
+                    "nivel": 6,
+                    "dado_evolutivo": "1d10",
+                    "formula": "5 + DEX + 1d10 / Perfurante"
+                },
+                "A": {
+                    "nivel": 8,
+                    "dado_evolutivo": "1d12",
+                    "formula": "5 + DEX + 1d12 / Perfurante"
+                },
+                "S": {
+                    "nivel": 11,
+                    "dado_evolutivo": "2d6",
+                    "formula": "5 + DEX + 2d6 / Perfurante"
+                },
+                "SS": {
+                    "nivel": 12,
+                    "dado_evolutivo": "2d8",
+                    "formula": "5 + DEX + 2d8 / Perfurante"
+                }
+            },
+            "arma_tecnicas": [
+                {
+                    "nome": "Passo Entre Gêmeos",
+                    "tipo": "Ação de Movimento",
+                    "regras": "**Tipo:** Ação de Movimento\n\nSe a outra lança estiver a até **12m**, você se move até seu deslocamento normal ignorando Terreno Difícil.\n\nSe terminar o movimento com um inimigo dentro de **2m**, seu próximo ataque contra ele antes do fim do turno recebe **+1 no acerto**.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Um aliado dentro de 2m recebe +1 Defesa até o início do próximo turno dele. | O bônus de +1 no acerto só se aplica contra um inimigo que causou dano a um aliado desde o fim do seu último turno. Se acertar, cause +1 dano fixo. |\n\n---"
+                },
+                {
+                    "nome": "Duas Pontas, Um Voto",
+                    "tipo": "Ação de Ataque",
+                    "regras": "**Tipo:** Ação de Ataque  \n**Requisito:** empunhar Weal e Woe\n\nFaça dois ataques usando a propriedade **Ryōtō**.\n\n- Primeiro ataque: normal.\n- Segundo ataque: não soma FOR ou DEX na rolagem de acerto.\n\nSe os dois ataques acertarem o mesmo alvo, ele sofre **-1 Defesa** até o início do próximo turno dele.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Se os dois ataques acertarem, você recebe +1 Defesa até o início do seu próximo turno. | Se os dois ataques acertarem o mesmo alvo, ele fica **Vulnerável** contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status. |\n\n---"
+                },
+                {
+                    "nome": "Entrelaçamento Umbral",
+                    "tipo": "Ação Especial",
+                    "regras": "**Tipo:** Ação Especial\n\nSeu próximo ataque com Weal and Woe antes do fim do turno recebe:\n\n- **+2 no acerto**;\n- alcance tratado como **3m**;\n- ignora posição ruim e Cobertura Leve.\n\nSe superar a Defesa do alvo por **5 ou mais**, escolha um efeito:\n\n- o alvo sofre **Restrição de Movimentos** até o início do próximo turno dele;\n- ou um aliado dentro de **2m** pode se mover **1,5m sem provocar Ataque de Oportunidade**.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Se superar por 5 ou mais, você pode aplicar os dois efeitos. | Se o alvo já estiver Vulnerável, esse ataque causa +1 dano fixo. |\n\n---"
+                },
+                {
+                    "nome": "Metade que Responde",
+                    "tipo": "Reação",
+                    "regras": "**Tipo:** Reação\n\nQuando você ou um aliado a até 2m for alvo de um ataque, role:\n\n`1d20 + DEX`\n\nSe igualar ou superar o acerto inimigo, você defende o ataque.\n\nSe falhar por **4 ou menos**, reduza o dano recebido em:\n\n`5 + DEX`\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Receba **+1** na rolagem de Metade que Responde. | Pólux não concede esta Reação. Se Pólux estiver dominante, esta técnica não pode ser usada. |\n\n---"
+                },
+                {
+                    "nome": "Juramento dos Imortais Partidos",
+                    "tipo": "Ação Completa",
+                    "regras": "**Tipo:** Ação Completa  \n**Limite:** 1 vez por combate  \n**Área:** até 2 inimigos em 3m  \n**Requisito:** empunhar Weal e Woe\n\nFaça uma rolagem de acerto separada contra até 2 inimigos dentro de 3m.\n\nCada alvo atingido sofre o dano atual da arma:\n\n`5 + DEX + 2d8 / Perfurante`\n\nSe escolher apenas **1 alvo**, ele fica **Vulnerável** contra o próximo ataque que receber.\n\nSe atingir **2 alvos**, um aliado dentro de 3m recebe **+2 Defesa** até o início do próximo turno dele.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Após resolver a técnica, aliados dentro de 3m podem se mover 1,5m sem provocar Ataque de Oportunidade. | Você pode ativar **Luto do Gêmeo Imortal** junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o alvo já estiver Vulnerável, ele sofre **+1 Dano de Ferida**. |\n\n---"
+                }
+            ],
+            "arma_regra_completa": "## Weal and Woe Lanças Gêmeas de Obsidiana Umbral\n\n**Descrição:** Lanças gêmeas de vínculo. A dominância define qual metade conduz, mas não apaga a outra.  \n**Propriedade:** Acuidade  \n**Propriedade 2:** Ryōtō  \n**Propriedade 3:** Vínculo Gêmeo  \n**Tipo de arma:** Corpo a Corpo  \n**Crítico:** 19 Natural  \n**Dano:** 5 + DEX / Perfurante  \n**Dano Bônus:** dado evolutivo do Rank, incorporado ao dano da arma  \n**Alcance:** 2m  \n\n**Entidade:** Cástor  \n**Demônio:** Pólux  \n**Lado Dominante:** definido pelo Teste 1 da Cerimônia  \n**Gatilho de Despertar:** definido pelo Teste 3 da Cerimônia  \n**Reação da Entidade:** Defesa  \n\n---\n\n# DESCRIÇÃO DA ARMA\n\nWeal and Woe são duas lanças curtas de Nichirin escurecida, tratadas como uma única arma partida em duas metades.\n\n**Weal** é a lança da preservação. Sua ponta é fina, limpa e quase prateada sob a luz. A haste tem marcas como constelações apagadas.\n\n**Woe** é a lança do luto. Sua ponta é mais escura, pesada e irregular, como se a obsidiana tivesse sido quebrada e nunca polida por completo.\n\nQuando seladas, as duas parecem apenas armas gêmeas.\n\nQuando despertas, a sombra entre elas se tensiona como um fio invisível.\n\nUma lança sempre sabe que a outra existe.  \nUma metade sempre sente quando a outra se afasta.\n\nQuando **Cástor** responde, as lanças se movem como irmãos treinados no mesmo campo: uma cobre, a outra mede distância, e o portador sente onde a metade perdida está.\n\nQuando **Pólux** responde, o vínculo vira luto. A lança não busca harmonia. Ela busca o inimigo que causou separação, dor ou perda.\n\nWeal diz: “permaneça comigo.”  \nWoe diz: “pague pelo que levou.”\n\n---\n\n# ESTADOS DA ARMA\n\n## Estado Selado Gêmeas Separadas\n\nForma base da arma.\n\nNeste estado, Weal and Woe usam apenas:\n\n- dano da arma;\n- propriedades;\n- dado evolutivo do Rank;\n- ataques normais de Ryōtō;\n- efeitos normais de técnicas que usem a arma.\n\nNenhum efeito de Cástor ou Pólux fica ativo no Estado Selado.\n\nO vínculo existe, mas ainda não responde.\n\n---\n\n## Primeiro Despertar Voto das Lanças Gêmeas\n\nO Primeiro Despertar acontece quando o portador realiza o **Ritual de Despertar: Sangue Entre as Gêmeas** e recita o **Pacto de Acordar**.\n\nAo despertar, a arma libera o lado definido pelo **Teste 1 Lado Dominante**.\n\n- Se Cástor domina, **Weal conduz o vínculo**: defesa, localização da lança irmã, mobilidade curta e harmonia entre golpes.\n- Se Pólux domina, **Woe conduz o vínculo**: dano, Vulnerável, luto e punição contra quem fere o portador ou aliados.\n- Se houver Equilíbrio Instável, o portador escolhe qual lado chama ao realizar o ritual.\n\nO lado adormecido não acorda junto.\n\nEle só desperta pelo **Gatilho do Teste 3** ou por **Despertar Forçado**.\n\n---\n\n## Despertar Verdadeiro Juramento dos Imortais Partidos\n\nO Despertar Verdadeiro só pode ser usado depois que o portador descobre o **Nome Verdadeiro da Arma**.\n\nNesse estado, as lanças deixam de ser duas armas.\n\nElas viram uma promessa dividida.\n\nEnquanto estiver no Despertar Verdadeiro:\n\n- o lado dominante continua liderando;\n- uma vez durante o despertar, o portador pode usar um efeito do lado adormecido do mesmo Rank;\n- se o lado adormecido for Pólux, usar esse efeito concede +1 Marca do Demônio ao fim da cena;\n- se o lado adormecido for Cástor, ele concede o efeito sem possessão.\n\n**Requisito mínimo:** Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro.  \n**Uso perfeito:** Rank SS e Estágio de Identidade.\n\n---\n\n# DANO POR RANK\n\n## Rank D Nível 2\n\n`5 + DEX + 1d6 / Perfurante`\n\n## Rank C Nível 4\n\n`5 + DEX + 1d8 / Perfurante`\n\n## Rank B Nível 6\n\n`5 + DEX + 1d10 / Perfurante`\n\n## Rank A Nível 8\n\n`5 + DEX + 1d12 / Perfurante`\n\n## Rank S Nível 11\n\n`5 + DEX + 2d6 / Perfurante`\n\n## Rank SS Nível 12\n\n`5 + DEX + 2d8 / Perfurante`\n\n---\n\n# PROPRIEDADE ESPECIAL: VÍNCULO GÊMEO\n\nWeal and Woe são duas lanças, mas contam como uma única arma de Dupla Alma.\n\n## Acerto\n\nPor ter **Acuidade**, Weal and Woe podem usar **FOR ou DEX** nas rolagens de acerto.\n\n## Dano\n\nO dano da arma usa **DEX**, por causa do manejo duplo, da troca de mãos e da sincronia entre as lanças.\n\n## Ryōtō\n\nAo usar as duas lanças em uma Ação de Ataque, o portador pode atacar com ambas.\n\n- primeiro ataque: normal;\n- segundo ataque: não soma FOR ou DEX na rolagem de acerto;\n- ambos usam o dano atual da arma, salvo se uma técnica disser o contrário.\n\n## Lança Irmã\n\nEnquanto as duas lanças estiverem a até **12m** uma da outra, o vínculo permanece estável.\n\nSe uma lança sair de 12m:\n\n- o vínculo enfraquece;\n- efeitos que exigem a lança irmã não funcionam;\n- o Gatilho do lado adormecido pode acontecer, se esse for o resultado do Teste 3.\n\nSe o portador estiver com apenas uma lança, ele ainda pode atacar, mas não pode usar efeitos de **Ryōtō** nem habilidades que exijam as duas metades.\n\n---\n\n# TESTE 1 LADO DOMINANTE\n\nO lado dominante define qual metade conduz o vínculo.\n\n| Resultado | Funcionamento |\n|---:|---|\n| 1–3 | **Pólux domina.** Woe conduz. Use efeitos de Pólux. Cástor dorme fundo. |\n| 4–8 | **Pólux favorecido.** Woe conduz. Use efeitos de Pólux. Cástor desperta apenas pelo gatilho. |\n| 9–12 | **Equilíbrio instável.** Ao realizar o Ritual, escolha Weal/Cástor ou Woe/Pólux. |\n| 13–17 | **Cástor favorecido.** Weal conduz. Use efeitos de Cástor. Pólux desperta apenas pelo gatilho. |\n| 18–20 | **Cástor domina.** Weal conduz. Use efeitos de Cástor. Pólux dorme fundo. |\n\n---\n\n# TESTE 2 INTENSIDADE DO VÍNCULO\n\nO Teste 2 gera o **Valor de Vínculo**.\n\n| Intensidade | Valor de Vínculo |\n|---|---:|\n| Vínculo Frágil | +1 |\n| Vínculo Fraco | +2 |\n| Vínculo Comum | +3 |\n| Vínculo Forte | +4 |\n| Vínculo Profundo | +5 |\n| Vínculo Absoluto | +6 |\n\n**Cástor** usa o Valor de Vínculo em defesa, localização da lança irmã, mobilidade curta e harmonia.  \n**Pólux** usa o Valor de Vínculo em dano, Vulnerável, luto e punição.\n\n---\n\n# RITUAL DE DESPERTAR: SANGUE ENTRE AS GÊMEAS\n\nPara acordar Weal and Woe, o portador deve alimentar as duas lanças com o mesmo sangue.\n\nO ritual exige que o usuário corte a palma da mão e deixe o sangue escorrer primeiro sobre **Weal**, depois sobre **Woe**, sem interromper o fluxo.\n\nO sangue precisa tocar as duas pontas antes de cair no chão.\n\nSe o sangue tocar apenas uma lança, o vínculo acorda incompleto.\n\n## Como realizar o ritual\n\nO portador deve:\n\n1. fincar as duas lanças no chão ou cruzá-las diante do corpo;\n2. cortar a própria palma;\n3. deixar o mesmo fluxo de sangue tocar Weal e Woe;\n4. declarar quem não deve ser separado;\n5. recitar o **Pacto de Acordar**.\n\n## Custo\n\nAo realizar o ritual, reduza seus **PDV atuais para 10% do valor atual**, arredondado para cima.\n\nO restante é pago como **Sangue de Pacto**.\n\nEm termos práticos: o portador paga aproximadamente **90% dos PDV atuais**.\n\n| PDV atual antes do ritual | PDV após o ritual | PDV pago |\n|---:|---:|---:|\n| 100 | 10 | 90 |\n| 80 | 8 | 72 |\n| 55 | 6 | 49 |\n| 37 | 4 | 33 |\n| 21 | 3 | 18 |\n| 10 | 1 | 9 |\n\n## Regras do Sangue de Pacto\n\nO Sangue de Pacto:\n\n- não é dano comum;\n- não pode ser reduzido por RD;\n- não pode ser transferido;\n- não pode ser pago com PDR;\n- não pode ser anulado;\n- não pode reduzir o portador abaixo de 1 PDV;\n- não ativa efeitos que dependem de “sofrer dano de inimigo”;\n- não pode ser curado enquanto a arma estiver desperta.\n\nSe o portador cair a 0 PDV por outro motivo enquanto Weal and Woe estiverem despertas, as lanças permanecem acordadas até o fim da rodada atual.\n\nDepois disso, voltam ao Estado Selado.\n\n---\n\n# PACTO DE ACORDAR\n\nO Pacto é recitado apenas durante o ritual.\n\nEle não é uma habilidade por Rank.  \nEle não é uma ação separada.  \nEle é a chave que acorda a arma.\n\n## Pacto Completo\n\n> “Meu sangue une o que a morte partiu.  \n> Cástor, guarda a metade mortal.  \n> Pólux, carrega o luto imortal.  \n> Weal, permanece.  \n> Woe, responde.  \n> Duas lanças, um destino.”\n\nApós recitar o Pacto, a arma desperta conforme o lado dominante definido pelo Teste 1.\n\n---\n\n# DURAÇÃO DO DESPERTAR POR INTEGRAÇÃO\n\n## Dualidade\n\nA arma ainda é outro ser.\n\n**Duração:** 2 rodadas.  \n**Exigência:** o Pacto completo deve ser recitado em voz alta.  \n**Limite:** 1 vez por combate.\n\nO lado dominante desperta.  \nO lado adormecido só aparece pelo Gatilho do Teste 3.\n\n---\n\n## Simbiose\n\nA arma reconhece a intenção por trás do sangue.\n\n**Duração:** 3 rodadas.  \n**Exigência:** o portador pode recitar apenas duas linhas do Pacto.  \n**Limite:** 1 vez por combate.\n\nReceba +1 no Teste de Despertar contra o lado adormecido.\n\nAlém disso, enquanto as lanças estiverem a até 12m, você sempre sabe a direção geral da lança irmã.\n\n---\n\n## Unificação\n\nA arma decide junto.\n\n**Duração:** 3 rodadas.  \n**Exigência:** o portador pode recitar apenas o nome das lanças e declarar quem não deve ser separado.  \n**Limite:** 1 vez por combate.\n\nUma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste.\n\n- Se for Cástor, recebe Empréstimo.\n- Se for Pólux, usa o efeito de Pólux do Rank atual sem Possessão, mas ganha +1 Marca do Demônio ao fim da cena.\n\n---\n\n## Identidade\n\nA arma é extensão do corpo.\n\n**Duração:** 4 rodadas.  \n**Exigência:** o portador não precisa falar a reza em voz alta. Basta declarar a intenção do Pacto.  \n**Limite:** 1 vez por combate.\n\nO portador pode usar o **Despertar Verdadeiro**.\n\nNesse estado, uma vez durante o despertar, ele pode usar um efeito do lado adormecido do mesmo Rank sem realizar Teste de Despertar.\n\nSe esse lado for Pólux, ainda recebe +1 Marca do Demônio ao fim da cena.\n\n---\n\n# HABILIDADES BASAIS DO DESPERTAR\n\nEstas habilidades ficam disponíveis enquanto Weal and Woe estiverem despertas, de acordo com o lado ativo.\n\n---\n\n## Cástor Juramento do Gêmeo Mortal\n\n**Tipo:** Ação Especial\n\nVocê recebe **+2 na próxima Defesa** feita antes do início do seu próximo turno.\n\nSe a outra lança estiver a até **12m**, você sabe a direção exata dela e pode se mover **1,5m sem provocar Ataque de Oportunidade**.\n\nEste efeito não causa dano.\n\nCástor nunca aumenta dano bruto.\n\n---\n\n## Pólux Luto do Gêmeo Imortal\n\n**Tipo:** Ação Especial\n\nSeu próximo ataque com Weal and Woe antes do fim do turno recebe o **Dano Bônus de Pólux** conforme suas Marcas do Demônio.\n\nSe acertar, o alvo fica **Vulnerável** contra o próximo ataque que receber.\n\nSe o alvo feriu você ou um aliado desde o fim do seu último turno, ele também sofre **+1 Dano de Ferida**.\n\nUsar Luto do Gêmeo Imortal cobra Dano de Ferida conforme a tabela de Marcas.\n\nPólux nunca melhora Reação defensiva.\n\n---\n\n# DANO BÔNUS DE PÓLUX\n\n| Marcas do Demônio | Dano Bônus de Pólux | Custo |\n|---:|---:|---:|\n| 0 | +1 | 0 Ferida |\n| 1–2 | +2 | 1 Ferida |\n| 3–4 | +3 | 1 Ferida |\n| 5–6 | +4 | 2 Ferida |\n| 7+ | +5 | 2 Ferida |\n\nO Dano Bônus de Pólux é dano direto do golpe e dobra em crítico.\n\nVulnerável e Dano de Ferida não dobram em crítico.\n\n---\n\n# EFEITOS DO DESPERTAR POR RANK\n\nOs efeitos abaixo funcionam apenas enquanto Weal and Woe estiverem despertas.\n\nO lado ativo é definido pelo Teste 1.\n\nEm **Equilíbrio Instável**, o portador escolhe qual lado responde ao realizar o Ritual.\n\n---\n\n## Rank D Voto das Lanças Gêmeas\n\nEnquanto as duas lanças estiverem a até **12m**, você sabe a direção exata da lança irmã.\n\nAo atacar com Weal and Woe, escolha uma condução:\n\n| Condução | Efeito |\n|---|---|\n| **Weal** | você recebe **+1 Defesa** até o início do seu próximo turno |\n| **Woe** | se o ataque acertar, causa **+1 dano fixo** |\n| **Gêmeas** | seu próximo ataque contra o mesmo alvo recebe **+1 no acerto** |\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Ao escolher Weal, o bônus de Defesa também vale contra ataques de oportunidade. | Ao escolher Woe, se o alvo feriu um aliado nesta cena, o +1 dano fixo vira +2. |\n\n---\n\n## Rank C Passo Entre Gêmeos\n\n**Técnica liberada:** Passo Entre Gêmeos  \n**Tipo:** Ação de Movimento\n\nSe a outra lança estiver a até **12m**, você se move até seu deslocamento normal ignorando Terreno Difícil.\n\nSe terminar o movimento com um inimigo dentro de **2m**, seu próximo ataque contra ele antes do fim do turno recebe **+1 no acerto**.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Um aliado dentro de 2m recebe +1 Defesa até o início do próximo turno dele. | O bônus de +1 no acerto só se aplica contra um inimigo que causou dano a um aliado desde o fim do seu último turno. Se acertar, cause +1 dano fixo. |\n\n---\n\n## Rank B Duas Pontas, Um Voto\n\n**Técnica liberada:** Duas Pontas, Um Voto  \n**Tipo:** Ação de Ataque  \n**Requisito:** empunhar Weal e Woe\n\nFaça dois ataques usando a propriedade **Ryōtō**.\n\n- Primeiro ataque: normal.\n- Segundo ataque: não soma FOR ou DEX na rolagem de acerto.\n\nSe os dois ataques acertarem o mesmo alvo, ele sofre **-1 Defesa** até o início do próximo turno dele.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Se os dois ataques acertarem, você recebe +1 Defesa até o início do seu próximo turno. | Se os dois ataques acertarem o mesmo alvo, ele fica **Vulnerável** contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status. |\n\n---\n\n## Rank A Entrelaçamento Umbral\n\n**Técnica liberada:** Entrelaçamento Umbral  \n**Tipo:** Ação Especial\n\nSeu próximo ataque com Weal and Woe antes do fim do turno recebe:\n\n- **+2 no acerto**;\n- alcance tratado como **3m**;\n- ignora posição ruim e Cobertura Leve.\n\nSe superar a Defesa do alvo por **5 ou mais**, escolha um efeito:\n\n- o alvo sofre **Restrição de Movimentos** até o início do próximo turno dele;\n- ou um aliado dentro de **2m** pode se mover **1,5m sem provocar Ataque de Oportunidade**.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Se superar por 5 ou mais, você pode aplicar os dois efeitos. | Se o alvo já estiver Vulnerável, esse ataque causa +1 dano fixo. |\n\n---\n\n## Rank S Metade que Responde\n\n**Técnica liberada:** Metade que Responde  \n**Tipo:** Reação\n\nQuando você ou um aliado a até 2m for alvo de um ataque, role:\n\n`1d20 + DEX`\n\nSe igualar ou superar o acerto inimigo, você defende o ataque.\n\nSe falhar por **4 ou menos**, reduza o dano recebido em:\n\n`5 + DEX`\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Receba **+1** na rolagem de Metade que Responde. | Pólux não concede esta Reação. Se Pólux estiver dominante, esta técnica não pode ser usada. |\n\n---\n\n## Rank SS Juramento dos Imortais Partidos\n\n**Técnica liberada:** Juramento dos Imortais Partidos  \n**Tipo:** Ação Completa  \n**Limite:** 1 vez por combate  \n**Área:** até 2 inimigos em 3m  \n**Requisito:** empunhar Weal e Woe\n\nFaça uma rolagem de acerto separada contra até 2 inimigos dentro de 3m.\n\nCada alvo atingido sofre o dano atual da arma:\n\n`5 + DEX + 2d8 / Perfurante`\n\nSe escolher apenas **1 alvo**, ele fica **Vulnerável** contra o próximo ataque que receber.\n\nSe atingir **2 alvos**, um aliado dentro de 3m recebe **+2 Defesa** até o início do próximo turno dele.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Após resolver a técnica, aliados dentro de 3m podem se mover 1,5m sem provocar Ataque de Oportunidade. | Você pode ativar **Luto do Gêmeo Imortal** junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o alvo já estiver Vulnerável, ele sofre **+1 Dano de Ferida**. |\n\n---\n\n# TESTE 3 GATILHO DO LADO ADORMECIDO\n\nUse o resultado do Teste 3 da Cerimônia, adaptado a Weal and Woe.\n\n| Resultado | Gatilho |\n|---:|---|\n| 3–14 | Uma das lanças sai do alcance de 12m da outra. |\n| 15–38 | Você ou um aliado vinculado sofre acerto crítico. |\n| 39–57 | Uma lança seria destruída, roubada ou separada à força. |\n| 58–60 | Gatilho oculto do Mestre. |\n\nQuando o gatilho acontece, faça o **Teste de Despertar** conforme a Intensidade do Vínculo.\n\nSe o lado adormecido for **Cástor**, ele oferece Empréstimo.  \nSe o lado adormecido for **Pólux**, ele tenta Possessão.\n\n---\n\n# TESTE DE DESPERTAR\n\nQuando o Gatilho do lado adormecido acontecer, faça um **Teste de Força de Vontade**.\n\n| Intensidade | CD |\n|---|---:|\n| Frágil | 11 |\n| Fraco | 13 |\n| Comum | 15 |\n| Forte | 17 |\n| Profundo | 19 |\n| Absoluto | 21 |\n\n**Sucesso:** o portador mantém controle. Pode usar uma vez um efeito do lado adormecido do Rank atual.  \n**Falha:** o lado adormecido desperta de forma instável.\n\n---\n\n# EMPRÉSTIMO DE CÁSTOR\n\nQuando Cástor desperta como lado adormecido, ele não toma controle.\n\nEle permite usar **uma vez** o efeito de Cástor do seu Rank atual, mesmo que Pólux seja o dominante.\n\nDepois disso, volta a dormir.\n\n---\n\n# POSSESSÃO DE PÓLUX\n\nQuando Pólux desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno.\n\nDurante esse turno, Pólux:\n\n- não usa Reação defensiva;\n- prioriza quem separou, roubou ou ameaçou uma das lanças;\n- prioriza inimigos que feriram aliados;\n- tenta aplicar Vulnerável;\n- ignora posicionamento seguro se uma lança estiver distante;\n- não abandona a lança irmã;\n- luta como alguém que já perdeu uma metade e não aceitará perder de novo.\n\nAo fim da possessão, o portador ganha **+1 Marca do Demônio**.\n\n---\n\n# DESPERTAR FORÇADO DO LADO ADORMECIDO\n\nO portador pode tentar acordar o lado que dorme antes do gatilho acontecer.\n\nIsso é perigoso.\n\n## Custo\n\nO portador realiza o **Ritual de Sangue Entre as Gêmeas** normalmente e aceita que o lado adormecido tente responder.\n\nApós pagar o Sangue de Pacto, faça o **Teste de Despertar**.\n\n**Sucesso:** o lado adormecido desperta até o fim da cena.  \n**Falha:** o custo é pago, mas o despertar vem distorcido.\n\n- Se Cástor estava adormecido, ele concede apenas um efeito de Cástor do Rank atual e volta a dormir.\n- Se Pólux estava adormecido, ele tenta Possessão imediatamente.\n\n---\n\n# MARCAS DO DEMÔNIO\n\nSempre que Pólux possuir o portador, ganhe +1 Marca do Demônio.\n\n| Marcas | Efeito |\n|---:|---|\n| 0 | Sem custo adicional. |\n| 1–2 | Luto do Gêmeo Imortal causa 1 Dano de Ferida. |\n| 3–4 | Luto do Gêmeo Imortal causa 1 Dano de Ferida e Pólux puxa o portador na direção da lança irmã até o fim da cena. |\n| 5–6 | O custo sobe para 2 Dano de Ferida. |\n| 7+ | O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Pólux é feito com Desvantagem. |\n\n---\n\n# DESCOBRINDO O NOME VERDADEIRO\n\nA arma não entrega seu nome inteiro no começo.\n\nNo início, o portador conhece apenas o nome de combate.\n\n## Nome Selado\n\n**Weal and Woe**\n\nEsse é o nome das lanças.\n\nNão é o nome completo da arma.\n\nCom esse nome, o portador pode usar o Estado Selado e o Primeiro Despertar.\n\n---\n\n## Primeiro Fragmento Simbiose\n\nQuando o portador alcança **Simbiose**, ele descobre que as lanças não são apenas duas armas.\n\nElas são duas metades de um juramento.\n\nO Mestre revela o primeiro fragmento:\n\n**“Gêmeas”**\n\nA partir daqui, o portador entende que separação não é apenas distância.\n\nÉ ferida espiritual.\n\n---\n\n## Segundo Fragmento Unificação\n\nQuando o portador alcança **Unificação**, ele descobre que Weal e Woe não representam bem e mal.\n\nRepresentam presença e perda.\n\nO Mestre revela o segundo fragmento:\n\n**“Imortais Partidos”**\n\nA partir daqui, o portador pode buscar o Despertar Verdadeiro.\n\n---\n\n## Nome Verdadeiro Identidade\n\nQuando o portador alcança **Identidade**, ele aprende o nome inteiro.\n\n## Nome Verdadeiro da Arma\n\n**Weal and Woe, Juramento dos Imortais Partidos**\n\nEsse é o nome completo.\n\nNão são duas lanças.  \nNão são duas almas disputando uma arma.  \nSão duas metades que escolheram continuar existindo juntas, mesmo quando uma delas já deveria ter partido.\n\nAo aprender o Nome Verdadeiro, o portador desbloqueia o **Despertar Verdadeiro Juramento dos Imortais Partidos**.\n\n---\n\n# COMANDOS DE LIBERAÇÃO\n\n## Liberação Inicial\n\nUsada no Primeiro Despertar.\n\n> “Permaneçam juntas, Weal and Woe.”\n\nEsse comando exige o **Ritual de Sangue Entre as Gêmeas**.\n\n---\n\n## Liberação Verdadeira\n\nUsada no Despertar Verdadeiro.\n\n> “Partilhem o destino, Weal and Woe, Juramento dos Imortais Partidos.”\n\nEsse comando exige:\n\n- Rank S ou superior;\n- Unificação ou Identidade;\n- Nome Verdadeiro descoberto;\n- Ritual de Sangue Entre as Gêmeas pago.\n\n---\n\n# CRÍTICO\n\nO dano atual da arma entra no crítico normalmente.\n\nExemplo em Rank B:\n\n`5 + DEX + 1d10`\n\nEm crítico:\n\n`(5 + DEX + 1d10 + bônus diretos aplicáveis) × 2`\n\nO Dano Bônus de Pólux dobra, porque é dano direto do golpe.\n\nVulnerável, Dano de Ferida, bônus de Defesa e penalidade de Defesa não dobram.\n\n---\n\n# RESUMO RÁPIDO\n\n**Estado Selado:** lanças gêmeas, dano evolutivo, Ryōtō e Vínculo Gêmeo.  \n**Ritual:** corta a mão, banha as duas lanças com o mesmo sangue e paga 90% dos PDV atuais.  \n**Pacto:** é somente a reza que acorda a arma.  \n**Primeiro Despertar:** acorda o lado dominante.  \n**Weal/Cástor:** defesa, localização da lança irmã, mobilidade curta e harmonia.  \n**Woe/Pólux:** dano, Vulnerável, luto, perseguição e possessão.  \n**Vínculo Gêmeo:** as lanças querem ficar a até 12m uma da outra.  \n**Nome Verdadeiro:** desbloqueia o Juramento dos Imortais Partidos.",
+            "descricao": "Lanças gêmeas de vínculo. A dominância define qual metade conduz, mas não apaga a outra.",
+            "arma_ordem": 114,
+            "arma_mecanicas": [
+                {
+                    "id": "acuidade",
+                    "kind": "attack-attribute-choice",
+                    "attributes": [
+                        "FOR",
+                        "DEX"
+                    ],
+                    "requiresProficiency": true
+                },
+                {
+                    "id": "ryoto",
+                    "kind": "integrated-double-attack",
+                    "attacks": 2,
+                    "secondAttribute": false
+                }
+            ],
+            "arma_propriedades_chaves": [
+                "acuidade",
+                "ryoto",
+                "vínculo gêmeo"
+            ],
+            "arma_dado_evolutivo_por_rank": {
+                "D": "1d6",
+                "C": "1d8",
+                "B": "1d10",
+                "A": "1d12",
+                "S": "2d6",
+                "SS": "2d8"
+            },
+            "arma_efeitos_por_rank": {
+                "D": {
+                    "nome": "Voto das Lanças Gêmeas",
+                    "base": "Enquanto as duas lanças estiverem a até **12m**, você sabe a direção exata da lança irmã.\n\nAo atacar com Weal and Woe, escolha uma condução:\n\n| Condução | Efeito |\n|---|---|\n| **Weal** | você recebe **+1 Defesa** até o início do seu próximo turno |\n| **Woe** | se o ataque acertar, causa **+1 dano fixo** |\n| **Gêmeas** | seu próximo ataque contra o mesmo alvo recebe **+1 no acerto** |\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Ao escolher Weal, o bônus de Defesa também vale contra ataques de oportunidade. | Ao escolher Woe, se o alvo feriu um aliado nesta cena, o +1 dano fixo vira +2. |\n\n---"
+                },
+                "C": {
+                    "nome": "Passo Entre Gêmeos",
+                    "base": "**Técnica liberada:** Passo Entre Gêmeos  \n**Tipo:** Ação de Movimento\n\nSe a outra lança estiver a até **12m**, você se move até seu deslocamento normal ignorando Terreno Difícil.\n\nSe terminar o movimento com um inimigo dentro de **2m**, seu próximo ataque contra ele antes do fim do turno recebe **+1 no acerto**.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Um aliado dentro de 2m recebe +1 Defesa até o início do próximo turno dele. | O bônus de +1 no acerto só se aplica contra um inimigo que causou dano a um aliado desde o fim do seu último turno. Se acertar, cause +1 dano fixo. |\n\n---"
+                },
+                "B": {
+                    "nome": "Duas Pontas, Um Voto",
+                    "base": "**Técnica liberada:** Duas Pontas, Um Voto  \n**Tipo:** Ação de Ataque  \n**Requisito:** empunhar Weal e Woe\n\nFaça dois ataques usando a propriedade **Ryōtō**.\n\n- Primeiro ataque: normal.\n- Segundo ataque: não soma FOR ou DEX na rolagem de acerto.\n\nSe os dois ataques acertarem o mesmo alvo, ele sofre **-1 Defesa** até o início do próximo turno dele.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Se os dois ataques acertarem, você recebe +1 Defesa até o início do seu próximo turno. | Se os dois ataques acertarem o mesmo alvo, ele fica **Vulnerável** contra o próximo ataque que receber. O Vulnerável não afeta o golpe que aplicou esse status. |\n\n---"
+                },
+                "A": {
+                    "nome": "Entrelaçamento Umbral",
+                    "base": "**Técnica liberada:** Entrelaçamento Umbral  \n**Tipo:** Ação Especial\n\nSeu próximo ataque com Weal and Woe antes do fim do turno recebe:\n\n- **+2 no acerto**;\n- alcance tratado como **3m**;\n- ignora posição ruim e Cobertura Leve.\n\nSe superar a Defesa do alvo por **5 ou mais**, escolha um efeito:\n\n- o alvo sofre **Restrição de Movimentos** até o início do próximo turno dele;\n- ou um aliado dentro de **2m** pode se mover **1,5m sem provocar Ataque de Oportunidade**.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Se superar por 5 ou mais, você pode aplicar os dois efeitos. | Se o alvo já estiver Vulnerável, esse ataque causa +1 dano fixo. |\n\n---"
+                },
+                "S": {
+                    "nome": "Metade que Responde",
+                    "base": "**Técnica liberada:** Metade que Responde  \n**Tipo:** Reação\n\nQuando você ou um aliado a até 2m for alvo de um ataque, role:\n\n`1d20 + DEX`\n\nSe igualar ou superar o acerto inimigo, você defende o ataque.\n\nSe falhar por **4 ou menos**, reduza o dano recebido em:\n\n`5 + DEX`\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Receba **+1** na rolagem de Metade que Responde. | Pólux não concede esta Reação. Se Pólux estiver dominante, esta técnica não pode ser usada. |\n\n---"
+                },
+                "SS": {
+                    "nome": "Juramento dos Imortais Partidos",
+                    "base": "**Técnica liberada:** Juramento dos Imortais Partidos  \n**Tipo:** Ação Completa  \n**Limite:** 1 vez por combate  \n**Área:** até 2 inimigos em 3m  \n**Requisito:** empunhar Weal e Woe\n\nFaça uma rolagem de acerto separada contra até 2 inimigos dentro de 3m.\n\nCada alvo atingido sofre o dano atual da arma:\n\n`5 + DEX + 2d8 / Perfurante`\n\nSe escolher apenas **1 alvo**, ele fica **Vulnerável** contra o próximo ataque que receber.\n\nSe atingir **2 alvos**, um aliado dentro de 3m recebe **+2 Defesa** até o início do próximo turno dele.\n\n| Cástor responde | Pólux responde |\n|---|---|\n| Após resolver a técnica, aliados dentro de 3m podem se mover 1,5m sem provocar Ataque de Oportunidade. | Você pode ativar **Luto do Gêmeo Imortal** junto desta técnica sem gastar Ação Especial, mas ainda paga o Dano de Ferida. Se o alvo já estiver Vulnerável, ele sofre **+1 Dano de Ferida**. |\n\n---"
+                }
+            },
+            "arma_testes": {
+                "teste_1_lado_dominante": {
+                    "1-3": "Pólux domina. Woe conduz. Use efeitos de Pólux. Cástor dorme fundo.",
+                    "4-8": "Pólux favorecido. Woe conduz. Use efeitos de Pólux. Cástor desperta apenas pelo gatilho.",
+                    "9-12": "Equilíbrio instável. Ao realizar o Ritual, escolha Weal/Cástor ou Woe/Pólux.",
+                    "13-17": "Cástor favorecido. Weal conduz. Use efeitos de Cástor. Pólux desperta apenas pelo gatilho.",
+                    "18-20": "Cástor domina. Weal conduz. Use efeitos de Cástor. Pólux dorme fundo."
+                },
+                "teste_2_intensidade_vinculo": {
+                    "Vínculo Frágil": "+1",
+                    "Vínculo Fraco": "+2",
+                    "Vínculo Comum": "+3",
+                    "Vínculo Forte": "+4",
+                    "Vínculo Profundo": "+5",
+                    "Vínculo Absoluto": "+6"
+                },
+                "uso_do_vinculo": {
+                    "Cástor": "defesa, localização da lança irmã, mobilidade curta e harmonia",
+                    "Pólux": "dano, Vulnerável, luto e punição"
+                },
+                "teste_3_gatilho_lado_adormecido": {
+                    "3-14": "Uma das lanças sai do alcance de 12m da outra.",
+                    "15-38": "Você ou um aliado vinculado sofre acerto crítico.",
+                    "39-57": "Uma lança seria destruída, roubada ou separada à força.",
+                    "58-60": "Gatilho oculto do Mestre."
+                },
+                "teste_de_despertar": {
+                    "Vínculo Frágil": 11,
+                    "Vínculo Fraco": 13,
+                    "Vínculo Comum": 15,
+                    "Vínculo Forte": 17,
+                    "Vínculo Profundo": 19,
+                    "Vínculo Absoluto": 21
+                }
+            },
+            "arma_despertar": {
+                "estado_selado": "Gêmeas Separadas",
+                "primeiro_despertar": "Voto das Lanças Gêmeas",
+                "despertar_verdadeiro": "Juramento dos Imortais Partidos",
+                "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",
+                "uso_perfeito": "Rank SS e Estágio de Identidade"
+            },
+            "arma_ritual": {
+                "nome": "Sangue Entre as Gêmeas",
+                "passos": [
+                    "fincar as duas lanças no chão ou cruzá-las diante do corpo",
+                    "cortar a própria palma",
+                    "deixar o mesmo fluxo de sangue tocar Weal e Woe",
+                    "declarar quem não deve ser separado",
+                    "recitar o Pacto de Acordar"
+                ],
+                "custo": "reduza seus PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
+                "regras_sangue_de_pacto": [
+                    "não é dano comum",
+                    "não pode ser reduzido por RD",
+                    "não pode ser transferido",
+                    "não pode ser pago com PDR",
+                    "não pode ser anulado",
+                    "não pode reduzir o portador abaixo de 1 PDV",
+                    "não ativa efeitos que dependem de sofrer dano de inimigo",
+                    "não pode ser curado enquanto a arma estiver desperta"
+                ],
+                "pacto_completo": "Meu sangue une o que a morte partiu.\nCástor, guarda a metade mortal.\nPólux, carrega o luto imortal.\nWeal, permanece.\nWoe, responde.\nDuas lanças, um destino."
+            },
+            "arma_integracao": {
+                "Dualidade": {
+                    "duracao": "2 rodadas",
+                    "exigencia": "Pacto completo deve ser recitado em voz alta",
+                    "limite": "1 vez por combate"
+                },
+                "Simbiose": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas duas linhas do Pacto",
+                    "limite": "1 vez por combate",
+                    "bonus": "+1 no Teste de Despertar contra o lado adormecido"
+                },
+                "Unificação": {
+                    "duracao": "3 rodadas",
+                    "exigencia": "o portador pode recitar apenas o nome das lanças e declarar quem não deve ser separado",
+                    "limite": "1 vez por combate",
+                    "efeito": "uma vez por combate, quando o Gatilho do lado adormecido acontecer, o portador pode permitir o despertar sem teste"
+                },
+                "Identidade": {
+                    "duracao": "4 rodadas",
+                    "exigencia": "o portador não precisa falar a reza em voz alta; basta declarar a intenção do Pacto",
+                    "limite": "1 vez por combate",
+                    "efeito": "o portador pode usar o Despertar Verdadeiro; uma vez durante o despertar, pode usar um efeito do lado adormecido do mesmo Rank sem Teste de Despertar"
+                }
+            },
+            "arma_habilidades_basais_despertar": {
+                "castor": {
+                    "nome": "Juramento do Gêmeo Mortal",
+                    "tipo": "Ação Especial",
+                    "efeito": "Você recebe +2 na próxima Defesa feita antes do início do seu próximo turno. Se a outra lança estiver a até 12m, você sabe a direção exata dela e pode se mover 1,5m sem provocar Ataque de Oportunidade.",
+                    "observacao": "Este efeito não causa dano. Cástor nunca aumenta dano bruto."
+                },
+                "polux": {
+                    "nome": "Luto do Gêmeo Imortal",
+                    "tipo": "Ação Especial",
+                    "efeito": "Seu próximo ataque com Weal and Woe antes do fim do turno recebe o Dano Bônus de Pólux conforme suas Marcas do Demônio. Se acertar, o alvo fica Vulnerável contra o próximo ataque que receber. Se o alvo feriu você ou um aliado desde o fim do seu último turno, ele também sofre +1 Dano de Ferida.",
+                    "custo": "cobra Dano de Ferida conforme a tabela de Marcas",
+                    "observacao": "Pólux nunca melhora Reação defensiva."
+                }
+            },
+            "arma_emprestimo": {
+                "entidade": "Cástor",
+                "efeito": "quando Cástor desperta como lado adormecido, permite usar uma vez o efeito de Cástor do Rank atual; depois volta a dormir"
+            },
+            "arma_possessao": {
+                "entidade": "Pólux",
+                "efeito": "quando Pólux desperta como lado adormecido e o portador falha no Teste de Despertar, o Mestre controla o personagem por 1 turno",
+                "consequencia": "ao fim da possessão, o portador ganha +1 Marca do Demônio"
+            },
+            "arma_despertar_forcado": {
+                "custo": "o portador realiza o Ritual de Sangue Entre as Gêmeas normalmente e aceita que o lado adormecido tente responder",
+                "teste": "após pagar o Sangue de Pacto, faça o Teste de Despertar",
+                "sucesso": "o lado adormecido desperta até o fim da cena",
+                "falha": "o custo é pago, mas o despertar vem distorcido",
+                "castor_adormecido": "Cástor concede apenas um efeito de Cástor do Rank atual e volta a dormir",
+                "polux_adormecido": "Pólux tenta Possessão imediatamente"
+            },
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
+                "0": "Sem custo adicional.",
+                "1-2": "Luto do Gêmeo Imortal causa 1 Dano de Ferida.",
+                "3-4": "Luto do Gêmeo Imortal causa 1 Dano de Ferida e Pólux puxa o portador na direção da lança irmã até o fim da cena.",
+                "5-6": "O custo sobe para 2 Dano de Ferida.",
+                "7+": "O custo é 2 Dano de Ferida e o próximo Teste de Despertar de Pólux é feito com Desvantagem."
+            },
+            "arma_vinculo_intensidade": "",
+            "arma_vinculo_valor": 0,
+            "arma_nome_verdadeiro": {
+                "nome_selado": "Weal and Woe",
+                "primeiro_fragmento_simbiose": "Gêmeas",
+                "segundo_fragmento_unificacao": "Imortais Partidos",
+                "nome_verdadeiro": "Weal and Woe, Juramento dos Imortais Partidos"
+            },
+            "arma_comandos_liberacao": {
+                "liberacao_inicial": "Permaneçam juntas, Weal and Woe.",
+                "liberacao_verdadeira": "Partilhem o destino, Weal and Woe, Juramento dos Imortais Partidos."
+            },
+            "arma_especial_estado_atual": "Selado",
+            "arma_especial_integracao": "",
+            "arma_especial_forma_atual": "Gêmeas Separadas",
+            "arma_especial_recurso_resumo": ""
+        }
+    },
+    "effects": [],
+    "folder": "1d69316b98fed3ee",
+    "sort": 11400000,
+    "ownership": {
+        "default": 2
+    },
+    "flags": {
+        "custom-system-builder": {
+            "unique": true
+        }
+    },
+    "_stats": {
+        "systemId": "custom-system-builder",
+        "systemVersion": "6.0.2",
+        "coreVersion": "14",
+        "createdTime": 0,
+        "modifiedTime": 0,
+        "lastModifiedBy": null
+    }
+}

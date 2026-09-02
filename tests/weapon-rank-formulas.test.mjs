@@ -70,6 +70,7 @@ describe('geração sistêmica de fórmulas por Rank', () => {
             );
             if (document.type !== 'equippableItem') continue;
             const props = document.system?.props ?? {};
+            if (props.arma_categoria === 'especial') continue;
             const profiles = Array.isArray(props.arma_perfis_ataque)
                 ? props.arma_perfis_ataque
                 : [];
@@ -81,5 +82,58 @@ describe('geração sistêmica de fórmulas por Rank', () => {
         }
 
         assert.equal(weaponsChecked, 4);
+    });
+
+    it('Rebellion recebe a progressão evolutiva D a SS', async () => {
+        const directory = new URL('../build/compendium/armas-slayer/', import.meta.url);
+        const files = (await readdir(directory)).filter((file) => file.endsWith('.json'));
+        const documents = await Promise.all(
+            files.map(async (file) =>
+                JSON.parse(
+                    await readFile(
+                        new URL(`../build/compendium/armas-slayer/${file}`, import.meta.url),
+                        'utf8'
+                    )
+                )
+            )
+        );
+        const rebellion = documents.find((document) => document.name === 'Rebellion');
+        assert.ok(rebellion);
+        const formulas = JSON.parse(rebellion.system.props.arma_formulas_por_rank_json);
+        assert.equal(formulas.D[0], '7 + FOR + 1d6 / Cortante ou Concussão');
+        assert.equal(formulas.SS[0], '7 + FOR + 2d8 / Cortante ou Concussão');
+    });
+
+    it('todas as dezesseis armas especiais preservam perfis e progressão D a SS', async () => {
+        const directory = new URL('../build/compendium/armas-slayer/', import.meta.url);
+        const files = (await readdir(directory)).filter((file) => file.endsWith('.json'));
+        const documents = await Promise.all(
+            files.map(async (file) =>
+                JSON.parse(
+                    await readFile(
+                        new URL(`../build/compendium/armas-slayer/${file}`, import.meta.url),
+                        'utf8'
+                    )
+                )
+            )
+        );
+        const specialWeapons = documents.filter(
+            (document) =>
+                document.type === 'equippableItem' &&
+                document.system?.props?.arma_categoria === 'especial'
+        );
+
+        assert.equal(specialWeapons.length, 16);
+        for (const weapon of specialWeapons) {
+            const props = weapon.system.props;
+            assert.ok(props.arma_perfis_ataque.length > 0, `${weapon.name} deve possuir perfil`);
+            const formulas = JSON.parse(props.arma_formulas_por_rank_json);
+            for (const rank of Object.keys(RANK_DICE)) {
+                assert.ok(
+                    Array.isArray(formulas[rank]) && formulas[rank].length > 0,
+                    `${weapon.name} deve possuir fórmula no Rank ${rank}`
+                );
+            }
+        }
     });
 });

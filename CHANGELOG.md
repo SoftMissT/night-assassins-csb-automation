@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.11.56 — 2026-09-01
+
+- Publicadas no Compendium todas as 16 Armas Especiais Slayer existentes em `data/catalog-source/weapons/especiais`, além das quatro armas normais já suportadas.
+- Todas as especiais são geradas com o template canônico `NASpecialWeaponTpl00001`, pasta exclusiva de Armas Especiais e perfis mecânicos preservados.
+- Rebellion recebeu a representação humana completa de Pacto das Almas, Isis, Fenrir, Ritual e progressão por Rank, sem substituir seus dados estruturados.
+- O builder agora inclui explicitamente as fontes especiais e normaliza seus ícones para assets locais distribuídos; Gáe Bolg, Gilgamesh, Moonfang e Woldo usam temporariamente o ícone local da Katana por não possuírem arte própria no repositório.
+- Adicionadas regressões para garantir 4 armas normais, 16 especiais, template/pasta corretos, perfis válidos, progressão D–SS e existência física dos 20 ícones publicados.
+- Armas Especiais passam a estar disponíveis para importação e teste; suas mecânicas avançadas específicas ainda dependem de validação em Actor real no Foundry v14.
+
 ## v0.11.55 — 2026-09-01
 
 - Adotado integralmente o template oficial de Arma Especial Slayer v0.3.2, preservando `_id` e `uniqueId` canônicos `NASpecialWeaponTpl00001`.

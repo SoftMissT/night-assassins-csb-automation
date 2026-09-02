@@ -152,6 +152,49 @@ describe('attack-builder', () => {
         assert.ok(result.entradas.every((entry) => entry.fixo === 5));
     });
 
+    it('Rebellion especial aparece no Slayer e usa o dado evolutivo do Rank', () => {
+        const actor = makeActor({ props: { nome_slayer: 'Slayer', nvl_num: 6, for_display: 4 } });
+        actor.items = [
+            {
+                id: 'rebellion',
+                uuid: 'Actor.slayer.Item.rebellion',
+                name: 'Rebellion',
+                parent: actor,
+                system: {
+                    template: 'NASpecialWeaponTpl00001',
+                    props: {
+                        inventario_categoria: 'arma',
+                        arma_categoria: 'especial',
+                        arma_nome: 'Rebellion',
+                        arma_critico: 19,
+                        arma_perfis_ataque_json: JSON.stringify([
+                            {
+                                nome: 'Rebellion',
+                                dano_fixo: 7,
+                                atributos: [{ key: 'FOR', multiplicador: 1 }],
+                                tipos_dano: ['cortante', 'concussivo'],
+                                critico: 19,
+                            },
+                        ]),
+                        arma_formulas_por_rank_json: JSON.stringify({
+                            B: ['7 + FOR + 1d10 / Cortante ou Concussão'],
+                        }),
+                    },
+                },
+            },
+        ];
+
+        const model = createAttackBuilderModel(actor);
+        assert.equal(model.weapons.length, 1);
+        assert.match(model.weapons[0].label, /Rebellion/u);
+        assert.equal(model.weapons[0].definition.attack.critical.threshold, 19);
+        const result = buildAttackSelection(model, { weaponKey: model.weapons[0].key });
+        assert.equal(result.entradas.length, 1);
+        assert.equal(result.entradas[0].dado, '1d10');
+        assert.equal(result.entradas[0].fixo, 11);
+        assert.deepEqual(result.entradas[0].tiposDano, ['cortante', 'concussao']);
+    });
+
     it('oferece ataques desarmados escalonados para Oni', () => {
         const actor = makeActor({
             props: { nome_oni: 'Akuma', nvl_num: 10, for_display: 6, dex_display: 5 },

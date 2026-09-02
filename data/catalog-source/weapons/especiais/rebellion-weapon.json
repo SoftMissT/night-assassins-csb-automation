@@ -5,7 +5,7 @@
   "type": "equippableItem",
   "img": "modules/night-assassins-csb-automation/assets/icons/weapons/rebellion_icon.webp",
   "system": {
-    "template": "NAWeaponTpl00001",
+    "template": "NASpecialWeaponTpl00001",
     "props": {
       "inventario_categoria": "arma",
       "arma_categoria": "especial",
@@ -32,6 +32,7 @@
       "arma_reacao_entidade": "Defesa",
       "arma_dano_bonus_texto": "dado evolutivo do Rank incorporado ao dano da arma",
       "descricao": "Espadão dos Doze Caçadores mortos. Arma especial de sobrevivência, sangue e ascensão sob pressão. Isis responde com defesa, proteção e avanço seguro; Fenrir responde com dano, medo, ruptura e possessão.",
+      "arma_regra_completa": "## Pacto das Almas\n\nRebellion carrega doze ecos de caçadores mortos. Enquanto estiver desperta, acumula até 3 Stacks de Despertar.\n\nCada stack concede +1 em rolagens de acerto com Rebellion. Se Fenrir estiver ativo, cada stack também concede +1 de dano fixo. Isis nunca aumenta dano bruto.\n\n## Isis — Véu dos Doze Mártires\n\nAção Especial. Receba +2 na próxima rolagem de Bloqueio ou Esquiva antes do início do próximo turno. Se estiver com metade ou menos dos PDV máximos, o bônus aumenta para +3.\n\n## Fenrir — Gleipnir Rompida\n\nAção Especial. O próximo ataque com Rebellion recebe o Dano Bônus de Fenrir conforme as Marcas do Demônio. Se acertar, o alvo fica Amedrontado por 1 turno. O uso cobra Dano de Ferida conforme as Marcas.\n\n## Ritual — Sangue dos Doze\n\nO ritual reduz os PDV atuais para 10% do valor atual, arredondado para cima. O restante é pago como Sangue de Pacto.\n\n## Progressão\n\nRank D: 7 + FOR + 1d6\nRank C: 7 + FOR + 1d8\nRank B: 7 + FOR + 1d10\nRank A: 7 + FOR + 1d12\nRank S: 7 + FOR + 2d6\nRank SS: 7 + FOR + 2d8",
       "arma_ordem": 102,
       "arma_perfis_ataque": [
         {

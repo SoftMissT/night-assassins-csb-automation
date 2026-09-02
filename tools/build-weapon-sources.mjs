@@ -31,6 +31,50 @@ const PUBLISHED_WEAPONS = new Set([
     'Cutelos Gêmeos',
 ]);
 const BASIC_FOLDER_ID = '02e48b1127bca24a';
+const SPECIAL_FOLDER_ID = '1d69316b98fed3ee';
+const SPECIAL_SOURCE_DIRECTORY = path.join(
+    root,
+    'data',
+    'catalog-source',
+    'weapons',
+    'especiais'
+);
+const PUBLISHED_SPECIAL_WEAPONS = new Set([
+    'Boosted Gear Manoplas do Imperador Dragão Vermelho',
+    'Cérbero',
+    'Correntes de Jade Ceifadoras de Chi',
+    'Êxtase Tesoura da Névoa Sagrada',
+    'Gáe Bolg Espinho do Destino Selado',
+    'Gilgamesh Yoroi do Sol',
+    'Gumbai Leque do Pilar Quebrado',
+    "Imperator's Edge Estandarte das Cem Legiões",
+    'Impurity Arms Punhos Gêmeos de Kegare',
+    'Moonfang Runkah',
+    'Orochimaru Jakkojin',
+    'Playful Cloud Sansetsukon da Nuvem Irônica',
+    'Rebellion',
+    'Red Queen Motor Carmesim',
+    'Woldo Lua do Exílio',
+    "Yamato The Rift-Walker's Legacy",
+]);
+const SPECIAL_WEAPON_ICON_BY_NAME = Object.freeze({
+    'Boosted Gear Manoplas do Imperador Dragão Vermelho': 'Boosted_Gear_Red_Dragon_Gauntlets_icon.webp',
+    Cérbero: 'Cerberus_icon.webp',
+    'Correntes de Jade Ceifadoras de Chi': 'Jade_Chains_Chi_Reapers_icon.webp',
+    'Êxtase Tesoura da Névoa Sagrada': 'Ecstasy_Sacred_Mist_Scissors_icon.webp',
+    'Gáe Bolg Espinho do Destino Selado': 'katana_icon.webp',
+    'Gilgamesh Yoroi do Sol': 'katana_icon.webp',
+    'Gumbai Leque do Pilar Quebrado': 'Gumbai_Broken_Pillar_War_Fan_icon.webp',
+    "Imperator's Edge Estandarte das Cem Legiões": 'Imperators_Edge_Banner_icon.webp',
+    'Impurity Arms Punhos Gêmeos de Kegare': 'Impurity_Arms_Twin_Fists_icon.webp',
+    'Moonfang Runkah': 'katana_icon.webp',
+    'Orochimaru Jakkojin': 'Orochimaru_Jakkojin_icon.webp',
+    'Playful Cloud Sansetsukon da Nuvem Irônica': 'Playful_Cloud_Ironical_Sansetsukon_icon.webp',
+    Rebellion: 'Rebellion_icon.webp',
+    'Red Queen Motor Carmesim': 'Red_Queen_Crimson_Engine_icon.webp',
+    'Woldo Lua do Exílio': 'katana_icon.webp',
+    "Yamato The Rift-Walker's Legacy": 'Yamato_Rift_Walkers_Legacy_icon.webp',
+});
 
 export const RANK_DICE = Object.freeze({
     D: '1d6',
@@ -89,15 +133,42 @@ export function normalizeRankFormulas(extracted = {}, profiles = []) {
     );
 }
 
+const specialSourceDocuments = await Promise.all(
+    (await readdir(SPECIAL_SOURCE_DIRECTORY))
+        .filter((file) => file.endsWith('.json'))
+        .map(async (file) =>
+            JSON.parse(await readFile(path.join(SPECIAL_SOURCE_DIRECTORY, file), 'utf8'))
+        )
+);
+const publishedSpecialDocuments = specialSourceDocuments
+    .filter(
+        (document) =>
+            document.type === 'equippableItem' && PUBLISHED_SPECIAL_WEAPONS.has(document.name)
+    )
+    .map((document) => ({
+        ...document,
+        img: `modules/night-assassins-csb-automation/assets/icons/weapons/${SPECIAL_WEAPON_ICON_BY_NAME[document.name]}`,
+        system: {
+            ...document.system,
+            template: specialWeaponTemplate._id,
+        },
+        folder: SPECIAL_FOLDER_ID,
+    }));
+
 const sourceDocuments = catalog.documents.filter((document) => {
-    if (String(document._key ?? '').startsWith('!folders!'))
-        return document._id === BASIC_FOLDER_ID;
+    if (String(document._key ?? '').startsWith('!folders!')) {
+        return [BASIC_FOLDER_ID, SPECIAL_FOLDER_ID].includes(document._id);
+    }
     if (document.type === '_equippableItemTemplate') return document._id === weaponTemplate._id;
     if (document.type === 'equippableItem') return PUBLISHED_WEAPONS.has(document.name);
     return false;
 });
 
-const documents = [...sourceDocuments, specialWeaponTemplate].map((document) => {
+const documents = [
+    ...sourceDocuments,
+    specialWeaponTemplate,
+    ...publishedSpecialDocuments,
+].map((document) => {
     if (document.type === '_equippableItemTemplate' && document._id === weaponTemplate._id)
         return weaponTemplate;
     if (document.type === '_equippableItemTemplate' && document._id === specialWeaponTemplate._id)

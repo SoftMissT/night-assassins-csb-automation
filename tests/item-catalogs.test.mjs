@@ -197,11 +197,11 @@ describe('catálogo de Respirações', () => {
 });
 
 describe('catálogo de armas Slayer', () => {
-    it('publica somente as quatro armas entregues pelo operador e mantém templates normal/especial separados', async () => {
+    it('publica quatro armas normais e as dezesseis armas especiais oficiais', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         assert.equal(
             documents.filter((document) => String(document._key).startsWith('!folders!')).length,
-            1
+            2
         );
         assert.equal(
             documents.filter((document) => document.type === '_equippableItemTemplate').length,
@@ -209,10 +209,26 @@ describe('catálogo de armas Slayer', () => {
         );
         const weapons = documents.filter((document) => document.type === 'equippableItem');
         assert.deepEqual(weapons.map((item) => item.name).sort(), [
+            'Boosted Gear Manoplas do Imperador Dragão Vermelho',
+            'Correntes de Jade Ceifadoras de Chi',
             'Cutelos Gêmeos',
+            'Cérbero',
             'Double Blade',
+            'Gilgamesh Yoroi do Sol',
+            'Gumbai Leque do Pilar Quebrado',
+            'Gáe Bolg Espinho do Destino Selado',
+            "Imperator's Edge Estandarte das Cem Legiões",
+            'Impurity Arms Punhos Gêmeos de Kegare',
             'Katana',
             'Manoplas / Soqueiras',
+            'Moonfang Runkah',
+            'Orochimaru Jakkojin',
+            'Playful Cloud Sansetsukon da Nuvem Irônica',
+            'Rebellion',
+            'Red Queen Motor Carmesim',
+            'Woldo Lua do Exílio',
+            "Yamato The Rift-Walker's Legacy",
+            'Êxtase Tesoura da Névoa Sagrada',
         ]);
         assert.ok(weapons.every((item) => item.system?.props?.inventario_categoria === 'arma'));
         assert.ok(
@@ -221,7 +237,18 @@ describe('catálogo de armas Slayer', () => {
             ),
             'descrições de armas devem ser HTML do Foundry'
         );
-        assert.ok(weapons.every((item) => item.system?.template === 'NAWeaponTpl00001'));
+        const normalWeapons = weapons.filter((item) => item.system.props.arma_categoria !== 'especial');
+        const specialWeapons = weapons.filter((item) => item.system.props.arma_categoria === 'especial');
+        assert.equal(normalWeapons.length, 4);
+        assert.equal(specialWeapons.length, 16);
+        assert.ok(normalWeapons.every((item) => item.system?.template === 'NAWeaponTpl00001'));
+        assert.ok(
+            specialWeapons.every(
+                (item) =>
+                    item.system?.template === 'NASpecialWeaponTpl00001' &&
+                    item.folder === '1d69316b98fed3ee'
+            )
+        );
         assert.ok(
             weapons.every(
                 (item) =>
@@ -241,6 +268,7 @@ describe('catálogo de armas Slayer', () => {
         const doubleBlade = weapons.find((item) => item.name === 'Double Blade');
         const katana = weapons.find((item) => item.name === 'Katana');
         const manoplas = weapons.find((item) => item.name === 'Manoplas / Soqueiras');
+        const rebellion = weapons.find((item) => item.name === 'Rebellion');
         assert.equal(doubleBlade.system.props.arma_critico, 19);
         assert.equal(katana.system.props.arma_critico, 20);
         assert.equal(manoplas.system.props.arma_critico, 20);
@@ -253,6 +281,12 @@ describe('catálogo de armas Slayer', () => {
             'FOR',
         ]);
         assert.deepEqual(JSON.parse(cutelos.system.props.arma_tipos_dano_json), ['cortante']);
+        assert.equal(rebellion.system.template, 'NASpecialWeaponTpl00001');
+        assert.equal(rebellion.folder, '1d69316b98fed3ee');
+        assert.equal(rebellion.system.props.arma_critico, 19);
+        assert.equal(rebellion.system.props.arma_entidade, 'Isis');
+        assert.equal(rebellion.system.props.arma_demonio, 'Fenrir');
+        assert.match(rebellion.system.props.arma_regra_completa, /Pacto das Almas/u);
         for (const weapon of weapons) {
             const props = weapon.system.props;
             for (const key of [
@@ -284,7 +318,7 @@ describe('catálogo de armas Slayer', () => {
             },
         });
         assert.ok(
-            weapons.every(
+            normalWeapons.every(
                 (item) => Object.keys(item.system.props.arma_formulas_por_rank).length === 0
             )
         );
@@ -362,7 +396,7 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
     });
 
-    it('publica os quatro ícones locais sem campo de arte vertical', async () => {
+    it('publica os vinte ícones locais sem campo de arte vertical', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         const weapons = documents.filter((document) => document.type === 'equippableItem');
         const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
@@ -370,7 +404,7 @@ describe('catálogo de armas Slayer', () => {
             item.img?.startsWith('modules/night-assassins-csb-automation/assets/icons/weapons/')
         );
         assert.equal(illustrated.length, 0);
-        assert.equal(customIcons.length, 4);
+        assert.equal(customIcons.length, 20);
         for (const item of customIcons) {
             const relativePath = item.img.replace('modules/night-assassins-csb-automation/', '../');
             await access(new URL(relativePath, import.meta.url));

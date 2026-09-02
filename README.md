@@ -18,7 +18,7 @@ Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**
 | Custom System Builder | 5.2.1 ou superior |
 | Dice So Nice! | Obrigatório |
 
-Versão declarada no manifesto: **0.11.59**.
+Versão declarada no manifesto: **0.11.61**.
 
 ## Instalação
 

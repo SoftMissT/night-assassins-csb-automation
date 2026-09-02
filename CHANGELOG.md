@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.11.61 — 2026-09-02
+
+- Saneado o schema das 16 Armas Especiais para impedir que componentes numéricos do Custom System Builder recebam objetos, arrays ou valores não numéricos.
+- Separado definitivamente o contador numérico `arma_marcas_demonio` da tabela estruturada `arma_marcas_demonio_tabela`, preservando também sua representação JSON para o runtime.
+- Adicionado um sanitizer orientado pelo schema real do template especial, aplicado durante a geração do catálogo sem alterar layout, mecânicas ou campos `estados_slayer_*`.
+- Adicionadas auditorias executáveis para as fontes e para o build das Armas Especiais, cobrindo incompatibilidades de tipo e valores inválidos em `numberField`.
+- Adicionadas regressões para as 16 fontes especiais, incluindo a separação contador/tabela da Yamato e a integração obrigatória do sanitizer no builder.
+
 ## v0.11.59 — 2026-09-01
 
 - Adicionado o runtime universal de Armas Especiais com hidratação de dados canônicos pelo Compendium e fallback visual para Items vinculados a templates antigos do World.

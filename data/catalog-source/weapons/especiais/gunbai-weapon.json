@@ -400,7 +400,8 @@
                 "guan_yin_adormecida": "Guan Yin concede apenas um efeito de Guan Yin do Rank atual e volta a dormir",
                 "gong_gong_adormecido": "Gong Gong tenta Possessão imediatamente"
             },
-            "arma_marcas_demonio": {
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
                 "0": "Sem custo adicional.",
                 "1-2": "Pilar Buzhou Quebrado causa 1 Dano de Ferida.",
                 "3-4": "Pilar Buzhou Quebrado causa 1 Dano de Ferida e o campo parece inclinado ao redor do portador até o fim da cena.",

@@ -472,7 +472,8 @@
                 "nezha_adormecido": "Nezha concede apenas um efeito de Nezha do Rank atual e volta a dormir",
                 "zhulong_adormecido": "Zhulong tenta Possessão imediatamente"
             },
-            "arma_marcas_demonio": {
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
                 "0": "Sem custo adicional.",
                 "1-2": "Olho que Fecha o Dia causa 1 Dano de Ferida.",
                 "3-4": "Olho que Fecha o Dia causa 1 Dano de Ferida e Zhulong deixa a visão do portador escurecida nas bordas até o fim da cena.",

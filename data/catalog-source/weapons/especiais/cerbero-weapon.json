@@ -420,7 +420,8 @@
         "inicial": "Guarda o limiar, Cérbero.",
         "verdadeira": "Fecha as três estradas, Cérbero do Limiar da Encruzilhada."
       },
-      "arma_marcas_demonio": [
+      "arma_marcas_demonio": 0,
+      "arma_marcas_demonio_tabela": [
         {
           "marcas": "0",
           "efeito": "Sem custo adicional."

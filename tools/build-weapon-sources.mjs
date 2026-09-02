@@ -3,6 +3,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { extractWeaponRankFormulas } from '../scripts/weapon-service.mjs';
 import { normalizeNormalWeaponProps } from '../scripts/weapon-catalog-normalization.mjs';
+import {
+    collectCsbFieldSchema,
+    sanitizeSpecialWeaponProps,
+} from '../scripts/special-weapon-schema.mjs';
 import { markdownToFoundryHtml } from './compendium-catalog-utils.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -24,6 +28,7 @@ const specialTemplatePath = path.join(
 );
 const specialWeaponTemplate = JSON.parse(await readFile(specialTemplatePath, 'utf8'));
 specialWeaponTemplate._key = `!items!${specialWeaponTemplate._id}`;
+const specialWeaponFieldSchema = collectCsbFieldSchema(specialWeaponTemplate);
 const PUBLISHED_WEAPONS = new Set([
     'Katana',
     'Double Blade',
@@ -209,10 +214,13 @@ const documents = [
         return specialWeaponTemplate;
     if (document.type !== 'equippableItem') return document;
     const rawProps = document.system?.props ?? {};
-    const props = normalizeNormalWeaponProps(rawProps);
-    const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
+    const normalizedProps = normalizeNormalWeaponProps(rawProps);
     const specialWeapon =
-        String(props.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
+        String(normalizedProps.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
+    const props = specialWeapon
+        ? sanitizeSpecialWeaponProps(normalizedProps, specialWeaponFieldSchema)
+        : normalizedProps;
+    const profiles = Array.isArray(props.arma_perfis_ataque) ? props.arma_perfis_ataque : [];
     const extractedFormulas = specialWeapon
         ? extractWeaponRankFormulas(props.arma_regra_completa)
         : {};

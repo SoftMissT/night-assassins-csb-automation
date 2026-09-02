@@ -431,7 +431,8 @@
                 "anubis_adormecido": "Anúbis concede apenas um efeito de Anúbis do Rank atual e volta a dormir",
                 "apep_adormecido": "Apep tenta Possessão imediatamente"
             },
-            "arma_marcas_demonio": {
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
                 "0": "Sem custo adicional.",
                 "1-2": "Astral Disaster causa 1 Dano de Ferida.",
                 "3-4": "Astral Disaster causa 1 Dano de Ferida e os talismãs dos braços tremem até o fim da cena.",

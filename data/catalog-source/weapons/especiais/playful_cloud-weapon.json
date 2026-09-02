@@ -300,7 +300,8 @@
                 "liberacao_inicial": "Gira sem pausa, Playful Cloud.",
                 "liberacao_verdadeira": "Vê a brecha e golpeia sem cabeça, Playful Cloud, Nuvem dos Três Corpos e do Terceiro Olho."
             },
-            "arma_marcas_demonio": {
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
                 "0": "Dano Bônus +1, CD base, 0 Ferida.",
                 "1-2": "Dano Bônus +2, CD base +2, 1 Ferida.",
                 "3-4": "Dano Bônus +3, CD base +4, 1 Ferida.",

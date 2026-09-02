@@ -344,7 +344,8 @@
                 "chang_e_adormecida": "Chang’e concede apenas um efeito de Chang’e do Rank atual e volta a dormir",
                 "imugi_adormecido": "Imugi tenta Possessão imediatamente"
             },
-            "arma_marcas_demonio": {
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
                 "0": "Sem custo adicional.",
                 "1-2": "Pérola Roubada causa 1 Dano de Ferida.",
                 "3-4": "Pérola Roubada causa 1 Dano de Ferida e Imugi deixa o foco do portador instável até o fim da cena.",

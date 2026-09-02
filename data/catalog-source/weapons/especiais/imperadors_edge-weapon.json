@@ -328,7 +328,8 @@
                 "mitra_adormecido": "Mitra concede apenas um efeito de Mitra do Rank atual e volta a dormir",
                 "marduk_adormecido": "Marduk tenta Possessão imediatamente"
             },
-            "arma_marcas_demonio": {
+            "arma_marcas_demonio": 0,
+            "arma_marcas_demonio_tabela": {
                 "0": "Sem custo adicional.",
                 "1-2": "Ordem Sobre o Caos Morto causa 1 Dano de Ferida.",
                 "3-4": "Ordem Sobre o Caos Morto causa 1 Dano de Ferida e Marduk impõe sua voz até o fim da cena.",

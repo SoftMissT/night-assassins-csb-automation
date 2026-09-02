@@ -108,6 +108,12 @@ const macros = [
         name: 'Night Assassins Resistir ao Despertar',
         icon: 'na-gerenciar-resistencias_icon.webp',
     },
+    {
+        id: 'NADualSoulCon001',
+        file: 'na-resolver-consequencia-dual-soul.js',
+        name: 'Night Assassins Resolver Consequência Dual Soul',
+        icon: 'na-gerenciar-resistencias_icon.webp',
+    },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

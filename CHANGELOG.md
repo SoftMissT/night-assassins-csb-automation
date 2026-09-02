@@ -1,4 +1,15 @@
 # Changelog
+## v0.11.65 — 2026-09-02
+
+- Adicionado o Consequence Resolver genérico das Armas de Dupla Alma.
+- A consequência é decidida exclusivamente por `challengerKind`; Equilíbrio Instável não é reinterpretado e nenhuma nova rolagem é realizada.
+- Falha com Entidade concede Empréstimo com exatamente 1 uso, válido para a cena ou combate, sem aplicar Marca do Demônio.
+- Falha com Demônio inicia Possessão; o Combat Tracker acompanha um turno completo do portador sob controle narrativo do Mestre, sem alterar ownership do Actor.
+- Ao final da Possessão é aplicada exatamente `+1` Marca do Demônio, com trava idempotente de finalização.
+- O evento original de Resistência permanece auditável depois que a consequência é consumida.
+- Um novo Teste de Resistência fica bloqueado enquanto existir Empréstimo ou Possessão ativa.
+- Adicionados painel CSB e macro canônica para resolver a consequência.
+
 ## v0.11.64 — 2026-09-02
 - Adicionado o Teste genérico de Resistência ao Despertar para todas as Armas de Dupla Alma.
 - O runtime do evento passa a ser persistido separadamente em `dupla_alma_despertar_runtime_json`; a Cerimônia permanece imutável.

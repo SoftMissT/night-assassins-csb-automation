@@ -19,6 +19,9 @@ import {
     parseDualSoulResistanceRuntime,
     resolveDualSoulChallenge,
 } from './dual-soul-awakening-resistance-core.mjs';
+import {
+    hasActiveDualSoulConsequence,
+} from './dual-soul-consequence-core.mjs';
 
 import {
     dualSoulCeremonyCompleted,
@@ -594,6 +597,22 @@ export async function openDualSoulAwakeningResistance(
         return ui.notifications
             ?.warn?.(
                 `Já existe uma falha de Resistência pendente (${pending.challengerKind ?? 'lado desconhecido'}). Ela precisa ser resolvida antes de um novo teste.`
+            );
+    }
+
+    const consequenceRuntime =
+        getDualSoulAwakeningRuntime(
+            item
+        );
+
+    if (
+        hasActiveDualSoulConsequence(
+            consequenceRuntime
+        )
+    ) {
+        return ui.notifications
+            ?.warn?.(
+                'Uma consequência de Dupla Alma ainda está ativa. Resolva Empréstimo/Possessão antes de realizar outra Resistência.'
             );
     }
 

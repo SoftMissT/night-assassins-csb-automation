@@ -15,7 +15,7 @@
 import {
     beginPossessionTurn,
     consumeDualSoulLoan,
-    expireDualSoulLoan,
+    expireDualSoulLoan as expireDualSoulLoanState,
     hasActiveDualSoulConsequence,
     markPossessionAway,
     movePossessionToManualTurn,
@@ -991,7 +991,7 @@ export async function expireDualSoulLoan(
         );
 
     const next =
-        expireDualSoulLoan(
+        expireDualSoulLoanState(
             runtime,
             {
                 at:

@@ -129,6 +129,14 @@ import {
     openDualSoulAwakeningResistance,
 } from './dual-soul-awakening-resistance-service.mjs';
 import {
+    finalizeDualSoulPossession,
+    getDualSoulConsequenceState,
+    openDualSoulConsequenceManager,
+    recordDualSoulLoanUse,
+    registerDualSoulConsequenceRuntime,
+    routePendingDualSoulConsequence,
+} from './dual-soul-consequence-service.mjs';
+import {
     awakenYamato,
     openSpecialWeaponAwakeningManager,
     registerSpecialWeaponAwakeningRuntime,
@@ -222,6 +230,7 @@ Hooks.once('ready', async () => {
     registerWeaponModeEngine();
     registerSpecialWeaponRuntime();
     registerSpecialWeaponAwakeningRuntime();
+    registerDualSoulConsequenceRuntime();
 
     // Manutenções mundiais nunca rodam no boot. Elas atualizam Actors/Items e
     // cada escrita força o CSB a recomputar a ficha inteira. Permanecem
@@ -278,6 +287,11 @@ Hooks.once('ready', async () => {
             openDualSoulAwakeningResistance,
             getDualSoulAwakeningRuntime,
             dualSoulAwakeningPending,
+            openDualSoulConsequenceManager,
+            getDualSoulConsequenceState,
+            routePendingDualSoulConsequence,
+            recordDualSoulLoanUse,
+            finalizeDualSoulPossession,
             awakenYamato,
             openSpecialWeaponAwakeningManager,
             useKekkijutsuItem,

@@ -251,57 +251,6 @@ async function yamatoDimensionalProfileIndex(item, actor) {
     );
 }
 
-function itemFromSheetApplication(app) {
-    const item = app?.item ?? app?.document ?? app?.object ?? null;
-    return item?.documentName === 'Item' ? item : null;
-}
-
-function sheetRoot(app, html) {
-    const HTMLElementCtor = globalThis.HTMLElement;
-    if (!HTMLElementCtor) return null;
-    const candidate = html?.[0] ?? html;
-    if (candidate instanceof HTMLElementCtor) return candidate;
-    if (app?.element instanceof HTMLElementCtor) return app.element;
-    if (app?.element?.[0] instanceof HTMLElementCtor) return app.element[0];
-    return null;
-}
-
-function injectSpecialWeaponAbilityFallback(app, html) {
-    const item = itemFromSheetApplication(app);
-    if (!item) return;
-    const props = item.system?.props ?? {};
-    const isSpecial =
-        normalizeText(props.arma_categoria) === 'especial' ||
-        String(props.arma_nome ?? item.name ?? '') === YAMATO_NAME;
-    if (!isSpecial) return;
-
-    const root = sheetRoot(app, html);
-    if (!root) return;
-    if (root.querySelector?.('[data-na-special-weapon-abilities="true"]')) return;
-    if (String(root.textContent ?? '').includes('ABRIR HABILIDADES DA ARMA')) return;
-
-    const bar = document.createElement('div');
-    bar.dataset.naSpecialWeaponAbilities = 'true';
-    bar.className = 'na-csb-automation';
-    bar.style.display = 'flex';
-    bar.style.justifyContent = 'center';
-    bar.style.padding = '0.5rem';
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = 'ABRIR HABILIDADES DA ARMA';
-    button.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const actor = item.parent?.documentName === 'Actor' ? item.parent : null;
-        void openSpecialWeaponAbilities({ item, actor, actorUuid: actor?.uuid });
-    });
-    bar.append(button);
-
-    const target = root.querySelector?.('form') ?? root.querySelector?.('.window-content') ?? root;
-    target.prepend?.(bar);
-}
-
 let specialWeaponRuntimeRegistered = false;
 
 export function registerSpecialWeaponRuntime() {
@@ -320,10 +269,6 @@ export function registerSpecialWeaponRuntime() {
             console.warn?.(`[${MODULE_ID}] Falha ao hidratar arma especial`, error)
         );
     });
-
-    Hooks.on('renderItemSheet', injectSpecialWeaponAbilityFallback);
-    Hooks.on('renderItemSheetV2', injectSpecialWeaponAbilityFallback);
-    Hooks.on('renderApplicationV2', injectSpecialWeaponAbilityFallback);
 }
 
 export async function openSpecialWeaponAbilities(options = {}) {

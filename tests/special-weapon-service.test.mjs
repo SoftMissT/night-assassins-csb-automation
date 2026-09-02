@@ -92,6 +92,7 @@ test('builder publica contratos runtime especiais', () => {
         'dupla_alma_vinculo_json',
         'dupla_alma_cerimonia_json',
         'arma_marcas_demonio_tabela_json',
+        'arma_especial_despertar_runtime_json',
     ]) {
         assert.match(source, new RegExp(key));
     }

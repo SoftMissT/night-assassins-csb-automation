@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.11.62 — 2026-09-02
+
+- Implementado o núcleo do Primeiro Despertar da Yamato, com escolha manual entre Forseti e Yamata no Orochi.
+- O Ritual Sangue na Bainha reduz o PDV atual para 10%, arredondado para cima, sem ser tratado pelo motor como dano comum.
+- A Fenda do Herdeiro dura 2/3/3/4 rodadas conforme Dualidade, Simbiose, Unificação ou Identidade e retorna automaticamente ao estado Selado.
+- Adicionados controles nativos do CSB exclusivos da Yamato para gerenciar o despertar e abrir suas habilidades, sem injeção de DOM.
+- Testes, Integração avançada, Despertar Verdadeiro e demais técnicas continuam fora deste slice.
+
 ## v0.11.61 — 2026-09-02
 
 - Saneado o schema das 16 Armas Especiais para impedir que componentes numéricos do Custom System Builder recebam objetos, arrays ou valores não numéricos.

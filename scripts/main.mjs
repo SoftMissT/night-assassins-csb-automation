@@ -118,6 +118,11 @@ import {
     useSpecialWeaponAbility,
 } from './special-weapon-service.mjs';
 import {
+    awakenYamato,
+    openSpecialWeaponAwakeningManager,
+    registerSpecialWeaponAwakeningRuntime,
+} from './special-weapon-awakening-service.mjs';
+import {
     derivedBonusSummary,
     openDerivedBonusAudit,
     resolveSlayerDerivedBonuses,
@@ -205,6 +210,7 @@ Hooks.once('ready', async () => {
     registerWeaponSynchronizationEngine();
     registerWeaponModeEngine();
     registerSpecialWeaponRuntime();
+    registerSpecialWeaponAwakeningRuntime();
 
     // Manutenções mundiais nunca rodam no boot. Elas atualizam Actors/Items e
     // cada escrita força o CSB a recomputar a ficha inteira. Permanecem
@@ -254,6 +260,8 @@ Hooks.once('ready', async () => {
             rollSpecialWeaponItem,
             openSpecialWeaponAbilities,
             useSpecialWeaponAbility,
+            awakenYamato,
+            openSpecialWeaponAwakeningManager,
             useKekkijutsuItem,
             reloadWeaponItem,
             repairBreathingItems,

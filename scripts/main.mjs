@@ -112,6 +112,12 @@ import {
 } from './oni/regeneration-runtime.mjs';
 import { registerWeaponModeEngine } from './weapon-service.mjs';
 import {
+    openSpecialWeaponAbilities,
+    registerSpecialWeaponRuntime,
+    rollSpecialWeaponItem,
+    useSpecialWeaponAbility,
+} from './special-weapon-service.mjs';
+import {
     derivedBonusSummary,
     openDerivedBonusAudit,
     resolveSlayerDerivedBonuses,
@@ -198,6 +204,7 @@ Hooks.once('ready', async () => {
     registerAdvancedStatesEngine();
     registerWeaponSynchronizationEngine();
     registerWeaponModeEngine();
+    registerSpecialWeaponRuntime();
 
     // Manutenções mundiais nunca rodam no boot. Elas atualizam Actors/Items e
     // cada escrita força o CSB a recomputar a ficha inteira. Permanecem
@@ -244,6 +251,9 @@ Hooks.once('ready', async () => {
             rollHit,
             rollDamage: rollDamagePublic,
             rollWeaponItem: rollWeaponItemPublic,
+            rollSpecialWeaponItem,
+            openSpecialWeaponAbilities,
+            useSpecialWeaponAbility,
             useKekkijutsuItem,
             reloadWeaponItem,
             repairBreathingItems,

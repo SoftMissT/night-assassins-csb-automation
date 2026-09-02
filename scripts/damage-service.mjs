@@ -28,6 +28,11 @@ import {
     weaponAmmoState,
     weaponProfilesForActor,
 } from './weapon-service.mjs';
+import {
+    applySpecialWeaponHitEffects,
+    clearSpecialWeaponPending,
+    specialWeaponPendingForAttack,
+} from './special-weapon-service.mjs';
 import { flameWeaponTier } from './flame-breathing-data.mjs';
 import {
     consumeFlameInterception,
@@ -1644,9 +1649,16 @@ export async function rollWeaponItem(options = {}) {
         item.system?.props ?? {},
         actor.system?.props ?? {}
     );
-    if (!selectedMode && availableModes.length > 1) return;
+    const specialWeaponItem =
+        String(item.system?.props?.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
+    if (!selectedMode && availableModes.length > 1 && !specialWeaponItem) return;
 
     if (options.startWithHit === true && options.damageOnly !== true) {
+        const specialPending = specialWeaponPendingForAttack(actor, item);
+        if (specialPending) {
+            const { rollSpecialWeaponItem } = await import('./special-weapon-service.mjs');
+            return rollSpecialWeaponItem({ ...options, item, actor });
+        }
         const { rollHit } = await import('./hit-service.mjs');
         return rollHit({
             actor,
@@ -1663,7 +1675,16 @@ export async function rollWeaponItem(options = {}) {
         profiles = [profiles[options.weaponProfileIndex]];
     }
 
-    return rollDamage({
+    const specialPending = specialWeaponPendingForAttack(actor, item);
+    if (specialPending && Number(specialPending.damageBonus) !== 0) {
+        profiles = profiles.map((profile) => ({
+            ...profile,
+            dano_fixo:
+                (Number(profile.dano_fixo) || 0) + (Number(specialPending.damageBonus) || 0),
+        }));
+    }
+
+    const result = await rollDamage({
         actor,
         nome: itemProps.arma_nome || item.name,
         weaponProfiles: profiles,
@@ -1679,6 +1700,12 @@ export async function rollWeaponItem(options = {}) {
         promptHealOrDamage: options.promptHealOrDamage === true,
         classBasicAttack: options.classBasicAttack === true,
     });
+
+    if (specialPending) {
+        await applySpecialWeaponHitEffects({ actor, item, pending: specialPending });
+        await clearSpecialWeaponPending(actor, specialPending);
+    }
+    return result;
 }
 
 export async function reloadWeaponItem(options = {}) {

@@ -232,6 +232,36 @@ const documents = [
                     props.arma_dado_evolutivo_por_rank ?? {}
                 ),
                 arma_habilidade_resumo: weaponAbilitySummary(props),
+                ...(specialWeapon
+                    ? {
+                          arma_especial_habilidades_json: JSON.stringify(
+                              props.arma_habilidades_basais_despertar ?? {}
+                          ),
+                          arma_especial_rank_effects_json: JSON.stringify(
+                              props.arma_efeitos_por_rank ?? {}
+                          ),
+                          arma_especial_integracao_json: JSON.stringify(
+                              props.arma_integracao ?? {}
+                          ),
+                          dupla_alma_vinculo_json: JSON.stringify({
+                              entidade: props.arma_entidade ?? '',
+                              demonio: props.arma_demonio ?? '',
+                              intensidade: props.arma_vinculo_intensidade ?? '',
+                              valor: Number(props.arma_vinculo_valor) || 0,
+                              teste_2: props.arma_testes?.teste_2_intensidade_vinculo ?? {},
+                          }),
+                          dupla_alma_cerimonia_json: JSON.stringify(props.arma_testes ?? {}),
+                          dupla_alma_despertar_json:
+                              typeof props.dupla_alma_despertar_json === 'string' &&
+                              props.dupla_alma_despertar_json.trim()
+                                  ? props.dupla_alma_despertar_json
+                                  : JSON.stringify(props.arma_despertar ?? {}),
+                          arma_marcas_demonio_tabela_json: JSON.stringify({
+                              bonus: props.arma_dano_bonus_orochi ?? {},
+                              consequencias: props.arma_marcas_demonio_tabela ?? {},
+                          }),
+                      }
+                    : {}),
                 arma_perfis_ataque_json: JSON.stringify(profiles),
                 arma_mecanicas_json: JSON.stringify(props.arma_mecanicas ?? []),
                 arma_dano_atributo_json: JSON.stringify(props.arma_dano_atributo ?? []),

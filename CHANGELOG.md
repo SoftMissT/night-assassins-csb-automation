@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.11.59 — 2026-09-01
+
+- Adicionado o runtime universal de Armas Especiais com hidratação de dados canônicos pelo Compendium e fallback visual para Items vinculados a templates antigos do World.
+- Implementada a primeira fatia funcional da Yamato: Veredito Entre Cortes, Oito Gargantas e Corte do Julgamento a partir do Rank B.
+- Integrados bônus de Acerto, Vantagem, perfil obrigatório, bônus de dano, custo em Dano de Ferida e Sangramento ao pipeline compartilhado sem duplicar a rolagem normal.
+- Separados o contador numérico de Marcas do Demônio e sua tabela canônica de bônus/consequências.
+- O builder passa a serializar habilidades basais, efeitos por Rank, integração, vínculo, cerimônia, despertar e tabela de Marcas das armas especiais.
+- O template especial passa a expor `HABILIDADES DA ARMA` e encaminhar o ataque pelo runtime especial.
+- Shoshin, Mushin, Zanshin e Fudōshin permanecem fora desta fatia e serão implementados separadamente.
+
 ## v0.11.56 — 2026-09-01
 
 - Publicadas no Compendium todas as 16 Armas Especiais Slayer existentes em `data/catalog-source/weapons/especiais`, além das quatro armas normais já suportadas.

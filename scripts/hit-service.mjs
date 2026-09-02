@@ -384,8 +384,16 @@ export async function rollHit(options) {
         ? String(flameState.synchronizedWeapon?.id ?? '')
         : '';
     const requiredWeaponId = String(options.requiredWeaponId ?? pendingFlameWeaponId);
+    const requiredWeaponProfileIndex = Number.isInteger(options.requiredWeaponProfileIndex)
+        ? options.requiredWeaponProfileIndex
+        : null;
     const weapons = requiredWeaponId
-        ? allWeapons.filter((weapon) => weapon.id === requiredWeaponId)
+        ? allWeapons.filter(
+              (weapon) =>
+                  weapon.id === requiredWeaponId &&
+                  (requiredWeaponProfileIndex === null ||
+                      weapon.profileIndex === requiredWeaponProfileIndex)
+          )
         : allWeapons;
     if (requiredWeaponId && weapons.length === 0) {
         ui.notifications?.warn?.('A arma sincronizada não está mais no inventário do personagem.');
@@ -399,6 +407,7 @@ export async function rollHit(options) {
         requiredWeapon: Boolean(requiredWeaponId),
     });
     if (!dialogResult) return;
+    if (options.forceActionType) dialogResult.actionType = String(options.forceActionType);
 
     const breathingState = parseWaterBreathingState(props.resp_agua_estado);
     const breathHit = breathingState.nextHit;
@@ -498,7 +507,12 @@ export async function rollHit(options) {
             : [],
     });
     const hitBonus = derivedBonuses.channels.acerto.total;
-    const bonusRaw = [dialogResult.bonusRaw, hitBonus ? String(hitBonus) : '']
+    const directBonus = Number(options.bonus) || 0;
+    const bonusRaw = [
+        dialogResult.bonusRaw,
+        hitBonus ? String(hitBonus) : '',
+        directBonus ? String(directBonus) : '',
+    ]
         .filter(Boolean)
         .join(' + ');
     // Ni no Kata Sōsō Shinato Kaze — passiva a partir do Nível 3 de Respiração:
@@ -524,7 +538,11 @@ export async function rollHit(options) {
         windAdvantageState?.round === currentRound && windAdvantageState?.turn === currentTurn;
     const windAdvantageAvailable = windAdvantageEligible && !windAdvantageUsed;
     const requestedMode =
-        breathHit?.advantage || flameHit?.advantage || mistHit?.advantage || windAdvantageAvailable
+        options.advantage === true ||
+        breathHit?.advantage ||
+        flameHit?.advantage ||
+        mistHit?.advantage ||
+        windAdvantageAvailable
             ? mergeRollMode(dialogResult.mode, 'advantage')
             : dialogResult.mode;
     const weapon =

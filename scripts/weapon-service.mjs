@@ -62,6 +62,31 @@ function parseStructuredValue(value) {
     }
 }
 
+function rankFormulaValues(value, rank = '') {
+    const parsed = parseStructuredValue(value);
+    if (!parsed || typeof parsed !== 'object') return [];
+
+    const entry = parsed[rank];
+    if (Array.isArray(entry)) {
+        return entry
+            .map((value) => (typeof value === 'string' ? value : value?.formula))
+            .map((value) => String(value ?? '').trim())
+            .filter(Boolean);
+    }
+    if (typeof entry === 'string') return [entry.trim()].filter(Boolean);
+    if (entry && typeof entry === 'object') {
+        const formula = String(entry.formula ?? '').trim();
+        if (formula) return [formula];
+        const forms = entry.formas;
+        if (forms && typeof forms === 'object') {
+            return Object.values(forms)
+                .map((value) => String(value ?? '').trim())
+                .filter(Boolean);
+        }
+    }
+    return [];
+}
+
 function textList(value) {
     if (Array.isArray(value))
         return value.map((entry) => String(entry ?? '').trim()).filter(Boolean);
@@ -359,20 +384,40 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
     const profiles = selectedProfiles.length > 0 ? selectedProfiles : allProfiles;
     const rank = slayerWeaponRank(actorProps);
     const proficient = isWeaponProficient(itemProps, actorProps);
-    const parsedRankFormulas =
-        parseStructuredValue(itemProps.arma_formulas_por_rank) ??
-        parseStructuredValue(itemProps.arma_formulas_por_rank_json);
-    const rankFormulas =
-        parsedRankFormulas && typeof parsedRankFormulas === 'object'
-            ? parsedRankFormulas
-            : extractWeaponRankFormulas(itemProps.arma_regra_completa);
     const specialWeapon =
         String(itemProps.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
-    const ranked = specialWeapon && Array.isArray(rankFormulas[rank]) ? rankFormulas[rank] : [];
+    const structuredRanked = rankFormulaValues(
+        itemProps.arma_formulas_por_rank ?? itemProps.arma_formulas_por_rank_json,
+        rank
+    );
+    const damageRanked = rankFormulaValues(
+        itemProps.arma_dano_por_rank ?? itemProps.arma_dano_por_rank_json,
+        rank
+    );
+    const markdownRanked = extractWeaponRankFormulas(itemProps.arma_regra_completa)[rank] ?? [];
+    const ranked = specialWeapon
+        ? structuredRanked.length > 0
+            ? structuredRanked
+            : damageRanked.length > 0
+              ? damageRanked
+              : markdownRanked
+        : [];
+    const rankDiceMap =
+        parseStructuredValue(
+            itemProps.arma_dado_evolutivo_por_rank ??
+                itemProps.arma_dado_evolutivo_por_rank_json
+        ) ?? {};
 
     return profiles.map((profile, index) => {
         const rankFormula = ranked[index] ?? ranked[0] ?? '';
-        const rankDice = diceFromFormula(rankFormula);
+        const rankDiceEntry = rankDiceMap?.[rank];
+        const rankDice =
+            diceFromFormula(rankFormula) ||
+            diceFromFormula(
+                typeof rankDiceEntry === 'object'
+                    ? rankDiceEntry?.dado_evolutivo ?? rankDiceEntry?.formula ?? ''
+                    : rankDiceEntry ?? ''
+            );
         const baseDice = String(profile.dano_dados ?? '').trim();
         const choiceKeys = attributeChoiceKeys(profile.formula_texto || rankFormula);
         const propertyKeys = weaponPropertyKeys(itemProps.arma_propriedades);

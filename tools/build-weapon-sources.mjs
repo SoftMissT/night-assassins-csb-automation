@@ -133,6 +133,40 @@ export function normalizeRankFormulas(extracted = {}, profiles = []) {
     );
 }
 
+function cleanWeaponText(value = '') {
+    return String(value ?? '')
+        .replace(/<[^>]+>/gu, ' ')
+        .replace(/^#{1,6}\s*/gmu, '')
+        .replace(/[*_`>]/gu, '')
+        .replace(/\s+/gu, ' ')
+        .trim();
+}
+
+function weaponAbilitySummary(props = {}) {
+    const direct = cleanWeaponText(props.arma_regra_completa);
+    if (direct) return direct.slice(0, 220);
+
+    const parts = [];
+    const special = props.arma_propriedade_especial;
+    if (special?.nome) parts.push(String(special.nome));
+
+    const basal = props.arma_habilidades_basais_despertar;
+    if (basal && typeof basal === 'object') {
+        for (const ability of Object.values(basal)) {
+            if (ability?.nome) parts.push(String(ability.nome));
+        }
+    }
+
+    const ranks = props.arma_efeitos_por_rank;
+    if (ranks && typeof ranks === 'object') {
+        for (const [rank, effect] of Object.entries(ranks)) {
+            if (effect?.nome) parts.push(`${rank}: ${effect.nome}`);
+        }
+    }
+
+    return [...new Set(parts)].join(' • ').slice(0, 220);
+}
+
 const specialSourceDocuments = await Promise.all(
     (await readdir(SPECIAL_SOURCE_DIRECTORY))
         .filter((file) => file.endsWith('.json'))
@@ -193,6 +227,11 @@ const documents = [
                 arma_regra_completa: markdownToFoundryHtml(props.arma_regra_completa ?? ''),
                 arma_formulas_por_rank: formulas,
                 arma_formulas_por_rank_json: JSON.stringify(formulas),
+                arma_dano_por_rank_json: JSON.stringify(props.arma_dano_por_rank ?? {}),
+                arma_dado_evolutivo_por_rank_json: JSON.stringify(
+                    props.arma_dado_evolutivo_por_rank ?? {}
+                ),
+                arma_habilidade_resumo: weaponAbilitySummary(props),
                 arma_perfis_ataque_json: JSON.stringify(profiles),
                 arma_mecanicas_json: JSON.stringify(props.arma_mecanicas ?? []),
                 arma_dano_atributo_json: JSON.stringify(props.arma_dano_atributo ?? []),

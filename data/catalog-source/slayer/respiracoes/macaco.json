@@ -1,0 +1,364 @@
+{
+  "titulo": "Respiração do Macaco",
+  "nome_romaji": "Saru no Kokyū",
+  "kanji": "猿の呼吸",
+  "citacao": "O Macaco não tem estilo. Tem adaptação. Tem caos com intenção.",
+  "descricao_geral": "A Respiração do Macaco é uma derivação instável da Respiração do Vento e da Respiração do Trovão. Do Vento, herdou deslocamento, ângulos impossíveis e pressão lateral. Do Trovão, herdou velocidade, impulso explosivo e ataques que chegam antes da leitura inimiga terminar. Mas o Macaco fracassou em seguir as duas tradições: era imprevisível demais para o Trovão, desobediente demais para o Vento. Desse fracasso nasceu uma Respiração própria. A Respiração do Macaco não busca forma perfeita. Ela busca quebrar o ritmo do inimigo. O usuário ataca, salta, finta, reage, provoca, gira, some e reaparece em ângulos que não deveriam existir. Outras Respirações impõem padrão. O Macaco transforma padrão em armadilha.",
+  "estrutura_padrao": "[ Nível de Respiração ] [ Efeito ] [ Custo de PDR ]",
+  "conversoes_de_atributo": [
+    { "termo_original": "Kūdō", "night_assassins": "PDR" },
+    { "termo_original": "ESPÍRITO", "night_assassins": "FDV" },
+    { "termo_original": "MENTE", "night_assassins": "INT, SAB ou CAR" },
+    { "termo_original": "CORPO", "night_assassins": "VIT, DEX ou FOR" }
+  ],
+  "atributo_simiesco": {
+    "descricao": "Ao aprender a Respiração do Macaco, escolha o Atributo Simiesco do usuário.",
+    "opcoes": [
+      { "atributo": "DEX", "tema": "acrobacia, velocidade, esquiva, saltos e finta" },
+      { "atributo": "FOR", "tema": "golpes pesados, bastão, impacto corporal e força explosiva" },
+      { "atributo": "VIT", "tema": "resistência absurda, corpo elástico, quedas, recuperação e teimosia física" }
+    ],
+    "observacao": "Sempre que uma técnica pedir Atributo Simiesco, use o atributo escolhido."
+  },
+  "funcao_mecanica": {
+    "papel_principal": "Duelista caótico e skirmisher",
+    "papel_secundario": "Controle leve, mobilidade, finta e pressão tática",
+    "atributos_chave": ["DEX", "Atributo Simiesco", "FDV"],
+    "recurso_interno": "Impulsos",
+    "dano_comum": ["Cortante", "Concussão", "Impacto"],
+    "status_principais": ["Desorientado", "Derrubado", "Desequilibrado", "Atordoado"],
+    "fraqueza": "Controle de movimento, terreno fechado, inimigos estáticos e punição contra erro"
+  },
+  "cd_do_macaco": "10 + Atributo Simiesco + Nível de Respiração",
+  "observacao_cd": "Quando o efeito for mental, o alvo resiste com FDV. Quando o efeito for físico, o alvo resiste com VIT, DEX ou FOR, conforme a técnica.",
+  "passiva_especial": {
+    "nome": "Impulsos",
+    "nome_romaji": "Shōdō",
+    "kanji": "衝動",
+    "descricao": "O Macaco não acumula força. Acumula momento.",
+    "maximo_de_impulsos": 5,
+    "ganha_1_impulso_quando": [
+      "Move 3m ou mais no mesmo turno em que realiza um ataque.",
+      "Usa uma Reação.",
+      "Acerta um inimigo que já foi atacado por um aliado nesta rodada.",
+      "Derruba, desorienta ou desequilibra um inimigo com uma Forma do Macaco."
+    ],
+    "limite_de_ganho": "2 Impulsos por rodada (a 8ª Forma pode ultrapassar esse limite quando especificado)",
+    "perde_impulsos_quando": [
+      "Fica Atordoado.",
+      "Fica Paralisado.",
+      "Fica Inconsciente.",
+      "Fica Restrito de Movimento.",
+      "Passa 1 rodada inteira sem se mover pelo menos 3m.",
+      "Repete a mesma Forma duas vezes seguidas enquanto tiver 3 ou mais Impulsos."
+    ],
+    "observacao": "Quando uma dessas condições ocorrer, perde todos os Impulsos."
+  },
+  "recompensas_por_impulso": [
+    { "impulsos": "1–2", "efeito": "+1,5m de Deslocamento para cada Impulso acumulado." },
+    { "impulsos": 3, "efeito": "Pode realizar Ataque Travesso." },
+    { "impulsos": 5, "efeito": "Pode ativar Rei dos Macacos." }
+  ],
+  "ataque_travesso": {
+    "tipo_manobra": "Especial",
+    "requisito": "3+ Impulsos",
+    "custo": "2 PDR",
+    "frequencia": "1 vez por turno",
+    "descricao": "O usuário realiza um ataque padrão adicional. Esse ataque não pode usar Forma de Respiração. Se acertar, causa dano normal da arma e o usuário pode mover 1,5m sem provocar Ataque de Oportunidade."
+  },
+  "estado_supremo_rei_dos_macacos": {
+    "nome": "Rei dos Macacos",
+    "nome_romaji": "Saruō",
+    "kanji": "猿王",
+    "tipo_manobra": "Ação Livre",
+    "requisito": "5 Impulsos",
+    "custo": "Consome todos os Impulsos",
+    "duracao": "Número de rodadas igual ao Nível de Respiração",
+    "uso": "1 vez por combate",
+    "descricao": "O usuário entra em um estado de caos perfeito. Não há plano. Há instinto com dentes.",
+    "efeitos_ativos": [
+      "Recebe +1 Ação de Ataque por turno.",
+      "Recebe +1 Ação de Movimento por turno.",
+      "Não pode usar a mesma Forma duas vezes consecutivas.",
+      "Não pode usar Ataque Travesso.",
+      "Não pode ganhar Impulsos enquanto o estado durar.",
+      "Recebe +2 em Esquiva contra Ataques de Oportunidade."
+    ],
+    "custo_final": "1 nível de Exaustão ao final do estado (2 níveis se o estado terminar porque o usuário ficou Atordoado, Paralisado ou Inconsciente)"
+  },
+  "tecnicas": [
+    {
+      "forma": 1,
+      "nome_pt": "Salto da Nuvem Voadora",
+      "nome_romaji": "Ichi no Kata: Tobikumo no Kiri",
+      "kanji": "一の型・飛雲の斬り",
+      "tipo_manobra": "Ataque",
+      "tipo_de_dano": "Cortante",
+      "funcao": "Entrada móvel e geração de Impulso",
+      "descricao": "O caçador se impulsiona em um arco imprevisível e corta no ponto de queda. O inimigo defende onde o Macaco deveria estar. O Macaco já passou.",
+      "niveis": [
+        { "nivel": 1, "dano": "2d6 + DEX", "custo": "2 PDR" },
+        { "nivel": 2, "dano": "3d6 + DEX", "custo": "3 PDR" },
+        { "nivel": 3, "dano": "4d6 + DEX", "custo": "4 PDR" },
+        { "nivel": 4, "dano": "5d6 + DEX", "custo": "5 PDR" }
+      ],
+      "efeitos": [
+        "Recebe +2 no ataque.",
+        "Se acertar, move 1,5m em qualquer direção sem provocar Ataque de Oportunidade.",
+        "Se moveu pelo menos 3m antes desta Forma, ganha +1 Impulso."
+      ]
+    },
+    {
+      "forma": 2,
+      "nome_pt": "Mãos Ágeis do Trapaceiro",
+      "nome_romaji": "Ni no Kata: Warashi no Hayate",
+      "kanji": "二の型・悪戯の疾風",
+      "tipo_manobra": "Especial",
+      "tipo_de_dano": "Cortante",
+      "funcao": "Finta, debuff e ataque leve",
+      "descricao": "O usuário cria a ilusão de que a lâmina está em vários lugares ao mesmo tempo. O inimigo defende o fantasma. O corte real já passou.",
+      "niveis": [
+        { "nivel": 1, "dano": "2d4 + DEX", "efeito": "Desorientado", "custo": "1 PDR" },
+        { "nivel": 2, "dano": "2d6 + DEX", "efeito": "Desorientado", "custo": "2 PDR" },
+        { "nivel": 3, "dano": "2d8 + DEX", "efeito": "Desorientado", "custo": "3 PDR" },
+        { "nivel": 4, "dano": "2d10 + DEX", "efeito": "Desorientado + Desequilibrado", "custo": "4 PDR" }
+      ],
+      "observacoes": [
+        "Se acertar, o alvo fica Desorientado por 1 turno.",
+        "No Nível 4, o alvo também fica Desequilibrado.",
+        "Se o usuário tiver 2 ou mais Impulsos ao usar esta Forma, ganha +1 Impulso ao acertar."
+      ]
+    },
+    {
+      "forma": 3,
+      "nome_pt": "Rasteira que Veio do Céu",
+      "nome_romaji": "San no Kata: Tengoku Kara no Ashi Barai",
+      "kanji": "三の型・天国からの足払い",
+      "tipo_manobra": "Ataque",
+      "tipo_de_dano": "Concussão",
+      "funcao": "Derrubar e abrir defesa",
+      "descricao": "Um gesto alto força o olhar do inimigo para cima. A lâmina já está embaixo.",
+      "niveis": [
+        { "nivel": 1, "dano": "2d6 + DEX", "custo": "2 PDR" },
+        { "nivel": 2, "dano": "3d6 + DEX", "custo": "3 PDR" },
+        { "nivel": 3, "dano": "4d6 + DEX", "custo": "4 PDR" },
+        { "nivel": 4, "dano": "5d6 + DEX", "custo": "5 PDR" }
+      ],
+      "resultado_teste_dex_vit": {
+        "teste": "DEX ou VIT contra CD do Macaco",
+        "falha": "Fica Derrubado e Desequilibrado.",
+        "sucesso": "Fica apenas Desequilibrado."
+      },
+      "observacoes": [
+        "Após o golpe, o usuário pode mover 1,5m sem provocar Ataque de Oportunidade.",
+        "Se o alvo ficar Derrubado, o usuário ganha +1 Impulso."
+      ]
+    },
+    {
+      "forma": 4,
+      "nome_pt": "Dança das Quatro Patas no Trovão",
+      "nome_romaji": "Shi no Kata: Raijin Shihō Mai",
+      "kanji": "四の型・雷神四方舞",
+      "tipo_manobra": "Completa",
+      "tipo_de_dano": "Cortante",
+      "funcao": "Deslocamento ofensivo e ataque com vantagem",
+      "descricao": "O usuário usa todo o turno como trajeto. Não corre em linha reta. Contorna. Muda direção. Faz o inimigo defender o espaço errado.",
+      "niveis": [
+        { "nivel": 1, "dano": "3d6 + DEX", "movimento_durante_a_forma": "até 6m", "custo": "3 PDR" },
+        { "nivel": 2, "dano": "4d6 + DEX", "movimento_durante_a_forma": "até 7,5m", "custo": "4 PDR" },
+        { "nivel": 3, "dano": "5d6 + DEX", "movimento_durante_a_forma": "até 9m", "custo": "5 PDR" },
+        { "nivel": 4, "dano": "6d6 + DEX", "movimento_durante_a_forma": "até 10,5m", "custo": "6 PDR" }
+      ],
+      "efeitos": [
+        "O movimento desta Forma não provoca Ataques de Oportunidade.",
+        "O ataque é realizado com Vantagem.",
+        "Ganha +1 Impulso automaticamente ao usar esta Forma."
+      ],
+      "ritmo_impossivel": {
+        "condicao": "Se o usuário tiver 3 ou mais Impulsos",
+        "tabela_dano_extra": [
+          { "nivel": 1, "dano_extra": "+1d6" },
+          { "nivel": 2, "dano_extra": "+1d8" },
+          { "nivel": 3, "dano_extra": "+1d10" },
+          { "nivel": 4, "dano_extra": "+1d12" }
+        ]
+      }
+    },
+    {
+      "forma": 5,
+      "nome_pt": "Fúria do Rei Macaco",
+      "nome_romaji": "Go no Kata: Saruō no Ikari",
+      "kanji": "五の型・猿王の怒り",
+      "tipo_manobra": "Ataque",
+      "tipo_de_dano": "Cortante + Concussão",
+      "funcao": "Golpe duplo contra alvo único",
+      "descricao": "A lâmina e o corpo atacam ao mesmo tempo em direções diferentes. Não é sequência. É simultaneidade forçada.",
+      "niveis": [
+        { "nivel": 1, "ataques": "Não é possível usar", "dano_por_ataque": null, "custo": null },
+        { "nivel": 2, "ataques": 2, "dano_por_ataque": "2d6 + Atributo Simiesco", "custo": "4 PDR" },
+        { "nivel": 3, "ataques": 2, "dano_por_ataque": "3d6 + Atributo Simiesco", "custo": "5 PDR" },
+        { "nivel": 4, "ataques": 2, "dano_por_ataque": "4d6 + Atributo Simiesco", "custo": "6 PDR" }
+      ],
+      "mecanica_de_acerto": "Faça uma única rolagem de ataque para os dois golpes. Se acertar, ambos os golpes causam dano. Se o resultado for crítico, dobre apenas os dados dos dois golpes. Bônus fixos entram uma única vez em cada golpe.",
+      "golpe_simultaneo": {
+        "condicao": "Se ambos os golpes causarem dano ao mesmo alvo, aplique dano adicional",
+        "tabela": [
+          { "nivel_de_respiracao": 2, "dano_adicional": "+1d6" },
+          { "nivel_de_respiracao": 3, "dano_adicional": "+1d8" },
+          { "nivel_de_respiracao": 4, "dano_adicional": "+1d10" }
+        ],
+        "bonus_impulso": "Se ambos os golpes acertarem, o usuário ganha +2 Impulsos."
+      }
+    },
+    {
+      "forma": 6,
+      "nome_pt": "Enganação dos 72 Espíritos",
+      "nome_romaji": "Roku no Kata: Nanajūni Tamashii no Izanai",
+      "kanji": "六の型・七十二魂の誘い",
+      "tipo_manobra": "Reação",
+      "gatilho": "Ser alvo de um ataque",
+      "funcao": "Esquiva superior e reposicionamento",
+      "descricao": "O usuário se dissolve lateralmente e deixa uma impressão residual onde estava. O inimigo golpeia a memória do Macaco.",
+      "niveis": [
+        { "nivel": 1, "bonus_esquiva": "+2", "custo": "2 PDR" },
+        { "nivel": 2, "bonus_esquiva": "+4", "custo": "3 PDR" },
+        { "nivel": 3, "bonus_esquiva": "+6", "custo": "4 PDR" },
+        { "nivel": 4, "bonus_esquiva": "+8", "custo": "5 PDR" }
+      ],
+      "efeitos": [
+        "O bônus é aplicado imediatamente contra o ataque recebido.",
+        "Pode ser usada uma vez por rodada.",
+        "Ganha +1 Impulso ao usar esta Reação."
+      ],
+      "transformacao_lateral": "Se o usuário tiver 4 ou mais Impulsos e a Esquiva for bem-sucedida, pode mover 3m imediatamente sem provocar Ataque de Oportunidade."
+    },
+    {
+      "forma": 7,
+      "nome_pt": "Bastão Dourado da Montanha",
+      "nome_romaji": "Shichi no Kata: Kongōzan no Kinbō",
+      "kanji": "七の型・金剛山の金棒",
+      "tipo_manobra": "Especial",
+      "tipo_de_dano": "Concussão ou Impacto",
+      "funcao": "Quebrar guarda e atordoar",
+      "descricao": "Pela primeira vez na luta, o Macaco para. Toda a respiração concentra em um único ponto. A arma deixa de ser lâmina e vira bastão de pressão pura.",
+      "niveis": [
+        { "nivel": 1, "dano": "Não é possível usar", "custo": null },
+        { "nivel": 2, "dano": "Não é possível usar", "custo": null },
+        { "nivel": 3, "dano": "5d10 + FOR", "custo": "7 PDR" },
+        { "nivel": 4, "dano": "7d10 + FOR", "custo": "9 PDR" }
+      ],
+      "efeitos": [
+        "Ignora 2 pontos de Redução de Dano física.",
+        "Se acertar, o alvo realiza teste de VIT contra CD do Macaco.",
+        "Em falha, fica Atordoado por 1 turno.",
+        "Em sucesso, fica Desorientado por 1 turno."
+      ],
+      "quebra_da_montanha": "Se o usuário tiver 3 ou mais Impulsos ao acertar esta Forma, o alvo também fica Desequilibrado. Se o alvo ficar Atordoado, o usuário ganha +1 Impulso."
+    },
+    {
+      "forma": 8,
+      "nome_pt": "Grito do Grande Sábio Igual ao Céu",
+      "nome_romaji": "Hachi no Kata: Seiten Taisei no Sakebi",
+      "kanji": "八の型・斉天大聖の叫び",
+      "tipo_manobra": "Ataque",
+      "tipo_de_dano": "Mental",
+      "funcao": "Controle em área sem dano bruto",
+      "recarga": "3 turnos",
+      "descricao": "O usuário comprime pressão espiritual em um grito. Não é som comum. É autoridade de alguém que desafiou os céus e continuou rindo.",
+      "niveis": [
+        { "nivel": 1, "area": "Não é possível usar", "custo": null },
+        { "nivel": 2, "area": "Não é possível usar", "custo": null },
+        { "nivel": 3, "area": "Raio de 5m", "custo": "8 PDR" },
+        { "nivel": 4, "area": "Raio de 6m", "custo": "9 PDR" }
+      ],
+      "resultado_teste_fdv": {
+        "teste": "FDV contra CD do Macaco",
+        "falha": "Ficam Atordoados por 1 turno.",
+        "sucesso": "Ficam Desorientados por 1 turno."
+      },
+      "observacao": "Esta Forma não causa dano.",
+      "bonus_apos_uso": "Ganha +3 Impulsos (pode ultrapassar o limite normal por rodada, mas nunca ultrapassa o máximo de 5)."
+    },
+    {
+      "forma": 9,
+      "nome_pt": "Dança do Espírito Primordial",
+      "nome_romaji": "Ku no Kata: Genshin no Mai",
+      "kanji": "九の型・原神の舞",
+      "tipo_manobra": "Completa",
+      "tipo_de_dano": "Cortante + Concussão",
+      "funcao": "Forma final de pressão múltipla",
+      "descricao": "O usuário não escolhe mais direção. O movimento escolhe por ele. Golpes chegam de todos os ângulos. Não é técnica. É encarnação.",
+      "niveis": [
+        { "nivel": 1, "ataques": "Não é possível usar", "dano_por_ataque": null, "custo": null },
+        { "nivel": 2, "ataques": "Não é possível usar", "dano_por_ataque": null, "custo": null },
+        { "nivel": 3, "ataques": "Não é possível usar", "dano_por_ataque": null, "custo": null },
+        { "nivel": 4, "ataques": 3, "dano_por_ataque": "4d10 + Atributo Simiesco", "custo": "11 PDR" }
+      ],
+      "observacao": "Os ataques podem atingir o mesmo alvo ou alvos diferentes em raio de 3m. Cada ataque exige rolagem separada.",
+      "corpo_impossivel": {
+        "duracao": "Durante a execução e até o início do próximo turno do usuário",
+        "efeitos": ["+4 em Defesa", "Vantagem em testes de VIT, DEX ou FOR", "Não provoca Ataques de Oportunidade"]
+      },
+      "espirito_primordial": {
+        "condicao": "Se os 3 ataques acertarem o mesmo alvo",
+        "efeito": "Sofre 1 nível de Exaustão",
+        "observacao": "Se o usuário estiver com menos de 3 Impulsos ao declarar esta Forma, ganha Impulsos suficientes para chegar a 3."
+      }
+    }
+  ],
+  "forma_do_conselho": {
+    "nome": "O Macaco que Roubou o Raio de Deus",
+    "nome_romaji": "Hyōgikai no Kata: Kami no Ikazuchi o Nusunda Saru",
+    "kanji": "評議会の型・神の雷を盗んだ猿",
+    "tipo_manobra": "Ataque",
+    "tipo_de_dano": "Cortante + Trovejante",
+    "requisito": "2+ Impulsos ativos",
+    "classificacao": "Forma do Conselho",
+    "permissao": "Requer aprovação narrativa do Mestre",
+    "funcao": "Técnica secreta de finta e roubo de ritmo",
+    "descricao": "O Macaco viu o Trovão cair do céu. E roubou. Não por força. Por chegar antes dos deuses perceberem a mão estendida.",
+    "niveis": [
+      { "nivel": 1, "ataques": "Não é possível usar", "dano": null, "custo": null },
+      { "nivel": 2, "ataques": 2, "dano": "2d8 + DEX cada", "custo": "5 PDR" },
+      { "nivel": 3, "ataques": 2, "dano": "3d8 + DEX cada", "custo": "6 PDR" },
+      { "nivel": 4, "ataques": 2, "dano": "4d8 + DEX cada", "custo": "7 PDR" }
+    ],
+    "mecanica": "O primeiro ataque é uma finta. O segundo é o golpe real.",
+    "efeitos": [
+      "O primeiro ataque tem Vantagem.",
+      "Se o primeiro ataque acertar, o segundo recebe +2 no acerto.",
+      "Se o segundo ataque acertar, causa +1d6 de Dano Trovejante.",
+      "Se ambos acertarem, o alvo fica Desorientado por 1 turno."
+    ],
+    "observacao_impulsos": "Os Impulsos não são gastos. Eles apenas provam que o Macaco já estabeleceu o ritmo.",
+    "limite": "1 vez por combate. Enquanto o Rei dos Macacos estiver ativo, esta Forma pode ser usada, mas não pode ser repetida no turno seguinte."
+  },
+  "sinergias": {
+    "vento": "Quando um usuário do Vento empurrar, deslocar ou derrubar um inimigo, o próximo ataque do Macaco contra esse alvo recebe +1d6 de Dano Cortante. Esse efeito ocorre no máximo uma vez por turno.",
+    "trovao": "Quando um usuário do Trovão acertar uma Técnica de Avanço ou ataque com Dano Trovejante em um alvo, o Macaco ganha +1 Impulso se atacar esse mesmo alvo até o fim da rodada. Esse ganho ainda respeita o limite de Impulsos por rodada.",
+    "agua": "Quando o Macaco estiver sob efeito de uma técnica defensiva da Água, sua próxima Reação de Esquiva recebe +1 adicional. Esse efeito ocorre no máximo uma vez por rodada.",
+    "tinta": "Se o Macaco estiver sob efeito de Kanji Azul, a primeira Forma usada após mover 3m ou mais recebe +1 no acerto. Se estiver sob efeito de Kanji Amarelo, a 1ª Forma e a Forma do Conselho ampliam crítico natural para 19–20."
+  },
+  "notas_de_balanceamento": [
+    "Impulsos são ritmo, não combustível universal: não substituem PDR, não recuperam PDR, não reduzem custo de Forma. Eles apenas abrem janelas de movimento, ataque e estado supremo.",
+    "Rei dos Macacos mexe na economia de ações. Por isso ele tem freios: consome todos os 5 Impulsos; não permite ganhar Impulsos enquanto ativo; não permite Ataque Travesso; não permite repetir Forma; dura por Nível de Respiração; causa Exaustão ao final; uso limitado a 1 vez por combate. O Macaco pode parecer estar em dois lugares. Não pode virar três personagens.",
+    "O jogador precisa narrar movimento. Não basta dizer 'ando 3m'. O jogador deve explicar como o personagem usou parede, chão, arma, corpo, aliado, inimigo, coluna, mesa, galho ou terreno para criar ângulo. Se a mesa não sustenta descrição, o Macaco vira bônus grátis. Bônus grátis apodrece sistema.",
+    "A 8ª Forma é controle, não dano. O Grito do Grande Sábio não causa dano. Ele existe para criar uma janela decisiva. A recarga de 3 turnos impede rotação abusiva.",
+    "A Forma do Conselho é especial. Ela não faz parte da progressão comum. É uma técnica concedida por narrativa, mestre, conselho, linhagem, mestre antigo ou evento de campanha. Ela representa o Macaco roubando o Trovão. Esse tipo de coisa deve custar história."
+  ],
+  "resumo_mecanico": [
+    { "elemento": "Impulsos", "funcao": "Recurso interno de ritmo" },
+    { "elemento": "Ataque Travesso", "funcao": "Ataque extra leve com 3+ Impulsos" },
+    { "elemento": "Rei dos Macacos", "funcao": "Estado supremo de ação extra" },
+    { "elemento": "Salto da Nuvem Voadora", "funcao": "Entrada móvel" },
+    { "elemento": "Mãos Ágeis", "funcao": "Finta e Desorientado" },
+    { "elemento": "Rasteira do Céu", "funcao": "Derrubado e Desequilibrado" },
+    { "elemento": "Dança das Quatro Patas", "funcao": "Mobilidade com Vantagem" },
+    { "elemento": "Fúria do Rei Macaco", "funcao": "Ataque duplo" },
+    { "elemento": "Enganação dos 72 Espíritos", "funcao": "Esquiva reativa" },
+    { "elemento": "Bastão Dourado", "funcao": "Quebra-guarda e Atordoamento" },
+    { "elemento": "Grito do Grande Sábio", "funcao": "Controle mental em área" },
+    { "elemento": "Dança do Espírito Primordial", "funcao": "Forma final de multiataque" },
+    { "elemento": "Roubo do Raio de Deus", "funcao": "Forma do Conselho" }
+  ]
+}

@@ -43,9 +43,59 @@ function guardCsbRollResult(node) {
     for (const value of Object.values(node)) guardCsbRollResult(value);
 }
 
+function findComponentByKey(node, key) {
+    if (!node || typeof node !== 'object') return null;
+    if (node.key === key) return node;
+    for (const value of Object.values(node)) {
+        if (!value || typeof value !== 'object') continue;
+        const found = findComponentByKey(value, key);
+        if (found) return found;
+    }
+    return null;
+}
+
+function ensureWeaponRuntimeFields(template) {
+    const runtime = findComponentByKey(template?.system, 'arma_runtime_data');
+    if (!runtime || !Array.isArray(runtime.contents)) {
+        throw new Error('Painel arma_runtime_data não encontrado no template oficial.');
+    }
+
+    const keys = new Set(runtime.contents.map((component) => component?.key).filter(Boolean));
+    const textAreaSource = runtime.contents.find((component) => component?.type === 'textArea');
+    const textFieldSource = runtime.contents.find((component) => component?.type === 'textField');
+
+    if (!textAreaSource || !textFieldSource) {
+        throw new Error('Componentes-base de runtime não encontrados no template oficial.');
+    }
+
+    for (const [key, defaultValue] of [
+        ['arma_dano_por_rank_json', '{}'],
+        ['arma_dado_evolutivo_por_rank_json', '{}'],
+    ]) {
+        if (keys.has(key)) continue;
+        runtime.contents.push({
+            ...structuredClone(textAreaSource),
+            key,
+            defaultValue,
+            tooltip: '',
+        });
+        keys.add(key);
+    }
+
+    if (!keys.has('arma_habilidade_resumo')) {
+        runtime.contents.push({
+            ...structuredClone(textFieldSource),
+            key: 'arma_habilidade_resumo',
+            defaultValue: '',
+            tooltip: 'Resumo curto da habilidade/regra da arma para exibição na ficha.',
+        });
+    }
+}
+
 // Única adaptação funcional: o CSB interpreta o retorno de objeto da macro como
 // fórmula. O layout, as keys e a estrutura visual continuam sendo os oficiais.
 guardCsbRollResult(official.system);
+ensureWeaponRuntimeFields(official);
 
 await writeFile(targetPath, `${JSON.stringify(official, null, 2)}\n`);
 console.info(`Template oficial de armas normais adotado em ${targetPath}`);

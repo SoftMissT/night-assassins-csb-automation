@@ -113,6 +113,9 @@ export async function hydrateSpecialWeaponItem(item) {
         'arma_lado_dominante',
         'arma_gatilho_despertar',
         'arma_reacao_entidade',
+        'arma_ritual',
+        'arma_despertar',
+        'arma_integracao',
         'arma_especial_forma_atual',
         'arma_habilidade_resumo',
         'arma_especial_estados_json',
@@ -429,7 +432,7 @@ export async function useSpecialWeaponAbility(options = {}) {
 
     if (!isSpecialWeaponAwakened(props))
         return ui.notifications?.warn?.(
-            'Yamato está Selada. Defina Primeiro Despertar ou Despertar Verdadeiro antes de usar habilidades do despertar.'
+            `${props.arma_nome ?? item.name ?? 'A arma'} está Selada. Realize a Cerimônia e retire a arma do selamento antes de usar efeitos da Entidade ou do Demônio.`
         );
 
     const side = currentYamatoSide(

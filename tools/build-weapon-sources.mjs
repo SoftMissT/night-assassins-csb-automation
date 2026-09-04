@@ -174,6 +174,43 @@ function weaponAbilitySummary(props = {}) {
     return [...new Set(parts)].join(' • ').slice(0, 220);
 }
 
+function specialWeaponAwakeningStates(props = {}) {
+    const awakening =
+        props.arma_despertar && typeof props.arma_despertar === 'object'
+            ? props.arma_despertar
+            : {};
+    const sealedName = String(awakening.estado_selado ?? '').trim();
+    const firstName = String(awakening.primeiro_despertar ?? '').trim();
+    const sealedRules = Array.isArray(awakening.estado_selado_regras)
+        ? awakening.estado_selado_regras.map(String).filter(Boolean)
+        : [];
+
+    return {
+        sealedName,
+        firstName,
+        states: [
+            {
+                id: 'selado',
+                nome: `Estado Selado — ${sealedName}`,
+                estado: 'Selado',
+                forma: sealedName,
+                regras: sealedRules,
+                bloqueios: [
+                    `nenhum efeito de ${props.arma_entidade ?? 'Entidade'} fica ativo`,
+                    `nenhum efeito de ${props.arma_demonio ?? 'Demônio'} fica ativo`,
+                ],
+            },
+            {
+                id: 'primeiro_despertar',
+                nome: `Primeiro Despertar — ${firstName}`,
+                estado: 'Primeiro Despertar',
+                forma: firstName,
+                ritual: props.arma_ritual?.nome ?? '',
+            },
+        ],
+    };
+}
+
 const specialSourceDocuments = await Promise.all(
     (await readdir(SPECIAL_SOURCE_DIRECTORY))
         .filter((file) => file.endsWith('.json'))
@@ -227,6 +264,7 @@ const documents = [
         ? extractWeaponRankFormulas(props.arma_regra_completa)
         : {};
     const formulas = specialWeapon ? normalizeRankFormulas(extractedFormulas, profiles) : {};
+    const awakening = specialWeapon ? specialWeaponAwakeningStates(props) : null;
     return {
         ...document,
         system: {
@@ -244,6 +282,10 @@ const documents = [
                 arma_habilidade_resumo: weaponAbilitySummary(props),
                 ...(specialWeapon
                     ? {
+                          arma_especial_estado_atual: 'Selado',
+                          arma_especial_forma_atual: awakening.sealedName,
+                          arma_especial_recurso_resumo: '',
+                          arma_especial_estados_json: JSON.stringify(awakening.states),
                           arma_especial_habilidades_json: JSON.stringify(
                               props.arma_habilidades_basais_despertar ?? {}
                           ),

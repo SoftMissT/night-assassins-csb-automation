@@ -7,6 +7,9 @@
 
 import {
     buildDualSoulCeremonyResult,
+    dualSoulDominance,
+    dualSoulIntensity,
+    dualSoulTrigger,
     dualSoulCeremonyCompleted as ceremonyCompletedValue,
     dualSoulCeremonyRuntime,
     parseDualSoulJson,
@@ -318,62 +321,6 @@ function validCeremonyDefinition(
     );
 }
 
-async function chooseDominanceDie() {
-    return foundry
-        .applications
-        .api
-        .DialogV2
-        .wait({
-            window: {
-                title:
-                    'Cerimônia — Teste 1',
-            },
-
-            content: `
-                <div class="na-csb-automation">
-                    <h3>Lado Dominante</h3>
-
-                    <p>
-                        Escolha o dado usado pela mesa.
-                    </p>
-
-                    <p>
-                        <strong>1d20</strong>
-                        usa a tabela diretamente.
-                    </p>
-
-                    <p>
-                        <strong>1d100</strong>
-                        preserva a mesma proporção,
-                        convertendo cada cinco resultados
-                        em uma posição da tabela.
-                    </p>
-                </div>
-            `,
-
-            modal: true,
-            rejectClose: false,
-
-            buttons: [
-                {
-                    action: 'd20',
-                    label: '1d20',
-                    callback: () => '1d20',
-                },
-                {
-                    action: 'd100',
-                    label: '1d100',
-                    callback: () => '1d100',
-                },
-                {
-                    action: 'cancel',
-                    label: 'Cancelar',
-                    callback: () => null,
-                },
-            ],
-        });
-}
-
 async function ceremonyRoll(
     actor,
     formula,
@@ -387,7 +334,7 @@ async function ceremonyRoll(
 
     await roll.evaluate();
 
-    await roll.toMessage(
+    const message = await roll.toMessage(
         {
             speaker:
                 ChatMessage
@@ -406,7 +353,106 @@ async function ceremonyRoll(
         }
     );
 
+    if (
+        message?.id &&
+        game.dice3d?.waitFor3DAnimationByMessageID
+    ) {
+        await game.dice3d.waitFor3DAnimationByMessageID(message.id);
+    }
+
     return roll;
+}
+
+async function showCeremonyStage({
+    item,
+    number,
+    title,
+    formula,
+    description,
+    entityName,
+    demonName,
+}) {
+    return foundry.applications.api.DialogV2.wait({
+        window: { title: `Cerimônia de Vínculo — ${number}/3` },
+        content: `
+            <div class="na-csb-automation na-dual-soul-ceremony">
+                <header class="na-dual-soul-hero">
+                    <span class="na-dual-soul-step">ATO ${number} DE III</span>
+                    <h2>${escapeHtml(title)}</h2>
+                    <p>${escapeHtml(description)}</p>
+                </header>
+
+                <div
+                    class="na-blood-offering na-blood-offering-${number}"
+                    style="--na-blood-level: ${(number / 3) * 100}%"
+                    role="img"
+                    aria-label="O recipiente ritual está ${number === 3 ? 'cheio' : `preenchido em ${number} de 3 partes`}"
+                >
+                    <div class="na-blood-source" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="na-blood-vessel" aria-hidden="true">
+                        <div class="na-blood-liquid"></div>
+                        <i class="na-blood-ripple"></i>
+                    </div>
+                    <span class="na-blood-caption">SANGUE DO VÍNCULO · ${number}/3</span>
+                </div>
+
+                <div class="na-dual-soul-bond" aria-label="As duas almas da arma">
+                    <div class="na-dual-soul-side na-dual-soul-entity">
+                        <span>ENTIDADE</span>
+                        <strong>${escapeHtml(entityName)}</strong>
+                    </div>
+                    <div class="na-dual-soul-thread" aria-hidden="true"><i></i></div>
+                    <div class="na-dual-soul-side na-dual-soul-demon">
+                        <span>DEMÔNIO</span>
+                        <strong>${escapeHtml(demonName)}</strong>
+                    </div>
+                </div>
+
+                <div class="na-dual-soul-formula">
+                    <span>ROLAGEM</span>
+                    <strong>${escapeHtml(formula)}</strong>
+                </div>
+
+                <footer>${escapeHtml(item.name)} · resultado permanente ao concluir os três atos</footer>
+            </div>
+        `,
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            { action: 'roll', label: `Rolar ${formula}`, default: true, callback: () => true },
+            { action: 'cancel', label: 'Cancelar cerimônia', callback: () => null },
+        ],
+    });
+}
+
+async function revealCeremonyResult({
+    number,
+    title,
+    total,
+    result,
+    detail = '',
+}) {
+    return foundry.applications.api.DialogV2.wait({
+        window: { title: `Cerimônia — Resultado ${number}/3` },
+        content: `
+            <div class="na-csb-automation na-dual-soul-ceremony na-dual-soul-reveal">
+                <span class="na-dual-soul-step">${escapeHtml(title)}</span>
+                <div class="na-dual-soul-result-number">${escapeHtml(total)}</div>
+                <h2>${escapeHtml(result)}</h2>
+                ${detail ? `<p>${escapeHtml(detail)}</p>` : ''}
+                <div class="na-dual-soul-seal-line" aria-hidden="true"></div>
+            </div>
+        `,
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            { action: 'continue', label: number === 3 ? 'Gravar vínculo permanente' : 'Continuar cerimônia', default: true, callback: () => true },
+        ],
+    });
 }
 
 export function getDualSoulCeremonyState(
@@ -711,12 +757,18 @@ export async function openDualSoulCeremony(
         return null;
     }
 
-    const test1Formula =
-        await chooseDominanceDie();
+    const test1Formula = '1d20';
 
-    if (!test1Formula) {
-        return null;
-    }
+    const test1Ready = await showCeremonyStage({
+        item,
+        number: 1,
+        title: 'Lado Dominante',
+        formula: test1Formula,
+        description: 'Decide qual alma liderará a arma pelo resto da campanha.',
+        entityName,
+        demonName,
+    });
+    if (!test1Ready) return null;
 
     const test1 =
         await ceremonyRoll(
@@ -725,12 +777,58 @@ export async function openDualSoulCeremony(
             `${item.name} — Cerimônia · Teste 1 · Lado Dominante`
         );
 
+    const dominancePreview = dualSoulDominance(test1.total, {
+        formula: test1Formula,
+        entityName,
+        demonName,
+    });
+    await revealCeremonyResult({
+        number: 1,
+        title: 'Lado Dominante',
+        total: test1.total,
+        result: dominancePreview.display,
+        detail: dominancePreview.sleepingName
+            ? `${dominancePreview.sleepingName} permanece como lado adormecido.`
+            : 'Nenhum lado domina. A disputa permanece em equilíbrio instável.',
+    });
+
+    const test2Ready = await showCeremonyStage({
+        item,
+        number: 2,
+        title: 'Intensidade do Vínculo',
+        formula: '3d20',
+        description: 'Mede quanto poder o portador consegue puxar do vínculo.',
+        entityName,
+        demonName,
+    });
+    if (!test2Ready) return null;
+
     const test2 =
         await ceremonyRoll(
             actor,
             '3d20',
             `${item.name} — Cerimônia · Teste 2 · Intensidade do Vínculo`
         );
+
+    const intensityPreview = dualSoulIntensity(test2.total);
+    await revealCeremonyResult({
+        number: 2,
+        title: 'Intensidade do Vínculo',
+        total: test2.total,
+        result: intensityPreview.name,
+        detail: `Eixo do lado dominante: +${intensityPreview.value}.`,
+    });
+
+    const test3Ready = await showCeremonyStage({
+        item,
+        number: 3,
+        title: 'Gatilho de Despertar',
+        formula: '3d20',
+        description: 'Define quando o lado adormecido poderá tentar despertar.',
+        entityName,
+        demonName,
+    });
+    if (!test3Ready) return null;
 
     const test3 =
         await ceremonyRoll(
@@ -758,6 +856,15 @@ export async function openDualSoulCeremony(
             tests:
                 definition,
         });
+
+    const triggerPreview = dualSoulTrigger(test3.total);
+    await revealCeremonyResult({
+        number: 3,
+        title: 'Gatilho de Despertar',
+        total: test3.total,
+        result: result.trigger.publicText,
+        detail: `${triggerPreview.label} · CD base ${result.intensity.awakeningCd ?? 'não definida'}.`,
+    });
 
     const runtime = {
         ...result,

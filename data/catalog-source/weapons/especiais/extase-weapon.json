@@ -193,7 +193,8 @@
                 "observacao": "com 4 Cargas, alguns efeitos de Rank ficam mais fortes"
             },
             "arma_despertar": {
-                "estado_selado": "Tesoura Adormecida",
+      "estado_selado": "Tesoura Adormecida",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "efeitos normais de técnicas que usem a arma", "formas de corte sem efeitos espirituais"],
                 "primeiro_despertar": "Névoa Sagrada",
                 "despertar_verdadeiro": "Cortador da Forma Viva",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

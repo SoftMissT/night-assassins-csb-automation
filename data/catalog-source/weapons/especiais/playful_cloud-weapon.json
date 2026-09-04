@@ -284,7 +284,8 @@
                 }
             },
             "arma_despertar": {
-                "estado_selado": "Três Segmentos Quietos",
+      "estado_selado": "Três Segmentos Quietos",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "alcance compacto ou articulado", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Nuvem Brincalhona",
                 "despertar_verdadeiro": "Torvelinho de Três Corpos",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

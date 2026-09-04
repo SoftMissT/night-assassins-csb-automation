@@ -307,7 +307,12 @@
                     "Vínculo Absoluto": 21
                 }
             },
-            "arma_ritual": {
+    "arma_despertar": {
+      "estado_selado": "Cérbero Adormecido",
+      "estado_selado_regras": ["alternar entre Nunchaku, Tridente e Mangual", "dano da forma", "propriedades da arma", "dado evolutivo do Rank", "efeitos normais de técnicas que usem a arma"],
+      "primeiro_despertar": "Guarda do Limiar"
+    },
+    "arma_ritual": {
                 "nome": "Sangue no Limiar",
                 "custo": "reduza seus PDV atuais para 10% do valor atual, arredondado para cima; o restante é Sangue de Pacto",
                 "regras_sangue_pacto": [

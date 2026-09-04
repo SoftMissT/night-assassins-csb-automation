@@ -173,7 +173,8 @@
                 }
             },
             "arma_despertar": {
-                "estado_selado": "Leque Fechado",
+      "estado_selado": "Leque Fechado",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "formas básicas do leque", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Comando Sob o Céu",
                 "despertar_verdadeiro": "Queda do Pilar Celeste",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

@@ -160,6 +160,33 @@ test(
 );
 
 test(
+    'Cerimônia apresenta os três testes em atos e aguarda Dice So Nice',
+    async () => {
+        const service = await source('scripts/dual-soul-ceremony-service.mjs');
+        const css = await source('styles/na-csb-automation.css');
+
+        assert.match(service, /showCeremonyStage/);
+        assert.match(service, /revealCeremonyResult/);
+        assert.match(service, /number:\s*1/);
+        assert.match(service, /number:\s*2/);
+        assert.match(service, /number:\s*3/);
+        assert.match(service, /waitFor3DAnimationByMessageID/);
+        assert.match(service, /const test1Formula = '1d20'/);
+        assert.match(service, /formula:\s*'3d20'/);
+        assert.doesNotMatch(service, /chooseDominanceDie|label:\s*'1d100'/);
+        assert.match(css, /\.na-dual-soul-bond/);
+        assert.match(css, /\.na-dual-soul-thread/);
+        assert.match(service, /na-blood-offering/);
+        assert.match(service, /--na-blood-level/);
+        assert.match(css, /@keyframes na-blood-drop/);
+        assert.match(css, /\.na-blood-vessel/);
+        assert.match(css, /\.na-blood-liquid/);
+        assert.match(css, /@keyframes na-blood-ripple/);
+        assert.match(css, /prefers-reduced-motion/);
+    }
+);
+
+test(
     'template usa painel CSB genérico e não DOM injection',
     async () => {
         const template =

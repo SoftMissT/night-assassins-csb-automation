@@ -229,7 +229,12 @@
                     "Vínculo Absoluto": 21
                 }
             },
-            "arma_ritual": {
+    "arma_despertar": {
+      "estado_selado": "Motor Frio",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "efeitos normais de técnicas que usem a arma"],
+      "primeiro_despertar": "Motor Carmesim"
+    },
+    "arma_ritual": {
                 "nome": "Sangue na Válvula",
                 "passos": [
                     "segurar Red Queen com as duas mãos",

@@ -168,7 +168,8 @@
                 "dois_tempos": ["preparar o alvo", "perfurar o alvo preparado"]
             },
             "arma_despertar": {
-                "estado_selado": "Luar Recolhido",
+      "estado_selado": "Luar Recolhido",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "alcance de 3m", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Luar das Doze Órbitas",
                 "despertar_verdadeiro": "Lua que Abate o Sol",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

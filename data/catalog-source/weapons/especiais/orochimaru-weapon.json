@@ -235,7 +235,8 @@
                 "alcance_vivo": "ataques em alcance estendido ainda são ataques corpo a corpo com a arma; eles não contam como projéteis"
             },
             "arma_despertar": {
-                "estado_selado": "Lâmina Recolhida",
+      "estado_selado": "Lâmina Recolhida",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "formas de alcance", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Jakkojin",
                 "despertar_verdadeiro": "Serpente que Fecha o Dia",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

@@ -207,7 +207,8 @@
                 }
             },
             "arma_despertar": {
-                "estado_selado": "Talismãs Fechados",
+      "estado_selado": "Talismãs Fechados",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "ataques normais de Ryōtō", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Kegare Revelado",
                 "despertar_verdadeiro": "Dois Braços do Caos Solar",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

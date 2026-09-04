@@ -181,7 +181,8 @@
                 "nao_quebra": "movimento forçado por inimigos não quebra a Postura Iai"
             },
             "arma_despertar": {
-                "estado_selado": "Lâmina Herdada",
+      "estado_selado": "Lâmina Herdada",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Fenda do Herdeiro",
                 "despertar_verdadeiro": "Legado do Andarilho da Fenda",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

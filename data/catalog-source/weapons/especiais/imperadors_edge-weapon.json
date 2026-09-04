@@ -124,7 +124,8 @@
                 "marduk": "pode transformar Iluminado em ordem violenta contra o alvo"
             },
             "arma_despertar": {
-                "estado_selado": "Estandarte Recolhido",
+      "estado_selado": "Estandarte Recolhido",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Juramento das Cem Legiões",
                 "despertar_verdadeiro": "Mandato das Cem Legiões",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

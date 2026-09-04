@@ -228,7 +228,12 @@
           "Vínculo Absoluto": 21
         }
       },
-      "arma_ritual": {
+    "arma_despertar": {
+      "estado_selado": "Rebellion Adormecida",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "efeitos normais de técnicas que usem a arma"],
+      "primeiro_despertar": "Voz dos Doze"
+    },
+    "arma_ritual": {
         "nome": "Sangue dos Doze",
         "passos": [
           "segurar Rebellion com as duas mãos",

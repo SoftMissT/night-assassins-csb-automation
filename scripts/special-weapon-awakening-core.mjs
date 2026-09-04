@@ -1,7 +1,10 @@
-export const YAMATO_AWAKENING_STATE = Object.freeze({
+export const SPECIAL_WEAPON_AWAKENING_STATE = Object.freeze({
     sealed: 'Selada',
     first: 'Primeiro Despertar',
 });
+
+// Compatibilidade pública com a API introduzida na v0.11.62.
+export const YAMATO_AWAKENING_STATE = SPECIAL_WEAPON_AWAKENING_STATE;
 
 export function normalizeIntegrationStage(value = '') {
     const text = String(value ?? '')
@@ -27,13 +30,28 @@ export function awakeningBloodCost(currentPdv = 0) {
     return { current, remaining: Math.min(current, remaining), cost: Math.max(0, current - remaining) };
 }
 
-export function awakeningRuntime({ combatId = null, round = 0, duration = 2, side = '' } = {}) {
+export function awakeningRuntime({
+    combatId = null,
+    round = 0,
+    duration = 2,
+    side = '',
+    sideKind = '',
+    sideName = '',
+    weaponId = null,
+    weaponName = '',
+    ritualName = '',
+} = {}) {
     const startRound = Math.max(0, Math.trunc(Number(round) || 0));
     const rounds = Math.max(1, Math.trunc(Number(duration) || 1));
     return {
         version: 1,
-        state: YAMATO_AWAKENING_STATE.first,
+        state: SPECIAL_WEAPON_AWAKENING_STATE.first,
         side,
+        sideKind,
+        sideName,
+        weaponId,
+        weaponName,
+        ritualName,
         combatId,
         startRound,
         expiresRound: startRound + rounds,
@@ -42,7 +60,7 @@ export function awakeningRuntime({ combatId = null, round = 0, duration = 2, sid
 }
 
 export function awakeningExpired(runtime, combat = {}) {
-    if (!runtime || runtime.state !== YAMATO_AWAKENING_STATE.first) return false;
+    if (!runtime || runtime.state !== SPECIAL_WEAPON_AWAKENING_STATE.first) return false;
     if (runtime.combatId && runtime.combatId !== (combat.id ?? null)) return true;
     return Number(combat.round ?? 0) >= Number(runtime.expiresRound ?? Infinity);
 }

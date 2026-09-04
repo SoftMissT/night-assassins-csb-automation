@@ -1,4 +1,15 @@
 # Changelog
+## v0.11.66 — 2026-09-04
+
+- Generalizado o Primeiro Despertar para as 17 Armas Especiais de Dupla Alma, preservando a Cerimônia permanente e usando um lado ativo apenas durante o despertar.
+- Adicionada a macro canônica `Night Assassins Retirar Arma do Selamento`, com seleção da arma no Actor, confirmação do ritual e tratamento seguro de cancelamento.
+- Todas as Armas Especiais passam a nascer Seladas, mantendo somente dano, propriedades, dado evolutivo e formas ou posturas básicas declaradas em suas fontes canônicas.
+- O Sangue de Pacto reduz os PDV atuais para 10%, arredondado para cima e com mínimo de 1, sem ser tratado como dano inimigo.
+- A duração do Primeiro Despertar permanece vinculada à Integração: Dualidade 2, Simbiose 3, Unificação 3 e Identidade 4 rodadas.
+- Reformulada a apresentação da Cerimônia de Vínculo em três etapas: Teste 1 usa 1d20; Testes 2 e 3 usam 3d20; cada resultado aguarda a animação do Dice So Nice.
+- Adicionado o recipiente ritual com gotas de sangue e preenchimento progressivo durante as três etapas da Cerimônia.
+- Adicionadas regressões para os 17 Estados Selados, macro genérica, expiração automática e compatibilidade do adapter legado da Yamato.
+
 ## v0.11.65 — 2026-09-02
 
 - Adicionado o Consequence Resolver genérico das Armas de Dupla Alma.

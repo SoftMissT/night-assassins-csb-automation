@@ -2381,3 +2381,334 @@
     border-radius: 3px;
     padding: 1px 5px;
 }
+
+/* Cerimônia de Vínculo — três atos, duas almas, um resultado permanente. */
+.na-dual-soul-ceremony {
+    --na-bond-gold: #d7b86a;
+    --na-bond-ivory: #eee4ce;
+    --na-bond-entity: #72d9e7;
+    --na-bond-demon: #d34b68;
+    position: relative;
+    overflow: hidden;
+    min-width: min(540px, 78vw);
+    padding: 20px;
+    border: 1px solid rgba(215, 184, 106, 0.45);
+    background:
+        radial-gradient(circle at 50% -20%, rgba(215, 184, 106, 0.16), transparent 45%),
+        linear-gradient(145deg, #121015 0%, #08090c 58%, #111015 100%);
+    color: var(--na-bond-ivory);
+}
+
+.na-dual-soul-hero {
+    text-align: center;
+}
+
+.na-dual-soul-step {
+    display: inline-block;
+    color: var(--na-bond-gold);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+}
+
+.na-dual-soul-hero h2,
+.na-dual-soul-reveal h2 {
+    margin: 5px 0 7px;
+    border: 0;
+    color: var(--na-bond-ivory);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.na-dual-soul-hero p,
+.na-dual-soul-reveal p {
+    margin: 0 auto;
+    max-width: 44ch;
+    color: #bdb3a3;
+}
+
+.na-blood-offering {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    width: 150px;
+    height: 132px;
+    margin: 12px auto -8px;
+}
+
+.na-blood-source {
+    position: relative;
+    width: 50px;
+    height: 69px;
+}
+
+.na-blood-source span {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 8px;
+    height: 12px;
+    border-radius: 70% 45% 70% 45%;
+    background: linear-gradient(145deg, #ff4964 0%, #a70724 55%, #42000d 100%);
+    box-shadow: 0 0 8px rgba(211, 32, 66, 0.72);
+    transform: translateX(-50%) rotate(45deg);
+    animation: na-blood-drop 1.65s cubic-bezier(0.55, 0.08, 0.78, 0.28) infinite;
+}
+
+.na-blood-source span:nth-child(2) {
+    left: 34%;
+    width: 6px;
+    height: 9px;
+    animation-delay: 0.56s;
+}
+
+.na-blood-source span:nth-child(3) {
+    left: 67%;
+    width: 5px;
+    height: 8px;
+    animation-delay: 1.1s;
+}
+
+.na-blood-vessel {
+    position: absolute;
+    bottom: 23px;
+    width: 92px;
+    height: 48px;
+    overflow: hidden;
+    border: 2px solid rgba(238, 228, 206, 0.68);
+    border-top-color: rgba(238, 228, 206, 0.94);
+    border-radius: 7px 7px 35px 35px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02));
+    box-shadow:
+        inset 0 0 12px rgba(255, 255, 255, 0.05),
+        0 7px 18px rgba(0, 0, 0, 0.48);
+}
+
+.na-blood-vessel::before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    top: -4px;
+    left: -5px;
+    width: 98px;
+    height: 8px;
+    border: 2px solid rgba(238, 228, 206, 0.78);
+    border-radius: 50%;
+    background: #0b090c;
+}
+
+.na-blood-liquid {
+    position: absolute;
+    right: 2px;
+    bottom: 1px;
+    left: 2px;
+    height: var(--na-blood-level);
+    max-height: 43px;
+    border-radius: 3px 3px 30px 30px;
+    background:
+        radial-gradient(ellipse at 50% 0%, #ef3e59 0%, #b20d2b 24%, #650015 68%, #310009 100%);
+    box-shadow: 0 -3px 9px rgba(221, 24, 60, 0.36);
+    transition: height 0.65s ease-out;
+}
+
+.na-blood-ripple {
+    position: absolute;
+    z-index: 3;
+    bottom: calc(min(var(--na-blood-level), 43px) - 1px);
+    left: 50%;
+    width: 22px;
+    height: 5px;
+    border: 1px solid rgba(255, 112, 132, 0.8);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translateX(-50%);
+    animation: na-blood-ripple 1.65s ease-out infinite;
+}
+
+.na-blood-caption {
+    position: absolute;
+    bottom: 0;
+    color: #9f7b75;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+}
+
+@keyframes na-blood-drop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -8px) rotate(45deg) scale(0.6);
+    }
+    14% {
+        opacity: 1;
+    }
+    78% {
+        opacity: 1;
+        transform: translate(-50%, 54px) rotate(45deg) scale(1);
+    }
+    82%,
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 58px) rotate(45deg) scale(0.55);
+    }
+}
+
+@keyframes na-blood-ripple {
+    0%,
+    76% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.2);
+    }
+    82% {
+        opacity: 0.82;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(2.5);
+    }
+}
+
+.na-dual-soul-bond {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0 18px;
+}
+
+.na-dual-soul-side {
+    display: grid;
+    gap: 3px;
+    min-height: 58px;
+    align-content: center;
+    padding: 9px 11px;
+    border: 1px solid currentColor;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.na-dual-soul-side span {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+}
+
+.na-dual-soul-side strong {
+    color: var(--na-bond-ivory);
+    font-size: 13px;
+}
+
+.na-dual-soul-entity {
+    color: var(--na-bond-entity);
+    text-align: right;
+}
+
+.na-dual-soul-demon {
+    color: var(--na-bond-demon);
+}
+
+.na-dual-soul-thread {
+    height: 1px;
+    background: linear-gradient(90deg, var(--na-bond-entity), var(--na-bond-gold), var(--na-bond-demon));
+    box-shadow: 0 0 10px rgba(215, 184, 106, 0.55);
+}
+
+.na-dual-soul-thread i {
+    display: block;
+    width: 9px;
+    height: 9px;
+    margin: -4px auto 0;
+    transform: rotate(45deg);
+    border: 1px solid var(--na-bond-gold);
+    background: #0b0a0d;
+}
+
+.na-dual-soul-formula {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    border-top: 1px solid rgba(215, 184, 106, 0.2);
+    border-bottom: 1px solid rgba(215, 184, 106, 0.2);
+}
+
+.na-dual-soul-formula span {
+    color: #8f877a;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+}
+
+.na-dual-soul-formula strong {
+    color: var(--na-bond-gold);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+}
+
+.na-dual-soul-ceremony footer {
+    margin-top: 13px;
+    color: #756f66;
+    font-size: 10px;
+    text-align: center;
+}
+
+.na-dual-soul-reveal {
+    display: grid;
+    justify-items: center;
+    gap: 7px;
+    text-align: center;
+}
+
+.na-dual-soul-result-number {
+    margin: 8px 0 2px;
+    color: var(--na-bond-gold);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 0 0 22px rgba(215, 184, 106, 0.34);
+}
+
+.na-dual-soul-seal-line {
+    width: 150px;
+    height: 1px;
+    margin-top: 12px;
+    background: linear-gradient(90deg, transparent, var(--na-bond-gold), transparent);
+}
+
+@media (max-width: 620px) {
+    .na-dual-soul-ceremony {
+        min-width: 0;
+        padding: 14px;
+    }
+
+    .na-dual-soul-bond {
+        grid-template-columns: 1fr;
+    }
+
+    .na-dual-soul-entity,
+    .na-dual-soul-demon {
+        text-align: center;
+    }
+
+    .na-dual-soul-thread {
+        width: 1px;
+        height: 30px;
+        margin: auto;
+        background: linear-gradient(180deg, var(--na-bond-entity), var(--na-bond-gold), var(--na-bond-demon));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .na-dual-soul-ceremony *,
+    .na-dual-soul-ceremony *::before,
+    .na-dual-soul-ceremony *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}

@@ -114,6 +114,12 @@ const macros = [
         name: 'Night Assassins Resolver Consequência Dual Soul',
         icon: 'na-gerenciar-resistencias_icon.webp',
     },
+    {
+        id: 'NADualSoulAwk001',
+        file: 'na-despertar-arma-dual-soul.js',
+        name: 'Night Assassins Retirar Arma do Selamento',
+        icon: 'na-marca-cacador_icon.webp',
+    },
 ];
 
 await rm(outputDirectory, { recursive: true, force: true });

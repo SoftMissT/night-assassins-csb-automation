@@ -137,6 +137,7 @@ import {
     routePendingDualSoulConsequence,
 } from './dual-soul-consequence-service.mjs';
 import {
+    awakenSpecialWeapon,
     awakenYamato,
     openSpecialWeaponAwakeningManager,
     registerSpecialWeaponAwakeningRuntime,
@@ -293,6 +294,7 @@ Hooks.once('ready', async () => {
             recordDualSoulLoanUse,
             finalizeDualSoulPossession,
             awakenYamato,
+            awakenSpecialWeapon,
             openSpecialWeaponAwakeningManager,
             useKekkijutsuItem,
             reloadWeaponItem,

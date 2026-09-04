@@ -158,7 +158,8 @@
                 ]
             },
             "arma_despertar": {
-                "estado_selado": "Armadura Adormecida",
+      "estado_selado": "Armadura Adormecida",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "ataques normais de Ryōtō", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Yoroi do Sol",
                 "despertar_verdadeiro": "Ascensão de Argila e Dilúvio",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

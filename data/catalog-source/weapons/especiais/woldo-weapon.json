@@ -139,7 +139,8 @@
                 }
             },
             "arma_despertar": {
-                "estado_selado": "Lua Baixa",
+      "estado_selado": "Lua Baixa",
+      "estado_selado_regras": ["dano da arma", "propriedades", "dado evolutivo do Rank", "alcance de 3m", "efeitos normais de técnicas que usem a arma"],
                 "primeiro_despertar": "Dança da Lua Fria",
                 "despertar_verdadeiro": "Corte do Céu Baixo",
                 "requisito_despertar_verdadeiro": "Rank S, Estágio de Unificação e conhecer o Nome Verdadeiro",

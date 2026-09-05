@@ -1,5 +1,4 @@
 import { MODULE_ID } from './constants.mjs';
-import { bloodPactPayment } from './blood-pact-core.mjs';
 import {
     dualSoulCeremonyCompleted,
     getDualSoulCeremonyState,
@@ -70,8 +69,9 @@ async function chooseDualSoulWeapon(actor, options = {}) {
     if (weapons.length <= 1) return weapons[0] ?? null;
 
     const selected = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Retirar Arma do Selamento' },
-        content: '<div class="na-csb-automation"><p>Escolha a Arma de Dupla Alma.</p></div>',
+        classes: ['na-dual-soul-dialog'],
+        window: { title: 'Ativar Arma de Dupla Alma' },
+        content: '<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Arma de Dupla Alma</span><h2>Qual vínculo será ativado?</h2><p>Escolha a arma cuja Cerimônia já foi concluída.</p></div>',
         modal: true,
         rejectClose: false,
         buttons: [
@@ -108,8 +108,9 @@ async function chooseEquilibriumSide(props = {}) {
     const entity = String(props.arma_entidade ?? 'Entidade');
     const demon = String(props.arma_demonio ?? 'Demônio');
     return foundry.applications.api.DialogV2.wait({
+        classes: ['na-dual-soul-dialog'],
         window: { title: 'Equilíbrio Instável' },
-        content: '<div class="na-csb-automation"><p>Escolha qual lado responderá ao ritual neste despertar. A Cerimônia permanente não será alterada.</p></div>',
+        content: '<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Equilíbrio Instável</span><h2>Quem responde ao despertar?</h2><p>Escolha o lado que ficará ativo neste Primeiro Despertar. A Cerimônia permanente não será alterada.</p></div>',
         modal: true,
         rejectClose: false,
         buttons: [
@@ -134,22 +135,16 @@ function ritualDefinition(props = {}) {
     return structured(props.arma_ritual, {});
 }
 
-function ritualHtml(item, ritual, side, integration, duration, pdv) {
-    const steps = Array.isArray(ritual.passos)
-        ? `<ol>${ritual.passos.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>`
-        : '';
-    const pact = String(ritual.pacto_completo ?? '').trim();
-    return `<div class="na-csb-automation">
+function ritualHtml(item, side, integration, duration) {
+    return `<div class="na-csb-automation na-dual-soul-panel">
+        <span class="na-dual-soul-kicker">Primeiro Despertar</span>
         <h2>${escapeHtml(item.name)}</h2>
-        <p><strong>Ritual:</strong> ${escapeHtml(ritual.nome ?? 'Pacto de Acordar')}</p>
-        ${steps}
-        ${pact ? `<h3>Pacto de Acordar</h3><p style="white-space:pre-line">${escapeHtml(pact)}</p>` : ''}
-        <p><strong>Lado:</strong> ${escapeHtml(side.name)} (${escapeHtml(side.kind)})</p>
-        <p><strong>Integração:</strong> ${escapeHtml(integration)} · <strong>Duração:</strong> ${duration} rodadas</p>
-        <hr>
-        <p><strong>PDV atual:</strong> ${pdv.current}</p>
-        <p><strong>PDV após o pacto:</strong> ${pdv.remaining}</p>
-        <p><strong>Sangue de Pacto:</strong> ${pdv.cost} PDV</p>
+        <div class="na-dual-soul-summary"><span>Vínculo</span><strong>Cerimônia concluída</strong></div>
+        <div class="na-dual-soul-facts">
+            <p><span>Lado</span><strong>${escapeHtml(side.name)} · ${escapeHtml(side.kind)}</strong></p>
+            <p><span>Integração</span><strong>${escapeHtml(integration)} · ${duration} rodadas</strong></p>
+        </div>
+        <p class="na-dual-soul-footnote">O Sangue de Pacto já foi pago ao concluir a Cerimônia de Vínculo. Esta ativação não reduz o PDV novamente.</p>
     </div>`;
 }
 
@@ -197,35 +192,17 @@ export async function awakenSpecialWeapon(options = {}) {
     if (ceremony?.dominance?.dominantKind === 'equilibrio') side = await chooseEquilibriumSide(props);
     if (!side) return null;
 
-    let pdv;
-    try {
-        pdv = bloodPactPayment(actor.system?.props ?? {});
-    } catch (error) {
-        return ui.notifications?.warn?.(error.message);
-    }
-    if (pdv.current <= 1)
-        return ui.notifications?.warn?.('O Sangue de Pacto não pode reduzir o portador abaixo de 1 PDV.');
-
     const integration = integrationName(props);
     const duration = awakeningDuration(integration);
     const ritual = ritualDefinition(props);
     const confirmed = await foundry.applications.api.DialogV2.confirm({
-        window: { title: `${item.name} — ${ritual.nome ?? 'Pacto de Acordar'}` },
-        content: ritualHtml(item, ritual, side, integration, duration, pdv),
+        classes: ['na-dual-soul-dialog'],
+        window: { title: `${item.name} — Primeiro Despertar` },
+        content: ritualHtml(item, side, integration, duration),
         modal: true,
         rejectClose: false,
     });
     if (!confirmed) return null;
-
-    // The sheet may have changed while the confirmation was open.
-    let latestPdv;
-    try {
-        latestPdv = bloodPactPayment(actor.system?.props ?? {});
-    } catch (error) {
-        return ui.notifications?.warn?.(error.message);
-    }
-    if (latestPdv.current !== pdv.current || latestPdv.damageBefore !== pdv.damageBefore)
-        return ui.notifications?.warn?.('O PDV mudou durante a confirmação. Abra o ritual novamente para conferir o custo.');
 
     const definition = awakeningDefinition(props);
     const runtime = awakeningRuntime({
@@ -242,15 +219,6 @@ export async function awakenSpecialWeapon(options = {}) {
     runtime.integration = integration;
     runtime.ceremonyDominance = ceremony?.dominance ?? null;
 
-    await actor.update({
-        'system.props.pdv_slayer_dano_tomado': pdv.damageAfter,
-    }, {
-        naCsbAutomation: true,
-        naSpecialWeapon: true,
-        naLifeDeath: true,
-        naBloodPact: true,
-    });
-
     await item.update({
         'system.props.arma_especial_estado_atual': SPECIAL_WEAPON_AWAKENING_STATE.first,
         'system.props.arma_especial_forma_atual': definition.firstName,
@@ -266,10 +234,11 @@ export async function awakenSpecialWeapon(options = {}) {
 
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<div class="na-csb-automation"><h3>${escapeHtml(item.name)} — Primeiro Despertar</h3><p><strong>${escapeHtml(side.name)}</strong> respondeu ao ritual <strong>${escapeHtml(ritual.nome ?? 'Pacto de Acordar')}</strong>.</p><p>${duration} rodadas · Sangue de Pacto: ${pdv.cost} PDV.</p></div>`,
+        content: `<div class="na-csb-automation na-dual-soul-chat"><h3>${escapeHtml(item.name)} — Primeiro Despertar</h3><p><strong>${escapeHtml(side.name)}</strong> respondeu ao vínculo.</p><p>${duration} rodadas. O Sangue de Pacto já foi oferecido na Cerimônia de Vínculo.</p></div>`,
     });
-    ui.notifications?.info?.(`${item.name} despertou com ${side.name} por ${duration} rodadas.`);
-    return { ok: true, runtime, pdv, ceremony };
+    actor.sheet?.render?.(false);
+    ui.notifications?.info?.(`${item.name}: Primeiro Despertar ativado sem nova cobrança de PDV.`);
+    return { ok: true, runtime, ceremony };
 }
 
 // Alias de compatibilidade para macros e integrações publicadas na v0.11.62.
@@ -288,15 +257,15 @@ export async function openSpecialWeaponAwakeningManager(options = {}) {
     const ceremonyState = dualSoulCeremonyCompleted(item)
         ? ceremony?.dominance?.display ?? 'Concluída'
         : 'NÃO REALIZADA';
-    const ritual = ritualDefinition(item.system?.props ?? {});
     const choice = await foundry.applications.api.DialogV2.wait({
+        classes: ['na-dual-soul-dialog'],
         window: { title: `${item.name} — Gerenciar Despertar` },
-        content: `<div class="na-csb-automation"><p><strong>Cerimônia:</strong> ${escapeHtml(ceremonyState)}</p><p><strong>Estado:</strong> ${escapeHtml(state)}</p><p><strong>Ritual:</strong> ${escapeHtml(ritual.nome ?? 'Pacto de Acordar')}</p></div>`,
+        content: `<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Controle da arma</span><h2>${escapeHtml(item.name)}</h2><div class="na-dual-soul-facts"><p><span>Cerimônia</span><strong>${escapeHtml(ceremonyState)}</strong></p><p><span>Estado</span><strong>${escapeHtml(state)}</strong></p></div><p class="na-dual-soul-footnote">A Cerimônia de Vínculo já rompeu o selo e cobrou o Sangue de Pacto. Ativar o Primeiro Despertar não reduz o PDV novamente.</p></div>`,
         modal: true,
         rejectClose: false,
         buttons: [
-            { action: 'awaken', label: 'Retirar do Selamento', callback: () => 'awaken' },
-            { action: 'seal', label: 'Selar Arma', callback: () => 'seal' },
+            { action: 'awaken', label: 'Ativar Primeiro Despertar', callback: () => 'awaken' },
+            { action: 'seal', label: 'Encerrar Despertar', callback: () => 'seal' },
             { action: 'cancel', label: 'Cancelar', callback: () => null },
         ],
     });

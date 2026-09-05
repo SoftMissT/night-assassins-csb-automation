@@ -25,8 +25,9 @@ export async function resetDualSoulBond(item) {
     // Escape the document name; never interpolate editable Item text as markup.
     const name = String(item.name ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
     const confirmed = await foundry.applications.api.DialogV2.confirm({
+        classes: ['na-dual-soul-dialog', 'na-dual-soul-reset-dialog'],
         window: { title: 'GM — Resetar vínculo desta arma' },
-        content: `<p>Resetar os três resultados da Cerimônia de <strong>${name}</strong>?</p><p>O vínculo anterior será arquivado nesta arma. Marcas, integração, PDV e uso por combate serão preservados. Não haverá nova rolagem automática.</p>`,
+        content: `<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Controle do Mestre</span><h2>Arquivar vínculo</h2><p>Resetar os três resultados da Cerimônia de <strong>${name}</strong>?</p><div class="na-dual-soul-reset-note"><strong>Este reset não causa dano e não devolve sangue.</strong><span>O vínculo anterior será arquivado. Marcas, integração, PDV e uso por combate serão preservados. Ao concluir uma nova Cerimônia, 90% do PDV atual será oferecido novamente.</span></div></div>`,
         defaultYes: false,
         modal: true,
         rejectClose: false,

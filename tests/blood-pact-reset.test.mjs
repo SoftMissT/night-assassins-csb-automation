@@ -6,7 +6,7 @@ import { awakenSpecialWeapon } from '../scripts/special-weapon-awakening-service
 import { openDualSoulCeremony } from '../scripts/dual-soul-ceremony-service.mjs';
 import { MODULE_ID } from '../scripts/constants.mjs';
 
-const globals = ['game', 'ui', 'foundry', 'ChatMessage'];
+const globals = ['game', 'ui', 'foundry', 'ChatMessage', 'Roll'];
 const saved = Object.fromEntries(globals.map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
 afterEach(() => {
     for (const key of globals) {
@@ -15,7 +15,7 @@ afterEach(() => {
     }
 });
 
-function fixture({ gm = true, confirm = true } = {}) {
+function fixture({ gm = true, confirm = true, completed = true, wait = 'close', rollTotals = [5, 40, 23] } = {}) {
     const writes = [], warnings = [], dialogs = [], chats = [];
     const actor = {
         documentName: 'Actor', name: 'Slayer', uuid: 'Actor.test', isOwner: true,
@@ -28,10 +28,18 @@ function fixture({ gm = true, confirm = true } = {}) {
             this.system.props.pdv_slayer_atual -= this.system.props.pdv_slayer_dano_tomado - before;
         },
     };
-    const ceremony = { version: 1, test1: { formula: '1d20' }, runtime: {
+    const ceremonyDefinition = {
+        version: 1,
+        test1: { formula: '1d20' },
+        teste_1_lado_dominante: { '1-8': 'Demônio', '9-12': 'Equilíbrio', '13-20': 'Entidade' },
+        teste_2_intensidade_vinculo: { '3-60': 'Vínculo' },
+        teste_3_gatilho_lado_adormecido: { '3-60': 'Gatilho canônico' },
+        teste_de_despertar: { 'Vínculo Forte': 17 },
+    };
+    const ceremony = { ...ceremonyDefinition, ...(completed ? { runtime: {
         completed: true, dominance: { dominantKind: 'entidade', display: 'Entidade' },
         intensity: { name: 'Forte', awakeningCd: 17 }, trigger: { publicText: 'Gatilho' },
-    } };
+    } } : {}) };
     const flags = {};
     const item = {
         id: 'one', uuid: 'Actor.test.Item.one', name: 'Arma de teste', parent: actor,
@@ -59,13 +67,21 @@ function fixture({ gm = true, confirm = true } = {}) {
         getDocument: async () => ({ system: { props: { ...item.system.props } } }) };
     globalThis.game = { user: { id: 'gm', isGM: gm },
         packs: new Map([[`${MODULE_ID}.night-assassins-armas-slayer`, pack]]),
-        combat: { id: 'combat', started: true, round: 2 } };
-    globalThis.ui = { notifications: { warn: text => { warnings.push(text); }, info: () => {} } };
+        combat: { id: 'combat', started: true, round: 2 },
+        settings: { get: () => 'publicroll' }, dice3d: null };
+    globalThis.ui = { notifications: { warn: text => { warnings.push(text); }, error: text => { warnings.push(text); }, info: () => {} } };
+    let confirmIndex = 0;
     globalThis.foundry = { applications: { api: { DialogV2: {
-        confirm: async data => { dialogs.push(data); return typeof confirm === 'function' ? confirm() : confirm; },
-        wait: async data => { dialogs.push(data); return 'close'; },
+        confirm: async data => { dialogs.push(data); return typeof confirm === 'function' ? confirm(data, confirmIndex++) : confirm; },
+        wait: async data => { dialogs.push(data); return typeof wait === 'function' ? wait(data) : wait; },
     } } } };
-    globalThis.ChatMessage = { getSpeaker: () => ({}), create: async data => { chats.push(data); } };
+    const totals = [...rollTotals];
+    globalThis.Roll = class {
+        constructor(formula) { this.formula = formula; this.total = totals.shift(); }
+        async evaluate() { return this; }
+        async toMessage() { return { id: `roll-${this.formula}` }; }
+    };
+    globalThis.ChatMessage = { getSpeaker: () => ({}), create: async data => { chats.push(data); return { id: `chat-${chats.length}` }; } };
     return { actor, item, writes, warnings, flags, dialogs, chats, ceremony };
 }
 
@@ -85,32 +101,90 @@ test('sangue recusa PDV ausente/inválido sem reconstruir uma fórmula diferente
     assert.equal(bloodPactPayment({ pdv_slayer_atual: 0, pdv_slayer_dano_tomado: 20 }).cost, 0);
 });
 
-test('Primeiro Despertar aplica 72 ao dano tomado: PDV 80 → 8; sem mexer nos hidden', async () => {
+test('Primeiro Despertar usa o sangue já pago na Cerimônia e não cobra PDV novamente', async () => {
     const f = fixture();
     const result = await awakenSpecialWeapon({ actor: f.actor, item: f.item });
+    assert.equal(result.ok, true);
+    assert.equal(f.actor.system.props.pdv_slayer_atual, 80);
+    assert.equal(f.writes.filter(w => w.target === 'actor').length, 0);
+    assert.equal(f.chats.length, 1);
+    assert.match(f.dialogs[0].content, /Cerimônia concluída/);
+    assert.deepEqual(f.dialogs[0].classes, ['na-dual-soul-dialog']);
+    assert.match(f.chats[0].content, /já foi oferecido na Cerimônia/);
+    await awakenSpecialWeapon({ actor: f.actor, item: f.item });
+    assert.equal(f.writes.filter(w => w.target === 'actor').length, 0);
+});
+
+test('cancelar o Primeiro Despertar não altera a ficha', async () => {
+    const f = fixture({ confirm: false });
+    assert.equal(await awakenSpecialWeapon({ actor: f.actor, item: f.item }), null);
+    assert.equal(f.writes.length, 0);
+});
+
+test('Cerimônia aplica 90% do PDV atual em Dano Tomado antes de gravar o vínculo', async () => {
+    const f = fixture({ completed: false, wait: true });
+    const result = await openDualSoulCeremony({ actor: f.actor, item: f.item });
     assert.equal(result.ok, true);
     assert.equal(f.actor.system.props.pdv_slayer_atual, 8);
     const payment = f.writes.find(w => w.target === 'actor');
     assert.deepEqual(payment.patch, { 'system.props.pdv_slayer_dano_tomado': 92 });
     assert.equal(payment.options.naLifeDeath, true);
     assert.equal(payment.options.naBloodPact, true);
-    assert.equal(f.chats.length, 1);
-    assert.match(f.dialogs[0].content, /Sangue da arma/);
-    await awakenSpecialWeapon({ actor: f.actor, item: f.item });
-    assert.equal(f.writes.filter(w => w.target === 'actor').length, 1);
+    assert.equal(JSON.parse(f.item.system.props.dupla_alma_cerimonia_json).runtime.bloodPact.cost, 72);
+    assert.match(f.dialogs.at(-1).content, /Após a Cerimônia/);
+    assert.match(f.dialogs.at(-1).content, /Sangue da arma/);
+    assert.match(f.chats.at(-1).content, /80 →\s*<strong>8 PDV<\/strong>/);
 });
 
-test('cancelar o ritual não cobra sangue', async () => {
-    const f = fixture({ confirm: false });
-    assert.equal(await awakenSpecialWeapon({ actor: f.actor, item: f.item }), null);
+test('cancelar a oferta final não cobra sangue nem grava a Cerimônia', async () => {
+    const f = fixture({ completed: false, wait: true, confirm: (_data, index) => index === 0 });
+    assert.equal(await openDualSoulCeremony({ actor: f.actor, item: f.item }), null);
     assert.equal(f.writes.length, 0);
+    assert.equal(JSON.parse(f.item.system.props.dupla_alma_cerimonia_json).runtime, undefined);
 });
 
-test('mudança de PDV durante a confirmação aborta sem cobrança obsoleta', async () => {
-    const f = fixture({ confirm: () => { f.actor.system.props.pdv_slayer_atual = 70; return true; } });
-    await awakenSpecialWeapon({ actor: f.actor, item: f.item });
+test('mudança de PDV na confirmação da Cerimônia aborta sem cobrança obsoleta', async () => {
+    const f = fixture({ completed: false, wait: true, confirm: (_data, index) => {
+        if (index === 1) f.actor.system.props.pdv_slayer_atual = 70;
+        return true;
+    } });
+    await openDualSoulCeremony({ actor: f.actor, item: f.item });
     assert.equal(f.writes.length, 0);
     assert.match(f.warnings[0], /PDV mudou/);
+});
+
+test('falha de persistência do sangue impede a gravação da Cerimônia', async () => {
+    const f = fixture({ completed: false, wait: true });
+    f.actor.update = async (patch, options) => {
+        f.writes.push({ target: 'actor', patch, options });
+    };
+    await assert.rejects(
+        openDualSoulCeremony({ actor: f.actor, item: f.item }),
+        /não foi persistido em Dano Tomado/
+    );
+    assert.equal(f.writes.filter(w => w.target === 'item').length, 0);
+    assert.equal(f.chats.length, 0);
+});
+
+test('falha ao gravar o vínculo estorna o Sangue de Pacto da Cerimônia', async () => {
+    const f = fixture({ completed: false, wait: true });
+    const originalUpdate = f.item.update.bind(f.item);
+    f.item.update = async (patch, options) => {
+        if (Object.hasOwn(patch, 'system.props.dupla_alma_cerimonia_json')) {
+            throw new Error('falha simulada no Item');
+        }
+        return originalUpdate(patch, options);
+    };
+
+    await assert.rejects(
+        openDualSoulCeremony({ actor: f.actor, item: f.item }),
+        /falha simulada no Item/
+    );
+    assert.equal(f.actor.system.props.pdv_slayer_dano_tomado, 20);
+    assert.equal(f.actor.system.props.pdv_slayer_atual, 80);
+    assert.equal(f.writes.filter(w => w.target === 'actor').length, 2);
+    assert.equal(f.writes.filter(w => w.options.naBloodPactRollback).length, 1);
+    assert.equal(f.chats.length, 0);
 });
 
 test('reset GM arquiva vínculo da arma escolhida e preserva Marcas, integração, vida e uso', async () => {
@@ -165,11 +239,14 @@ test('reset revalida permissão após confirmar e escapa nome editável', async 
     assert.equal(f.writes.length, 0);
 });
 
-test('Cerimônia concluída só oferece reset ao GM, sem cobrar sangue nem rerrolar', async () => {
+test('Cerimônia concluída só oferece reset ao GM e informa que o sangue já foi pago', async () => {
     for (const gm of [false, true]) {
         const f = fixture({ gm });
         await openDualSoulCeremony({ actor: f.actor, item: f.item });
         assert.equal(f.dialogs[0].buttons.some(b => b.action === 'reset'), gm);
+        assert.ok(f.dialogs[0].classes.includes('na-dual-soul-completed-dialog'));
+        assert.match(f.dialogs[0].content, /Sangue de Pacto já foi oferecido/);
+        assert.match(f.dialogs[0].content, /Primeiro Despertar não cobra/);
         assert.equal(f.writes.length, 0);
         assert.equal(f.chats.length, 0);
     }

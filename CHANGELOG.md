@@ -1,4 +1,13 @@
 # Changelog
+## v0.11.68 — 2026-09-05
+
+- Corrigido o contrato do Sangue de Pacto: a própria Cerimônia de Vínculo oferece 90% do `pdv_slayer_atual`, soma o custo em `pdv_slayer_dano_tomado` e só então grava o vínculo permanente.
+- A oferta final exibe o ritual específico da arma, o PDV antes/depois e o custo; cancelamento ou alteração concorrente do PDV não grava nem cobra a Cerimônia.
+- Se a escrita do vínculo falhar após a cobrança, o módulo tenta estornar imediatamente o Sangue de Pacto; falha de persistência do dano impede a gravação do vínculo.
+- Primeiro Despertar não cobra PDV novamente. Reset administrativo do GM não causa dano nem devolve sangue; uma nova Cerimônia cobra novamente sobre o PDV atual.
+- Diálogos Dual Soul receberam hierarquia visual, recipiente com gotas e preenchimento progressivo, foco visível, responsividade e redução de movimento.
+- Regressão local: 1061/1061 em 170 suítes, zero falhas. Validação final em Actor real no Foundry v14 permanece como gate do operador.
+
 ## v0.11.67 — 2026-09-05
 
 - Sangue de Pacto usa `pdv_slayer_atual` calculado pela ficha, incluindo seus bônus, e soma o custo ao `pdv_slayer_dano_tomado`, sem reconstruir PDV ou alterar hidden.

@@ -19,6 +19,7 @@ import {
     hydrateSpecialWeaponItem,
 } from './special-weapon-service.mjs';
 import { resetDualSoulBond } from './dual-soul-reset-service.mjs';
+import { bloodPactPayment } from './blood-pact-core.mjs';
 
 function normalizeText(value = '') {
     return String(value ?? '')
@@ -38,6 +39,49 @@ function escapeHtml(value = '') {
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+}
+
+function ceremonyBloodHtml(item, payment, ritual = {}) {
+    const steps = Array.isArray(ritual.passos)
+        ? `<ol>${ritual.passos.map((step) => `<li>${escapeHtml(step)}</li>`).join('')}</ol>`
+        : '';
+    const pact = String(ritual.pacto_completo ?? '').trim();
+
+    return `
+        <div class="na-csb-automation na-dual-soul-panel na-blood-pact-panel">
+            <span class="na-dual-soul-kicker">Oferta de Sangue</span>
+            <h2>Romper o selo de ${escapeHtml(item.name)}</h2>
+
+            <div class="na-dual-soul-summary">
+                <span>Ritual da arma</span>
+                <strong>${escapeHtml(ritual.nome ?? 'Cerimônia de Vínculo')}</strong>
+            </div>
+
+            <div class="na-dual-soul-ritual-copy">
+                ${steps}
+                ${pact ? `<h3>Pacto de Acordar</h3><p>${escapeHtml(pact)}</p>` : ''}
+            </div>
+
+            <p>
+                Concluir a Cerimônia de Vínculo exige
+                <strong>90% do PDV atual</strong> do portador.
+                O sangue rompe o selo e desperta o vínculo desta arma.
+            </p>
+
+            <div class="na-blood-pact-ledger" aria-label="Custo da Cerimônia de Vínculo">
+                <div><span>PDV atual</span><strong>${payment.current}</strong></div>
+                <i aria-hidden="true">→</i>
+                <div><span>Após a Cerimônia</span><strong>${payment.remaining}</strong></div>
+                <div class="na-blood-pact-cost"><span>Dano tomado</span><strong>+${payment.cost}</strong></div>
+            </div>
+
+            <p class="na-dual-soul-warning">
+                Confirmar soma ${payment.cost} em Dano Tomado. A ficha recalcula
+                o PDV atual para ${payment.remaining}. O custo não será cobrado
+                novamente ao ativar o Primeiro Despertar.
+            </p>
+        </div>
+    `;
 }
 
 function actorItems(actor) {
@@ -374,6 +418,7 @@ async function showCeremonyStage({
     demonName,
 }) {
     return foundry.applications.api.DialogV2.wait({
+        classes: ['na-dual-soul-dialog'],
         window: { title: `Cerimônia de Vínculo — ${number}/3` },
         content: `
             <div class="na-csb-automation na-dual-soul-ceremony">
@@ -437,6 +482,7 @@ async function revealCeremonyResult({
     detail = '',
 }) {
     return foundry.applications.api.DialogV2.wait({
+        classes: ['na-dual-soul-dialog'],
         window: { title: `Cerimônia — Resultado ${number}/3` },
         content: `
             <div class="na-csb-automation na-dual-soul-ceremony na-dual-soul-reveal">
@@ -515,50 +561,39 @@ async function showCompletedCeremony(
         .api
         .DialogV2
         .wait({
+            classes: ['na-dual-soul-dialog', 'na-dual-soul-completed-dialog'],
             window: {
                 title:
                     `Cerimônia — ${item.name}`,
             },
 
             content: `
-                <div class="na-csb-automation">
+                <div class="na-csb-automation na-dual-soul-panel na-dual-soul-completed">
+                    <span class="na-dual-soul-kicker">Vínculo permanente</span>
                     <h2>
                         Cerimônia já concluída
                     </h2>
 
-                    <p>
-                        <strong>Lado Dominante:</strong>
-                        ${dominance}
-                    </p>
-
-                    <p>
-                        <strong>Intensidade:</strong>
-                        ${intensity}
-                    </p>
-
-                    <p>
-                        <strong>Gatilho:</strong>
-                        ${trigger}
-                    </p>
-
-                    <p>
-                        <strong>CD base de Despertar:</strong>
-                        ${
+                    <div class="na-dual-soul-facts">
+                        <p><span>Lado dominante</span><strong>${dominance}</strong></p>
+                        <p><span>Intensidade</span><strong>${intensity}</strong></p>
+                        <p><span>Gatilho</span><strong>${trigger}</strong></p>
+                        <p><span>CD base de Despertar</span><strong>${
                             cd === null ||
                             cd === undefined
                                 ? '—'
                                 : escapeHtml(cd)
-                        }
-                    </p>
+                        }</strong></p>
+                    </div>
 
-                    <hr>
+                    <div class="na-dual-soul-reset-note">
+                        <strong>O Sangue de Pacto já foi oferecido.</strong>
+                        <span>Esta Cerimônia consumiu 90% do PDV que o portador possuía ao concluí-la. O Primeiro Despertar não cobra esse custo novamente.</span>
+                    </div>
 
-                    <p>
-                        Este resultado é permanente.
-                        ${game.user?.isGM
-                            ? 'O reset administrativo arquiva este vínculo antes de liberar uma nova Cerimônia.'
-                            : 'A Cerimônia não pode ser rerrolada pelo jogador.'}
-                    </p>
+                    <p class="na-dual-soul-footnote">${game.user?.isGM
+                        ? 'O reset administrativo não devolve sangue. Ao concluir uma nova Cerimônia, 90% do PDV atual será oferecido novamente.'
+                        : 'A Cerimônia não pode ser rerrolada pelo jogador.'}</p>
                 </div>
             `,
 
@@ -693,6 +728,18 @@ export async function openDualSoulCeremony(
             localProps
         );
 
+    const canonicalRitual = parseDualSoulJson(
+        canonicalProps.arma_ritual,
+        {}
+    );
+    const localRitual = parseDualSoulJson(
+        localProps.arma_ritual,
+        {}
+    );
+    const ritual = Object.keys(localRitual).length > 0
+        ? localRitual
+        : canonicalRitual;
+
     if (
         !validCeremonyDefinition(
             definition
@@ -715,8 +762,10 @@ export async function openDualSoulCeremony(
                         'Cerimônia de Vínculo — IRREVERSÍVEL',
                 },
 
+                classes: ['na-dual-soul-dialog', 'na-blood-pact-dialog'],
+
                 content: `
-                    <div class="na-csb-automation">
+                    <div class="na-csb-automation na-dual-soul-panel">
                         <h2>
                             ${escapeHtml(item.name)}
                         </h2>
@@ -760,6 +809,11 @@ export async function openDualSoulCeremony(
                         <p>
                             Os resultados serão gravados
                             permanentemente nesta arma.
+                        </p>
+
+                        <p class="na-dual-soul-warning">
+                            Ao concluir os três testes, a Cerimônia exigirá 90%
+                            do PDV atual para romper o selo da arma.
                         </p>
                     </div>
                 `,
@@ -969,8 +1023,93 @@ export async function openDualSoulCeremony(
         },
     };
 
-    await item.update(
+    let payment;
+    try {
+        payment = bloodPactPayment(
+            actor.system?.props ?? {}
+        );
+    } catch (error) {
+        return ui.notifications
+            ?.warn?.(error.message);
+    }
+
+    const bloodConfirmed = await foundry
+        .applications
+        .api
+        .DialogV2
+        .confirm({
+            classes: ['na-dual-soul-dialog', 'na-blood-pact-dialog'],
+            window: {
+                title: `Cerimônia — Oferta de Sangue · ${item.name}`,
+            },
+            content: ceremonyBloodHtml(item, payment, ritual),
+            defaultYes: false,
+            modal: true,
+            rejectClose: false,
+        });
+
+    if (!bloodConfirmed) {
+        return null;
+    }
+
+    let latestPayment;
+    try {
+        latestPayment = bloodPactPayment(
+            actor.system?.props ?? {}
+        );
+    } catch (error) {
+        return ui.notifications
+            ?.warn?.(error.message);
+    }
+
+    if (
+        latestPayment.current !== payment.current ||
+        latestPayment.damageBefore !== payment.damageBefore
+    ) {
+        return ui.notifications
+            ?.warn?.(
+                'O PDV mudou durante a confirmação. Abra a Cerimônia novamente para conferir a oferta de sangue.'
+            );
+    }
+
+    runtime.bloodPact = {
+        currentBefore: payment.current,
+        remainingAfter: payment.remaining,
+        cost: payment.cost,
+        damageBefore: payment.damageBefore,
+        damageAfter: payment.damageAfter,
+    };
+
+    await actor.update(
         {
+            'system.props.pdv_slayer_dano_tomado':
+                payment.damageAfter,
+        },
+        {
+            naCsbAutomation: true,
+            naSpecialWeapon: true,
+            naDualSoulCeremony: true,
+            naLifeDeath: true,
+            naBloodPact: true,
+        }
+    );
+
+    const persistedDamage = Number(
+        actor.system?.props?.pdv_slayer_dano_tomado
+    );
+
+    if (
+        !Number.isFinite(persistedDamage) ||
+        persistedDamage !== payment.damageAfter
+    ) {
+        throw new Error(
+            'O Sangue de Pacto não foi persistido em Dano Tomado. A Cerimônia não foi gravada.'
+        );
+    }
+
+    try {
+        await item.update(
+            {
             'system.props.arma_lado_dominante':
                 result
                     .dominance
@@ -1000,13 +1139,37 @@ export async function openDualSoulCeremony(
                 JSON.stringify(
                     linkStored
                 ),
-        },
-        {
-            naCsbAutomation: true,
-            naSpecialWeapon: true,
-            naDualSoulCeremony: true,
+            },
+            {
+                naCsbAutomation: true,
+                naSpecialWeapon: true,
+                naDualSoulCeremony: true,
+                naBloodPact: true,
+            }
+        );
+    } catch (error) {
+        try {
+            await actor.update(
+                {
+                    'system.props.pdv_slayer_dano_tomado':
+                        payment.damageBefore,
+                },
+                {
+                    naCsbAutomation: true,
+                    naSpecialWeapon: true,
+                    naDualSoulCeremony: true,
+                    naLifeDeath: true,
+                    naBloodPactRollback: true,
+                }
+            );
+        } catch {
+            ui.notifications?.error?.(
+                'Falha crítica: o vínculo não foi gravado e o Sangue de Pacto não pôde ser estornado automaticamente.'
+            );
         }
-    );
+
+        throw error;
+    }
 
     const cd =
         result
@@ -1085,10 +1248,23 @@ export async function openDualSoulCeremony(
                     }
                 </p>
 
+                <p>
+                    <strong>Oferta de Sangue:</strong>
+                    ${payment.current} →
+                    <strong>${payment.remaining} PDV</strong>
+                    · Dano Tomado +${payment.cost}
+                </p>
+
+                <p>
+                    <strong>Ritual:</strong>
+                    ${escapeHtml(ritual.nome ?? 'Cerimônia de Vínculo')}
+                </p>
+
                 <hr>
 
                 <p>
-                    Estes resultados são permanentes.
+                    Estes resultados são permanentes. O selo foi rompido pela
+                    Cerimônia de Vínculo.
                 </p>
             </div>
         `,
@@ -1096,7 +1272,7 @@ export async function openDualSoulCeremony(
 
     ui.notifications
         ?.info?.(
-            `${item.name}: Cerimônia de Vínculo concluída.`
+            `${item.name}: vínculo concluído e selo rompido. PDV ${payment.current} → ${payment.remaining}.`
         );
 
     return {
@@ -1104,5 +1280,6 @@ export async function openDualSoulCeremony(
         actor,
         item,
         runtime,
+        pdv: payment,
     };
 }

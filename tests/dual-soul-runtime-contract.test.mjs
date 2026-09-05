@@ -176,6 +176,9 @@ test(
         assert.doesNotMatch(service, /chooseDominanceDie|label:\s*'1d100'/);
         assert.match(css, /\.na-dual-soul-bond/);
         assert.match(css, /\.na-dual-soul-thread/);
+        assert.match(css, /\.na-dual-soul-dialog/);
+        assert.match(css, /\.na-blood-pact-ledger/);
+        assert.match(css, /prefers-reduced-motion:\s*reduce/);
         assert.match(service, /na-blood-offering/);
         assert.match(service, /--na-blood-level/);
         assert.match(css, /@keyframes na-blood-drop/);

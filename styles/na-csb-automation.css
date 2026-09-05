@@ -2431,31 +2431,50 @@
 }
 
 .na-blood-offering {
+    --na-blood-level: 33.333%;
+    --na-blood-from: 0%;
     position: relative;
     display: grid;
     justify-items: center;
-    width: 150px;
-    height: 132px;
-    margin: 12px auto -8px;
+    width: 180px;
+    height: 174px;
+    margin: 18px auto 0;
 }
+
+.na-blood-offering-2 { --na-blood-level: 66.667%; --na-blood-from: 33.333%; }
+.na-blood-offering-3 { --na-blood-level: 100%; --na-blood-from: 66.667%; }
 
 .na-blood-source {
     position: relative;
     width: 50px;
-    height: 69px;
+    height: 100px;
+    z-index: 1;
+}
+
+.na-blood-source::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -8px;
+    width: 36px;
+    height: 2px;
+    transform: translateX(-50%);
+    background: #b20d2b;
+    box-shadow: 0 2px 5px #650015;
 }
 
 .na-blood-source span {
     position: absolute;
     top: 0;
     left: 50%;
-    width: 8px;
-    height: 12px;
-    border-radius: 70% 45% 70% 45%;
+    width: 11px;
+    height: 15px;
+    border-radius: 50% 50% 48% 48%;
     background: linear-gradient(145deg, #ff4964 0%, #a70724 55%, #42000d 100%);
     box-shadow: 0 0 8px rgba(211, 32, 66, 0.72);
     transform: translateX(-50%) rotate(45deg);
-    animation: na-blood-drop 1.65s cubic-bezier(0.55, 0.08, 0.78, 0.28) infinite;
+    opacity: 0;
+    animation: na-blood-drop 1.8s ease-in 3 forwards;
 }
 
 .na-blood-source span:nth-child(2) {
@@ -2474,9 +2493,10 @@
 
 .na-blood-vessel {
     position: absolute;
+    z-index: 2;
     bottom: 23px;
-    width: 92px;
-    height: 48px;
+    width: 112px;
+    height: 68px;
     overflow: hidden;
     border: 2px solid rgba(238, 228, 206, 0.68);
     border-top-color: rgba(238, 228, 206, 0.94);
@@ -2493,7 +2513,7 @@
     z-index: 2;
     top: -4px;
     left: -5px;
-    width: 98px;
+    width: 118px;
     height: 8px;
     border: 2px solid rgba(238, 228, 206, 0.78);
     border-radius: 50%;
@@ -2505,19 +2525,18 @@
     right: 2px;
     bottom: 1px;
     left: 2px;
-    height: var(--na-blood-level);
-    max-height: 43px;
+    height: min(var(--na-blood-level), 61px);
     border-radius: 3px 3px 30px 30px;
     background:
         radial-gradient(ellipse at 50% 0%, #ef3e59 0%, #b20d2b 24%, #650015 68%, #310009 100%);
     box-shadow: 0 -3px 9px rgba(221, 24, 60, 0.36);
-    transition: height 0.65s ease-out;
+    animation: na-blood-fill 5.4s steps(9, end) both;
 }
 
 .na-blood-ripple {
     position: absolute;
     z-index: 3;
-    bottom: calc(min(var(--na-blood-level), 43px) - 1px);
+    top: -2px;
     left: 50%;
     width: 22px;
     height: 5px;
@@ -2525,7 +2544,7 @@
     border-radius: 50%;
     opacity: 0;
     transform: translateX(-50%);
-    animation: na-blood-ripple 1.65s ease-out infinite;
+    animation: na-blood-ripple 1.8s ease-out 3;
 }
 
 .na-blood-caption {
@@ -2541,20 +2560,37 @@
 @keyframes na-blood-drop {
     0% {
         opacity: 0;
-        transform: translate(-50%, -8px) rotate(45deg) scale(0.6);
+        transform: translate(-50%, -5px) scale(0.3, 0.2);
     }
     14% {
         opacity: 1;
     }
+    38% {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(0.8, 1.2);
+    }
     78% {
         opacity: 1;
-        transform: translate(-50%, 54px) rotate(45deg) scale(1);
+        transform: translate(-50%, 137px) scale(0.7, 1.4);
     }
     82%,
     100% {
         opacity: 0;
-        transform: translate(-50%, 58px) rotate(45deg) scale(0.55);
+        transform: translate(-50%, 142px) scale(1.8, 0.25);
     }
+}
+
+@keyframes na-blood-fill {
+    from { height: min(var(--na-blood-from), 61px); }
+    to { height: min(var(--na-blood-level), 61px); }
+}
+
+.na-csb-automation.na-dual-soul-chat h2 {
+    color: #eee4ce;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    line-height: 1.2;
+    border-bottom-color: #d7b86a;
 }
 
 @keyframes na-blood-ripple {

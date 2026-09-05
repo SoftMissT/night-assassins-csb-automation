@@ -18,6 +18,7 @@ import {
 import {
     hydrateSpecialWeaponItem,
 } from './special-weapon-service.mjs';
+import { resetDualSoulBond } from './dual-soul-reset-service.mjs';
 
 function normalizeText(value = '') {
     return String(value ?? '')
@@ -384,7 +385,7 @@ async function showCeremonyStage({
 
                 <div
                     class="na-blood-offering na-blood-offering-${number}"
-                    style="--na-blood-level: ${(number / 3) * 100}%"
+                    style="--na-blood-level: ${(number / 3) * 100}%; --na-blood-from: ${((number - 1) / 3) * 100}%"
                     role="img"
                     aria-label="O recipiente ritual está ${number === 3 ? 'cheio' : `preenchido em ${number} de 3 partes`}"
                 >
@@ -394,8 +395,7 @@ async function showCeremonyStage({
                         <span></span>
                     </div>
                     <div class="na-blood-vessel" aria-hidden="true">
-                        <div class="na-blood-liquid"></div>
-                        <i class="na-blood-ripple"></i>
+                        <div class="na-blood-liquid"><i class="na-blood-ripple"></i></div>
                     </div>
                     <span class="na-blood-caption">SANGUE DO VÍNCULO · ${number}/3</span>
                 </div>
@@ -510,7 +510,7 @@ async function showCompletedCeremony(
             ?.intensity
             ?.awakeningCd;
 
-    await foundry
+    const choice = await foundry
         .applications
         .api
         .DialogV2
@@ -555,7 +555,9 @@ async function showCompletedCeremony(
 
                     <p>
                         Este resultado é permanente.
-                        A Cerimônia não pode ser rerrolada.
+                        ${game.user?.isGM
+                            ? 'O reset administrativo arquiva este vínculo antes de liberar uma nova Cerimônia.'
+                            : 'A Cerimônia não pode ser rerrolada pelo jogador.'}
                     </p>
                 </div>
             `,
@@ -564,6 +566,11 @@ async function showCompletedCeremony(
             rejectClose: false,
 
             buttons: [
+                ...(game.user?.isGM ? [{
+                    action: 'reset',
+                    label: 'GM — Resetar vínculo desta arma',
+                    callback: () => 'reset',
+                }] : []),
                 {
                     action: 'close',
                     label: 'Fechar',
@@ -571,6 +578,13 @@ async function showCompletedCeremony(
                 },
             ],
         });
+    if (choice === 'reset') {
+        try {
+            return await resetDualSoulBond(item);
+        } catch (error) {
+            ui.notifications?.warn?.(error.message);
+        }
+    }
 }
 
 export async function openDualSoulCeremony(
@@ -634,10 +648,11 @@ export async function openDualSoulCeremony(
                 item
             );
 
-        await showCompletedCeremony(
+        const completedAction = await showCompletedCeremony(
             item,
             runtime
         );
+        if (completedAction?.reset) return completedAction;
 
         return {
             ok: true,
@@ -1006,7 +1021,7 @@ export async function openDualSoulCeremony(
                 }),
 
         content: `
-            <div class="na-csb-automation">
+            <div class="na-csb-automation na-dual-soul-chat">
                 <h2>
                     🔗 Cerimônia de Vínculo
                 </h2>

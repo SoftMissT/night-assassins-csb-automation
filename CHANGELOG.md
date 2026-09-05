@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.67 — 2026-09-05
+
+- Sangue de Pacto usa `pdv_slayer_atual` calculado pela ficha, incluindo seus bônus, e soma o custo ao `pdv_slayer_dano_tomado`, sem reconstruir PDV ou alterar hidden.
+- Reset administrativo do vínculo na janela de Cerimônia concluída: exclusivo do GM, confirmação, histórico no Item e preservação de Marcas, integração, vida e uso por combate. Bloqueado durante despertar/consequências ativas.
+- Gotas com formação e queda, recipiente preenchido do patamar anterior, ondulação junto à superfície e movimento limitado; contraste do título no chat corrigido.
+- Regressão local: 1057/1057; prévia Chromium e reduced-motion verificadas. Validação em Actor real no Foundry v14 pendente; sem nova versão/tag/release.
+
 ## v0.11.66 — 2026-09-04
 
 - Generalizado o Primeiro Despertar para as 17 Armas Especiais de Dupla Alma, preservando a Cerimônia permanente e usando um lado ativo apenas durante o despertar.

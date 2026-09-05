@@ -1,5 +1,5 @@
 import { MODULE_ID } from './constants.mjs';
-import { slayerCurrentPdv } from './life-death-service.mjs';
+import { bloodPactPayment } from './blood-pact-core.mjs';
 import {
     dualSoulCeremonyCompleted,
     getDualSoulCeremonyState,
@@ -8,7 +8,6 @@ import {
 import { hydrateSpecialWeaponItem, YAMATO_NAME } from './special-weapon-service.mjs';
 import {
     SPECIAL_WEAPON_AWAKENING_STATE,
-    awakeningBloodCost,
     awakeningDuration,
     awakeningExpired,
     awakeningRuntime,
@@ -198,7 +197,12 @@ export async function awakenSpecialWeapon(options = {}) {
     if (ceremony?.dominance?.dominantKind === 'equilibrio') side = await chooseEquilibriumSide(props);
     if (!side) return null;
 
-    const pdv = awakeningBloodCost(slayerCurrentPdv(actor.system?.props ?? {}));
+    let pdv;
+    try {
+        pdv = bloodPactPayment(actor.system?.props ?? {});
+    } catch (error) {
+        return ui.notifications?.warn?.(error.message);
+    }
     if (pdv.current <= 1)
         return ui.notifications?.warn?.('O Sangue de Pacto não pode reduzir o portador abaixo de 1 PDV.');
 
@@ -212,6 +216,16 @@ export async function awakenSpecialWeapon(options = {}) {
         rejectClose: false,
     });
     if (!confirmed) return null;
+
+    // The sheet may have changed while the confirmation was open.
+    let latestPdv;
+    try {
+        latestPdv = bloodPactPayment(actor.system?.props ?? {});
+    } catch (error) {
+        return ui.notifications?.warn?.(error.message);
+    }
+    if (latestPdv.current !== pdv.current || latestPdv.damageBefore !== pdv.damageBefore)
+        return ui.notifications?.warn?.('O PDV mudou durante a confirmação. Abra o ritual novamente para conferir o custo.');
 
     const definition = awakeningDefinition(props);
     const runtime = awakeningRuntime({
@@ -228,9 +242,8 @@ export async function awakenSpecialWeapon(options = {}) {
     runtime.integration = integration;
     runtime.ceremonyDominance = ceremony?.dominance ?? null;
 
-    const damage = Math.max(0, Number(actor.system?.props?.pdv_slayer_dano_tomado) || 0);
     await actor.update({
-        'system.props.pdv_slayer_dano_tomado': damage + pdv.cost,
+        'system.props.pdv_slayer_dano_tomado': pdv.damageAfter,
     }, {
         naCsbAutomation: true,
         naSpecialWeapon: true,

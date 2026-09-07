@@ -587,6 +587,98 @@ export async function distributePool(pool, level, currentValues) {
 }
 
 /**
+ * Aplica os três bônus livres da criação Oni em atributos distintos.
+ * @param {Record<string,number>} values
+ * @param {string[]} chosen
+ * @returns {Record<string,number>|null}
+ */
+export function oniCreationValuesWithBonuses(values, chosen) {
+    if (!Array.isArray(chosen) || chosen.length !== 3) return null;
+
+    const validKeys = new Set(ATTRIBUTES.map((attribute) => attribute.key));
+    const unique = new Set(chosen);
+
+    if (unique.size !== 3 || chosen.some((key) => !validKeys.has(key))) return null;
+
+    const next = { ...values };
+    for (const key of chosen) next[key] = parseNumber(next[key]) + 1;
+    return next;
+}
+
+/**
+ * Criação Oni: escolhe três atributos diferentes para receber +1 cada.
+ * @param {Record<string,number>} values
+ * @returns {Promise<Record<string,number>|null>}
+ */
+export async function applyOniCreationBonuses(values) {
+    const options = ATTRIBUTES.map(
+        (attribute) =>
+            `<option value="${attribute.key}">${attribute.label} · ${attribute.name} (${values[attribute.key]} → ${values[attribute.key] + 1})</option>`
+    ).join('');
+
+    while (true) {
+        const chosen = await foundry.applications.api.DialogV2.wait({
+            window: {
+                title: 'Criação Oni — três bônus livres',
+            },
+            content: `
+      <div class="na-csb-automation" style="display:grid;gap:10px;padding:4px 0;">
+        <p style="margin:0;">
+          Depois de distribuir os sete valores, escolha
+          <strong>três características diferentes</strong>.
+          Cada uma recebe <strong>+1</strong>.
+        </p>
+
+        ${[1, 2, 3]
+            .map(
+                (index) => `
+        <label style="display:grid;gap:4px;">
+          <strong>${index}ª característica</strong>
+          <select name="na-oni-creation-bonus-${index}" style="width:100%;">
+            <option value="">Escolha</option>
+            ${options}
+          </select>
+        </label>`
+            )
+            .join('')}
+
+        <small style="color:#a99f93;">
+          Não é permitido colocar dois ou três desses pontos na mesma característica.
+        </small>
+      </div>`,
+            modal: true,
+            rejectClose: false,
+            buttons: [
+                {
+                    action: 'confirm-oni-creation-bonuses',
+                    label: 'Aplicar três bônus',
+                    callback: (event, button) =>
+                        [1, 2, 3].map((index) =>
+                            String(
+                                button.form.elements[`na-oni-creation-bonus-${index}`]?.value ?? ''
+                            )
+                        ),
+                },
+                {
+                    action: 'cancel',
+                    label: 'Cancelar',
+                    callback: () => null,
+                },
+            ],
+        });
+
+        if (chosen === null || chosen === undefined || chosen === 'cancel') return null;
+
+        const next = oniCreationValuesWithBonuses(values, chosen);
+        if (next) return next;
+
+        ui.notifications?.warn?.(
+            'Escolha exatamente três características diferentes para receber +1.'
+        );
+    }
+}
+
+/**
  * Diálogo de ganho de +1 permanente nos níveis 3 e 7.
  * @param {Record<string,number>} values
  * @param {number} level

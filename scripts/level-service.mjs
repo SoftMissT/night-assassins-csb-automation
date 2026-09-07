@@ -21,6 +21,7 @@ import {
     chooseRolledPool,
     readDiscordPool,
     distributePool,
+    applyOniCreationBonuses,
     applyAttributeGain,
     applyAttributeGainTwo,
     applyCorpoDemoniaco,
@@ -48,7 +49,13 @@ export async function createLevelOneValues(actor) {
               : await readDiscordPool();
 
     if (!pool) return false;
-    const values = await distributePool(pool, 1, currentValues);
+    const distributedValues = await distributePool(pool, 1, currentValues);
+    if (!distributedValues) return false;
+
+    const values =
+        kind === 'oni'
+            ? await applyOniCreationBonuses(distributedValues)
+            : distributedValues;
     if (!values || !(await confirmSnapshot(values, currentValues, 1))) return false;
 
     const patch = buildSnapshotPatch(1, values, kind);

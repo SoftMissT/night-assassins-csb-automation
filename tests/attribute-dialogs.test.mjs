@@ -4,7 +4,13 @@ import { setupFoundryMocks } from './fixtures/foundry-mock.mjs';
 
 setupFoundryMocks();
 
-const { readDiscordPool, distributePool, discordPoolCounter } =
+const {
+    readDiscordPool,
+    distributePool,
+    discordPoolCounter,
+    applyOniCreationBonuses,
+    oniCreationValuesWithBonuses,
+} =
     await import('../scripts/dialogs/attribute-dialogs.mjs');
 const currentValues = { vit: 4, dex: 4, for: 4, car: 4, fdv: 4, int: 4, sab: 4 };
 
@@ -69,4 +75,44 @@ test('distribuição aceita exatamente o multiconjunto rolado', async () => {
         int: 1,
         sab: 1,
     });
+});
+
+test('criação Oni aplica +1 em exatamente três características distintas', () => {
+    assert.deepEqual(
+        oniCreationValuesWithBonuses(
+            { vit: 4, dex: 3, for: 2, car: 2, fdv: 1, int: 1, sab: 1 },
+            ['vit', 'car', 'sab']
+        ),
+        { vit: 5, dex: 3, for: 2, car: 3, fdv: 1, int: 1, sab: 2 }
+    );
+});
+
+test('criação Oni rejeita bônus repetido ou característica inválida', () => {
+    const values = { vit: 4, dex: 3, for: 2, car: 2, fdv: 1, int: 1, sab: 1 };
+    assert.equal(oniCreationValuesWithBonuses(values, ['vit', 'vit', 'sab']), null);
+    assert.equal(oniCreationValuesWithBonuses(values, ['vit', 'dex', 'sorte']), null);
+    assert.equal(oniCreationValuesWithBonuses(values, ['vit', 'dex']), null);
+});
+
+test('diálogo Oni repete seleção inválida e aceita três bônus distintos', async () => {
+    const answers = [
+        ['vit', 'vit', 'sab'],
+        ['vit', 'dex', 'sab'],
+    ];
+    let warnings = 0;
+    ui.notifications.warn = () => {
+        warnings += 1;
+    };
+    foundry.applications.api.DialogV2.wait = async () => answers.shift();
+
+    assert.deepEqual(await applyOniCreationBonuses(currentValues), {
+        vit: 5,
+        dex: 5,
+        for: 4,
+        car: 4,
+        fdv: 4,
+        int: 4,
+        sab: 5,
+    });
+    assert.equal(warnings, 1);
 });

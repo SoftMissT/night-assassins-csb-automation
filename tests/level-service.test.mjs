@@ -43,6 +43,136 @@ describe('level-service', () => {
             // Mockar o distributePool via monkey-patch é complexo; faremos um teste de unidade do patch via persistence.
             assert.strictEqual(true, true);
         });
+
+        it('na criação Oni soma +1 em três características distintas após distribuir o pool', async () => {
+            const answers = [
+                'standard',
+                ['4', '3', '2', '2', '1', '1', '1'],
+                ['vit', 'car', 'sab'],
+                true,
+            ];
+            foundry.applications.api.DialogV2.wait = async () => answers.shift();
+
+            let patch = null;
+            const actor = makeActor({
+                props: { nome_oni: 'Akuma' },
+                update: async (nextPatch) => {
+                    patch = nextPatch;
+                },
+            });
+
+            assert.equal(await createLevelOneValues(actor), true);
+            assert.equal(patch['system.props.vit_oni_nvl1'], 5);
+            assert.equal(patch['system.props.dex_oni_nvl1'], 3);
+            assert.equal(patch['system.props.for_oni_nvl1'], 2);
+            assert.equal(patch['system.props.car_oni_nvl1'], 3);
+            assert.equal(patch['system.props.fdv_oni_nvl1'], 1);
+            assert.equal(patch['system.props.int_oni_nvl1'], 1);
+            assert.equal(patch['system.props.sab_oni_nvl1'], 2);
+            assert.equal(patch['system.props.atr_vit_oni_valor_config'], 5);
+            assert.equal(patch['system.props.atr_car_oni_valor_config'], 3);
+            assert.equal(patch['system.props.atr_sab_oni_valor_config'], 2);
+            assert.equal(answers.length, 0);
+            foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+        });
+
+        it('aplica os mesmos três bônus Oni depois das sete rolagens de 1d4', async () => {
+            const originalRoll = globalThis.Roll;
+            globalThis.Roll = {
+                create: (formula) => {
+                    assert.equal(formula, '7d4');
+                    return {
+                        evaluate: async () => ({
+                            total: 14,
+                            toMessage: async () => {},
+                            dice: [
+                                {
+                                    results: [4, 3, 2, 2, 1, 1, 1].map((result) => ({
+                                        result,
+                                        active: true,
+                                    })),
+                                },
+                            ],
+                        }),
+                    };
+                },
+            };
+            const answers = [
+                'roll',
+                'first',
+                ['4', '3', '2', '2', '1', '1', '1'],
+                ['dex', 'fdv', 'int'],
+                true,
+            ];
+            foundry.applications.api.DialogV2.wait = async () => answers.shift();
+
+            let patch = null;
+            const actor = makeActor({
+                props: { nome_oni: 'Akuma' },
+                update: async (nextPatch) => {
+                    patch = nextPatch;
+                },
+            });
+
+            try {
+                assert.equal(await createLevelOneValues(actor), true);
+                assert.equal(patch['system.props.vit_oni_nvl1'], 4);
+                assert.equal(patch['system.props.dex_oni_nvl1'], 4);
+                assert.equal(patch['system.props.for_oni_nvl1'], 2);
+                assert.equal(patch['system.props.car_oni_nvl1'], 2);
+                assert.equal(patch['system.props.fdv_oni_nvl1'], 2);
+                assert.equal(patch['system.props.int_oni_nvl1'], 2);
+                assert.equal(patch['system.props.sab_oni_nvl1'], 1);
+                assert.equal(answers.length, 0);
+            } finally {
+                globalThis.Roll = originalRoll;
+                foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+            }
+        });
+
+        it('não salva snapshot Oni parcial quando cancela os três bônus', async () => {
+            const answers = [
+                'standard',
+                ['4', '3', '2', '2', '1', '1', '1'],
+                null,
+            ];
+            foundry.applications.api.DialogV2.wait = async () => answers.shift();
+            let updates = 0;
+            const actor = makeActor({
+                props: { nome_oni: 'Akuma' },
+                update: async () => {
+                    updates += 1;
+                },
+            });
+
+            assert.equal(await createLevelOneValues(actor), false);
+            assert.equal(updates, 0);
+            assert.equal(answers.length, 0);
+            foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+        });
+
+        it('mantém a criação Slayer sem os três bônus exclusivos do Oni', async () => {
+            const answers = [
+                'standard',
+                ['4', '3', '2', '2', '1', '1', '1'],
+                true,
+            ];
+            foundry.applications.api.DialogV2.wait = async () => answers.shift();
+            let patch = null;
+            const actor = makeActor({
+                props: { nome_slayer: 'Caçador' },
+                update: async (nextPatch) => {
+                    patch = nextPatch;
+                },
+            });
+
+            assert.equal(await createLevelOneValues(actor), true);
+            assert.equal(patch['system.props.vit_nvl1'], 4);
+            assert.equal(patch['system.props.dex_nvl1'], 3);
+            assert.equal(patch['system.props.sab_nvl1'], 1);
+            assert.equal(answers.length, 0);
+            foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+        });
     });
 
     describe('processLevelGain', () => {

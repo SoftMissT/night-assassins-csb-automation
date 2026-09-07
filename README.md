@@ -18,7 +18,7 @@ Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**
 | Custom System Builder | 5.2.1 ou superior |
 | Dice So Nice! | Obrigatório |
 
-Versão declarada no manifesto: **0.11.66**.
+Versão declarada no manifesto: **0.11.69**.
 
 ## Instalação
 
@@ -66,7 +66,7 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 | Ficha | Estado atual |
 | --- | --- |
 | **Slayer** | Abas Perícias, Combate, Habilidades e Config/Dados; progressão N1–N20, PDV/PDR, atributos, ações, Vida e Morte, Respirações e inventário. O fluxo compartilhado de armas normais está implementado e aguarda o gate final no Foundry para Acerto → crítico → Dano. |
-| **Oni** | Combate e Configurações/Dados; progressão N1–N20, PDV/PDK, Regeneração, Origens, Kekkijutsus, ações e resistências. Não recebe Vida e Morte de Slayer. |
+| **Oni** | Combate e Configurações/Dados; criação N1 com pool padrão ou sete d4 e três bônus +1 distintos; progressão N1–N20, PDV/PDK, Regeneração, Origens, Kekkijutsus, ações e resistências. Não recebe Vida e Morte de Slayer. |
 | **Oni Minion** | Ficha enxuta com tipos, pacotes de atributos, ataques, traços, fraquezas e PDV/PDK próprios. |
 | **NPC** | Ficha para NPCs com dados próprios. Participa do relay genérico e do mesmo motor de Acerto/Dano por armas normais usado pelo Slayer quando possui uma arma válida. |
 

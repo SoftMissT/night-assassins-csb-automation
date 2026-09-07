@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.69 — 2026-09-06
+
+- Corrigida a criação de atributos do Oni: depois de distribuir `4, 3, 2, 2, 1, 1, 1` ou os sete resultados de `1d4`, o jogador escolhe exatamente três características diferentes para receber `+1` cada.
+- A seleção recusa característica repetida, incompleta ou inválida; cancelar não grava snapshot parcial.
+- Os três bônus são persistidos no snapshot Oni de nível 1 e nas sete props de configuração Oni. O fluxo de criação Slayer permanece inalterado.
+- Adicionadas regressões para pool padrão, pool rolado, escolhas distintas, rejeição de duplicatas, cancelamento e isolamento Slayer/Oni.
+
 ## v0.11.68 — 2026-09-05
 
 - Corrigido o contrato do Sangue de Pacto: a própria Cerimônia de Vínculo oferece 90% do `pdv_slayer_atual`, soma o custo em `pdv_slayer_dano_tomado` e só então grava o vínculo permanente.

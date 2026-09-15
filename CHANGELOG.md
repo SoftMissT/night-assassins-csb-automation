@@ -1,4 +1,9 @@
 # Changelog
+## v0.11.74 — 2026-09-15
+
+- Corrigidos os IDs das pastas do Compêndio de Macros para o formato obrigatório de 16 caracteres do Foundry v14.
+- Hotfix da v0.11.73, que impedia a inicialização do Foundry ao validar `NAMacroCombat01`.
+
 ## v0.11.73 — 2026-09-15
 
 - Organizados os documentos do Compêndio de Arte em pastas de Respirações, Armas, Itens, Macros e Templates.

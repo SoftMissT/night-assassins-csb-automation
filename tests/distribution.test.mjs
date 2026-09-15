@@ -238,6 +238,20 @@ describe('module distribution', () => {
             assert.doesNotMatch(damageMacro, new RegExp(`macroArgs\\.${forbidden}`, 'u'));
         }
     });
+
+    it('gera pastas de macros com IDs válidos para o Foundry v14', async () => {
+        const { readdir } = await import('node:fs/promises');
+        await import(`../tools/build-macro-sources.mjs?folder-id-test=${Date.now()}`);
+        const directory = new URL('../build/compendium/macros/', import.meta.url);
+        const folderFiles = (await readdir(directory)).filter((file) => file.includes('-folder-'));
+
+        assert.equal(folderFiles.length, 5);
+        for (const file of folderFiles) {
+            const folder = JSON.parse(await readFile(new URL(file, directory), 'utf8'));
+            assert.match(folder._id, /^[A-Za-z0-9]{16}$/u, `${file} deve usar ID Foundry de 16 caracteres`);
+            assert.equal(folder._key, `!folders!${folder._id}`);
+        }
+    });
 });
 
 describe('module settings', () => {

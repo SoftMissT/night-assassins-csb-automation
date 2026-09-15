@@ -8,22 +8,22 @@ const sourceDirectory = path.join(root, 'macros');
 const outputDirectory = path.join(root, 'build', 'compendium', 'macros');
 
 const MACRO_FOLDERS = Object.freeze([
-    { id: 'NAMacroCombat01', name: 'Combate' },
-    { id: 'NAMacroBreath01', name: 'Respirações' },
-    { id: 'NAMacroSheet001', name: 'Ficha Slayer' },
-    { id: 'NAMacroWeapon01', name: 'Armas e Armas Especiais' },
-    { id: 'NAMacroGMTools01', name: 'GM e Manutenção' },
+    { id: 'NAMacroCombat001', name: 'Combate' },
+    { id: 'NAMacroBreath001', name: 'Respirações' },
+    { id: 'NAMacroSheet0001', name: 'Ficha Slayer' },
+    { id: 'NAMacroWeapon001', name: 'Armas e Armas Especiais' },
+    { id: 'NAMacroGMTool001', name: 'GM e Manutenção' },
 ]);
 
 const folderFor = (file) => {
     if (['na-roll-mode.js', 'na-acerto-roll.js', 'na_roll_damage.js'].includes(file))
-        return 'NAMacroCombat01';
+        return 'NAMacroCombat001';
     if (
         ['na-resp-usar-forma.js', 'na-respiracao-recuperacao.js', 'na-corrigir-respiracoes.js'].includes(
             file
         )
     )
-        return 'NAMacroBreath01';
+        return 'NAMacroBreath001';
     if (
         [
             'na-attribute-level-snapshot.js',
@@ -37,7 +37,7 @@ const folderFor = (file) => {
             'na-gerenciar-vida-morte.js',
         ].includes(file)
     )
-        return 'NAMacroSheet001';
+        return 'NAMacroSheet0001';
     if (
         [
             'na-corrigir-armas.js',
@@ -48,8 +48,8 @@ const folderFor = (file) => {
             'na-despertar-arma-dual-soul.js',
         ].includes(file)
     )
-        return 'NAMacroWeapon01';
-    return 'NAMacroGMTools01';
+        return 'NAMacroWeapon001';
+    return 'NAMacroGMTool001';
 };
 
 function macroIconPath(file, icon = '') {

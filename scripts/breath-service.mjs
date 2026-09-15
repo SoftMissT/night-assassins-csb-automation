@@ -136,6 +136,12 @@ function parseDamageTypes(raw) {
 
 function getFormData(item) {
     const props = item?.system?.props ?? {};
+    const numericProp = (value) => {
+        if (value && typeof value === 'object') {
+            return value.value ?? value.current ?? value.raw ?? value;
+        }
+        return value;
+    };
     const catalog =
         waterFormById(String(props.forma_id ?? '')) ??
         flameFormById(String(props.forma_id ?? '')) ??
@@ -147,13 +153,13 @@ function getFormData(item) {
     const levels = [];
     for (let i = 1; i <= 4; i++) {
         const disponivel =
-            parseNumber(props[`tem_nvl${i}`]) === 1 ||
+            parseNumber(numericProp(props[`tem_nvl${i}`])) === 1 ||
             props[`tem_nvl${i}`] === true ||
             props[`tem_nvl${i}`] === 'true';
         if (!disponivel) continue;
         levels.push({
             level: i,
-            custo: parseNumber(props[`nvl${i}_custo`]),
+            custo: parseNumber(numericProp(props[`nvl${i}_custo`])),
             dano: String(props[`nvl${i}_dano`] ?? '').trim(),
             efeito: String(props[`nvl${i}_efeito`] ?? '').trim(),
             status: String(props[`nvl${i}_status`] ?? '').trim(),
@@ -316,11 +322,15 @@ async function collectFlameChoices(actor, form, props = {}) {
 }
 
 export function getBreathLevel(props = {}) {
+    const numericProp = (value) =>
+        value && typeof value === 'object'
+            ? (value.value ?? value.current ?? value.raw ?? value)
+            : value;
     const candidates = [
-        ['nvl_respiracao_num', props.nvl_respiracao_num],
-        ['respiracao_nivel', props.respiracao_nivel],
-        ['nivel_respiracao', props.nivel_respiracao],
-        ['nvl_respiracao', props.nvl_respiracao],
+        ['nvl_respiracao_num', numericProp(props.nvl_respiracao_num)],
+        ['respiracao_nivel', numericProp(props.respiracao_nivel)],
+        ['nivel_respiracao', numericProp(props.nivel_respiracao)],
+        ['nvl_respiracao', numericProp(props.nvl_respiracao)],
     ];
 
     for (const [key, raw] of candidates) {

@@ -9,6 +9,14 @@ const outputDirectory = path.join(root, 'build', 'compendium', 'artes');
 
 const MODULE_ID = 'night-assassins-csb-automation';
 
+const folders = Object.freeze({
+    breathing: { id: 'NAArtBreathing01', name: 'Respirações' },
+    weapons: { id: 'NAArtWeapons0001', name: 'Armas' },
+    items: { id: 'NAArtItems000001', name: 'Itens' },
+    macros: { id: 'NAArtMacros00001', name: 'Macros' },
+    templates: { id: 'NAArtTemplts0001', name: 'Templates' },
+});
+
 const labels = Object.freeze({
     resp_agua: 'Ícone Respiração da Água',
     resp_amor: 'Ícone Respiração do Amor',
@@ -24,6 +32,25 @@ const labels = Object.freeze({
 function toArtId(file) {
     const base = path.parse(file).name;
     return createHash('sha1').update(`night-assassins-art:${base}`).digest('hex').slice(0, 16);
+}
+
+function folderFor(relativeFile) {
+    const category = relativeFile.split(path.sep)[0];
+    return folders[category] ?? null;
+}
+
+function folderDocument(folder, index) {
+    return {
+        _id: folder.id,
+        _key: `!folders!${folder.id}`,
+        name: folder.name,
+        type: 'Item',
+        sorting: 'a',
+        folder: null,
+        sort: index * 100000,
+        color: null,
+        flags: {},
+    };
 }
 
 function artDocument(relativeFile, index) {
@@ -54,7 +81,7 @@ function artDocument(relativeFile, index) {
             unique: null,
         },
         effects: [],
-        folder: null,
+        folder: folderFor(relativeFile)?.id ?? null,
         sort: index * 100000,
         ownership: { default: 0 },
         flags: {},
@@ -87,6 +114,14 @@ const files = (await listImagesRecursive(assetsDirectory)).sort();
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
+await Promise.all(
+    Object.values(folders).map((folder, index) =>
+        writeFile(
+            path.join(outputDirectory, `${String(index).padStart(2, '0')}-folder-${folder.id}.json`),
+            `${JSON.stringify(folderDocument(folder, index), null, 2)}\n`
+        )
+    )
+);
 await Promise.all(
     files.map((file, index) =>
         writeFile(

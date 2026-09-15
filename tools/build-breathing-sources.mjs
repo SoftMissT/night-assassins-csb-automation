@@ -109,20 +109,12 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
 ]);
 
 /**
- * Respirações com motor de estado/combate real (service dedicado, testes,
- * auditoria forma-por-forma contra a fonte oficial). O catálogo mecânico
- * (`catalogs/breathing.json`) contém dados de todas as Respirações do jogo,
- * mas só estas são publicadas no pack Foundry distribuído as demais não
- * têm mecânica implementada (não passam de descrição), então não vão para
- * o build até receberem o mesmo tratamento.
+ * O catálogo mecânico (`catalogs/breathing.json`) contém dados de todas as
+ * Respirações do jogo, mas o pacote distribuído está temporariamente isolado
+ * em Chamas para permitir a validação completa antes de reabrir as demais.
  */
 export const PUBLISHED_BREATHINGS = Object.freeze([
     'Chamas',
-    'Metal',
-    'Neve',
-    'Névoa',
-    'Pedra',
-    'Vento',
 ]);
 
 const catalog = JSON.parse(await readFile(catalogPath, 'utf8'));

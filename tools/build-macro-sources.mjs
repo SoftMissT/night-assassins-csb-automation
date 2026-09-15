@@ -7,6 +7,51 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDirectory = path.join(root, 'macros');
 const outputDirectory = path.join(root, 'build', 'compendium', 'macros');
 
+const MACRO_FOLDERS = Object.freeze([
+    { id: 'NAMacroCombat01', name: 'Combate' },
+    { id: 'NAMacroBreath01', name: 'Respirações' },
+    { id: 'NAMacroSheet001', name: 'Ficha Slayer' },
+    { id: 'NAMacroWeapon01', name: 'Armas e Armas Especiais' },
+    { id: 'NAMacroGMTools01', name: 'GM e Manutenção' },
+]);
+
+const folderFor = (file) => {
+    if (['na-roll-mode.js', 'na-acerto-roll.js', 'na_roll_damage.js'].includes(file))
+        return 'NAMacroCombat01';
+    if (
+        ['na-resp-usar-forma.js', 'na-respiracao-recuperacao.js', 'na-corrigir-respiracoes.js'].includes(
+            file
+        )
+    )
+        return 'NAMacroBreath01';
+    if (
+        [
+            'na-attribute-level-snapshot.js',
+            'na-marca-cacador.js',
+            'na-gerenciar-acoes.js',
+            'na-gerenciar-descanso.js',
+            'na-gerenciar-estados-avancados.js',
+            'na-gerenciar-interludio.js',
+            'na-gerenciar-resistencias.js',
+            'na-gerenciar-status.js',
+            'na-gerenciar-vida-morte.js',
+        ].includes(file)
+    )
+        return 'NAMacroSheet001';
+    if (
+        [
+            'na-corrigir-armas.js',
+            'na-diagnosticar-armas-duplicadas.js',
+            'na-cerimonia-vinculo.js',
+            'na-resistir-despertar.js',
+            'na-resolver-consequencia-dual-soul.js',
+            'na-despertar-arma-dual-soul.js',
+        ].includes(file)
+    )
+        return 'NAMacroWeapon01';
+    return 'NAMacroGMTools01';
+};
+
 function macroIconPath(file, icon = '') {
     if (icon.includes('/')) return `modules/${MODULE_ID}/assets/icons/${icon}`;
     return `modules/${MODULE_ID}/assets/icons/macros/${icon || `${path.basename(file, '.js')}_icon.webp`}`;
@@ -68,12 +113,6 @@ const macros = [
         file: 'na-respiracao-recuperacao.js',
         name: 'Night Assassins Respiração da Recuperação',
         icon: 'na-gerenciar-acoes_icon.webp',
-    },
-    {
-        id: 'NAFlameBreath001',
-        file: 'na-respiracao-chamas.js',
-        name: 'Night Assassins Respiração das Chamas',
-        icon: 'breathing/resp_chamas.webp',
     },
     {
         id: 'NARespFormUse001',
@@ -140,6 +179,27 @@ const macros = [
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
 
+for (const [index, folder] of MACRO_FOLDERS.entries()) {
+    await writeFile(
+        path.join(outputDirectory, `${String(index).padStart(2, '0')}-folder-${folder.id}.json`),
+        `${JSON.stringify(
+            {
+                _key: `!folders!${folder.id}`,
+                _id: folder.id,
+                name: folder.name,
+                type: 'Macro',
+                sorting: 'a',
+                folder: null,
+                sort: (index + 1) * 100000,
+                color: null,
+                flags: {},
+            },
+            null,
+            2
+        )}\n`
+    );
+}
+
 for (const [index, macro] of macros.entries()) {
     if (macro.id.length !== 16) throw new Error(`ID inválido para ${macro.file}: ${macro.id}`);
 
@@ -153,7 +213,7 @@ for (const [index, macro] of macros.entries()) {
         img: macroIconPath(macro.file, macro.icon),
         scope: 'global',
         command,
-        folder: null,
+        folder: folderFor(macro.file),
         sort: (index + 1) * 100000,
         ownership: {
             default: [

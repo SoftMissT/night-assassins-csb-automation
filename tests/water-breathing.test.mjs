@@ -55,6 +55,11 @@ describe('Respiração da Água', () => {
         assert.equal(getBreathLevel({ respiracao_nivel: 7 }), 1, 'fallback acima de 4 é rejeitado');
         assert.equal(getBreathLevel({}), 1, 'sem props cai para 1');
         assert.equal(getBreathLevel({ nvl_respiracao_num: 0 }), 1);
+        assert.equal(
+            getBreathLevel({ nvl_respiracao_num: { value: 3 } }),
+            3,
+            'Number Field do CSB pode chegar encapsulado em objeto'
+        );
     });
 
     it('1ª Forma persiste o dano para o próximo ataque', () => {

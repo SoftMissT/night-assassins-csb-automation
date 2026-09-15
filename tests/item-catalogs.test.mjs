@@ -23,7 +23,7 @@ async function sourceDocuments(directory) {
 }
 
 describe('catálogo de Respirações', () => {
-    it('o catálogo de fonte conhece as 44 Respirações do sistema, mas só publica as 6 com motor real', async () => {
+    it('o catálogo de fonte conhece as 44 Respirações do sistema, mas publica somente Chamas no piloto', async () => {
         const documents = await sourceDocuments('../build/compendium/respiracoes/');
         const folders = documents.filter(
             (document) =>
@@ -39,8 +39,8 @@ describe('catálogo de Respirações', () => {
         assert.equal(BREATHING_FOLDER_NAMES.length, 44);
         assert.equal(
             PUBLISHED_BREATHINGS.length,
-            6,
-            'só Chamas/Metal/Neve/Névoa/Pedra/Vento têm motor de estado/combate real'
+            1,
+            'o piloto publica somente Chamas até a validação completa'
         );
         assert.equal(
             folders.length,
@@ -124,16 +124,10 @@ describe('catálogo de Respirações', () => {
         assert.equal(storm.system.props.nvl3_dano, '8d8');
     });
 
-    it('publica as cinco Respirações prioritárias como Items mecânicos', async () => {
+    it('publica somente Chamas como Items mecânicos no piloto', async () => {
         const documents = await sourceDocuments('../build/compendium/respiracoes/');
         const items = documents.filter((document) => document.type === 'equippableItem');
-        const expected = new Map([
-            ['Chamas', { count: 9, passive: 'chamas_01' }],
-            ['Pedra', { count: 5, passive: null }],
-            ['Metal', { count: 6, passive: 'metal_05' }],
-            ['Neve', { count: 8, passive: 'neve_08' }],
-            ['Névoa', { count: 8, passive: null }],
-        ]);
+        const expected = new Map([['Chamas', { count: 9, passive: 'chamas_01' }]]);
 
         for (const [breathing, contract] of expected) {
             const forms = items.filter(
@@ -165,9 +159,10 @@ describe('catálogo de Respirações', () => {
                     .every((item) => Number(item.system.props.nvl1_custo) >= 0)
             );
         }
-        const stone = items.filter((item) => item.system?.props?.respiracao_nome === 'Pedra');
-        assert.ok(stone.every((item) => item.name.startsWith('Iwa no Kokyū ')));
-        assert.ok(stone.some((item) => item.system.props.nome_forma.includes('Tenmen Kudaki')));
+        assert.ok(
+            items.every((item) => item.system?.props?.respiracao_nome === 'Chamas'),
+            'nenhuma outra Respiração entra no piloto'
+        );
     });
 
     it('publica o Item principal da Respiração das Chamas', async () => {

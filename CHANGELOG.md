@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.73 — 2026-09-15
+
+- Organizados os documentos do Compêndio de Arte em pastas de Respirações, Armas, Itens, Macros e Templates.
+- Organizados os templates de ficha em pastas próprias para Slayer, Oni, Oni Minion e NPC.
+- Mantida a publicação do hub único da Respiração das Chamas e removida a duplicação da macro interna do compêndio.
+- Regressão local: 1072/1072 testes aprovados, zero falhas.
+
 ## v0.11.69 — 2026-09-06
 
 - Corrigida a criação de atributos do Oni: depois de distribuir `4, 3, 2, 2, 1, 1, 1` ou os sete resultados de `1d4`, o jogador escolhe exatamente três características diferentes para receber `+1` cada.

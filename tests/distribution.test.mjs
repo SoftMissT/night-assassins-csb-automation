@@ -104,11 +104,28 @@ describe('module distribution', () => {
             new URL('../build/compendium/templates-de-ficha/', import.meta.url)
         );
         assert.deepEqual(files.sort(), [
+            '00-folder-NATplSlayer00001.json',
+            '01-folder-NATplOni00000001.json',
+            '02-folder-NATplMinion00001.json',
+            '03-folder-NATplNpc00000001.json',
             'NANpcTemplate001.json',
             'NAOniMinionTpl01.json',
             'NAOniTemplate001.json',
             'NASlayerTpl00001.json',
         ]);
+
+        const expectedFolders = new Map([
+            ['NASlayerTpl00001.json', 'NATplSlayer00001'],
+            ['NAOniTemplate001.json', 'NATplOni00000001'],
+            ['NAOniMinionTpl01.json', 'NATplMinion00001'],
+            ['NANpcTemplate001.json', 'NATplNpc00000001'],
+        ]);
+        for (const [file, folder] of expectedFolders) {
+            const actor = JSON.parse(
+                await readFile(new URL(`../build/compendium/templates-de-ficha/${file}`, import.meta.url), 'utf8')
+            );
+            assert.equal(actor.folder, folder);
+        }
     });
 
     it('aplica o contrato visual e mantém atributos Oni/Minion visíveis', async () => {

@@ -62,6 +62,11 @@ const macros = [
         name: 'Night Assassins Gerenciar Descanso',
     },
     {
+        id: 'NARecovery000001',
+        file: 'na-respiracao-recuperacao.js',
+        name: 'Night Assassins Respiração da Recuperação',
+    },
+    {
         id: 'NARespFormUse001',
         file: 'na-resp-usar-forma.js',
         name: 'Night Assassins Usar Forma de Respiração',

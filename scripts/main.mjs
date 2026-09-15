@@ -62,6 +62,12 @@ import {
     restEligibleStatuses,
 } from './rest-service.mjs';
 import {
+    openRecoveryManager,
+    recoveryBreathingLevel,
+    hasRecoveryBreathing,
+    recoveryFormDefinition,
+} from './recovery-breathing-service.mjs';
+import {
     attemptSnowRestrictionEscape,
     registerBreathingEngine,
     triggerSnowOpportunityAttack,
@@ -326,6 +332,10 @@ Hooks.once('ready', async () => {
             openRestManager,
             resolveRestTier,
             restEligibleStatuses,
+            openRecoveryManager,
+            recoveryBreathingLevel,
+            hasRecoveryBreathing,
+            recoveryFormDefinition,
             useBreathForm,
             attemptSnowRestrictionEscape,
             triggerSnowOpportunityAttack,

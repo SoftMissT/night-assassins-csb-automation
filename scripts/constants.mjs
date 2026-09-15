@@ -278,6 +278,7 @@ export const STATUS_SLAYER = Object.freeze([
     { key: 'fadiga_corporal', label: 'Fadiga Corporal', category: 'Fadiga' },
     { key: 'fadiga_espiritual', label: 'Fadiga Espiritual', category: 'Fadiga' },
     { key: 'fadiga_mental', label: 'Fadiga Mental', category: 'Fadiga' },
+    { key: 'ofegante', label: 'Ofegante', category: 'Mobilidade' },
     { key: 'encorajado', label: 'Encorajado', category: 'Benéfico' },
 ]);
 

@@ -122,6 +122,12 @@ function buildFormula(mode, attrVal, bonusExtra, statusModifier = 0) {
     return bonusExtra ? `${base} ${bonusExtra}` : base;
 }
 
+// Mantém o bônus informado no diálogo como parcela de cada tentativa da
+// sequência. O valor não deve ser consumido pela primeira rolagem.
+export function attemptBonusFormula({ situational = '', secondary = '', chain = '' } = {}) {
+    return [situational, secondary, chain].filter(Boolean).join(' ');
+}
+
 async function doRoll({
     actor,
     attrName,
@@ -165,7 +171,11 @@ async function doRoll({
                   ? `- ${Math.abs(secondaryPenalty)}`
                   : '';
         const chainBonus = index > 0 && criticalChainBonus > 0 ? `+ ${criticalChainBonus}` : '';
-        const attemptBonus = [extra, secondaryBonus, chainBonus].filter(Boolean).join(' ');
+        const attemptBonus = attemptBonusFormula({
+            situational: extra,
+            secondary: secondaryBonus,
+            chain: chainBonus,
+        });
         const formula = buildFormula(mode, attemptAttrVal, attemptBonus, statusEffects.modifier);
         let roll;
         try {

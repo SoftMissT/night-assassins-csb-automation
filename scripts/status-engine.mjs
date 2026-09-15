@@ -537,7 +537,8 @@ export function movementBlocked(props = {}) {
     return (
         exhaustion >= 3 ||
         state.active.includes('restricao_movimentos') ||
-        state.active.includes('colapso')
+        state.active.includes('colapso') ||
+        state.active.includes('ofegante')
     );
 }
 

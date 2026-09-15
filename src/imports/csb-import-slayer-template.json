@@ -2016,8 +2016,8 @@
                                                     "altRollMessageToChat": false,
                                                     "style": "button"
                                                 },
-                                                {
-                                                    "key": "descanso_slayer_gerenciar",
+                                        {
+                                            "key": "descanso_slayer_gerenciar",
                                                     "colSpan": 1,
                                                     "rowSpan": 1,
                                                     "cssClass": "",
@@ -2038,8 +2038,32 @@
                                                     "altRollMessage": "",
                                                     "rollMessageToChat": false,
                                                     "altRollMessageToChat": false,
-                                                    "style": "button"
-                                                }
+                                            "style": "button"
+                                        },
+                                        {
+                                            "key": "respiracao_recuperacao_slayer",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "Usar uma Forma da Respiração da Recuperação.",
+                                            "visibilityFormula": "",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "label",
+                                            "size": "full-size",
+                                            "icon": "",
+                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ffffff;\">Respiração</span>\n",
+                                            "prefix": "",
+                                            "suffix": "",
+                                            "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARecovery000001'))?.execute({actorUuid:entity.uuid}); return '';}%",
+                                            "altRollMessage": "",
+                                            "rollMessageToChat": false,
+                                            "altRollMessageToChat": false,
+                                            "style": "button"
+                                        }
                                             ],
                                             "flow": "horizontal",
                                             "align": "center",

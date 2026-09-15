@@ -314,7 +314,7 @@ test('template Slayer tem itemContainer para armas e Formas', () => {
 
     assert.equal(
         containers.get('inventario_slayer_armas').itemFilterFormula,
-        "equalText(item.inventario_categoria, 'arma')"
+        "equalText(item.inventario_categoria || '', 'arma')"
     );
 
     /*

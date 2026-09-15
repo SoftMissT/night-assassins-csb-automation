@@ -24,9 +24,13 @@ Roll.create = (formula) => {
     };
 };
 
-import { rollHit } from '../scripts/hit-service.mjs';
+import { rollHit, attemptBonusFormula } from '../scripts/hit-service.mjs';
 
 describe('hit-service', () => {
+    it('repete o bônus situacional em cada acerto da sequência', () => {
+        assert.equal(attemptBonusFormula({ situational: '+3', secondary: '+1', chain: '+2' }), '+3 +1 +2');
+        assert.equal(attemptBonusFormula({ situational: '+3' }), '+3');
+    });
     it('avisa quando acerto_label é inválido', async () => {
         let warned = false;
         ui.notifications.warn = (msg) => {

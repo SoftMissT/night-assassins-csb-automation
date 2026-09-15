@@ -2778,7 +2778,7 @@
                                     "nameAlign": "left",
                                     "nameLabel": "Arma",
                                     "templateFilter": [],
-                                    "itemFilterFormula": "equalText(item.inventario_categoria || '', 'arma')",
+                                    "itemFilterFormula": "item.inventario_categoria ? equalText(item.inventario_categoria, 'arma') : 0",
                                     "sortPredicates": []
                                 },
                                 {
@@ -2863,7 +2863,7 @@
                                     "nameAlign": "left",
                                     "nameLabel": "Forma",
                                     "templateFilter": ["NABreathTpl00001"],
-                                    "itemFilterFormula": "",
+                                    "itemFilterFormula": "item.inventario_categoria ? equalText(item.inventario_categoria, 'respiracao') : 0",
                                     "sortPredicates": []
                                 }
                             ],

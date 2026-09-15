@@ -35,6 +35,7 @@ const macros = [
         id: 'NADiagnostic0001',
         file: 'na-diagnostico-erros.js',
         name: 'Night Assassins Diagnóstico de Erros',
+        icon: 'na-gm-control_icon.webp',
     },
     {
         id: 'NAResistance0001',
@@ -66,6 +67,7 @@ const macros = [
         id: 'NARecovery000001',
         file: 'na-respiracao-recuperacao.js',
         name: 'Night Assassins Respiração da Recuperação',
+        icon: 'na-gerenciar-acoes_icon.webp',
     },
     {
         id: 'NAFlameBreath001',
@@ -102,6 +104,7 @@ const macros = [
         id: 'NAWeaponDiag0001',
         file: 'na-diagnosticar-armas-duplicadas.js',
         name: 'Night Assassins Diagnosticar Armas Duplicadas',
+        icon: 'na-gm-control_icon.webp',
     },
     {
         id: 'NABreathRepair01',

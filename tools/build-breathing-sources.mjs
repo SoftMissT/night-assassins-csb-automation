@@ -178,10 +178,7 @@ for (const document of catalog.documents) {
             ? 1
             : 0;
     if (flame) {
-        document.name = `Honō no Kokyū ${flame.name}`;
-        document.system.props.nome_forma = flame.name;
-        document.system.props.nome_jp = flame.ptName ?? '';
-        document.system.props.tipo_manobra = flame.passive
+            document.system.props.tipo_manobra = flame.passive
             ? 'Passiva'
             : ({ ataque: 'Ação de Ataque', especial: 'Ação Especial', reacao: 'Reação' }[
                   flame.action
@@ -248,6 +245,26 @@ const flameSource = catalog.documents.find(
         document.system?.props?.respiracao_nome === 'Chamas'
 );
 if (!flameSource) throw new Error('Nenhuma Forma de Chamas disponível para gerar o Item principal.');
+const flameFolder = catalog.documents.find(
+    (document) => document.type === 'Item' && document._id === flameSource.folder
+);
+if (!flameFolder) throw new Error('Pasta pública de Chamas não encontrada.');
+const flameDataFolder = structuredClone(flameFolder);
+Object.assign(flameDataFolder, {
+    _id: 'NAFlameData00001',
+    _key: '!folders!NAFlameData00001',
+    name: '_Interno — Formas das Chamas (não importar)',
+    folder: null,
+});
+catalog.documents.push(flameDataFolder);
+for (const document of catalog.documents) {
+    if (
+        document.type === 'equippableItem' &&
+        document.system?.props?.respiracao_nome === 'Chamas'
+    ) {
+        document.folder = flameDataFolder._id;
+    }
+}
 const flameHub = structuredClone(flameSource);
 Object.assign(flameHub, {
     _id: 'NAFlameHub000001',
@@ -267,6 +284,7 @@ Object.assign(flameHub.system.props, {
     descricao: '<p>Abra este Item para escolher e executar qualquer Forma conhecida da Respiração das Chamas.</p>',
     forma_passiva: 0,
 });
+flameHub.folder = flameFolder._id;
 for (let level = 1; level <= 4; level += 1) {
     Object.assign(flameHub.system.props, {
         [`tem_nvl${level}`]: 0,

@@ -25,8 +25,10 @@ async function sourceDocuments(directory) {
 describe('catálogo de Respirações', () => {
     it('o catálogo de fonte conhece as 44 Respirações do sistema, mas só publica as 6 com motor real', async () => {
         const documents = await sourceDocuments('../build/compendium/respiracoes/');
-        const folders = documents.filter((document) =>
-            String(document._key).startsWith('!folders!')
+        const folders = documents.filter(
+            (document) =>
+                String(document._key).startsWith('!folders!') &&
+                !String(document.name ?? '').startsWith('_Interno')
         );
         const items = documents.filter((document) => document.type === 'equippableItem');
         assert.equal(
@@ -115,8 +117,8 @@ describe('catálogo de Respirações', () => {
             'Reação'
         );
         const storm = flames.find((item) => item.system.props.forma_id === 'chamas_06');
-        assert.equal(storm.system.props.nome_forma, 'Roku no Kata Hono Arashi');
-        assert.equal(storm.system.props.nome_jp, 'Tormenta de Chamas');
+        assert.equal(storm.system.props.nome_forma, 'Tormenta de Chamas');
+        assert.equal(storm.system.props.nome_jp, '');
         assert.equal(storm.system.props.tem_nvl2, 0);
         assert.equal(storm.system.props.tem_nvl3, 1);
         assert.equal(storm.system.props.nvl3_dano, '8d8');
@@ -173,7 +175,17 @@ describe('catálogo de Respirações', () => {
         const flameHub = documents.find(
             (item) => item.system?.props?.forma_id === 'hub_chamas'
         );
+        const publicFolder = documents.find(
+            (item) => item.type === 'Item' && item.name === 'Respiração das Chamas'
+        );
         assert.equal(flameHub?.name, 'Respiração das Chamas');
+        assert.equal(
+            documents.filter(
+                (item) => item.type === 'equippableItem' && item.folder === publicFolder?._id
+            ).length,
+            1,
+            'a pasta pública de Chamas deve importar somente o Item principal'
+        );
         assert.equal(flameHub?.system?.props?.inventario_categoria, 'respiracao');
         assert.equal(
             flameHub?.img,

@@ -314,7 +314,7 @@ test('template Slayer tem itemContainer para armas e Formas', () => {
 
     assert.equal(
         containers.get('inventario_slayer_armas').itemFilterFormula,
-        "equalText(item.inventario_categoria || '', 'arma')"
+        "item.inventario_categoria ? equalText(item.inventario_categoria, 'arma') : 0"
     );
 
     /*
@@ -324,7 +324,10 @@ test('template Slayer tem itemContainer para armas e Formas', () => {
         'NABreathTpl00001',
     ]);
 
-    assert.equal(containers.get('skills_slayer_respiracoes').itemFilterFormula, '');
+    assert.equal(
+        containers.get('skills_slayer_respiracoes').itemFilterFormula,
+        "item.inventario_categoria ? equalText(item.inventario_categoria, 'respiracao') : 0"
+    );
 });
 
 test('pacote CSB import segue o contrato de importação', () => {

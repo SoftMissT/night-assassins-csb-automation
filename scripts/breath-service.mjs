@@ -1361,6 +1361,79 @@ function snapshotActorPatch(actor, patch) {
     );
 }
 
+function normalizedBreathingName(value) {
+    return String(value ?? '')
+        .trim()
+        .toLocaleLowerCase('pt-BR');
+}
+
+export function breathingItemsForActor(actor, breathingName) {
+    const wanted = normalizedBreathingName(breathingName);
+    if (!wanted) return [];
+    return [...(actor?.items ?? [])]
+        .filter((item) => {
+            const props = item?.system?.props ?? {};
+            return (
+                normalizedBreathingName(props.respiracao_nome) === wanted &&
+                Boolean(props.forma_id)
+            );
+        })
+        .sort(
+            (left, right) =>
+                parseNumber(left.system?.props?.forma_ordem) -
+                parseNumber(right.system?.props?.forma_ordem)
+        );
+}
+
+/** Abre o painel próprio de uma Respiração e reutiliza o pipeline canônico da Forma. */
+export async function openBreathingManager({ actorUuid, breathingName } = {}) {
+    const doc = actorUuid ? await fromUuid(actorUuid) : null;
+    const actor = doc?.actor ?? doc ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user?.character;
+    if (!actor) return ui.notifications?.warn?.('Nenhum personagem ativo.');
+    if (!actor.isOwner && !game.user?.isGM)
+        return ui.notifications?.error?.('Você não pode usar técnicas com este personagem.');
+
+    let forms = breathingItemsForActor(actor, breathingName).filter(
+        (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
+    );
+    if (forms.length === 0) {
+        const pack = game.packs?.get?.(
+            'night-assassins-csb-automation.night-assassins-respiracoes'
+        );
+        const documents = pack ? await pack.getDocuments() : [];
+        forms = breathingItemsForActor({ items: documents }, breathingName).filter(
+            (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
+        );
+    }
+    if (forms.length === 0)
+        return ui.notifications?.warn?.(`Nenhuma Forma da Respiração ${breathingName} foi encontrada.`);
+
+    const options = forms
+        .map((item) => {
+            const props = item.system?.props ?? {};
+            const label = String(props.nome_forma ?? item.name ?? 'Forma');
+            return `<option value="${item.uuid}">${label}</option>`;
+        })
+        .join('');
+    const itemUuid = await foundry.applications.api.DialogV2.wait({
+        window: { title: `Respiração ${breathingName}` },
+        modal: true,
+        rejectClose: false,
+        content: `<p>Escolha a Forma que deseja usar.</p><select name="form" style="width:100%">${options}</select>`,
+        buttons: [
+            {
+                action: 'use',
+                label: 'Usar Forma',
+                default: true,
+                callback: (_event, button) => button.form.elements.form.value,
+            },
+            { action: 'cancel', label: 'Cancelar', callback: () => null },
+        ],
+    });
+    if (!itemUuid) return null;
+    return useBreathForm({ actorUuid: actor.uuid, itemUuid });
+}
+
 /**
  * API pública: executa uma forma de respiração a partir de um item CSB.
  * @param {object} options

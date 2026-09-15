@@ -2813,7 +2813,7 @@
                                                     "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">USAR</span>",
                                                     "prefix": "",
                                                     "suffix": "",
-                                                    "rollMessage": "%{const form=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!form)return ui.notifications.warn('Forma de Respiração não encontrada nesta linha.');await game.modules.get('night-assassins-csb-automation')?.api?.useBreathForm({actorUuid:entity.uuid,itemUuid:form.uuid}); return '';}%",
+                                            "rollMessage": "%{const form=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!form)return ui.notifications.warn('Respiração não encontrada nesta linha.');await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.uuid,itemUuid:form.uuid}); return '';}%",
                                                     "altRollMessage": "",
                                                     "rollMessageToChat": false,
                                                     "altRollMessageToChat": false,

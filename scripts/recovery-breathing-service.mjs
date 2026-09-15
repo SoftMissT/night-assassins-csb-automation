@@ -10,14 +10,14 @@ const FORMS = Object.freeze({
   sinfonia: { label: '4ª Forma — Sinfonia dos Pulmões', action: 'completa', test: true, dc: [14, 12, 10, 8], pdv: ['', '', '6d8','8d8'], pdr: ['', '', '6d8','8d8'] },
 });
 
-const RECOVERY_NAMES = new Set(['recuperação', 'respiração da recuperação', 'respiração de recuperação']);
 const n = (v) => Math.max(0, Math.trunc(parseNumber(v)));
 const levelOf = (props) => Math.min(4, Math.max(1, n(props.nvl_respiracao_num ?? props.respiracao_nivel ?? props.nivel_respiracao) || 1));
 const attr = (props, key) => n(props[`${key}_display`] ?? props[key]);
 
 export function recoveryBreathingLevel(props = {}) { return levelOf(props); }
+/** Todo Slayer possui esta respiração; o nível da ficha define as Formas disponíveis. */
 export function hasRecoveryBreathing(actor) {
-  return [...(actor?.items ?? [])].some((item) => RECOVERY_NAMES.has(String(item.system?.props?.respiracao_nome ?? '').trim().toLowerCase()));
+  return actor?.type === 'slayer' || actor?.system?.props?.nvl_respiracao_num !== undefined;
 }
 export function recoveryFormDefinition(formId, level) {
   const form = FORMS[formId];
@@ -48,7 +48,6 @@ export async function openRecoveryManager({ actorUuid } = {}) {
   const actor = doc?.actor ?? doc ?? canvas.tokens.controlled[0]?.actor ?? game.user?.character;
   if (!actor) return ui.notifications.warn('Nenhum personagem ativo.');
   if (!actor.isOwner && !game.user.isGM) return ui.notifications.error('Você não pode usar esta Respiração.');
-  if (!hasRecoveryBreathing(actor)) return ui.notifications.warn('O personagem não possui a Respiração da Recuperação.');
   const props = actor.system?.props ?? {};
   const level = levelOf(props);
   const result = await foundry.applications.api.DialogV2.wait({

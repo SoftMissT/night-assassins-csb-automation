@@ -8,6 +8,7 @@ const sourceDirectory = path.join(root, 'macros');
 const outputDirectory = path.join(root, 'build', 'compendium', 'macros');
 
 function macroIconPath(file, icon = '') {
+    if (icon.includes('/')) return `modules/${MODULE_ID}/assets/icons/${icon}`;
     return `modules/${MODULE_ID}/assets/icons/macros/${icon || `${path.basename(file, '.js')}_icon.webp`}`;
 }
 
@@ -65,6 +66,12 @@ const macros = [
         id: 'NARecovery000001',
         file: 'na-respiracao-recuperacao.js',
         name: 'Night Assassins Respiração da Recuperação',
+    },
+    {
+        id: 'NAFlameBreath001',
+        file: 'na-respiracao-chamas.js',
+        name: 'Night Assassins Respiração das Chamas',
+        icon: 'breathing/resp_chamas.webp',
     },
     {
         id: 'NARespFormUse001',

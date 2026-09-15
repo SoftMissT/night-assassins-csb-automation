@@ -124,6 +124,19 @@ if (!item) {
     return '';
 }
 
+const itemProps = getProps(item);
+if (String(itemProps.forma_id ?? '').startsWith('hub_')) {
+    if (!moduleApi.openBreathingManager) {
+        ui.notifications.error('O módulo precisa ser atualizado para abrir o painel da Respiração.');
+        return '';
+    }
+    await moduleApi.openBreathingManager({
+        actorUuid: actor.uuid,
+        breathingName: String(itemProps.respiracao_nome ?? ''),
+    });
+    return '';
+}
+
 await moduleApi.useBreathForm({
     actorUuid: actor.uuid,
     itemUuid: item.uuid,

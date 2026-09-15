@@ -87,7 +87,8 @@ describe('catálogo de Respirações', () => {
         const flames = documents.filter(
             (document) =>
                 document.type === 'equippableItem' &&
-                document.system?.props?.respiracao_nome === 'Chamas'
+                document.system?.props?.respiracao_nome === 'Chamas' &&
+                !String(document.system?.props?.forma_id ?? '').startsWith('hub_')
         );
         assert.equal(flames.length, 9);
         assert.equal(
@@ -133,7 +134,11 @@ describe('catálogo de Respirações', () => {
         ]);
 
         for (const [breathing, contract] of expected) {
-            const forms = items.filter((item) => item.system?.props?.respiracao_nome === breathing);
+            const forms = items.filter(
+                (item) =>
+                    item.system?.props?.respiracao_nome === breathing &&
+                    !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
+            );
             assert.equal(
                 forms.length,
                 contract.count,
@@ -161,6 +166,19 @@ describe('catálogo de Respirações', () => {
         const stone = items.filter((item) => item.system?.props?.respiracao_nome === 'Pedra');
         assert.ok(stone.every((item) => item.name.startsWith('Iwa no Kokyū ')));
         assert.ok(stone.some((item) => item.system.props.nome_forma.includes('Tenmen Kudaki')));
+    });
+
+    it('publica o Item principal da Respiração das Chamas', async () => {
+        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const flameHub = documents.find(
+            (item) => item.system?.props?.forma_id === 'hub_chamas'
+        );
+        assert.equal(flameHub?.name, 'Respiração das Chamas');
+        assert.equal(flameHub?.system?.props?.inventario_categoria, 'respiracao');
+        assert.equal(
+            flameHub?.img,
+            'modules/night-assassins-csb-automation/assets/icons/breathing/resp_chamas.webp'
+        );
     });
 
     it('usa os ícones locais disponíveis sem fabricar assets ausentes', async () => {
@@ -300,6 +318,7 @@ describe('catálogo de armas Slayer', () => {
             }
             assert.doesNotMatch(props.descricao, /<li>\s*(?:Propriedades|Alcance|Crítico|Dano)\s*:/iu);
         }
+
         assert.equal(cutelos.system.props.descricao, '<p>Duas lâminas em formato de cutelos e com cabos padrão estilo katanas, unidos por uma corrente que permite manobras ofensivas e defensivas.</p>');
         assert.match(cutelos.system.props.arma_regra_completa, /usar suas Reações/u);
         const cutelosMechanics = JSON.parse(cutelos.system.props.arma_mecanicas_json);

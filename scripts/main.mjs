@@ -72,6 +72,7 @@ import {
     registerBreathingEngine,
     triggerSnowOpportunityAttack,
     useBreathForm,
+    openBreathingManager,
 } from './breath-service.mjs';
 import {
     openLifeDeathManager,
@@ -337,6 +338,7 @@ Hooks.once('ready', async () => {
             hasRecoveryBreathing,
             recoveryFormDefinition,
             useBreathForm,
+            openBreathingManager,
             attemptSnowRestrictionEscape,
             triggerSnowOpportunityAttack,
             openLifeDeathManager,

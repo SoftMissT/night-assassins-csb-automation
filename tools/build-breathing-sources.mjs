@@ -242,6 +242,44 @@ for (const document of catalog.documents) {
     }
 }
 
+const flameSource = catalog.documents.find(
+    (document) =>
+        document.type === 'equippableItem' &&
+        document.system?.props?.respiracao_nome === 'Chamas'
+);
+if (!flameSource) throw new Error('Nenhuma Forma de Chamas disponível para gerar o Item principal.');
+const flameHub = structuredClone(flameSource);
+Object.assign(flameHub, {
+    _id: 'NAFlameHub000001',
+    _key: '!items!NAFlameHub000001',
+    name: 'Respiração das Chamas',
+    img: breathingIconPath('Chamas'),
+});
+Object.assign(flameHub.system.props, {
+    inventario_categoria: 'respiracao',
+    forma_id: 'hub_chamas',
+    forma_ordem: 0,
+    nome_forma: 'Painel da Respiração das Chamas',
+    nome_jp: 'Honō no Kokyū',
+    respiracao_nome: 'Chamas',
+    tipo_manobra: 'Respiração',
+    nivel_req: 1,
+    descricao: '<p>Abra este Item para escolher e executar qualquer Forma conhecida da Respiração das Chamas.</p>',
+    forma_passiva: 0,
+});
+for (let level = 1; level <= 4; level += 1) {
+    Object.assign(flameHub.system.props, {
+        [`tem_nvl${level}`]: 0,
+        [`nvl${level}_custo`]: 0,
+        [`nvl${level}_dano`]: '',
+        [`nvl${level}_efeito`]: '',
+        [`nvl${level}_status`]: '',
+        [`nvl${level}_buff`]: '',
+        [`nvl${level}_tipos_dano`]: '',
+    });
+}
+catalog.documents.push(flameHub);
+
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
 await Promise.all(

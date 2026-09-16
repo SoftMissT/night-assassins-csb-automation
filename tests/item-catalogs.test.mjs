@@ -182,6 +182,16 @@ describe('catálogo de Respirações', () => {
             'a pasta pública de Chamas deve importar somente o Item principal'
         );
         assert.equal(flameHub?.system?.props?.inventario_categoria, 'respiracao');
+        assert.equal(flameHub?.system?.body?.contents?.length, 2);
+        assert.ok(
+            flameHub?.system?.body?.contents?.some((entry) => entry.key === 'btn_abrir_formas'),
+            'o hub deve conter somente o botão para abrir o painel'
+        );
+        assert.equal(
+            flameHub?.system?.body?.contents?.filter((entry) => entry.visibilityFormula).length,
+            0,
+            'o hub não pode herdar fórmulas de visibilidade das Formas individuais'
+        );
         assert.equal(
             flameHub?.img,
             'modules/night-assassins-csb-automation/assets/icons/breathing/resp_chamas.webp'

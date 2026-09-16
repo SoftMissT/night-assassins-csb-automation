@@ -1,4 +1,10 @@
 # Changelog
+## v0.11.75 — 2026-09-15
+
+- Corrigido o Item hub da Respiração das Chamas, que herdava o corpo de uma Forma individual e falhava ao renderizar no CSB v14.
+- O hub agora usa um corpo próprio mínimo com descrição e botão para abrir as Formas.
+- Regressão local: 1073/1073 testes aprovados, zero falhas.
+
 ## v0.11.74 — 2026-09-15
 
 - Corrigidos os IDs das pastas do Compêndio de Macros para o formato obrigatório de 16 caracteres do Foundry v14.

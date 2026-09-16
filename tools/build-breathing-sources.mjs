@@ -258,6 +258,47 @@ for (const document of catalog.documents) {
     }
 }
 const flameHub = structuredClone(flameSource);
+const hubLabel = (value, extra = {}) => ({
+    key: '',
+    colSpan: 1,
+    rowSpan: 1,
+    cssClass: '',
+    role: 0,
+    editRole: 0,
+    permission: 0,
+    tooltip: '',
+    visibilityFormula: '',
+    editableFormula: '',
+    escapeHTML: false,
+    type: 'label',
+    size: 'full-size',
+    icon: '',
+    value,
+    prefix: '',
+    suffix: '',
+    style: 'default',
+    ...extra,
+});
+flameHub.system.body = {
+    contents: [
+        hubLabel(
+            '<h2>Respiração das Chamas</h2><p>Abra o painel para escolher e executar uma Forma. As Formas são carregadas pela automação e não precisam ser importadas individualmente.</p>'
+        ),
+        hubLabel('Abrir Formas', {
+            key: 'btn_abrir_formas',
+            icon: 'fa-solid fa-fire',
+            rollMessage:
+                "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.parent?.uuid,itemUuid:entity.uuid});}%",
+            rollMessageToChat: false,
+            altRollMessage: '',
+            altRollMessageToChat: false,
+            style: 'button',
+            tooltip: 'Escolha uma Forma da Respiração das Chamas.',
+        }),
+    ],
+    key: 'custom_body',
+    type: 'panel',
+};
 Object.assign(flameHub, {
     _id: 'NAFlameHub000001',
     _key: '!items!NAFlameHub000001',

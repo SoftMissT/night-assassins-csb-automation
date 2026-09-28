@@ -9,7 +9,7 @@
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO } from './constants.mjs';
 
 export const DAMAGE_PRESETS_KEY = 'dano_presets';
-export const DAMAGE_PRESETS_VERSION = 1;
+export const DAMAGE_PRESETS_VERSION = 2;
 export const MAX_DAMAGE_PRESETS = 60;
 export const MAX_PRESET_ENTRIES = 8;
 export const DEFAULT_PRESET_GROUP = 'normal';
@@ -30,6 +30,7 @@ const SAFE_FORMULA = /^[a-zA-Z0-9_\s+\-*/().,@]+$/u;
 const MAX_FORMULA_LENGTH = 80;
 const MAX_NAME_LENGTH = 80;
 const MAX_GROUP_LENGTH = 40;
+const MAX_BREATHING_LENGTH = 60;
 
 const ACTION_KEYS = new Set(
     TIPOS_ACAO.filter((type) => type.damage && type.key !== 'epica').map((type) => type.key)
@@ -123,7 +124,16 @@ export function normalizePresetEntry(entry) {
     const tiposDano = normalizeDamageTypes(entry.tiposDano);
     const hasContent = Boolean(dado) || fixo !== 0 || attrs.length > 0 || tiposDano.length > 0;
     if (!hasContent) return null;
-    return { tipoAcao, dado, fixo, attrs, tiposDano };
+    const rawIndex = Number(entry.attackIndex);
+    const attackIndex = Number.isInteger(rawIndex) && rawIndex >= 0 ? rawIndex : null;
+    return {
+        tipoAcao,
+        dado,
+        fixo,
+        attrs,
+        tiposDano,
+        ...(attackIndex !== null ? { attackIndex } : {}),
+    };
 }
 
 /**
@@ -140,7 +150,12 @@ export function normalizeDamagePreset(preset) {
     if (sourceEntries.length === 0 || sourceEntries.length > MAX_PRESET_ENTRIES) return null;
     const entries = sourceEntries.map((entry) => normalizePresetEntry(entry));
     if (entries.some((entry) => !entry)) return null;
-    return { id: String(preset.id ?? presetId()), name, group, entries };
+    const resourceCost = Math.max(0, Math.trunc(Number(preset.resourceCost) || 0));
+    const breathing =
+        String(preset.breathing ?? '')
+            .trim()
+            .slice(0, MAX_BREATHING_LENGTH) || presetGroupLabel(group);
+    return { id: String(preset.id ?? presetId()), name, group, breathing, resourceCost, entries };
 }
 
 /**

@@ -1,5 +1,6 @@
 /**
- * @fileoverview DialogV2 para rolagem de dano com múltiplas entradas e presets.
+ * @fileoverview DialogV2 para rolagem de dano com múltiplas entradas, dano de
+ * arma e presets registráveis pelo usuário.
  */
 
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO } from '../constants.mjs';
@@ -36,7 +37,7 @@ function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
 }
 
 function makeAcaoOpts(sel) {
-    return `<option value="">Nenhuma -</option>
+    return `<option value="">Nenhuma ação</option>
     ${TIPOS_ACAO.filter((t) => t.damage && t.key !== 'epica')
         .map(
             (t) => `<option value="${t.key}" ${sel === t.key ? 'selected' : ''}>${t.label}</option>`
@@ -59,18 +60,22 @@ function makeAttrCheckboxes(selAttrs, idx, attrValues) {
         const chk = selAttrs.includes(key) ? 'checked' : '';
         return `<label class="na-attr-label">
       <input type="checkbox" class="na-attr-chk" data-idx="${idx}" value="${key}" ${chk} />
-      <span style="color:${color};font-weight:700;font-size:11px;">${label}</span>
-      <span style="color:#9C9284;font-size:10px;">${attrValues[key] ?? 0}</span>
+      <span class="na-attr-key" style="color:${color};">${label}</span>
+      <span class="na-attr-val">${attrValues[key] ?? 0}</span>
     </label>`;
     }).join('');
 }
 
 function makeEntradaHtml(e, idx, attrValues) {
+    const attackIndex = Number.isInteger(Number(e.attackIndex)) && e.attackIndex !== ''
+        ? Number(e.attackIndex)
+        : '';
     return `
   <div class="na-entrada" data-idx="${idx}">
+    <input type="hidden" class="na-entry-attackidx" data-idx="${idx}" value="${attackIndex}" />
     <div class="na-entry-header">
-      <strong class="na-entry-num"></strong>
-      <button type="button" class="na-remove-btn" data-idx="${idx}">✕</button>
+      <strong class="na-entry-num">Dano ${idx + 1}</strong>
+      <button type="button" class="na-remove-btn" data-idx="${idx}" title="Remover entrada">✕</button>
     </div>
     <div class="na-row-grid">
       <div>
@@ -81,20 +86,15 @@ function makeEntradaHtml(e, idx, attrValues) {
         <label class="na-label">Dado(s) <span class="na-hint">(ex: 3d8)</span></label>
         <input type="text" class="na-dado-inp" data-idx="${idx}" value="${escapeHtml(e.dado ?? '')}" placeholder="sem dado" />
       </div>
-    </div>
-    <div class="na-row-grid" style="margin-top:4px;">
       <div>
-        <label class="na-label">+ Fixo Adicional</label>
+        <label class="na-label">+ Fixo</label>
         <input type="number" class="na-fixo-inp" data-idx="${idx}" value="${e.fixo ?? 0}" placeholder="0" />
       </div>
-      <div>
-        <label class="na-label">Atributos no Dano</label>
-        <div class="na-attrs">${makeAttrCheckboxes(e.attrs ?? [], idx, attrValues)}</div>
-      </div>
     </div>
-    <label class="na-label" style="margin-top:6px;">Tipo(s) de Dano</label>
+    <label class="na-label">Atributos no Dano</label>
+    <div class="na-attrs">${makeAttrCheckboxes(e.attrs ?? [], idx, attrValues)}</div>
+    <label class="na-label">Tipo(s) de Dano</label>
     <div class="na-dano-grid">${makeDanoCheckboxes(e.tiposDano ?? [], idx)}</div>
-    <div class="na-dano-tip" data-idx="${idx}"></div>
     <div class="na-linha-preview" data-idx="${idx}"></div>
   </div>`;
 }
@@ -108,6 +108,7 @@ function collectEntries(container) {
         const dado = el.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() || '';
         const fixo = Number(el.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
         const tipoAcao = el.querySelector(`.na-acao-sel[data-idx="${idx}"]`)?.value || '';
+        const attackIndexRaw = el.querySelector(`.na-entry-attackidx[data-idx="${idx}"]`)?.value;
         const tiposDano = [];
         el.querySelectorAll(`.na-dano-chk[data-idx="${idx}"]:checked`).forEach((cb) =>
             tiposDano.push(cb.value)
@@ -116,21 +117,25 @@ function collectEntries(container) {
         el.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`).forEach((cb) => {
             if (ATTRIBUTES.some((a) => a.key === cb.value)) attrs.push(cb.value);
         });
-        entries.push({ tipoAcao, dado, fixo, attrs, tiposDano });
+        const entry = { tipoAcao, dado, fixo, attrs, tiposDano };
+        const attackIndex = Number(attackIndexRaw);
+        if (attackIndexRaw !== '' && Number.isInteger(attackIndex) && attackIndex >= 0)
+            entry.attackIndex = attackIndex;
+        entries.push(entry);
     });
     return entries;
 }
 
 function presetOptionsHtml(presets, selected = '') {
     const groups = groupedPresets(presets);
-    if (groups.length === 0) return '<option value="">Nenhum preset salvo</option>';
+    if (groups.length === 0) return '<option value="">— nenhum preset salvo —</option>';
     return groups
         .map(
             (group) =>
                 `<optgroup label="${escapeHtml(group.label)}">${group.presets
                     .map(
                         (preset) =>
-                            `<option value="${escapeHtml(preset.id)}" ${preset.id === selected ? 'selected' : ''}>${escapeHtml(preset.name)}</option>`
+                            `<option value="${escapeHtml(preset.id)}" ${preset.id === selected ? 'selected' : ''}>${escapeHtml(preset.name)}${preset.resourceCost ? ` · ${preset.resourceCost} PDR` : ''}</option>`
                     )
                     .join('')}</optgroup>`
         )
@@ -141,34 +146,53 @@ function presetRowHtml(presets, { presetDraft, onSavePreset, onManagePresets }) 
     const hasPresets = Array.isArray(presets) && presets.length > 0;
     if (!hasPresets && !onSavePreset && !onManagePresets) return '';
     const saveButton = onSavePreset
-        ? '<button type="button" id="na-save-preset-btn">Salvar como preset</button>'
+        ? '<button type="button" id="na-save-preset-btn" class="na-btn na-btn-gold">Salvar como preset</button>'
         : '';
     const manageButton =
         onManagePresets && !presetDraft
-            ? '<button type="button" id="na-manage-presets-btn">Gerenciar</button>'
+            ? '<button type="button" id="na-manage-presets-btn" class="na-btn">⚙ Gerenciar</button>'
             : '';
-    return `<div class="na-preset-row" style="margin-bottom:8px;">
+    return `<section class="na-dmg-presets">
       <label class="na-label">Preset de dano</label>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <select id="na-preset-sel" style="flex:1;">${
-            hasPresets ? '<option value="">— nenhum —</option>' : ''
+      <div class="na-dmg-presets-row">
+        <select id="na-preset-sel">${
+            hasPresets ? '<option value="">— aplicar preset —</option>' : ''
         }${presetOptionsHtml(presets, presetDraft?.id ?? '')}</select>
         ${saveButton}${manageButton}
       </div>
-    </div>`;
+    </section>`;
 }
 
 function presetFieldsHtml(draft) {
     const groupList = PRESET_GROUPS.map(
         (group) => `<option value="${escapeHtml(group.label)}"></option>`
     ).join('');
-    return `<div class="na-preset-fields" style="margin-bottom:8px;">
-      <label class="na-label">Nome do preset</label>
-      <input type="text" name="na-preset-name" id="na-preset-name" maxlength="80" value="${escapeHtml(draft.name ?? '')}" />
-      <label class="na-label">Grupo <span class="na-hint">(Normal, Chamas, Água… ou um grupo próprio)</span></label>
-      <input type="text" name="na-preset-group" id="na-preset-group" list="na-preset-group-list" maxlength="40" value="${escapeHtml(draft.groupLabel ?? 'Normal')}" />
-      <datalist id="na-preset-group-list">${groupList}</datalist>
-    </div>`;
+    return `<section class="na-dmg-preset-fields">
+      <div class="na-row-grid">
+        <div>
+          <label class="na-label">Nome do preset</label>
+          <input type="text" name="na-preset-name" id="na-preset-name" maxlength="80" value="${escapeHtml(draft.name ?? '')}" placeholder="ex: Rengoku crítico" />
+        </div>
+        <div>
+          <label class="na-label">Respiração <span class="na-hint">(usada)</span></label>
+          <input type="text" name="na-preset-breathing" id="na-preset-breathing" maxlength="60" value="${escapeHtml(draft.breathing ?? '')}" placeholder="ex: Chamas" />
+        </div>
+        <div>
+          <label class="na-label">Grupo</label>
+          <input type="text" name="na-preset-group" id="na-preset-group" list="na-preset-group-list" maxlength="40" value="${escapeHtml(draft.groupLabel ?? 'Normal')}" />
+          <datalist id="na-preset-group-list">${groupList}</datalist>
+        </div>
+      </div>
+    </section>`;
+}
+
+function contextChipsHtml({ breathing, weaponLabel, presetDraft }) {
+    const chips = [];
+    if (breathing) chips.push(`<span class="na-dmg-chip na-dmg-chip-breath">${escapeHtml(breathing)}</span>`);
+    if (weaponLabel)
+        chips.push(`<span class="na-dmg-chip na-dmg-chip-weapon">${escapeHtml(weaponLabel)}</span>`);
+    if (presetDraft) chips.push('<span class="na-dmg-chip na-dmg-chip-preset">Modo preset</span>');
+    return chips.length ? `<div class="na-dmg-chips">${chips.join('')}</div>` : '';
 }
 
 function bindDamageDialogInteractions(root, attrValues, options = {}) {
@@ -180,7 +204,7 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     const renumber = () => {
         container.querySelectorAll('.na-entrada').forEach((entry, index) => {
             const label = entry.querySelector('.na-entry-num');
-            if (label) label.textContent = `DANO ${index + 1}`;
+            if (label) label.textContent = `Dano ${index + 1}`;
         });
     };
 
@@ -198,7 +222,18 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
                 return buildEntryFormula(dado, fixo, attrs, attrValues);
             })
             .filter((formula) => formula !== '0');
-        if (totalPreview) totalPreview.textContent = formulas.length ? formulas.join(' + ') : '0';
+        container.querySelectorAll('.na-entrada').forEach((entry) => {
+            const idx = entry.dataset.idx;
+            const dado =
+                entry.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() ?? '';
+            const fixo = Number(entry.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
+            const attrs = [
+                ...entry.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`),
+            ].map((checkbox) => checkbox.value);
+            const preview = entry.querySelector('.na-linha-preview');
+            if (preview) preview.textContent = `= ${buildEntryFormula(dado, fixo, attrs, attrValues)}`;
+        });
+        if (totalPreview) totalPreview.textContent = formulas.length ? formulas.join('  +  ') : '0';
     };
 
     const renderEntries = (entries) => {
@@ -240,6 +275,14 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
             if (!preset) return;
             const nomeInput = root.querySelector('#na-dmg-nome');
             if (nomeInput) nomeInput.value = preset.name ?? '';
+            const pdrInput = root.querySelector('#na-dmg-pdr');
+            if (pdrInput) pdrInput.value = Number(preset.resourceCost) || 0;
+            const breathingInput = root.querySelector('#na-preset-breathing');
+            if (breathingInput && preset.breathing) breathingInput.value = preset.breathing;
+            const nameInput = root.querySelector('#na-preset-name');
+            if (nameInput && preset.name) nameInput.value = preset.name;
+            const groupInput = root.querySelector('#na-preset-group');
+            if (groupInput && preset.group) groupInput.value = preset.group;
             renderEntries(preset.entries);
         });
     }
@@ -248,6 +291,10 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     if (saveButton && typeof options.onSavePreset === 'function') {
         saveButton.addEventListener('click', async () => {
             const nome = root.querySelector('#na-dmg-nome')?.value?.trim() || '';
+            const resourceCost = Math.max(
+                0,
+                Number(root.querySelector('#na-dmg-pdr')?.value) || 0
+            );
             const entries = collectEntries(container).filter(
                 (entry) =>
                     entry.dado ||
@@ -259,7 +306,12 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
                 return globalThis.ui?.notifications?.warn?.('Adicione ao menos uma entrada de dano.');
             saveButton.disabled = true;
             try {
-                await options.onSavePreset({ nome, entries });
+                await options.onSavePreset({
+                    nome,
+                    entries,
+                    resourceCost,
+                    breathing: options.breathing ?? '',
+                });
             } finally {
                 saveButton.disabled = false;
             }
@@ -270,6 +322,27 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     if (manageButton && typeof options.onManagePresets === 'function')
         manageButton.addEventListener('click', () => options.onManagePresets());
 
+    const weaponButton = root.querySelector?.('#na-weapon-btn');
+    if (weaponButton && typeof options.onRequestWeaponEntries === 'function') {
+        weaponButton.addEventListener('click', async () => {
+            weaponButton.disabled = true;
+            try {
+                const added = await options.onRequestWeaponEntries();
+                if (!Array.isArray(added) || added.length === 0) return;
+                const current = collectEntries(container).filter(
+                    (entry) =>
+                        entry.dado ||
+                        entry.fixo !== 0 ||
+                        entry.attrs.length > 0 ||
+                        entry.tiposDano.length > 0
+                );
+                renderEntries([...current, ...added]);
+            } finally {
+                weaponButton.disabled = false;
+            }
+        });
+    }
+
     renumber();
     updatePreview();
 }
@@ -278,17 +351,6 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
  * Abre o diálogo de dano e retorna os dados confirmados ou null.
  * Em modo preset (`presetDraft`) devolve `{ preset }` em vez de rolar.
  * @param {object} options
- * @param {Actor} options.actor
- * @param {string} [options.nome]
- * @param {Array} [options.entradas]
- * @param {number} [options.pdrCusto]
- * @param {string} [options.resourceLabel]
- * @param {string} [options.resourceKey]
- * @param {boolean} [options.critical]
- * @param {Array} [options.presets]
- * @param {object|null} [options.presetDraft]
- * @param {Function|null} [options.onSavePreset]
- * @param {Function|null} [options.onManagePresets]
  * @returns {Promise<object|null>}
  */
 export async function openDamageDialog({
@@ -301,8 +363,11 @@ export async function openDamageDialog({
     critical = false,
     presets = [],
     presetDraft = null,
+    breathing = '',
+    weaponLabel = '',
     onSavePreset = null,
     onManagePresets = null,
+    onRequestWeaponEntries = null,
 }) {
     const props = actor?.system?.props ?? {};
     const attrValues = {};
@@ -322,6 +387,9 @@ export async function openDamageDialog({
                       : e.tipoDano
                         ? [e.tipoDano]
                         : [],
+                  ...(Number.isInteger(Number(e.attackIndex)) && e.attackIndex !== ''
+                      ? { attackIndex: Number(e.attackIndex) }
+                      : {}),
               }))
             : [BLANK_ENTRY];
 
@@ -332,33 +400,60 @@ export async function openDamageDialog({
         .map((e, i) => makeEntradaHtml(e, i, attrValues))
         .join('');
 
-    const draftFields = presetDraft
-        ? presetFieldsHtml({
-              name: presetDraft.name ?? nome ?? '',
-              groupLabel: presetDraft.groupLabel ?? 'Normal',
-          })
-        : '';
+    const title = presetDraft
+        ? presetDraft.name
+            ? `Preset — ${escapeHtml(presetDraft.name)}`
+            : 'Novo preset de dano'
+        : escapeHtml(nome || 'Rolar Dano');
+
     const content = `
   <div class="na-dmg-dialog">
-    ${draftFields}
+    <header class="na-dmg-head">
+      <div>
+        <span class="na-dmg-kicker">Night Assassins · Dano</span>
+        <h2 class="na-dmg-title">${title}</h2>
+      </div>
+      ${contextChipsHtml({ breathing, weaponLabel, presetDraft })}
+    </header>
+
+    ${presetDraft ? presetFieldsHtml({ ...presetDraft, breathing: presetDraft.breathing ?? breathing }) : ''}
+
     ${presetRowHtml(presets, { presetDraft, onSavePreset, onManagePresets })}
-    <div style="margin-bottom:8px;">
-      <label class="na-label">Nome do Ataque / Técnica</label>
-      <input type="text" id="na-dmg-nome" value="${escapeHtml(nome ?? '')}" placeholder="ex: Corte Celestial" />
-    </div>
-    <div id="na-entradas-container">${entradasIniciais}</div>
-    <button type="button" id="na-add-btn">+ Adicionar Entrada de Dano</button>
+
     ${
         presetDraft
             ? ''
-            : `<div style="margin-bottom:8px;">
-      <label class="na-label">${resourceLabel} a Gastar <span class="na-hint">(total)</span></label>
-      <input type="number" id="na-dmg-pdr" min="0" value="${Number.isFinite(Number(pdrCusto)) ? Number(pdrCusto) : 0}" placeholder="0" />
-      <div class="na-hint" style="margin-top:2px;">Somado à chave <code>${resourceKey}</code>.</div>
+            : `<section class="na-dmg-field">
+      <label class="na-label">Nome do Ataque / Técnica</label>
+      <input type="text" id="na-dmg-nome" value="${escapeHtml(nome ?? '')}" placeholder="ex: Corte Celestial" />
+    </section>`
+    }
+
+    <div class="na-dmg-entries-head">
+      <span class="na-dmg-entries-title">Entradas de dano</span>
+      <div class="na-dmg-entries-actions">
+        <button type="button" id="na-add-btn" class="na-btn">+ Entrada</button>
+        <button type="button" id="na-weapon-btn" class="na-btn">+ Dano da arma</button>
+      </div>
     </div>
-    <label class="na-label">Fórmula Total</label>
-    <div id="na-total-preview">-</div>
-    <label class="na-critical-toggle">
+    <div id="na-entradas-container">${entradasIniciais}</div>
+
+    <section class="na-dmg-foot">
+      <div class="na-dmg-resource">
+        <label class="na-label">${resourceLabel} a gastar</label>
+        <input type="number" id="na-dmg-pdr" min="0" value="${Number.isFinite(Number(pdrCusto)) ? Number(pdrCusto) : 0}" placeholder="0" />
+        <span class="na-hint">somado a <code>${resourceKey}</code></span>
+      </div>
+      <div class="na-dmg-total">
+        <label class="na-label">Fórmula total</label>
+        <div id="na-total-preview">0</div>
+      </div>
+    </section>
+
+    ${
+        presetDraft
+            ? ''
+            : `<label class="na-critical-toggle">
       <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
       <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>
     </label>`
@@ -371,8 +466,10 @@ export async function openDamageDialog({
         if (!root?.querySelector?.('#na-add-btn')) return;
         bindDamageDialogInteractions(root, attrValues, {
             presetsById,
+            breathing,
             onSavePreset,
             onManagePresets,
+            onRequestWeaponEntries,
         });
     });
 
@@ -397,6 +494,12 @@ export async function openDamageDialog({
                               ...(presetDraft.id ? { id: presetDraft.id } : {}),
                               name: form.querySelector('#na-preset-name')?.value?.trim() ?? '',
                               group: form.querySelector('#na-preset-group')?.value?.trim() ?? '',
+                              breathing:
+                                  form.querySelector('#na-preset-breathing')?.value?.trim() ?? '',
+                              resourceCost: Math.max(
+                                  0,
+                                  Number(form.querySelector('#na-dmg-pdr')?.value) || 0
+                              ),
                               entries,
                           },
                       };
@@ -417,6 +520,9 @@ export async function openDamageDialog({
                           tipoAcao: entry.tipoAcao,
                           selTiposDano: entry.tiposDano,
                           selAttrs: entry.attrs,
+                          ...(entry.attackIndex !== undefined
+                              ? { attackIndex: entry.attackIndex }
+                              : {}),
                       }));
                       return {
                           nome: form.querySelector('#na-dmg-nome')?.value?.trim() || 'Dano',
@@ -435,7 +541,13 @@ export async function openDamageDialog({
     let result;
     try {
         result = await foundry.applications.api.DialogV2.wait({
-            window: { title: presetDraft ? 'Preset de Dano Night Assassins' : 'Rolar Dano Night Assassins' },
+            window: {
+                title: presetDraft
+                    ? 'Preset de Dano — Night Assassins'
+                    : 'Rolar Dano — Night Assassins',
+                resizable: true,
+            },
+            position: { width: 760 },
             content,
             modal: true,
             rejectClose: false,

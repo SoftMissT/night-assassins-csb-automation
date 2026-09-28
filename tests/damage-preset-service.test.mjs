@@ -34,9 +34,33 @@ describe('damage-preset-service — normalização', () => {
         assert.ok(preset);
         assert.equal(preset.name, 'Corte de Teste');
         assert.equal(preset.group, 'chamas');
+        assert.equal(preset.breathing, 'Chamas');
+        assert.equal(preset.resourceCost, 0);
         assert.deepEqual(preset.entries[0].attrs, ['for']);
         assert.deepEqual(preset.entries[0].tiposDano, ['fogo']);
         assert.ok(preset.id);
+    });
+
+    test('guarda custo de recurso, Respiração e índice de golpe da arma', () => {
+        const preset = normalizeDamagePreset({
+            name: 'Rengoku crítico',
+            group: 'chamas',
+            breathing: 'Chamas',
+            resourceCost: 4,
+            entries: [{ tipoAcao: 'ataque', dado: '2d6', fixo: 0, attackIndex: 1 }],
+        });
+        assert.ok(preset);
+        assert.equal(preset.resourceCost, 4);
+        assert.equal(preset.breathing, 'Chamas');
+        assert.equal(preset.entries[0].attackIndex, 1);
+
+        const noCost = normalizeDamagePreset({
+            name: 'Sem custo',
+            group: 'normal',
+            entries: [validEntry()],
+        });
+        assert.equal(noCost.resourceCost, 0);
+        assert.equal(noCost.breathing, 'Normal');
     });
 
     test('rejeita preset sem nome, sem entradas ou com excesso de entradas', () => {
@@ -134,7 +158,7 @@ describe('damage-preset-service — persistência', () => {
     test('monta o patch do Actor na chave system.props', () => {
         const patch = damagePresetsPatch([]);
         assert.deepEqual(Object.keys(patch), [`system.props.${DAMAGE_PRESETS_KEY}`]);
-        assert.equal(JSON.parse(patch[`system.props.${DAMAGE_PRESETS_KEY}`]).version, 1);
+        assert.equal(JSON.parse(patch[`system.props.${DAMAGE_PRESETS_KEY}`]).version, 2);
     });
 });
 

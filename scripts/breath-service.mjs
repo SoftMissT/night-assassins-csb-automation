@@ -1310,6 +1310,7 @@ async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, r
             await rollDamage({
                 actor,
                 nome,
+                breathing: form?.respiracao,
                 entradas: [
                     {
                         tipoAcao: 'ataque',
@@ -1331,6 +1332,7 @@ async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, r
         actor,
         hitResult,
         techniqueLabel: nome,
+        breathing: form?.respiracao,
         techniqueEntradas: breathingTechniqueEntradas(actor),
     });
 }
@@ -1800,6 +1802,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             await rollDamage({
                 actor,
                 nome: `${form.respiracao} ${form.nome}`,
+                breathing: form.respiracao,
                 entradas: plan.state.serpentine.damageComponents.map((component) => ({
                     tipoAcao: 'unica',
                     dado: component.formula,

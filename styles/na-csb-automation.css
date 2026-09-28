@@ -3009,3 +3009,570 @@
         animation: none !important;
     }
 }
+
+/* ==========================================================================
+   Diálogo de Dano & Presets — v2 (Night Assassins)
+   Ritual-editorial: Orbitron/Rajdhani, gold + blood, escala maior.
+   ========================================================================== */
+
+.na-dmg-dialog,
+.na-preset-manager {
+    --na-dmg-display: 'Orbitron', 'Trebuchet MS', sans-serif;
+    --na-dmg-body: 'Rajdhani', 'Segoe UI', sans-serif;
+    --na-dmg-ink: #f5efe2;
+    --na-dmg-muted: #a69a86;
+    --na-dmg-gold: #e9c46a;
+    --na-dmg-gold-dim: #b99443;
+    --na-dmg-blood: #e0353f;
+    --na-dmg-cyan: #4fd6e8;
+    --na-dmg-die: #ffca5c;
+    --na-dmg-line: rgba(233, 196, 106, 0.24);
+    --na-dmg-line-soft: rgba(233, 196, 106, 0.1);
+    --na-dmg-panel: #161320;
+    --na-dmg-panel-2: #1e1a29;
+    --na-dmg-input: #100e15;
+    box-sizing: border-box;
+}
+
+.na-dmg-dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 18px 6px;
+    font-family: var(--na-dmg-body);
+    font-size: 15px;
+    color: var(--na-dmg-ink);
+    background:
+        radial-gradient(circle at 92% 0%, rgba(224, 53, 63, 0.12), transparent 34%),
+        radial-gradient(circle at 4% 100%, rgba(233, 196, 106, 0.1), transparent 40%),
+        linear-gradient(150deg, #14111c, #0a090e 74%);
+}
+
+.na-dmg-dialog .na-label {
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--na-dmg-body);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--na-dmg-gold-dim);
+}
+
+.na-dmg-dialog .na-hint {
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--na-dmg-muted);
+}
+
+.na-dmg-dialog input[type='text'],
+.na-dmg-dialog input[type='number'],
+.na-dmg-dialog select,
+.na-preset-manager input[type='text'],
+.na-preset-manager select {
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    font-family: var(--na-dmg-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--na-dmg-ink);
+    background: var(--na-dmg-input);
+    border: 1px solid var(--na-dmg-line);
+    border-radius: 7px;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.na-dmg-dialog input:focus,
+.na-dmg-dialog select:focus,
+.na-preset-manager input:focus,
+.na-preset-manager select:focus {
+    outline: none;
+    border-color: var(--na-dmg-gold);
+    box-shadow: 0 0 0 2px rgba(233, 196, 106, 0.18);
+}
+
+.na-dmg-dialog input.na-dado-inp {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 14px;
+    color: var(--na-dmg-die);
+}
+
+/* Cabeçalho ---------------------------------------------------------------- */
+
+.na-dmg-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--na-dmg-line);
+}
+
+.na-dmg-kicker {
+    display: block;
+    font-family: var(--na-dmg-display);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--na-dmg-gold-dim);
+}
+
+.na-dmg-title {
+    margin: 3px 0 0;
+    font-family: var(--na-dmg-display);
+    font-size: 21px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--na-dmg-ink);
+}
+
+.na-dmg-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.na-dmg-chip {
+    padding: 4px 11px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    border: 1px solid var(--na-dmg-line);
+    color: var(--na-dmg-gold);
+    background: rgba(233, 196, 106, 0.1);
+}
+
+.na-dmg-chip-breath {
+    color: var(--na-dmg-gold);
+}
+
+.na-dmg-chip-weapon {
+    color: var(--na-dmg-cyan);
+    border-color: rgba(79, 214, 232, 0.35);
+    background: rgba(79, 214, 232, 0.12);
+}
+
+.na-dmg-chip-preset {
+    color: var(--na-dmg-blood);
+    border-color: rgba(224, 53, 63, 0.4);
+    background: rgba(224, 53, 63, 0.12);
+}
+
+/* Presets ------------------------------------------------------------------ */
+
+.na-dmg-presets-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.na-btn {
+    min-height: 36px;
+    padding: 0 14px;
+    font-family: var(--na-dmg-body);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--na-dmg-gold);
+    background: var(--na-dmg-panel-2);
+    border: 1px solid var(--na-dmg-line);
+    border-radius: 7px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.na-btn:hover:not(:disabled) {
+    border-color: var(--na-dmg-gold);
+    background: #262031;
+    color: #ffe9b0;
+}
+
+.na-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.na-btn-gold {
+    color: #170f04;
+    background: linear-gradient(180deg, #f0cd76, #cfa646);
+    border-color: #f0cd76;
+}
+
+.na-btn-gold:hover:not(:disabled) {
+    background: linear-gradient(180deg, #ffe08c, #dcb352);
+    color: #170f04;
+}
+
+/* Entradas ----------------------------------------------------------------- */
+
+.na-dmg-entries-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.na-dmg-entries-title {
+    font-family: var(--na-dmg-display);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--na-dmg-gold);
+}
+
+.na-dmg-entries-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.na-dmg-dialog #na-entradas-container {
+    max-height: 52vh;
+    overflow-y: auto;
+    padding: 2px 8px 2px 2px;
+    margin: 0;
+}
+
+.na-dmg-dialog #na-entradas-container::-webkit-scrollbar {
+    width: 8px;
+}
+.na-dmg-dialog #na-entradas-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+.na-dmg-dialog #na-entradas-container::-webkit-scrollbar-thumb {
+    background: var(--na-dmg-gold-dim);
+    border-radius: 4px;
+}
+
+.na-dmg-dialog .na-entrada {
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    background: linear-gradient(180deg, var(--na-dmg-panel-2), var(--na-dmg-panel));
+    border: 1px solid var(--na-dmg-line-soft);
+    border-left: 4px solid var(--na-dmg-gold);
+    border-radius: 4px 10px 10px 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+.na-dmg-dialog .na-entry-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid var(--na-dmg-line-soft);
+}
+
+.na-dmg-dialog .na-entry-num {
+    font-family: var(--na-dmg-display);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--na-dmg-gold);
+}
+
+.na-dmg-dialog .na-remove-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--na-dmg-blood);
+    background: rgba(224, 53, 63, 0.12);
+    border: 1px solid rgba(224, 53, 63, 0.4);
+    border-radius: 6px;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.na-dmg-dialog .na-remove-btn:hover {
+    background: rgba(224, 53, 63, 0.28);
+    color: #ffd0d3;
+}
+
+.na-dmg-dialog .na-row-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 0.7fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.na-dmg-dialog .na-attrs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0;
+}
+
+.na-dmg-dialog .na-attr-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    font-size: 13px;
+    background: var(--na-dmg-input);
+    border: 1px solid var(--na-dmg-line-soft);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.na-dmg-dialog .na-attr-label:hover {
+    border-color: var(--na-dmg-gold);
+}
+
+.na-dmg-dialog .na-attr-key {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.na-dmg-dialog .na-attr-val {
+    font-size: 11.5px;
+    color: var(--na-dmg-muted);
+}
+
+.na-dmg-dialog .na-dano-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 0 8px;
+}
+
+.na-dmg-dialog .na-dano-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 13px;
+    color: #d9cebc;
+    background: var(--na-dmg-input);
+    border: 1px solid var(--na-dmg-line-soft);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition:
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.na-dmg-dialog .na-dano-label:hover {
+    border-color: var(--na-dmg-gold);
+    color: #fff;
+}
+
+.na-dmg-dialog .na-linha-preview {
+    min-height: 26px;
+    padding: 5px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--na-dmg-die);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--na-dmg-line-soft);
+    border-radius: 6px;
+}
+
+/* Rodapé ------------------------------------------------------------------- */
+
+.na-dmg-foot {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px;
+    align-items: end;
+}
+
+.na-dmg-resource .na-hint code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--na-dmg-gold-dim);
+}
+
+.na-dmg-dialog #na-total-preview {
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--na-dmg-die);
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid var(--na-dmg-line);
+    border-radius: 8px;
+    word-break: break-all;
+    box-shadow: inset 0 0 18px rgba(255, 202, 92, 0.08);
+}
+
+.na-dmg-dialog .na-critical-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(224, 53, 63, 0.08);
+    border: 1px solid rgba(224, 53, 63, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.na-dmg-dialog .na-critical-toggle strong {
+    font-family: var(--na-dmg-display);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffb4ba;
+}
+
+.na-dmg-dialog .na-critical-toggle small {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--na-dmg-muted);
+}
+
+/* Gerenciador -------------------------------------------------------------- */
+
+.na-preset-manager {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 18px 4px;
+    font-family: var(--na-dmg-body);
+    font-size: 15px;
+    color: var(--na-dmg-ink);
+    background:
+        radial-gradient(circle at 96% 0%, rgba(233, 196, 106, 0.1), transparent 36%),
+        linear-gradient(150deg, #14111c, #0a090e 74%);
+}
+
+.na-preset-manager-head {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--na-dmg-line);
+}
+
+.na-preset-manager-head h2 {
+    margin: 3px 0 4px;
+    font-family: var(--na-dmg-display);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--na-dmg-ink);
+}
+
+.na-preset-manager-head p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--na-dmg-muted);
+}
+
+.na-preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 54vh;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+.na-preset-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    text-align: left;
+    background: var(--na-dmg-panel);
+    border: 1px solid var(--na-dmg-line-soft);
+    border-left: 4px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        transform 0.1s ease;
+}
+
+.na-preset-item:hover {
+    background: var(--na-dmg-panel-2);
+    border-color: var(--na-dmg-line);
+}
+
+.na-preset-item.is-selected {
+    border-left-color: var(--na-dmg-gold);
+    border-color: var(--na-dmg-gold);
+    background: #241e2f;
+    box-shadow: 0 0 0 1px rgba(233, 196, 106, 0.4), 0 8px 22px rgba(0, 0, 0, 0.4);
+}
+
+.na-preset-item-name {
+    font-family: var(--na-dmg-display);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--na-dmg-ink);
+}
+
+.na-preset-item-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-end;
+}
+
+.na-preset-chip {
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    color: var(--na-dmg-gold);
+    background: rgba(233, 196, 106, 0.12);
+    border: 1px solid var(--na-dmg-line);
+    white-space: nowrap;
+}
+
+.na-preset-chip-breath {
+    color: var(--na-dmg-cyan);
+    border-color: rgba(79, 214, 232, 0.3);
+    background: rgba(79, 214, 232, 0.1);
+}
+
+.na-preset-chip-cost {
+    color: var(--na-dmg-blood);
+    border-color: rgba(224, 53, 63, 0.35);
+    background: rgba(224, 53, 63, 0.1);
+}
+
+.na-preset-item-meta {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--na-dmg-muted);
+    white-space: nowrap;
+}
+
+.na-preset-empty {
+    margin: 8px 2px;
+    padding: 18px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--na-dmg-muted);
+    border: 1px dashed var(--na-dmg-line);
+    border-radius: 10px;
+}

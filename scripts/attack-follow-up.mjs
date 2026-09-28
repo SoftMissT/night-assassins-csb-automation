@@ -97,6 +97,7 @@ export async function resolveAutoDamage({
     actor,
     hitResult,
     techniqueLabel = 'Ataque',
+    breathing = '',
     techniqueEntradas = [],
     forceAttackDamage = true,
     skipBreathingInjection = false,
@@ -150,6 +151,7 @@ export async function resolveAutoDamage({
             await rollDamage({
                 actor,
                 nome: techniqueLabel,
+                breathing,
                 entradas,
                 critical: attempt.critical,
                 actionId,

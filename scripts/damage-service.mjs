@@ -5,7 +5,7 @@
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
-import { DAMAGE_PRESETS_KEY, parseDamagePresets } from './damage-preset-service.mjs';
+import { DAMAGE_PRESETS_KEY, parseDamagePresets, presetGroupKey } from './damage-preset-service.mjs';
 import {
     openDamagePresetManager,
     promptDamagePresetFields,
@@ -220,6 +220,85 @@ export function weaponProfileEntries(profile, attrValues, { attackIndex = null }
     return Array.from({ length: count }, (_unused, index) => entryFor(index));
 }
 
+const WEAPON_TEMPLATE_IDS = new Set(['NAWeaponTpl00001', 'NASpecialWeaponTpl00001']);
+
+function isWeaponItem(item) {
+    const props = item?.system?.props ?? {};
+    return (
+        WEAPON_TEMPLATE_IDS.has(item?.system?.template) ||
+        props.arma_critico !== undefined ||
+        Boolean(
+            props.arma_nome &&
+            (props.arma_dano_fixo !== undefined ||
+                props.arma_dano_atributo !== undefined ||
+                props.arma_tipos_dano !== undefined)
+        )
+    );
+}
+
+/**
+ * Catálogo de dano das armas do Actor (perfil → entradas prontas para o diálogo).
+ * @param {Actor} actor
+ * @returns {{id:string,label:string,entries:object[]}[]}
+ */
+export function buildWeaponDamageCatalog(actor) {
+    const actorProps = actor?.system?.props ?? {};
+    const attrValues = {};
+    for (const { key } of ATTRIBUTES)
+        attrValues[key] = parseAttributeValue(actorProps[`${key}_display`]);
+    const catalog = [];
+    for (const item of actor?.items ?? []) {
+        if (!isWeaponItem(item)) continue;
+        const props = item?.system?.props ?? {};
+        const profiles = weaponProfilesForActor(props, actorProps);
+        profiles.forEach((profile, index) => {
+            const entries = weaponProfileEntries(profile, attrValues);
+            if (entries.length === 0) return;
+            catalog.push({
+                id: `${item.uuid ?? item.id ?? item.name}::${index}`,
+                label: `${props.arma_nome || item.name || 'Arma'} — ${profile.nome || `Perfil ${index + 1}`}`,
+                entries,
+            });
+        });
+    }
+    return catalog;
+}
+
+/**
+ * Pede ao usuário qual arma/perfil adicionar e devolve as entradas de dano.
+ * @param {Actor} actor
+ * @returns {Promise<object[]>}
+ */
+export async function promptWeaponDamageEntries(actor) {
+    const catalog = buildWeaponDamageCatalog(actor);
+    if (catalog.length === 0) {
+        ui.notifications?.warn?.('Nenhuma arma encontrada neste personagem.');
+        return [];
+    }
+    if (catalog.length === 1) return catalog[0].entries;
+    const options = catalog
+        .map((entry, index) => `<option value="${index}">${entry.label}</option>`)
+        .join('');
+    const chosen = await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Adicionar dano da arma' },
+        position: { width: 480 },
+        content: `<div class="na-csb-automation"><label class="na-label">Arma / perfil</label><select name="weapon">${options}</select></div>`,
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            {
+                action: 'add',
+                label: 'Adicionar',
+                default: true,
+                callback: (_event, button) => Number(button.form.elements.weapon.value),
+            },
+            { action: 'cancel', label: 'Cancelar', callback: () => null },
+        ],
+    });
+    if (!Number.isInteger(chosen)) return [];
+    return catalog[chosen]?.entries ?? [];
+}
+
 async function chooseWeaponProfile(profiles) {
     if (profiles.length === 1) return profiles[0];
     const options = profiles
@@ -389,6 +468,7 @@ export async function rollDamage(options = {}) {
     }
 
     const presetStore = parseDamagePresets(props[DAMAGE_PRESETS_KEY]);
+    const breathingContext = String(options.breathing ?? '').trim();
     const dialogResult = await openDamageDialog({
         actor,
         nome: options.nome ?? '',
@@ -398,18 +478,28 @@ export async function rollDamage(options = {}) {
         resourceKey: attackerKind === 'oni' ? 'pdk_oni_gasto_valor' : 'pdr_slayer_gasto_valor',
         critical: options.critical === true,
         presets: presetStore.presets,
-        onSavePreset: async ({ nome: presetNome, entries }) => {
-            const fields = await promptDamagePresetFields({ name: presetNome });
+        breathing: breathingContext,
+        weaponLabel: options.weaponLabel ?? '',
+        onRequestWeaponEntries: () => promptWeaponDamageEntries(actor),
+        onSavePreset: async ({ nome: presetNome, entries, resourceCost, breathing }) => {
+            const fields = await promptDamagePresetFields({
+                name: presetNome,
+                group: presetGroupKey(breathing || breathingContext),
+                breathing: breathing || breathingContext,
+            });
             if (!fields) return;
             const saved = await saveDamagePreset(actor, {
                 name: fields.name,
                 group: fields.group,
+                breathing: fields.breathing,
+                resourceCost,
                 entries,
             });
             if (!saved.ok) ui.notifications?.warn?.(saved.reason);
             else ui.notifications?.info?.(`Preset "${fields.name}" salvo.`);
         },
-        onManagePresets: () => openDamagePresetManager({ actorUuid: actor.uuid }),
+        onManagePresets: () =>
+            openDamagePresetManager({ actorUuid: actor.uuid, breathing: breathingContext }),
     });
     if (!dialogResult) return;
 

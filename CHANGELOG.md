@@ -1,4 +1,14 @@
 # Changelog
+## v0.11.77 — 2026-09-28
+
+- Diálogo de dano e gerenciador maiores e coesos com o design system do módulo (Orbitron/Rajdhani, dourado/sangue, fundo ritual); escala tipográfica e controles ampliados.
+- Preset agora guarda o **custo de PDR/PDK** (`resourceCost`) e o **nome da Respiração usada** (`breathing`); aplicar um preset restaura o custo.
+- Botão **+ Dano da arma** monta as entradas de dano a partir das armas do Actor, com seletor de arma/perfil e preservação do `attackIndex` (golpe).
+- Cabeçalho do diálogo mostra chips de Respiração e arma; as rotas de dano de Respiração passam o nome da Respiração.
+- Gerenciador vira lista de cards com nome, chips de grupo/Respiração/custo, contagem de entradas e seleção; ações Novo/Editar/Excluir/Fechar.
+- `dano_presets` sobe para versão 2; presets v1 são lidos e completam os novos campos na próxima gravação.
+- Regressão local: `1085/1085` testes, 173 suítes, zero falhas. Gate visual/runtime no Foundry 14.367 pendente.
+
 ## v0.11.76 — 2026-09-28
 
 - Presets de dano registráveis pelo usuário: o jogador salva ataques completos (nome + grupo + até 8 entradas de dado/fixo/atributos/tipos) na própria ficha e os reutiliza na macro de dano.

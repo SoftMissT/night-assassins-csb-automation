@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.76 — 2026-09-28
+
+- Presets de dano registráveis pelo usuário: o jogador salva ataques completos (nome + grupo + até 8 entradas de dado/fixo/atributos/tipos) na própria ficha e os reutiliza na macro de dano.
+- Grupos `Normal` (classes, itens e passivas) + as sete Respirações + grupo livre. A única mecânica que permanece por Respiração são passivas e acumuladores (`resp_passivas_estado`); custo, ação, calor, crítico e passivas seguem oficiais.
+- Diálogo de dano ganhou seletor agrupado de presets, "Salvar como preset" e "Gerenciar"; o painel de todas as Respirações ganhou o botão "Presets de dano"; API `openDamagePresetManager`.
+- Regressão local: 1084/1084 testes, 173 suítes, zero falhas. Gate visual/runtime no Foundry 14.367 pendente.
+
 ## v0.11.75 — 2026-09-15
 
 - Corrigido o Item hub da Respiração das Chamas, que herdava o corpo de uma Forma individual e falhava ao renderizar no CSB v14.

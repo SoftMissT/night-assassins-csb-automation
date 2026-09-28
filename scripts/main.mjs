@@ -7,6 +7,7 @@ import { handleActorUpdate } from './trigger-router.mjs';
 import { rollTest } from './roll-service.mjs';
 import { rollHit } from './hit-service.mjs';
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from './damage-service.mjs';
+import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import {
     createLevelOneValues,
     processLevelGain,
@@ -339,6 +340,7 @@ Hooks.once('ready', async () => {
             recoveryFormDefinition,
             useBreathForm,
             openBreathingManager,
+            openDamagePresetManager,
             attemptSnowRestrictionEscape,
             triggerSnowOpportunityAttack,
             openLifeDeathManager,

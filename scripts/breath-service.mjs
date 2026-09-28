@@ -26,6 +26,7 @@
  */
 
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
+import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { parseNumber } from './parsing.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
 import { consumeSlayerActions } from './action-service.mjs';
@@ -1437,10 +1438,17 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
                 default: true,
                 callback: (_event, button) => button.form.elements.form.value,
             },
+            {
+                action: 'presets',
+                label: 'Presets de dano',
+                callback: () => '__damage_presets__',
+            },
             { action: 'cancel', label: 'Cancelar', callback: () => null },
         ],
     });
     if (!itemUuid) return null;
+    if (itemUuid === '__damage_presets__')
+        return openDamagePresetManager({ actorUuid: actor.uuid, group: breathingName });
     return useBreathForm({ actorUuid: actor.uuid, itemUuid });
 }
 

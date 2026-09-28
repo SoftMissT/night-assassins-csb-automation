@@ -5,6 +5,12 @@
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
+import { DAMAGE_PRESETS_KEY, parseDamagePresets } from './damage-preset-service.mjs';
+import {
+    openDamagePresetManager,
+    promptDamagePresetFields,
+    saveDamagePreset,
+} from './dialogs/damage-preset-manager.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
 import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
 import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
@@ -382,6 +388,7 @@ export async function rollDamage(options = {}) {
         ];
     }
 
+    const presetStore = parseDamagePresets(props[DAMAGE_PRESETS_KEY]);
     const dialogResult = await openDamageDialog({
         actor,
         nome: options.nome ?? '',
@@ -390,6 +397,19 @@ export async function rollDamage(options = {}) {
         resourceLabel: attackerKind === 'oni' ? 'PDK' : 'PDR',
         resourceKey: attackerKind === 'oni' ? 'pdk_oni_gasto_valor' : 'pdr_slayer_gasto_valor',
         critical: options.critical === true,
+        presets: presetStore.presets,
+        onSavePreset: async ({ nome: presetNome, entries }) => {
+            const fields = await promptDamagePresetFields({ name: presetNome });
+            if (!fields) return;
+            const saved = await saveDamagePreset(actor, {
+                name: fields.name,
+                group: fields.group,
+                entries,
+            });
+            if (!saved.ok) ui.notifications?.warn?.(saved.reason);
+            else ui.notifications?.info?.(`Preset "${fields.name}" salvo.`);
+        },
+        onManagePresets: () => openDamagePresetManager({ actorUuid: actor.uuid }),
     });
     if (!dialogResult) return;
 

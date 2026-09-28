@@ -314,7 +314,14 @@ export async function promptWeaponDamageEntries(actor) {
  */
 export async function promptBreathingDamageEntries(actor) {
     const { buildBreathingDamageCatalog } = await import('./items/attack-builder.mjs');
-    const catalog = buildBreathingDamageCatalog(actor);
+    let catalog = buildBreathingDamageCatalog(actor);
+    if (catalog.length === 0) {
+        const pack = game.packs?.get?.(
+            'night-assassins-csb-automation.night-assassins-respiracoes'
+        );
+        const documents = pack ? await pack.getDocuments() : [];
+        if (documents.length > 0) catalog = buildBreathingDamageCatalog(actor, { items: documents });
+    }
     if (catalog.length === 0) {
         ui.notifications?.warn?.('Nenhuma Forma de Respiração encontrada neste personagem.');
         return [];

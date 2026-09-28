@@ -110,11 +110,17 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
 
 /**
  * O catálogo mecânico (`catalogs/breathing.json`) contém dados de todas as
- * Respirações do jogo, mas o pacote distribuído está temporariamente isolado
- * em Chamas para permitir a validação completa antes de reabrir as demais.
+ * Respirações do jogo, mas o pacote distribuído publica apenas as Respirações
+ * com motor dedicado e auditoria concluída. Chamas é o piloto do modelo de
+ * hub; as demais voltam em 2026-09-28 após ficarem de fora no piloto.
  */
 export const PUBLISHED_BREATHINGS = Object.freeze([
     'Chamas',
+    'Metal',
+    'Neve',
+    'Névoa',
+    'Pedra',
+    'Vento',
 ]);
 
 const catalog = JSON.parse(await readFile(catalogPath, 'utf8'));
@@ -212,6 +218,14 @@ for (const document of catalog.documents) {
                 ? mechanics.damageTypes.join(',')
                 : '';
         }
+    }
+    // Custos de nível precisam ser numéricos no Item publicado; o catálogo de
+    // algumas Respirações (ex.: Vento) usa rótulos livres ("variável", "-") e o
+    // motor já trata o ausente como 0. Publicamos 0 para manter o campo são.
+    for (let level = 1; level <= 4; level += 1) {
+        const costKey = `nvl${level}_custo`;
+        if (props[costKey] !== undefined && !Number.isFinite(Number(props[costKey])))
+            props[costKey] = 0;
     }
     const richTextKeys = [
         'descricao',

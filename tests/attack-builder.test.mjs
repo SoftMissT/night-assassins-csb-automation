@@ -237,6 +237,17 @@ describe('attack-builder', () => {
         assert.deepEqual(form.levels[2][0].tiposDano, ['fogo']);
     });
 
+    it('aceita uma lista externa de Formas (fallback do Compêndio)', () => {
+        const actor = makeActor({
+            props: { nome_slayer: 'Slayer', nvl_respiracao_num: 2, dex_display: 4 },
+        });
+        actor.items = [];
+        const catalog = buildBreathingDamageCatalog(actor, { items: [breath(actor)] });
+        assert.equal(catalog.length, 1);
+        assert.equal(catalog[0].breathing, 'Teste');
+        assert.equal(catalog[0].forms[0].levels[2][0].dado, '2d6 + 4');
+    });
+
     it('não oferece Formas de Respiração para Oni', () => {
         const actor = makeActor({ props: { nome_oni: 'Akuma', nvl_num: 10 } });
         actor.items = [breath(actor)];

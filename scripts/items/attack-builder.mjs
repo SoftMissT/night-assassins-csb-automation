@@ -153,16 +153,19 @@ export function definitionDamageEntries(definition, actor) {
 }
 
 /**
- * Catálogo de Formas de Respiração do Actor: Respiração → Formas → níveis → entradas.
- * Somente Slayer; Formas passivas são ignoradas.
+ * Catálogo de Formas de Respiração: Respiração → Formas → níveis → entradas.
+ * Somente Slayer; Formas passivas são ignoradas. `items` permite usar o
+ * Compendium como fonte quando o Actor não porta as Formas.
  * @param {Actor} actor
+ * @param {{items?: object[]}} [options]
  * @returns {{breathing:string, forms:{key:string,formName:string,levels:Record<number,object[]>}[]}[]}
  */
-export function buildBreathingDamageCatalog(actor) {
+export function buildBreathingDamageCatalog(actor, { items } = {}) {
     const ownerKind = actorKind(actor);
     if (ownerKind !== 'slayer') return [];
+    const sourceItems = Array.isArray(items) ? items : itemsOf(actor);
     const groups = new Map();
-    for (const item of itemsOf(actor)) {
+    for (const item of sourceItems) {
         if (!isBreathingForm(item)) continue;
         const props = itemProps(item);
         const breathing = String(props.respiracao_nome || '').trim();

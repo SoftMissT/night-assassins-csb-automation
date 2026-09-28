@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.79 — 2026-09-28
+
+- Corrigido: a ficha do Slayer (e o seletor do diálogo) estava sem as Respirações porque `PUBLISHED_BREATHINGS` foi reduzido a Chamas no piloto do hub (v0.11.75). Publicadas de volta as 6 com motor dedicado: Chamas, Metal, Neve, Névoa, Pedra e Vento (Água segue fora, sem service).
+- Botão **+ Respiração** cai no Compêndio `night-assassins-respiracoes` quando o Actor não porta as Formas, listando as Formas publicadas sem exigir importação.
+- Custos de nível não numéricos do catálogo ("variável", "-") passam a ser publicados como 0.
+- Regressão local: `1088/1088` testes, 173 suítes, zero falhas. Gate Foundry v14 pendente.
+
 ## v0.11.78 — 2026-09-28
 
 - Botão **+ Respiração** no diálogo de dano: escolhe Respiração → Forma → Nível e adiciona as entradas de dano da Forma (fórmula, tipo e rótulo do nível escolhido).

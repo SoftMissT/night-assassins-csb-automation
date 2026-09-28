@@ -23,7 +23,7 @@ async function sourceDocuments(directory) {
 }
 
 describe('catálogo de Respirações', () => {
-    it('o catálogo de fonte conhece as 44 Respirações do sistema, mas publica somente Chamas no piloto', async () => {
+    it('o catálogo de fonte conhece as 44 Respirações do sistema, mas publica as 6 com motor dedicado', async () => {
         const documents = await sourceDocuments('../build/compendium/respiracoes/');
         const folders = documents.filter(
             (document) =>
@@ -39,8 +39,8 @@ describe('catálogo de Respirações', () => {
         assert.equal(BREATHING_FOLDER_NAMES.length, 44);
         assert.equal(
             PUBLISHED_BREATHINGS.length,
-            1,
-            'o piloto publica somente Chamas até a validação completa'
+            6,
+            'publica as Respirações com motor dedicado e auditoria concluída'
         );
         assert.equal(
             folders.length,
@@ -124,10 +124,17 @@ describe('catálogo de Respirações', () => {
         assert.equal(storm.system.props.nvl3_dano, '8d8');
     });
 
-    it('publica somente Chamas como Items mecânicos no piloto', async () => {
+    it('publica as 6 Respirações com motor como Items mecânicos', async () => {
         const documents = await sourceDocuments('../build/compendium/respiracoes/');
         const items = documents.filter((document) => document.type === 'equippableItem');
-        const expected = new Map([['Chamas', { count: 9, passive: 'chamas_01' }]]);
+        const expected = new Map([
+            ['Chamas', { count: 9, passive: 'chamas_01' }],
+            ['Metal', { count: 6, passive: 'metal_05' }],
+            ['Neve', { count: 8, passive: 'neve_08' }],
+            ['Névoa', { count: 8, passive: '' }],
+            ['Pedra', { count: 5, passive: '' }],
+            ['Vento', { count: 10, passive: 'vento_01' }],
+        ]);
 
         for (const [breathing, contract] of expected) {
             const forms = items.filter(
@@ -160,8 +167,10 @@ describe('catálogo de Respirações', () => {
             );
         }
         assert.ok(
-            items.every((item) => item.system?.props?.respiracao_nome === 'Chamas'),
-            'nenhuma outra Respiração entra no piloto'
+            items.every((item) =>
+                PUBLISHED_BREATHINGS.includes(item.system?.props?.respiracao_nome ?? '')
+            ),
+            'nenhuma Respiração fora das publicadas entra no pack'
         );
     });
 

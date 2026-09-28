@@ -232,7 +232,9 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
 
     if (action.action === 'new' || (action.action === 'edit' && selected)) {
         const draft = action.action === 'edit' ? selected : null;
-        const { promptWeaponDamageEntries } = await import('../damage-service.mjs');
+        const { promptWeaponDamageEntries, promptBreathingDamageEntries } = await import(
+            '../damage-service.mjs'
+        );
         const editor = await openDamageDialog({
             actor,
             nome: draft?.name ?? '',
@@ -248,6 +250,7 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
                 breathing: draft?.breathing ?? defaultBreathing,
             },
             onRequestWeaponEntries: () => promptWeaponDamageEntries(actor),
+            onRequestBreathingEntries: () => promptBreathingDamageEntries(actor),
         });
         if (!editor?.preset) return openDamagePresetManager({ actorUuid: actor.uuid, group, breathing });
         const result = await saveDamagePreset(actor, editor.preset);

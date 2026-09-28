@@ -322,26 +322,33 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     if (manageButton && typeof options.onManagePresets === 'function')
         manageButton.addEventListener('click', () => options.onManagePresets());
 
-    const weaponButton = root.querySelector?.('#na-weapon-btn');
-    if (weaponButton && typeof options.onRequestWeaponEntries === 'function') {
-        weaponButton.addEventListener('click', async () => {
-            weaponButton.disabled = true;
+    const appendEntries = (added) => {
+        if (!Array.isArray(added) || added.length === 0) return;
+        const current = collectEntries(container).filter(
+            (entry) =>
+                entry.dado ||
+                entry.fixo !== 0 ||
+                entry.attrs.length > 0 ||
+                entry.tiposDano.length > 0
+        );
+        renderEntries([...current, ...added]);
+    };
+
+    const bindAppendButton = (selector, request) => {
+        const button = root.querySelector?.(selector);
+        if (!button || typeof request !== 'function') return;
+        button.addEventListener('click', async () => {
+            button.disabled = true;
             try {
-                const added = await options.onRequestWeaponEntries();
-                if (!Array.isArray(added) || added.length === 0) return;
-                const current = collectEntries(container).filter(
-                    (entry) =>
-                        entry.dado ||
-                        entry.fixo !== 0 ||
-                        entry.attrs.length > 0 ||
-                        entry.tiposDano.length > 0
-                );
-                renderEntries([...current, ...added]);
+                appendEntries(await request());
             } finally {
-                weaponButton.disabled = false;
+                button.disabled = false;
             }
         });
-    }
+    };
+
+    bindAppendButton('#na-weapon-btn', options.onRequestWeaponEntries);
+    bindAppendButton('#na-breath-btn', options.onRequestBreathingEntries);
 
     renumber();
     updatePreview();
@@ -368,6 +375,7 @@ export async function openDamageDialog({
     onSavePreset = null,
     onManagePresets = null,
     onRequestWeaponEntries = null,
+    onRequestBreathingEntries = null,
 }) {
     const props = actor?.system?.props ?? {};
     const attrValues = {};
@@ -434,6 +442,7 @@ export async function openDamageDialog({
       <div class="na-dmg-entries-actions">
         <button type="button" id="na-add-btn" class="na-btn">+ Entrada</button>
         <button type="button" id="na-weapon-btn" class="na-btn">+ Dano da arma</button>
+        <button type="button" id="na-breath-btn" class="na-btn">+ Respiração</button>
       </div>
     </div>
     <div id="na-entradas-container">${entradasIniciais}</div>
@@ -470,6 +479,7 @@ export async function openDamageDialog({
             onSavePreset,
             onManagePresets,
             onRequestWeaponEntries,
+            onRequestBreathingEntries,
         });
     });
 

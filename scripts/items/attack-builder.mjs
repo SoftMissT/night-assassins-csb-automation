@@ -152,6 +152,40 @@ export function definitionDamageEntries(definition, actor) {
     ).flat();
 }
 
+/**
+ * Catálogo de Formas de Respiração do Actor: Respiração → Formas → níveis → entradas.
+ * Somente Slayer; Formas passivas são ignoradas.
+ * @param {Actor} actor
+ * @returns {{breathing:string, forms:{key:string,formName:string,levels:Record<number,object[]>}[]}[]}
+ */
+export function buildBreathingDamageCatalog(actor) {
+    const ownerKind = actorKind(actor);
+    if (ownerKind !== 'slayer') return [];
+    const groups = new Map();
+    for (const item of itemsOf(actor)) {
+        if (!isBreathingForm(item)) continue;
+        const props = itemProps(item);
+        const breathing = String(props.respiracao_nome || '').trim();
+        const formName = String(props.nome_forma || item?.name || '').trim();
+        if (!breathing || !formName) continue;
+        const levels = {};
+        for (const level of [1, 2, 3, 4]) {
+            const normalized = normalizeBreathingTechnique(item, { level, ownerKind });
+            if (!normalized.ok || normalized.definition.metadata.passive) continue;
+            const entries = definitionDamageEntries(normalized.definition, actor);
+            if (entries.length > 0) levels[level] = entries;
+        }
+        if (Object.keys(levels).length === 0) continue;
+        if (!groups.has(breathing)) groups.set(breathing, []);
+        groups.get(breathing).push({
+            key: item.uuid ?? item.id ?? item.name,
+            formName,
+            levels,
+        });
+    }
+    return [...groups.entries()].map(([breathing, forms]) => ({ breathing, forms }));
+}
+
 export function createAttackBuilderModel(actor) {
     const actorProps = actor?.system?.props ?? {};
     const ownerKind = actorKind(actor);

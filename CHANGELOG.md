@@ -1,4 +1,10 @@
 # Changelog
+## v0.11.78 — 2026-09-28
+
+- Botão **+ Respiração** no diálogo de dano: escolhe Respiração → Forma → Nível e adiciona as entradas de dano da Forma (fórmula, tipo e rótulo do nível escolhido).
+- Catálogo de Formas do Actor (`buildBreathingDamageCatalog`) reaproveita o normalizador de técnicas; Formas passivas ficam de fora e o recurso é exclusivo de Slayer.
+- Regressão local: `1087/1087` testes, 173 suítes, zero falhas. Gate Foundry v14 pendente.
+
 ## v0.11.77 — 2026-09-28
 
 - Diálogo de dano e gerenciador maiores e coesos com o design system do módulo (Orbitron/Rajdhani, dourado/sangue, fundo ritual); escala tipográfica e controles ampliados.

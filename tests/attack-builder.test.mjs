@@ -7,6 +7,7 @@ setupFoundryMocks();
 
 import {
     buildAttackSelection,
+    buildBreathingDamageCatalog,
     createAttackBuilderModel,
 } from '../scripts/items/attack-builder.mjs';
 
@@ -207,6 +208,39 @@ describe('attack-builder', () => {
         assert.equal(result.entradas[0].dado, '2d8');
         assert.equal(result.entradas[0].fixo, 6);
         assert.equal(result.resourceKey, 'pdk');
+    });
+
+    it('monta o catálogo de Formas por Respiração, ignorando passivas', () => {
+        const actor = makeActor({
+            props: { nome_slayer: 'Slayer', nvl_respiracao_num: 2, dex_display: 4 },
+        });
+        const active = breath(actor);
+        const passive = breath(actor);
+        passive.id = 'breath-passive';
+        passive.uuid = 'Actor.slayer.Item.breath-passive';
+        Object.assign(passive.system.props, {
+            forma_id: 'teste_02',
+            nome_forma: 'Forma Passiva',
+            forma_passiva: 1,
+            tipo_manobra: 'Passiva',
+        });
+        actor.items = [active, passive];
+
+        const catalog = buildBreathingDamageCatalog(actor);
+        assert.equal(catalog.length, 1);
+        assert.equal(catalog[0].breathing, 'Teste');
+        assert.equal(catalog[0].forms.length, 1);
+        const form = catalog[0].forms[0];
+        assert.equal(form.formName, 'Primeira Forma');
+        assert.deepEqual(Object.keys(form.levels), ['2']);
+        assert.equal(form.levels[2][0].dado, '2d6 + 4');
+        assert.deepEqual(form.levels[2][0].tiposDano, ['fogo']);
+    });
+
+    it('não oferece Formas de Respiração para Oni', () => {
+        const actor = makeActor({ props: { nome_oni: 'Akuma', nvl_num: 10 } });
+        actor.items = [breath(actor)];
+        assert.deepEqual(buildBreathingDamageCatalog(actor), []);
     });
 
     it('ignora Formas passivas e preserva o modo manual', () => {

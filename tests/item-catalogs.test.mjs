@@ -28,7 +28,7 @@ describe('catálogo de Respirações', () => {
         const folders = documents.filter(
             (document) =>
                 String(document._key).startsWith('!folders!') &&
-                !String(document.name ?? '').startsWith('_Interno')
+                String(document.name ?? '').startsWith('Respiração ')
         );
         const items = documents.filter((document) => document.type === 'equippableItem');
         assert.equal(
@@ -249,6 +249,21 @@ it('publica as Formas de Pedra com nome em português e preserva o japonês sepa
     assert.equal(form.name, 'Pedra Serpentino Duplo');
     assert.equal(form.system.props.nome_forma, 'Serpentino Duplo');
     assert.equal(form.system.props.nome_jp, 'Jamongan Sōkyoku');
+});
+
+it('publica Chamas na pasta pública e sem travessão artificial', async () => {
+    const documents = await sourceDocuments('../build/compendium/respiracoes/');
+    assert.equal(documents.some((document) => String(document.name).includes('Interno')), false);
+    const flameFolder = documents.find(
+        (document) => document.type === 'Item' && document.name === 'Respiração das Chamas'
+    );
+    assert.ok(flameFolder);
+    const flameForm = documents.find(
+        (document) => document.type === 'equippableItem' && document.system?.props?.forma_id === 'chamas_01'
+    );
+    assert.ok(flameForm);
+    assert.notEqual(flameForm.folder, flameFolder._id);
+    assert.equal(flameForm.name.includes(' — '), false);
 });
 
 describe('catálogo de armas Slayer', () => {

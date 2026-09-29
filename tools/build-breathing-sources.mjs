@@ -161,6 +161,7 @@ catalog.documents = catalog.documents.map((document) =>
 
 for (const document of catalog.documents) {
     if (document.type !== 'equippableItem') continue;
+    document.name = String(document.name ?? '').replace(/\s+[—–]\s+/gu, ': ');
     const icon = breathingIconPath(document.system?.props?.respiracao_nome);
     if (icon) document.img = icon;
     const flame = flameFormById(document.system?.props?.forma_id);
@@ -259,7 +260,7 @@ const flameDataFolder = structuredClone(flameFolder);
 Object.assign(flameDataFolder, {
     _id: 'NAFlameData00001',
     _key: '!folders!NAFlameData00001',
-    name: '_Interno — Formas das Chamas (não importar)',
+    name: 'Formas das Chamas (técnicas)',
     folder: null,
 });
 catalog.documents.push(flameDataFolder);

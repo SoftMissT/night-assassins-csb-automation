@@ -1,4 +1,9 @@
 # Changelog
+## v0.11.83 — 2026-09-29 — publicação dos nomes e pastas corrigidos
+
+- O gerador publica nomes de Formas sem travessão artificial.
+- A pasta técnica das Chamas deixou de aparecer como “Interno — ...”.
+
 ## v0.11.82 — 2026-09-29 — templates de Items e rodapé do dano
 
 - Corrigida a inversão dos nomes das Formas de Pedra: português em `name`/`nome_forma`; japonês apenas em `nome_jp`, oculto no template.

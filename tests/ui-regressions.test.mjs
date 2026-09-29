@@ -10,9 +10,11 @@ test('diálogo de dano mantém os controles fora do scroll das entradas', async 
         read('styles/na-csb-automation.css'),
   ]);
   assert.match(dialog, /contentClasses:\s*\['na-dmg-window'\]/u);
+  assert.match(css, /\.na-dmg-window\s*\{[^}]*height:\s*calc\(100vh - 40px\)/isu);
   assert.match(css, /\.na-dmg-window\s*\{[^}]*display:\s*flex/isu);
+  assert.match(css, /\.na-dmg-window \.na-dmg-dialog\s*\{[^}]*display:\s*flex/isu);
   assert.match(css, /\.na-dmg-window #na-entradas-container\s*\{[^}]*overflow-y:\s*auto/isu);
-    assert.match(css, /\.na-dmg-window \.dialog-content\s*\{[^}]*min-height:\s*0/isu);
+  assert.match(css, /\.na-dmg-window \.dialog-content,\s*\.na-dmg-window > \.dialog-content\s*\{[^}]*min-height:\s*0/isu);
     assert.match(css, /\.na-dmg-window \.na-dmg-dialog\s*\{[^}]*overflow:\s*hidden/isu);
 });
 

@@ -1,4 +1,8 @@
 # Changelog
+## v0.11.84 — 2026-09-29 — rodapé fixo no diálogo de dano
+
+- O diálogo de dano agora limita a altura ao viewport e mantém `Rolar`/`Cancelar` fora do scroll das entradas.
+
 ## v0.11.83 — 2026-09-29 — publicação dos nomes e pastas corrigidos
 
 - O gerador publica nomes de Formas sem travessão artificial.

@@ -3700,12 +3700,16 @@
 /* O rodapé do DialogV2 fica fora da área rolável. Só as entradas crescem. */
 .na-dmg-window {
     display: flex;
+    flex-direction: column;
+    height: calc(100vh - 40px);
+    max-height: calc(100vh - 40px);
     min-height: 0;
     overflow: hidden;
     padding: 0;
 }
 
-.na-dmg-window .dialog-content {
+.na-dmg-window .dialog-content,
+.na-dmg-window > .dialog-content {
     display: flex;
     flex: 1 1 auto;
     min-height: 0;
@@ -3714,6 +3718,8 @@
 }
 
 .na-dmg-window .na-dmg-dialog {
+    display: flex;
+    flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
@@ -3727,6 +3733,8 @@
 }
 
 .na-dmg-window .dialog-buttons,
-.na-dmg-window .form-footer {
+.na-dmg-window .form-footer,
+.na-dmg-window > .dialog-buttons,
+.na-dmg-window > .form-footer {
     flex: 0 0 auto;
 }

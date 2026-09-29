@@ -6,6 +6,7 @@
         "header": {
             "key": "arma_header",
             "type": "panel",
+            "title": "Resumo da Arma",
             "contents": [
                 {
                     "key": "",
@@ -249,6 +250,7 @@
                     "escapeHTML": false,
                     "type": "panel",
                     "contents": [],
+                    "visibilityFormula": "false",
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
@@ -262,6 +264,7 @@
         "body": {
             "key": "arma_body",
             "type": "panel",
+            "title": "Dados da Arma",
             "contents": [
                 {
                     "key": "arma_contexto",
@@ -657,6 +660,7 @@
                     "escapeHTML": false,
                     "type": "panel",
                     "contents": [],
+                    "visibilityFormula": "false",
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
@@ -697,6 +701,7 @@
                     "escapeHTML": false,
                     "type": "panel",
                     "contents": [],
+                    "visibilityFormula": "false",
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",

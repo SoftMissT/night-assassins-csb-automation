@@ -240,6 +240,17 @@ describe('catálogo de Respirações', () => {
     });
 });
 
+it('publica as Formas de Pedra com nome em português e preserva o japonês separado', async () => {
+    const documents = await sourceDocuments('../build/compendium/respiracoes/');
+    const form = documents.find(
+        (document) => document.type === 'equippableItem' && document.system?.props?.forma_id === 'pedra_01'
+    );
+    assert.ok(form);
+    assert.equal(form.name, 'Pedra Serpentino Duplo');
+    assert.equal(form.system.props.nome_forma, 'Serpentino Duplo');
+    assert.equal(form.system.props.nome_jp, 'Jamongan Sōkyoku');
+});
+
 describe('catálogo de armas Slayer', () => {
     it('publica quatro armas normais e as dezessete armas especiais oficiais', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');

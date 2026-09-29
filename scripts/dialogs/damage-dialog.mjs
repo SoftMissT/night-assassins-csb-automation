@@ -130,7 +130,7 @@ function hasContentEntry(entry) {
 
 function presetOptionsHtml(presets, selected = '') {
     const groups = groupedPresets(presets);
-    if (groups.length === 0) return '<option value="">— nenhum preset salvo —</option>';
+    if (groups.length === 0) return '<option value="">Nenhum preset salvo</option>';
     return groups
         .map(
             (group) =>
@@ -154,7 +154,7 @@ function presetRowHtml(presets, { presetDraft, onSavePreset }) {
       <label class="na-label">Preset de dano</label>
       <div class="na-dmg-presets-row">
         <select id="na-preset-sel">${
-            hasPresets ? '<option value="">— aplicar preset —</option>' : ''
+            hasPresets ? '<option value="">Aplicar preset</option>' : ''
         }${presetOptionsHtml(presets, presetDraft?.id ?? '')}</select>
         ${saveButton}
       </div>
@@ -573,7 +573,7 @@ export async function openDamageDialog({
 
     const title = presetDraft
         ? presetDraft.name
-            ? `Preset — ${escapeHtml(presetDraft.name)}`
+            ? `Preset: ${escapeHtml(presetDraft.name)}`
             : 'Novo preset de dano'
         : escapeHtml(nome || 'Rolar Dano');
 
@@ -713,8 +713,9 @@ export async function openDamageDialog({
         result = await foundry.applications.api.DialogV2.wait({
             window: {
                 title: presetDraft
-                    ? 'Preset de Dano — Night Assassins'
-                    : 'Rolar Dano — Night Assassins',
+                    ? 'Preset de Dano: Night Assassins'
+                    : 'Rolar Dano: Night Assassins',
+                contentClasses: ['na-dmg-window'],
                 resizable: true,
             },
             position: { width: 720 },

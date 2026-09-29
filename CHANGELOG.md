@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.82 — 2026-09-29 — templates de Items e rodapé do dano
+
+- Corrigida a inversão dos nomes das Formas de Pedra: português em `name`/`nome_forma`; japonês apenas em `nome_jp`, oculto no template.
+- Removido campo vazio do template de Respiração e ocultadas caixas vazias dos templates de arma normal/especial.
+- Corrigido o `DialogV2`: só a lista de entradas rola; `Rolar` e `Cancelar` permanecem no rodapé visível.
+- Removidos travessões artificiais dos rótulos do diálogo.
+
 ## v0.11.81 — 2026-09-28
 
 - Entradas de dano compactas: uma barra por entrada (`[n] ação · dados · +fixo · origem · ✕`) + chips micro de atributos/tipos; palco com teto de 40vh e scroll interno — o diálogo não cresce mais com 2+ entradas.

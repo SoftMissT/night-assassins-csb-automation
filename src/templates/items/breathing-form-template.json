@@ -22,6 +22,7 @@
                             "editableFormula": "",
                             "escapeHTML": false,
                             "type": "tabbedPanel",
+                            "title": "Forma de Respiração",
                             "contents": [
                                 {
                                     "key": "tab_info",
@@ -71,25 +72,6 @@
                                                     "maxLength": ""
                                                 },
                                                 {
-                                                    "key": "",
-                                                    "colSpan": 1,
-                                                    "rowSpan": 1,
-                                                    "cssClass": "",
-                                                    "role": 0,
-                                                    "editRole": 0,
-                                                    "permission": 0,
-                                                    "tooltip": "",
-                                                    "visibilityFormula": "",
-                                                    "editableFormula": "",
-                                                    "escapeHTML": false,
-                                                    "type": "textField",
-                                                    "size": "full-size",
-                                                    "label": "",
-                                                    "defaultValue": "",
-                                                    "allowedCharacters": "",
-                                                    "maxLength": ""
-                                                },
-                                                {
                                                     "key": "nome_jp",
                                                     "colSpan": 1,
                                                     "rowSpan": 1,
@@ -98,7 +80,7 @@
                                                     "editRole": 0,
                                                     "permission": 0,
                                                     "tooltip": "",
-                                                    "visibilityFormula": "",
+                                                    "visibilityFormula": "false",
                                                     "editableFormula": "",
                                                     "escapeHTML": false,
                                                     "type": "textField",
@@ -177,7 +159,7 @@
                                             "verticalAlign": "top",
                                             "collapsible": false,
                                             "defaultCollapsed": false,
-                                            "title": "",
+                                            "title": "Dados da Forma",
                                             "titleStyle": "default"
                                         },
                                         {
@@ -217,7 +199,7 @@
                                             "verticalAlign": "top",
                                             "collapsible": false,
                                             "defaultCollapsed": false,
-                                            "title": "",
+                                            "title": "Descrição",
                                             "titleStyle": "default"
                                         },
                                         {
@@ -276,7 +258,7 @@
                                             "verticalAlign": "center",
                                             "collapsible": false,
                                             "defaultCollapsed": false,
-                                            "title": "",
+                                            "title": "Requisito",
                                             "titleStyle": "default"
                                         }
                                     ]
@@ -1101,7 +1083,7 @@
                                             "type": "label",
                                             "size": "full-size",
                                             "icon": "",
-                                            "value": "<div style=\"font-size:13px;color:#888;line-height:1.6;margin-top:12px;\"><strong>${nome_forma}$</strong><br><em>${nome_jp}$</em><br>${respiracao_nome}$ · ${tipo_manobra}$ · Nível Req: ${nivel_req}$<br><br>${descricao}$</div>",
+                                            "value": "<div style=\"font-size:13px;color:#888;line-height:1.6;margin-top:12px;\"><strong>${nome_forma}$</strong><br>${respiracao_nome}$ · ${tipo_manobra}$ · Nível Req: ${nivel_req}$<br><br>${descricao}$</div>",
                                             "prefix": "",
                                             "suffix": "",
                                             "rollMessage": "",

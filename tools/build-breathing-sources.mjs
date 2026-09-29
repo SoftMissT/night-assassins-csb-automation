@@ -196,9 +196,9 @@ for (const document of catalog.documents) {
     const curated = stone ?? mist ?? metal ?? snow;
     if (curated) {
         if (stone) {
-            document.name = `Iwa no Kokyū ${stone.name}`;
-            document.system.props.nome_forma = stone.name;
-            document.system.props.nome_jp = stone.ptName ?? '';
+            document.name = `${props.respiracao_nome} ${stone.ptName ?? stone.name}`.trim();
+            document.system.props.nome_forma = stone.ptName ?? stone.name;
+            document.system.props.nome_jp = stone.name ?? '';
         }
         const action = curated.action ?? curated.actions?.join(' + ') ?? '';
         document.system.props.tipo_manobra =

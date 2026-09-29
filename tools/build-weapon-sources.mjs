@@ -191,7 +191,7 @@ function specialWeaponAwakeningStates(props = {}) {
         states: [
             {
                 id: 'selado',
-                nome: `Estado Selado — ${sealedName}`,
+                nome: `Estado Selado: ${sealedName}`,
                 estado: 'Selado',
                 forma: sealedName,
                 regras: sealedRules,
@@ -202,7 +202,7 @@ function specialWeaponAwakeningStates(props = {}) {
             },
             {
                 id: 'primeiro_despertar',
-                nome: `Primeiro Despertar — ${firstName}`,
+                nome: `Primeiro Despertar: ${firstName}`,
                 estado: 'Primeiro Despertar',
                 forma: firstName,
                 ritual: props.arma_ritual?.nome ?? '',

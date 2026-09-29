@@ -126,6 +126,9 @@ export function normalizePresetEntry(entry) {
     if (!hasContent) return null;
     const rawIndex = Number(entry.attackIndex);
     const attackIndex = Number.isInteger(rawIndex) && rawIndex >= 0 ? rawIndex : null;
+    const source = String(entry.source ?? '')
+        .trim()
+        .slice(0, 80);
     return {
         tipoAcao,
         dado,
@@ -133,6 +136,7 @@ export function normalizePresetEntry(entry) {
         attrs,
         tiposDano,
         ...(attackIndex !== null ? { attackIndex } : {}),
+        ...(source ? { source } : {}),
     };
 }
 

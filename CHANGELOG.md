@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.80 — 2026-09-28
+
+- Corrigido: salvar o preset travava o diálogo ("quebra a hud e não deixa rolar"). "Salvar como preset", "+ Dano da arma" e "+ Respiração" viraram painéis inline; o diálogo de dano agora é não-modal; nenhum diálogo aninhado.
+- A origem do dano aparece: ao adicionar uma Forma ou arma, o nome do ataque é preenchido (se vazio) e cada entrada mostra seu `source`.
+- `buildDamageCatalogs(actor)` monta os catálogos de arma e de Forma (fallback ao Compêndio só para Slayer).
+- Regressão local: `1088/1088` testes, 173 suítes. Gate Foundry v14 pendente.
+
 ## v0.11.79 — 2026-09-28
 
 - Corrigido: a ficha do Slayer (e o seletor do diálogo) estava sem as Respirações porque `PUBLISHED_BREATHINGS` foi reduzido a Chamas no piloto do hub (v0.11.75). Publicadas de volta as 6 com motor dedicado: Chamas, Metal, Neve, Névoa, Pedra e Vento (Água segue fora, sem service).

@@ -7,7 +7,6 @@ import { openDamageDialog } from './damage-dialog.mjs';
 import { actorKind } from '../actor-kind.mjs';
 import {
     DAMAGE_PRESETS_KEY,
-    PRESET_GROUPS,
     damagePresetsPatch,
     parseDamagePresets,
     presetGroupKey,
@@ -99,46 +98,7 @@ export async function saveDamagePreset(actor, draft = {}) {
     return { ok: true, presets: result.presets, preset: saved };
 }
 
-/**
- * Pede nome, Respiração e grupo para salvar um preset fora do editor.
- * @param {{name?:string,group?:string,breathing?:string}} defaults
- * @returns {Promise<{name:string,group:string,breathing:string}|null>}
- */
-export async function promptDamagePresetFields({ name = '', group = 'normal', breathing = '' } = {}) {
-    const groupList = PRESET_GROUPS.map(
-        (entry) => `<option value="${escapeHtml(entry.label)}"></option>`
-    ).join('');
-    const result = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Salvar preset de dano' },
-        position: { width: 460 },
-        modal: true,
-        rejectClose: false,
-        content: `<div class="na-preset-manager na-csb-automation">
-      <label class="na-label">Nome do preset</label>
-      <input type="text" name="name" maxlength="80" value="${escapeHtml(name || '')}" placeholder="ex: Rengoku" />
-      <label class="na-label">Respiração usada</label>
-      <input type="text" name="breathing" maxlength="60" value="${escapeHtml(breathing)}" placeholder="ex: Chamas" />
-      <label class="na-label">Grupo</label>
-      <input type="text" name="group" list="na-preset-group-list" maxlength="40" value="${escapeHtml(presetGroupLabel(group))}" />
-      <datalist id="na-preset-group-list">${groupList}</datalist>
-    </div>`,
-        buttons: [
-            {
-                action: 'save',
-                label: 'Salvar',
-                default: true,
-                callback: (_event, button) => ({
-                    name: button.form.querySelector('[name="name"]')?.value?.trim() ?? '',
-                    breathing: button.form.querySelector('[name="breathing"]')?.value?.trim() ?? '',
-                    group: button.form.querySelector('[name="group"]')?.value?.trim() ?? '',
-                }),
-            },
-            { action: 'cancel', label: 'Cancelar', callback: () => null },
-        ],
-    });
-    if (!result?.name) return null;
-    return { name: result.name, group: result.group || 'normal', breathing: result.breathing };
-}
+
 
 /**
  * Abre o gerenciador de presets de dano do Actor.
@@ -232,9 +192,8 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
 
     if (action.action === 'new' || (action.action === 'edit' && selected)) {
         const draft = action.action === 'edit' ? selected : null;
-        const { promptWeaponDamageEntries, promptBreathingDamageEntries } = await import(
-            '../damage-service.mjs'
-        );
+        const { buildDamageCatalogs } = await import('../damage-service.mjs');
+        const { weaponCatalog, breathingCatalog } = await buildDamageCatalogs(actor);
         const editor = await openDamageDialog({
             actor,
             nome: draft?.name ?? '',
@@ -243,14 +202,14 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
             resourceLabel,
             presets: store.presets,
             breathing: draft?.breathing ?? defaultBreathing,
+            weaponCatalog,
+            breathingCatalog,
             presetDraft: {
                 id: draft?.id,
                 name: draft?.name ?? '',
                 groupLabel: presetGroupLabel(draft?.group ?? defaultGroup),
                 breathing: draft?.breathing ?? defaultBreathing,
             },
-            onRequestWeaponEntries: () => promptWeaponDamageEntries(actor),
-            onRequestBreathingEntries: () => promptBreathingDamageEntries(actor),
         });
         if (!editor?.preset) return openDamagePresetManager({ actorUuid: actor.uuid, group, breathing });
         const result = await saveDamagePreset(actor, editor.preset);

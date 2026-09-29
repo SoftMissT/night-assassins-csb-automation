@@ -8,7 +8,6 @@ import { openDamageDialog } from './dialogs/damage-dialog.mjs';
 import { DAMAGE_PRESETS_KEY, parseDamagePresets, presetGroupKey } from './damage-preset-service.mjs';
 import {
     openDamagePresetManager,
-    promptDamagePresetFields,
     saveDamagePreset,
 } from './dialogs/damage-preset-manager.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
@@ -220,14 +219,6 @@ export function weaponProfileEntries(profile, attrValues, { attackIndex = null }
     return Array.from({ length: count }, (_unused, index) => entryFor(index));
 }
 
-function escapePickerHtml(value) {
-    return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;');
-}
-
 const WEAPON_TEMPLATE_IDS = new Set(['NAWeaponTpl00001', 'NASpecialWeaponTpl00001']);
 
 function isWeaponItem(item) {
@@ -273,156 +264,27 @@ export function buildWeaponDamageCatalog(actor) {
 }
 
 /**
- * Pede ao usuário qual arma/perfil adicionar e devolve as entradas de dano.
+ * Catálogos de dano disponíveis para o diálogo: armas e Formas de Respiração
+ * (com fallback ao Compêndio quando o Actor não porta as Formas).
  * @param {Actor} actor
- * @returns {Promise<object[]>}
+ * @returns {Promise<{weaponCatalog:object[],breathingCatalog:object[]}>}
  */
-export async function promptWeaponDamageEntries(actor) {
-    const catalog = buildWeaponDamageCatalog(actor);
-    if (catalog.length === 0) {
-        ui.notifications?.warn?.('Nenhuma arma encontrada neste personagem.');
-        return [];
+export async function buildDamageCatalogs(actor) {
+    const weaponCatalog = buildWeaponDamageCatalog(actor);
+    let breathingCatalog = [];
+    if (isSlayerActor(actor)) {
+        const { buildBreathingDamageCatalog } = await import('./items/attack-builder.mjs');
+        breathingCatalog = buildBreathingDamageCatalog(actor);
+        if (breathingCatalog.length === 0) {
+            const pack = game.packs?.get?.(
+                'night-assassins-csb-automation.night-assassins-respiracoes'
+            );
+            const documents = pack ? await pack.getDocuments() : [];
+            if (documents.length > 0)
+                breathingCatalog = buildBreathingDamageCatalog(actor, { items: documents });
+        }
     }
-    if (catalog.length === 1) return catalog[0].entries;
-    const options = catalog
-        .map((entry, index) => `<option value="${index}">${entry.label}</option>`)
-        .join('');
-    const chosen = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Adicionar dano da arma' },
-        position: { width: 480 },
-        content: `<div class="na-csb-automation"><label class="na-label">Arma / perfil</label><select name="weapon">${options}</select></div>`,
-        modal: true,
-        rejectClose: false,
-        buttons: [
-            {
-                action: 'add',
-                label: 'Adicionar',
-                default: true,
-                callback: (_event, button) => Number(button.form.elements.weapon.value),
-            },
-            { action: 'cancel', label: 'Cancelar', callback: () => null },
-        ],
-    });
-    if (!Number.isInteger(chosen)) return [];
-    return catalog[chosen]?.entries ?? [];
-}
-
-/**
- * Pede Respiração → Forma → Nível e devolve as entradas de dano da Forma.
- * @param {Actor} actor
- * @returns {Promise<object[]>}
- */
-export async function promptBreathingDamageEntries(actor) {
-    const { buildBreathingDamageCatalog } = await import('./items/attack-builder.mjs');
-    let catalog = buildBreathingDamageCatalog(actor);
-    if (catalog.length === 0) {
-        const pack = game.packs?.get?.(
-            'night-assassins-csb-automation.night-assassins-respiracoes'
-        );
-        const documents = pack ? await pack.getDocuments() : [];
-        if (documents.length > 0) catalog = buildBreathingDamageCatalog(actor, { items: documents });
-    }
-    if (catalog.length === 0) {
-        ui.notifications?.warn?.('Nenhuma Forma de Respiração encontrada neste personagem.');
-        return [];
-    }
-    const breathingOptions = catalog
-        .map(
-            (group) =>
-                `<option value="${escapePickerHtml(group.breathing)}">${escapePickerHtml(group.breathing)}</option>`
-        )
-        .join('');
-    const content = `<div class="na-csb-automation">
-      <div class="na-row-grid">
-        <div><label class="na-label">Respiração</label><select name="breathing">${breathingOptions}</select></div>
-        <div><label class="na-label">Forma</label><select name="form"></select></div>
-        <div><label class="na-label">Nível</label><select name="level"></select></div>
-      </div>
-      <label class="na-label">Entradas de dano</label>
-      <div id="na-breath-preview" class="na-breath-preview">—</div>
-    </div>`;
-
-    const hookApi = globalThis.Hooks;
-    const renderHook = hookApi?.on?.('renderDialogV2', (_dialog, element) => {
-        const root = element?.querySelector ? element : element?.[0];
-        if (!root?.querySelector?.('select[name="form"]')) return;
-        const breathingSelect = root.querySelector('select[name="breathing"]');
-        const formSelect = root.querySelector('select[name="form"]');
-        const levelSelect = root.querySelector('select[name="level"]');
-        const preview = root.querySelector('#na-breath-preview');
-        if (!breathingSelect || !formSelect || !levelSelect || !preview) return;
-
-        const currentGroup = () =>
-            catalog.find((group) => group.breathing === breathingSelect.value) ?? catalog[0];
-        const updatePreview = () => {
-            const group = currentGroup();
-            const form = group?.forms.find((entry) => entry.key === formSelect.value);
-            const entries = form?.levels?.[Number(levelSelect.value)] ?? [];
-            preview.textContent = entries.length
-                ? entries.map((entry) => entry.sourceLabel || entry.dado || 'dano').join('  |  ')
-                : '—';
-        };
-        const fillLevels = () => {
-            const group = currentGroup();
-            const form =
-                group?.forms.find((entry) => entry.key === formSelect.value) ?? group?.forms[0];
-            const levels = form
-                ? Object.keys(form.levels)
-                      .map(Number)
-                      .sort((left, right) => left - right)
-                : [];
-            levelSelect.innerHTML = levels
-                .map((level) => `<option value="${level}">Nível ${level}</option>`)
-                .join('');
-            updatePreview();
-        };
-        const fillForms = () => {
-            const group = currentGroup();
-            formSelect.innerHTML = (group?.forms ?? [])
-                .map(
-                    (form) =>
-                        `<option value="${escapePickerHtml(form.key)}">${escapePickerHtml(form.formName)}</option>`
-                )
-                .join('');
-            fillLevels();
-        };
-        breathingSelect.addEventListener('change', fillForms);
-        formSelect.addEventListener('change', fillLevels);
-        levelSelect.addEventListener('change', updatePreview);
-        fillForms();
-    });
-
-    let entries;
-    try {
-        entries = await foundry.applications.api.DialogV2.wait({
-            window: { title: 'Adicionar Forma de Respiração' },
-            position: { width: 560 },
-            content,
-            modal: true,
-            rejectClose: false,
-            buttons: [
-                {
-                    action: 'add',
-                    label: 'Adicionar',
-                    default: true,
-                    callback: (_event, button) => {
-                        const group = catalog.find(
-                            (entry) => entry.breathing === button.form.elements.breathing.value
-                        );
-                        const form = group?.forms.find(
-                            (entry) => entry.key === button.form.elements.form.value
-                        );
-                        const level = Number(button.form.elements.level.value);
-                        return form?.levels?.[level] ?? [];
-                    },
-                },
-                { action: 'cancel', label: 'Cancelar', callback: () => null },
-            ],
-        });
-    } finally {
-        if (renderHook !== undefined) hookApi?.off?.('renderDialogV2', renderHook);
-    }
-    return Array.isArray(entries) ? entries : [];
+    return { weaponCatalog, breathingCatalog };
 }
 
 async function chooseWeaponProfile(profiles) {
@@ -595,6 +457,7 @@ export async function rollDamage(options = {}) {
 
     const presetStore = parseDamagePresets(props[DAMAGE_PRESETS_KEY]);
     const breathingContext = String(options.breathing ?? '').trim();
+    const { weaponCatalog, breathingCatalog } = await buildDamageCatalogs(actor);
     const dialogResult = await openDamageDialog({
         actor,
         nome: options.nome ?? '',
@@ -606,24 +469,18 @@ export async function rollDamage(options = {}) {
         presets: presetStore.presets,
         breathing: breathingContext,
         weaponLabel: options.weaponLabel ?? '',
-        onRequestWeaponEntries: () => promptWeaponDamageEntries(actor),
-        onRequestBreathingEntries: () => promptBreathingDamageEntries(actor),
-        onSavePreset: async ({ nome: presetNome, entries, resourceCost, breathing }) => {
-            const fields = await promptDamagePresetFields({
-                name: presetNome,
-                group: presetGroupKey(breathing || breathingContext),
-                breathing: breathing || breathingContext,
-            });
-            if (!fields) return;
+        weaponCatalog,
+        breathingCatalog,
+        onSavePreset: async ({ name, group, breathing, resourceCost, entries }) => {
             const saved = await saveDamagePreset(actor, {
-                name: fields.name,
-                group: fields.group,
-                breathing: fields.breathing,
+                name,
+                group: presetGroupKey(group || breathing || breathingContext),
+                breathing: breathing || breathingContext,
                 resourceCost,
                 entries,
             });
             if (!saved.ok) ui.notifications?.warn?.(saved.reason);
-            else ui.notifications?.info?.(`Preset "${fields.name}" salvo.`);
+            else ui.notifications?.info?.(`Preset "${saved.preset?.name ?? name}" salvo.`);
         },
         onManagePresets: () =>
             openDamagePresetManager({ actorUuid: actor.uuid, breathing: breathingContext }),

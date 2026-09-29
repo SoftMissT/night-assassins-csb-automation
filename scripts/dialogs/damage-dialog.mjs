@@ -77,29 +77,18 @@ function makeEntradaHtml(e, idx, attrValues) {
   <div class="na-entrada" data-idx="${idx}">
     <input type="hidden" class="na-entry-attackidx" data-idx="${idx}" value="${attackIndex}" />
     <input type="hidden" class="na-entry-source" data-idx="${idx}" value="${escapeHtml(source)}" />
-    <div class="na-entry-header">
-      <strong class="na-entry-num">Dano ${idx + 1}</strong>
-      <span class="na-entry-source-label">${escapeHtml(source)}</span>
+    <div class="na-entry-bar">
+      <span class="na-entry-num" title="Entrada">${idx + 1}</span>
+      <select class="na-acao-sel" data-idx="${idx}" title="Tipo de Ação">${makeAcaoOpts(e.tipoAcao)}</select>
+      <input type="text" class="na-dado-inp" data-idx="${idx}" value="${escapeHtml(e.dado ?? '')}" placeholder="dados (3d8)" title="Dado(s)" />
+      <input type="number" class="na-fixo-inp" data-idx="${idx}" value="${e.fixo ?? 0}" placeholder="+fixo" title="Fixo adicional" />
+      <span class="na-entry-source-label" title="${escapeHtml(source)}">${escapeHtml(source)}</span>
       <button type="button" class="na-remove-btn" data-idx="${idx}" title="Remover entrada">✕</button>
     </div>
-    <div class="na-row-grid">
-      <div>
-        <label class="na-label">Tipo de Ação</label>
-        <select class="na-acao-sel" data-idx="${idx}">${makeAcaoOpts(e.tipoAcao)}</select>
-      </div>
-      <div>
-        <label class="na-label">Dado(s) <span class="na-hint">(ex: 3d8)</span></label>
-        <input type="text" class="na-dado-inp" data-idx="${idx}" value="${escapeHtml(e.dado ?? '')}" placeholder="sem dado" />
-      </div>
-      <div>
-        <label class="na-label">+ Fixo</label>
-        <input type="number" class="na-fixo-inp" data-idx="${idx}" value="${e.fixo ?? 0}" placeholder="0" />
-      </div>
+    <div class="na-entry-tags">
+      <div class="na-attrs" title="Atributos no dano">${makeAttrCheckboxes(e.attrs ?? [], idx, attrValues)}</div>
+      <div class="na-dano-grid" title="Tipos de dano">${makeDanoCheckboxes(e.tiposDano ?? [], idx)}</div>
     </div>
-    <label class="na-label">Atributos no Dano</label>
-    <div class="na-attrs">${makeAttrCheckboxes(e.attrs ?? [], idx, attrValues)}</div>
-    <label class="na-label">Tipo(s) de Dano</label>
-    <div class="na-dano-grid">${makeDanoCheckboxes(e.tiposDano ?? [], idx)}</div>
     <div class="na-linha-preview" data-idx="${idx}"></div>
   </div>`;
 }
@@ -155,23 +144,19 @@ function presetOptionsHtml(presets, selected = '') {
         .join('');
 }
 
-function presetRowHtml(presets, { presetDraft, onSavePreset, onManagePresets }) {
+function presetRowHtml(presets, { presetDraft, onSavePreset }) {
     const hasPresets = Array.isArray(presets) && presets.length > 0;
-    if (!hasPresets && !onSavePreset && !onManagePresets) return '';
+    if (!hasPresets && !onSavePreset) return '';
     const saveButton = onSavePreset
         ? '<button type="button" id="na-save-preset-btn" class="na-btn na-btn-gold">Salvar como preset</button>'
         : '';
-    const manageButton =
-        onManagePresets && !presetDraft
-            ? '<button type="button" id="na-manage-presets-btn" class="na-btn">⚙ Gerenciar</button>'
-            : '';
     return `<section class="na-dmg-presets">
       <label class="na-label">Preset de dano</label>
       <div class="na-dmg-presets-row">
         <select id="na-preset-sel">${
             hasPresets ? '<option value="">— aplicar preset —</option>' : ''
         }${presetOptionsHtml(presets, presetDraft?.id ?? '')}</select>
-        ${saveButton}${manageButton}
+        ${saveButton}
       </div>
     </section>`;
 }
@@ -280,7 +265,7 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     const renumber = () => {
         container.querySelectorAll('.na-entrada').forEach((entry, index) => {
             const label = entry.querySelector('.na-entry-num');
-            if (label) label.textContent = `Dano ${index + 1}`;
+            if (label) label.textContent = String(index + 1);
         });
     };
 
@@ -424,11 +409,6 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
         });
     }
 
-    // Gerenciar -------------------------------------------------------------
-    root.querySelector('#na-manage-presets-btn')?.addEventListener('click', () =>
-        options.onManagePresets?.()
-    );
-
     // Dano da arma (inline) -------------------------------------------------
     const weaponButton = root.querySelector?.('#na-weapon-btn');
     if (weaponButton) {
@@ -558,7 +538,6 @@ export async function openDamageDialog({
     weaponCatalog = [],
     breathingCatalog = [],
     onSavePreset = null,
-    onManagePresets = null,
 }) {
     const props = actor?.system?.props ?? {};
     const attrValues = {};
@@ -610,7 +589,7 @@ export async function openDamageDialog({
 
     ${presetDraft ? presetFieldsHtml({ ...presetDraft, breathing: presetDraft.breathing ?? breathing }) : ''}
 
-    ${presetRowHtml(presets, { presetDraft, onSavePreset, onManagePresets })}
+    ${presetRowHtml(presets, { presetDraft, onSavePreset })}
     ${!presetDraft && onSavePreset ? inlineSavePanelHtml() : ''}
 
     ${
@@ -667,7 +646,6 @@ export async function openDamageDialog({
             weaponCatalog,
             breathingCatalog,
             onSavePreset,
-            onManagePresets,
         });
     });
 
@@ -739,10 +717,11 @@ export async function openDamageDialog({
                     : 'Rolar Dano — Night Assassins',
                 resizable: true,
             },
-            position: { width: 760 },
+            position: { width: 720 },
             content,
-            // Não-modal: o diálogo nunca trava a ficha nem outros diálogos.
-            modal: false,
+            // Modal: overlay padrão; não reflui nem compete com a HUD atrás.
+            // Sem diálogos aninhados (salvar/arma/Respiração são painéis inline).
+            modal: true,
             rejectClose: false,
             buttons,
         });

@@ -3618,3 +3618,81 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* Entradas compactas: uma barra por entrada + chips micro.
+   Cabem 2+ entradas sem o diálogo virar gigante. */
+
+.na-dmg-dialog .na-entrada {
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border-radius: 4px 8px 8px 4px;
+}
+
+.na-dmg-dialog .na-entry-bar {
+    display: grid;
+    grid-template-columns: 26px minmax(120px, 1.2fr) minmax(78px, 0.85fr) 72px minmax(52px, 1fr) 30px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.na-dmg-dialog .na-entry-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    line-height: 24px;
+    text-align: center;
+    font-family: var(--na-dmg-display);
+    font-size: 12px;
+    font-weight: 800;
+    color: #170f04;
+    background: linear-gradient(180deg, #f0cd76, #cfa646);
+}
+
+.na-dmg-dialog .na-entry-bar select,
+.na-dmg-dialog .na-entry-bar input {
+    min-height: 30px;
+    height: 30px;
+    padding: 2px 7px;
+    font-size: 13.5px;
+}
+
+.na-dmg-dialog .na-entry-bar .na-entry-source-label {
+    margin: 0;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+}
+
+.na-dmg-dialog .na-entry-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.na-dmg-dialog .na-attrs,
+.na-dmg-dialog .na-dano-grid {
+    gap: 4px;
+    padding: 0;
+}
+
+.na-dmg-dialog .na-attr-label,
+.na-dmg-dialog .na-dano-label {
+    padding: 1px 6px;
+    font-size: 11.5px;
+    border-radius: 5px;
+}
+
+.na-dmg-dialog .na-attr-val {
+    font-size: 10.5px;
+}
+
+.na-dmg-dialog .na-linha-preview {
+    min-height: 20px;
+    padding: 2px 8px;
+    font-size: 12.5px;
+}
+
+.na-dmg-dialog #na-entradas-container {
+    max-height: 40vh;
+}

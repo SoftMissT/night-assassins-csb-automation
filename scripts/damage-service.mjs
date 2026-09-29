@@ -6,10 +6,7 @@ import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
 import { DAMAGE_PRESETS_KEY, parseDamagePresets, presetGroupKey } from './damage-preset-service.mjs';
-import {
-    openDamagePresetManager,
-    saveDamagePreset,
-} from './dialogs/damage-preset-manager.mjs';
+import { saveDamagePreset } from './dialogs/damage-preset-manager.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
 import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
 import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
@@ -482,8 +479,6 @@ export async function rollDamage(options = {}) {
             if (!saved.ok) ui.notifications?.warn?.(saved.reason);
             else ui.notifications?.info?.(`Preset "${saved.preset?.name ?? name}" salvo.`);
         },
-        onManagePresets: () =>
-            openDamagePresetManager({ actorUuid: actor.uuid, breathing: breathingContext }),
     });
     if (!dialogResult) return;
 

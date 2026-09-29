@@ -1,4 +1,12 @@
 # Changelog
+## v0.11.81 — 2026-09-28
+
+- Entradas de dano compactas: uma barra por entrada (`[n] ação · dados · +fixo · origem · ✕`) + chips micro de atributos/tipos; palco com teto de 40vh e scroll interno — o diálogo não cresce mais com 2+ entradas.
+- Corrigido: o pop-up de dano "quebrava a HUD e diminuía os dados" porque a v0.11.80 o abria como **não-modal** (janela no fluxo do `#interface` espreme sidebar/dice tray). Voltou a `modal: true` (top layer) e largura 720.
+- Botão **Gerenciar** removido do diálogo de dano (último modal aninhado); a gestão fica no painel da Respiração e na API.
+- Salvar/arma/Respiração seguem como painéis inline (sem diálogo dentro de diálogo).
+- Regressão local: `1088/1088` testes, 173 suítes. Gate Foundry v14 pendente.
+
 ## v0.11.80 — 2026-09-28
 
 - Corrigido: salvar o preset travava o diálogo ("quebra a hud e não deixa rolar"). "Salvar como preset", "+ Dano da arma" e "+ Respiração" viraram painéis inline; o diálogo de dano agora é não-modal; nenhum diálogo aninhado.

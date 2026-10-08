@@ -1,4 +1,11 @@
 # Changelog
+## v0.11.85 — 2026-10-08 — pipeline canônico de Formas + leva Pedra
+
+- Formas migradas executam pelo pipeline canônico: valida nível/PDR, consome ação e custo, rola acerto e resolve o dano da arma + técnica na mesma rolagem, aplica as primitivas do nível e registra o efeito no chat. Cancelar o Acerto não consome ação, PDR nem feeds.
+- Respiração da Pedra é a primeira leva: a passiva (Quebra + Sangramento) segue automatizada; Reflexão e Resiliência passam a texto; a 1ª Forma usa `semAcerto` (dano direto, sem rolagem de Acerto).
+- Novos módulos: `breathing-contract` (dado canônico), `breathing-primitives` (as 6 primitivas) e `breathing-pipeline` (caminho único); motores por Forma da Pedra removidos (saldo líquido −942/+576 nas linhas).
+- Regressão local: `1114/1114` testes, 180 suítes. Gate Foundry v14 pendente.
+
 ## v0.11.84 — 2026-09-29 — rodapé fixo no diálogo de dano
 
 - O diálogo de dano agora limita a altura ao viewport e mantém `Rolar`/`Cancelar` fora do scroll das entradas.

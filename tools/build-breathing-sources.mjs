@@ -171,6 +171,7 @@ for (const document of catalog.documents) {
     const snow = snowFormById(document.system?.props?.forma_id);
     const props = document.system.props;
     props.forma_passiva =
+        stone?.passiva ||
         flame?.passive ||
         ['metal_05', 'neve_08'].includes(String(props.forma_id ?? '')) ||
         /passiva/iu.test(String(props.tipo_manobra ?? ''))
@@ -197,11 +198,15 @@ for (const document of catalog.documents) {
     const curated = stone ?? mist ?? metal ?? snow;
     if (curated) {
         if (stone) {
-            document.name = `${props.respiracao_nome} ${stone.ptName ?? stone.name}`.trim();
-            document.system.props.nome_forma = stone.ptName ?? stone.name;
-            document.system.props.nome_jp = stone.name ?? '';
+            document.name = `${props.respiracao_nome} ${stone.ptName ?? stone.nome}`.trim();
+            document.system.props.nome_forma = stone.ptName ?? stone.nome;
+            document.system.props.nome_jp = stone.nome ?? '';
         }
-        const action = curated.action ?? curated.actions?.join(' + ') ?? '';
+        // Pedra usa o shape canônico (`acao`/`acoes`/`niveis[].custo/dano/tiposDano`);
+        // mist/metal/snow seguem o formato legado (`action`/`actions`/`levels`).
+        const action = stone
+            ? stone.acao ?? stone.acoes?.join(' + ') ?? ''
+            : curated.action ?? curated.actions?.join(' + ') ?? '';
         document.system.props.tipo_manobra =
             {
                 ataque: 'Ação de Ataque',
@@ -211,12 +216,14 @@ for (const document of catalog.documents) {
                 completa: 'Ação Completa',
             }[action] ?? action;
         for (let level = 1; level <= 4; level += 1) {
-            const mechanics = curated.levels[level - 1];
+            const mechanics = stone ? stone.niveis?.[level - 1] : curated.levels[level - 1];
             document.system.props[`tem_nvl${level}`] = mechanics ? 1 : 0;
-            document.system.props[`nvl${level}_custo`] = mechanics?.cost ?? 0;
-            document.system.props[`nvl${level}_dano`] = mechanics?.damage ?? mechanics?.bonus ?? '';
-            document.system.props[`nvl${level}_tipos_dano`] = Array.isArray(mechanics?.damageTypes)
-                ? mechanics.damageTypes.join(',')
+            document.system.props[`nvl${level}_custo`] = mechanics?.custo ?? mechanics?.cost ?? 0;
+            document.system.props[`nvl${level}_dano`] =
+                mechanics?.dano ?? mechanics?.damage ?? mechanics?.bonus ?? '';
+            const types = mechanics?.tiposDano ?? mechanics?.damageTypes;
+            document.system.props[`nvl${level}_tipos_dano`] = Array.isArray(types)
+                ? types.join(',')
                 : '';
         }
     }

@@ -2,220 +2,251 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { STONE_FORMS, stoneFormById } from '../scripts/stone-breathing-data.mjs';
 import {
-    buildStoneBreathingPlan,
-    buildStoneMarkReactivation,
+    applyStonePassiveAfterDamage,
     clearStoneBreathingState,
-    consumeStoneCounterAttack,
-    consumeStonePending,
     parseStoneBreathingState,
+    stoneStatePatch,
     tickStoneBreathing,
-    stoneReflectionPenalty,
 } from '../scripts/stone-breathing-service.mjs';
 
-describe('Respiração da Pedra', () => {
-    it('publica as cinco Formas oficiais com ações corretas', () => {
+describe('Respiração da Pedra — dado canônico', () => {
+    it('publica as cinco Formas no shape canônico', () => {
         assert.equal(STONE_FORMS.length, 5);
-        assert.equal(stoneFormById('pedra_01').action, 'unica');
-        assert.equal(stoneFormById('pedra_03').action, 'reacao');
-        assert.deepEqual(stoneFormById('pedra_04').actions, ['ataque', 'especial']);
-        assert.equal(stoneFormById('pedra_02').name, 'Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki');
-        assert.equal(stoneFormById('pedra_05').name, 'Kaifuku-ryoku');
+        assert.equal(stoneFormById('pedra_01').acao, 'unica');
+        assert.equal(stoneFormById('pedra_01').semAcerto, true);
+        assert.equal(stoneFormById('pedra_02').acao, 'ataque');
+        assert.equal(stoneFormById('pedra_03').acao, 'reacao');
+        assert.equal(stoneFormById('pedra_04').acao, 'ataque');
+        assert.deepEqual(stoneFormById('pedra_04').acoes, ['ataque', 'especial']);
+        assert.equal(stoneFormById('pedra_05').acao, 'especial');
+        assert.equal(stoneFormById('pedra_02').nome, 'Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki');
+        assert.equal(stoneFormById('pedra_05').ptName, 'Resiliência');
+        assert.equal(stoneFormById('nao_existe'), null);
     });
 
-    it('Serpentino escala Ferida e calcula CD pelo dano originário', () => {
+    it('Serpentino escala Ferida/Concussão e registra a exigência em texto', () => {
+        const form = stoneFormById('pedra_01');
         assert.deepEqual(
-            STONE_FORMS[0].levels.map((entry) => entry.damage),
+            form.niveis.map((entry) => entry?.dano),
             ['1d4', '1d6', '2d4', '2d4 + @for']
         );
-        const plan = buildStoneBreathingPlan(
-            'pedra_01',
-            4,
-            { for_display: 5 },
-            { originDamage: 27 }
-        );
-        assert.equal(plan.cost, 3);
-        assert.equal(plan.state.serpentine.saveDc, 17);
-        assert.equal(plan.state.serpentine.noHitRoll, true);
-        assert.deepEqual(plan.state.serpentine.damageComponents, [
-            { formula: '2d4', types: ['ferida'] },
-            { formula: '@for', types: ['concussao'] },
-        ]);
+        assert.deepEqual(form.niveis.map((entry) => entry?.custo), [1, 2, 2, 3]);
+        assert.deepEqual(form.niveis[3].tiposDano, ['ferida', 'concussao']);
+        for (const level of form.niveis)
+            assert.match(level.texto, /acerto anterior/u, 'exigência vira texto');
     });
 
-    it('Quebra Superior escala dano e Sangramento por dois turnos', () => {
-        const plans = [1, 2, 3, 4].map((level) => buildStoneBreathingPlan('pedra_02', level, {}));
+    it('Quebra Superior carrega o Sangramento por nível como primitiva stack', () => {
+        const form = stoneFormById('pedra_02');
         assert.deepEqual(
-            plans.map((plan) => plan.selected.damage),
+            form.niveis.map((entry) => entry.dano),
             ['3d10', '3d10', '4d10', '5d10']
         );
         assert.deepEqual(
-            plans.map((plan) => plan.state.bleeding.amount),
-            [4, 5, 6, 7]
+            form.niveis.map((entry) => entry.primitivas[0].formula),
+            ['4', '5', '6', '7']
         );
-        assert.ok(plans.every((plan) => plan.state.bleeding.turns === 2));
+        for (const level of form.niveis) {
+            const primitive = level.primitivas[0];
+            assert.equal(primitive.tipo, 'aplicaStatus');
+            assert.equal(primitive.status, 'sangramento');
+            assert.equal(primitive.turnos, 2);
+            assert.equal(primitive.tick, 'start');
+            assert.equal(primitive.stack, true);
+            assert.equal(primitive.sourceName, 'Tenmen Kudaki');
+        }
     });
 
-    it('Reflexão escolhe FOR no corpo a corpo e DEX à distância', () => {
-        const melee = buildStoneBreathingPlan(
-            'pedra_03',
-            3,
-            { for_display: 5, dex_display: 2 },
-            { weaponRange: 'corpo' }
+    it('Riólito só existe nos níveis 3 e 4 e declara dois ataques', () => {
+        const form = stoneFormById('pedra_04');
+        assert.equal(form.niveis[0], null);
+        assert.equal(form.niveis[1], null);
+        assert.deepEqual(
+            form.niveis[2].primitivas,
+            [{ tipo: 'ataques', n: 2 }]
         );
-        const ranged = buildStoneBreathingPlan(
-            'pedra_03',
-            4,
-            { for_display: 5, dex_display: 2 },
-            { weaponRange: 'distancia', protectedUuid: 'Actor.ally' }
+        assert.deepEqual(
+            form.niveis.slice(2).map((entry) => entry.dano),
+            ['6d6', '8d6']
         );
-        assert.equal(melee.state.reflection.attackPenalty, 7);
-        assert.equal(melee.state.reflection.blockTurns, 2);
-        assert.equal(ranged.state.reflection.attackPenalty, 4);
-        assert.equal(ranged.state.reflection.counterAttack, true);
-        assert.equal(ranged.state.reflection.allyTarget, 'Actor.ally');
-        assert.equal(stoneReflectionPenalty(ranged.state), -4);
-        const consumed = consumeStoneCounterAttack(ranged.state);
-        assert.equal(consumed.available, true);
-        assert.equal(consumed.state.reflection.counterAttack, false);
     });
 
-    it('Reflexão preserva a duração de Bloqueio até completar dois turnos', () => {
-        const plan = buildStoneBreathingPlan(
-            'pedra_03',
-            4,
-            { for_display: 5 },
-            { weaponRange: 'corpo' }
-        );
-        assert.equal(tickStoneBreathing(plan.state).state.reflection.blockTurns, 1);
+    it('Reflexão e Resiliência ficam como texto (sem automação)', () => {
+        for (const id of ['pedra_03', 'pedra_05']) {
+            const form = stoneFormById(id);
+            for (const level of form.niveis) {
+                assert.ok(!level.dano, 'Forma cortada não tem dado de dano');
+                assert.match(level.texto, /na mesa|deixou de ser automatizada/u);
+            }
+        }
+    });
+});
+
+describe('Respiração da Pedra — passiva', () => {
+    it('parse aceita objeto e JSON, sem compartilhar referência', () => {
+        const source = { bleeding: { amount: 4, turns: 2 } };
+        const parsed = parseStoneBreathingState(source);
+        assert.equal(parsed.version, 1);
+        parsed.bleeding.amount = 9;
+        assert.equal(source.bleeding.amount, 4, 'structuredClone evita mutação por referência');
+        assert.equal(parseStoneBreathingState('{"bleeding":{"amount":5}}').bleeding.amount, 5);
+        assert.deepEqual(parseStoneBreathingState('{{{'), { version: 1 });
+        assert.deepEqual(parseStoneBreathingState(null), { version: 1 });
+    });
+
+    it('patch escreve o resumo da passiva e zera resiliência por compatibilidade', () => {
+        const idle = stoneStatePatch({});
+        assert.equal(idle['system.props.resp_pedra_resumo'], 'Pedra · sem efeito ativo');
+        assert.equal(idle['system.props.resp_pedra_resiliencia_turnos'], 0);
+
+        const bleeding = stoneStatePatch({ bleeding: { amount: 6, turns: 2 } });
+        assert.match(bleeding['system.props.resp_pedra_resumo'], /Sangramento 6 por 2 turno/u);
+        assert.equal(bleeding['system.props.resp_pedra_resiliencia_turnos'], 0);
         assert.equal(
-            tickStoneBreathing(tickStoneBreathing(plan.state).state).state.reflection,
-            undefined
+            JSON.parse(bleeding['system.props.resp_pedra_estado']).bleeding.amount,
+            6
         );
     });
 
-    it('Riólito só existe nos níveis 3 e 4 e cria dois danos', () => {
-        assert.equal(buildStoneBreathingPlan('pedra_04', 2, {}).ok, false);
-        const plan = buildStoneBreathingPlan('pedra_04', 4, {});
-        assert.deepEqual(plan.actions, ['ataque', 'especial']);
-        assert.equal(plan.state.pendingDamage.formula, '8d6');
-        assert.equal(plan.state.pendingDamage.uses, 2);
-        assert.equal(consumeStonePending(plan.state, { damage: true }).pendingDamage.uses, 1);
-    });
-
-    it('Resiliência dura três turnos e só pode ser usada uma vez no combate', () => {
-        const plan = buildStoneBreathingPlan('pedra_05', 1, {});
-        assert.equal(plan.state.resilience.multiplier, 0.5);
-        assert.deepEqual(plan.state.resilience.resistances, [
-            'concussao',
-            'cortante',
-            'perfurante',
-        ]);
+    it('tick decresce o Sangramento legado e limpa os campos de Forma', () => {
+        const legacy = {
+            activeForm: { id: 'pedra_02', level: 1 },
+            nextHit: { count: 2 },
+            pendingDamage: { formula: '3d10' },
+            serpentine: { saveDc: 15 },
+            bleeding: { amount: 4, turns: 2 },
+            reflection: { blockBonus: 1 },
+            resilience: { turns: 3 },
+            resilienceUsed: true,
+        };
+        const tick = tickStoneBreathing(legacy);
+        assert.equal(tick.state.bleeding.turns, 1);
+        for (const key of [
+            'activeForm',
+            'nextHit',
+            'pendingDamage',
+            'serpentine',
+            'reflection',
+            'resilience',
+            'resilienceUsed',
+        ])
+            assert.equal(tick.state[key], undefined, `${key} deve ser limpo`);
         assert.equal(
-            buildStoneBreathingPlan('pedra_05', 1, {
-                resp_pedra_estado: JSON.stringify(plan.state),
-            }).ok,
-            false
+            legacy.bleeding.turns,
+            2,
+            'tickStoneBreathing não muta o estado recebido por referência'
         );
-        const tick = tickStoneBreathing(plan.state);
-        assert.equal(tick.state.resilience.turns, 2);
-        const cleared = clearStoneBreathingState(tick.state)['system.props.resp_pedra_estado'];
-        assert.equal(parseStoneBreathingState(cleared).resilienceUsed, undefined);
+        const exhausted = tickStoneBreathing(tick.state);
+        assert.equal(exhausted.state.bleeding, undefined);
     });
 
-    it('reativação pela Marca dura até o final do combate e cobra exatamente 5 PDR', () => {
-        const previous = { resilienceUsed: true, bleeding: { amount: 4, turns: 2 } };
-        const plan = buildStoneMarkReactivation({
-            resp_pedra_estado: JSON.stringify(previous),
-            pdr_slayer_total_conta: 12,
-            pdr_slayer_gasto_valor: 3,
-        });
-        assert.equal(plan.eligible, true);
-        assert.equal(plan.ok, true);
-        assert.equal(plan.state.resilience.untilCombatEnd, true);
-        assert.equal(plan.state.resilience.turns, null);
-        assert.deepEqual(plan.state.bleeding, previous.bleeding);
-        assert.equal(plan.patch['system.props.pdr_slayer_gasto_valor'], 8);
-        assert.equal(
-            Object.keys(plan.patch).some((key) => key.includes('acao')),
-            false
-        );
-    });
-
-    it('reativação pela Marca exige uso prévio e não repete efeito já estendido', () => {
-        const neverUsed = buildStoneMarkReactivation({ resp_pedra_estado: JSON.stringify({}) });
-        const alreadyExtended = buildStoneMarkReactivation({
-            resp_pedra_estado: JSON.stringify({
+    it('clear limpa todas as chaves legadas e devolve o resumo neutro', () => {
+        const cleared = clearStoneBreathingState(
+            JSON.stringify({
+                activeForm: { id: 'pedra_04' },
+                nextHit: {},
+                pendingDamage: {},
+                serpentine: {},
+                bleeding: { amount: 4, turns: 2 },
+                reflection: {},
+                resilience: { turns: 3 },
                 resilienceUsed: true,
-                resilience: { untilCombatEnd: true },
-            }),
-        });
-        assert.equal(neverUsed.eligible, false);
-        assert.equal(alreadyExtended.eligible, false);
+            })
+        );
+        const state = JSON.parse(cleared['system.props.resp_pedra_estado']);
+        assert.deepEqual(Object.keys(state), ['version']);
+        assert.equal(cleared['system.props.resp_pedra_resumo'], 'Pedra · sem efeito ativo');
     });
 
-    it('reativação pela Marca não gera patch quando faltam PDR', () => {
-        const plan = buildStoneMarkReactivation({
-            resp_pedra_estado: JSON.stringify({ resilienceUsed: true }),
-            pdr_slayer_total_conta: 7,
-            pdr_slayer_gasto_valor: 4,
-        });
-        assert.equal(plan.eligible, true);
-        assert.equal(plan.ok, false);
-        assert.equal(plan.cost, 5);
-        assert.equal(plan.pdrCurrent, 3);
-        assert.equal(plan.patch, undefined);
-    });
-
-    it('o botão manual não transforma Resiliência em reativação da Marca', () => {
-        const firstUse = buildStoneBreathingPlan('pedra_05', 4, {}, { markReactivation: true });
-        assert.equal(firstUse.ok, true);
-        assert.equal(firstUse.state.resilience.turns, 3);
-        assert.equal(firstUse.state.resilience.untilCombatEnd, false);
-        const secondUse = buildStoneBreathingPlan(
-            'pedra_05',
-            4,
-            {
-                resp_pedra_estado: JSON.stringify(firstUse.state),
+    it('applyStonePassiveAfterDamage registra dano confirmado e concede uma Quebra', async () => {
+        const updates = [];
+        const actor = {
+            id: 'actor_001',
+            uuid: 'Actor.actor_001',
+            name: 'Slayer',
+            system: {
+                props: {
+                    nome_slayer: 'Slayer',
+                    resp_passivas_estado: JSON.stringify({ version: 1, lastWeapon: { id: 'w1' } }),
+                },
             },
-            { markReactivation: true }
-        );
-        assert.equal(secondUse.ok, false);
-    });
-
-    it('estados simultâneos: Sangramento (Quebra Superior) e Resiliência coexistem sem mutação por referência compartilhada', () => {
-        const bleedPlan = buildStoneBreathingPlan('pedra_02', 3, {});
-        assert.equal(bleedPlan.state.bleeding.amount, 6);
-        const resiliencePlan = buildStoneBreathingPlan('pedra_05', 2, {
-            resp_pedra_estado: JSON.stringify(bleedPlan.state),
+            items: [{ system: { props: { respiracao_nome: 'Pedra' } } }],
+            update: async (patch) => updates.push(patch),
+        };
+        await applyStonePassiveAfterDamage({
+            actor,
+            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, name: 'Oni', amount: 12, wound: 3 }],
+            damageRequests: [{ negated: false, components: [{ types: ['concussao'] }] }],
+            actionId: 'act-1',
+            strength: 5,
+            hasAttackDamage: true,
         });
-        assert.equal(
-            resiliencePlan.state.bleeding.amount,
-            6,
-            'o Sangramento herdado do estado anterior não deve ser apagado por outra Forma'
-        );
-        assert.equal(
-            resiliencePlan.state.pendingDamage.formula,
-            '4d10',
-            'o dano pendente da Quebra Superior deve sobreviver à ativação da Resiliência'
-        );
-        assert.equal(resiliencePlan.state.resilience.multiplier, 0.5);
-
-        // Tick de turno: a Resiliência perde 1 turno, o Sangramento (que não tem
-        // campo `turns` gerenciado por tickStoneBreathing) permanece intocado por
-        // referência — a mutação de um não pode vazar para o outro.
-        const ticked = tickStoneBreathing(resiliencePlan.state);
-        assert.equal(ticked.state.resilience.turns, 2);
-        assert.equal(ticked.state.bleeding.amount, 6);
-        assert.equal(ticked.state.bleeding.turns, 2);
-        // Original permanece intocado: tickStoneBreathing não deve mutar o estado recebido por referência.
-        assert.equal(resiliencePlan.state.resilience.turns, 3);
+        assert.equal(updates.length, 1);
+        const state = JSON.parse(updates[0]['system.props.resp_passivas_estado']);
+        assert.equal(state.stone.lastConfirmedDamageByTarget['Actor.oni'].damage, 15);
+        assert.equal(state.stone.breakByWeapon.w1, 1);
+        assert.equal(state.stone.lastBreakActionId, 'act-1');
     });
 
-    it('Riólito: Recuperação por Crítico é limitada aos 2 PDR do dado curado, não hardcoded no chamador', () => {
-        assert.equal(stoneFormById('pedra_04').levels[2].recoverPdrOnCritical, 2);
-        assert.equal(stoneFormById('pedra_04').levels[3].recoverPdrOnCritical, 2);
-        const plan = buildStoneBreathingPlan('pedra_04', 3, {});
-        assert.equal(plan.selected.recoverPdrOnCritical, 2);
-        assert.equal(plan.state.pendingDamage.recoverPdrMaximum, 2);
+    it('applyStonePassiveAfterDamage não quebra com Concussão anulada e ignora dano zero', async () => {
+        const updates = [];
+        const actor = {
+            id: 'actor_002',
+            uuid: 'Actor.actor_002',
+            name: 'Slayer',
+            system: {
+                props: {
+                    nome_slayer: 'Slayer',
+                    resp_passivas_estado: JSON.stringify({ version: 1, lastWeapon: { id: 'w1' } }),
+                },
+            },
+            items: [{ system: { props: { respiracao_nome: 'Pedra' } } }],
+            update: async (patch) => updates.push(patch),
+        };
+        await applyStonePassiveAfterDamage({
+            actor,
+            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, name: 'Oni', amount: 0, wound: 0 }],
+            damageRequests: [{ negated: true, components: [{ types: ['concussao'] }] }],
+            actionId: 'act-2',
+            strength: 5,
+            hasAttackDamage: true,
+        });
+        const state = JSON.parse(updates[0]['system.props.resp_passivas_estado']);
+        assert.equal(state.stone?.breakByWeapon, undefined, 'anulado não concede Quebra');
+        assert.equal(
+            state.stone?.lastConfirmedDamageByTarget,
+            undefined,
+            'alvo sem dano não registra origem'
+        );
+    });
+
+    it('applyStonePassiveAfterDamage não escreve sem arma/Pedra ou sem dano de ataque', async () => {
+        const makeActor = (props, items) => ({
+            id: 'actor_003',
+            uuid: 'Actor.actor_003',
+            name: 'Slayer',
+            system: { props },
+            items,
+            update: async () => {
+                throw new Error('não deveria atualizar');
+            },
+        });
+        const semPedra = makeActor({ nome_slayer: 'Slayer' }, []);
+        await applyStonePassiveAfterDamage({
+            actor: semPedra,
+            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, amount: 10, wound: 0 }],
+            damageRequests: [],
+            hasAttackDamage: true,
+        });
+        const semAtaque = makeActor(
+            { nome_slayer: 'Slayer' },
+            [{ system: { props: { respiracao_nome: 'Pedra' } } }]
+        );
+        await applyStonePassiveAfterDamage({
+            actor: semAtaque,
+            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, amount: 10, wound: 0 }],
+            damageRequests: [],
+            hasAttackDamage: false,
+        });
     });
 });

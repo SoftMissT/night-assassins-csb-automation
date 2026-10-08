@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { resolveBreathingDefense } from '../scripts/breathing-defense.mjs';
 
-test('Resiliência da Pedra reduz somente parcelas resistidas', () => {
+test('Inabalável do Metal reduz somente parcelas resistidas', () => {
     const result = resolveBreathingDefense({
         amount: 15,
         components: [
@@ -10,8 +10,8 @@ test('Resiliência da Pedra reduz somente parcelas resistidas', () => {
             { label: 'Fogo', types: ['fogo'], subtotal: 5 },
         ],
         props: {
-            resp_pedra_estado: JSON.stringify({
-                resilience: { turns: 3, resistances: ['cortante', 'perfurante', 'concussao'] },
+            resp_metal_estado: JSON.stringify({
+                unshakable: { turns: 2, resistances: ['cortante', 'perfurante'] },
             }),
         },
     });

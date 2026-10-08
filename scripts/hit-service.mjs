@@ -22,12 +22,6 @@ import {
     synchronizeFlameWeapon,
 } from './flame-breathing-service.mjs';
 import {
-    consumeStonePending,
-    parseStoneBreathingState,
-    stoneReflectionPenalty,
-    stoneStatePatch,
-} from './stone-breathing-service.mjs';
-import {
     consumeMistPending,
     mistStatePatch,
     parseMistBreathingState,
@@ -422,8 +416,6 @@ export async function rollHit(options) {
     const breathingState = parseWaterBreathingState(props.resp_agua_estado);
     const breathHit = breathingState.nextHit;
     const flameHit = flameState.nextHit;
-    const stoneState = parseStoneBreathingState(props.resp_pedra_estado);
-    const stoneHit = stoneState.nextHit;
     const mistState = parseMistBreathingState(props.resp_nevoa_estado);
     const mistHit = mistState.nextHit;
     const metalState = parseMetalBreathingState(props.resp_metal_estado);
@@ -434,20 +426,18 @@ export async function rollHit(options) {
     const classTechniquePending = [
         breathHit,
         flameHit,
-        stoneHit,
         mistHit,
         snowHit,
         windHit,
     ].some((pending) => pending && typeof pending === 'object');
     const snowPenalty = actor.getFlag?.(MODULE_ID, 'snowPenalty');
-    const stonePenalty = actor.getFlag?.(MODULE_ID, 'stoneReflectionPenalty');
     const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
     // 8ª Forma Ofuscamento (Névoa): a partir do Nível 2, quem tenta acertar o usuário/aliado
     // ofuscado sofre -2 na rolagem de Acerto. O estado "dazzle" fica salvo em resp_nevoa_estado
     // do PRÓPRIO usuário da Névoa (com allyUuid apontando o aliado também protegido); então, ao
     // rolar Acerto contra um alvo, é preciso checar se o alvo é o usuário da névoa (dazzle no
     // próprio) ou o aliado protegido (dazzle no usuário, allyUuid === alvo). Segue o mesmo padrão
-    // usado para snowPenalty/stoneReflectionPenalty (penalidade lida do alvo e aplicada ao atacante).
+    // usado para snowPenalty (penalidade lida do alvo e aplicada ao atacante).
     const targetedActors = [...(game.user?.targets ?? [])]
         .map((token) => token.actor)
         .filter(Boolean);
@@ -487,7 +477,6 @@ export async function rollHit(options) {
     const breathBonus =
         (Number(breathHit?.bonus) || 0) +
         (Number(flameHit?.bonus) || 0) +
-        (Number(stoneHit?.bonus) || 0) +
         (Number(mistHit?.bonus) || 0) +
         (Number(snowHit?.bonus) || 0) +
         (Number(snowState.belowZero?.fdvHitBonus) || 0) +
@@ -496,14 +485,8 @@ export async function rollHit(options) {
         fogBonus +
         (Number(mistState.dazzle?.hitBonus) || 0) +
         (Number(snowPenalty?.hitPenalty) || 0) +
-        (Number(stonePenalty?.value) || 0) +
         flameTier.hit +
         dazzlePenalty;
-    if (stonePenalty?.sourceState) {
-        const canonical = stoneReflectionPenalty(stonePenalty.sourceState);
-        if (canonical !== Number(stonePenalty.value))
-            ui.notifications?.warn?.('Penalidade da Reflexão da Pedra foi normalizada.');
-    }
     const derivedBonuses = resolveSlayerDerivedBonuses(props, {
         runtimeSources: breathBonus
             ? [
@@ -618,7 +601,6 @@ export async function rollHit(options) {
         Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1,
         Number(breathHit?.count) || 1,
         Number(flameHit?.count) || 1,
-        Number(stoneHit?.count) || 1,
         Number(mistHit?.count) || 1,
         Number(snowHit?.count) || 1,
         Number(windHit?.count) || 1
@@ -734,19 +716,6 @@ export async function rollHit(options) {
             naCsbAutomation: true,
             naBreathing: true,
         });
-    }
-    if (result?.attempts?.length && stoneHit) {
-        await actor.update(stoneStatePatch(consumeStonePending(stoneState, { hit: true })), {
-            naCsbAutomation: true,
-            naBreathing: true,
-        });
-    }
-    if (result?.attempts?.length && stonePenalty) {
-        // Reflexão da Pedra: "diminui... a próxima rolagem de acerto do inimigo"
-        // é uso único — consome a penalidade assim que ela é aplicada a UMA
-        // rolagem de Acerto, independente de quantos turnos restavam na
-        // expiração de segurança.
-        await actor.unsetFlag?.(MODULE_ID, 'stoneReflectionPenalty');
     }
     if (result?.attempts?.length && mistHit) {
         await actor.update(mistStatePatch(consumeMistPending(mistState, { hit: true })), {

@@ -38,15 +38,14 @@ test('Marca escreve os sete temporários e cada display consome seu temporário'
     }
 });
 
-test('Marca integra a reativação opcional da Resiliência em um único update', () => {
+test('Marca ativa em um único update, sem a integração de Resiliência (removida na leva Pedra)', () => {
     const activationSource = macro.slice(
         macro.indexOf('async function activate'),
         macro.indexOf('async function finish')
     );
-    assert.match(macro, /buildStoneMarkReactivation/);
-    assert.match(macro, /game\.combat/);
-    assert.match(macro, /forma_id/);
-    assert.match(activationSource, /stoneReactivation\?\.patch/);
+    assert.doesNotMatch(macro, /buildStoneMarkReactivation/);
+    assert.doesNotMatch(macro, /prepareStoneMarkReactivation/);
+    assert.doesNotMatch(macro, /stoneReactivation/);
     assert.equal((activationSource.match(/await actor\.update/g) ?? []).length, 1);
     assert.doesNotMatch(activationSource, /consumeSlayerActions/);
 });

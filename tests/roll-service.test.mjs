@@ -161,29 +161,6 @@ describe('roll-service', () => {
         assert.equal(actor.system.props.folego_slayer_atual, 3);
     });
 
-    it('não consome Reflexão da Pedra quando a Defesa falha', async () => {
-        _dialogReturn = {
-            mode: 'normal',
-            rollMode: 'publicroll',
-            secVal: 0,
-            bonusRaw: '',
-            cdVal: 20,
-        };
-        _rollResult = {
-            total: 12,
-            toMessage: async () => {},
-            dice: [{ results: [{ result: 8, active: true }] }],
-        };
-        const state = JSON.stringify({ reflection: { blockBonus: 2, counterAttack: true } });
-        const actor = makeActor({ props: { for_display: '4', resp_pedra_estado: state } });
-        let updated = false;
-        actor.update = async () => {
-            updated = true;
-        };
-        await rollTest({ actor, test: 'Bloqueio', attr: 'FOR' });
-        assert.equal(updated, false);
-    });
-
     it('Shi no Kata: Aisu Hato N4: +2 em teste com CD que não é Bloqueio/Esquiva', async () => {
         _dialogReturn = {
             mode: 'normal',
@@ -263,8 +240,7 @@ describe('roll-service', () => {
             toMessage: async () => {},
             dice: [{ results: [{ result: 14, active: true }] }],
         };
-        const state = JSON.stringify({ reflection: { blockBonus: 2, counterAttack: true } });
-        const actor = makeActor({ props: { for_display: '4', resp_pedra_estado: state } });
+        const actor = makeActor({ props: { for_display: '4' } });
         let confirmations = 0;
         foundry.applications.api.DialogV2.confirm = async () => {
             confirmations += 1;

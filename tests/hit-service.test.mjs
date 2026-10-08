@@ -291,32 +291,6 @@ describe('hit-service', () => {
         assert.equal(rolls, 2);
     });
 
-    it('Reflexão da Pedra: penaliza a próxima rolagem de Acerto e consome a penalidade em uso único (regressão)', async () => {
-        _dialogReturn = { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0 };
-        let called = false;
-        _rollResult = {
-            total: 14,
-            toMessage: async () => {
-                called = true;
-            },
-            dice: [{ results: [{ result: 1, active: true }] }],
-        };
-        let unsetCalls = 0;
-        const actor = makeActor({ props: { acerto_label: 'acerto_label_for', for_display: '6' } });
-        actor.getFlag = (moduleId, key) =>
-            key === 'stoneReflectionPenalty' ? { value: -9, turns: 1 } : undefined;
-        actor.unsetFlag = async (moduleId, key) => {
-            if (key === 'stoneReflectionPenalty') unsetCalls += 1;
-        };
-        await rollHit({ actor });
-        assert.strictEqual(called, true);
-        // −9 da Reflexão aplicada à rolagem (bônus total: 6 (FOR) − 9)
-        assert.match(_formula, /\+ 6 \+ -9$/);
-        // uso único: a penalidade é consumida (unsetFlag) assim que aplicada a UMA rolagem —
-        // não deve permanecer disponível para rolagens seguintes do mesmo inimigo.
-        assert.equal(unsetCalls, 1);
-    });
-
     it('permite encerrar a sequência antes do limite', async () => {
         _dialogReturn = [
             { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0, rollCount: 5 },

@@ -2,7 +2,6 @@ import {
     parseMetalBreathingState,
     resolveMetalIncomingAttackDefense,
 } from './metal-breathing-service.mjs';
-import { parseStoneBreathingState } from './stone-breathing-service.mjs';
 
 function normalizedComponents(components = []) {
     return components.map((component) => ({
@@ -23,7 +22,6 @@ export function resolveBreathingDefense({
     const preparedMetal = parseMetalBreathingState(props.resp_metal_estado);
     const steel = resolveMetalIncomingAttackDefense(preparedMetal);
     const metal = steel.state;
-    const stone = parseStoneBreathingState(props.resp_pedra_estado);
     const patches = {};
 
     if (steel.consumed) Object.assign(patches, steel.patch);
@@ -44,12 +42,7 @@ export function resolveBreathingDefense({
     const resistances = new Set(
         suppressResistances
             ? []
-            : [
-                  ...(metal.unshakable?.turns > 0 ? (metal.unshakable.resistances ?? []) : []),
-                  ...(stone.resilience?.turns > 0 || stone.resilience?.untilCombatEnd
-                      ? (stone.resilience.resistances ?? [])
-                      : []),
-              ]
+            : [...(metal.unshakable?.turns > 0 ? (metal.unshakable.resistances ?? []) : [])]
     );
     const source = normalizedComponents(components);
     if (resistances.size === 0)

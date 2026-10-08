@@ -11,7 +11,6 @@ import { buildFlameInterception, parseFlameBreathingState } from './flame-breath
 import { consumeMetalSteelDefense, parseMetalBreathingState } from './metal-breathing-service.mjs';
 import { parseMistBreathingState } from './mist-breathing-service.mjs';
 import { parseSnowBreathingState } from './snow-breathing-service.mjs';
-import { consumeStoneCounterAttack, parseStoneBreathingState } from './stone-breathing-service.mjs';
 import { derivedChannelForTest, resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 
 function naturalD20(roll) {
@@ -171,21 +170,10 @@ export async function rollTest(options) {
             statusEffects.reasons.push(`Céu em Chamas ${flamePenalty.value} Bloqueio`);
         }
         const metalState = parseMetalBreathingState(actor.system?.props?.resp_metal_estado);
-        const stoneState = parseStoneBreathingState(actor.system?.props?.resp_pedra_estado);
         const metalBonus = Number(metalState.metalized?.blockBonus) || 0;
-        const selectedTargetUuids = new Set(
-            [...(game.user?.targets ?? [])].map((token) => token.actor?.uuid).filter(Boolean)
-        );
-        const stoneSourceUuid = String(stoneState.reflection?.target ?? '');
-        const stoneApplies = !stoneSourceUuid || selectedTargetUuids.has(stoneSourceUuid);
-        const stoneBonus = stoneApplies ? Number(stoneState.reflection?.blockBonus) || 0 : 0;
         if (metalBonus) {
             statusEffects.modifier += metalBonus;
             statusEffects.reasons.push(`Metalizado +${metalBonus}`);
-        }
-        if (stoneBonus) {
-            statusEffects.modifier += stoneBonus;
-            statusEffects.reasons.push(`Reflexão +${stoneBonus}`);
         }
     }
     if (['Bloqueio', 'Esquiva'].includes(test)) {
@@ -264,37 +252,6 @@ export async function rollTest(options) {
         result && ['Bloqueio', 'Esquiva'].includes(test)
             ? await confirmDefenseSuccess(result, test)
             : false;
-    if (defenseSucceeded) {
-        const stoneState = parseStoneBreathingState(actor.system?.props?.resp_pedra_estado);
-        const selectedTargetUuids = new Set(
-            [...(game.user?.targets ?? [])].map((token) => token.actor?.uuid).filter(Boolean)
-        );
-        const stoneSourceUuid = String(stoneState.reflection?.target ?? '');
-        const counter =
-            !stoneSourceUuid || selectedTargetUuids.has(stoneSourceUuid)
-                ? consumeStoneCounterAttack(stoneState)
-                : { available: false };
-        if (counter.available) {
-            await actor.update(counter.patch, { naCsbAutomation: true, naBreathing: true });
-            const useCounter = await foundry.applications.api.DialogV2.confirm({
-                window: { title: 'Ganku no Hadae — Contra-ataque' },
-                content:
-                    '<p>O inimigo afetado errou. Realizar agora o ataque padrão de contra-ataque?</p>',
-                yes: { label: 'Contra-atacar' },
-                no: { label: 'Recusar' },
-                rejectClose: false,
-            });
-            if (useCounter) {
-                const { rollHit } = await import('./hit-service.mjs');
-                await rollHit({
-                    actor,
-                    actorUuid: actor.uuid,
-                    autoDamage: true,
-                    skipActionConsumption: true,
-                });
-            }
-        }
-    }
     if (defenseSucceeded && test === 'Bloqueio') {
         const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
         if (flameState.block?.intercept) {

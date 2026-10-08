@@ -32,7 +32,6 @@ import { getDamageStatusEffects } from './status-effects.mjs';
 import { consumeSlayerActions } from './action-service.mjs';
 import { resolveWaterDamageTypes, waterFormById } from './water-breathing-data.mjs';
 import { flameFormById } from './flame-breathing-data.mjs';
-import { stoneFormById } from './stone-breathing-data.mjs';
 import { mistFormById } from './mist-breathing-data.mjs';
 import { metalFormById } from './metal-breathing-data.mjs';
 import { snowFormById } from './snow-breathing-data.mjs';
@@ -49,10 +48,7 @@ import {
     tickFlameBreathing,
 } from './flame-breathing-service.mjs';
 import {
-    buildStoneBreathingPlan,
     clearStoneBreathingState,
-    parseStoneBreathingState,
-    stoneStatePatch,
     tickStoneBreathing,
 } from './stone-breathing-service.mjs';
 import {
@@ -96,8 +92,9 @@ import {
     isPassiveItem,
     parseBreathPassiveState,
     passiveStatePatch,
-    stoneConfirmedDamageForTarget,
 } from './breath-passives.mjs';
+import { isMigrated } from './breathing-contract.mjs';
+import { runCanonicalBreathingForm } from './breathing-pipeline.mjs';
 
 const MANOBRA_MAP = {
     unica: 'unica',
@@ -146,7 +143,6 @@ function getFormData(item) {
     const catalog =
         waterFormById(String(props.forma_id ?? '')) ??
         flameFormById(String(props.forma_id ?? '')) ??
-        stoneFormById(String(props.forma_id ?? '')) ??
         mistFormById(String(props.forma_id ?? '')) ??
         metalFormById(String(props.forma_id ?? '')) ??
         snowFormById(String(props.forma_id ?? ''));
@@ -899,63 +895,6 @@ async function collectCuratedChoices(actor, form, level, props) {
             };
         }
     }
-    if (form.id === 'pedra_01') {
-        if (!targetActor)
-            return { cancelled: true, reason: 'Marque o inimigo atingido pelo ataque originário.' };
-        const record = stoneConfirmedDamageForTarget(
-            parseBreathPassiveState(props.resp_passivas_estado),
-            targetActor.uuid,
-            {
-                combatId: game.combat?.uuid ?? '',
-                round: game.combat?.round ?? 0,
-                turn: game.combat?.turn ?? 0,
-            }
-        );
-        if (!record)
-            return {
-                cancelled: true,
-                reason: 'Jamongan Sōkyoku exige dano confirmado neste mesmo alvo e turno.',
-            };
-        return {
-            originDamage: record.damage,
-            targetUuid: targetActor.uuid,
-            originActionId: record.actionId,
-        };
-    }
-    if (form.id === 'pedra_03') {
-        if (!targetActor) return { cancelled: true, reason: 'Marque o inimigo alvo da reação.' };
-        const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
-        const weaponId = String(passiveState.lastWeapon?.id ?? '');
-        const weaponItem = weaponId ? actor.items?.get?.(weaponId) : null;
-        const rangeRaw = String(weaponItem?.system?.props?.arma_alcance ?? '').toLocaleLowerCase(
-            'pt-BR'
-        );
-        const rangeMeters = Number.parseFloat(rangeRaw.replace(',', '.'));
-        const ranged =
-            (Number.isFinite(rangeMeters) && rangeMeters > 2) ||
-            /dist[aâ]ncia|ranged|longo|proj[eé]til|arremesso/u.test(rangeRaw);
-        const protectingAlly = await confirmRule(
-            'Reflexão da Pedra',
-            'Você está protegendo um aliado (em vez de si mesmo)?'
-        );
-        let protectedUuid = actor.uuid;
-        if (protectingAlly) {
-            const allyToken =
-                [...(game.user?.targets ?? [])].find(
-                    (token) => token.actor?.uuid !== targetActor.uuid
-                ) ?? canvas?.tokens?.controlled?.find((token) => token.actor?.uuid !== actor.uuid);
-            protectedUuid = allyToken?.actor?.uuid ?? actor.uuid;
-        }
-        return {
-            targetUuid: targetActor.uuid,
-            weaponRange: ranged ? 'distancia' : 'corpo-a-corpo',
-            protectedUuid,
-        };
-    }
-    if (form.id === 'pedra_05')
-        return {
-            markReactivation: Boolean(props.marca_ativa && parseNumber(props.marca_ativa) > 0),
-        };
     if (form.id === 'nevoa_03') {
         return {
             ...mistCyclone,
@@ -1263,12 +1202,6 @@ function breathingTechniqueEntradas(actor) {
     if (flame?.formula) push(flame.formula, flame.types ?? ['fogo']);
     if (flame?.comboRider?.formula)
         push(flame.comboRider.formula, flame.comboRider.types ?? ['fogo']);
-    const stone = parseStoneBreathingState(props.resp_pedra_estado).pendingDamage;
-    if (stone?.formula)
-        push(
-            String(stone.formula).replace(/@for\b/giu, String(props.for_display ?? 0)),
-            stone.types ?? ['concussao']
-        );
     const mist = parseMistBreathingState(props.resp_nevoa_estado).pendingDamage;
     if (mist?.formula) push(resolveMistFormula(mist.formula, props), ['cortante']);
     const snow = parseSnowBreathingState(props.resp_neve_estado).pendingDamage;
@@ -1344,12 +1277,6 @@ async function clearResolvedTechniqueQueue(actor, formId) {
         delete state.nextHit;
         delete state.pendingDamage;
         await actor.update(flameStatePatch(state), { naCsbAutomation: true, naBreathing: true });
-    } else if (formId.startsWith('pedra_')) {
-        const state = parseStoneBreathingState(props.resp_pedra_estado);
-        delete state.nextHit;
-        delete state.pendingDamage;
-        delete state.bleeding;
-        await actor.update(stoneStatePatch(state), { naCsbAutomation: true, naBreathing: true });
     } else if (formId.startsWith('nevoa_')) {
         const state = parseMistBreathingState(props.resp_nevoa_estado);
         delete state.nextHit;
@@ -1455,6 +1382,78 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
 }
 
 /**
+ * Runtime injetado no pipeline canônico com o ambiente real do Foundry.
+ * O pipeline não importa os serviços diretamente (evita ciclo); tudo que ele
+ * consome entra por aqui — trocável por um fake nos testes.
+ */
+function buildCanonicalRuntime(actor, props, item) {
+    return {
+        notify: ui.notifications,
+        consumeActions: (target, types) => consumeSlayerActions(target, types, { update: false }),
+        applyPatch: (target, patch) =>
+            target.update(patch, { naCsbAutomation: true, naBreathing: true }),
+        getProps: (target) => target.system?.props ?? props,
+        getPdrCurrent: () => slayerPdrInfo(actor.system?.props ?? props).pdrCurrent,
+        getBreathLevel: () => getBreathLevel(actor.system?.props ?? props),
+        resolveCardTargets: () =>
+            [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean),
+        roll: (formula) => Roll.create(formula).evaluate(),
+        applyStatus: (target, key, effect) => applyBreathingStatus(target, key, effect),
+        applyStackingStatus: (target, key, effect) =>
+            applyStackingBreathingStatus(target, key, effect),
+        applyHeal: async (target, amount, meta) => {
+            const { healActor } = await import('./heal-relay.mjs');
+            return healActor(target, amount, meta);
+        },
+        setBuffs: async (target, buff) => {
+            const current = target.getFlag?.(MODULE_ID, 'buffs');
+            const list = Array.isArray(current) ? current : [];
+            const next = [...list.filter((entry) => entry?.id !== buff.id), buff];
+            await target.setFlag(MODULE_ID, 'buffs', next);
+        },
+        rollHit: async (options) => {
+            const { rollHit } = await import('./hit-service.mjs');
+            return rollHit(options);
+        },
+        rollDamage: async (options) => {
+            const { rollDamage } = await import('./damage-service.mjs');
+            return rollDamage(options);
+        },
+        weaponEntriesFor: async (target, weapon) => {
+            const weaponItem = target.items?.get?.(weapon?.id) ?? null;
+            if (!weaponItem) return [];
+            const { buildWeaponDamageCatalog } = await import('./damage-service.mjs');
+            const key = String(weaponItem.uuid ?? weaponItem.id ?? weaponItem.name);
+            const profileIndex = Number.isInteger(weapon?.profileIndex) ? weapon.profileIndex : 0;
+            return (
+                buildWeaponDamageCatalog(target).find(
+                    (entry) => entry.id === `${key}::${profileIndex}`
+                )?.entries ?? []
+            );
+        },
+        getPdrSurcharge: () =>
+            getDamageStatusEffects(actor.system?.props ?? props).pdrSurcharge ?? 0,
+        postUsage: ({ actor: user, form, level, custo, dados }) => {
+            const estilo = form.estilo ? `[${form.estilo}º Estilo] ` : '';
+            const texto = dados?.texto
+                ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${dados.texto}</div>`
+                : '';
+            const feeds = Object.entries(form.feedsUsar ?? {})
+                .filter(([, value]) => Number(value) > 0)
+                .map(([key, value]) => `${key} ${value}`)
+                .join(', ');
+            const feedsLine = feeds
+                ? `<div style="font-size:12px;color:#888;">feeds: ${feeds}</div>`
+                : '';
+            return ChatMessage.create({
+                speaker: ChatMessage.getSpeaker({ actor: user }),
+                content: `<div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;"><strong>${estilo}${form.ptName || form.nome}</strong><div style="font-size:12px;color:#888;">${form.respiracao} · Nível ${level} · −${custo} PDR</div>${texto}${feedsLine}</div>`,
+            });
+        },
+    };
+}
+
+/**
  * API pública: executa uma forma de respiração a partir de um item CSB.
  * @param {object} options
  * @param {string} options.itemUuid - UUID do item (forma de respiração)
@@ -1549,9 +1548,21 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         return;
     }
 
+    // Respiração migrada: o dado canônico assume daqui (rota legada abaixo
+    // permanece para as demais até a leva de cada uma).
+    if (isMigrated(form.respiracao)) {
+        const runtime = buildCanonicalRuntime(actor, props, item);
+        return runCanonicalBreathingForm({
+            actor,
+            respiracao: form.respiracao,
+            formaId: props.forma_id,
+            level: selected.level,
+            runtime,
+        });
+    }
+
     const isWaterForm = Boolean(waterFormById(form.id));
     const isFlameForm = Boolean(flameFormById(form.id));
-    const isStoneForm = Boolean(stoneFormById(form.id));
     const isMistForm = Boolean(mistFormById(form.id));
     const isMetalForm = Boolean(metalFormById(form.id));
     const isSnowForm = Boolean(snowFormById(form.id));
@@ -1571,17 +1582,15 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         ? buildWaterBreathingPlan(form.id, selected.level, props, choices)
         : isFlameForm
           ? buildFlameBreathingPlan(form.id, selected.level, props, choices)
-          : isStoneForm
-            ? buildStoneBreathingPlan(form.id, selected.level, props, choices)
-            : isMistForm
-              ? buildMistBreathingPlan(form.id, selected.level, props, choices)
-              : isMetalForm
-                ? buildMetalBreathingPlan(form.id, selected.level, props, choices)
-                : isSnowForm
-                  ? buildSnowBreathingPlan(form.id, selected.level, props, choices)
-                  : isWindForm
-                    ? buildWindBreathingPlan(form.id, selected.level, props, choices)
-                    : buildGenericBreathingPlan(form, selected);
+          : isMistForm
+            ? buildMistBreathingPlan(form.id, selected.level, props, choices)
+            : isMetalForm
+              ? buildMetalBreathingPlan(form.id, selected.level, props, choices)
+              : isSnowForm
+                ? buildSnowBreathingPlan(form.id, selected.level, props, choices)
+                : isWindForm
+                  ? buildWindBreathingPlan(form.id, selected.level, props, choices)
+                  : buildGenericBreathingPlan(form, selected);
     if (!plan.ok) {
         ui.notifications?.warn?.(plan.reason);
         return;
@@ -1690,67 +1699,6 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
                 sourceActorUuid: actor.uuid,
             });
     }
-    if (isStoneForm && form.id === 'pedra_03' && choices.targetUuid && plan.state?.reflection) {
-        const reflected = await fromUuid(choices.targetUuid);
-        const targetActor = reflected?.actor ?? reflected;
-        if (targetActor?.setFlag)
-            await targetActor.setFlag(MODULE_ID, 'stoneReflectionPenalty', {
-                value: -Math.max(0, Number(plan.state.reflection.attackPenalty) || 0),
-                // Regra: "diminui... a próxima rolagem de acerto do inimigo" é um
-                // efeito de USO ÚNICO (a próxima rolagem, singular) independente da
-                // duração do bônus de Bloqueio (que dura 2 turnos nos Níveis 3/4). O
-                // campo `turns` aqui é só uma expiração de segurança (1 turno) caso o
-                // alvo nunca chegue a atacar; o consumo real acontece em hit-service.mjs
-                // assim que a penalidade é aplicada a uma rolagem de Acerto.
-                turns: 1,
-                sourceActorUuid: actor.uuid,
-                sourceState: plan.state,
-            });
-
-        // Sinergia: aliado protegido usuário de Metal/Cristal/Madeira testa FDV
-        // (CD 16 - CAR do usuário da Pedra); se passar, recupera PDR = metade
-        // da CAR do usuário da Pedra (arredondado para cima).
-        const STONE_SYNERGY_BREATHINGS = new Set(['Metal', 'Cristal', 'Madeira']);
-        const protectedUuid =
-            choices.protectedUuid && choices.protectedUuid !== actor.uuid
-                ? choices.protectedUuid
-                : null;
-        if (protectedUuid) {
-            const protectedDocument = await fromUuid(protectedUuid);
-            const protectedActor = protectedDocument?.actor ?? protectedDocument;
-            const hasSynergyBreathing = [...(protectedActor?.items ?? [])].some((item) =>
-                STONE_SYNERGY_BREATHINGS.has(item.system?.props?.respiracao_nome)
-            );
-            if (protectedActor?.update && hasSynergyBreathing) {
-                const car = parseNumber(props.car_display);
-                const fdv = parseNumber(protectedActor.system?.props?.fdv_display);
-                const synergyDc = 16 - car;
-                const synergyRoll = await Roll.create(`1d20 + ${fdv}`).evaluate();
-                await synergyRoll.toMessage({
-                    speaker: ChatMessage.getSpeaker({ actor: protectedActor }),
-                    flavor: `<strong>Sinergia da Pedra</strong> FDV CD ${synergyDc}`,
-                });
-                if (synergyRoll.total >= synergyDc) {
-                    const recovery = Math.ceil(car / 2);
-                    const protectedPdrGasto = parseNumber(
-                        protectedActor.system?.props?.pdr_slayer_gasto_valor
-                    );
-                    await protectedActor.update(
-                        {
-                            'system.props.pdr_slayer_gasto_valor': Math.max(
-                                0,
-                                protectedPdrGasto - recovery
-                            ),
-                        },
-                        { naCsbAutomation: true, naBreathing: true }
-                    );
-                    ui.notifications?.info?.(
-                        `Sinergia da Pedra: ${protectedActor.name} recuperou ${recovery} PDR.`
-                    );
-                }
-            }
-        }
-    }
     if (isMistForm && form.id === 'nevoa_08' && plan.state?.dazzle?.allyUuid) {
         const allyDocument = await fromUuid(plan.state.dazzle.allyUuid);
         const allyActor = allyDocument?.actor ?? allyDocument;
@@ -1786,46 +1734,8 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         return;
     }
 
-    if (isStoneForm && form.id === 'pedra_01') {
-        const targetActor = choices.targetUuid ? await fromUuid(choices.targetUuid) : null;
-        if (!targetActor)
-            return ui.notifications?.warn?.('Alvo do Serpentino Duplo não encontrado.');
-        const vit = parseNumber(targetActor.system?.props?.vit_display);
-        const save = await Roll.create(`1d20 + ${vit}`).evaluate();
-        const message = await save.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor: targetActor }),
-            flavor: `<strong>Jamongan Sōkyoku</strong> VIT CD ${plan.state.serpentine.saveDc}`,
-        });
-        await game.dice3d?.waitFor3DAnimationByMessageID?.(message?.id);
-        if (save.total < plan.state.serpentine.saveDc) {
-            const { rollDamage } = await import('./damage-service.mjs');
-            await rollDamage({
-                actor,
-                nome: `${form.respiracao} ${form.nome}`,
-                breathing: form.respiracao,
-                entradas: plan.state.serpentine.damageComponents.map((component) => ({
-                    tipoAcao: 'unica',
-                    dado: component.formula,
-                    fixo: 0,
-                    attrs: [],
-                    tiposDano: component.types,
-                })),
-                skipActionConsumption: true,
-                forceAttackDamage: true,
-            });
-        }
-        await postBreathChat({
-            actor,
-            form,
-            selected: { ...selected, custo: custoFinal },
-            damageRoll: null,
-        });
-        return;
-    }
-
     const flameNeedsAttackResolution =
         isFlameForm && Boolean(plan.state?.nextHit || plan.state?.pendingDamage);
-    const stoneNeedsAttackResolution = isStoneForm && ['pedra_02', 'pedra_04'].includes(form.id);
     const mistNeedsAttackResolution =
         isMistForm && ['nevoa_01', 'nevoa_02', 'nevoa_04', 'nevoa_06'].includes(form.id);
     const metalNeedsAttackResolution = isMetalForm && form.id === 'metal_06';
@@ -1833,7 +1743,6 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         isSnowForm && ['neve_01', 'neve_02', 'neve_05'].includes(form.id);
     if (
         flameNeedsAttackResolution ||
-        stoneNeedsAttackResolution ||
         mistNeedsAttackResolution ||
         metalNeedsAttackResolution ||
         snowNeedsAttackResolution
@@ -1870,20 +1779,6 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
                 damageRoll: null,
             });
             return;
-        }
-
-        if (isStoneForm && form.id === 'pedra_04' && hitResult.criticals > 0) {
-            // Recuperação por Crítico: até `recoverPdrOnCritical` PDR (2, hoje) por
-            // uso "efeito de contato não duplicável": mesmo se os dois ataques
-            // (ação de Ataque + ação Especial) forem críticos, recupera só uma vez.
-            const recovery = Math.max(0, Math.trunc(parseNumber(selected.recoverPdrOnCritical)));
-            if (recovery > 0) {
-                const currentSpent = parseNumber(actor.system?.props?.pdr_slayer_gasto_valor);
-                await actor.update(
-                    { 'system.props.pdr_slayer_gasto_valor': Math.max(0, currentSpent - recovery) },
-                    { naCsbAutomation: true, naBreathing: true }
-                );
-            }
         }
 
         if (isSnowForm && form.id === 'neve_02' && plan.state?.pendingTargetEffect) {
@@ -2031,13 +1926,6 @@ export function registerBreathingEngine() {
                     turns,
                 });
             else void actor.unsetFlag(MODULE_ID, 'snowMovementPenalty');
-        }
-        const stonePenalty = actor.getFlag?.(MODULE_ID, 'stoneReflectionPenalty');
-        if (Number(stonePenalty?.turns) > 0) {
-            const turns = Number(stonePenalty.turns) - 1;
-            if (turns > 0)
-                void actor.setFlag(MODULE_ID, 'stoneReflectionPenalty', { ...stonePenalty, turns });
-            else void actor.unsetFlag(MODULE_ID, 'stoneReflectionPenalty');
         }
         const mistSuppression = actor.getFlag?.(MODULE_ID, 'mistResistanceSuppression');
         if (Number(mistSuppression?.turns) > 0) {

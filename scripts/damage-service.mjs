@@ -44,11 +44,7 @@ import {
     flameWeaponHeat,
     parseFlameBreathingState,
 } from './flame-breathing-service.mjs';
-import {
-    consumeStonePending,
-    parseStoneBreathingState,
-    stoneStatePatch,
-} from './stone-breathing-service.mjs';
+import { applyStonePassiveAfterDamage } from './stone-breathing-service.mjs';
 import {
     consumeMistPending,
     mistStatePatch,
@@ -81,10 +77,8 @@ import {
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
 import {
-    addStoneBreakForAction,
     parseBreathPassiveState,
     passiveStatePatch,
-    registerStoneConfirmedDamage,
 } from './breath-passives.mjs';
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
@@ -618,29 +612,13 @@ export async function rollDamage(options = {}) {
             formula: String(flameTier.weaponDamage),
             flame: true,
         });
-    const stoneState = parseStoneBreathingState(
-        attackerKind === 'slayer' ? props.resp_pedra_estado : ''
-    );
-    const stoneDamage = stoneState.pendingDamage;
-    if (injectBreathing && stoneDamage?.formula && hasAttackDamage) {
-        const formula = String(stoneDamage.formula).replace(
-            /@for\b/giu,
-            String(attrValues.for ?? 0)
-        );
-        specs.push({
-            label: 'Respiração da Pedra',
-            types: stoneDamage.types ?? ['concussao'],
-            formula,
-            stone: true,
-        });
-    }
     const mistState = parseMistBreathingState(
         attackerKind === 'slayer' ? props.resp_nevoa_estado : ''
     );
     const mistDamage = mistState.pendingDamage;
     if (injectBreathing && mistDamage?.formula && hasAttackDamage) {
         if (mistDamage.replaceWeaponDamage)
-            specs = specs.filter((spec) => spec.breathing || spec.flame || spec.stone);
+            specs = specs.filter((spec) => spec.breathing || spec.flame);
         specs.push({
             label: 'Respiração da Névoa',
             types: ['cortante'],
@@ -701,7 +679,7 @@ export async function rollDamage(options = {}) {
         // Garras do Vento Puro: transforma o PRIMEIRO spec (dano da arma):
         // N2/N3 → arma ×N · N4 → (arma + DEX) ×N
         const weaponSpec = specs.find(
-            (spec) => !spec.breathing && !spec.flame && !spec.stone && !spec.mist && !spec.snow
+            (spec) => !spec.breathing && !spec.flame && !spec.mist && !spec.snow
         );
         if (weaponSpec) {
             const { multiplier, addDex } = windDamage.garras;
@@ -823,14 +801,6 @@ export async function rollDamage(options = {}) {
         const nextState = consumeFlamePending(flameState, { damage: true });
         const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
         Object.assign(existing.changes, flameStatePatch(nextState));
-        updatesByActor.set(actor.uuid, existing);
-    }
-    if (stoneDamage && hasAttackDamage) {
-        const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
-        Object.assign(
-            existing.changes,
-            stoneStatePatch(consumeStonePending(stoneState, { damage: true }))
-        );
         updatesByActor.set(actor.uuid, existing);
     }
     if (mistDamage && hasAttackDamage) {
@@ -1500,24 +1470,6 @@ export async function rollDamage(options = {}) {
                         `${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ''}.`
                     );
 
-                    // Tenmen Kudaki / Hyōmen Kurasshu / Kyoseki: Sangramento é uma
-                    // parcela distinta da Concussão. Aplica após a defesa quando o
-                    // ataque não foi completamente anulado, mesmo se a Concussão foi
-                    // reduzida a zero. Reaplicar a mesma fonte soma o dano e renova 2 turnos.
-                    if (
-                        stoneDamage?.source === 'pedra_02' &&
-                        stoneState.bleeding &&
-                        request.negated !== true
-                    ) {
-                        await applyStackingBreathingStatus(targetActor, 'sangramento', {
-                            damageFormula: String(stoneState.bleeding.amount),
-                            remainingTurns: 2,
-                            sourceName: `${actor.name} · Tenmen Kudaki`,
-                            tick: 'start',
-                            stacks: 1,
-                        });
-                    }
-
                     // Água 5 (Chuva Misericordiosa): finalizar o alvo recupera PDR igual
                     // ao Nível de Respiração do usuário (regra do .md "Se finalizar").
                     const killRecovery = Math.max(
@@ -1555,47 +1507,17 @@ export async function rollDamage(options = {}) {
         ui.notifications?.warn?.(`Não foi possível atualizar ${targetName}.`);
     }
 
-    // Registra a origem automática de Jamongan Sōkyoku e concede no máximo
-    // uma Quebra por ação, mesmo quando a ação contém dois ataques ou vários alvos.
-    const knowsStone =
-        attackerKind === 'slayer' &&
-        [...(actor.items ?? [])].some((item) =>
-            ['Pedra', 'Iwa no Kokyū'].includes(item.system?.props?.respiracao_nome)
-        );
-    if (knowsStone && hasAttackDamage) {
-        let nextPassiveState = parseBreathPassiveState(actor.system?.props?.resp_passivas_estado);
-        const weaponId = String(nextPassiveState.lastWeapon?.id ?? '');
-        for (const target of appliedTargets) {
-            if (target.amount + target.wound <= 0) continue;
-            nextPassiveState = registerStoneConfirmedDamage(nextPassiveState, {
-                targetUuid: target.actor.uuid,
-                damage: target.amount + target.wound,
-                actionId,
-                combatId: game.combat?.uuid ?? '',
-                round: game.combat?.round ?? 0,
-                turn: game.combat?.turn ?? 0,
-                weaponId,
-            });
-        }
-        const quebraApplies = damageRequests.some(
-            (request) =>
-                request.negated !== true &&
-                (request.components ?? []).some((component) =>
-                    component.types?.includes('concussao')
-                )
-        );
-        if (quebraApplies && weaponId)
-            nextPassiveState = addStoneBreakForAction(
-                nextPassiveState,
-                weaponId,
-                attrValues.for,
-                actionId
-            );
-        await actor.update(passiveStatePatch(nextPassiveState), {
-            naCsbAutomation: true,
-            naBreathing: true,
-        });
-    }
+    // Jamongan Sōkyoku (dano confirmado) + Quebra por ação (no máximo uma,
+    // mesmo quando a ação contém dois ataques ou vários alvos) vivem no
+    // módulo da passiva da Pedra.
+    await applyStonePassiveAfterDamage({
+        actor,
+        appliedTargets,
+        damageRequests,
+        actionId,
+        strength: attrValues.for,
+        hasAttackDamage,
+    });
 
     if (finalDamage > 0 && (!targets || targets.size === 0))
         ui.notifications?.warn?.(

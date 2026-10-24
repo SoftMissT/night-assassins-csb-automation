@@ -1,7 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const officialPath = path.resolve(
     root,
@@ -18,10 +17,8 @@ const officialPath = path.resolve(
         )
 );
 const targetPath = path.join(root, 'src', 'templates', 'items', 'slayer-weapon-template.json');
-
 const officialText = await readFile(officialPath, 'utf8');
 const official = JSON.parse(officialText);
-
 if (official?._id !== 'NAWeaponTpl00001') {
     throw new Error(`Template oficial inesperado: ${official?._id ?? 'sem _id'}`);
 }
@@ -59,15 +56,12 @@ function ensureWeaponRuntimeFields(template) {
     if (!runtime || !Array.isArray(runtime.contents)) {
         throw new Error('Painel arma_runtime_data não encontrado no template oficial.');
     }
-
     const keys = new Set(runtime.contents.map((component) => component?.key).filter(Boolean));
     const textAreaSource = runtime.contents.find((component) => component?.type === 'textArea');
     const textFieldSource = runtime.contents.find((component) => component?.type === 'textField');
-
     if (!textAreaSource || !textFieldSource) {
         throw new Error('Componentes-base de runtime não encontrados no template oficial.');
     }
-
     for (const [key, defaultValue] of [
         ['arma_dano_por_rank_json', '{}'],
         ['arma_dado_evolutivo_por_rank_json', '{}'],
@@ -81,7 +75,6 @@ function ensureWeaponRuntimeFields(template) {
         });
         keys.add(key);
     }
-
     if (!keys.has('arma_habilidade_resumo')) {
         runtime.contents.push({
             ...structuredClone(textFieldSource),
@@ -91,11 +84,9 @@ function ensureWeaponRuntimeFields(template) {
         });
     }
 }
-
 // Única adaptação funcional: o CSB interpreta o retorno de objeto da macro como
 // fórmula. O layout, as keys e a estrutura visual continuam sendo os oficiais.
 guardCsbRollResult(official.system);
 ensureWeaponRuntimeFields(official);
-
 await writeFile(targetPath, `${JSON.stringify(official, null, 2)}\n`);
 console.info(`Template oficial de armas normais adotado em ${targetPath}`);

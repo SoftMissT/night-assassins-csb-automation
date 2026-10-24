@@ -619,7 +619,7 @@ export async function applyOniCreationBonuses(values) {
     while (true) {
         const chosen = await foundry.applications.api.DialogV2.wait({
             window: {
-                title: 'Criação Oni — três bônus livres',
+                title: 'Criação Oni três bônus livres',
             },
             content: `
       <div class="na-csb-automation" style="display:grid;gap:10px;padding:4px 0;">

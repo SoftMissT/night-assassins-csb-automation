@@ -25,7 +25,9 @@ function escapeHtml(value) {
 
 async function resolveActor(actorUuid) {
     const doc = actorUuid ? await fromUuid(actorUuid) : null;
-    return doc?.actor ?? doc ?? canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character ?? null;
+    return (
+        doc?.actor ?? doc ?? canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character ?? null
+    );
 }
 
 function canEdit(actor) {
@@ -59,9 +61,7 @@ function presetCardHtml(preset, selectedId, resourceLabel) {
 function presetListHtml(presets, selectedId, resourceLabel) {
     if (presets.length === 0)
         return '<p class="na-preset-empty">Nenhum preset salvo. Crie o primeiro com <strong>Novo</strong>.</p>';
-    return presets
-        .map((preset) => presetCardHtml(preset, selectedId, resourceLabel))
-        .join('');
+    return presets.map((preset) => presetCardHtml(preset, selectedId, resourceLabel)).join('');
 }
 
 function bindManagerInteractions(root) {
@@ -97,8 +97,6 @@ export async function saveDamagePreset(actor, draft = {}) {
         result.presets[result.presets.length - 1];
     return { ok: true, presets: result.presets, preset: saved };
 }
-
-
 
 /**
  * Abre o gerenciador de presets de dano do Actor.
@@ -211,7 +209,8 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
                 breathing: draft?.breathing ?? defaultBreathing,
             },
         });
-        if (!editor?.preset) return openDamagePresetManager({ actorUuid: actor.uuid, group, breathing });
+        if (!editor?.preset)
+            return openDamagePresetManager({ actorUuid: actor.uuid, group, breathing });
         const result = await saveDamagePreset(actor, editor.preset);
         if (!result.ok) ui.notifications?.warn?.(result.reason);
         else ui.notifications?.info?.(`Preset "${result.preset?.name ?? ''}" salvo.`);

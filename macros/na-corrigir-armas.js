@@ -7,7 +7,6 @@ if (!game.user?.isGM) {
     ui.notifications.warn('Apenas o Mestre pode corrigir as armas dos Caçadores.');
     return '';
 }
-
 try {
     const result = await moduleApi.repairSlayerWeaponItems({});
     const summaryText =
@@ -19,7 +18,9 @@ try {
             ? `Armas corrigidas: <strong>${result.items}</strong> itens em <strong>${result.actors}</strong> Caçadores.`
             : summaryText;
     await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: game.user.character }),
+        speaker: ChatMessage.getSpeaker({
+            actor: game.user.character,
+        }),
         content: `<h3>Correção de Armas dos Caçadores</h3><p>${summaryHtml}</p>`,
     });
     ui.notifications.info(summaryText);

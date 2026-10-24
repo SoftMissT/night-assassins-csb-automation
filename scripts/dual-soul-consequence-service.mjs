@@ -23,29 +23,19 @@ import {
     completeDualSoulPossession,
 } from './dual-soul-consequence-core.mjs';
 
-import {
-    getDualSoulAwakeningRuntime,
-} from './dual-soul-awakening-resistance-service.mjs';
+import { getDualSoulAwakeningRuntime } from './dual-soul-awakening-resistance-service.mjs';
 
-import {
-    isDualSoulWeapon,
-} from './dual-soul-ceremony-service.mjs';
+import { isDualSoulWeapon } from './dual-soul-ceremony-service.mjs';
 
-import {
-    hydrateSpecialWeaponItem,
-} from './special-weapon-service.mjs';
+import { hydrateSpecialWeaponItem } from './special-weapon-service.mjs';
 
-const RUNTIME_KEY =
-    'dupla_alma_despertar_runtime_json';
+const RUNTIME_KEY = 'dupla_alma_despertar_runtime_json';
 
 function nowIso() {
-    return new Date()
-        .toISOString();
+    return new Date().toISOString();
 }
 
-function escapeHtml(
-    value = ''
-) {
+function escapeHtml(value = '') {
     return String(value ?? '')
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
@@ -54,18 +44,12 @@ function escapeHtml(
         .replaceAll("'", '&#039;');
 }
 
-function actorItems(
-    actor
-) {
+function actorItems(actor) {
     if (!actor?.items) {
         return [];
     }
 
-    if (
-        Array.isArray(
-            actor.items.contents
-        )
-    ) {
+    if (Array.isArray(actor.items.contents)) {
         return actor.items.contents;
     }
 
@@ -76,206 +60,97 @@ function actorItems(
     }
 }
 
-function combatants(
-    combat
-) {
+function combatants(combat) {
     if (!combat?.combatants) {
         return [];
     }
 
-    if (
-        Array.isArray(
-            combat.combatants.contents
-        )
-    ) {
+    if (Array.isArray(combat.combatants.contents)) {
         return combat.combatants.contents;
     }
 
     try {
-        return [
-            ...combat.combatants,
-        ];
+        return [...combat.combatants];
     } catch {
         return [];
     }
 }
 
-function currentCombatantId(
-    combat
-) {
+function currentCombatantId(combat) {
     return (
-        combat
-            ?.combatant
-            ?.id ??
-        combat
-            ?.current
-            ?.combatantId ??
-        combat
-            ?.turns
-            ?.[combat?.turn]
-            ?.id ??
+        combat?.combatant?.id ??
+        combat?.current?.combatantId ??
+        combat?.turns?.[combat?.turn]?.id ??
         null
     );
 }
 
-function combatantForActor(
-    combat,
-    actor
-) {
+function combatantForActor(combat, actor) {
     return (
-        combatants(combat)
-            .find(
-                (combatant) =>
-                    combatant
-                        ?.actorId ===
-                        actor?.id ||
-                    combatant
-                        ?.actor
-                        ?.uuid ===
-                        actor?.uuid
-            ) ??
-        null
+        combatants(combat).find(
+            (combatant) =>
+                combatant?.actorId === actor?.id || combatant?.actor?.uuid === actor?.uuid
+        ) ?? null
     );
 }
 
 function isPrimaryGm() {
-    const primary =
-        game.users
-            ?.filter(
-                (user) =>
-                    user.active &&
-                    user.isGM
-            )
-            .sort(
-                (a, b) =>
-                    String(a.id)
-                        .localeCompare(
-                            String(b.id)
-                        )
-            )[0];
+    const primary = game.users
+        ?.filter((user) => user.active && user.isGM)
+        .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0];
 
-    return Boolean(
-        game.user?.isGM &&
-        primary?.id ===
-            game.user.id
-    );
+    return Boolean(game.user?.isGM && primary?.id === game.user.id);
 }
 
-function soulName(
-    kind,
-    props = {}
-) {
-    if (
-        kind === 'entidade'
-    ) {
-        return (
-            String(
-                props.arma_entidade ??
-                ''
-            ).trim() ||
-            'Entidade'
-        );
+function soulName(kind, props = {}) {
+    if (kind === 'entidade') {
+        return String(props.arma_entidade ?? '').trim() || 'Entidade';
     }
 
-    if (
-        kind === 'demonio'
-    ) {
-        return (
-            String(
-                props.arma_demonio ??
-                ''
-            ).trim() ||
-            'Demônio'
-        );
+    if (kind === 'demonio') {
+        return String(props.arma_demonio ?? '').trim() || 'Demônio';
     }
 
     return '—';
 }
 
-async function resolveActor(
-    options = {}
-) {
-    if (
-        options.actor
-            ?.documentName ===
-        'Actor'
-    ) {
+async function resolveActor(options = {}) {
+    if (options.actor?.documentName === 'Actor') {
         return options.actor;
     }
 
-    if (
-        options.actorUuid
-    ) {
-        const document =
-            await fromUuid(
-                options.actorUuid
-            );
+    if (options.actorUuid) {
+        const document = await fromUuid(options.actorUuid);
 
-        const actor =
-            document?.actor ??
-            document;
+        const actor = document?.actor ?? document;
 
-        if (
-            actor
-                ?.documentName ===
-            'Actor'
-        ) {
+        if (actor?.documentName === 'Actor') {
             return actor;
         }
     }
 
-    const controlled =
-        canvas
-            ?.tokens
-            ?.controlled ??
-        [];
+    const controlled = canvas?.tokens?.controlled ?? [];
 
-    if (
-        controlled.length === 1
-    ) {
-        return (
-            controlled[0]
-                ?.actor ??
-            null
-        );
+    if (controlled.length === 1) {
+        return controlled[0]?.actor ?? null;
     }
 
-    if (
-        controlled.length > 1
-    ) {
+    if (controlled.length > 1) {
         return null;
     }
 
-    return (
-        game.user?.character ??
-        null
-    );
+    return game.user?.character ?? null;
 }
 
-async function explicitItem(
-    options = {}
-) {
-    if (
-        options.item &&
-        options.item.documentName !==
-            'Actor'
-    ) {
+async function explicitItem(options = {}) {
+    if (options.item && options.item.documentName !== 'Actor') {
         return options.item;
     }
 
-    if (
-        options.itemUuid
-    ) {
-        const document =
-            await fromUuid(
-                options.itemUuid
-            );
+    if (options.itemUuid) {
+        const document = await fromUuid(options.itemUuid);
 
-        if (
-            document &&
-            document.documentName !==
-                'Actor'
-        ) {
+        if (document && document.documentName !== 'Actor') {
             return document;
         }
     }
@@ -283,53 +158,29 @@ async function explicitItem(
     return null;
 }
 
-async function chooseDualSoulItem(
-    actor,
-    options = {}
-) {
-    const explicit =
-        await explicitItem(
-            options
-        );
+async function chooseDualSoulItem(actor, options = {}) {
+    const explicit = await explicitItem(options);
 
     if (explicit) {
-        return isDualSoulWeapon(
-            explicit
-        )
-            ? explicit
-            : null;
+        return isDualSoulWeapon(explicit) ? explicit : null;
     }
 
-    const weapons =
-        actorItems(actor)
-            .filter(
-                isDualSoulWeapon
-            );
+    const weapons = actorItems(actor).filter(isDualSoulWeapon);
 
-    if (
-        weapons.length === 0
-    ) {
+    if (weapons.length === 0) {
         return null;
     }
 
-    if (
-        weapons.length === 1
-    ) {
+    if (weapons.length === 1) {
         return weapons[0];
     }
 
-    const selected =
-        await foundry
-            .applications
-            .api
-            .DialogV2
-            .wait({
-                window: {
-                    title:
-                        'Consequência de Dupla Alma',
-                },
+    const selected = await foundry.applications.api.DialogV2.wait({
+        window: {
+            title: 'Consequência de Dupla Alma',
+        },
 
-                content: `
+        content: `
                     <div class="na-csb-automation">
                         <p>
                             Escolha a Arma de Dupla Alma.
@@ -337,98 +188,59 @@ async function chooseDualSoulItem(
                     </div>
                 `,
 
-                modal: true,
-                rejectClose: false,
+        modal: true,
+        rejectClose: false,
 
-                buttons: [
-                    ...weapons.map(
-                        (
-                            weapon,
-                            index
-                        ) => ({
-                            action:
-                                `weapon-${index}`,
+        buttons: [
+            ...weapons.map((weapon, index) => ({
+                action: `weapon-${index}`,
 
-                            label:
-                                weapon.name,
+                label: weapon.name,
 
-                            callback:
-                                () => (
-                                    weapon.uuid ??
-                                    weapon.id
-                                ),
-                        })
-                    ),
+                callback: () => weapon.uuid ?? weapon.id,
+            })),
 
-                    {
-                        action:
-                            'cancel',
+            {
+                action: 'cancel',
 
-                        label:
-                            'Cancelar',
+                label: 'Cancelar',
 
-                        callback:
-                            () => null,
-                    },
-                ],
-            });
+                callback: () => null,
+            },
+        ],
+    });
 
     if (!selected) {
         return null;
     }
 
-    return (
-        weapons.find(
-            (weapon) =>
-                (
-                    weapon.uuid ??
-                    weapon.id
-                ) === selected
-        ) ??
-        null
-    );
+    return weapons.find((weapon) => (weapon.uuid ?? weapon.id) === selected) ?? null;
 }
 
-async function writeRuntime(
-    item,
-    runtime,
-    extra = {}
-) {
+async function writeRuntime(item, runtime, extra = {}) {
     await item.update(
         {
-            [`system.props.${RUNTIME_KEY}`]:
-                JSON.stringify(
-                    runtime
-                ),
+            [`system.props.${RUNTIME_KEY}`]: JSON.stringify(runtime),
 
             ...extra,
         },
         {
-            naCsbAutomation:
-                true,
+            naCsbAutomation: true,
 
-            naSpecialWeapon:
-                true,
+            naSpecialWeapon: true,
 
-            naDualSoulConsequence:
-                true,
+            naDualSoulConsequence: true,
         }
     );
 
     return runtime;
 }
 
-async function createAuditMessage({
-    actor,
-    title,
-    body,
-} = {}) {
+async function createAuditMessage({ actor, title, body } = {}) {
     return ChatMessage.create({
-        speaker:
-            ChatMessage
-                .getSpeaker({
-                    actor,
-                }),
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
 
         content: `
             <div class="na-csb-automation">
@@ -442,269 +254,141 @@ async function createAuditMessage({
     });
 }
 
-function loanScopeForActor(
-    actor
-) {
-    const combat =
-        game.combat;
+function loanScopeForActor(actor) {
+    const combat = game.combat;
 
-    if (
-        combat?.started
-    ) {
-        const combatant =
-            combatantForActor(
-                combat,
-                actor
-            );
+    if (combat?.started) {
+        const combatant = combatantForActor(combat, actor);
 
         if (combatant) {
             return {
-                scopeKind:
-                    'combat',
+                scopeKind: 'combat',
 
-                combatId:
-                    combat.id,
+                combatId: combat.id,
 
-                sceneId:
-                    null,
+                sceneId: null,
             };
         }
     }
 
     return {
-        scopeKind:
-            'scene',
+        scopeKind: 'scene',
 
-        combatId:
-            null,
+        combatId: null,
 
-        sceneId:
-            canvas?.scene?.id ??
-            null,
+        sceneId: canvas?.scene?.id ?? null,
     };
 }
 
-function possessionTrackingForActor(
-    actor
-) {
-    const combat =
-        game.combat;
+function possessionTrackingForActor(actor) {
+    const combat = game.combat;
 
-    if (
-        !combat?.started
-    ) {
+    if (!combat?.started) {
         return {
-            trackedCombat:
-                false,
+            trackedCombat: false,
 
-            combatId:
-                null,
+            combatId: null,
 
-            combatantId:
-                null,
+            combatantId: null,
 
-            startedWhileActorTurn:
-                false,
+            startedWhileActorTurn: false,
         };
     }
 
-    const combatant =
-        combatantForActor(
-            combat,
-            actor
-        );
+    const combatant = combatantForActor(combat, actor);
 
     if (!combatant) {
         return {
-            trackedCombat:
-                false,
+            trackedCombat: false,
 
-            combatId:
-                null,
+            combatId: null,
 
-            combatantId:
-                null,
+            combatantId: null,
 
-            startedWhileActorTurn:
-                false,
+            startedWhileActorTurn: false,
         };
     }
 
     return {
-        trackedCombat:
-            true,
+        trackedCombat: true,
 
-        combatId:
-            combat.id,
+        combatId: combat.id,
 
-        combatantId:
-            combatant.id,
+        combatantId: combatant.id,
 
-        startedWhileActorTurn:
-            currentCombatantId(
-                combat
-            ) === combatant.id,
+        startedWhileActorTurn: currentCombatantId(combat) === combatant.id,
     };
 }
 
-export function getDualSoulConsequenceState(
-    item
-) {
-    return (
-        getDualSoulAwakeningRuntime(
-            item
-        )
-            ?.consequence ??
-        null
-    );
+export function getDualSoulConsequenceState(item) {
+    return getDualSoulAwakeningRuntime(item)?.consequence ?? null;
 }
 
-export async function routePendingDualSoulConsequence(
-    options = {}
-) {
-    const actor =
-        await resolveActor(
-            options
-        );
+export async function routePendingDualSoulConsequence(options = {}) {
+    const actor = await resolveActor(options);
 
     if (!actor) {
-        return ui.notifications
-            ?.warn?.(
-                'Selecione o portador da Arma de Dupla Alma.'
-            );
+        return ui.notifications?.warn?.('Selecione o portador da Arma de Dupla Alma.');
     }
 
-    if (
-        !game.user?.isGM &&
-        actor.isOwner === false
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Você não possui permissão para este Actor.'
-            );
+    if (!game.user?.isGM && actor.isOwner === false) {
+        return ui.notifications?.warn?.('Você não possui permissão para este Actor.');
     }
 
-    const item =
-        await chooseDualSoulItem(
-            actor,
-            options
-        );
+    const item = await chooseDualSoulItem(actor, options);
 
     if (!item) {
-        return ui.notifications
-            ?.warn?.(
-                'Nenhuma Arma de Dupla Alma válida foi encontrada.'
-            );
+        return ui.notifications?.warn?.('Nenhuma Arma de Dupla Alma válida foi encontrada.');
     }
 
-    if (
-        item.parent
-            ?.documentName !==
-            'Actor' ||
-        item.parent?.uuid !==
-            actor.uuid
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'A arma precisa estar vinculada ao Actor.'
-            );
+    if (item.parent?.documentName !== 'Actor' || item.parent?.uuid !== actor.uuid) {
+        return ui.notifications?.warn?.('A arma precisa estar vinculada ao Actor.');
     }
 
-    const hydration =
-        await hydrateSpecialWeaponItem(
-            item
-        );
+    const hydration = await hydrateSpecialWeaponItem(item);
 
     if (!hydration?.ok) {
-        return ui.notifications
-            ?.error?.(
-                hydration?.reason ??
-                'Falha ao hidratar a arma.'
-            );
+        return ui.notifications?.error?.(hydration?.reason ?? 'Falha ao hidratar a arma.');
     }
 
-    const runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+    const runtime = getDualSoulAwakeningRuntime(item);
 
-    if (
-        runtime.pending !== true ||
-        runtime.result !==
-            'failure'
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Não existe falha de Resistência pendente.'
-            );
+    if (runtime.pending !== true || runtime.result !== 'failure') {
+        return ui.notifications?.warn?.('Não existe falha de Resistência pendente.');
     }
 
-    if (
-        runtime.consequence
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Este evento já possui uma consequência.'
-            );
+    if (runtime.consequence) {
+        return ui.notifications?.warn?.('Este evento já possui uma consequência.');
     }
 
-    const props =
-        item.system?.props ??
-        {};
+    const props = item.system?.props ?? {};
 
-    const at =
-        nowIso();
+    const at = nowIso();
 
-    if (
-        runtime.challengerKind ===
-        'entidade'
-    ) {
-        const scope =
-            loanScopeForActor(
-                actor
-            );
+    if (runtime.challengerKind === 'entidade') {
+        const scope = loanScopeForActor(actor);
 
-        const routed =
-            routeDualSoulConsequence(
-                runtime,
-                {
-                    routedAt:
-                        at,
+        const routed = routeDualSoulConsequence(runtime, {
+            routedAt: at,
 
-                    routedByUserId:
-                        game.user?.id ??
-                        null,
+            routedByUserId: game.user?.id ?? null,
 
-                    entityName:
-                        soulName(
-                            'entidade',
-                            props
-                        ),
+            entityName: soulName('entidade', props),
 
-                    ...scope,
-                }
-            );
+            ...scope,
+        });
 
-        await writeRuntime(
-            item,
-            routed
-        );
+        await writeRuntime(item, routed);
 
         await createAuditMessage({
             actor,
 
-            title:
-                'Empréstimo da Entidade',
+            title: 'Empréstimo da Entidade',
 
             body: `
                 <p>
                     <strong>
-                        ${escapeHtml(
-                            soulName(
-                                'entidade',
-                                props
-                            )
-                        )}
+                        ${escapeHtml(soulName('entidade', props))}
                     </strong>
                     respondeu à falha.
                 </p>
@@ -722,15 +406,7 @@ export async function routePendingDualSoulConsequence(
                 <p>
                     Escopo:
                     <strong>
-                        ${
-                            routed
-                                .consequence
-                                .scope
-                                .kind ===
-                            'combat'
-                                ? 'este combate'
-                                : 'esta cena'
-                        }
+                        ${routed.consequence.scope.kind === 'combat' ? 'este combate' : 'esta cena'}
                     </strong>.
                 </p>
 
@@ -741,85 +417,46 @@ export async function routePendingDualSoulConsequence(
             `,
         });
 
-        ui.notifications
-            ?.info?.(
-                'Empréstimo concedido: 1 uso disponível.'
-            );
+        ui.notifications?.info?.('Empréstimo concedido: 1 uso disponível.');
 
         return {
             ok: true,
             actor,
             item,
-            runtime:
-                routed,
+            runtime: routed,
         };
     }
 
-    if (
-        runtime.challengerKind ===
-        'demonio'
-    ) {
-        if (
-            !game.user?.isGM
-        ) {
-            return ui.notifications
-                ?.warn?.(
-                    'A Possessão deve ser iniciada pelo Mestre.'
-                );
+    if (runtime.challengerKind === 'demonio') {
+        if (!game.user?.isGM) {
+            return ui.notifications?.warn?.('A Possessão deve ser iniciada pelo Mestre.');
         }
 
-        const tracking =
-            possessionTrackingForActor(
-                actor
-            );
+        const tracking = possessionTrackingForActor(actor);
 
-        const routed =
-            routeDualSoulConsequence(
-                runtime,
-                {
-                    routedAt:
-                        at,
+        const routed = routeDualSoulConsequence(runtime, {
+            routedAt: at,
 
-                    routedByUserId:
-                        game.user?.id ??
-                        null,
+            routedByUserId: game.user?.id ?? null,
 
-                    demonName:
-                        soulName(
-                            'demonio',
-                            props
-                        ),
+            demonName: soulName('demonio', props),
 
-                    ...tracking,
-                }
-            );
+            ...tracking,
+        });
 
-        await writeRuntime(
-            item,
-            routed
-        );
+        await writeRuntime(item, routed);
 
-        const tracked =
-            routed
-                .consequence
-                .state ===
-            'waiting_turn';
+        const tracked = routed.consequence.state === 'waiting_turn';
 
         await createAuditMessage({
             actor,
 
-            title:
-                'Possessão do Demônio',
+            title: 'Possessão do Demônio',
 
             body: `
                 <p>
                     <strong>
-                        ${escapeHtml(
-                            soulName(
-                                'demonio',
-                                props
-                            )
-                        )}
+                        ${escapeHtml(soulName('demonio', props))}
                     </strong>
                     assumiu a disputa.
                 </p>
@@ -849,87 +486,50 @@ export async function routePendingDualSoulConsequence(
             `,
         });
 
-        ui.notifications
-            ?.warn?.(
-                tracked
-                    ? 'Possessão armada: o próximo turno completo do portador pertence ao Mestre.'
-                    : 'Possessão ativa em modo manual. Finalize após um turno completo.'
-            );
+        ui.notifications?.warn?.(
+            tracked
+                ? 'Possessão armada: o próximo turno completo do portador pertence ao Mestre.'
+                : 'Possessão ativa em modo manual. Finalize após um turno completo.'
+        );
 
         return {
             ok: true,
             actor,
             item,
-            runtime:
-                routed,
+            runtime: routed,
         };
     }
 
-    return ui.notifications
-        ?.error?.(
-            'challengerKind inválido no evento.'
-        );
+    return ui.notifications?.error?.('challengerKind inválido no evento.');
 }
 
-export async function recordDualSoulLoanUse(
-    options = {}
-) {
-    const actor =
-        await resolveActor(
-            options
-        );
+export async function recordDualSoulLoanUse(options = {}) {
+    const actor = await resolveActor(options);
 
-    const item =
-        await chooseDualSoulItem(
-            actor,
-            options
-        );
+    const item = await chooseDualSoulItem(actor, options);
 
-    if (
-        !actor ||
-        !item
-    ) {
+    if (!actor || !item) {
         return null;
     }
 
-    if (
-        !game.user?.isGM &&
-        actor.isOwner === false
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Você não possui permissão para este Actor.'
-            );
+    if (!game.user?.isGM && actor.isOwner === false) {
+        return ui.notifications?.warn?.('Você não possui permissão para este Actor.');
     }
 
-    const runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+    const runtime = getDualSoulAwakeningRuntime(item);
 
-    const next =
-        consumeDualSoulLoan(
-            runtime,
-            {
-                at:
-                    nowIso(),
+    const next = consumeDualSoulLoan(runtime, {
+        at: nowIso(),
 
-                userId:
-                    game.user?.id ??
-                    null,
-            }
-        );
+        userId: game.user?.id ?? null,
+    });
 
-    await writeRuntime(
-        item,
-        next
-    );
+    await writeRuntime(item, next);
 
     await createAuditMessage({
         actor,
 
-        title:
-            'Empréstimo Consumido',
+        title: 'Empréstimo Consumido',
 
         body: `
             <p>
@@ -943,127 +543,56 @@ export async function recordDualSoulLoanUse(
         `,
     });
 
-    ui.notifications
-        ?.info?.(
-            'Empréstimo consumido. 0 usos restantes.'
-        );
+    ui.notifications?.info?.('Empréstimo consumido. 0 usos restantes.');
 
     return next;
 }
 
-export async function expireDualSoulLoan(
-    options = {}
-) {
-    const actor =
-        options.actor ??
-        await resolveActor(
-            options
-        );
+export async function expireDualSoulLoan(options = {}) {
+    const actor = options.actor ?? (await resolveActor(options));
 
-    const item =
-        options.item ??
-        await chooseDualSoulItem(
-            actor,
-            options
-        );
+    const item = options.item ?? (await chooseDualSoulItem(actor, options));
 
-    if (
-        !actor ||
-        !item
-    ) {
+    if (!actor || !item) {
         return null;
     }
 
-    if (
-        options.automatic !== true &&
-        !game.user?.isGM &&
-        actor.isOwner === false
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Você não possui permissão para este Actor.'
-            );
+    if (options.automatic !== true && !game.user?.isGM && actor.isOwner === false) {
+        return ui.notifications?.warn?.('Você não possui permissão para este Actor.');
     }
 
-    const runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+    const runtime = getDualSoulAwakeningRuntime(item);
 
-    const next =
-        expireDualSoulLoanState(
-            runtime,
-            {
-                at:
-                    nowIso(),
+    const next = expireDualSoulLoanState(runtime, {
+        at: nowIso(),
 
-                reason:
-                    options.reason ??
-                    'scene-or-combat-ended',
-            }
-        );
+        reason: options.reason ?? 'scene-or-combat-ended',
+    });
 
-    await writeRuntime(
-        item,
-        next
-    );
+    await writeRuntime(item, next);
 
-    if (
-        options.automatic !==
-        true
-    ) {
-        ui.notifications
-            ?.info?.(
-                'Empréstimo encerrado sem uso.'
-            );
+    if (options.automatic !== true) {
+        ui.notifications?.info?.('Empréstimo encerrado sem uso.');
     }
 
     return next;
 }
 
-async function lockPossessionFinalization(
-    item,
-    runtime
-) {
-    const consequence =
-        runtime
-            ?.consequence;
+async function lockPossessionFinalization(item, runtime) {
+    const consequence = runtime?.consequence;
 
-    if (
-        consequence?.kind !==
-            'possession'
-    ) {
-        throw new Error(
-            'Runtime não contém Possessão.'
-        );
+    if (consequence?.kind !== 'possession') {
+        throw new Error('Runtime não contém Possessão.');
     }
 
-    if (
-        ![
-            'in_turn',
-            'manual_turn',
-        ].includes(
-            consequence.state
-        )
-    ) {
-        throw new Error(
-            `Possessão não pode ser finalizada no estado ${consequence.state}.`
-        );
+    if (!['in_turn', 'manual_turn'].includes(consequence.state)) {
+        throw new Error(`Possessão não pode ser finalizada no estado ${consequence.state}.`);
     }
 
     const finalizationId =
-        globalThis
-            .foundry
-            ?.utils
-            ?.randomID
-            ?.() ??
-        globalThis
-            .crypto
-            ?.randomUUID
-            ?.() ??
-        String(
-            Date.now()
-        );
+        globalThis.foundry?.utils?.randomID?.() ??
+        globalThis.crypto?.randomUUID?.() ??
+        String(Date.now());
 
     const locked = {
         ...runtime,
@@ -1071,175 +600,88 @@ async function lockPossessionFinalization(
         consequence: {
             ...consequence,
 
-            state:
-                'finalizing',
+            state: 'finalizing',
 
             finalizationId,
 
-            finalizationStartedAt:
-                nowIso(),
+            finalizationStartedAt: nowIso(),
         },
     };
 
-    await writeRuntime(
-        item,
-        locked
-    );
+    await writeRuntime(item, locked);
 
-    const fresh =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+    const fresh = getDualSoulAwakeningRuntime(item);
 
-    if (
-        fresh
-            ?.consequence
-            ?.finalizationId !==
-        finalizationId
-    ) {
+    if (fresh?.consequence?.finalizationId !== finalizationId) {
         return {
             ok: false,
-            reason:
-                'finalization-lock-lost',
+            reason: 'finalization-lock-lost',
         };
     }
 
     return {
         ok: true,
         finalizationId,
-        runtime:
-            fresh,
+        runtime: fresh,
     };
 }
 
-export async function finalizeDualSoulPossession(
-    options = {}
-) {
-    if (
-        !game.user?.isGM
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Somente o Mestre pode finalizar uma Possessão.'
-            );
+export async function finalizeDualSoulPossession(options = {}) {
+    if (!game.user?.isGM) {
+        return ui.notifications?.warn?.('Somente o Mestre pode finalizar uma Possessão.');
     }
 
-    const actor =
-        options.actor ??
-        await resolveActor(
-            options
-        );
+    const actor = options.actor ?? (await resolveActor(options));
 
-    const item =
-        options.item ??
-        await chooseDualSoulItem(
-            actor,
-            options
-        );
+    const item = options.item ?? (await chooseDualSoulItem(actor, options));
 
-    if (
-        !actor ||
-        !item
-    ) {
+    if (!actor || !item) {
         return null;
     }
 
-    const runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+    const runtime = getDualSoulAwakeningRuntime(item);
 
-    if (
-        runtime
-            ?.consequence
-            ?.kind !==
-        'possession'
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Não existe Possessão para finalizar.'
-            );
+    if (runtime?.consequence?.kind !== 'possession') {
+        return ui.notifications?.warn?.('Não existe Possessão para finalizar.');
     }
 
-    if (
-        runtime
-            .consequence
-            .state ===
-        'complete'
-    ) {
+    if (runtime.consequence.state === 'complete') {
         return runtime;
     }
 
-    if (
-        ![
-            'in_turn',
-            'manual_turn',
-        ].includes(
-            runtime
-                .consequence
-                .state
-        )
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'A Possessão ainda não completou um turno rastreável.'
-            );
+    if (!['in_turn', 'manual_turn'].includes(runtime.consequence.state)) {
+        return ui.notifications?.warn?.('A Possessão ainda não completou um turno rastreável.');
     }
 
-    const lock =
-        await lockPossessionFinalization(
-            item,
-            runtime
-        );
+    const lock = await lockPossessionFinalization(item, runtime);
 
     if (!lock.ok) {
-        return ui.notifications
-            ?.warn?.(
-                'Outra finalização da Possessão venceu a trava de concorrência.'
-            );
+        return ui.notifications?.warn?.(
+            'Outra finalização da Possessão venceu a trava de concorrência.'
+        );
     }
 
-    const markBefore =
-        Math.max(
-            0,
-            Math.trunc(
-                Number(
-                    item
-                        .system
-                        ?.props
-                        ?.arma_marcas_demonio
-                ) ||
-                0
-            )
-        );
+    const markBefore = Math.max(
+        0,
+        Math.trunc(Number(item.system?.props?.arma_marcas_demonio) || 0)
+    );
 
-    const markAfter =
-        markBefore + 1;
+    const markAfter = markBefore + 1;
 
-    const at =
-        nowIso();
+    const at = nowIso();
 
-    const completed =
-        completeDualSoulPossession(
-            lock.runtime,
-            {
-                at,
+    const completed = completeDualSoulPossession(lock.runtime, {
+        at,
 
-                round:
-                    game.combat?.round ??
-                    null,
+        round: game.combat?.round ?? null,
 
-                turn:
-                    game.combat?.turn ??
-                    null,
+        turn: game.combat?.turn ?? null,
 
-                markBefore,
-                markAfter,
+        markBefore,
+        markAfter,
 
-                finalizationId:
-                    lock.finalizationId,
-            }
-        );
+        finalizationId: lock.finalizationId,
+    });
 
     /*
      * Marca e runtime são atualizados no MESMO Item.update.
@@ -1249,34 +691,25 @@ export async function finalizeDualSoulPossession(
      */
     await item.update(
         {
-            'system.props.arma_marcas_demonio':
-                markAfter,
+            'system.props.arma_marcas_demonio': markAfter,
 
-            [`system.props.${RUNTIME_KEY}`]:
-                JSON.stringify(
-                    completed
-                ),
+            [`system.props.${RUNTIME_KEY}`]: JSON.stringify(completed),
         },
         {
-            naCsbAutomation:
-                true,
+            naCsbAutomation: true,
 
-            naSpecialWeapon:
-                true,
+            naSpecialWeapon: true,
 
-            naDualSoulConsequence:
-                true,
+            naDualSoulConsequence: true,
 
-            naDualSoulDemonMark:
-                true,
+            naDualSoulDemonMark: true,
         }
     );
 
     await createAuditMessage({
         actor,
 
-        title:
-            'Possessão Encerrada',
+        title: 'Possessão Encerrada',
 
         body: `
             <p>
@@ -1300,99 +733,54 @@ export async function finalizeDualSoulPossession(
         `,
     });
 
-    ui.notifications
-        ?.warn?.(
-            `Possessão encerrada. Marcas do Demônio: ${markBefore} → ${markAfter}.`
-        );
+    ui.notifications?.warn?.(
+        `Possessão encerrada. Marcas do Demônio: ${markBefore} → ${markAfter}.`
+    );
 
     return completed;
 }
 
-async function processPossessionItem(
-    item,
-    actor,
-    combat
-) {
-    let runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+async function processPossessionItem(item, actor, combat) {
+    let runtime = getDualSoulAwakeningRuntime(item);
 
-    const consequence =
-        runtime
-            ?.consequence;
+    const consequence = runtime?.consequence;
 
-    if (
-        runtime.resolved === true ||
-        consequence?.kind !==
-            'possession'
-    ) {
+    if (runtime.resolved === true || consequence?.kind !== 'possession') {
         return;
     }
 
-    if (
-        consequence.combatId !==
-        combat.id
-    ) {
+    if (consequence.combatId !== combat.id) {
         return;
     }
 
-    const combatant =
-        combatantForActor(
-            combat,
-            actor
-        );
+    const combatant = combatantForActor(combat, actor);
 
     if (!combatant) {
         return;
     }
 
-    if (
-        consequence.combatantId &&
-        consequence.combatantId !==
-            combatant.id
-    ) {
+    if (consequence.combatantId && consequence.combatantId !== combatant.id) {
         return;
     }
 
-    const currentId =
-        currentCombatantId(
-            combat
-        );
+    const currentId = currentCombatantId(combat);
 
     if (!currentId) {
         return;
     }
 
-    if (
-        consequence.state ===
-        'waiting_turn'
-    ) {
+    if (consequence.state === 'waiting_turn') {
         /*
          * Possessão foi criada DURANTE o turno atual:
          * primeiro esperamos sair dele.
          */
-        if (
-            currentId !==
-            combatant.id
-        ) {
-            if (
-                consequence.seenAway !==
-                true
-            ) {
-                runtime =
-                    markPossessionAway(
-                        runtime,
-                        {
-                            at:
-                                nowIso(),
-                        }
-                    );
+        if (currentId !== combatant.id) {
+            if (consequence.seenAway !== true) {
+                runtime = markPossessionAway(runtime, {
+                    at: nowIso(),
+                });
 
-                await writeRuntime(
-                    item,
-                    runtime
-                );
+                await writeRuntime(item, runtime);
             }
 
             return;
@@ -1402,37 +790,21 @@ async function processPossessionItem(
          * Só entra aqui se já houve um estado "away".
          * Portanto este início corresponde a um turno completo.
          */
-        if (
-            consequence.seenAway ===
-            true
-        ) {
-            runtime =
-                beginPossessionTurn(
-                    runtime,
-                    {
-                        round:
-                            combat.round ??
-                            null,
+        if (consequence.seenAway === true) {
+            runtime = beginPossessionTurn(runtime, {
+                round: combat.round ?? null,
 
-                        turn:
-                            combat.turn ??
-                            null,
+                turn: combat.turn ?? null,
 
-                        at:
-                            nowIso(),
-                    }
-                );
+                at: nowIso(),
+            });
 
-            await writeRuntime(
-                item,
-                runtime
-            );
+            await writeRuntime(item, runtime);
 
             await createAuditMessage({
                 actor,
 
-                title:
-                    'Turno de Possessão',
+                title: 'Turno de Possessão',
 
                 body: `
                     <p>
@@ -1461,150 +833,80 @@ async function processPossessionItem(
      * Se o turno da Possessão estava ativo e o Tracker
      * avançou para outro combatente, o turno completo terminou.
      */
-    if (
-        consequence.state ===
-            'in_turn' &&
-        currentId !==
-            combatant.id
-    ) {
+    if (consequence.state === 'in_turn' && currentId !== combatant.id) {
         await finalizeDualSoulPossession({
             actor,
             item,
-            automatic:
-                true,
+            automatic: true,
         });
     }
 }
 
-async function processCombatPossessions(
-    combat
-) {
+async function processCombatPossessions(combat) {
     const tasks = [];
 
-    for (
-        const combatant
-        of combatants(
-            combat
-        )
-    ) {
-        const actor =
-            combatant?.actor;
+    for (const combatant of combatants(combat)) {
+        const actor = combatant?.actor;
 
         if (!actor) {
             continue;
         }
 
-        for (
-            const item
-            of actorItems(actor)
-        ) {
-            if (
-                !isDualSoulWeapon(
-                    item
-                )
-            ) {
+        for (const item of actorItems(actor)) {
+            if (!isDualSoulWeapon(item)) {
                 continue;
             }
 
-            const runtime =
-                getDualSoulAwakeningRuntime(
-                    item
-                );
+            const runtime = getDualSoulAwakeningRuntime(item);
 
-            if (
-                runtime
-                    ?.consequence
-                    ?.kind !==
-                'possession'
-            ) {
+            if (runtime?.consequence?.kind !== 'possession') {
                 continue;
             }
 
-            tasks.push(
-                processPossessionItem(
-                    item,
-                    actor,
-                    combat
-                )
-            );
+            tasks.push(processPossessionItem(item, actor, combat));
         }
     }
 
-    await Promise.all(
-        tasks
-    );
+    await Promise.all(tasks);
 }
 
-async function handleDeletedCombat(
-    combat
-) {
+async function handleDeletedCombat(combat) {
     const tasks = [];
 
-    for (
-        const combatant
-        of combatants(
-            combat
-        )
-    ) {
-        const actor =
-            combatant?.actor;
+    for (const combatant of combatants(combat)) {
+        const actor = combatant?.actor;
 
         if (!actor) {
             continue;
         }
 
-        for (
-            const item
-            of actorItems(actor)
-        ) {
-            if (
-                !isDualSoulWeapon(
-                    item
-                )
-            ) {
+        for (const item of actorItems(actor)) {
+            if (!isDualSoulWeapon(item)) {
                 continue;
             }
 
-            const runtime =
-                getDualSoulAwakeningRuntime(
-                    item
-                );
+            const runtime = getDualSoulAwakeningRuntime(item);
 
-            const consequence =
-                runtime
-                    ?.consequence;
+            const consequence = runtime?.consequence;
 
-            if (
-                runtime.resolved ===
-                true
-            ) {
+            if (runtime.resolved === true) {
                 continue;
             }
 
             if (
-                consequence?.kind ===
-                    'loan' &&
-                consequence.state ===
-                    'active' &&
-                consequence
-                    ?.scope
-                    ?.kind ===
-                    'combat' &&
-                consequence
-                    ?.scope
-                    ?.combatId ===
-                    combat.id
+                consequence?.kind === 'loan' &&
+                consequence.state === 'active' &&
+                consequence?.scope?.kind === 'combat' &&
+                consequence?.scope?.combatId === combat.id
             ) {
                 tasks.push(
                     expireDualSoulLoan({
                         actor,
                         item,
 
-                        automatic:
-                            true,
+                        automatic: true,
 
-                        reason:
-                            'combat-ended',
+                        reason: 'combat-ended',
                     })
                 );
 
@@ -1617,163 +919,85 @@ async function handleDeletedCombat(
              * Marca automaticamente. O estado cai para manual.
              */
             if (
-                consequence?.kind ===
-                    'possession' &&
-                consequence.combatId ===
-                    combat.id &&
-                ![
-                    'complete',
-                    'finalizing',
-                ].includes(
-                    consequence.state
-                )
+                consequence?.kind === 'possession' &&
+                consequence.combatId === combat.id &&
+                !['complete', 'finalizing'].includes(consequence.state)
             ) {
-                const manual =
-                    movePossessionToManualTurn(
-                        runtime,
-                        {
-                            at:
-                                nowIso(),
+                const manual = movePossessionToManualTurn(runtime, {
+                    at: nowIso(),
 
-                            reason:
-                                'combat-ended-before-tracked-finalization',
-                        }
-                    );
+                    reason: 'combat-ended-before-tracked-finalization',
+                });
 
-                tasks.push(
-                    writeRuntime(
-                        item,
-                        manual
-                    )
-                );
+                tasks.push(writeRuntime(item, manual));
             }
         }
     }
 
-    await Promise.all(
-        tasks
-    );
+    await Promise.all(tasks);
 }
 
-let runtimeRegistered =
-    false;
+let runtimeRegistered = false;
 
 export function registerDualSoulConsequenceRuntime() {
-    if (
-        runtimeRegistered
-    ) {
+    if (runtimeRegistered) {
         return;
     }
 
-    runtimeRegistered =
-        true;
+    runtimeRegistered = true;
 
-    Hooks.on(
-        'updateCombat',
-        (
-            combat,
-            changes
-        ) => {
-            if (
-                !isPrimaryGm()
-            ) {
-                return;
-            }
-
-            if (
-                !Object.hasOwn(
-                    changes,
-                    'turn'
-                ) &&
-                !Object.hasOwn(
-                    changes,
-                    'round'
-                )
-            ) {
-                return;
-            }
-
-            void processCombatPossessions(
-                combat
-            ).catch(
-                (error) =>
-                    console.error?.(
-                        '[night-assassins-csb-automation] Falha no runtime de Possessão',
-                        error
-                    )
-            );
+    Hooks.on('updateCombat', (combat, changes) => {
+        if (!isPrimaryGm()) {
+            return;
         }
-    );
 
-    Hooks.on(
-        'deleteCombat',
-        (
-            combat
-        ) => {
-            if (
-                !isPrimaryGm()
-            ) {
-                return;
-            }
-
-            void handleDeletedCombat(
-                combat
-            ).catch(
-                (error) =>
-                    console.error?.(
-                        '[night-assassins-csb-automation] Falha ao encerrar consequências de combate',
-                        error
-                    )
-            );
+        if (!Object.hasOwn(changes, 'turn') && !Object.hasOwn(changes, 'round')) {
+            return;
         }
-    );
+
+        void processCombatPossessions(combat).catch((error) =>
+            console.error?.('[night-assassins-csb-automation] Falha no runtime de Possessão', error)
+        );
+    });
+
+    Hooks.on('deleteCombat', (combat) => {
+        if (!isPrimaryGm()) {
+            return;
+        }
+
+        void handleDeletedCombat(combat).catch((error) =>
+            console.error?.(
+                '[night-assassins-csb-automation] Falha ao encerrar consequências de combate',
+                error
+            )
+        );
+    });
 }
 
-async function expireStaleLoanIfNeeded(
-    actor,
-    item
-) {
-    const runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+async function expireStaleLoanIfNeeded(actor, item) {
+    const runtime = getDualSoulAwakeningRuntime(item);
 
-    const consequence =
-        runtime
-            ?.consequence;
+    const consequence = runtime?.consequence;
 
     if (
         runtime.resolved === true ||
-        consequence?.kind !==
-            'loan' ||
-        consequence.state !==
-            'active'
+        consequence?.kind !== 'loan' ||
+        consequence.state !== 'active'
     ) {
         return runtime;
     }
 
-    const scope =
-        consequence.scope ??
-        {};
+    const scope = consequence.scope ?? {};
 
-    if (
-        scope.kind ===
-        'combat'
-    ) {
-        if (
-            !game.combat?.started ||
-            game.combat.id !==
-                scope.combatId
-        ) {
+    if (scope.kind === 'combat') {
+        if (!game.combat?.started || game.combat.id !== scope.combatId) {
             return expireDualSoulLoan({
                 actor,
                 item,
 
-                automatic:
-                    true,
+                automatic: true,
 
-                reason:
-                    'combat-ended',
+                reason: 'combat-ended',
             });
         }
 
@@ -1781,152 +1005,82 @@ async function expireStaleLoanIfNeeded(
     }
 
     if (
-        scope.kind ===
-            'scene' &&
+        scope.kind === 'scene' &&
         scope.sceneId &&
         canvas?.scene?.id &&
-        scope.sceneId !==
-            canvas.scene.id
+        scope.sceneId !== canvas.scene.id
     ) {
         return expireDualSoulLoan({
             actor,
             item,
 
-            automatic:
-                true,
+            automatic: true,
 
-            reason:
-                'scene-changed',
+            reason: 'scene-changed',
         });
     }
 
     return runtime;
 }
 
-export async function openDualSoulConsequenceManager(
-    options = {}
-) {
-    const actor =
-        await resolveActor(
-            options
-        );
+export async function openDualSoulConsequenceManager(options = {}) {
+    const actor = await resolveActor(options);
 
     if (!actor) {
-        return ui.notifications
-            ?.warn?.(
-                'Selecione o portador da Arma de Dupla Alma.'
-            );
+        return ui.notifications?.warn?.('Selecione o portador da Arma de Dupla Alma.');
     }
 
-    const item =
-        await chooseDualSoulItem(
-            actor,
-            options
-        );
+    const item = await chooseDualSoulItem(actor, options);
 
     if (!item) {
-        return ui.notifications
-            ?.warn?.(
-                'Nenhuma Arma de Dupla Alma válida foi encontrada.'
-            );
+        return ui.notifications?.warn?.('Nenhuma Arma de Dupla Alma válida foi encontrada.');
     }
 
-    if (
-        item.parent
-            ?.documentName !==
-            'Actor' ||
-        item.parent?.uuid !==
-            actor.uuid
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'A arma precisa estar vinculada ao Actor.'
-            );
+    if (item.parent?.documentName !== 'Actor' || item.parent?.uuid !== actor.uuid) {
+        return ui.notifications?.warn?.('A arma precisa estar vinculada ao Actor.');
     }
 
-    await hydrateSpecialWeaponItem(
-        item
-    );
+    await hydrateSpecialWeaponItem(item);
 
-    await expireStaleLoanIfNeeded(
-        actor,
-        item
-    );
+    await expireStaleLoanIfNeeded(actor, item);
 
-    const runtime =
-        getDualSoulAwakeningRuntime(
-            item
-        );
+    const runtime = getDualSoulAwakeningRuntime(item);
 
-    const props =
-        item.system?.props ??
-        {};
+    const props = item.system?.props ?? {};
 
-    if (
-        runtime.pending === true &&
-        runtime.result ===
-            'failure'
-    ) {
-        const challengerName =
-            soulName(
-                runtime
-                    .challengerKind,
-                props
+    if (runtime.pending === true && runtime.result === 'failure') {
+        const challengerName = soulName(runtime.challengerKind, props);
+
+        const isEntity = runtime.challengerKind === 'entidade';
+
+        if (!isEntity && !game.user?.isGM) {
+            return ui.notifications?.warn?.(
+                'A falha gerou Possessão. O Mestre deve resolver esta consequência.'
             );
-
-        const isEntity =
-            runtime
-                .challengerKind ===
-            'entidade';
-
-        if (
-            !isEntity &&
-            !game.user?.isGM
-        ) {
-            return ui.notifications
-                ?.warn?.(
-                    'A falha gerou Possessão. O Mestre deve resolver esta consequência.'
-                );
         }
 
-        const confirmed =
-            await foundry
-                .applications
-                .api
-                .DialogV2
-                .confirm({
-                    window: {
-                        title:
-                            isEntity
-                                ? 'Resolver Empréstimo'
-                                : 'Resolver Possessão',
-                    },
+        const confirmed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: isEntity ? 'Resolver Empréstimo' : 'Resolver Possessão',
+            },
 
-                    content: `
+            content: `
                         <div class="na-csb-automation">
                             <h2>
-                                ${escapeHtml(
-                                    item.name
-                                )}
+                                ${escapeHtml(item.name)}
                             </h2>
 
                             <p>
                                 Desafiante:
                                 <strong>
-                                    ${escapeHtml(
-                                        challengerName
-                                    )}
+                                    ${escapeHtml(challengerName)}
                                 </strong>
                             </p>
 
                             <p>
                                 Consequência:
                                 <strong>
-                                    ${
-                                        isEntity
-                                            ? 'Empréstimo'
-                                            : 'Possessão'
-                                    }
+                                    ${isEntity ? 'Empréstimo' : 'Possessão'}
                                 </strong>
                             </p>
 
@@ -1956,12 +1110,10 @@ export async function openDualSoulConsequenceManager(
                         </div>
                     `,
 
-                    modal:
-                        true,
+            modal: true,
 
-                    rejectClose:
-                        false,
-                });
+            rejectClose: false,
+        });
 
         if (!confirmed) {
             return null;
@@ -1973,103 +1125,64 @@ export async function openDualSoulConsequenceManager(
         });
     }
 
-    const consequence =
-        runtime
-            ?.consequence;
+    const consequence = runtime?.consequence;
 
-    if (
-        consequence?.kind ===
-            'loan'
-    ) {
-        if (
-            consequence.state !==
-            'active'
-        ) {
-            return foundry
-                .applications
-                .api
-                .DialogV2
-                .wait({
-                    window: {
-                        title:
-                            'Empréstimo — Auditoria',
-                    },
+    if (consequence?.kind === 'loan') {
+        if (consequence.state !== 'active') {
+            return foundry.applications.api.DialogV2.wait({
+                window: {
+                    title: 'Empréstimo — Auditoria',
+                },
 
-                    content: `
+                content: `
                         <div class="na-csb-automation">
                             <p>
                                 Estado:
                                 <strong>
-                                    ${escapeHtml(
-                                        consequence.state
-                                    )}
+                                    ${escapeHtml(consequence.state)}
                                 </strong>
                             </p>
 
                             <p>
                                 Usos restantes:
                                 <strong>
-                                    ${escapeHtml(
-                                        consequence
-                                            .usesRemaining ??
-                                        0
-                                    )}
+                                    ${escapeHtml(consequence.usesRemaining ?? 0)}
                                 </strong>
                             </p>
 
                             <p>
                                 Evento original preservado:
                                 <strong>
-                                    ${
-                                        runtime
-                                            ?.audit
-                                            ?.resistanceEvent
-                                            ? 'SIM'
-                                            : 'NÃO'
-                                    }
+                                    ${runtime?.audit?.resistanceEvent ? 'SIM' : 'NÃO'}
                                 </strong>
                             </p>
                         </div>
                     `,
 
-                    buttons: [
-                        {
-                            action:
-                                'close',
+                buttons: [
+                    {
+                        action: 'close',
 
-                            label:
-                                'Fechar',
+                        label: 'Fechar',
 
-                            callback:
-                                () => null,
-                        },
-                    ],
-                });
+                        callback: () => null,
+                    },
+                ],
+            });
         }
 
-        const selected =
-            await foundry
-                .applications
-                .api
-                .DialogV2
-                .wait({
-                    window: {
-                        title:
-                            'Empréstimo da Entidade',
-                    },
+        const selected = await foundry.applications.api.DialogV2.wait({
+            window: {
+                title: 'Empréstimo da Entidade',
+            },
 
-                    content: `
+            content: `
                         <div class="na-csb-automation">
                             <p>
                                 Entidade:
                                 <strong>
                                     ${escapeHtml(
-                                        consequence
-                                            .entityName ||
-                                        soulName(
-                                            'entidade',
-                                            props
-                                        )
+                                        consequence.entityName || soulName('entidade', props)
                                     )}
                                 </strong>
                             </p>
@@ -2077,10 +1190,7 @@ export async function openDualSoulConsequenceManager(
                             <p>
                                 Usos disponíveis:
                                 <strong>
-                                    ${escapeHtml(
-                                        consequence
-                                            .usesRemaining
-                                    )}
+                                    ${escapeHtml(consequence.usesRemaining)}
                                 </strong>
                             </p>
 
@@ -2103,67 +1213,48 @@ export async function openDualSoulConsequenceManager(
                         </div>
                     `,
 
-                    modal:
-                        true,
+            modal: true,
 
-                    rejectClose:
-                        false,
+            rejectClose: false,
 
-                    buttons: [
-                        {
-                            action:
-                                'use',
+            buttons: [
+                {
+                    action: 'use',
 
-                            label:
-                                'Registrar uso do Empréstimo',
+                    label: 'Registrar uso do Empréstimo',
 
-                            callback:
-                                () => 'use',
-                        },
+                    callback: () => 'use',
+                },
 
-                        ...(game.user?.isGM
-                            ? [
-                                {
-                                    action:
-                                        'expire',
+                ...(game.user?.isGM
+                    ? [
+                          {
+                              action: 'expire',
 
-                                    label:
-                                        'Encerrar sem uso',
+                              label: 'Encerrar sem uso',
 
-                                    callback:
-                                        () => 'expire',
-                                },
-                            ]
-                            : []),
+                              callback: () => 'expire',
+                          },
+                      ]
+                    : []),
 
-                        {
-                            action:
-                                'close',
+                {
+                    action: 'close',
 
-                            label:
-                                'Fechar',
+                    label: 'Fechar',
 
-                            callback:
-                                () => null,
-                        },
-                    ],
-                });
+                    callback: () => null,
+                },
+            ],
+        });
 
-        if (
-            selected === 'use'
-        ) {
-            const confirmed =
-                await foundry
-                    .applications
-                    .api
-                    .DialogV2
-                    .confirm({
-                        window: {
-                            title:
-                                'Consumir Empréstimo',
-                        },
+        if (selected === 'use') {
+            const confirmed = await foundry.applications.api.DialogV2.confirm({
+                window: {
+                    title: 'Consumir Empréstimo',
+                },
 
-                        content: `
+                content: `
                             <div class="na-csb-automation">
                                 <p>
                                     Confirma que o único uso
@@ -2171,7 +1262,7 @@ export async function openDualSoulConsequenceManager(
                                 </p>
                             </div>
                         `,
-                    });
+            });
 
             if (!confirmed) {
                 return null;
@@ -2183,60 +1274,35 @@ export async function openDualSoulConsequenceManager(
             });
         }
 
-        if (
-            selected === 'expire'
-        ) {
+        if (selected === 'expire') {
             return expireDualSoulLoan({
                 actor,
                 item,
 
-                reason:
-                    'gm-ended-loan',
+                reason: 'gm-ended-loan',
             });
         }
 
         return null;
     }
 
-    if (
-        consequence?.kind ===
-            'possession'
-    ) {
-        const state =
-            consequence.state;
+    if (consequence?.kind === 'possession') {
+        const state = consequence.state;
 
-        const canFinalize =
-            game.user?.isGM &&
-            [
-                'in_turn',
-                'manual_turn',
-            ].includes(
-                state
-            );
+        const canFinalize = game.user?.isGM && ['in_turn', 'manual_turn'].includes(state);
 
-        const selected =
-            await foundry
-                .applications
-                .api
-                .DialogV2
-                .wait({
-                    window: {
-                        title:
-                            'Possessão do Demônio',
-                    },
+        const selected = await foundry.applications.api.DialogV2.wait({
+            window: {
+                title: 'Possessão do Demônio',
+            },
 
-                    content: `
+            content: `
                         <div class="na-csb-automation">
                             <p>
                                 Demônio:
                                 <strong>
                                     ${escapeHtml(
-                                        consequence
-                                            .demonName ||
-                                        soulName(
-                                            'demonio',
-                                            props
-                                        )
+                                        consequence.demonName || soulName('demonio', props)
                                     )}
                                 </strong>
                             </p>
@@ -2244,27 +1310,19 @@ export async function openDualSoulConsequenceManager(
                             <p>
                                 Estado:
                                 <strong>
-                                    ${escapeHtml(
-                                        state
-                                    )}
+                                    ${escapeHtml(state)}
                                 </strong>
                             </p>
 
                             <p>
                                 Marca aplicada:
                                 <strong>
-                                    ${
-                                        consequence
-                                            .markApplied
-                                            ? 'SIM'
-                                            : 'NÃO'
-                                    }
+                                    ${consequence.markApplied ? 'SIM' : 'NÃO'}
                                 </strong>
                             </p>
 
                             ${
-                                state ===
-                                'waiting_turn'
+                                state === 'waiting_turn'
                                     ? `
                                         <p>
                                             Aguardando o próximo
@@ -2275,8 +1333,7 @@ export async function openDualSoulConsequenceManager(
                             }
 
                             ${
-                                state ===
-                                'in_turn'
+                                state === 'in_turn'
                                     ? `
                                         <p>
                                             O turno de Possessão
@@ -2287,8 +1344,7 @@ export async function openDualSoulConsequenceManager(
                             }
 
                             ${
-                                state ===
-                                'manual_turn'
+                                state === 'manual_turn'
                                     ? `
                                         <p>
                                             Rastreamento automático
@@ -2301,21 +1357,14 @@ export async function openDualSoulConsequenceManager(
                             }
 
                             ${
-                                state ===
-                                'complete'
+                                state === 'complete'
                                     ? `
                                         <p>
                                             Marcas:
                                             <strong>
-                                                ${escapeHtml(
-                                                    consequence
-                                                        .markBefore
-                                                )}
+                                                ${escapeHtml(consequence.markBefore)}
                                                 →
-                                                ${escapeHtml(
-                                                    consequence
-                                                        .markAfter
-                                                )}
+                                                ${escapeHtml(consequence.markAfter)}
                                             </strong>
                                         </p>
                                     `
@@ -2324,57 +1373,40 @@ export async function openDualSoulConsequenceManager(
                         </div>
                     `,
 
-                    modal:
-                        true,
+            modal: true,
 
-                    rejectClose:
-                        false,
+            rejectClose: false,
 
-                    buttons: [
-                        ...(canFinalize
-                            ? [
-                                {
-                                    action:
-                                        'finalize',
+            buttons: [
+                ...(canFinalize
+                    ? [
+                          {
+                              action: 'finalize',
 
-                                    label:
-                                        'Finalizar após turno completo',
+                              label: 'Finalizar após turno completo',
 
-                                    callback:
-                                        () => 'finalize',
-                                },
-                            ]
-                            : []),
+                              callback: () => 'finalize',
+                          },
+                      ]
+                    : []),
 
-                        {
-                            action:
-                                'close',
+                {
+                    action: 'close',
 
-                            label:
-                                'Fechar',
+                    label: 'Fechar',
 
-                            callback:
-                                () => null,
-                        },
-                    ],
-                });
+                    callback: () => null,
+                },
+            ],
+        });
 
-        if (
-            selected ===
-            'finalize'
-        ) {
-            const confirmed =
-                await foundry
-                    .applications
-                    .api
-                    .DialogV2
-                    .confirm({
-                        window: {
-                            title:
-                                'Finalizar Possessão',
-                        },
+        if (selected === 'finalize') {
+            const confirmed = await foundry.applications.api.DialogV2.confirm({
+                window: {
+                    title: 'Finalizar Possessão',
+                },
 
-                        content: `
+                content: `
                             <div class="na-csb-automation">
                                 <p>
                                     Confirma que o Mestre
@@ -2391,7 +1423,7 @@ export async function openDualSoulConsequenceManager(
                                 </p>
                             </div>
                         `,
-                    });
+            });
 
             if (!confirmed) {
                 return null;
@@ -2406,22 +1438,13 @@ export async function openDualSoulConsequenceManager(
         return null;
     }
 
-    if (
-        runtime.result ===
-            'success'
-    ) {
-        return ui.notifications
-            ?.info?.(
-                'A última Resistência foi um sucesso. Não existe consequência.'
-            );
+    if (runtime.result === 'success') {
+        return ui.notifications?.info?.(
+            'A última Resistência foi um sucesso. Não existe consequência.'
+        );
     }
 
-    return ui.notifications
-        ?.info?.(
-            'Nenhuma consequência de Dupla Alma está pendente ou ativa.'
-        );
+    return ui.notifications?.info?.('Nenhuma consequência de Dupla Alma está pendente ou ativa.');
 }
 
-export {
-    hasActiveDualSoulConsequence,
-};
+export { hasActiveDualSoulConsequence };

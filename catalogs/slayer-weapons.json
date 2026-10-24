@@ -36,12 +36,8 @@
                     "arma_nome": "Arco Longo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 20,
                     "arma_alcance": "20m",
                     "arma_propriedades": "Municiada 1 / Manejável / Precisão",
@@ -61,9 +57,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 5m",
                             "critico": 20
                         },
@@ -79,9 +73,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 10m",
                             "critico": 20
                         },
@@ -97,9 +89,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 20m",
                             "critico": 20
                         }
@@ -125,11 +115,7 @@
                             "action": "especial"
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "municiada 1",
-                        "manejavel",
-                        "precisao"
-                    ],
+                    "arma_propriedades_chaves": ["municiada 1", "manejavel", "precisao"],
                     "arma_municao_capacidade": 12,
                     "arma_municao_atual": 12,
                     "arma_regra_completa": ""
@@ -168,12 +154,8 @@
                     "arma_nome": "Balestra",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 20,
                     "arma_alcance": "15m",
                     "arma_propriedades": "Municiada 1 / Manejável / Precisão",
@@ -193,9 +175,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 7m",
                             "critico": 20
                         },
@@ -211,9 +191,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 15m",
                             "critico": 20
                         }
@@ -239,11 +217,7 @@
                             "action": "especial"
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "municiada 1",
-                        "manejavel",
-                        "precisao"
-                    ],
+                    "arma_propriedades_chaves": ["municiada 1", "manejavel", "precisao"],
                     "arma_municao_capacidade": 8,
                     "arma_municao_atual": 8,
                     "arma_regra_completa": "Após cada disparo, para engatilhar outro dardo ou flecha é preciso gastar uma Ação Única. Ao utilizar a propriedade de Precisão para mirar, você ganha +1 de dano e +1 de acerto para cada turno que passar com a mira estabilizada acumulável, desde que use a Ação Especial de cada turno para manter a mira estabilizada."
@@ -282,13 +256,8 @@
                     "arma_nome": "Bastão Retrátil",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["concussivo"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m padrão ou 3m se estendido",
                     "arma_propriedades": "Acuidade",
@@ -313,9 +282,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "** 1,5m padrão ou 3m se estendido",
                             "critico": 19
                         }
@@ -326,16 +293,11 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade"],
                     "arma_regra_completa": "Usando sua Ação Especial, você pode ativar a extensão da sua arma, dobrando seu alcance e lhe concedendo +2 em testes de pulo e acrobacias em geral até que o bastão seja retraído. Caso use durante o combate, pode ativar a extensão para acertar um inimigo que ainda não tenha visto você realizando essa ação de extensão. Sendo assim, ao declarar um teste de ataque padrão, você pode ativar a extensão na mesma ação e, caso acerte, o ataque é considerado crítico."
                 }
             },
@@ -372,12 +334,8 @@
                     "arma_nome": "Chicote",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 20,
                     "arma_alcance": "3m",
                     "arma_propriedades": "Manejável",
@@ -397,9 +355,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "** 3m",
                             "critico": 20
                         }
@@ -415,9 +371,7 @@
                             "freeAdjustMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel"],
                     "arma_regra_completa": "Seu crítico não causa dano dobrado, mas agarra o inimigo, forçando-o a fazer um teste de FOR e tirar 15+ para conseguir se soltar no início do seu próximo turno. Se ele não passar no teste, perde a próxima ação de ataque. Essa prisão dura apenas um turno do inimigo."
                 }
             },
@@ -454,13 +408,8 @@
                     "arma_nome": "Cutelos Gêmeos",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 20,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Acuidade / Morote",
@@ -485,9 +434,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "** 1,5m",
                             "critico": 20
                         }
@@ -498,10 +445,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -516,26 +460,17 @@
                             "kind": "reaction-parry",
                             "action": "reacao",
                             "physicalOnly": true,
-                            "targets": [
-                                "self",
-                                "ally"
-                            ],
+                            "targets": ["self", "ally"],
                             "hitDc": 16,
                             "reduction": {
                                 "fixed": 4,
-                                "attributes": [
-                                    "INT",
-                                    "SAB"
-                                ],
+                                "attributes": ["INT", "SAB"],
                                 "multiplier": 0.5,
                                 "choice": true
                             }
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "morote"],
                     "arma_regra_completa": "Você pode usar suas Reações para aparar ataques físicos realizados contra você ou contra aliados, realizando um teste de acerto C.D 16 ao invés de realizar uma rolagem de defesa padrão. Sendo assim, você pode reduzir o dano desses ataques em uma quantidade igual ao dano de sua arma (4) + Metade de sua INT ou SAB."
                 }
             },
@@ -573,10 +508,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Acuidade / Ryōtō",
@@ -591,10 +523,7 @@
                             "dano_fixo": 5,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "** 1,5m",
                             "critico": 19,
                             "ataques": 2,
@@ -609,10 +538,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -622,10 +548,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "ryoto"],
                     "arma_regra_completa": "Pode acertar duas vezes na mesma ação padrão de ataque. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
                 }
             },
@@ -662,12 +585,8 @@
                     "arma_nome": "Escopeta Cano Duplo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 8,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_alcance": "12m",
                     "arma_propriedades": "Municiada 2 / Manejável",
@@ -687,9 +606,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 3m",
                             "critico": 19
                         },
@@ -705,9 +622,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 6m",
                             "critico": 20
                         },
@@ -723,9 +638,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 12m",
                             "critico": 19,
                             "critico_desabilitado": true
@@ -747,10 +660,7 @@
                             "capacity": 8
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "municiada 2",
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["municiada 2", "manejavel"],
                     "arma_municao_capacidade": 8,
                     "arma_municao_atual": 8,
                     "arma_regra_completa": ""
@@ -789,13 +699,8 @@
                     "arma_nome": "Escudo de Batalha",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["FOR"],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 20,
                     "arma_alcance": "1,5m corpo a corpo / 6,5m arremesso",
                     "arma_propriedades": "Morote",
@@ -815,10 +720,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "** 1,5m corpo a corpo / 6,5m arremesso",
                             "critico": 20
                         }
@@ -833,9 +735,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["morote"],
                     "arma_regra_completa": ""
                 }
             },
@@ -2006,9 +1906,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 20,
                     "arma_alcance": "7m",
                     "arma_propriedades": "Manejável",
@@ -2022,9 +1920,7 @@
                             "dano_fixo": 5,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "** 7m",
                             "critico": 20
                         }
@@ -2040,9 +1936,7 @@
                             "freeAdjustMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel"],
                     "arma_regra_completa": "O usuário pode estender seu alcance até 12m, ao custo de -2 na rolagem de acerto."
                 }
             },
@@ -2079,13 +1973,8 @@
                     "arma_nome": "Espada Ondular",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 20,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Manejável / Morote",
@@ -2105,10 +1994,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "** 1,5m",
                             "critico": 20
                         }
@@ -2130,10 +2016,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel", "morote"],
                     "arma_regra_completa": "Você pode dobrar o alcance padrão de sua arma para alcançar pontos vitais ou inesperados do inimigo. Fazendo isso, você recebe um bônus de +1 na rolagem de acerto (utilizável apenas em ataques padrão). Em contrapartida, você recebe -1 na sua próxima rolagem de defesa."
                 }
             },
@@ -2170,10 +2053,7 @@
                     "arma_nome": "Foice",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
                     "arma_tipos_dano": [],
                     "arma_critico": 18,
                     "arma_alcance": "3,5m",
@@ -2210,10 +2090,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -2223,10 +2100,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "morote"],
                     "arma_regra_completa": ""
                 }
             },
@@ -2263,13 +2137,8 @@
                     "arma_nome": "Fuuma Shuriken",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m corpo a corpo / 9m arremesso",
                     "arma_propriedades": "Manejável",
@@ -2289,9 +2158,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "corpo a corpo",
                             "critico": 19
                         },
@@ -2307,10 +2174,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "arremesso",
                             "critico": 19
                         }
@@ -2326,9 +2190,7 @@
                             "freeAdjustMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel"],
                     "arma_regra_completa": "Ao custo de -2 na rolagem de acerto, você pode arremessá-la em modo bumerangue, fazendo com que a arma volte para você em um movimento de arco após o ataque. Caso seja arremessada sem essa propriedade, é necessário ir até o local onde a Fuuma Shuriken acertou o alvo e pegá-la de volta com uma Ação Única."
                 }
             },
@@ -2365,14 +2227,8 @@
                     "arma_nome": "Ioiô de Lâmina",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 19,
                     "arma_alcance": "5m",
                     "arma_propriedades": "Acuidade / Ryōtō",
@@ -2397,10 +2253,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "** 5m",
                             "critico": 19
                         }
@@ -2411,10 +2264,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -2424,10 +2274,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "ryoto"],
                     "arma_regra_completa": "Pode aplicar o dobro de efeitos de contato por ação."
                 }
             },
@@ -2465,10 +2312,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Manejável / Ryoto",
@@ -2482,10 +2326,7 @@
                             "dano_fixo": 4,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "** 1,5m",
                             "critico": 19
                         }
@@ -2507,10 +2348,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel",
-                        "ryoto"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel", "ryoto"],
                     "arma_regra_completa": "Ataques cujo resultado da rolagem de acerto supere o resultado da rolagem de defesa em uma quantidade de 3 ou mais aplicam sangramento igual a 1d4. Exemplo: Ataque 15 e Defesa 12. Esse sangramento dura apenas 1 turno do inimigo."
                 }
             },
@@ -2548,10 +2386,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 20,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Acuidade / Nitoryu & Morote",
@@ -2566,10 +2401,7 @@
                             "dano_fixo": 5,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "1,5m",
                             "critico": 20,
                             "ataques": 2,
@@ -2584,10 +2416,7 @@
                             "dano_fixo": 7,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "1,5m",
                             "critico": 20,
                             "ataques": 1,
@@ -2602,10 +2431,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -2622,11 +2448,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "nitoryu",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "nitoryu", "morote"],
                     "arma_regra_completa": ""
                 }
             },
@@ -2663,12 +2485,8 @@
                     "arma_nome": "Katana Ferrão",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Manejável",
@@ -2688,9 +2506,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "** 1,5m",
                             "critico": 19
                         }
@@ -2706,9 +2522,7 @@
                             "freeAdjustMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel"],
                     "arma_regra_completa": "Aumenta o número de turnos em que efeitos de contato são aplicados exclusivamente para efeitos do tipo Veneno e Sangramento em +1 turno além do padrão previsto pelo ataque padrão ou técnica de ataque."
                 }
             },
@@ -2746,10 +2560,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 20,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Acuidade / Nitoryu & Ryoto",
@@ -2763,10 +2574,7 @@
                             "dano_fixo": 5,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "1,5m",
                             "critico": 20
                         },
@@ -2776,10 +2584,7 @@
                             "dano_fixo": 7,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "1,5m",
                             "critico": 20
                         }
@@ -2790,10 +2595,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -2810,11 +2612,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "nitoryu",
-                        "ryoto"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "nitoryu", "ryoto"],
                     "arma_regra_completa": "Quando rolar um crítico natural, você realiza um teste de FOR com C.D 14 para desmembrar um membro do Oni, que poderá ser recuperado por ele com uma Ação Única ou Especial no seu próximo turno. Essa habilidade só pode ser usada um número de vezes igual ao nível de respiração do usuário. Enquanto não recuperar o membro retirado, o Oni tem -2 em rolagens de acerto."
                 }
             },
@@ -2851,14 +2649,8 @@
                     "arma_nome": "Kusarigama",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 20,
                     "arma_alcance": "5m",
                     "arma_propriedades": "Acuidade / Morote / Ryoto",
@@ -2883,10 +2675,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "** 5m",
                             "critico": 20
                         }
@@ -2897,10 +2686,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -2916,11 +2702,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "ryoto"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "morote", "ryoto"],
                     "arma_regra_completa": "Pode acertar duas vezes no mesmo turno usando a ação padrão. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
                 }
             },
@@ -2957,13 +2739,8 @@
                     "arma_nome": "Manoplas / Soqueiras",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["concussivo"],
                     "arma_critico": 20,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Acuidade / Ryōtō / Nitoryu",
@@ -2989,9 +2766,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "** 1,5m",
                             "critico": 20,
                             "ataques": 2,
@@ -3002,10 +2777,7 @@
                                 "ativa": true,
                                 "bonus_acerto": 1,
                                 "dano_fixo": 1,
-                                "atributo_inteiro": [
-                                    "DEX",
-                                    "FOR"
-                                ]
+                                "atributo_inteiro": ["DEX", "FOR"]
                             }
                         },
                         {
@@ -3026,9 +2798,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "** 1,5m",
                             "critico": 20,
                             "ataques": 2,
@@ -3039,10 +2809,7 @@
                                 "ativa": true,
                                 "bonus_acerto": 1,
                                 "dano_fixo": 1,
-                                "atributo_inteiro": [
-                                    "DEX",
-                                    "FOR"
-                                ]
+                                "atributo_inteiro": ["DEX", "FOR"]
                             }
                         }
                     ],
@@ -3052,10 +2819,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -3072,11 +2836,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto",
-                        "nitoryu"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "ryoto", "nitoryu"],
                     "arma_regra_completa": "Acertos críticos concedem +1 de acerto na sua ação de ataque e um ataque extra em sequência. Críticos consecutivos podem continuar aplicando esse efeito, formando uma barragem de socos nos melhores casos. Porém, o dano de cada soco extra conseguido dessa forma é igual a 1 + DEX ou FOR, e não o dano padrão da arma."
                 }
             },
@@ -3113,13 +2873,8 @@
                     "arma_nome": "Nagamaki",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 19,
                     "arma_alcance": "2m",
                     "arma_propriedades": "Acuidade / Morote",
@@ -3144,9 +2899,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "** 2m",
                             "critico": 19
                         }
@@ -3157,10 +2910,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -3170,10 +2920,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "morote"],
                     "arma_regra_completa": "Ganha a propriedade Nitoryu e perde a propriedade Pesada se você tiver 3 ou mais de FOR."
                 }
             },
@@ -3210,14 +2957,8 @@
                     "arma_nome": "Naginata",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX",
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX", "FOR"],
+                    "arma_tipos_dano": ["cortante", "perfurante"],
                     "arma_critico": 20,
                     "arma_alcance": "2m",
                     "arma_propriedades": "Acuidade / Morote",
@@ -3242,10 +2983,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["cortante", "perfurante"],
                             "alcance": "** 2m",
                             "critico": 20
                         }
@@ -3256,10 +2994,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -3269,10 +3004,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["acuidade", "morote"],
                     "arma_regra_completa": ""
                 }
             },
@@ -3310,10 +3042,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 7,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 20,
                     "arma_alcance": "2,5m",
                     "arma_propriedades": "Morote",
@@ -3327,10 +3056,7 @@
                             "dano_fixo": 7,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "** 2,5m",
                             "critico": 20
                         }
@@ -3345,9 +3071,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["morote"],
                     "arma_regra_completa": "Quando realizar um movimento de respiração que use a Ação de Ataque, você pode utilizar o seu mangual: seu alcance é estendido em +5m (totalizando 7,5m), seu dano se torna totalmente Concussivo e é somado um dano bônus igual a metade da sua FOR. Tempo de recarga: três turnos."
                 }
             },
@@ -3384,12 +3108,8 @@
                     "arma_nome": "Rapieira",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 3,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Manejável",
@@ -3409,9 +3129,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "** 1,5m",
                             "critico": 19
                         }
@@ -3427,9 +3145,7 @@
                             "freeAdjustMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["manejavel"],
                     "arma_regra_completa": "Você realiza um floreio contra seu alvo, usando sua Ação Especial. O inimigo deve realizar um teste de SAB com C.D igual a 10 + DEX do Exterminador. Caso o inimigo falhe, você recebe +2 em seu próximo teste de Reação, utilizável até o início do seu próximo turno."
                 }
             },
@@ -3466,12 +3182,8 @@
                     "arma_nome": "Revólver",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 22,
                     "arma_alcance": "15m",
                     "arma_propriedades": "Municiada 6 / Manejável",
@@ -3491,9 +3203,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 5m",
                             "critico": 22
                         },
@@ -3509,9 +3219,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 10m",
                             "critico": 22
                         },
@@ -3527,9 +3235,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 15m",
                             "critico": 22
                         }
@@ -3550,10 +3256,7 @@
                             "capacity": 12
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "municiada 6",
-                        "manejavel"
-                    ],
+                    "arma_propriedades_chaves": ["municiada 6", "manejavel"],
                     "arma_municao_capacidade": 12,
                     "arma_municao_atual": 12,
                     "arma_regra_completa": "Pode dar mais de um tiro por ataque. O número máximo de tiros é igual à metade da sua DEX (arredondado para baixo se necessário). Cada tiro consecutivo recebe -1 de acerto na rolagem, de maneira que um terceiro tiro, por exemplo, tem -2 na rolagem de acerto."
@@ -3592,12 +3295,8 @@
                     "arma_nome": "Rifle",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 18,
                     "arma_alcance": "30m",
                     "arma_propriedades": "Municiada 1 / Manejável / Precisão",
@@ -3617,9 +3316,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 10m",
                             "critico": 18
                         },
@@ -3635,9 +3332,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 20m",
                             "critico": 18
                         },
@@ -3653,9 +3348,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "até 30m",
                             "critico": 18
                         }
@@ -3681,11 +3374,7 @@
                             "action": "especial"
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "municiada 1",
-                        "manejavel",
-                        "precisao"
-                    ],
+                    "arma_propriedades_chaves": ["municiada 1", "manejavel", "precisao"],
                     "arma_municao_capacidade": 8,
                     "arma_municao_atual": 8,
                     "arma_regra_completa": "Ganha +2 na rolagem de ativação da propriedade de Precisão. Em contrapartida, deve gastar uma Ação Única ou Especial para recarregar após cada tiro, usando ou não a propriedade de Precisão."
@@ -3725,9 +3414,7 @@
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 7,
                     "arma_dano_atributo": [],
-                    "arma_tipos_dano": [
-                        "concussivo"
-                    ],
+                    "arma_tipos_dano": ["concussivo"],
                     "arma_critico": 19,
                     "arma_alcance": "1,5m",
                     "arma_propriedades": "Concussão / Morote",
@@ -3741,9 +3428,7 @@
                             "dano_fixo": 7,
                             "dano_dados": "",
                             "atributos": [],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "** 1,5m",
                             "critico": 19
                         }
@@ -3765,10 +3450,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "concussao",
-                        "morote"
-                    ],
+                    "arma_propriedades_chaves": ["concussao", "morote"],
                     "arma_regra_completa": "Acertos críticos aplicam +2 de dano bônus, após o cálculo do crítico."
                 }
             },
@@ -3807,13 +3489,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "FOR",
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["FOR", "DEX"],
+                    "arma_tipos_dano": ["concussivo"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m",
@@ -3843,9 +3520,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "1,5m",
                             "critico": 19
                         }
@@ -3897,10 +3572,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -3910,11 +3582,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto",
-                        "longinus dracônico"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "ryoto", "longinus dracônico"]
                 }
             },
             "effects": [],
@@ -3952,15 +3620,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "FOR",
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "concussivo",
-                        "perfurante",
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["FOR", "DEX"],
+                    "arma_tipos_dano": ["concussivo", "perfurante", "cortante"],
                     "arma_critico": 20,
                     "arma_critico_texto": "20 Natural",
                     "arma_alcance": "1,5m",
@@ -3990,9 +3651,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "1,5m",
                             "critico": 20
                         },
@@ -4013,9 +3672,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "3m",
                             "critico": 20
                         },
@@ -4036,9 +3693,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "3m",
                             "critico": 20
                         },
@@ -4059,9 +3714,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "3m",
                             "critico": 20
                         }
@@ -4082,10 +3735,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -4137,12 +3787,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m empunhadas / 5m com corrente",
@@ -4166,9 +3812,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "1,5m empunhadas / 5m com corrente",
                             "critico": 19
                         }
@@ -4226,11 +3870,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel",
-                        "ryoto",
-                        "alcance variavel"
-                    ]
+                    "arma_propriedades_chaves": ["manejavel", "ryoto", "alcance variavel"]
                 }
             },
             "effects": [],
@@ -4268,12 +3908,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["FOR"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m fechada / 3m em cone de corte",
@@ -4297,9 +3933,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "1,5m fechada / 3m em cone de corte",
                             "critico": 19
                         }
@@ -4346,10 +3980,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -4359,11 +3990,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "alcance variavel"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "alcance variavel"]
                 }
             },
             "effects": [],
@@ -4401,14 +4028,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
-                    "arma_dano_atributo": [
-                        "FOR",
-                        "DEX",
-                        "FDV"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["FOR", "DEX", "FDV"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "3m",
@@ -4443,9 +4064,7 @@
                                     "escolha": false
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "3m",
                             "critico": 19
                         }
@@ -4492,10 +4111,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -4510,11 +4126,7 @@
                             "minimumRangeMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "sojutsu"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "sojutsu"]
                 }
             },
             "effects": [],
@@ -4552,13 +4164,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 4,
-                    "arma_dano_atributo": [
-                        "FOR",
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["FOR", "DEX"],
+                    "arma_tipos_dano": ["concussivo"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m",
@@ -4588,9 +4195,7 @@
                                     "escolha": true
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "1,5m",
                             "critico": 19
                         }
@@ -4647,10 +4252,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -4660,11 +4262,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto",
-                        "armadura viva"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "ryoto", "armadura viva"]
                 }
             },
             "effects": [],
@@ -4702,13 +4300,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 20,
                     "arma_critico_texto": "20 Natural",
                     "arma_alcance": "1,5m corpo a corpo / 4,5m em arco de comando",
@@ -4732,10 +4325,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "1,5m corpo a corpo / 4,5m em arco de comando",
                             "critico": 20
                         }
@@ -4793,11 +4383,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel",
-                        "morote",
-                        "comando de campo"
-                    ]
+                    "arma_propriedades_chaves": ["manejavel", "morote", "comando de campo"]
                 }
             },
             "effects": [],
@@ -4835,12 +4421,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["FOR"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "3m",
@@ -4864,9 +4446,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "3m",
                             "critico": 19
                         }
@@ -4927,11 +4507,7 @@
                             "minimumRangeMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "sojutsu",
-                        "morote",
-                        "precisao"
-                    ]
+                    "arma_propriedades_chaves": ["sojutsu", "morote", "precisao"]
                 }
             },
             "effects": [],
@@ -4969,13 +4545,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
-                    "arma_dano_atributo": [
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["FOR"],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m",
@@ -4999,10 +4570,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "1,5m",
                             "critico": 19
                         }
@@ -5054,10 +4622,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -5067,11 +4632,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto",
-                        "pacto de kegare"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "ryoto", "pacto de kegare"]
                 }
             },
             "effects": [],
@@ -5109,12 +4670,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "3m",
@@ -5138,9 +4695,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "3m",
                             "critico": 19
                         }
@@ -5187,10 +4742,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -5205,11 +4757,7 @@
                             "minimumRangeMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "sojutsu"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "sojutsu"]
                 }
             },
             "effects": [],
@@ -5247,12 +4795,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m retraída / 6m com Jakkojin",
@@ -5276,9 +4820,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "1,5m retraída / 6m com Jakkojin",
                             "critico": 19
                         }
@@ -5320,10 +4862,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -5333,11 +4872,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "alcance variavel"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "alcance variavel"]
                 }
             },
             "effects": [],
@@ -5375,12 +4910,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["concussivo"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m compacto / 3m articulado",
@@ -5404,9 +4935,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["concussivo"],
                             "alcance": "1,5m compacto / 3m articulado",
                             "critico": 19
                         }
@@ -5463,11 +4992,7 @@
                             "minimumRangeMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "manejavel",
-                        "sojutsu",
-                        "alcance variavel"
-                    ]
+                    "arma_propriedades_chaves": ["manejavel", "sojutsu", "alcance variavel"]
                 }
             },
             "effects": [],
@@ -5505,13 +5030,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 7,
-                    "arma_dano_atributo": [
-                        "FOR"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante",
-                        "concussivo"
-                    ],
+                    "arma_dano_atributo": ["FOR"],
+                    "arma_tipos_dano": ["cortante", "concussivo"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "2m",
@@ -5535,10 +5055,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante",
-                                "concussivo"
-                            ],
+                            "tipos_dano": ["cortante", "concussivo"],
                             "alcance": "2m",
                             "critico": 19
                         }
@@ -5586,11 +5103,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "concussao",
-                        "morote",
-                        "pacto das almas"
-                    ]
+                    "arma_propriedades_chaves": ["concussao", "morote", "pacto das almas"]
                 }
             },
             "effects": [],
@@ -5628,12 +5141,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "1,5m",
@@ -5657,9 +5166,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "1,5m",
                             "critico": 19
                         }
@@ -5711,10 +5218,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -5724,11 +5228,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "motor exceed"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "motor exceed"]
                 }
             },
             "effects": [],
@@ -5766,12 +5266,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 5,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "perfurante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["perfurante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "2m",
@@ -5795,9 +5291,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "perfurante"
-                            ],
+                            "tipos_dano": ["perfurante"],
                             "alcance": "2m",
                             "critico": 19
                         }
@@ -5844,10 +5338,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -5857,11 +5348,7 @@
                             "secondAttribute": false
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "ryoto",
-                        "vínculo gêmeo"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "ryoto", "vínculo gêmeo"]
                 }
             },
             "effects": [],
@@ -5899,12 +5386,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 6,
-                    "arma_dano_atributo": [
-                        "DEX"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["DEX"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 19,
                     "arma_critico_texto": "19 Natural",
                     "arma_alcance": "3m",
@@ -5928,9 +5411,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "3m",
                             "critico": 19
                         }
@@ -5977,10 +5458,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -5995,11 +5473,7 @@
                             "minimumRangeMeters": 1.5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "sojutsu"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "sojutsu"]
                 }
             },
             "effects": [],
@@ -6037,12 +5511,8 @@
                     "arma_tipo": "Corpo a Corpo",
                     "arma_dano_dados": "",
                     "arma_dano_fixo": 7,
-                    "arma_dano_atributo": [
-                        "FDV"
-                    ],
-                    "arma_tipos_dano": [
-                        "cortante"
-                    ],
+                    "arma_dano_atributo": ["FDV"],
+                    "arma_tipos_dano": ["cortante"],
                     "arma_critico": 18,
                     "arma_critico_texto": "18 Natural / 16 Natural em Postura Iai",
                     "arma_alcance": "1,5m físico / 12m em Cortes Dimensionais",
@@ -6066,9 +5536,7 @@
                                     "multiplicador": 1
                                 }
                             ],
-                            "tipos_dano": [
-                                "cortante"
-                            ],
+                            "tipos_dano": ["cortante"],
                             "alcance": "1,5m físico / 12m em Cortes Dimensionais",
                             "critico": 18
                         }
@@ -6115,10 +5583,7 @@
                         {
                             "id": "acuidade",
                             "kind": "attack-attribute-choice",
-                            "attributes": [
-                                "FOR",
-                                "DEX"
-                            ],
+                            "attributes": ["FOR", "DEX"],
                             "requiresProficiency": true
                         },
                         {
@@ -6128,11 +5593,7 @@
                             "penetrationMargin": 5
                         }
                     ],
-                    "arma_propriedades_chaves": [
-                        "acuidade",
-                        "morote",
-                        "vínculo de herança"
-                    ]
+                    "arma_propriedades_chaves": ["acuidade", "morote", "vínculo de herança"]
                 }
             },
             "effects": [],

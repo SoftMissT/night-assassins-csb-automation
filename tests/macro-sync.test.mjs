@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { CANONICAL_MACRO_PACK_ID, syncCanonicalMacros } from '../scripts/macro-sync.mjs';
 
 describe('macro-sync', () => {
-    it('cria ausentes e atualiza macros gerenciadas dentro da pasta Night Assassins', async () => {
+    it('publica no mundo somente o launcher GM e preserva as demais no compêndio', async () => {
         const created = [];
         const updated = [];
         const docs = [
@@ -46,14 +46,12 @@ describe('macro-sync', () => {
 
         const result = await syncCanonicalMacros();
 
-        assert.deepEqual(result, { created: 1, updated: 1, skipped: 0, folderId: 'folder-na' });
+        assert.deepEqual(result, { created: 1, updated: 0, skipped: 1, folderId: 'folder-na' });
         assert.equal(created.length, 1);
         assert.equal(created[0].name, 'Night Assassins Controle GM');
         assert.equal(created[0].folder, 'folder-na');
         assert.deepEqual(created[0].ownership, { default: 0 });
-        assert.equal(updated.length, 1);
-        assert.equal(updated[0]._id, 'world-damage');
-        assert.equal(updated[0].command, 'damage');
+        assert.equal(updated.length, 0);
     });
 
     it('não cria macros quando o usuário não é GM', async () => {
@@ -61,17 +59,17 @@ describe('macro-sync', () => {
         assert.deepEqual(await syncCanonicalMacros(), { created: 0, updated: 0, skipped: 0 });
     });
 
-    it('atualiza pelo ID canônico mesmo quando a Macro antiga perdeu as flags', async () => {
+    it('atualiza o launcher GM pelo ID canônico mesmo quando perdeu as flags', async () => {
         const updated = [];
         const document = {
-            id: 'NADamageRoll0001',
-            name: 'Night Assassins Rolagem de Dano',
-            uuid: 'Compendium.na.damage',
+            id: 'NAGMControl00001',
+            name: 'Night Assassins Controle GM',
+            uuid: 'Compendium.na.gm',
             toObject: () => ({
-                name: 'Night Assassins Rolagem de Dano',
+                name: 'Night Assassins Controle GM',
                 type: 'script',
                 scope: 'global',
-                command: 'rollDamage({ actorUuid: macroArgs.actorUuid, builder: true })',
+                command: 'openGmDashboard()',
             }),
         };
         globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, OBSERVER: 2 } };
@@ -82,7 +80,7 @@ describe('macro-sync', () => {
         game.user.isGM = true;
         game.folders = { find: () => ({ id: 'folder-na' }) };
         game.macros = {
-            contents: [{ id: 'NADamageRoll0001', name: 'Macro antiga', folder: 'folder-na', flags: {} }],
+            contents: [{ id: 'NAGMControl00001', name: 'Macro antiga', folder: 'folder-na', flags: {} }],
         };
         game.packs = new Map([[CANONICAL_MACRO_PACK_ID, { getDocuments: async () => [document] }]]);
 
@@ -90,7 +88,41 @@ describe('macro-sync', () => {
 
         assert.equal(result.updated, 1);
         assert.equal(result.created, 0);
-        assert.equal(updated[0]._id, 'NADamageRoll0001');
-        assert.match(updated[0].command, /builder:\s*true/u);
+        assert.equal(updated[0]._id, 'NAGMControl00001');
+        assert.equal(updated[0].command, 'openGmDashboard()');
+        assert.deepEqual(updated[0].ownership, { default: 0 });
+    });
+
+    it('não sobrescreve uma Macro do usuário apenas porque o nome coincide', async () => {
+        const created = [];
+        const document = {
+            id: 'NAGMControl00001',
+            name: 'Night Assassins Controle GM',
+            uuid: 'Compendium.na.gm',
+            toObject: () => ({ name: 'Night Assassins Controle GM', command: 'oficial' }),
+        };
+        globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, OBSERVER: 2 } };
+        globalThis.Macro = {
+            createDocuments: async (data) => created.push(...data),
+            updateDocuments: async () => assert.fail('não deve sobrescrever Macro do usuário'),
+        };
+        game.user.isGM = true;
+        game.folders = { find: () => ({ id: 'folder-na' }) };
+        game.macros = {
+            contents: [
+                {
+                    id: 'macro-usuario',
+                    name: 'Night Assassins Controle GM',
+                    flags: {},
+                },
+            ],
+        };
+        game.packs = new Map([[CANONICAL_MACRO_PACK_ID, { getDocuments: async () => [document] }]]);
+
+        const result = await syncCanonicalMacros();
+
+        assert.equal(result.created, 1);
+        assert.equal(result.updated, 0);
+        assert.equal(created[0].command, 'oficial');
     });
 });

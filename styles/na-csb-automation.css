@@ -1,5 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Rajdhani:wght@400;500;600;700&display=swap');
-
+/* Fontes empacotadas (SIL OFL 1.1; origem e hashes em assets/fonts/SOURCES.md).
+   Subconjunto latin: cobre todo o pt-BR. Sem @import de terceiros: a abertura do
+   Foundry não depende de rede externa e não espera por fonts.googleapis.com. */
+@font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../assets/fonts/Orbitron-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../assets/fonts/Orbitron-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url('../assets/fonts/Orbitron-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Rajdhani';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../assets/fonts/Rajdhani-400-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Rajdhani';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../assets/fonts/Rajdhani-500-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Rajdhani';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../assets/fonts/Rajdhani-600-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Rajdhani';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../assets/fonts/Rajdhani-700-latin.woff2') format('woff2');
+    unicode-range:
+        U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+        U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 .na-csb-automation {
     font-family:
         'Lexend',
@@ -14,7 +85,6 @@
     box-sizing: border-box;
     width: 100%;
 }
-
 .na-csb-automation .na-label {
     font-weight: 700;
     font-size: 11px;
@@ -24,14 +94,12 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
-
 .na-csb-automation .na-hint {
     font-weight: 400;
     font-size: 10px;
     color: #9c9284;
     text-transform: none;
 }
-
 .na-csb-automation input[type='text'],
 .na-csb-automation input[type='number'],
 .na-csb-automation select {
@@ -46,219 +114,29 @@
     color: #ffffff;
     transition: border-color 0.15s ease;
 }
-
 .na-csb-automation input[type='text']:focus,
 .na-csb-automation input[type='number']:focus,
 .na-csb-automation select:focus {
     border-color: #d8b45d;
     outline: none;
 }
-
 .na-csb-automation input.na-dado-inp {
     font-family: 'JetBrains Mono', Consolas, monospace;
 }
-
-.na-dmg-dialog #na-entradas-container {
-    max-height: 48vh;
-    overflow-y: auto;
-    margin-bottom: 8px;
-    padding-right: 4px;
-}
-
-.na-dmg-dialog #na-entradas-container::-webkit-scrollbar {
-    width: 5px;
-}
-.na-dmg-dialog #na-entradas-container::-webkit-scrollbar-track {
-    background: #0d0b0a;
-    border-radius: 3px;
-}
-.na-dmg-dialog #na-entradas-container::-webkit-scrollbar-thumb {
-    background: #4a3a2a;
-    border-radius: 3px;
-}
-
-.na-entrada {
-    border-left: 3px solid #a4fe23;
-    border-top: 1px solid #4a3a2a;
-    border-right: 1px solid #4a3a2a;
-    border-bottom: 1px solid #4a3a2a;
-    border-radius: 0 4px 4px 0;
-    padding: 8px 10px;
-    margin-bottom: 8px;
-    background: #1c1915;
-}
-
-.na-entry-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    padding-bottom: 3px;
-    border-bottom: 1px solid #2a2520;
-}
-
-.na-entry-num {
-    font-size: 11px;
-    font-weight: 700;
-    color: #d8b45d;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.na-remove-btn {
-    font-size: 11px;
-    line-height: 1;
-    height: 20px;
-    width: 22px;
-    padding: 0;
-    cursor: pointer;
-    color: #d64545;
-    border: 1px solid #5a2020;
-    background: #2a1515;
-    border-radius: 3px;
-    transition: background 0.15s;
-}
-
-.na-remove-btn:hover {
-    background: #421c1c;
-    color: #ff6b6b;
-}
-
-.na-row-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 8px;
-    margin-bottom: 4px;
-}
-
-.na-attrs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 2px 0;
-}
-.na-attr-label {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    cursor: pointer;
-    white-space: nowrap;
-    user-select: none;
-    background: #2a2520;
-    border: 1px solid #4a3a2a;
-    border-radius: 3px;
-    padding: 2px 5px;
-}
-.na-attr-label:hover {
-    border-color: #d8b45d;
-}
-
-.na-dano-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 2px 0 4px;
-}
-.na-dano-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    background: #2a2520;
-    border: 1px solid #4a3a2a;
-    border-radius: 3px;
-    padding: 2px 6px;
-    cursor: pointer;
-    user-select: none;
-    color: #d4cbbc;
-    transition: all 0.15s ease;
-    font-size: 11px;
-}
-.na-dano-label:hover {
-    border-color: #a4fe23;
-    color: #ffffff;
-}
-.na-dano-chk {
-    margin: 0;
-    cursor: pointer;
-}
-
-.na-dano-tip {
-    display: none;
-    margin: 4px 0;
-    font-size: 11px;
-    color: #d8b45d;
-    background: #2a2520;
-    border-left: 3px solid #d8b45d;
-    border-radius: 0 4px 4px 0;
-    padding: 4px 6px;
-    line-height: 1.3;
-}
-
-.na-linha-preview {
-    margin-top: 4px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: #a4fe23;
-    background: #0d0b0a;
-    border: 1px solid #2a2520;
-    padding: 3px 6px;
-    border-radius: 3px;
-    min-height: 18px;
-}
-
-.na-dmg-dialog #na-add-btn {
-    width: 100%;
-    height: 28px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    border: 1px solid #4a3a2a;
-    border-radius: 4px;
-    background: #2a2520;
-    color: #a4fe23;
-    font-size: 11px;
-    font-weight: 700;
-    transition:
-        background 0.15s ease,
-        border-color 0.15s ease;
-}
-
-.na-dmg-dialog #na-add-btn:hover {
-    background: #3a322b;
-    border-color: #a4fe23;
-}
-
-.na-dmg-dialog #na-total-preview {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 6px 10px;
-    background: #0d0b0a;
-    color: #a4fe23;
-    border: 1px solid #4a3a2a;
-    border-radius: 4px;
-    word-break: break-all;
-    letter-spacing: 0.5px;
-}
-
 /* Controle GM estilos externos porque DialogV2 remove <style> do content. */
 .na-gm-dashboard-window .window-content {
     padding: 0;
     overflow: hidden;
-    background: #0b0a0d;
 }
-
 .na-gm-dashboard-window .dialog-content {
     height: 100%;
     min-height: 0;
 }
-
 .na-gm-dashboard-window .dialog-buttons {
     margin: 0;
-    padding: 10px 16px;
     border-top: 1px solid #342f39;
     background: #100e13;
 }
-
 .na-gm-board {
     --na-gm-ink: #f5f0e8;
     --na-gm-muted: #9e96a5;
@@ -268,22 +146,15 @@
     display: flex;
     flex-direction: column;
     color: var(--na-gm-ink);
-    background:
-        radial-gradient(circle at 92% 4%, rgba(193, 0, 12, 0.13), transparent 28%),
-        linear-gradient(145deg, #121015, #09090c 72%);
 }
-
 .na-gm-hero {
     flex: 0 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 24px;
-    padding: 18px 22px 16px;
     border-bottom: 1px solid var(--na-gm-line);
-    background: linear-gradient(90deg, rgba(229, 184, 79, 0.06), transparent 42%);
 }
-
 .na-gm-hero small,
 .na-gm-identity small,
 .na-gm-card-meta small {
@@ -292,51 +163,37 @@
     font-weight: 900;
     letter-spacing: 0.16em;
 }
-
 .na-gm-hero h2 {
     margin: 2px 0 0;
-    font:
-        700 25px/1.1 Georgia,
-        serif;
     color: var(--na-gm-ink);
 }
-
 .na-gm-hero p {
     margin: 5px 0 0;
     color: var(--na-gm-muted);
-    font-size: 11px;
 }
-
 .na-gm-count {
     min-width: 92px;
     text-align: right;
 }
-
 .na-gm-count strong {
     display: block;
-    color: #e7bd5c;
     font:
         800 30px/1 Georgia,
         serif;
 }
-
 .na-gm-count span {
     color: var(--na-gm-muted);
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
-
 .na-gm-toolbar {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 22px;
     border-bottom: 1px solid #25212a;
-    background: rgba(6, 6, 8, 0.68);
 }
-
 .na-gm-toolbar label {
     flex: 1;
     display: flex;
@@ -345,27 +202,21 @@
     margin: 0;
     padding: 0 11px;
     border: 1px solid #403847;
-    border-radius: 6px;
-    background: #17141a;
     color: #82798a;
 }
-
 .na-gm-toolbar input.na-gm-search {
     width: 100%;
-    height: 34px;
     padding: 0;
     border: 0;
     background: transparent;
     color: var(--na-gm-ink);
     box-shadow: none;
 }
-
 .na-gm-visible-count {
     color: var(--na-gm-muted);
     font-size: 10px;
     white-space: nowrap;
 }
-
 .na-gm-grid {
     flex: 1;
     min-height: 0;
@@ -376,7 +227,6 @@
     overflow-y: auto;
     padding: 16px 22px 22px;
 }
-
 .na-gm-card {
     position: relative;
     min-width: 0;
@@ -389,21 +239,17 @@
         transform 0.15s ease,
         border-color 0.15s ease;
 }
-
 .na-gm-card:hover {
     transform: translateY(-2px);
     border-color: #655773;
 }
-
 .na-gm-card[hidden] {
     display: none;
 }
-
 .na-gm-card-accent {
     height: 3px;
     background: linear-gradient(90deg, #c1000c, #e7bd5c 54%, #15d7e6);
 }
-
 .na-gm-card-head {
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr) 30px;
@@ -411,7 +257,6 @@
     align-items: center;
     padding: 11px 12px 8px;
 }
-
 .na-gm-card-head img {
     width: 48px;
     height: 48px;
@@ -420,7 +265,6 @@
     object-fit: cover;
     background: #09080a;
 }
-
 .na-gm-identity {
     min-width: 0;
 }
@@ -441,14 +285,10 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 .na-gm-open-sheet {
-    width: 30px;
-    height: 30px;
     margin: 0;
     padding: 0;
     border: 1px solid #4b424f;
-    border-radius: 6px;
     background: #17141a;
     color: #cbbfce;
 }
@@ -456,14 +296,12 @@
     border-color: #e7bd5c;
     color: #e7bd5c;
 }
-
 .na-gm-resources {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 9px;
     padding: 3px 12px 11px;
 }
-
 .na-gm-resource {
     position: relative;
     padding: 8px;
@@ -528,7 +366,6 @@
 .na-gm-resource.is-empty {
     border-color: rgba(193, 0, 12, 0.45);
 }
-
 .na-gm-card-meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -557,15 +394,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 .na-gm-empty {
     grid-column: 1 / -1;
     display: grid;
     justify-items: center;
     gap: 7px;
-    padding: 70px 20px;
     color: var(--na-gm-muted);
-    text-align: center;
 }
 .na-gm-empty i {
     color: #5e5363;
@@ -578,7 +412,6 @@
 .na-gm-empty span {
     font-size: 10px;
 }
-
 @media (max-width: 760px) {
     .na-gm-grid {
         grid-template-columns: 1fr;
@@ -594,21 +427,14 @@
         display: none;
     }
 }
-
 /* Controle GM 2.0 mesa tática persistente e densa. */
-.na-gm-dashboard-window {
-    min-width: 900px;
-}
-
 .na-gm-dashboard-window .window-header {
     border-bottom: 1px solid #4a3b28;
     background: linear-gradient(90deg, #08090c, #17110d 60%, #08090c);
 }
-
 .na-gm-dashboard-window .dialog-buttons {
     padding: 6px 12px;
 }
-
 .na-gm-dashboard-window .dialog-buttons button {
     min-height: 28px;
     border-color: #55442e;
@@ -618,7 +444,6 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
-
 .na-gm-board {
     --na-gm-gold: #e6b94f;
     --na-gm-cyan: #19e5ef;
@@ -635,7 +460,6 @@
         auto,
         auto;
 }
-
 .na-gm-hero {
     min-height: 58px;
     padding: 10px 16px 9px;
@@ -647,7 +471,6 @@
         rgba(25, 229, 239, 0.04)
     );
 }
-
 .na-gm-hero h2 {
     font:
         800 21px/1.05 'Palatino Linotype',
@@ -656,7 +479,6 @@
         serif;
     letter-spacing: 0.025em;
 }
-
 .na-gm-hero p {
     margin-top: 3px;
     font-size: 10px;
@@ -670,26 +492,22 @@
     color: var(--na-gm-gold);
     font-size: 27px;
 }
-
 .na-gm-toolbar {
     min-height: 42px;
     padding: 6px 12px;
     border-bottom-color: var(--na-gm-gridline);
     background: rgba(7, 7, 9, 0.94);
 }
-
 .na-gm-toolbar label {
     max-width: 520px;
     border-radius: 3px;
     border-color: #514638;
     background: #121116;
 }
-
 .na-gm-toolbar input.na-gm-search {
     height: 28px;
     font-size: 11px;
 }
-
 .na-gm-refresh {
     display: inline-flex;
     align-items: center;
@@ -707,12 +525,10 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
-
 .na-gm-refresh:hover {
     border-color: var(--na-gm-gold);
     background: #241d12;
 }
-
 .na-gm-table-wrap {
     flex: 1;
     min-height: 0;
@@ -720,7 +536,6 @@
     scrollbar-color: #594b39 #101014;
     scrollbar-width: thin;
 }
-
 .na-gm-table {
     width: max-content;
     min-width: 100%;
@@ -730,7 +545,6 @@
     font-size: 10px;
     table-layout: fixed;
 }
-
 .na-gm-table th,
 .na-gm-table td {
     height: 42px;
@@ -740,7 +554,6 @@
     vertical-align: middle;
     box-sizing: border-box;
 }
-
 .na-gm-table thead th {
     position: sticky;
     top: 25px;
@@ -756,7 +569,6 @@
     text-transform: uppercase;
     white-space: nowrap;
 }
-
 .na-gm-table thead .na-gm-groups th {
     top: 0;
     height: 25px;
@@ -766,7 +578,6 @@
     font-size: 7px;
     letter-spacing: 0.2em;
 }
-
 .na-gm-table thead tr:nth-child(2) th:nth-child(14) {
     color: var(--na-gm-red);
 }
@@ -776,7 +587,6 @@
 .na-gm-table thead tr:nth-child(2) th:nth-child(16) {
     color: #ff88f5;
 }
-
 .na-gm-table tbody tr:nth-child(odd) td {
     background: rgba(24, 23, 27, 0.96);
 }
@@ -789,7 +599,6 @@
 .na-gm-table tbody tr[hidden] {
     display: none;
 }
-
 .na-gm-table th:first-child,
 .na-gm-table td:first-child {
     position: sticky;
@@ -799,7 +608,6 @@
     min-width: 218px;
     box-shadow: 5px 0 12px rgba(0, 0, 0, 0.28);
 }
-
 .na-gm-table thead th:first-child {
     z-index: 6;
 }
@@ -852,14 +660,12 @@
     width: 88px;
     min-width: 88px;
 }
-
 .na-gm-person-cell {
     display: grid;
     grid-template-columns: 31px minmax(0, 1fr) 24px;
     gap: 7px;
     align-items: center;
 }
-
 .na-gm-person-cell img {
     width: 31px;
     height: 31px;
@@ -868,7 +674,6 @@
     background: #050506;
     object-fit: cover;
 }
-
 .na-gm-person-cell > div,
 .na-gm-text-cell {
     min-width: 0;
@@ -892,14 +697,12 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 .na-gm-open-sheet {
     width: 23px;
     height: 23px;
     border-radius: 2px;
     font-size: 9px;
 }
-
 .na-gm-level,
 .na-gm-attr,
 .na-gm-spent,
@@ -948,7 +751,6 @@
     font-size: 9px;
     white-space: nowrap;
 }
-
 .na-gm-table-resource > div:first-child {
     display: flex;
     align-items: baseline;
@@ -984,7 +786,6 @@
 .na-gm-table-resource.is-empty strong {
     text-shadow: 0 0 8px rgba(255, 49, 64, 0.55);
 }
-
 .na-gm-empty {
     height: 180px !important;
     padding: 30px !important;
@@ -995,7 +796,6 @@
     display: block;
     margin: 5px auto;
 }
-
 @media (max-width: 1050px) {
     .na-gm-dashboard-window {
         min-width: 720px;
@@ -1004,17 +804,14 @@
         display: none;
     }
 }
-
 /* Controle GM compacto Caçadores e Onis. */
 .na-gm-dashboard-window {
-    min-width: 480px;
+    min-width: min(480px, calc(100vw - 40px));
     max-width: calc(100vw - 24px);
 }
-
 .na-gm-dashboard-window .window-content {
     background: #08090c;
 }
-
 .na-gm-mini-board {
     --na-gm-font: 'Orbitron', 'Trebuchet MS', sans-serif;
     --na-gm-gold: #f2b632;
@@ -1029,7 +826,6 @@
         radial-gradient(circle at 8% 0%, rgba(242, 182, 50, 0.08), transparent 30%),
         linear-gradient(145deg, #111014, #07080a 70%);
 }
-
 .na-gm-mini-hero {
     flex: 0 0 auto;
     display: flex;
@@ -1039,7 +835,6 @@
     padding: 11px 13px 9px;
     border-bottom: 1px solid #463b2c;
 }
-
 .na-gm-mini-hero small,
 .na-gm-mini-name small {
     display: block;
@@ -1047,14 +842,12 @@
     font: 700 9px/1 var(--na-gm-font);
     letter-spacing: 0.16em;
 }
-
 .na-gm-mini-hero h2 {
     margin: 3px 0 0;
     color: #fff9ed;
     font: 800 19px/1.1 var(--na-gm-font);
     letter-spacing: 0.035em;
 }
-
 .na-gm-mini-actions {
     display: flex;
     gap: 5px;
@@ -1078,7 +871,6 @@
     border-color: var(--na-gm-red);
     color: var(--na-gm-red);
 }
-
 .na-gm-mini-search {
     flex: 0 0 auto;
     display: flex;
@@ -1091,7 +883,6 @@
     background: #111015;
     color: #766e7a;
 }
-
 .na-gm-mini-search input {
     width: 100%;
     height: 28px;
@@ -1102,14 +893,12 @@
     box-shadow: none;
     font: 600 11px/1 var(--na-gm-font);
 }
-
 .na-gm-mini-sections {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     padding: 0 10px 10px;
 }
-
 .na-gm-mini-section {
     overflow: hidden;
     margin-top: 8px;
@@ -1117,7 +906,6 @@
     border-radius: 5px;
     background: rgba(13, 13, 17, 0.94);
 }
-
 .na-gm-mini-section > header {
     display: flex;
     align-items: center;
@@ -1127,7 +915,6 @@
     border-bottom: 1px solid #39343c;
     background: #111116;
 }
-
 .na-gm-mini-section > header h3 {
     display: flex;
     align-items: center;
@@ -1137,7 +924,6 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
-
 .na-gm-mini-section > header span {
     min-width: 20px;
     padding: 2px 5px;
@@ -1147,7 +933,6 @@
     font: 700 10px/1 var(--na-gm-font);
     text-align: center;
 }
-
 .na-gm-mini-section--hunter > header h3 {
     color: var(--na-gm-gold);
 }
@@ -1161,7 +946,6 @@
 .na-gm-mini-section--oni > header h3 {
     color: var(--na-gm-red);
 }
-
 .na-gm-mini-list {
     display: grid;
 }
@@ -1190,7 +974,6 @@
 .na-gm-mini-row[hidden] {
     display: none;
 }
-
 .na-gm-mini-name {
     min-width: 0;
 }
@@ -1206,13 +989,11 @@
 .na-gm-mini-row--oni .na-gm-mini-name small {
     color: var(--na-gm-red);
 }
-
 .na-gm-mini-resources {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 7px;
 }
-
 .na-gm-mini-resource {
     min-width: 0;
     padding: 4px 6px;
@@ -1220,7 +1001,6 @@
     border-radius: 3px;
     background: #09090c;
 }
-
 .na-gm-mini-resource-line {
     display: flex;
     align-items: baseline;
@@ -1247,7 +1027,6 @@
 .na-gm-mini-resource--pdr strong {
     color: var(--na-gm-cyan);
 }
-
 .na-gm-mini-track {
     height: 4px;
     margin-top: 4px;
@@ -1269,7 +1048,6 @@
 .na-gm-mini-resource.is-empty {
     border-color: rgba(255, 51, 66, 0.45);
 }
-
 .na-gm-mini-row .na-gm-open-sheet {
     width: 24px;
     height: 24px;
@@ -1278,17 +1056,15 @@
     border-radius: 3px;
     font-size: 9px;
 }
-
 .na-gm-mini-empty {
     padding: 16px 10px;
     color: #77717c;
     font: 600 8px/1.4 var(--na-gm-font);
     text-align: center;
 }
-
 @media (max-width: 620px) {
     .na-gm-dashboard-window {
-        min-width: 360px;
+        min-width: min(360px, calc(100vw - 40px));
     }
     .na-gm-mini-row {
         grid-template-columns: minmax(120px, 1fr) 30px;
@@ -1306,7 +1082,6 @@
     color: var(--na-ink);
     font-family: 'Orbitron', 'Trebuchet MS', sans-serif;
 }
-
 .na-hit-hero {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -1321,7 +1096,6 @@
         #100e0c 62%
     );
 }
-
 .na-hit-kicker {
     color: #c7b991;
     font-size: 10px;
@@ -1433,7 +1207,6 @@
     color: #d7ad5b;
     font-size: 11px;
 }
-
 @media (max-width: 520px) {
     .na-hit-grid {
         grid-template-columns: 1fr;
@@ -1442,7 +1215,6 @@
         grid-template-columns: 1fr 1fr;
     }
 }
-
 .na-action-manager {
     display: grid;
     gap: 10px;
@@ -1472,12 +1244,10 @@
     display: grid;
     gap: 6px;
 }
-
 /* =============================================================================
    Night Assassins Sheet Skin (Manhwa Dark)
    Templates use .na-sheet-* classes. Chrome is scoped via .na-sheet on the app.
    ============================================================================= */
-
 :root {
     --na-gold: #ffd700;
     --na-gold-dim: #d8b45d;
@@ -1503,9 +1273,7 @@
     --na-font-display: 'Orbitron', 'Trebuchet MS', sans-serif;
     --na-font-body: 'Rajdhani', 'Segoe UI', sans-serif;
 }
-
 /* --- Label / title / stat text (from migrated templates) --- */
-
 .na-sheet-text {
     font-family: var(--na-font-display);
     font-weight: 700;
@@ -1515,21 +1283,17 @@
     color: var(--na-ink);
     display: inline-block;
 }
-
 .na-sheet-title {
     color: var(--na-gold);
     text-shadow: 0 0 12px rgba(255, 215, 0, 0.22);
 }
-
 .na-sheet-label {
     color: var(--na-muted);
 }
-
 .na-sheet-stat {
     font-variant-numeric: tabular-nums;
     text-shadow: 0 0 10px currentColor;
 }
-
 .na-sheet-size-sm {
     font-size: 12px;
     letter-spacing: 0.1em;
@@ -1544,7 +1308,6 @@
     font-size: 22px;
     letter-spacing: 0.14em;
 }
-
 .na-sheet-role-vit {
     color: var(--na-vit);
 }
@@ -1578,11 +1341,9 @@
 .na-sheet-role-accent-red {
     color: var(--na-red);
 }
-
 .na-sheet-glow {
     text-shadow: 0 0 8px currentColor;
 }
-
 .na-sheet-stat.na-sheet-role-vit,
 .na-sheet-stat.na-sheet-role-dex,
 .na-sheet-stat.na-sheet-role-for,
@@ -1593,9 +1354,7 @@
     font-size: 25px;
     letter-spacing: 0.08em;
 }
-
 /* --- Sheet chrome (only when .na-sheet is tagged on the Application) --- */
-
 .na-sheet {
     --color-text-primary: var(--na-ink);
     --color-text-secondary: var(--na-muted);
@@ -1603,14 +1362,12 @@
     --color-border-dark: #2a2520;
     --color-shadow-primary: rgba(255, 215, 0, 0.55);
 }
-
 .na-sheet .window-header {
     border-bottom: 1px solid var(--na-line);
     background:
         linear-gradient(90deg, rgba(255, 215, 0, 0.08), transparent 46%),
         linear-gradient(180deg, #16131c, #100e13);
 }
-
 .na-sheet .window-header .window-title {
     font-family: var(--na-font-display);
     font-weight: 700;
@@ -1618,7 +1375,6 @@
     text-transform: uppercase;
     color: var(--na-gold-dim);
 }
-
 .na-sheet .window-content {
     background:
         radial-gradient(ellipse 80% 50% at 100% 0%, rgba(168, 85, 247, 0.07), transparent 50%),
@@ -1627,11 +1383,9 @@
     color: var(--na-ink);
     font-family: var(--na-font-body);
 }
-
 .na-sheet .custom-system-entity {
     color: var(--na-ink);
 }
-
 .na-sheet nav.custom-tabs,
 .na-sheet .custom-tabs {
     margin: 6px 0 10px !important;
@@ -1642,7 +1396,6 @@
     border-radius: 0;
     gap: 4px;
 }
-
 .na-sheet nav.custom-tabs a.item,
 .na-sheet .custom-tabs a.item {
     font-family: var(--na-font-display);
@@ -1660,14 +1413,12 @@
         background 0.15s ease,
         text-shadow 0.15s ease;
 }
-
 .na-sheet nav.custom-tabs a.item:hover,
 .na-sheet .custom-tabs a.item:hover {
     color: var(--na-ink) !important;
     border-color: rgba(216, 180, 93, 0.35);
     background: rgba(216, 180, 93, 0.06);
 }
-
 .na-sheet nav.custom-tabs a.item.active,
 .na-sheet .custom-tabs a.item.active,
 .na-sheet .tabs .active {
@@ -1676,7 +1427,6 @@
     background: linear-gradient(180deg, rgba(255, 215, 0, 0.12), rgba(255, 215, 0, 0.03));
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.45) !important;
 }
-
 .na-sheet .custom-system-panel {
     margin: 6px 4px;
     border: 1px solid var(--na-line);
@@ -1685,7 +1435,6 @@
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
     overflow: hidden;
 }
-
 .na-sheet .custom-system-panel > summary,
 .na-sheet .custom-system-panel-title {
     font-family: var(--na-font-display);
@@ -1698,11 +1447,9 @@
     border-bottom: 1px solid rgba(58, 52, 44, 0.85);
     padding: 8px 12px 8px 1.4rem;
 }
-
 .na-sheet .custom-system-panel[open] > summary {
     color: var(--na-gold);
 }
-
 .na-sheet .custom-system-field > label,
 .na-sheet .custom-system-label {
     font-family: var(--na-font-body);
@@ -1711,7 +1458,6 @@
     letter-spacing: 0.04em;
     color: var(--na-muted);
 }
-
 .na-sheet input[type='text'],
 .na-sheet input[type='number'],
 .na-sheet input[type='search'],
@@ -1727,7 +1473,6 @@
         border-color 0.15s ease,
         box-shadow 0.15s ease;
 }
-
 .na-sheet input:focus,
 .na-sheet select:focus,
 .na-sheet textarea:focus {
@@ -1735,7 +1480,6 @@
     box-shadow: 0 0 0 1px rgba(216, 180, 93, 0.25);
     outline: none;
 }
-
 .na-sheet button,
 .na-sheet .custom-system-sheet-button,
 .na-sheet button.custom-system-label-root {
@@ -1754,7 +1498,6 @@
         box-shadow 0.15s ease,
         transform 0.12s ease;
 }
-
 .na-sheet button:hover,
 .na-sheet .custom-system-sheet-button:hover,
 .na-sheet button.custom-system-label-root:hover {
@@ -1763,7 +1506,6 @@
     box-shadow: 0 0 12px rgba(255, 215, 0, 0.12);
     transform: translateY(-1px);
 }
-
 .na-sheet .custom-system-meter {
     background: #050508 !important;
     border: 1px solid #2a2520;
@@ -1771,12 +1513,10 @@
     min-height: 16px;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.55);
 }
-
 .na-sheet .custom-system-meter-fill {
     border-radius: 50vh !important;
     background: linear-gradient(90deg, #9e0e18, #ff3543) !important;
 }
-
 .na-sheet .custom-system-meter-content {
     font-family: var(--na-font-display);
     font-size: 10px;
@@ -1787,17 +1527,14 @@
         0 0 4px rgba(0, 0, 0, 0.9),
         0 1px 2px rgba(0, 0, 0, 0.9) !important;
 }
-
 /* PDV / PDR / Fôlego semantic fills when parents carry known keys via title/aria fallback accents */
 .na-sheet .hp-bar .custom-system-meter-fill,
 .na-sheet [class*='pdv'] .custom-system-meter-fill {
     background: linear-gradient(90deg, #9e0e18, #ff2b4a) !important;
 }
-
 .na-sheet [class*='pdr'] .custom-system-meter-fill {
     background: linear-gradient(90deg, #087b84, #15d7e6) !important;
 }
-
 .na-sheet .profile-img-container {
     border: 1px solid var(--na-line) !important;
     border-radius: 8px !important;
@@ -1807,7 +1544,6 @@
         0 10px 24px rgba(0, 0, 0, 0.35);
     overflow: hidden;
 }
-
 .na-sheet header.sheet-header h1 input {
     font-family: var(--na-font-display) !important;
     font-weight: 700;
@@ -1816,18 +1552,15 @@
     background: transparent !important;
     border: 1px solid transparent !important;
 }
-
 .na-sheet header.sheet-header h1 input:focus {
     border-color: rgba(216, 180, 93, 0.4) !important;
     background: rgba(0, 0, 0, 0.25) !important;
 }
-
 .na-sheet .custom-system-item-container,
 .na-sheet .custom-system-dynamic-table,
 .na-sheet table {
     border-color: var(--na-line);
 }
-
 .na-sheet .custom-system-dynamic-table th,
 .na-sheet table th {
     font-family: var(--na-font-display);
@@ -1838,13 +1571,11 @@
     background: rgba(255, 215, 0, 0.05);
     border-color: var(--na-line);
 }
-
 .na-sheet .custom-system-dynamic-table td,
 .na-sheet table td {
     border-color: rgba(58, 52, 44, 0.7);
     color: var(--na-ink);
 }
-
 .na-sheet ::-webkit-scrollbar {
     width: 7px;
     height: 7px;
@@ -1859,7 +1590,6 @@
 .na-sheet ::-webkit-scrollbar-thumb:hover {
     background: var(--na-gold-dim);
 }
-
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
     .na-sheet button,
@@ -1870,7 +1600,6 @@
         transform: none;
     }
 }
-
 /* ── P0 estabilização: contraste da ficha escura ─────────────────────
    Escopado a `.na-sheet`: sem isso, `.custom-system-actor` sozinho atinge
    QUALQUER ficha CSB do mundo, inclusive de outros sistemas/módulos. */
@@ -1878,7 +1607,6 @@
 .na-sheet .custom-system-actor li {
     color: #f2f2f2;
 }
-
 .na-sheet .custom-system-actor div[style*='color:#888'],
 .na-sheet .custom-system-actor span[style*='color:#888'],
 .na-sheet .custom-system-actor em[style*='color:#888'],
@@ -1890,13 +1618,12 @@
 .na-sheet .custom-system-actor span[style*='color: #aaa'] {
     color: #f2f2f2;
 }
-
 /* ═══════════════════════════════════════════════════════════════════
-   FICHA ONI — skin própria (P0 reconstrução).
+   FICHA ONI skin própria (P0 reconstrução).
    Escopado inteiramente dentro de `.na-oni-sheet` (nunca em `:root`
    global) para que o Slayer não herde nenhuma destas regras. A classe é
    aplicada via `tagNightAssassinsSheet()` (scripts/main.mjs) com base em
-   `actorKind(actor) === "oni"` — detecção por template/flags, nunca por
+   `actorKind(actor) === "oni"` detecção por template/flags, nunca por
    nome do Actor.
    ═══════════════════════════════════════════════════════════════════ */
 .na-oni-sheet {
@@ -1912,23 +1639,20 @@
     --oni-text-secondary: #d7d2d2;
     --oni-muted: #aaa3a5;
     --oni-line: #45252b;
-
     /* Reaproveita apenas infraestrutura NEUTRA (fontes/spacing) do sistema
-       compartilhado — cor/superfície são sobrescritas abaixo. */
+       compartilhado cor/superfície são sobrescritas abaixo. */
     --color-text-primary: var(--oni-text);
     --color-text-secondary: var(--oni-text-secondary);
     --color-border-light-primary: var(--oni-line);
     --color-border-dark: #1a0d10;
     --color-shadow-primary: rgba(255, 38, 56, 0.45);
 }
-
 .na-oni-sheet .window-header {
     border-bottom: 1px solid var(--oni-line);
     background:
         linear-gradient(90deg, rgba(255, 38, 56, 0.14), transparent 46%),
         linear-gradient(180deg, #170a0d, #0c0608);
 }
-
 .na-oni-sheet .window-header .window-title {
     font-family: var(--na-font-display);
     font-weight: 700;
@@ -1937,7 +1661,6 @@
     color: var(--oni-red);
     text-shadow: 0 0 12px rgba(255, 38, 56, 0.35);
 }
-
 .na-oni-sheet .window-content {
     background:
         radial-gradient(ellipse 80% 50% at 100% 0%, rgba(194, 11, 30, 0.12), transparent 50%),
@@ -1946,15 +1669,13 @@
     color: var(--oni-text);
     font-family: var(--na-font-body);
 }
-
 .na-oni-sheet .custom-system-entity,
 .na-oni-sheet p,
 .na-oni-sheet li,
 .na-oni-sheet label {
     color: var(--oni-text);
 }
-
-/* ── Abas: COMBATE / CONFIGURAÇÕES — identidade vermelho-sangue, não dourada. */
+/* ── Abas: COMBATE / CONFIGURAÇÕES identidade vermelho-sangue, não dourada. */
 .na-oni-sheet nav.custom-tabs,
 .na-oni-sheet .custom-tabs {
     margin: 6px 0 10px !important;
@@ -1965,7 +1686,6 @@
     border-radius: 0;
     gap: 4px;
 }
-
 .na-oni-sheet nav.custom-tabs a.item,
 .na-oni-sheet .custom-tabs a.item {
     font-family: var(--na-font-display);
@@ -1983,14 +1703,12 @@
         background 0.15s ease,
         text-shadow 0.15s ease;
 }
-
 .na-oni-sheet nav.custom-tabs a.item:hover,
 .na-oni-sheet .custom-tabs a.item:hover {
     color: var(--oni-text) !important;
     border-color: rgba(255, 38, 56, 0.35);
     background: rgba(255, 38, 56, 0.08);
 }
-
 .na-oni-sheet nav.custom-tabs a.item.active,
 .na-oni-sheet .custom-tabs a.item.active,
 .na-oni-sheet .tabs .active {
@@ -1999,7 +1717,6 @@
     background: linear-gradient(180deg, rgba(255, 38, 56, 0.16), rgba(255, 38, 56, 0.03));
     text-shadow: 0 0 10px rgba(255, 38, 56, 0.5) !important;
 }
-
 /* ── Painéis/cards ── */
 .na-oni-sheet .custom-system-panel {
     margin: 6px 4px;
@@ -2009,7 +1726,6 @@
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
     overflow: hidden;
 }
-
 .na-oni-sheet .custom-system-panel > summary,
 .na-oni-sheet .custom-system-panel-title {
     font-family: var(--na-font-display);
@@ -2022,11 +1738,9 @@
     border-bottom: 1px solid rgba(69, 37, 43, 0.85);
     padding: 8px 12px 8px 1.4rem;
 }
-
 .na-oni-sheet .custom-system-panel[open] > summary {
     color: var(--oni-red);
 }
-
 /* ── Kekkijutsu cards ── */
 .na-oni-sheet .na-kekki-card {
     border: 1px solid var(--oni-line);
@@ -2035,7 +1749,6 @@
     margin: 6px 4px;
     background: linear-gradient(155deg, rgba(122, 16, 48, 0.14), rgba(9, 7, 9, 0.9));
 }
-
 .na-oni-sheet .na-kekki-badge-pdk {
     display: inline-block;
     font-family: var(--na-font-display);
@@ -2049,7 +1762,6 @@
     padding: 2px 8px;
     box-shadow: 0 0 8px var(--oni-pdk-glow);
 }
-
 .na-oni-sheet .na-kekki-badge-rank {
     display: inline-block;
     font-family: var(--na-font-display);
@@ -2060,7 +1772,6 @@
     border-radius: 4px;
     padding: 2px 6px;
 }
-
 /* ── Campos/inputs ── */
 .na-oni-sheet .custom-system-field > label,
 .na-oni-sheet .custom-system-label {
@@ -2070,7 +1781,6 @@
     letter-spacing: 0.04em;
     color: var(--oni-text-secondary);
 }
-
 .na-oni-sheet input[type='text'],
 .na-oni-sheet input[type='number'],
 .na-oni-sheet input[type='search'],
@@ -2086,7 +1796,6 @@
         border-color 0.15s ease,
         box-shadow 0.15s ease;
 }
-
 .na-oni-sheet input:focus,
 .na-oni-sheet select:focus,
 .na-oni-sheet textarea:focus {
@@ -2094,7 +1803,6 @@
     box-shadow: 0 0 0 1px rgba(255, 38, 56, 0.3);
     outline: none;
 }
-
 .na-oni-sheet button,
 .na-oni-sheet .custom-system-sheet-button,
 .na-oni-sheet button.custom-system-label-root {
@@ -2113,7 +1821,6 @@
         box-shadow 0.15s ease,
         transform 0.12s ease;
 }
-
 .na-oni-sheet button:hover,
 .na-oni-sheet .custom-system-sheet-button:hover,
 .na-oni-sheet button.custom-system-label-root:hover {
@@ -2121,27 +1828,23 @@
     color: var(--oni-red);
     box-shadow: 0 0 12px rgba(255, 38, 56, 0.3);
 }
-
 /* ── Barras de recurso PDV/PDK (sempre visíveis, cabeçalho + Combate) ──
-   PDV = vermelho sangue; PDK = vinho/magenta demoníaco — identidade
+   PDV = vermelho sangue; PDK = vinho/magenta demoníaco identidade
    própria, nunca reaproveita a cor do PDR do Slayer. */
 .na-oni-sheet .na-oni-resource-bars {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
-
 .na-oni-sheet .na-oni-resource-pdv {
     color: var(--oni-red);
     text-shadow: 0 0 8px rgba(255, 38, 56, 0.4);
 }
-
 .na-oni-sheet .na-oni-resource-pdk {
     color: var(--oni-pdk);
     text-shadow: 0 0 8px var(--oni-pdk-glow);
 }
-
-/* ── Meter fills (barra nativa do CSB, quando usada) — PDV vermelho,
+/* ── Meter fills (barra nativa do CSB, quando usada) PDV vermelho,
    PDK vinho/magenta, nunca o ciano do PDR Slayer. ── */
 .na-oni-sheet .custom-system-meter {
     background: var(--oni-bg) !important;
@@ -2150,19 +1853,16 @@
     min-height: 16px;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
 }
-
 .na-oni-sheet .custom-system-meter-fill,
 .na-oni-sheet .hp-bar .custom-system-meter-fill,
 .na-oni-sheet [class*='pdv'] .custom-system-meter-fill {
     background: linear-gradient(90deg, var(--oni-red-dark), var(--oni-red)) !important;
     border-radius: 50vh !important;
 }
-
 .na-oni-sheet [class*='pdk'] .custom-system-meter-fill {
     background: linear-gradient(90deg, #430a1c, var(--oni-pdk)) !important;
     border-radius: 50vh !important;
 }
-
 .na-oni-sheet .custom-system-meter-content {
     font-family: var(--na-font-display);
     font-size: 10px;
@@ -2173,14 +1873,12 @@
         0 0 4px rgba(0, 0, 0, 0.9),
         0 1px 2px rgba(0, 0, 0, 0.9) !important;
 }
-
-/* ── Kekkijutsu — badges e lista restantes (ação/origem/container) ── */
+/* ── Kekkijutsu badges e lista restantes (ação/origem/container) ── */
 .na-oni-sheet .na-kekki-list {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
-
 .na-oni-sheet .na-kekki-badge-action {
     display: inline-block;
     font-family: var(--na-font-display);
@@ -2194,14 +1892,12 @@
     border-radius: 4px;
     padding: 2px 6px;
 }
-
 .na-oni-sheet .na-kekki-origin {
     font-family: var(--na-font-body);
     font-size: 11px;
     color: var(--oni-muted);
     font-style: italic;
 }
-
 /* ── Retrato + campos de identidade (cabeçalho) ── */
 .na-oni-sheet .profile-img-container {
     border: 1px solid var(--oni-line) !important;
@@ -2212,7 +1908,6 @@
         0 10px 24px rgba(0, 0, 0, 0.45);
     overflow: hidden;
 }
-
 .na-oni-sheet header.sheet-header h1 input {
     font-family: var(--na-font-display) !important;
     font-weight: 700;
@@ -2221,18 +1916,15 @@
     background: transparent !important;
     border: 1px solid transparent !important;
 }
-
 .na-oni-sheet header.sheet-header h1 input:focus {
     border-color: rgba(255, 38, 56, 0.4) !important;
     background: rgba(0, 0, 0, 0.3) !important;
 }
-
 .na-oni-sheet .custom-system-item-container,
 .na-oni-sheet .custom-system-dynamic-table,
 .na-oni-sheet table {
     border-color: var(--oni-line);
 }
-
 .na-oni-sheet .custom-system-dynamic-table th,
 .na-oni-sheet table th {
     font-family: var(--na-font-display);
@@ -2243,20 +1935,17 @@
     background: rgba(255, 38, 56, 0.08);
     border-color: var(--oni-line);
 }
-
 .na-oni-sheet .custom-system-dynamic-table td,
 .na-oni-sheet table td {
     border-color: rgba(69, 37, 43, 0.7);
     color: var(--oni-text);
 }
-
 .na-oni-sheet ::-webkit-scrollbar-thumb {
     background: #4a2a30;
 }
 .na-oni-sheet ::-webkit-scrollbar-thumb:hover {
     background: var(--oni-red);
 }
-
 /* Cores semânticas da ficha Oni. Estas regras são deliberadamente locais:
    Slayer/NPC mantêm suas próprias fontes, fundos e paletas. */
 .na-oni-sheet .window-content .na-sheet-role-vit {
@@ -2288,12 +1977,10 @@
     color: #b36cff !important;
     text-shadow: 0 0 8px rgba(179, 108, 255, 0.35);
 }
-
 /* ============================================================
-   Night Assassins — Armas Especiais (Slayer)
+   Night Assassins Armas Especiais (Slayer)
    Componentes reutilizáveis para Labels/HTML de templates CSB.
    ============================================================ */
-
 .na-sheet .na-weapon-attrs {
     display: flex;
     flex-wrap: wrap;
@@ -2301,7 +1988,6 @@
     gap: 8px;
     padding: 4px 0 10px;
 }
-
 .na-sheet .na-weapon-attr-chip {
     display: inline-flex;
     align-items: baseline;
@@ -2319,7 +2005,6 @@
     color: var(--na-chip-color);
     text-shadow: 0 0 8px color-mix(in srgb, var(--na-chip-color) 50%, transparent);
 }
-
 .na-sheet .na-weapon-attr-chip.na-sheet-role-for {
     --na-chip-color: var(--na-for);
 }
@@ -2332,7 +2017,6 @@
 .na-sheet .na-weapon-attr-chip.na-sheet-role-vit {
     --na-chip-color: var(--na-vit);
 }
-
 .na-sheet .na-weapon-dual-tag {
     display: inline-block;
     margin-left: 6px;
@@ -2344,7 +2028,6 @@
     border-radius: 3px;
     padding: 1px 6px;
 }
-
 .na-sheet .na-weapon-profile-card {
     border-left: 3px solid var(--na-gold-dim);
     background: var(--na-bg-input);
@@ -2352,7 +2035,6 @@
     padding: 6px 10px;
     margin: 6px 0;
 }
-
 .na-sheet .na-weapon-profile-card .na-weapon-profile-name {
     font-family: var(--na-font-display);
     font-size: 11px;
@@ -2361,7 +2043,6 @@
     text-transform: uppercase;
     color: var(--na-gold-dim);
 }
-
 .na-sheet .custom-system-field :is(h1, h2, h3) {
     font-family: var(--na-font-display);
     letter-spacing: 0.08em;
@@ -2371,7 +2052,6 @@
     padding-bottom: 3px;
     margin: 10px 0 6px;
 }
-
 .na-sheet .custom-system-field code {
     font-family: 'JetBrains Mono', Consolas, monospace;
     font-size: 12px;
@@ -2381,8 +2061,7 @@
     border-radius: 3px;
     padding: 1px 5px;
 }
-
-/* Cerimônia de Vínculo — três atos, duas almas, um resultado permanente. */
+/* Cerimônia de Vínculo três atos, duas almas, um resultado permanente. */
 .na-dual-soul-dialog {
     --na-dialog-ink: #f2ead9;
     --na-dialog-muted: #aaa092;
@@ -2397,27 +2076,20 @@
         0 24px 70px rgba(0, 0, 0, 0.72),
         0 0 0 1px rgba(178, 13, 43, 0.14);
 }
-
 .na-dual-soul-dialog .window-header {
     border-bottom: 1px solid var(--na-dialog-line);
-    background:
-        linear-gradient(90deg, rgba(178, 13, 43, 0.16), transparent 42%),
-        #0d0c10;
+    background: linear-gradient(90deg, rgba(178, 13, 43, 0.16), transparent 42%), #0d0c10;
     color: var(--na-dialog-ink);
 }
-
 .na-dual-soul-dialog .window-content {
     padding: 0;
     background:
-        radial-gradient(circle at 85% 0%, rgba(215, 184, 106, 0.08), transparent 34%),
-        #09090c;
+        radial-gradient(circle at 85% 0%, rgba(215, 184, 106, 0.08), transparent 34%), #09090c;
     color: var(--na-dialog-ink);
 }
-
 .na-dual-soul-dialog .dialog-content {
     padding: 0;
 }
-
 .na-dual-soul-dialog .form-footer,
 .na-dual-soul-dialog .dialog-buttons {
     display: grid;
@@ -2428,7 +2100,6 @@
     border-top: 1px solid var(--na-dialog-line);
     background: #0d0c10;
 }
-
 .na-dual-soul-dialog .form-footer button,
 .na-dual-soul-dialog .dialog-buttons button {
     min-height: 38px;
@@ -2441,7 +2112,6 @@
     font-weight: 800;
     letter-spacing: 0.04em;
 }
-
 .na-dual-soul-dialog .form-footer button:hover,
 .na-dual-soul-dialog .form-footer button:focus-visible,
 .na-dual-soul-dialog .dialog-buttons button:hover,
@@ -2451,14 +2121,12 @@
     color: #fff6df;
     box-shadow: 0 0 0 2px rgba(215, 184, 106, 0.15);
 }
-
 .na-blood-pact-dialog .form-footer button[data-action='yes'],
 .na-dual-soul-reset-dialog .form-footer button[data-action='yes'] {
     border-color: rgba(211, 75, 104, 0.68);
     background: linear-gradient(180deg, #39131c, #1d0b11);
     color: #ffdce2;
 }
-
 .na-dual-soul-panel {
     min-width: min(520px, 78vw);
     width: 100%;
@@ -2469,7 +2137,6 @@
         radial-gradient(circle at 100% 0%, rgba(178, 13, 43, 0.1), transparent 38%);
     color: var(--na-dialog-ink);
 }
-
 .na-dual-soul-panel h2 {
     margin: 4px 0 18px;
     border: 0;
@@ -2481,7 +2148,6 @@
     overflow-wrap: anywhere;
     white-space: normal;
 }
-
 .na-dual-soul-kicker {
     color: var(--na-dialog-gold);
     font-family: 'Rajdhani', sans-serif;
@@ -2490,7 +2156,6 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
 }
-
 .na-dual-soul-summary {
     display: grid;
     gap: 3px;
@@ -2498,21 +2163,20 @@
     padding-bottom: 12px;
     border-bottom: 1px solid var(--na-dialog-line);
 }
-
 .na-dual-soul-summary span,
 .na-dual-soul-facts span,
 .na-blood-pact-ledger span {
     color: var(--na-dialog-muted);
-    font: 800 9px/1.2 'Rajdhani', sans-serif;
+    font:
+        800 9px/1.2 'Rajdhani',
+        sans-serif;
     letter-spacing: 0.14em;
     text-transform: uppercase;
 }
-
 .na-dual-soul-summary strong {
     color: #ead7aa;
     font-size: 14px;
 }
-
 .na-dual-soul-ritual-copy {
     max-height: 240px;
     overflow: auto;
@@ -2523,27 +2187,25 @@
     color: #c8bdad;
     line-height: 1.45;
 }
-
 .na-dual-soul-ritual-copy h3 {
     margin: 12px 0 4px;
     color: #e8d8b8;
-    font: 800 12px/1.2 'Rajdhani', sans-serif;
+    font:
+        800 12px/1.2 'Rajdhani',
+        sans-serif;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
-
 .na-dual-soul-ritual-copy p {
     margin: 0;
     white-space: pre-line;
 }
-
 .na-dual-soul-facts {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     margin: 12px 0 16px;
 }
-
 .na-dual-soul-facts p {
     display: grid;
     gap: 4px;
@@ -2553,13 +2215,11 @@
     border: 1px solid rgba(215, 184, 106, 0.16);
     background: rgba(255, 255, 255, 0.025);
 }
-
 .na-dual-soul-facts strong {
     overflow-wrap: anywhere;
     color: var(--na-dialog-ink);
     font-size: 12px;
 }
-
 .na-blood-pact-ledger {
     display: grid;
     grid-template-columns: 1fr auto 1fr 1fr;
@@ -2567,7 +2227,6 @@
     gap: 7px;
     margin-top: 16px;
 }
-
 .na-blood-pact-ledger > div {
     display: grid;
     justify-items: center;
@@ -2576,28 +2235,23 @@
     border: 1px solid rgba(215, 184, 106, 0.2);
     background: #100e12;
 }
-
 .na-blood-pact-ledger > i {
     align-self: center;
     color: var(--na-dialog-gold);
     font-style: normal;
 }
-
 .na-blood-pact-ledger strong {
     color: #f1e6cd;
     font-family: 'Orbitron', sans-serif;
     font-size: 20px;
 }
-
 .na-blood-pact-ledger .na-blood-pact-cost {
     border-color: rgba(178, 13, 43, 0.48);
     background: linear-gradient(145deg, rgba(178, 13, 43, 0.2), #100e12);
 }
-
 .na-blood-pact-ledger .na-blood-pact-cost strong {
     color: #ff8a9d;
 }
-
 .na-dual-soul-warning,
 .na-dual-soul-reset-note {
     margin: 14px 0 0;
@@ -2608,22 +2262,18 @@
     font-size: 11px;
     line-height: 1.45;
 }
-
 .na-dual-soul-reset-note {
     display: grid;
     gap: 4px;
 }
-
 .na-dual-soul-reset-note strong {
     color: #ead7aa;
 }
-
 .na-dual-soul-footnote {
     margin: 14px 0 0;
     color: #847c72;
     font-size: 10px;
 }
-
 .na-dual-soul-ceremony {
     --na-bond-gold: #d7b86a;
     --na-bond-ivory: #eee4ce;
@@ -2639,11 +2289,9 @@
         linear-gradient(145deg, #121015 0%, #08090c 58%, #111015 100%);
     color: var(--na-bond-ivory);
 }
-
 .na-dual-soul-hero {
     text-align: center;
 }
-
 .na-dual-soul-step {
     display: inline-block;
     color: var(--na-bond-gold);
@@ -2652,7 +2300,6 @@
     font-weight: 700;
     letter-spacing: 0.22em;
 }
-
 .na-dual-soul-hero h2,
 .na-dual-soul-reveal h2 {
     margin: 5px 0 7px;
@@ -2663,14 +2310,12 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
-
 .na-dual-soul-hero p,
 .na-dual-soul-reveal p {
     margin: 0 auto;
     max-width: 44ch;
     color: #bdb3a3;
 }
-
 .na-blood-offering {
     --na-blood-level: 33.333%;
     --na-blood-from: 0%;
@@ -2681,17 +2326,20 @@
     height: 174px;
     margin: 18px auto 0;
 }
-
-.na-blood-offering-2 { --na-blood-level: 66.667%; --na-blood-from: 33.333%; }
-.na-blood-offering-3 { --na-blood-level: 100%; --na-blood-from: 66.667%; }
-
+.na-blood-offering-2 {
+    --na-blood-level: 66.667%;
+    --na-blood-from: 33.333%;
+}
+.na-blood-offering-3 {
+    --na-blood-level: 100%;
+    --na-blood-from: 66.667%;
+}
 .na-blood-source {
     position: relative;
     width: 50px;
     height: 100px;
     z-index: 1;
 }
-
 .na-blood-source::before {
     content: '';
     position: absolute;
@@ -2703,7 +2351,6 @@
     background: #b20d2b;
     box-shadow: 0 2px 5px #650015;
 }
-
 .na-blood-source span {
     position: absolute;
     top: 0;
@@ -2717,21 +2364,18 @@
     opacity: 0;
     animation: na-blood-drop 1.8s ease-in 3 forwards;
 }
-
 .na-blood-source span:nth-child(2) {
     left: 34%;
     width: 6px;
     height: 9px;
     animation-delay: 0.56s;
 }
-
 .na-blood-source span:nth-child(3) {
     left: 67%;
     width: 5px;
     height: 8px;
     animation-delay: 1.1s;
 }
-
 .na-blood-vessel {
     position: absolute;
     z-index: 2;
@@ -2742,12 +2386,16 @@
     border: 2px solid rgba(238, 228, 206, 0.68);
     border-top-color: rgba(238, 228, 206, 0.94);
     border-radius: 7px 7px 35px 35px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02));
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.025),
+        rgba(255, 255, 255, 0.09),
+        rgba(255, 255, 255, 0.02)
+    );
     box-shadow:
         inset 0 0 12px rgba(255, 255, 255, 0.05),
         0 7px 18px rgba(0, 0, 0, 0.48);
 }
-
 .na-blood-vessel::before {
     content: '';
     position: absolute;
@@ -2760,7 +2408,6 @@
     border-radius: 50%;
     background: #0b090c;
 }
-
 .na-blood-liquid {
     position: absolute;
     right: 2px;
@@ -2768,12 +2415,16 @@
     left: 2px;
     height: min(var(--na-blood-level), 61px);
     border-radius: 3px 3px 30px 30px;
-    background:
-        radial-gradient(ellipse at 50% 0%, #ef3e59 0%, #b20d2b 24%, #650015 68%, #310009 100%);
+    background: radial-gradient(
+        ellipse at 50% 0%,
+        #ef3e59 0%,
+        #b20d2b 24%,
+        #650015 68%,
+        #310009 100%
+    );
     box-shadow: 0 -3px 9px rgba(221, 24, 60, 0.36);
     animation: na-blood-fill 5.4s steps(9, end) both;
 }
-
 .na-blood-ripple {
     position: absolute;
     z-index: 3;
@@ -2787,7 +2438,6 @@
     transform: translateX(-50%);
     animation: na-blood-ripple 1.8s ease-out 3;
 }
-
 .na-blood-caption {
     position: absolute;
     bottom: 0;
@@ -2797,7 +2447,6 @@
     font-weight: 700;
     letter-spacing: 0.16em;
 }
-
 @keyframes na-blood-drop {
     0% {
         opacity: 0;
@@ -2820,12 +2469,14 @@
         transform: translate(-50%, 142px) scale(1.8, 0.25);
     }
 }
-
 @keyframes na-blood-fill {
-    from { height: min(var(--na-blood-from), 61px); }
-    to { height: min(var(--na-blood-level), 61px); }
+    from {
+        height: min(var(--na-blood-from), 61px);
+    }
+    to {
+        height: min(var(--na-blood-level), 61px);
+    }
 }
-
 .na-csb-automation.na-dual-soul-chat h2 {
     color: #eee4ce;
     font-family: 'Rajdhani', sans-serif;
@@ -2833,7 +2484,6 @@
     line-height: 1.2;
     border-bottom-color: #d7b86a;
 }
-
 @keyframes na-blood-ripple {
     0%,
     76% {
@@ -2848,7 +2498,6 @@
         transform: translateX(-50%) scale(2.5);
     }
 }
-
 .na-dual-soul-bond {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 90px minmax(0, 1fr);
@@ -2856,7 +2505,6 @@
     gap: 10px;
     margin: 24px 0 18px;
 }
-
 .na-dual-soul-side {
     display: grid;
     gap: 3px;
@@ -2866,34 +2514,33 @@
     border: 1px solid currentColor;
     background: rgba(255, 255, 255, 0.025);
 }
-
 .na-dual-soul-side span {
     font-family: 'Rajdhani', sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.18em;
 }
-
 .na-dual-soul-side strong {
     color: var(--na-bond-ivory);
     font-size: 13px;
 }
-
 .na-dual-soul-entity {
     color: var(--na-bond-entity);
     text-align: right;
 }
-
 .na-dual-soul-demon {
     color: var(--na-bond-demon);
 }
-
 .na-dual-soul-thread {
     height: 1px;
-    background: linear-gradient(90deg, var(--na-bond-entity), var(--na-bond-gold), var(--na-bond-demon));
+    background: linear-gradient(
+        90deg,
+        var(--na-bond-entity),
+        var(--na-bond-gold),
+        var(--na-bond-demon)
+    );
     box-shadow: 0 0 10px rgba(215, 184, 106, 0.55);
 }
-
 .na-dual-soul-thread i {
     display: block;
     width: 9px;
@@ -2903,7 +2550,6 @@
     border: 1px solid var(--na-bond-gold);
     background: #0b0a0d;
 }
-
 .na-dual-soul-formula {
     display: flex;
     align-items: baseline;
@@ -2913,33 +2559,28 @@
     border-top: 1px solid rgba(215, 184, 106, 0.2);
     border-bottom: 1px solid rgba(215, 184, 106, 0.2);
 }
-
 .na-dual-soul-formula span {
     color: #8f877a;
     font-size: 10px;
     letter-spacing: 0.15em;
 }
-
 .na-dual-soul-formula strong {
     color: var(--na-bond-gold);
     font-family: 'Orbitron', sans-serif;
     font-size: 18px;
 }
-
 .na-dual-soul-ceremony footer {
     margin-top: 13px;
     color: #756f66;
     font-size: 10px;
     text-align: center;
 }
-
 .na-dual-soul-reveal {
     display: grid;
     justify-items: center;
     gap: 7px;
     text-align: center;
 }
-
 .na-dual-soul-result-number {
     margin: 8px 0 2px;
     color: var(--na-bond-gold);
@@ -2949,57 +2590,52 @@
     line-height: 1;
     text-shadow: 0 0 22px rgba(215, 184, 106, 0.34);
 }
-
 .na-dual-soul-seal-line {
     width: 150px;
     height: 1px;
     margin-top: 12px;
     background: linear-gradient(90deg, transparent, var(--na-bond-gold), transparent);
 }
-
 @media (max-width: 620px) {
     .na-dual-soul-dialog .form-footer,
     .na-dual-soul-dialog .dialog-buttons {
         grid-template-columns: 1fr;
     }
-
     .na-dual-soul-panel {
         min-width: 0;
         padding: 17px 15px;
     }
-
     .na-dual-soul-facts,
     .na-blood-pact-ledger {
         grid-template-columns: 1fr;
     }
-
     .na-blood-pact-ledger > i {
         transform: rotate(90deg);
         justify-self: center;
     }
-
     .na-dual-soul-ceremony {
         min-width: 0;
         padding: 14px;
     }
-
     .na-dual-soul-bond {
         grid-template-columns: 1fr;
     }
-
     .na-dual-soul-entity,
     .na-dual-soul-demon {
         text-align: center;
     }
-
     .na-dual-soul-thread {
         width: 1px;
         height: 30px;
         margin: auto;
-        background: linear-gradient(180deg, var(--na-bond-entity), var(--na-bond-gold), var(--na-bond-demon));
+        background: linear-gradient(
+            180deg,
+            var(--na-bond-entity),
+            var(--na-bond-gold),
+            var(--na-bond-demon)
+        );
     }
 }
-
 @media (prefers-reduced-motion: reduce) {
     .na-dual-soul-ceremony *,
     .na-dual-soul-ceremony *::before,
@@ -3009,12 +2645,11 @@
         animation: none !important;
     }
 }
-
 /* ==========================================================================
-   Diálogo de Dano & Presets — v2 (Night Assassins)
-   Ritual-editorial: Orbitron/Rajdhani, gold + blood, escala maior.
+   Diálogo de Dano & Presets (Night Assassins)
+   Um bloco só. A janela cresce com o conteúdo até o teto do viewport e só a
+   lista de entradas rola; cabeçalho, rodapé e botões do DialogV2 ficam à vista.
    ========================================================================== */
-
 .na-dmg-dialog,
 .na-preset-manager {
     --na-dmg-display: 'Orbitron', 'Trebuchet MS', sans-serif;
@@ -3033,12 +2668,68 @@
     --na-dmg-input: #100e15;
     box-sizing: border-box;
 }
-
+/* Janela do DialogV2 ------------------------------------------------------- */
+/* DOM do DialogV2 (14.367): .application > .window-content.na-dmg-window >
+   form.dialog-form.standard-form > (.dialog-content + footer.form-footer).
+   O core já limita .application (max-height: 100vh - 1.5 × hotbar) e deixa
+   .window-content em flex:1 com overflow:hidden. O form, porém, é flex-column
+   com overflow visível: sem min-height:0 ele não encolhe, passa do teto e o
+   rodapé com os botões é cortado. Cada elo da cadeia precisa poder encolher. */
+.na-dmg-window {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.na-dmg-window .dialog-form {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    gap: 0;
+}
+.na-dmg-window .dialog-content,
+.na-dmg-window .dialog-form > .dialog-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+}
+.na-dmg-window .na-dmg-dialog {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+.na-dmg-window .form-footer {
+    flex: 0 0 auto;
+    padding: 10px 16px 14px;
+    background: #0f0d14;
+    border-top: 1px solid rgba(233, 196, 106, 0.24);
+}
+/* Só a lista de entradas encolhe e rola. */
+.na-dmg-window #na-entradas-container {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 96px;
+    padding: 2px 6px 2px 2px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--na-dmg-gold-dim) rgba(0, 0, 0, 0.3);
+}
+/* Estrutura ---------------------------------------------------------------- */
 .na-dmg-dialog {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 16px 18px 6px;
+    gap: 10px;
+    padding: 12px 16px 6px;
     font-family: var(--na-dmg-body);
     font-size: 15px;
     color: var(--na-dmg-ink);
@@ -3047,18 +2738,19 @@
         radial-gradient(circle at 4% 100%, rgba(233, 196, 106, 0.1), transparent 40%),
         linear-gradient(150deg, #14111c, #0a090e 74%);
 }
-
+.na-dmg-dialog > * {
+    flex: 0 0 auto;
+}
 .na-dmg-dialog .na-label {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     font-family: var(--na-dmg-body);
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--na-dmg-gold-dim);
 }
-
 .na-dmg-dialog .na-hint {
     font-size: 11.5px;
     font-weight: 500;
@@ -3066,15 +2758,14 @@
     text-transform: none;
     color: var(--na-dmg-muted);
 }
-
 .na-dmg-dialog input[type='text'],
 .na-dmg-dialog input[type='number'],
 .na-dmg-dialog select,
 .na-preset-manager input[type='text'],
 .na-preset-manager select {
     width: 100%;
-    min-height: 36px;
-    padding: 6px 10px;
+    min-height: 34px;
+    padding: 4px 10px;
     box-sizing: border-box;
     font-family: var(--na-dmg-body);
     font-size: 15px;
@@ -3087,8 +2778,8 @@
         border-color 0.15s ease,
         box-shadow 0.15s ease;
 }
-
-.na-dmg-dialog input:focus,
+.na-dmg-dialog input[type='text']:focus,
+.na-dmg-dialog input[type='number']:focus,
 .na-dmg-dialog select:focus,
 .na-preset-manager input:focus,
 .na-preset-manager select:focus {
@@ -3096,24 +2787,20 @@
     border-color: var(--na-dmg-gold);
     box-shadow: 0 0 0 2px rgba(233, 196, 106, 0.18);
 }
-
 .na-dmg-dialog input.na-dado-inp {
     font-family: 'JetBrains Mono', Consolas, monospace;
     font-size: 14px;
     color: var(--na-dmg-die);
 }
-
 /* Cabeçalho ---------------------------------------------------------------- */
-
 .na-dmg-head {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 1px solid var(--na-dmg-line);
 }
-
 .na-dmg-kicker {
     display: block;
     font-family: var(--na-dmg-display);
@@ -3123,25 +2810,22 @@
     text-transform: uppercase;
     color: var(--na-dmg-gold-dim);
 }
-
 .na-dmg-title {
-    margin: 3px 0 0;
+    margin: 2px 0 0;
     font-family: var(--na-dmg-display);
-    font-size: 21px;
+    font-size: 19px;
     font-weight: 800;
     line-height: 1.15;
     color: var(--na-dmg-ink);
 }
-
 .na-dmg-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     justify-content: flex-end;
 }
-
 .na-dmg-chip {
-    padding: 4px 11px;
+    padding: 3px 10px;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -3151,34 +2835,35 @@
     color: var(--na-dmg-gold);
     background: rgba(233, 196, 106, 0.1);
 }
-
-.na-dmg-chip-breath {
-    color: var(--na-dmg-gold);
-}
-
 .na-dmg-chip-weapon {
     color: var(--na-dmg-cyan);
     border-color: rgba(79, 214, 232, 0.35);
     background: rgba(79, 214, 232, 0.12);
 }
-
 .na-dmg-chip-preset {
     color: var(--na-dmg-blood);
     border-color: rgba(224, 53, 63, 0.4);
     background: rgba(224, 53, 63, 0.12);
 }
-
-/* Presets ------------------------------------------------------------------ */
-
+/* Preset + nome na mesma linha --------------------------------------------- */
+.na-dmg-topline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 10px;
+    align-items: end;
+}
+.na-dmg-topline > :only-child {
+    grid-column: 1 / -1;
+}
 .na-dmg-presets-row {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px;
     align-items: center;
 }
-
+/* Botões ------------------------------------------------------------------- */
 .na-btn {
-    min-height: 36px;
+    min-height: 34px;
     padding: 0 14px;
     font-family: var(--na-dmg-body);
     font-size: 13.5px;
@@ -3193,41 +2878,38 @@
     white-space: nowrap;
     transition:
         border-color 0.15s ease,
-        background 0.15s ease,
+        background-color 0.15s ease,
         color 0.15s ease;
 }
-
 .na-btn:hover:not(:disabled) {
     border-color: var(--na-dmg-gold);
     background: #262031;
     color: #ffe9b0;
 }
-
+.na-btn:focus-visible {
+    outline: 2px solid var(--na-dmg-gold);
+    outline-offset: 2px;
+}
 .na-btn:disabled {
     opacity: 0.5;
     cursor: default;
 }
-
 .na-btn-gold {
     color: #170f04;
     background: linear-gradient(180deg, #f0cd76, #cfa646);
     border-color: #f0cd76;
 }
-
 .na-btn-gold:hover:not(:disabled) {
     background: linear-gradient(180deg, #ffe08c, #dcb352);
     color: #170f04;
 }
-
 /* Entradas ----------------------------------------------------------------- */
-
 .na-dmg-entries-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
 }
-
 .na-dmg-entries-title {
     font-family: var(--na-dmg-display);
     font-size: 13px;
@@ -3236,62 +2918,75 @@
     text-transform: uppercase;
     color: var(--na-dmg-gold);
 }
-
 .na-dmg-entries-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 }
-
-.na-dmg-dialog #na-entradas-container {
-    max-height: 52vh;
-    overflow-y: auto;
-    padding: 2px 8px 2px 2px;
-    margin: 0;
-}
-
-.na-dmg-dialog #na-entradas-container::-webkit-scrollbar {
-    width: 8px;
-}
-.na-dmg-dialog #na-entradas-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-}
-.na-dmg-dialog #na-entradas-container::-webkit-scrollbar-thumb {
-    background: var(--na-dmg-gold-dim);
-    border-radius: 4px;
-}
-
+/* Uma entrada: barra de campos, atributos + fórmula, tipos de dano. */
 .na-dmg-dialog .na-entrada {
-    padding: 12px 14px;
-    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        'bar bar'
+        'attrs preview'
+        'dano dano';
+    gap: 4px 10px;
+    align-items: center;
+    padding: 6px 10px 8px;
     background: linear-gradient(180deg, var(--na-dmg-panel-2), var(--na-dmg-panel));
     border: 1px solid var(--na-dmg-line-soft);
     border-left: 4px solid var(--na-dmg-gold);
-    border-radius: 4px 10px 10px 4px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+    border-radius: 4px 8px 8px 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
 }
-
-.na-dmg-dialog .na-entry-header {
-    display: flex;
+/* O wrapper some da grade: attrs e tipos viram itens diretos da entrada. */
+.na-dmg-dialog .na-entry-tags {
+    display: contents;
+}
+.na-dmg-dialog .na-entry-bar {
+    grid-area: bar;
+    display: grid;
+    grid-template-columns:
+        26px minmax(120px, 1.2fr) minmax(78px, 0.85fr) 72px minmax(52px, 1fr)
+        30px;
+    gap: 8px;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding-bottom: 7px;
-    border-bottom: 1px solid var(--na-dmg-line-soft);
 }
-
+.na-dmg-dialog .na-entry-bar select,
+.na-dmg-dialog .na-entry-bar input {
+    min-height: 30px;
+    height: 30px;
+    padding: 2px 7px;
+    font-size: 13.5px;
+}
 .na-dmg-dialog .na-entry-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    line-height: 24px;
+    text-align: center;
     font-family: var(--na-dmg-display);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--na-dmg-gold);
+    color: #170f04;
+    background: linear-gradient(180deg, #f0cd76, #cfa646);
 }
-
+.na-dmg-dialog .na-entry-source-label {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--na-dmg-cyan);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .na-dmg-dialog .na-remove-btn {
     width: 28px;
     height: 28px;
+    padding: 0;
     font-size: 14px;
     line-height: 1;
     color: var(--na-dmg-blood);
@@ -3300,69 +2995,41 @@
     border-radius: 6px;
     cursor: pointer;
     transition:
-        background 0.15s ease,
+        background-color 0.15s ease,
         color 0.15s ease;
 }
-
 .na-dmg-dialog .na-remove-btn:hover {
     background: rgba(224, 53, 63, 0.28);
     color: #ffd0d3;
 }
-
-.na-dmg-dialog .na-row-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 1.2fr 0.7fr;
-    gap: 10px;
-    margin-bottom: 10px;
+.na-dmg-dialog .na-remove-btn:focus-visible {
+    outline: 2px solid var(--na-dmg-gold);
+    outline-offset: 2px;
 }
-
 .na-dmg-dialog .na-attrs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 4px 0;
+    grid-area: attrs;
 }
-
-.na-dmg-dialog .na-attr-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
-    font-size: 13px;
-    background: var(--na-dmg-input);
-    border: 1px solid var(--na-dmg-line-soft);
-    border-radius: 6px;
-    cursor: pointer;
-    user-select: none;
+.na-dmg-dialog .na-dano-grid {
+    grid-area: dano;
 }
-
-.na-dmg-dialog .na-attr-label:hover {
-    border-color: var(--na-dmg-gold);
-}
-
-.na-dmg-dialog .na-attr-key {
-    font-weight: 700;
-    letter-spacing: 0.04em;
-}
-
-.na-dmg-dialog .na-attr-val {
-    font-size: 11.5px;
-    color: var(--na-dmg-muted);
-}
-
+.na-dmg-dialog .na-attrs,
 .na-dmg-dialog .na-dano-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    padding: 4px 0 8px;
+    gap: 4px;
+    padding: 0;
 }
-
+/* Chips marcáveis: a checkbox continua no DOM (teclado, leitor de tela),
+   só sai da vista. O estado vem da borda e do fundo do chip. */
+.na-dmg-dialog .na-attr-label,
 .na-dmg-dialog .na-dano-label {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 10px;
-    font-size: 13px;
+    padding: 1px 8px;
+    font-size: 11.5px;
+    line-height: 18px;
     color: #d9cebc;
     background: var(--na-dmg-input);
     border: 1px solid var(--na-dmg-line-soft);
@@ -3371,67 +3038,142 @@
     user-select: none;
     transition:
         border-color 0.15s ease,
+        background-color 0.15s ease,
         color 0.15s ease;
 }
-
+.na-dmg-dialog .na-attr-chk,
+.na-dmg-dialog .na-dano-chk {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.na-dmg-dialog .na-attr-label:hover,
 .na-dmg-dialog .na-dano-label:hover {
     border-color: var(--na-dmg-gold);
     color: #fff;
 }
-
+.na-dmg-dialog :is(.na-attr-label, .na-dano-label):has(> input:checked) {
+    border-color: var(--na-dmg-gold);
+    background: rgba(233, 196, 106, 0.18);
+    color: #fff;
+}
+.na-dmg-dialog :is(.na-attr-label, .na-dano-label):has(> input:focus-visible) {
+    outline: 2px solid var(--na-dmg-gold);
+    outline-offset: 1px;
+}
+/* A cor do atributo vem da paleta da ficha (--na-attr-color). Cores escuras,
+   como o vermelho da Força (2,65:1), reprovam no fundo do diálogo: o piso de
+   luminosidade em OKLCH sobe só o que é escuro e mantém o matiz. A 1ª linha é
+   o recuo para navegadores sem sintaxe de cor relativa. */
+.na-dmg-dialog .na-attr-key {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--na-attr-color, #fff);
+    color: oklch(from var(--na-attr-color, #fff) max(l, 0.74) c h);
+}
+.na-dmg-dialog .na-attr-val {
+    font-size: 10.5px;
+    color: var(--na-dmg-muted);
+}
 .na-dmg-dialog .na-linha-preview {
-    min-height: 26px;
-    padding: 5px 10px;
+    grid-area: preview;
+    justify-self: end;
+    max-width: 260px;
+    padding: 1px 8px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 13.5px;
+    font-size: 12.5px;
     font-weight: 600;
     letter-spacing: 0.03em;
     color: var(--na-dmg-die);
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--na-dmg-line-soft);
     border-radius: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-
-/* Rodapé ------------------------------------------------------------------- */
-
+/* Painéis inline (arma, Respiração, salvar preset) ------------------------- */
+.na-dmg-dialog .na-row-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 0.7fr;
+    gap: 10px;
+}
+.na-dmg-dialog .na-inline-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(233, 196, 106, 0.06);
+    border: 1px solid var(--na-dmg-line);
+    border-radius: 8px;
+}
+.na-dmg-dialog .na-inline-panel[hidden] {
+    display: none;
+}
+.na-dmg-dialog .na-inline-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.na-dmg-dialog .na-inline-actions select {
+    flex: 1 1 240px;
+}
+/* Rodapé: recurso, fórmula total e crítico numa linha ----------------------- */
 .na-dmg-foot {
     display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 14px;
+    grid-template-columns: 150px minmax(0, 1fr) 210px;
+    gap: 10px;
     align-items: end;
 }
-
-.na-dmg-resource .na-hint code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    color: var(--na-dmg-gold-dim);
+/* Modo preset não tem "Foi crítico?": a coluna sobrando vira espaço da fórmula. */
+.na-dmg-foot:not(:has(.na-critical-toggle)) {
+    grid-template-columns: 150px minmax(0, 1fr);
 }
-
+/* Fórmula longa não pode crescer o rodapé: teto de ~3 linhas, rola por dentro. */
 .na-dmg-dialog #na-total-preview {
-    padding: 10px 14px;
+    max-height: 4.4em;
+    padding: 6px 12px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 17px;
+    font-size: 13.5px;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    line-height: 1.4;
+    letter-spacing: 0.03em;
     color: var(--na-dmg-die);
     background: rgba(0, 0, 0, 0.45);
     border: 1px solid var(--na-dmg-line);
     border-radius: 8px;
-    word-break: break-all;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    scrollbar-width: thin;
+    scrollbar-color: var(--na-dmg-gold-dim) transparent;
     box-shadow: inset 0 0 18px rgba(255, 202, 92, 0.08);
 }
-
 .na-dmg-dialog .na-critical-toggle {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 14px;
+    padding: 6px 12px;
     background: rgba(224, 53, 63, 0.08);
     border: 1px solid rgba(224, 53, 63, 0.3);
     border-radius: 8px;
     cursor: pointer;
 }
-
+/* O core zera a borda da checkbox (appearance:none): desmarcada ela sumia
+   (1,19:1 contra o fundo). Borda explícita devolve o controle visível. */
+.na-dmg-dialog .na-critical-toggle input[type='checkbox'] {
+    flex: 0 0 auto;
+    border: 1.5px solid #e8868c;
+    border-radius: 3px;
+}
+.na-dmg-dialog .na-critical-toggle:has(> input:focus-visible) {
+    outline: 2px solid var(--na-dmg-gold);
+    outline-offset: 2px;
+}
 .na-dmg-dialog .na-critical-toggle strong {
     font-family: var(--na-dmg-display);
     font-size: 13px;
@@ -3439,16 +3181,19 @@
     text-transform: uppercase;
     color: #ffb4ba;
 }
-
 .na-dmg-dialog .na-critical-toggle small {
     display: block;
-    margin-top: 2px;
-    font-size: 12px;
+    margin-top: 1px;
+    font-size: 11.5px;
     color: var(--na-dmg-muted);
 }
-
+@media (prefers-reduced-motion: reduce) {
+    .na-dmg-dialog *,
+    .na-btn {
+        transition: none;
+    }
+}
 /* Gerenciador -------------------------------------------------------------- */
-
 .na-preset-manager {
     display: flex;
     flex-direction: column;
@@ -3461,12 +3206,10 @@
         radial-gradient(circle at 96% 0%, rgba(233, 196, 106, 0.1), transparent 36%),
         linear-gradient(150deg, #14111c, #0a090e 74%);
 }
-
 .na-preset-manager-head {
     padding-bottom: 12px;
     border-bottom: 1px solid var(--na-dmg-line);
 }
-
 .na-preset-manager-head h2 {
     margin: 3px 0 4px;
     font-family: var(--na-dmg-display);
@@ -3474,13 +3217,11 @@
     font-weight: 800;
     color: var(--na-dmg-ink);
 }
-
 .na-preset-manager-head p {
     margin: 0;
     font-size: 13px;
     color: var(--na-dmg-muted);
 }
-
 .na-preset-list {
     display: flex;
     flex-direction: column;
@@ -3489,7 +3230,6 @@
     overflow-y: auto;
     padding-right: 6px;
 }
-
 .na-preset-item {
     display: grid;
     grid-template-columns: 1fr auto auto;
@@ -3508,33 +3248,30 @@
         background 0.15s ease,
         transform 0.1s ease;
 }
-
 .na-preset-item:hover {
     background: var(--na-dmg-panel-2);
     border-color: var(--na-dmg-line);
 }
-
 .na-preset-item.is-selected {
     border-left-color: var(--na-dmg-gold);
     border-color: var(--na-dmg-gold);
     background: #241e2f;
-    box-shadow: 0 0 0 1px rgba(233, 196, 106, 0.4), 0 8px 22px rgba(0, 0, 0, 0.4);
+    box-shadow:
+        0 0 0 1px rgba(233, 196, 106, 0.4),
+        0 8px 22px rgba(0, 0, 0, 0.4);
 }
-
 .na-preset-item-name {
     font-family: var(--na-dmg-display);
     font-size: 15px;
     font-weight: 700;
     color: var(--na-dmg-ink);
 }
-
 .na-preset-item-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     justify-content: flex-end;
 }
-
 .na-preset-chip {
     padding: 2px 9px;
     font-size: 11px;
@@ -3547,26 +3284,22 @@
     border: 1px solid var(--na-dmg-line);
     white-space: nowrap;
 }
-
 .na-preset-chip-breath {
     color: var(--na-dmg-cyan);
     border-color: rgba(79, 214, 232, 0.3);
     background: rgba(79, 214, 232, 0.1);
 }
-
 .na-preset-chip-cost {
     color: var(--na-dmg-blood);
     border-color: rgba(224, 53, 63, 0.35);
     background: rgba(224, 53, 63, 0.1);
 }
-
 .na-preset-item-meta {
     font-size: 12px;
     font-weight: 600;
     color: var(--na-dmg-muted);
     white-space: nowrap;
 }
-
 .na-preset-empty {
     margin: 8px 2px;
     padding: 18px;
@@ -3575,166 +3308,4 @@
     color: var(--na-dmg-muted);
     border: 1px dashed var(--na-dmg-line);
     border-radius: 10px;
-}
-
-/* Painéis inline do diálogo de dano (arma, Respiração, salvar preset) */
-
-.na-dmg-dialog .na-inline-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
-    background: rgba(233, 196, 106, 0.06);
-    border: 1px solid var(--na-dmg-line);
-    border-radius: 8px;
-}
-
-.na-dmg-dialog .na-inline-panel[hidden] {
-    display: none;
-}
-
-.na-dmg-dialog .na-inline-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.na-dmg-dialog .na-inline-actions select {
-    flex: 1 1 240px;
-}
-
-.na-dmg-dialog .na-entry-source-label {
-    flex: 1;
-    margin: 0 8px;
-    font-family: var(--na-dmg-body);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--na-dmg-cyan);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Entradas compactas: uma barra por entrada + chips micro.
-   Cabem 2+ entradas sem o diálogo virar gigante. */
-
-.na-dmg-dialog .na-entrada {
-    padding: 8px 10px;
-    margin-bottom: 8px;
-    border-radius: 4px 8px 8px 4px;
-}
-
-.na-dmg-dialog .na-entry-bar {
-    display: grid;
-    grid-template-columns: 26px minmax(120px, 1.2fr) minmax(78px, 0.85fr) 72px minmax(52px, 1fr) 30px;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 6px;
-}
-
-.na-dmg-dialog .na-entry-num {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    line-height: 24px;
-    text-align: center;
-    font-family: var(--na-dmg-display);
-    font-size: 12px;
-    font-weight: 800;
-    color: #170f04;
-    background: linear-gradient(180deg, #f0cd76, #cfa646);
-}
-
-.na-dmg-dialog .na-entry-bar select,
-.na-dmg-dialog .na-entry-bar input {
-    min-height: 30px;
-    height: 30px;
-    padding: 2px 7px;
-    font-size: 13.5px;
-}
-
-.na-dmg-dialog .na-entry-bar .na-entry-source-label {
-    margin: 0;
-    font-size: 11px;
-    letter-spacing: 0.03em;
-}
-
-.na-dmg-dialog .na-entry-tags {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 4px;
-}
-
-.na-dmg-dialog .na-attrs,
-.na-dmg-dialog .na-dano-grid {
-    gap: 4px;
-    padding: 0;
-}
-
-.na-dmg-dialog .na-attr-label,
-.na-dmg-dialog .na-dano-label {
-    padding: 1px 6px;
-    font-size: 11.5px;
-    border-radius: 5px;
-}
-
-.na-dmg-dialog .na-attr-val {
-    font-size: 10.5px;
-}
-
-.na-dmg-dialog .na-linha-preview {
-    min-height: 20px;
-    padding: 2px 8px;
-    font-size: 12.5px;
-}
-
-.na-dmg-dialog #na-entradas-container {
-    max-height: 40vh;
-}
-
-/* O rodapé do DialogV2 fica fora da área rolável. Só as entradas crescem. */
-.na-dmg-window {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 40px);
-    max-height: calc(100vh - 40px);
-    min-height: 0;
-    overflow: hidden;
-    padding: 0;
-}
-
-.na-dmg-window .dialog-content,
-.na-dmg-window > .dialog-content {
-    display: flex;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-    padding: 0;
-}
-
-.na-dmg-window .na-dmg-dialog {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: hidden;
-}
-
-.na-dmg-window #na-entradas-container {
-    flex: 1 1 auto;
-    min-height: 72px;
-    max-height: none;
-    overflow-y: auto;
-}
-
-.na-dmg-window .dialog-buttons,
-.na-dmg-window .form-footer,
-.na-dmg-window > .dialog-buttons,
-.na-dmg-window > .form-footer {
-    flex: 0 0 auto;
 }

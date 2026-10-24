@@ -15,6 +15,7 @@ import {
     runAttributeSnapshot,
 } from './level-service.mjs';
 import { applyInitialMark, upgradeMarkAtLevelSix } from './ability-service.mjs';
+import * as huntersMark from './slayer/hunter-mark.mjs';
 import { applyOniDamage, registerDamageRelay } from './damage-relay.mjs';
 import { healActor, registerHealRelay } from './heal-relay.mjs';
 import {
@@ -114,11 +115,9 @@ import { oniReadyCatchUp, registerOniProgressionEngine } from './oni/progression
 import { actorKind } from './actor-kind.mjs';
 import { repairOniActors } from './oni/repair-service.mjs';
 import { useKekkijutsuItem } from './oni/kekkijutsu-use-service.mjs';
-import {
-    registerOniRegenerationEngine,
-    useOniRegeneration,
-} from './oni/regeneration-runtime.mjs';
+import { registerOniRegenerationEngine, useOniRegeneration } from './oni/regeneration-runtime.mjs';
 import { registerWeaponModeEngine } from './weapon-service.mjs';
+import { registerWeaponCreationAudit } from './weapon-creation-audit.mjs';
 import {
     openSpecialWeaponAbilities,
     registerSpecialWeaponRuntime,
@@ -237,6 +236,7 @@ Hooks.once('ready', async () => {
     registerAdvancedStatesEngine();
     registerWeaponSynchronizationEngine();
     registerWeaponModeEngine();
+    registerWeaponCreationAudit();
     registerSpecialWeaponRuntime();
     registerSpecialWeaponAwakeningRuntime();
     registerDualSoulConsequenceRuntime();
@@ -264,8 +264,7 @@ Hooks.once('ready', async () => {
         registerHealRelay();
     }
 
-    // Macros can be synchronized automatically: this touches only o pequeno
-    // Compendium de macros e não percorre/regrava Actors ou Items do mundo.
+    // Sincroniza somente o launcher GM; as macros funcionais ficam no Compendium.
     if (game.user.isGM) {
         void syncCanonicalMacros()
             .then(({ created, updated }) => {
@@ -315,6 +314,7 @@ Hooks.once('ready', async () => {
             openDerivedBonusAudit,
             resolveSlayerDerivedBonuses,
             derivedBonusSummary,
+            huntersMark,
             getRollStatusEffects,
             getDamageStatusEffects,
             mergeRollMode,

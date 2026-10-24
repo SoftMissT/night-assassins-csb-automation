@@ -12,10 +12,7 @@
 import { MODULE_ID } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
 import { actorKind } from './actor-kind.mjs';
-import {
-    USER_POISON_STATE_KEY,
-    userPoisonHealingAmount,
-} from './slayer/poison-user-service.mjs';
+import { USER_POISON_STATE_KEY, userPoisonHealingAmount } from './slayer/poison-user-service.mjs';
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
 const HEAL_REQUEST_TYPE = 'applyHeal';

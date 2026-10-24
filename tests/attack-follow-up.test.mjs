@@ -50,7 +50,9 @@ function makeWeaponItem({ id = 'weapon1', uuid = 'Item.weapon1', name = 'Nichiri
 
 describe('attack-follow-up — pipeline Acerto → Dano (Problemas 1, 2 e 3)', () => {
     it('não oferece encadeamento para Oni comum e libera Exterminador Corrompido', () => {
-        const oni = makeActor({ props: { nome_oni: 'Oni', origem_oni_dropdown: 'origem_oni_comum' } });
+        const oni = makeActor({
+            props: { nome_oni: 'Oni', origem_oni_dropdown: 'origem_oni_comum' },
+        });
         const corrupted = makeActor({
             props: {
                 nome_oni: 'Corrompido',

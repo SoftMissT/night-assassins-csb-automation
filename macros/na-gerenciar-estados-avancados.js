@@ -6,7 +6,8 @@ if (!moduleApi?.slayer?.openAdvancedStatesManager) {
     );
     return '';
 }
-
 const input = typeof scope !== 'undefined' && scope ? scope : {};
-await moduleApi.slayer.openAdvancedStatesManager({ actorUuid: input.actorUuid });
+await moduleApi.slayer.openAdvancedStatesManager({
+    actorUuid: input.actorUuid,
+});
 return '';

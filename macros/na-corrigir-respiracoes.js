@@ -1,7 +1,7 @@
 const moduleApi = game.modules.get('night-assassins-csb-automation')?.api;
 if (!moduleApi?.repairBreathingItems) {
     ui.notifications.error(
-        'Night Assassins — atualize e ative o módulo para corrigir as respirações.'
+        'Night Assassins atualize e ative o módulo para corrigir as respirações.'
     );
     return '';
 }
@@ -9,7 +9,6 @@ if (!game.user?.isGM) {
     ui.notifications.warn('Apenas o Mestre pode corrigir as respirações dos Caçadores.');
     return '';
 }
-
 try {
     const result = await moduleApi.repairBreathingItems({});
     const summaryText =
@@ -21,7 +20,9 @@ try {
             ? `Respirações corrigidas: <strong>${result.items}</strong> itens em <strong>${result.actors}</strong> Caçadores.`
             : summaryText;
     await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor: game.user.character }),
+        speaker: ChatMessage.getSpeaker({
+            actor: game.user.character,
+        }),
         content: `<h3>Correção de Respirações dos Caçadores</h3><p>${summaryHtml}</p>`,
     });
     ui.notifications.info(summaryText);

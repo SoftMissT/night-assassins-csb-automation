@@ -178,7 +178,10 @@ function journalPages(journal) {
 }
 
 function exportTimestamp(date = new Date()) {
-    return date.toISOString().replaceAll(':', '-').replace(/\.\d{3}Z$/, 'Z');
+    return date
+        .toISOString()
+        .replaceAll(':', '-')
+        .replace(/\.\d{3}Z$/, 'Z');
 }
 
 export function buildDiagnosticExport(journal, { format = 'markdown', generatedAt } = {}) {

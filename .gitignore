@@ -13,12 +13,14 @@ AGENTS.md
 
 # Agentes e ferramentas locais
 /.claude/
-/CLAUDE.md
+CLAUDE.md
 /.agents/
 /.codex/
 /.opencode/
 /.vscode/
 /.idea/
+/.gitnexus
+
 
 # Segredos e configuração local
 .env
@@ -57,3 +59,8 @@ ARCHITECTURE.md
 erros.md
 CURRENT_CONTEXT.md
 HANDOFF-2026-08-23.md
+PRIMER.md
+
+# pacotes locais de build
+module-*.zip
+como-estao-as-coisas.html

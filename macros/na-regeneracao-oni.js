@@ -5,5 +5,7 @@ if (!moduleApi?.oni?.regenerate) {
     );
 }
 const macroArgs = typeof scope !== 'undefined' ? (scope ?? {}) : {};
-await moduleApi.oni.regenerate({ actorUuid: macroArgs.actorUuid });
+await moduleApi.oni.regenerate({
+    actorUuid: macroArgs.actorUuid,
+});
 return '';

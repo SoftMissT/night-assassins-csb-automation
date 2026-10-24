@@ -404,8 +404,7 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
         : [];
     const rankDiceMap =
         parseStructuredValue(
-            itemProps.arma_dado_evolutivo_por_rank ??
-                itemProps.arma_dado_evolutivo_por_rank_json
+            itemProps.arma_dado_evolutivo_por_rank ?? itemProps.arma_dado_evolutivo_por_rank_json
         ) ?? {};
 
     return profiles.map((profile, index) => {
@@ -415,8 +414,8 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
             diceFromFormula(rankFormula) ||
             diceFromFormula(
                 typeof rankDiceEntry === 'object'
-                    ? rankDiceEntry?.dado_evolutivo ?? rankDiceEntry?.formula ?? ''
-                    : rankDiceEntry ?? ''
+                    ? (rankDiceEntry?.dado_evolutivo ?? rankDiceEntry?.formula ?? '')
+                    : (rankDiceEntry ?? '')
             );
         const baseDice = String(profile.dano_dados ?? '').trim();
         const choiceKeys = attributeChoiceKeys(profile.formula_texto || rankFormula);

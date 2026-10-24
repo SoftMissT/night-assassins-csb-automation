@@ -1,4 +1,40 @@
 # Changelog
+## v0.11.86 — 2026-10-24
+
+Inclui o que estava em "Não lançado" desde 2026-10-13.
+
+### 2026-10-24 — estabilidade do Controle GM e segurança operacional
+
+- O mundo passa a sincronizar somente o launcher **Night Assassins Controle GM**. As 24 macros canônicas continuam no Compendium para preservar UUIDs usados pelas fichas; cópias mundiais antigas não são apagadas, evitando quebrar hotbars.
+- O launcher GM não depende mais de `canvas.ready`, e o serviço aguarda o `DialogV2.render({ force: true })`; a validação `game.user.isGM` permanece no launcher e no serviço.
+- O template NPC e os geradores Slayer/Oni agora testam `item.inventario_categoria` antes de chamar `equalText`, eliminando a causa dos erros `compareText(undefined)` registrados em `docs/bugs/Log24-10-26.md`. O compêndio `night-assassins-templates-de-ficha` foi regenerado a partir dos templates corrigidos.
+- O Controle GM respeita a largura útil em viewports estreitos. As fontes locais, `font-display: swap` e ausência de `@import` externo permanecem cobertas por teste.
+- Adicionados `SECURITY.md`, instruções locais atualizadas e roteamento ai-memory gerenciado para Claude/Codex.
+- `module.json` passa a usar título e label sem travessão (decisão do operador); `tests/distribution.test.mjs` acompanha o texto novo.
+- Regressão local: 1177/1177 testes. Gate visual/runtime no Foundry 14.367 pendente.
+
+### 2026-10-18 — Marca do Caçador no pipeline e auditoria de criação de arma
+
+- **Crítico Marcado:** com a Marca ativa e um alvo Oni selecionado, a margem de crítico passa a ser a menor entre a da arma e a da Marca (19; 17 com 3 ou mais anos queimados; 18 para o Nascido Marcado). Antes o macro gravava `marca_critico_margem` e nada lia. Sem alvo Oni selecionado vale a margem da arma (a regra v6 só reduz contra Onis).
+- **Frequência Cardíaca Elevada:** com a Marca ativa, a Ação de Ataque ganha 1 ataque adicional por turno de combate (`rollCount + 1` no `hit-service`), exceto em Ação Completa e com técnica de Respiração pendente. Limite conhecido: com arma Nitoryu/Ryōtō o adicional segue a regra de 2º golpe (sem FOR/DEX).
+- **Overdrive do Nascido Marcado:** o diálogo de ativação oferece 0 a N anos de vida (N = vida restante), +1d20 por ano, que entram no Dano de Ferida; ao encerrar, descontam a vida e acumulam 1d6 necrótico por ano.
+- **Exaustão 1 do Nascido Marcado** quando a Intensidade total passa de ⌈nível de Respiração ÷ 2⌉; **−1 ano de vida por ativação** para a Marca normal de quem tem Marca do Destino nv12 (sem somar 1d6). Exaustão e necrótico continuam sendo avisos no encerramento, como já eram.
+- Lógica pura em `scripts/slayer/hunter-mark.mjs` (exposta em `api.huntersMark`); o macro deixou de gravar `marca_critico_margem` e `marca_ataque_extra`. `tests/hunter-mark.test.mjs` (19 testes).
+- **Armas duplicadas "do nada":** nenhum código do módulo cria Item de arma (varredura de `createEmbeddedDocuments`, `Item.create`, `createDocuments`, `duplicate`, `importFromCompendium`). Em vez de chutar um conserto, `scripts/weapon-creation-audit.mjs` registra a origem (`_stats.duplicateSource`, `_stats.compendiumSource` ou desconhecida) sempre que uma arma ganha uma cópia de mesmo nome no mesmo Actor, com o marcador `[NA-ARMA-DUP]` no Registro de Erros, e avisa o GM só quando a origem é desconhecida. Não apaga nada (duas armas iguais podem ser legítimas, ex.: Nitoryu). `tests/weapon-creation-audit.test.mjs` (10 testes). A causa ainda é desconhecida; a próxima ocorrência vai dizer de onde veio.
+- Verificação: `node --test` 1172/1172. **Sem validação no Foundry.**
+
+### 2026-10-13 — diálogo de dano: altura, rodapé e contraste
+
+- Causa raiz do rodapé cortado (tentado em v0.11.82 e v0.11.84 sem validar no Foundry): no `DialogV2` o `form.dialog-form` fica entre `.window-content` e `.dialog-content`, é flex-column com overflow visível e nunca recebeu `min-height: 0`. Com 2+ entradas os botões `Rolar`/`Cancelar` saíam da janela. Removido o `height: calc(100vh - 40px)` e estilizada a cadeia inteira (form, conteúdo, diálogo, lista); só a lista de entradas encolhe e rola.
+- A janela acompanha o conteúdo: `ResizeObserver` chama `setPosition({ height: 'auto' })` e o core mantém o `top` dentro do viewport. Janela redimensionada à mão (altura numérica) não é alterada.
+- Layout compacto: preset e nome na mesma linha, crítico no rodapé, entrada de 201 para 126 px, atributos e tipos de dano como chips marcáveis (a checkbox segue no DOM, com foco visível) e fórmula total com teto de ~3 linhas.
+- Contraste: Força (`#C1000C`) de 2,99 para 6,81:1 via piso de luminosidade OKLCH (a paleta da ficha não muda); checkbox "Foi crítico?" ganhou borda (estava a 1,19:1 contra o fundo).
+- CSS: as três camadas do diálogo (v1, v2 e compacta) viraram um bloco só; removidas regras mortas (`.na-entry-header`, `.na-dano-tip`) e o `transition: all`; 19 declarações sobrescritas pelo mesmo seletor (quase todas do painel do GM) foram eliminadas, com equivalência provada no CSSOM do Chromium (466 seletores, 5402 propriedades finais idênticas).
+- Fontes empacotadas: Orbitron e Rajdhani (subconjunto `latin`, SIL OFL 1.1, ~73 KB, origem e hashes em `assets/fonts/SOURCES.md`) com `@font-face` e `font-display: swap`. O `@import` do Google Fonts saiu: o Foundry não bate mais em `fonts.googleapis.com` ao abrir (1 requisição externa para 0, medido no harness).
+- Pacote: `catalogs/breathing.json` (2,35 MB, lido só pelas ferramentas de build) deixa de ir no `module.zip`; o `release.yml` passa a zipar `assets/fonts` e a falhar se o catálogo reaparecer no pacote.
+- Template Slayer: o bônus de PDV do **Tsuyoi** caía no `default 0` do `switchCase` nos níveis 13 e 14 (o dropdown `nvl_pj` vai até `nvl_14` e a fórmula parava no 12). Agora mantém +3 do nível 6 em diante, nas duas cópias da fórmula (`slayer-template.json` e `csb-import-slayer-template.json`). Níveis 1–5 (+2) e 6–12 (+3) seguem a anotação do operador em `docs/Habilidades Especiais.md`; 13–14 é a continuação do último patamar. `tests/slayer-gift-formulas.test.mjs` avalia as fórmulas dos Dons (Tato, Visão, Tsuyoi, Marechi, Ōketsu) para todo nível do dropdown. Exige reimportar o template no mundo.
+- Armas: o reparo em lote ("Corrigir armas", `repairSlayerWeaponItems`) **recarregava a munição gasta** do Caçador: `weaponRepairChanges` devolvia `arma_municao_atual` ao valor do catálogo (Arco Longo 2 → 12, Revólver 2 → 12), a cada execução do macro. Agora a munição do Item é preservada e só é limitada à capacidade; Item sem valor próprio recebe o do catálogo. Cobertura em `tests/weapon-ammo-preservation.test.mjs` (5 dos 8 testes falhavam antes).
+- Regressão local: `1143/1143` testes, 181 suítes (29 novos: diálogo de dano, `tests/font-assets.test.mjs`, `tests/slayer-gift-formulas.test.mjs` e `tests/weapon-ammo-preservation.test.mjs`; a asserção que exigia o `height` fixo foi trocada pelo contrato novo e falha contra o CSS antigo). Medido em harness com o CSS real do core 14.367 a 1366×768 e 1920×1080. Gate Foundry v14 pendente; o `✓` da checkbox e o `release.yml` (zip com fontes, sem `breathing.json`) não foram exercitados fora do harness.
 ## v0.11.85 — 2026-10-08 — pipeline canônico de Formas + leva Pedra
 
 - Formas migradas executam pelo pipeline canônico: valida nível/PDR, consome ação e custo, rola acerto e resolve o dano da arma + técnica na mesma rolagem, aplica as primitivas do nível e registra o efeito no chat. Cancelar o Acerto não consome ação, PDR nem feeds.

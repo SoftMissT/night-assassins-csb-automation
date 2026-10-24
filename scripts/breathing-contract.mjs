@@ -101,7 +101,12 @@ function normalizeLevel(raw, context) {
     }
     const dano = String(raw.dano ?? raw.damage ?? '').trim();
     if (!validFormula(dano)) return null;
-    const tiposDano = normalizeDamageTypes(raw.tiposDano, raw.damageTypes, raw.types, context.types);
+    const tiposDano = normalizeDamageTypes(
+        raw.tiposDano,
+        raw.damageTypes,
+        raw.types,
+        context.types
+    );
     const bonusAcertoRaw = Number(raw.bonusAcerto ?? raw.hitBonus ?? 0);
     const bonusAcerto = Number.isFinite(bonusAcertoRaw) ? bonusAcertoRaw : 0;
     const texto = String(raw.texto ?? raw.effect ?? '').trim();
@@ -137,7 +142,7 @@ export function normalizeForm(raw, respiracao) {
         ? raw.acoes.map(String)
         : Array.isArray(raw.actions)
           ? raw.actions.map(String)
-          : raw.acao ?? raw.action
+          : (raw.acao ?? raw.action)
             ? [String(raw.acao ?? raw.action)]
             : [];
     const acao = raw.acao ?? raw.action ?? acoes[0] ?? null;
@@ -217,6 +222,9 @@ export function resolveLevel(form, level) {
         return { ok: false, reason: `Nível de respiração inválido: ${level}.` };
     const dados = form.niveis?.[index - 1] ?? null;
     if (!dados)
-        return { ok: false, reason: `Esta Forma não pode ser usada no Nível de Respiração ${index}.` };
+        return {
+            ok: false,
+            reason: `Esta Forma não pode ser usada no Nível de Respiração ${index}.`,
+        };
     return { ok: true, dados };
 }

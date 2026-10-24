@@ -80,50 +80,26 @@ export const DUAL_SOUL_TRIGGER_BANDS = Object.freeze([
 function integer(value, fallback = 0) {
     const parsed = Number(value);
 
-    return Number.isFinite(parsed)
-        ? Math.trunc(parsed)
-        : fallback;
+    return Number.isFinite(parsed) ? Math.trunc(parsed) : fallback;
 }
 
 function clamp(value, minimum, maximum) {
-    return Math.min(
-        maximum,
-        Math.max(
-            minimum,
-            integer(value, minimum)
-        )
-    );
+    return Math.min(maximum, Math.max(minimum, integer(value, minimum)));
 }
 
-export function parseDualSoulJson(
-    value,
-    fallback = {}
-) {
-    if (
-        value &&
-        typeof value === 'object' &&
-        !Array.isArray(value)
-    ) {
+export function parseDualSoulJson(value, fallback = {}) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
         return value;
     }
 
-    if (
-        typeof value !== 'string' ||
-        !value.trim()
-    ) {
+    if (typeof value !== 'string' || !value.trim()) {
         return fallback;
     }
 
     try {
         const parsed = JSON.parse(value);
 
-        return (
-            parsed &&
-            typeof parsed === 'object' &&
-            !Array.isArray(parsed)
-        )
-            ? parsed
-            : fallback;
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : fallback;
     } catch {
         return fallback;
     }
@@ -141,18 +117,11 @@ export function parseDualSoulJson(
  * ...
  * 96-100 -> 20
  */
-export function dominanceD20Equivalent(
-    total,
-    formula = '1d20'
-) {
-    const normalized =
-        String(formula ?? '')
-            .toLowerCase();
+export function dominanceD20Equivalent(total, formula = '1d20') {
+    const normalized = String(formula ?? '').toLowerCase();
 
     if (normalized.includes('d100')) {
-        return Math.ceil(
-            clamp(total, 1, 100) / 5
-        );
+        return Math.ceil(clamp(total, 1, 100) / 5);
     }
 
     return clamp(total, 1, 20);
@@ -160,17 +129,9 @@ export function dominanceD20Equivalent(
 
 export function dualSoulDominance(
     total,
-    {
-        formula = '1d20',
-        entityName = 'Entidade',
-        demonName = 'Demônio',
-    } = {}
+    { formula = '1d20', entityName = 'Entidade', demonName = 'Demônio' } = {}
 ) {
-    const result =
-        dominanceD20Equivalent(
-            total,
-            formula
-        );
+    const result = dominanceD20Equivalent(total, formula);
 
     if (result <= 3) {
         return {
@@ -186,8 +147,7 @@ export function dualSoulDominance(
             deepSleep: true,
             d20Equivalent: result,
 
-            display:
-                `${demonName} — Demônio domina`,
+            display: `${demonName} — Demônio domina`,
         };
     }
 
@@ -205,8 +165,7 @@ export function dualSoulDominance(
             deepSleep: false,
             d20Equivalent: result,
 
-            display:
-                `${demonName} — Demônio favorecido`,
+            display: `${demonName} — Demônio favorecido`,
         };
     }
 
@@ -242,8 +201,7 @@ export function dualSoulDominance(
             deepSleep: false,
             d20Equivalent: result,
 
-            display:
-                `${entityName} — Entidade favorecida`,
+            display: `${entityName} — Entidade favorecida`,
         };
     }
 
@@ -260,95 +218,59 @@ export function dualSoulDominance(
         deepSleep: true,
         d20Equivalent: result,
 
-        display:
-            `${entityName} — Entidade domina`,
+        display: `${entityName} — Entidade domina`,
     };
 }
 
 export function dualSoulIntensity(total) {
-    const value =
-        clamp(total, 3, 60);
+    const value = clamp(total, 3, 60);
 
     return (
-        DUAL_SOUL_INTENSITIES.find(
-            (band) =>
-                value >= band.min &&
-                value <= band.max
-        ) ??
+        DUAL_SOUL_INTENSITIES.find((band) => value >= band.min && value <= band.max) ??
         DUAL_SOUL_INTENSITIES[2]
     );
 }
 
 export function dualSoulTrigger(total) {
-    const value =
-        clamp(total, 3, 60);
+    const value = clamp(total, 3, 60);
 
     return (
-        DUAL_SOUL_TRIGGER_BANDS.find(
-            (band) =>
-                value >= band.min &&
-                value <= band.max
-        ) ??
+        DUAL_SOUL_TRIGGER_BANDS.find((band) => value >= band.min && value <= band.max) ??
         DUAL_SOUL_TRIGGER_BANDS[1]
     );
 }
 
-export function lookupDualSoulRange(
-    table = {},
-    total
-) {
-    if (
-        !table ||
-        typeof table !== 'object' ||
-        Array.isArray(table)
-    ) {
+export function lookupDualSoulRange(table = {}, total) {
+    if (!table || typeof table !== 'object' || Array.isArray(table)) {
         return undefined;
     }
 
     const value = integer(total);
 
-    for (
-        const [rawRange, result]
-        of Object.entries(table)
-    ) {
-        const range =
-            String(rawRange)
-                .replace(/[–—]/gu, '-');
+    for (const [rawRange, result] of Object.entries(table)) {
+        const range = String(rawRange).replace(/[–—]/gu, '-');
 
-        const plus =
-            range.match(
-                /^\s*(\d+)\s*\+\s*$/u
-            );
+        const plus = range.match(/^\s*(\d+)\s*\+\s*$/u);
 
         if (plus) {
-            if (
-                value >= Number(plus[1])
-            ) {
+            if (value >= Number(plus[1])) {
                 return result;
             }
 
             continue;
         }
 
-        const between =
-            range.match(
-                /^\s*(\d+)\s*-\s*(\d+)\s*$/u
-            );
+        const between = range.match(/^\s*(\d+)\s*-\s*(\d+)\s*$/u);
 
         if (!between) {
             continue;
         }
 
-        const minimum =
-            Number(between[1]);
+        const minimum = Number(between[1]);
 
-        const maximum =
-            Number(between[2]);
+        const maximum = Number(between[2]);
 
-        if (
-            value >= minimum &&
-            value <= maximum
-        ) {
+        if (value >= minimum && value <= maximum) {
             return result;
         }
     }
@@ -368,53 +290,29 @@ export function buildDualSoulCeremonyResult({
 
     tests = {},
 } = {}) {
-    const dominance =
-        dualSoulDominance(
-            test1Total,
-            {
-                formula: test1Formula,
-                entityName,
-                demonName,
-            }
-        );
+    const dominance = dualSoulDominance(test1Total, {
+        formula: test1Formula,
+        entityName,
+        demonName,
+    });
 
-    const intensity =
-        dualSoulIntensity(test2Total);
+    const intensity = dualSoulIntensity(test2Total);
 
-    const trigger =
-        dualSoulTrigger(test3Total);
+    const trigger = dualSoulTrigger(test3Total);
 
-    const dominanceText =
-        lookupDualSoulRange(
-            tests
-                ?.teste_1_lado_dominante,
-            dominance.d20Equivalent
-        );
+    const dominanceText = lookupDualSoulRange(
+        tests?.teste_1_lado_dominante,
+        dominance.d20Equivalent
+    );
 
-    const triggerText =
-        lookupDualSoulRange(
-            tests
-                ?.teste_3_gatilho_lado_adormecido,
-            test3Total
-        );
+    const triggerText = lookupDualSoulRange(tests?.teste_3_gatilho_lado_adormecido, test3Total);
 
     const publicTrigger =
-        trigger.id === 'oculto'
-            ? 'Gatilho oculto do Mestre.'
-            : (
-                triggerText ??
-                trigger.label
-            );
+        trigger.id === 'oculto' ? 'Gatilho oculto do Mestre.' : (triggerText ?? trigger.label);
 
-    const rawCd =
-        tests
-            ?.teste_de_despertar
-            ?.[intensity.name];
+    const rawCd = tests?.teste_de_despertar?.[intensity.name];
 
-    const awakeningCd =
-        Number.isFinite(Number(rawCd))
-            ? Number(rawCd)
-            : null;
+    const awakeningCd = Number.isFinite(Number(rawCd)) ? Number(rawCd) : null;
 
     return {
         version: 1,
@@ -425,12 +323,10 @@ export function buildDualSoulCeremonyResult({
             roll: {
                 formula: test1Formula,
                 total: integer(test1Total),
-                d20Equivalent:
-                    dominance.d20Equivalent,
+                d20Equivalent: dominance.d20Equivalent,
             },
 
-            sourceText:
-                dominanceText ?? '',
+            sourceText: dominanceText ?? '',
         },
 
         intensity: {
@@ -455,49 +351,21 @@ export function buildDualSoulCeremonyResult({
                 total: integer(test3Total),
             },
 
-            publicText:
-                publicTrigger,
+            publicText: publicTrigger,
 
-            sourceText:
-                trigger.id === 'oculto'
-                    ? ''
-                    : (
-                        triggerText ??
-                        ''
-                    ),
+            sourceText: trigger.id === 'oculto' ? '' : (triggerText ?? ''),
         },
     };
 }
 
-export function dualSoulCeremonyCompleted(
-    value
-) {
-    const parsed =
-        parseDualSoulJson(
-            value,
-            {}
-        );
+export function dualSoulCeremonyCompleted(value) {
+    const parsed = parseDualSoulJson(value, {});
 
-    return (
-        parsed
-            ?.runtime
-            ?.completed === true
-    );
+    return parsed?.runtime?.completed === true;
 }
 
-export function dualSoulCeremonyRuntime(
-    value
-) {
-    const parsed =
-        parseDualSoulJson(
-            value,
-            {}
-        );
+export function dualSoulCeremonyRuntime(value) {
+    const parsed = parseDualSoulJson(value, {});
 
-    return (
-        parsed?.runtime &&
-        typeof parsed.runtime === 'object'
-    )
-        ? parsed.runtime
-        : null;
+    return parsed?.runtime && typeof parsed.runtime === 'object' ? parsed.runtime : null;
 }

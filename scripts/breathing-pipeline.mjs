@@ -65,8 +65,7 @@ export async function runCanonicalBreathingForm({
     const patch = {};
     if (acoes.length > 0) {
         const actionResult = await runtime.consumeActions?.(actor, acoes);
-        if (!actionResult?.ok)
-            return refusal(notify, actionResult?.reason ?? 'Ação indisponível.');
+        if (!actionResult?.ok) return refusal(notify, actionResult?.reason ?? 'Ação indisponível.');
         Object.assign(patch, actionResult.patch ?? {});
     }
     if (custoTotal > 0) {
@@ -78,9 +77,7 @@ export async function runCanonicalBreathingForm({
     // paga ação, PDR nem feeds (o legado estornava via rollbackPatch).
     const commit = async () => {
         if (surcharge > 0)
-            notify?.info?.(
-                `Fadiga Espiritual: +${surcharge} PDR (custo total: ${custoTotal}).`
-            );
+            notify?.info?.(`Fadiga Espiritual: +${surcharge} PDR (custo total: ${custoTotal}).`);
         if (typeof runtime.applyFeeds === 'function')
             await runtime.applyFeeds(actor, form.feedsUsar, 'usar');
         await runtime.applyPatch?.(actor, patch);
@@ -117,10 +114,7 @@ export async function runCanonicalBreathingForm({
                 actor,
                 nome: tecnica,
                 breathing: form.respiracao,
-                entradas: [
-                    ...(Array.isArray(weaponEntries) ? weaponEntries : []),
-                    ...entradas,
-                ],
+                entradas: [...(Array.isArray(weaponEntries) ? weaponEntries : []), ...entradas],
                 skipActionConsumption: true,
                 forceAttackDamage: true,
                 skipBreathingInjection: true,

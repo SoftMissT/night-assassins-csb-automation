@@ -3,6 +3,7 @@ import { MODULE_ID } from './constants.mjs';
 const PACK_ID = `${MODULE_ID}.night-assassins-macros`;
 const FOLDER_NAME = 'Night Assassins';
 const GM_MACRO_NAME = 'Night Assassins Controle GM';
+const WORLD_MACRO_NAMES = new Set([GM_MACRO_NAME]);
 
 function macroOwnership(name) {
     const levels = CONST.DOCUMENT_OWNERSHIP_LEVELS;
@@ -36,10 +37,18 @@ export async function syncCanonicalMacros() {
     let folder = game.folders.find((entry) => entry.type === 'Macro' && entry.name === FOLDER_NAME);
     if (!folder) folder = await Folder.create({ name: FOLDER_NAME, type: 'Macro', sorting: 'a' });
 
-    const documents = await pack.getDocuments();
+    const packDocuments = await pack.getDocuments();
+    const documents = packDocuments.filter((document) => WORLD_MACRO_NAMES.has(document.name));
     const existingBySource = new Map();
     const existingById = new Map(game.macros.contents.map((macro) => [macro.id, macro]));
-    const existingByName = new Map(game.macros.contents.map((macro) => [macro.name, macro]));
+    const existingByName = new Map(
+        game.macros.contents
+            .filter(
+                (macro) =>
+                    macro.getFlag?.(MODULE_ID, 'managed') ?? macro.flags?.[MODULE_ID]?.managed
+            )
+            .map((macro) => [macro.name, macro])
+    );
     for (const macro of game.macros.contents) {
         const sourceId =
             macro.getFlag?.(MODULE_ID, 'sourceId') ??
@@ -69,6 +78,7 @@ export async function syncCanonicalMacros() {
             scope: source.scope,
             command: source.command,
             img: source.img,
+            ownership: source.ownership,
             flags: source.flags,
         });
     }
@@ -82,7 +92,7 @@ export async function syncCanonicalMacros() {
     return {
         created: missing.length,
         updated: updates.length,
-        skipped: documents.length - missing.length - updates.length,
+        skipped: packDocuments.length - documents.length,
         folderId: folder.id,
     };
 }

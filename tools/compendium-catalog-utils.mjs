@@ -1,9 +1,7 @@
 import { createHash } from 'node:crypto';
-
 export function stableId(namespace, value) {
     return createHash('sha1').update(`${namespace}:${value}`).digest('hex').slice(0, 16);
 }
-
 export function stripMarkdown(value = '') {
     return String(value)
         .replace(/^---[\s\S]*?---\s*/u, '')
@@ -31,7 +29,6 @@ function inlineMarkdown(value = '') {
         .replace(/__([^_]+)__/gu, '<strong>$1</strong>')
         .replace(/(?<!\*)\*([^*]+)\*(?!\*)/gu, '<em>$1</em>');
 }
-
 /** Convert trusted rule Markdown into HTML accepted by Foundry's enriched editor. */
 export function markdownToFoundryHtml(markdown = '') {
     const lines = String(markdown).replace(/\r\n?/gu, '\n').trim().split('\n');
@@ -39,7 +36,6 @@ export function markdownToFoundryHtml(markdown = '') {
     let paragraph = [];
     let listType = null;
     let listItems = [];
-
     const flushParagraph = () => {
         if (!paragraph.length) return;
         output.push(`<p>${paragraph.map(inlineMarkdown).join('<br>')}</p>`);
@@ -53,7 +49,6 @@ export function markdownToFoundryHtml(markdown = '') {
         listType = null;
         listItems = [];
     };
-
     for (let index = 0; index < lines.length; index += 1) {
         const line = lines[index].trimEnd();
         if (!line.trim()) {
@@ -128,7 +123,6 @@ export function markdownToFoundryHtml(markdown = '') {
     flushList();
     return output.join('\n');
 }
-
 export function splitLevelTwoSections(markdown = '') {
     const matches = [...String(markdown).matchAll(/^##\s+(.+)$/gmu)];
     return matches.map((match, index) => ({
@@ -141,7 +135,6 @@ export function splitLevelTwoSections(markdown = '') {
             .trim(),
     }));
 }
-
 export function firstDiceFormula(text = '') {
     const match = String(text).match(
         /\b\d+d\d+(?:\s*[+-]\s*(?:\d+|(?:DEX|FOR|VIT|CAR|FDV|INT|SAB)))?/iu
@@ -153,12 +146,10 @@ export function firstDiceFormula(text = '') {
         ) ?? ''
     );
 }
-
 export function firstFixedDamage(text = '') {
     const match = String(text).match(/(?:^|\n)[^\n]*\bDano(?:\s+[^:]+)?:\s*(\d+)/iu);
     return Number(match?.[1] ?? 0);
 }
-
 export function attributesIn(text = '') {
     return [
         ...new Set(
@@ -168,7 +159,6 @@ export function attributesIn(text = '') {
         ),
     ];
 }
-
 export function damageTypesIn(text = '') {
     const types = [
         'cortante',
@@ -184,26 +174,22 @@ export function damageTypesIn(text = '') {
     const normalized = String(text).toLocaleLowerCase('pt-BR');
     return types.filter((type) => normalized.includes(type));
 }
-
 export function actionIn(text = '') {
     const match = String(text).match(
         /Ação\s+(Livre|Única|Especial|de Ataque|Completa|de Movimento)|Reação/iu
     );
     return match?.[0] ?? 'Não informada';
 }
-
 export function costIn(text = '') {
     const values = [...String(text).matchAll(/(\d+)\s*PDR\b/giu)].map((match) => Number(match[1]));
     return values.length ? values[0] : 0;
 }
-
 export function minimumBreathingLevel(text = '') {
     const match = String(text).match(
         /(?:a partir do|requer(?:imento)?[^\n]*?)\s*N[ií]vel\s+(\d)\s+de Respira/iu
     );
     return Math.min(4, Math.max(1, Number(match?.[1] ?? 1)));
 }
-
 export function folderDocument(id, name, sort = 0) {
     return {
         _id: id,

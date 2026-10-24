@@ -149,23 +149,15 @@ export function normalizeYamatoSide(value = '') {
 }
 
 export function currentYamatoSide(itemProps = {}) {
-    const runtime = structured(
-        itemProps.arma_especial_despertar_runtime_json,
-        {}
-    );
+    const runtime = structured(itemProps.arma_especial_despertar_runtime_json, {});
 
-    const runtimeSide =
-        normalizeYamatoSide(
-            runtime.side
-        );
+    const runtimeSide = normalizeYamatoSide(runtime.side);
 
     if (runtimeSide) {
         return runtimeSide;
     }
 
-    return normalizeYamatoSide(
-        itemProps.arma_lado_dominante
-    );
+    return normalizeYamatoSide(itemProps.arma_lado_dominante);
 }
 
 export function isSpecialWeaponAwakened(itemProps = {}) {
@@ -301,7 +293,8 @@ export async function openSpecialWeaponAbilities(options = {}) {
         structured(canonicalProps.arma_especial_rank_effects_json, null) ??
         canonicalProps.arma_efeitos_por_rank ??
         {};
-    const forseti = basal.forseti ?? canonicalProps.arma_habilidades_basais_despertar?.forseti ?? {};
+    const forseti =
+        basal.forseti ?? canonicalProps.arma_habilidades_basais_despertar?.forseti ?? {};
     const orochi = basal.orochi ?? canonicalProps.arma_habilidades_basais_despertar?.orochi ?? {};
     const corte = rankEffects.B ?? canonicalProps.arma_efeitos_por_rank?.B ?? {};
 
@@ -350,9 +343,7 @@ export async function applySpecialWeaponHitEffects({ actor, item, pending } = {}
     const bleed = Math.max(0, Math.trunc(Number(pending.bleedAmount) || 0));
     if (!bleed) return;
 
-    const targets = [...(game.user?.targets ?? [])]
-        .map((token) => token.actor)
-        .filter(Boolean);
+    const targets = [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean);
     if (targets.length === 0) {
         ui.notifications?.warn?.(
             `${pending.label || item.name}: acerto confirmado, mas nenhum alvo está marcado para receber Sangramento.`
@@ -435,9 +426,7 @@ export async function useSpecialWeaponAbility(options = {}) {
             `${props.arma_nome ?? item.name ?? 'A arma'} está Selada. Realize a Cerimônia e retire a arma do selamento antes de usar efeitos da Entidade ou do Demônio.`
         );
 
-    const side = currentYamatoSide(
-        item.system?.props ?? {}
-    );
+    const side = currentYamatoSide(item.system?.props ?? {});
 
     if (!side)
         return ui.notifications?.warn?.(
@@ -468,7 +457,9 @@ export async function useSpecialWeaponAbility(options = {}) {
 
     if (abilityId === 'yamato.oito_gargantas') {
         if (side !== 'orochi')
-            return ui.notifications?.warn?.('Oito Gargantas exige Yamata no Orochi como lado ativo.');
+            return ui.notifications?.warn?.(
+                'Oito Gargantas exige Yamata no Orochi como lado ativo.'
+            );
         const action = await consumeSlayerActions(actor, ['especial'], { update: false });
         if (!action.ok) return ui.notifications?.warn?.(action.reason);
         const pending = newPending(item, {

@@ -79,7 +79,10 @@ export async function loadCanonicalSlayerWeapons({ fetchImpl = globalThis.fetch 
             )
             .catch((error) => {
                 canonicalWeaponsPromise = null;
-                console.error(`[${MODULE_ID}] Falha ao carregar catálogo canônico de armas.`, error);
+                console.error(
+                    `[${MODULE_ID}] Falha ao carregar catálogo canônico de armas.`,
+                    error
+                );
                 return [];
             });
     }
@@ -120,6 +123,28 @@ function attributeSummary(profiles, props) {
     return [...new Set(attributes.length > 0 ? attributes : fallbackAttributes)].join(' ou ');
 }
 
+/**
+ * Munição atual depois do reparo. A munição gasta é estado do Item do Caçador: o reparo
+ * pode limitá-la à capacidade do catálogo, mas nunca recarregá-la. Só um Item sem valor
+ * próprio recebe o do catálogo (ou a capacidade cheia).
+ * @param {unknown} own Valor atual no Item do ator.
+ * @param {unknown} canonical Valor atual no catálogo.
+ * @param {unknown} capacity Capacidade no catálogo.
+ * @returns {number}
+ */
+function repairedAmmo(own, canonical, capacity) {
+    const max = Math.max(0, Math.trunc(Number(capacity) || 0));
+    if (max === 0) return 0;
+    const ownText = typeof own === 'string' ? own.trim() : own;
+    const hasOwn =
+        ownText !== undefined &&
+        ownText !== null &&
+        ownText !== '' &&
+        Number.isFinite(Number(ownText));
+    const base = hasOwn ? Number(ownText) : Number(canonical ?? max);
+    return Math.min(max, Math.max(0, Math.trunc(base) || 0));
+}
+
 export function weaponRepairChanges(item, canonicalItem = null) {
     if (!isWeaponItem(item)) return null;
     const props = item.system?.props ?? {};
@@ -138,7 +163,8 @@ export function weaponRepairChanges(item, canonicalItem = null) {
         changes.ownership = { ...(item.ownership ?? {}), default: 2 };
     }
     const canonicalProfiles = weaponProfilesFromProps(canonicalProps);
-    const profiles = canonicalProfiles.length > 0 ? canonicalProfiles : weaponProfilesFromProps(props);
+    const profiles =
+        canonicalProfiles.length > 0 ? canonicalProfiles : weaponProfilesFromProps(props);
     if (profiles.length > 0) {
         const sourceProps = canonicalProfiles.length > 0 ? canonicalProps : props;
         const types = typeSummary(profiles, sourceProps);
@@ -147,9 +173,7 @@ export function weaponRepairChanges(item, canonicalItem = null) {
             arma_dano_dados: sourceProps.arma_dano_dados ?? '',
             arma_dano_fixo: Number(sourceProps.arma_dano_fixo) || 0,
             arma_dano_atributo_json: jsonArray(
-                sourceProps.arma_dano_atributo ??
-                    sourceProps.arma_dano_atributo_json ??
-                    attributes
+                sourceProps.arma_dano_atributo ?? sourceProps.arma_dano_atributo_json ?? attributes
             ),
             arma_tipos_dano_json: jsonArray(
                 sourceProps.arma_tipos_dano ?? sourceProps.arma_tipos_dano_json ?? types
@@ -161,8 +185,11 @@ export function weaponRepairChanges(item, canonicalItem = null) {
                 sourceProps.arma_formulas_por_rank ?? sourceProps.arma_formulas_por_rank_json ?? {}
             ),
             arma_municao_capacidade: Number(sourceProps.arma_municao_capacidade) || 0,
-            arma_municao_atual:
-                Number(sourceProps.arma_municao_atual ?? sourceProps.arma_municao_capacidade) || 0,
+            arma_municao_atual: repairedAmmo(
+                props.arma_municao_atual,
+                sourceProps.arma_municao_atual,
+                sourceProps.arma_municao_capacidade
+            ),
             arma_perfis_resumo: profileSummary(profiles),
             arma_tipos_dano_resumo: types,
             arma_atributos_resumo: attributes,
@@ -184,9 +211,7 @@ export async function repairSlayerWeaponItems({
     const updates = actors
         .map((actor) => {
             const itemUpdates = [...(actor?.items ?? [])]
-                .map((item) =>
-                    weaponRepairChanges(item, canonicalWeaponForItem(item, sources))
-                )
+                .map((item) => weaponRepairChanges(item, canonicalWeaponForItem(item, sources)))
                 .filter(Boolean);
             if (itemUpdates.length === 0) return null;
             return actor
@@ -214,7 +239,10 @@ export function registerWeaponSynchronizationEngine() {
     const schedule = (item) => {
         setTimeout(() => {
             void rehydrateSlayerWeaponItem(item).catch((error) =>
-                console.error(`[${MODULE_ID}] Falha ao sincronizar arma ${item?.name ?? ''}.`, error)
+                console.error(
+                    `[${MODULE_ID}] Falha ao sincronizar arma ${item?.name ?? ''}.`,
+                    error
+                )
             );
         }, 0);
     };

@@ -1,8 +1,8 @@
 {
     "id": "night-assassins-csb-automation",
-    "title": "Night Assassins — CSB Automation",
+    "title": "Night Assassins CSB Automation",
     "description": "Automação de atributos, progressão e Habilidades Especiais de Night Assassins para Custom System Builder.",
-    "version": "0.11.85",
+    "version": "0.11.86",
     "socket": true,
     "authors": [
         {
@@ -14,12 +14,8 @@
         "minimum": "14",
         "verified": "14.367"
     },
-    "esmodules": [
-        "scripts/main.mjs"
-    ],
-    "styles": [
-        "styles/na-csb-automation.css"
-    ],
+    "esmodules": ["scripts/main.mjs"],
+    "styles": ["styles/na-csb-automation.css"],
     "languages": [
         {
             "lang": "pt-BR",
@@ -37,7 +33,7 @@
         },
         {
             "name": "night-assassins-templates-de-ficha",
-            "label": "Night Assassins — Templates de Ficha",
+            "label": "Night Assassins Templates de Ficha",
             "path": "packs/night-assassins-templates-de-ficha",
             "type": "Actor",
             "system": "custom-system-builder"
@@ -83,7 +79,7 @@
     },
     "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
     "manifest": "https://raw.githubusercontent.com/SoftMissT/night-assassins-csb-automation/main/module.json",
-    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.85/module.zip",
+    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.86/module.zip",
     "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
     "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
     "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"

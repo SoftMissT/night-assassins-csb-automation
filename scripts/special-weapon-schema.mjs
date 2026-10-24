@@ -72,9 +72,7 @@ export function sanitizeSpecialWeaponProps(inputProps = {}, schema = new Map()) 
     }
 
     if (props.arma_marcas_demonio_tabela) {
-        props.arma_marcas_demonio_tabela_json = JSON.stringify(
-            props.arma_marcas_demonio_tabela
-        );
+        props.arma_marcas_demonio_tabela_json = JSON.stringify(props.arma_marcas_demonio_tabela);
     }
 
     const marksSchema = schema.get('arma_marcas_demonio');

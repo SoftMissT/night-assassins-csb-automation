@@ -19,9 +19,7 @@ import {
     parseDualSoulResistanceRuntime,
     resolveDualSoulChallenge,
 } from './dual-soul-awakening-resistance-core.mjs';
-import {
-    hasActiveDualSoulConsequence,
-} from './dual-soul-consequence-core.mjs';
+import { hasActiveDualSoulConsequence } from './dual-soul-consequence-core.mjs';
 
 import {
     dualSoulCeremonyCompleted,
@@ -29,20 +27,13 @@ import {
     isDualSoulWeapon,
 } from './dual-soul-ceremony-service.mjs';
 
-import {
-    parseAttributeValue,
-} from './parsing.mjs';
+import { parseAttributeValue } from './parsing.mjs';
 
-import {
-    hydrateSpecialWeaponItem,
-} from './special-weapon-service.mjs';
+import { hydrateSpecialWeaponItem } from './special-weapon-service.mjs';
 
-const RUNTIME_KEY =
-    'dupla_alma_despertar_runtime_json';
+const RUNTIME_KEY = 'dupla_alma_despertar_runtime_json';
 
-function escapeHtml(
-    value = ''
-) {
+function escapeHtml(value = '') {
     return String(value ?? '')
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
@@ -56,11 +47,7 @@ function actorItems(actor) {
         return [];
     }
 
-    if (
-        Array.isArray(
-            actor.items.contents
-        )
-    ) {
+    if (Array.isArray(actor.items.contents)) {
         return actor.items.contents;
     }
 
@@ -73,94 +60,49 @@ function actorItems(actor) {
 
 function currentRollMode() {
     try {
-        return (
-            game.settings.get(
-                'core',
-                'rollMode'
-            ) ??
-            'publicroll'
-        );
+        return game.settings.get('core', 'rollMode') ?? 'publicroll';
     } catch {
         return 'publicroll';
     }
 }
 
-async function resolveActor(
-    options = {}
-) {
-    if (
-        options.actor
-            ?.documentName === 'Actor'
-    ) {
+async function resolveActor(options = {}) {
+    if (options.actor?.documentName === 'Actor') {
         return options.actor;
     }
 
     if (options.actorUuid) {
-        const document =
-            await fromUuid(
-                options.actorUuid
-            );
+        const document = await fromUuid(options.actorUuid);
 
-        const actor =
-            document?.actor ??
-            document;
+        const actor = document?.actor ?? document;
 
-        if (
-            actor
-                ?.documentName === 'Actor'
-        ) {
+        if (actor?.documentName === 'Actor') {
             return actor;
         }
     }
 
-    const controlled =
-        canvas
-            ?.tokens
-            ?.controlled ??
-        [];
+    const controlled = canvas?.tokens?.controlled ?? [];
 
-    if (
-        controlled.length === 1
-    ) {
-        return (
-            controlled[0]
-                ?.actor ??
-            null
-        );
+    if (controlled.length === 1) {
+        return controlled[0]?.actor ?? null;
     }
 
-    if (
-        controlled.length > 1
-    ) {
+    if (controlled.length > 1) {
         return null;
     }
 
-    return (
-        game.user?.character ??
-        null
-    );
+    return game.user?.character ?? null;
 }
 
-async function explicitItem(
-    options = {}
-) {
-    if (
-        options.item &&
-        options.item.documentName !== 'Actor'
-    ) {
+async function explicitItem(options = {}) {
+    if (options.item && options.item.documentName !== 'Actor') {
         return options.item;
     }
 
     if (options.itemUuid) {
-        const document =
-            await fromUuid(
-                options.itemUuid
-            );
+        const document = await fromUuid(options.itemUuid);
 
-        if (
-            document &&
-            document.documentName !== 'Actor'
-        ) {
+        if (document && document.documentName !== 'Actor') {
             return document;
         }
     }
@@ -168,53 +110,29 @@ async function explicitItem(
     return null;
 }
 
-async function chooseDualSoulWeapon(
-    actor,
-    options = {}
-) {
-    const explicit =
-        await explicitItem(
-            options
-        );
+async function chooseDualSoulWeapon(actor, options = {}) {
+    const explicit = await explicitItem(options);
 
     if (explicit) {
-        return isDualSoulWeapon(
-            explicit
-        )
-            ? explicit
-            : null;
+        return isDualSoulWeapon(explicit) ? explicit : null;
     }
 
-    const weapons =
-        actorItems(actor)
-            .filter(
-                isDualSoulWeapon
-            );
+    const weapons = actorItems(actor).filter(isDualSoulWeapon);
 
-    if (
-        weapons.length === 0
-    ) {
+    if (weapons.length === 0) {
         return null;
     }
 
-    if (
-        weapons.length === 1
-    ) {
+    if (weapons.length === 1) {
         return weapons[0];
     }
 
-    const selected =
-        await foundry
-            .applications
-            .api
-            .DialogV2
-            .wait({
-                window: {
-                    title:
-                        'Resistência ao Despertar',
-                },
+    const selected = await foundry.applications.api.DialogV2.wait({
+        window: {
+            title: 'Resistência ao Despertar',
+        },
 
-                content: `
+        content: `
                     <div class="na-csb-automation">
                         <p>
                             Escolha a Arma de Dupla Alma
@@ -223,187 +141,99 @@ async function chooseDualSoulWeapon(
                     </div>
                 `,
 
-                modal: true,
-                rejectClose: false,
+        modal: true,
+        rejectClose: false,
 
-                buttons: [
-                    ...weapons.map(
-                        (
-                            weapon,
-                            index
-                        ) => ({
-                            action:
-                                `weapon-${index}`,
+        buttons: [
+            ...weapons.map((weapon, index) => ({
+                action: `weapon-${index}`,
 
-                            label:
-                                weapon.name,
+                label: weapon.name,
 
-                            callback:
-                                () => (
-                                    weapon.uuid ??
-                                    weapon.id
-                                ),
-                        })
-                    ),
+                callback: () => weapon.uuid ?? weapon.id,
+            })),
 
-                    {
-                        action: 'cancel',
-                        label: 'Cancelar',
-                        callback: () => null,
-                    },
-                ],
-            });
+            {
+                action: 'cancel',
+                label: 'Cancelar',
+                callback: () => null,
+            },
+        ],
+    });
 
     if (!selected) {
         return null;
     }
 
-    return (
-        weapons.find(
-            (weapon) =>
-                (
-                    weapon.uuid ??
-                    weapon.id
-                ) === selected
-        ) ??
-        null
-    );
+    return weapons.find((weapon) => (weapon.uuid ?? weapon.id) === selected) ?? null;
 }
 
-function attributeValue(
-    actor,
-    attribute
-) {
-    const key =
-        attribute === 'FOR'
-            ? 'for_display'
-            : 'vit_display';
+function attributeValue(actor, attribute) {
+    const key = attribute === 'FOR' ? 'for_display' : 'vit_display';
 
-    const props =
-        actor?.system?.props ??
-        {};
+    const props = actor?.system?.props ?? {};
 
-    if (
-        !Object.prototype
-            .hasOwnProperty
-            .call(
-                props,
-                key
-            )
-    ) {
-        throw new Error(
-            `A ficha não possui a key ${key}.`
-        );
+    if (!Object.prototype.hasOwnProperty.call(props, key)) {
+        throw new Error(`A ficha não possui a key ${key}.`);
     }
 
-    return parseAttributeValue(
-        props[key]
-    );
+    return parseAttributeValue(props[key]);
 }
 
-function soulName(
-    kind,
-    props = {}
-) {
+function soulName(kind, props = {}) {
     if (kind === 'entidade') {
-        return (
-            String(
-                props.arma_entidade ??
-                ''
-            ).trim() ||
-            'Entidade'
-        );
+        return String(props.arma_entidade ?? '').trim() || 'Entidade';
     }
 
     if (kind === 'demonio') {
-        return (
-            String(
-                props.arma_demonio ??
-                ''
-            ).trim() ||
-            'Demônio'
-        );
+        return String(props.arma_demonio ?? '').trim() || 'Demônio';
     }
 
     return '—';
 }
 
-async function mechanicalRoll({
-    actor,
-    formula,
-    flavor,
-} = {}) {
-    const roll =
-        Roll.create(
-            formula,
-            actor?.getRollData?.() ??
-            {}
-        );
+async function mechanicalRoll({ actor, formula, flavor } = {}) {
+    const roll = Roll.create(formula, actor?.getRollData?.() ?? {});
 
     await roll.evaluate();
 
     await roll.toMessage({
-        speaker:
-            ChatMessage
-                .getSpeaker({
-                    actor,
-                }),
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
 
         flavor,
 
-        rollMode:
-            currentRollMode(),
+        rollMode: currentRollMode(),
     });
 
     return roll;
 }
 
-async function chooseAttribute({
-    actor,
-    challengerName,
-    dc,
-} = {}) {
+async function chooseAttribute({ actor, challengerName, dc } = {}) {
     let forValue;
     let vitValue;
 
     try {
-        forValue =
-            attributeValue(
-                actor,
-                'FOR'
-            );
+        forValue = attributeValue(actor, 'FOR');
 
-        vitValue =
-            attributeValue(
-                actor,
-                'VIT'
-            );
+        vitValue = attributeValue(actor, 'VIT');
     } catch (error) {
-        ui.notifications
-            ?.error?.(
-                error.message
-            );
+        ui.notifications?.error?.(error.message);
 
         return null;
     }
 
-    return foundry
-        .applications
-        .api
-        .DialogV2
-        .wait({
-            window: {
-                title:
-                    'Resistência ao Despertar',
-            },
+    return foundry.applications.api.DialogV2.wait({
+        window: {
+            title: 'Resistência ao Despertar',
+        },
 
-            content: `
+        content: `
                 <div class="na-csb-automation">
                     <p>
                         <strong>
-                            ${escapeHtml(
-                                challengerName
-                            )}
+                            ${escapeHtml(challengerName)}
                         </strong>
                         está tentando assumir.
                     </p>
@@ -424,295 +254,157 @@ async function chooseAttribute({
                     <p>
                         FOR:
                         <strong>
-                            ${escapeHtml(
-                                forValue
-                            )}
+                            ${escapeHtml(forValue)}
                         </strong>
                         ·
                         VIT:
                         <strong>
-                            ${escapeHtml(
-                                vitValue
-                            )}
+                            ${escapeHtml(vitValue)}
                         </strong>
                     </p>
                 </div>
             `,
 
-            modal: true,
-            rejectClose: false,
+        modal: true,
+        rejectClose: false,
 
-            buttons: [
-                {
-                    action: 'FOR',
-                    label:
-                        `FOR (${forValue})`,
+        buttons: [
+            {
+                action: 'FOR',
+                label: `FOR (${forValue})`,
 
-                    callback:
-                        () => 'FOR',
-                },
+                callback: () => 'FOR',
+            },
 
-                {
-                    action: 'VIT',
-                    label:
-                        `VIT (${vitValue})`,
+            {
+                action: 'VIT',
+                label: `VIT (${vitValue})`,
 
-                    callback:
-                        () => 'VIT',
-                },
+                callback: () => 'VIT',
+            },
 
-                {
-                    action: 'cancel',
-                    label: 'Cancelar',
-                    callback: () => null,
-                },
-            ],
-        });
+            {
+                action: 'cancel',
+                label: 'Cancelar',
+                callback: () => null,
+            },
+        ],
+    });
 }
 
-export function getDualSoulAwakeningRuntime(
-    item
-) {
-    return parseDualSoulResistanceRuntime(
-        item
-            ?.system
-            ?.props
-            ?.[RUNTIME_KEY],
-        {}
-    );
+export function getDualSoulAwakeningRuntime(item) {
+    return parseDualSoulResistanceRuntime(item?.system?.props?.[RUNTIME_KEY], {});
 }
 
-export function dualSoulAwakeningPending(
-    item
-) {
-    return hasPendingDualSoulResistance(
-        item
-            ?.system
-            ?.props
-            ?.[RUNTIME_KEY]
-    );
+export function dualSoulAwakeningPending(item) {
+    return hasPendingDualSoulResistance(item?.system?.props?.[RUNTIME_KEY]);
 }
 
-export async function openDualSoulAwakeningResistance(
-    options = {}
-) {
-    const controlled =
-        canvas
-            ?.tokens
-            ?.controlled ??
-        [];
+export async function openDualSoulAwakeningResistance(options = {}) {
+    const controlled = canvas?.tokens?.controlled ?? [];
 
-    if (
-        !options.actor &&
-        !options.actorUuid &&
-        controlled.length > 1
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Selecione somente um token para o Teste de Resistência.'
-            );
+    if (!options.actor && !options.actorUuid && controlled.length > 1) {
+        return ui.notifications?.warn?.('Selecione somente um token para o Teste de Resistência.');
     }
 
-    const actor =
-        await resolveActor(
-            options
-        );
+    const actor = await resolveActor(options);
 
     if (!actor) {
-        return ui.notifications
-            ?.warn?.(
-                'Selecione o portador da Arma de Dupla Alma.'
-            );
+        return ui.notifications?.warn?.('Selecione o portador da Arma de Dupla Alma.');
     }
 
-    if (
-        !game.user?.isGM &&
-        actor.isOwner === false
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Você não possui permissão para realizar este teste com o Actor.'
-            );
-    }
-
-    const item =
-        await chooseDualSoulWeapon(
-            actor,
-            options
+    if (!game.user?.isGM && actor.isOwner === false) {
+        return ui.notifications?.warn?.(
+            'Você não possui permissão para realizar este teste com o Actor.'
         );
+    }
+
+    const item = await chooseDualSoulWeapon(actor, options);
 
     if (!item) {
-        return ui.notifications
-            ?.warn?.(
-                'Nenhuma Arma de Dupla Alma válida foi encontrada.'
-            );
+        return ui.notifications?.warn?.('Nenhuma Arma de Dupla Alma válida foi encontrada.');
     }
 
-    if (
-        item.parent
-            ?.documentName !== 'Actor' ||
-        item.parent?.uuid !==
-            actor.uuid
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'O Teste de Resistência deve ser realizado com uma arma vinculada ao Actor.'
-            );
-    }
-
-    const hydration =
-        await hydrateSpecialWeaponItem(
-            item
+    if (item.parent?.documentName !== 'Actor' || item.parent?.uuid !== actor.uuid) {
+        return ui.notifications?.warn?.(
+            'O Teste de Resistência deve ser realizado com uma arma vinculada ao Actor.'
         );
+    }
+
+    const hydration = await hydrateSpecialWeaponItem(item);
 
     if (!hydration?.ok) {
-        return ui.notifications
-            ?.error?.(
-                hydration?.reason ??
-                'Falha ao hidratar a arma.'
-            );
+        return ui.notifications?.error?.(hydration?.reason ?? 'Falha ao hidratar a arma.');
     }
 
-    if (
-        !dualSoulCeremonyCompleted(
-            item
-        )
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Esta arma ainda não concluiu a Cerimônia de Vínculo.'
-            );
+    if (!dualSoulCeremonyCompleted(item)) {
+        return ui.notifications?.warn?.('Esta arma ainda não concluiu a Cerimônia de Vínculo.');
     }
 
-    if (
-        dualSoulAwakeningPending(
-            item
-        )
-    ) {
-        const pending =
-            getDualSoulAwakeningRuntime(
-                item
-            );
+    if (dualSoulAwakeningPending(item)) {
+        const pending = getDualSoulAwakeningRuntime(item);
 
-        return ui.notifications
-            ?.warn?.(
-                `Já existe uma falha de Resistência pendente (${pending.challengerKind ?? 'lado desconhecido'}). Ela precisa ser resolvida antes de um novo teste.`
-            );
-    }
-
-    const consequenceRuntime =
-        getDualSoulAwakeningRuntime(
-            item
+        return ui.notifications?.warn?.(
+            `Já existe uma falha de Resistência pendente (${pending.challengerKind ?? 'lado desconhecido'}). Ela precisa ser resolvida antes de um novo teste.`
         );
-
-    if (
-        hasActiveDualSoulConsequence(
-            consequenceRuntime
-        )
-    ) {
-        return ui.notifications
-            ?.warn?.(
-                'Uma consequência de Dupla Alma ainda está ativa. Resolva Empréstimo/Possessão antes de realizar outra Resistência.'
-            );
     }
 
-    const ceremony =
-        getDualSoulCeremonyState(
-            item
+    const consequenceRuntime = getDualSoulAwakeningRuntime(item);
+
+    if (hasActiveDualSoulConsequence(consequenceRuntime)) {
+        return ui.notifications?.warn?.(
+            'Uma consequência de Dupla Alma ainda está ativa. Resolva Empréstimo/Possessão antes de realizar outra Resistência.'
         );
+    }
+
+    const ceremony = getDualSoulCeremonyState(item);
 
     if (!ceremony) {
-        return ui.notifications
-            ?.error?.(
-                'Runtime da Cerimônia não foi encontrado.'
-            );
+        return ui.notifications?.error?.('Runtime da Cerimônia não foi encontrado.');
     }
 
-    const dc =
-        Number(
-            ceremony
-                ?.intensity
-                ?.awakeningCd
-        );
+    const dc = Number(ceremony?.intensity?.awakeningCd);
 
-    if (
-        !Number.isFinite(dc) ||
-        dc <= 0
-    ) {
-        return ui.notifications
-            ?.error?.(
-                'A Cerimônia não possui uma CD de Despertar válida.'
-            );
+    if (!Number.isFinite(dc) || dc <= 0) {
+        return ui.notifications?.error?.('A Cerimônia não possui uma CD de Despertar válida.');
     }
 
-    const props =
-        item.system?.props ??
-        {};
+    const props = item.system?.props ?? {};
 
-    const unstable =
-        isUnstableDualSoulCeremony(
-            ceremony
-        );
+    const unstable = isUnstableDualSoulCeremony(ceremony);
 
-    const trigger =
-        String(
-            ceremony
-                ?.trigger
-                ?.publicText ??
+    const trigger = String(
+        ceremony?.trigger?.publicText ??
             props.arma_gatilho_despertar ??
             'Gatilho declarado pela mesa.'
-        );
+    );
 
-    const dominantDisplay =
-        unstable
-            ? 'Equilíbrio Instável'
-            : (
-                ceremony
-                    ?.dominance
-                    ?.display ??
-                ceremony
-                    ?.dominance
-                    ?.dominantName ??
-                '—'
-            );
+    const dominantDisplay = unstable
+        ? 'Equilíbrio Instável'
+        : (ceremony?.dominance?.display ?? ceremony?.dominance?.dominantName ?? '—');
 
-    const confirmed =
-        await foundry
-            .applications
-            .api
-            .DialogV2
-            .confirm({
-                window: {
-                    title:
-                        'Gatilho de Despertar',
-                },
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: {
+            title: 'Gatilho de Despertar',
+        },
 
-                content: `
+        content: `
                     <div class="na-csb-automation">
                         <h2>
-                            ${escapeHtml(
-                                item.name
-                            )}
+                            ${escapeHtml(item.name)}
                         </h2>
 
                         <p>
                             Vínculo:
                             <strong>
-                                ${escapeHtml(
-                                    dominantDisplay
-                                )}
+                                ${escapeHtml(dominantDisplay)}
                             </strong>
                         </p>
 
                         <p>
                             Intensidade:
                             <strong>
-                                ${escapeHtml(
-                                    ceremony
-                                        ?.intensity
-                                        ?.name ??
-                                    '—'
-                                )}
+                                ${escapeHtml(ceremony?.intensity?.name ?? '—')}
                             </strong>
                         </p>
 
@@ -728,9 +420,7 @@ export async function openDualSoulAwakeningResistance(
                         <p>
                             Gatilho:
                             <strong>
-                                ${escapeHtml(
-                                    trigger
-                                )}
+                                ${escapeHtml(trigger)}
                             </strong>
                         </p>
 
@@ -762,92 +452,66 @@ export async function openDualSoulAwakeningResistance(
                     </div>
                 `,
 
-                modal: true,
-                rejectClose: false,
+        modal: true,
+        rejectClose: false,
 
-                yes: {
-                    label:
-                        'Confirmar gatilho',
-                },
+        yes: {
+            label: 'Confirmar gatilho',
+        },
 
-                no: {
-                    label:
-                        'Cancelar',
-                },
-            });
+        no: {
+            label: 'Cancelar',
+        },
+    });
 
     if (!confirmed) {
         return null;
     }
 
-    let challengerRoll =
-        null;
+    let challengerRoll = null;
 
     let challenge;
 
     if (unstable) {
-        challengerRoll =
-            Roll.create(
-                '1d2'
-            );
+        challengerRoll = Roll.create('1d2');
 
-        await challengerRoll
-            .evaluate();
+        await challengerRoll.evaluate();
 
-        challenge =
-            resolveDualSoulChallenge({
-                ceremony,
+        challenge = resolveDualSoulChallenge({
+            ceremony,
 
-                challengerRollTotal:
-                    challengerRoll.total,
-            });
+            challengerRollTotal: challengerRoll.total,
+        });
 
-        const challengerName =
-            soulName(
-                challenge
-                    .challengerKind,
-                props
-            );
+        const challengerName = soulName(challenge.challengerKind, props);
 
         /*
          * A rolagem é anexada a uma ChatMessage.
          * Dice So Nice usa o fluxo padrão de rolagens
          * do Foundry já adotado pelo restante do módulo.
          */
-        await challengerRoll
-            .toMessage({
-                speaker:
-                    ChatMessage
-                        .getSpeaker({
-                            actor,
-                        }),
+        await challengerRoll.toMessage({
+            speaker: ChatMessage.getSpeaker({
+                actor,
+            }),
 
-                flavor:
-                    `<strong>Equilíbrio Instável — Desafiante</strong> · 1 = Entidade · 2 = Demônio · Resultado: <strong>${escapeHtml(challengerRoll.total)}</strong> → ${escapeHtml(challengerName)}`,
+            flavor: `<strong>Equilíbrio Instável — Desafiante</strong> · 1 = Entidade · 2 = Demônio · Resultado: <strong>${escapeHtml(challengerRoll.total)}</strong> → ${escapeHtml(challengerName)}`,
 
-                rollMode:
-                    currentRollMode(),
-            });
+            rollMode: currentRollMode(),
+        });
     } else {
-        challenge =
-            resolveDualSoulChallenge({
-                ceremony,
-            });
+        challenge = resolveDualSoulChallenge({
+            ceremony,
+        });
     }
 
-    const challengerName =
-        soulName(
-            challenge
-                .challengerKind,
-            props
-        );
+    const challengerName = soulName(challenge.challengerKind, props);
 
-    const attribute =
-        await chooseAttribute({
-            actor,
-            challengerName,
-            dc,
-        });
+    const attribute = await chooseAttribute({
+        actor,
+        challengerName,
+        dc,
+    });
 
     if (!attribute) {
         return null;
@@ -856,114 +520,65 @@ export async function openDualSoulAwakeningResistance(
     let chosenValue;
 
     try {
-        chosenValue =
-            attributeValue(
-                actor,
-                attribute
-            );
+        chosenValue = attributeValue(actor, attribute);
     } catch (error) {
-        return ui.notifications
-            ?.error?.(
-                error.message
-            );
+        return ui.notifications?.error?.(error.message);
     }
 
-    const formula =
-        `1d20 + ${chosenValue}`;
+    const formula = `1d20 + ${chosenValue}`;
 
-    const resistanceRoll =
-        Roll.create(
-            formula,
-            actor?.getRollData?.() ??
-            {}
-        );
+    const resistanceRoll = Roll.create(formula, actor?.getRollData?.() ?? {});
 
-    await resistanceRoll
-        .evaluate();
+    await resistanceRoll.evaluate();
 
-    const event =
-        buildDualSoulResistanceEvent({
-            ceremony,
+    const event = buildDualSoulResistanceEvent({
+        ceremony,
 
-            challengerRollTotal:
-                challengerRoll
-                    ?.total ??
-                null,
+        challengerRollTotal: challengerRoll?.total ?? null,
 
-            attribute,
+        attribute,
 
-            attributeValue:
-                chosenValue,
+        attributeValue: chosenValue,
 
-            rollTotal:
-                resistanceRoll.total,
+        rollTotal: resistanceRoll.total,
 
-            dc,
+        dc,
 
-            actorUuid:
-                actor.uuid ??
-                null,
+        actorUuid: actor.uuid ?? null,
 
-            itemUuid:
-                item.uuid ??
-                null,
+        itemUuid: item.uuid ?? null,
 
-            combatId:
-                game.combat?.id ??
-                null,
+        combatId: game.combat?.id ?? null,
 
-            round:
-                game.combat?.round ??
-                null,
+        round: game.combat?.round ?? null,
 
-            turn:
-                game.combat?.turn ??
-                null,
+        turn: game.combat?.turn ?? null,
 
-            eventId:
-                globalThis
-                    .foundry
-                    ?.utils
-                    ?.randomID
-                    ?.() ??
-                globalThis
-                    .crypto
-                    ?.randomUUID
-                    ?.() ??
-                String(
-                    Date.now()
-                ),
+        eventId:
+            globalThis.foundry?.utils?.randomID?.() ??
+            globalThis.crypto?.randomUUID?.() ??
+            String(Date.now()),
 
-            createdAt:
-                new Date()
-                    .toISOString(),
+        createdAt: new Date().toISOString(),
 
-            trigger,
-        });
+        trigger,
+    });
 
-    const resultLabel =
-        event.result === 'success'
-            ? '✅ SUCESSO'
-            : '❌ FALHA';
+    const resultLabel = event.result === 'success' ? '✅ SUCESSO' : '❌ FALHA';
 
     /*
      * Esta mensagem contém a própria Roll.
      * Não há uma segunda rolagem escondida.
      */
-    await resistanceRoll
-        .toMessage({
-            speaker:
-                ChatMessage
-                    .getSpeaker({
-                        actor,
-                    }),
+    await resistanceRoll.toMessage({
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
 
-            flavor:
-                `<strong>Resistência ao Despertar</strong> · ${escapeHtml(challengerName)} desafia · ${escapeHtml(attribute)} = ${escapeHtml(chosenValue)} · CD ${escapeHtml(dc)} → <strong>${resultLabel}</strong>`,
+        flavor: `<strong>Resistência ao Despertar</strong> · ${escapeHtml(challengerName)} desafia · ${escapeHtml(attribute)} = ${escapeHtml(chosenValue)} · CD ${escapeHtml(dc)} → <strong>${resultLabel}</strong>`,
 
-            rollMode:
-                currentRollMode(),
-        });
+        rollMode: currentRollMode(),
+    });
 
     /*
      * ÚNICA escrita mecânica deste slice.
@@ -973,31 +588,23 @@ export async function openDualSoulAwakeningResistance(
      */
     await item.update(
         {
-            [`system.props.${RUNTIME_KEY}`]:
-                JSON.stringify(
-                    event
-                ),
+            [`system.props.${RUNTIME_KEY}`]: JSON.stringify(event),
         },
         {
             naCsbAutomation: true,
             naSpecialWeapon: true,
-            naDualSoulAwakeningResistance:
-                true,
+            naDualSoulAwakeningResistance: true,
         }
     );
 
-    if (
-        event.result === 'success'
-    ) {
-        ui.notifications
-            ?.info?.(
-                `${actor.name} resistiu a ${challengerName}. O vínculo permanece como estava.`
-            );
+    if (event.result === 'success') {
+        ui.notifications?.info?.(
+            `${actor.name} resistiu a ${challengerName}. O vínculo permanece como estava.`
+        );
     } else {
-        ui.notifications
-            ?.warn?.(
-                `${actor.name} falhou contra ${challengerName}. Evento de despertar registrado como pendente.`
-            );
+        ui.notifications?.warn?.(
+            `${actor.name} falhou contra ${challengerName}. Evento de despertar registrado como pendente.`
+        );
     }
 
     return {

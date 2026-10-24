@@ -5,5 +5,7 @@ if (!moduleApi?.rollHit) {
     );
 }
 const macroArgs = typeof scope !== 'undefined' ? (scope ?? {}) : {};
-await moduleApi.rollHit({ actorUuid: macroArgs.actorUuid });
+await moduleApi.rollHit({
+    actorUuid: macroArgs.actorUuid,
+});
 return '';

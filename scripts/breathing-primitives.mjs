@@ -32,7 +32,8 @@ export async function aplicarStatusPrimitive({ primitive, target, runtime } = {}
     if (!target || !primitive?.status || typeof runtime?.applyStatus !== 'function')
         return { applied: false, reason: 'Sem alvo, status ou aplicador.' };
     const effect = statusEffectFrom(primitive);
-    if (primitive.stack === true) await runtime.applyStackingStatus(target, primitive.status, effect);
+    if (primitive.stack === true)
+        await runtime.applyStackingStatus(target, primitive.status, effect);
     else await runtime.applyStatus(target, primitive.status, effect);
     return { applied: true };
 }
@@ -119,9 +120,7 @@ export async function runLevelPrimitives({ primitives = [], actor, targets = [],
         if (!primitive || typeof primitive !== 'object') continue;
         if (primitive.tipo === 'aplicaStatus') {
             for (const target of targets)
-                results.status.push(
-                    await aplicarStatusPrimitive({ primitive, target, runtime })
-                );
+                results.status.push(await aplicarStatusPrimitive({ primitive, target, runtime }));
         } else if (primitive.tipo === 'cura') {
             results.heals.push(await curaPrimitive({ primitive, actor, runtime }));
         } else if (primitive.tipo === 'buff') {

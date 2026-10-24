@@ -47,7 +47,7 @@ https://github.com/SoftMissT/night-assassins-csb-automation/releases/latest/down
 
 ## Uso e macros
 
-Ao entrar no mundo como GM, o módulo cria ou atualiza a pasta **Night Assassins** no Diretório de Macros. Entre as macros distribuídas estão:
+Ao entrar no mundo como GM, o módulo cria ou atualiza somente o launcher **Night Assassins Controle GM** na pasta **Night Assassins** do Diretório de Macros. As demais macros permanecem no Compendium **Macros Night Assassins**, que preserva os UUIDs usados pelos templates:
 
 - Controle GM;
 - Gerenciar Ações, Status, Resistências, Descanso e Vida e Morte;
@@ -59,7 +59,7 @@ Ao entrar no mundo como GM, o módulo cria ou atualiza a pasta **Night Assassins
 
 As configurações ficam em **Configurações do Jogo → Night Assassins CSB Automation**.
 
-> A sincronização automática atualiza as macros gerenciadas no Diretório de Macros. Ela não redesenha nem reconecta componentes e botões dos templates CSB existentes no mundo.
+> A sincronização automática não apaga cópias antigas nem altera hotbars. Ela também não redesenha ou reconecta componentes e botões dos templates CSB existentes no mundo.
 
 ## Estado das fichas
 

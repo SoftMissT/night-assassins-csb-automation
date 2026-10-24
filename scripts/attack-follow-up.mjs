@@ -26,9 +26,7 @@ export function canChainBreathForms(actor) {
     const kind = actorKind(actor);
     if (kind !== 'oni') return true;
     const origin = String(actor?.system?.props?.origem_oni_dropdown ?? '').trim();
-    return (
-        origin === 'origem_oni_exterminador_corrompido' || origin === 'exterior_corrompido'
-    );
+    return origin === 'origem_oni_exterminador_corrompido' || origin === 'exterior_corrompido';
 }
 
 /**

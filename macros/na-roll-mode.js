@@ -5,11 +5,9 @@
     // Arrow IIFEs NÃO capturam 'arguments' de forma confiável dentro de AsyncFunction.
     // Sempre use 'scope' diretamente.
     const args = typeof scope !== 'undefined' ? scope || {} : {};
-
     // Labels calculadas do CSB podem entregar o valor final dentro de HTML.
     function parseAttributeValue(raw) {
         if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
-
         const text = String(raw ?? '')
             .replace(/<[^>]*>/g, ' ')
             .replace(/&nbsp;/gi, ' ')
@@ -18,11 +16,9 @@
         const match = text.match(/-?\d+(?:\.\d+)?/);
         return match ? Number(match[0]) : 0;
     }
-
     const test = args.test ?? 'Teste';
     const attr = args.attr ?? '';
     const color = args.color ?? '';
-
     // ── Leitura de Atributos do Ator ───────────────────────────────────────
     const actor = args.actorUuid
         ? await fromUuid(args.actorUuid)
@@ -34,7 +30,12 @@
         test,
         attr,
         kind: ['Bloqueio', 'Esquiva'].includes(test) ? 'defense' : 'test',
-    }) ?? { blocked: false, mode: 'normal', modifier: 0, reasons: [] };
+    }) ?? {
+        blocked: false,
+        mode: 'normal',
+        modifier: 0,
+        reasons: [],
+    };
     if (statusEffects.blocked)
         return ui.notifications?.warn(
             'Este personagem está incapacitado e não pode realizar a rolagem.'
@@ -43,7 +44,6 @@
         return ui.notifications?.warn(
             'Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.'
         );
-
     const ATTR_KEYS = ['vit', 'for', 'dex', 'fdv', 'car', 'int', 'sab'];
     const ATTR_NAMES = {
         vit: 'VIT',
@@ -62,7 +62,6 @@
         }
         return parseAttributeValue(props[propKey]);
     }
-
     // Monta mapa exclusivamente com os valores finais *_display da ficha.
     const attrValues = {};
     try {
@@ -70,17 +69,25 @@
     } catch (error) {
         return ui.notifications?.error(error.message);
     }
-
     // Atributos disponíveis como secundários (exclui o primário se houver)
     const primaryKey = attr ? attr.toLowerCase() : '';
     const val = ATTR_KEYS.includes(primaryKey) ? attrValues[primaryKey] : 0;
-    const secondaryOptions = [{ key: '', label: 'Nenhum', val: 0 }];
+    const secondaryOptions = [
+        {
+            key: '',
+            label: 'Nenhum',
+            val: 0,
+        },
+    ];
     for (const k of ATTR_KEYS) {
         if (k !== primaryKey) {
-            secondaryOptions.push({ key: k, label: ATTR_NAMES[k], val: attrValues[k] });
+            secondaryOptions.push({
+                key: k,
+                label: ATTR_NAMES[k],
+                val: attrValues[k],
+            });
         }
     }
-
     // ── Helpers ────────────────────────────────────────────────────────────
     function getDice(mode) {
         if (mode === 'advantage') return '2d20kh1';
@@ -96,9 +103,16 @@
 
     function parseBonus(raw) {
         const s = (raw || '').trim();
-        if (!s) return { extra: '', display: '' };
+        if (!s)
+            return {
+                extra: '',
+                display: '',
+            };
         const clean = s.replace(/^\+/, '');
-        return { extra: clean ? `+ ${clean}` : '', display: s };
+        return {
+            extra: clean ? `+ ${clean}` : '',
+            display: s,
+        };
     }
 
     function buildFormula(mode, secVal, bonusExtra) {
@@ -112,12 +126,10 @@
                     : ` - ${Math.abs(statusEffects.modifier)}`;
         return bonusExtra ? `${base} ${bonusExtra}` : base;
     }
-
     async function doRoll(mode, rollMode, secVal, bonusRaw, cdVal) {
         mode = automationApi?.mergeRollMode?.(mode, statusEffects.mode) ?? mode;
         const { extra, display } = parseBonus(bonusRaw);
         const formula = buildFormula(mode, secVal, extra);
-
         let roll;
         try {
             roll = await Roll.create(formula).evaluate();
@@ -125,7 +137,6 @@
             ui.notifications?.error(`Erro na fórmula: ${formula}`);
             return;
         }
-
         const modeLabel = getModeLabel(mode);
         const attrLine = attr ? `${ATTR_NAMES[primaryKey] ?? attr} = ${val}` : '';
         const secLine = secVal
@@ -135,21 +146,18 @@
         const statusLine = statusEffects.reasons.length
             ? ` | Status: ${statusEffects.reasons.join(', ')}`
             : '';
-
         let cdLine = '';
         if (cdVal > 0) {
             const passou = roll.total >= cdVal;
             const resultado = passou ? '✅ Sucesso!' : '❌ Falha!';
             cdLine = ` | CD ${cdVal} → ${resultado}`;
         }
-
         await roll.toMessage({
             flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
             speaker: ChatMessage.getSpeaker(),
             rollMode,
         });
     }
-
     // ── Dialog Content (estilos inline mínimos, look nativo Foundry) ───────
     const secOptionsHtml = secondaryOptions
         .map(
@@ -157,7 +165,6 @@
                 `<option value="${o.val}" data-key="${o.key}">${o.label}${o.val ? ` = ${o.val}` : ''}</option>`
         )
         .join('');
-
     const content = `
     <div style="margin-bottom:12px;">
       ${attr ? `<div style="font-size:13px;color:${color || '#666'};margin-bottom:4px;font-weight:600;">${attr} = ${val}</div>` : ''}
@@ -187,27 +194,22 @@
       </select>
     </div>
   `;
-
     // ── DialogV2 (ApplicationV2) ────────────────────────────────────────────
     const hookApi = globalThis.Hooks;
     const renderHook = hookApi?.on?.('renderDialogV2', (_dialog, element) => {
         const root = element?.querySelector ? element : element?.[0];
         if (!root?.querySelector?.('#na-rm-formula')) return;
-
         const bonusInput = root.querySelector('#na-rm-bonus');
         const secAttrSelect = root.querySelector('#na-rm-secattr');
         const formulaDisplay = root.querySelector('#na-rm-formula');
-
         const updateFormula = () => {
             const { extra } = parseBonus(bonusInput?.value ?? '');
             const secVal = Number(secAttrSelect?.value) || 0;
             if (formulaDisplay) formulaDisplay.textContent = buildFormula('normal', secVal, extra);
         };
-
         bonusInput?.addEventListener('input', updateFormula);
         secAttrSelect?.addEventListener('change', updateFormula);
     });
-
     const readInputs = (button) => {
         const form = button.form;
         return {
@@ -217,10 +219,11 @@
             cdVal: Number(form?.querySelector('#na-rm-cd')?.value) || 0,
         };
     };
-
     try {
         await foundry.applications.api.DialogV2.wait({
-            window: { title: test },
+            window: {
+                title: test,
+            },
             content,
             modal: true,
             rejectClose: false,
@@ -253,7 +256,11 @@
                         return i;
                     },
                 },
-                { action: 'cancel', label: 'Cancelar', callback: () => null },
+                {
+                    action: 'cancel',
+                    label: 'Cancelar',
+                    callback: () => null,
+                },
             ],
         });
     } finally {

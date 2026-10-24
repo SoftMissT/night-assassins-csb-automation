@@ -1,27 +1,41 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const MODULE_ID = 'night-assassins-csb-automation';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceDirectory = path.join(root, 'macros');
 const outputDirectory = path.join(root, 'build', 'compendium', 'macros');
-
 const MACRO_FOLDERS = Object.freeze([
-    { id: 'NAMacroCombat001', name: 'Combate' },
-    { id: 'NAMacroBreath001', name: 'Respirações' },
-    { id: 'NAMacroSheet0001', name: 'Ficha Slayer' },
-    { id: 'NAMacroWeapon001', name: 'Armas e Armas Especiais' },
-    { id: 'NAMacroGMTool001', name: 'GM e Manutenção' },
+    {
+        id: 'NAMacroCombat001',
+        name: 'Combate',
+    },
+    {
+        id: 'NAMacroBreath001',
+        name: 'Respirações',
+    },
+    {
+        id: 'NAMacroSheet0001',
+        name: 'Ficha Slayer',
+    },
+    {
+        id: 'NAMacroWeapon001',
+        name: 'Armas e Armas Especiais',
+    },
+    {
+        id: 'NAMacroGMTool001',
+        name: 'GM e Manutenção',
+    },
 ]);
-
 const folderFor = (file) => {
     if (['na-roll-mode.js', 'na-acerto-roll.js', 'na_roll_damage.js'].includes(file))
         return 'NAMacroCombat001';
     if (
-        ['na-resp-usar-forma.js', 'na-respiracao-recuperacao.js', 'na-corrigir-respiracoes.js'].includes(
-            file
-        )
+        [
+            'na-resp-usar-forma.js',
+            'na-respiracao-recuperacao.js',
+            'na-corrigir-respiracoes.js',
+        ].includes(file)
     )
         return 'NAMacroBreath001';
     if (
@@ -56,15 +70,22 @@ function macroIconPath(file, icon = '') {
     if (icon.includes('/')) return `modules/${MODULE_ID}/assets/icons/${icon}`;
     return `modules/${MODULE_ID}/assets/icons/macros/${icon || `${path.basename(file, '.js')}_icon.webp`}`;
 }
-
 const macros = [
-    { id: 'NARollMode000001', file: 'na-roll-mode.js', name: 'Night Assassins Teste de Atributo' },
+    {
+        id: 'NARollMode000001',
+        file: 'na-roll-mode.js',
+        name: 'Night Assassins Teste de Atributo',
+    },
     {
         id: 'NAHitRoll0000001',
         file: 'na-acerto-roll.js',
         name: 'Night Assassins Rolagem de Acerto',
     },
-    { id: 'NADamageRoll0001', file: 'na_roll_damage.js', name: 'Night Assassins Rolagem de Dano' },
+    {
+        id: 'NADamageRoll0001',
+        file: 'na_roll_damage.js',
+        name: 'Night Assassins Rolagem de Dano',
+    },
     {
         id: 'NAAttrLevel00001',
         file: 'na-attribute-level-snapshot.js',
@@ -75,7 +96,11 @@ const macros = [
         file: 'na-marca-cacador.js',
         name: 'Night Assassins Marca do Caçador',
     },
-    { id: 'NAGMControl00001', file: 'na-gm-control.js', name: 'Night Assassins Controle GM' },
+    {
+        id: 'NAGMControl00001',
+        file: 'na-gm-control.js',
+        name: 'Night Assassins Controle GM',
+    },
     {
         id: 'NADiagnostic0001',
         file: 'na-diagnostico-erros.js',
@@ -175,10 +200,13 @@ const macros = [
         icon: 'na-marca-cacador_icon.webp',
     },
 ];
-
-await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
-
+await rm(outputDirectory, {
+    recursive: true,
+    force: true,
+});
+await mkdir(outputDirectory, {
+    recursive: true,
+});
 for (const [index, folder] of MACRO_FOLDERS.entries()) {
     await writeFile(
         path.join(outputDirectory, `${String(index).padStart(2, '0')}-folder-${folder.id}.json`),
@@ -199,10 +227,8 @@ for (const [index, folder] of MACRO_FOLDERS.entries()) {
         )}\n`
     );
 }
-
 for (const [index, macro] of macros.entries()) {
     if (macro.id.length !== 16) throw new Error(`ID inválido para ${macro.file}: ${macro.id}`);
-
     const command = await readFile(path.join(sourceDirectory, macro.file), 'utf8');
     const document = {
         _key: `!macros!${macro.id}`,
@@ -234,12 +260,10 @@ for (const [index, macro] of macros.entries()) {
             lastModifiedBy: null,
         },
     };
-
     const outputName = `${String(index + 1).padStart(2, '0')}-${path.basename(macro.file, '.js')}.json`;
     await writeFile(
         path.join(outputDirectory, outputName),
         `${JSON.stringify(document, null, 2)}\n`
     );
 }
-
 console.log(`Preparadas ${macros.length} macros para o Compendium.`);

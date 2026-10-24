@@ -147,7 +147,9 @@ export function normalizePresetEntry(entry) {
  */
 export function normalizeDamagePreset(preset) {
     if (!preset || typeof preset !== 'object') return null;
-    const name = String(preset.name ?? '').trim().slice(0, MAX_NAME_LENGTH);
+    const name = String(preset.name ?? '')
+        .trim()
+        .slice(0, MAX_NAME_LENGTH);
     if (!name) return null;
     const group = presetGroupKey(preset.group);
     const sourceEntries = Array.isArray(preset.entries) ? preset.entries : [];
@@ -232,9 +234,7 @@ export function upsertDamagePreset(raw, preset) {
     const normalized = normalizeDamagePreset(preset);
     if (!normalized)
         return { ok: false, presets: store.presets, reason: 'Preset de dano inválido.' };
-    const remaining = store.presets.filter(
-        (entry) => String(entry?.id ?? '') !== normalized.id
-    );
+    const remaining = store.presets.filter((entry) => String(entry?.id ?? '') !== normalized.id);
     if (remaining.length >= MAX_DAMAGE_PRESETS)
         return {
             ok: false,
@@ -252,9 +252,7 @@ export function upsertDamagePreset(raw, preset) {
  */
 export function removeDamagePreset(raw, id) {
     const wanted = String(id ?? '');
-    return parseDamagePresets(raw).presets.filter(
-        (preset) => String(preset?.id ?? '') !== wanted
-    );
+    return parseDamagePresets(raw).presets.filter((preset) => String(preset?.id ?? '') !== wanted);
 }
 
 /**

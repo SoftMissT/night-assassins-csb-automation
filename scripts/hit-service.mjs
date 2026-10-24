@@ -6,11 +6,7 @@ import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openHitConfirmationDialog, openHitDialog } from './dialogs/hit-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
-import {
-    consumeOniActions,
-    consumeSlayerActions,
-    recoverSlayerFolego,
-} from './action-service.mjs';
+import { consumeOniActions, consumeSlayerActions, recoverSlayerFolego } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { parseWaterBreathingState } from './breath-service.mjs';
 import { flameWeaponTier } from './flame-breathing-data.mjs';
@@ -39,6 +35,7 @@ import {
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
 import { classRankAtLevel } from './slayer/class-contracts.mjs';
+import { markCriticalMargin, markExtraAttack } from './slayer/hunter-mark.mjs';
 import {
     consumeSnowPending,
     parseSnowBreathingState,
@@ -136,6 +133,7 @@ async function doRoll({
     weapon = null,
     metalReroll = false,
     stopOnMiss = false,
+    markMargin = null,
 }) {
     mode = mergeRollMode(mode, statusEffects.mode);
     const { extra, display } = parseBonus(bonusRaw);
@@ -151,7 +149,8 @@ async function doRoll({
     const attempts = [];
     let interrupted = false;
     const actionLabel = TIPOS_ACAO.find((entry) => entry.key === actionType)?.label;
-    const criticalThreshold = weapon?.effectiveCritical ?? 20;
+    // Crítico Marcado (Marca do Caçador ativa, alvo Oni): a menor margem entre a da arma e a da Marca.
+    const criticalThreshold = Math.min(weapon?.effectiveCritical ?? 20, markMargin ?? 20);
     let criticalChainBonus = 0;
 
     for (let index = 0; index < maximum; index += 1) {
@@ -230,9 +229,7 @@ async function doRoll({
             interrupted = true;
             break;
         }
-        const critical =
-            decision.hit &&
-            inCriticalRange;
+        const critical = decision.hit && inCriticalRange;
         attempts.push({
             roll,
             hit: decision.hit,
@@ -423,13 +420,9 @@ export async function rollHit(options) {
     const snowHit = snowState.nextHit;
     const windState = parseWindBreathingState(props.resp_vento_estado);
     const windHit = windState.nextHit;
-    const classTechniquePending = [
-        breathHit,
-        flameHit,
-        mistHit,
-        snowHit,
-        windHit,
-    ].some((pending) => pending && typeof pending === 'object');
+    const classTechniquePending = [breathHit, flameHit, mistHit, snowHit, windHit].some(
+        (pending) => pending && typeof pending === 'object'
+    );
     const snowPenalty = actor.getFlag?.(MODULE_ID, 'snowPenalty');
     const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
     // 8ª Forma Ofuscamento (Névoa): a partir do Nível 2, quem tenta acertar o usuário/aliado
@@ -596,6 +589,22 @@ export async function rollHit(options) {
         dialogResult.actionType === 'ataque' &&
         !classTechniquePending &&
         !poisonExtraUsed;
+    // Marca do Caçador: margem de crítico só contra Oni e Frequência Cardíaca Elevada (1×/turno).
+    // ponytail: com arma Nitoryu/Ryōtō o ataque adicional segue a regra de 2º golpe (sem FOR/DEX);
+    // para separar, o doRoll precisaria marcar quais tentativas são do rider.
+    const markMargin = markCriticalMargin(props, {
+        targetIsOni: targetedActors.some((target) => actorKind(target) === 'oni'),
+    });
+    const markExtraFlag = actor.getFlag?.(MODULE_ID, 'markExtraAttack');
+    const markExtraUsed =
+        combatRound !== null &&
+        markExtraFlag?.round === combatRound &&
+        markExtraFlag?.turn === combatTurn;
+    const markExtra = markExtraAttack(props, {
+        actionType: dialogResult.actionType,
+        classTechniquePending,
+        usedThisTurn: markExtraUsed,
+    });
     const baseRollCount = Math.max(
         dialogResult.rollCount,
         Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1,
@@ -620,15 +629,21 @@ export async function rollHit(options) {
         rollMode: dialogResult.rollMode,
         bonusRaw,
         cdVal: dialogResult.cdVal,
-        rollCount: baseRollCount + (poisonExtraAttack ? 1 : 0),
+        rollCount: baseRollCount + (poisonExtraAttack ? 1 : 0) + (markExtra ? 1 : 0),
         actionType: dialogResult.actionType,
         statusEffects: finalStatusEffects,
         weapon,
         metalReroll: metalState.chainReaction?.turns > 0,
         stopOnMiss: mistHit?.stopOnMiss === true,
+        markMargin,
     });
     if (poisonExtraAttack && result && combatRound !== null)
         await actor.setFlag?.(MODULE_ID, 'poisonExtraAttack', {
+            round: combatRound,
+            turn: combatTurn,
+        });
+    if (markExtra && result && combatRound !== null)
+        await actor.setFlag?.(MODULE_ID, 'markExtraAttack', {
             round: combatRound,
             turn: combatTurn,
         });

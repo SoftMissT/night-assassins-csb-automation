@@ -15,9 +15,7 @@ import {
     parseDualSoulJson,
 } from './dual-soul-ceremony-core.mjs';
 
-import {
-    hydrateSpecialWeaponItem,
-} from './special-weapon-service.mjs';
+import { hydrateSpecialWeaponItem } from './special-weapon-service.mjs';
 import { resetDualSoulBond } from './dual-soul-reset-service.mjs';
 import { bloodPactPayment } from './blood-pact-core.mjs';
 
@@ -26,10 +24,7 @@ function normalizeText(value = '') {
         .trim()
         .toLocaleLowerCase('pt-BR')
         .normalize('NFD')
-        .replace(
-            /[\u0300-\u036f]/gu,
-            ''
-        );
+        .replace(/[\u0300-\u036f]/gu, '');
 }
 
 function escapeHtml(value = '') {
@@ -89,11 +84,7 @@ function actorItems(actor) {
         return [];
     }
 
-    if (
-        Array.isArray(
-            actor.items.contents
-        )
-    ) {
+    if (Array.isArray(actor.items.contents)) {
         return actor.items.contents;
     }
 
@@ -105,102 +96,50 @@ function actorItems(actor) {
 }
 
 export function isDualSoulWeapon(item) {
-    const props =
-        item?.system?.props ?? {};
+    const props = item?.system?.props ?? {};
 
-    const category =
-        normalizeText(
-            props.arma_categoria
-        );
+    const category = normalizeText(props.arma_categoria);
 
     if (category !== 'especial') {
         return false;
     }
 
     const hasSides =
-        Boolean(
-            String(
-                props.arma_entidade ??
-                ''
-            ).trim()
-        ) &&
-        Boolean(
-            String(
-                props.arma_demonio ??
-                ''
-            ).trim()
-        );
+        Boolean(String(props.arma_entidade ?? '').trim()) &&
+        Boolean(String(props.arma_demonio ?? '').trim());
 
-    const hasCeremony =
-        Boolean(
-            props.dupla_alma_cerimonia_json
-        );
+    const hasCeremony = Boolean(props.dupla_alma_cerimonia_json);
 
-    return (
-        hasSides ||
-        hasCeremony
-    );
+    return hasSides || hasCeremony;
 }
 
-async function resolveActor(
-    options = {}
-) {
-    if (
-        options.actor
-            ?.documentName === 'Actor'
-    ) {
+async function resolveActor(options = {}) {
+    if (options.actor?.documentName === 'Actor') {
         return options.actor;
     }
 
     if (options.actorUuid) {
-        const document =
-            await fromUuid(
-                options.actorUuid
-            );
+        const document = await fromUuid(options.actorUuid);
 
-        const actor =
-            document?.actor ??
-            document;
+        const actor = document?.actor ?? document;
 
-        if (
-            actor
-                ?.documentName === 'Actor'
-        ) {
+        if (actor?.documentName === 'Actor') {
             return actor;
         }
     }
 
-    return (
-        canvas
-            ?.tokens
-            ?.controlled
-            ?.[0]
-            ?.actor ??
-        game.user?.character ??
-        null
-    );
+    return canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character ?? null;
 }
 
-async function resolveExplicitItem(
-    options = {}
-) {
-    if (
-        options.item &&
-        options.item.documentName !== 'Actor'
-    ) {
+async function resolveExplicitItem(options = {}) {
+    if (options.item && options.item.documentName !== 'Actor') {
         return options.item;
     }
 
     if (options.itemUuid) {
-        const document =
-            await fromUuid(
-                options.itemUuid
-            );
+        const document = await fromUuid(options.itemUuid);
 
-        if (
-            document &&
-            document.documentName !== 'Actor'
-        ) {
+        if (document && document.documentName !== 'Actor') {
             return document;
         }
     }
@@ -208,26 +147,14 @@ async function resolveExplicitItem(
     return null;
 }
 
-async function chooseDualSoulWeapon(
-    actor,
-    options = {}
-) {
-    const explicit =
-        await resolveExplicitItem(
-            options
-        );
+async function chooseDualSoulWeapon(actor, options = {}) {
+    const explicit = await resolveExplicitItem(options);
 
     if (explicit) {
-        return isDualSoulWeapon(explicit)
-            ? explicit
-            : null;
+        return isDualSoulWeapon(explicit) ? explicit : null;
     }
 
-    const weapons =
-        actorItems(actor)
-            .filter(
-                isDualSoulWeapon
-            );
+    const weapons = actorItems(actor).filter(isDualSoulWeapon);
 
     if (weapons.length === 0) {
         return null;
@@ -237,22 +164,13 @@ async function chooseDualSoulWeapon(
         return weapons[0];
     }
 
-    const buttons =
-        weapons.map(
-            (weapon, index) => ({
-                action:
-                    `weapon-${index}`,
+    const buttons = weapons.map((weapon, index) => ({
+        action: `weapon-${index}`,
 
-                label:
-                    weapon.name,
+        label: weapon.name,
 
-                callback:
-                    () => (
-                        weapon.uuid ??
-                        weapon.id
-                    ),
-            })
-        );
+        callback: () => weapon.uuid ?? weapon.id,
+    }));
 
     buttons.push({
         action: 'cancel',
@@ -260,18 +178,12 @@ async function chooseDualSoulWeapon(
         callback: () => null,
     });
 
-    const selected =
-        await foundry
-            .applications
-            .api
-            .DialogV2
-            .wait({
-                window: {
-                    title:
-                        'Cerimônia de Vínculo',
-                },
+    const selected = await foundry.applications.api.DialogV2.wait({
+        window: {
+            title: 'Cerimônia de Vínculo',
+        },
 
-                content: `
+        content: `
                     <div class="na-csb-automation">
                         <p>
                             Escolha a Arma de Dupla Alma
@@ -280,128 +192,65 @@ async function chooseDualSoulWeapon(
                     </div>
                 `,
 
-                modal: true,
-                rejectClose: false,
-                buttons,
-            });
+        modal: true,
+        rejectClose: false,
+        buttons,
+    });
 
     if (!selected) {
         return null;
     }
 
-    return (
-        weapons.find(
-            (weapon) =>
-                (
-                    weapon.uuid ??
-                    weapon.id
-                ) === selected
-        ) ??
-        null
-    );
+    return weapons.find((weapon) => (weapon.uuid ?? weapon.id) === selected) ?? null;
 }
 
-function staticCeremonyDefinition(
-    canonicalProps = {},
-    localProps = {}
-) {
-    const canonical =
-        parseDualSoulJson(
-            canonicalProps
-                .dupla_alma_cerimonia_json,
-            {}
-        );
+function staticCeremonyDefinition(canonicalProps = {}, localProps = {}) {
+    const canonical = parseDualSoulJson(canonicalProps.dupla_alma_cerimonia_json, {});
 
-    const local =
-        parseDualSoulJson(
-            localProps
-                .dupla_alma_cerimonia_json,
-            {}
-        );
+    const local = parseDualSoulJson(localProps.dupla_alma_cerimonia_json, {});
 
-    const source =
-        Object.keys(canonical).length > 0
-            ? canonical
-            : local;
+    const source = Object.keys(canonical).length > 0 ? canonical : local;
 
-    const {
-        runtime: _runtime,
-        ...definition
-    } = source;
+    const { runtime: _runtime, ...definition } = source;
 
     return definition;
 }
 
-function validCeremonyDefinition(
-    definition
-) {
+function validCeremonyDefinition(definition) {
     return Boolean(
         definition &&
         typeof definition === 'object' &&
         !Array.isArray(definition) &&
-
-        definition
-            .teste_1_lado_dominante &&
-        typeof definition
-            .teste_1_lado_dominante ===
-            'object' &&
-
-        definition
-            .teste_2_intensidade_vinculo &&
-        typeof definition
-            .teste_2_intensidade_vinculo ===
-            'object' &&
-
-        definition
-            .teste_3_gatilho_lado_adormecido &&
-        typeof definition
-            .teste_3_gatilho_lado_adormecido ===
-            'object' &&
-
-        definition
-            .teste_de_despertar &&
-        typeof definition
-            .teste_de_despertar ===
-            'object'
+        definition.teste_1_lado_dominante &&
+        typeof definition.teste_1_lado_dominante === 'object' &&
+        definition.teste_2_intensidade_vinculo &&
+        typeof definition.teste_2_intensidade_vinculo === 'object' &&
+        definition.teste_3_gatilho_lado_adormecido &&
+        typeof definition.teste_3_gatilho_lado_adormecido === 'object' &&
+        definition.teste_de_despertar &&
+        typeof definition.teste_de_despertar === 'object'
     );
 }
 
-async function ceremonyRoll(
-    actor,
-    formula,
-    flavor
-) {
-    const roll =
-        new Roll(
-            formula,
-            actor?.getRollData?.() ?? {}
-        );
+async function ceremonyRoll(actor, formula, flavor) {
+    const roll = new Roll(formula, actor?.getRollData?.() ?? {});
 
     await roll.evaluate();
 
     const message = await roll.toMessage(
         {
-            speaker:
-                ChatMessage
-                    .getSpeaker({
-                        actor,
-                    }),
+            speaker: ChatMessage.getSpeaker({
+                actor,
+            }),
 
             flavor,
         },
         {
-            rollMode:
-                game.settings.get(
-                    'core',
-                    'rollMode'
-                ),
+            rollMode: game.settings.get('core', 'rollMode'),
         }
     );
 
-    if (
-        message?.id &&
-        game.dice3d?.waitFor3DAnimationByMessageID
-    ) {
+    if (message?.id && game.dice3d?.waitFor3DAnimationByMessageID) {
         await game.dice3d.waitFor3DAnimationByMessageID(message.id);
     }
 
@@ -474,13 +323,7 @@ async function showCeremonyStage({
     });
 }
 
-async function revealCeremonyResult({
-    number,
-    title,
-    total,
-    result,
-    detail = '',
-}) {
+async function revealCeremonyResult({ number, title, total, result, detail = '' }) {
     return foundry.applications.api.DialogV2.wait({
         classes: ['na-dual-soul-dialog'],
         window: { title: `Cerimônia — Resultado ${number}/3` },
@@ -496,78 +339,40 @@ async function revealCeremonyResult({
         modal: true,
         rejectClose: false,
         buttons: [
-            { action: 'continue', label: number === 3 ? 'Gravar vínculo permanente' : 'Continuar cerimônia', default: true, callback: () => true },
+            {
+                action: 'continue',
+                label: number === 3 ? 'Gravar vínculo permanente' : 'Continuar cerimônia',
+                default: true,
+                callback: () => true,
+            },
         ],
     });
 }
 
-export function getDualSoulCeremonyState(
-    item
-) {
-    return dualSoulCeremonyRuntime(
-        item
-            ?.system
-            ?.props
-            ?.dupla_alma_cerimonia_json
-    );
+export function getDualSoulCeremonyState(item) {
+    return dualSoulCeremonyRuntime(item?.system?.props?.dupla_alma_cerimonia_json);
 }
 
-export function dualSoulCeremonyCompleted(
-    item
-) {
-    return ceremonyCompletedValue(
-        item
-            ?.system
-            ?.props
-            ?.dupla_alma_cerimonia_json
-    );
+export function dualSoulCeremonyCompleted(item) {
+    return ceremonyCompletedValue(item?.system?.props?.dupla_alma_cerimonia_json);
 }
 
-async function showCompletedCeremony(
-    item,
-    runtime
-) {
-    const dominance =
-        escapeHtml(
-            runtime
-                ?.dominance
-                ?.display ??
-            'Registrado'
-        );
+async function showCompletedCeremony(item, runtime) {
+    const dominance = escapeHtml(runtime?.dominance?.display ?? 'Registrado');
 
-    const intensity =
-        escapeHtml(
-            runtime
-                ?.intensity
-                ?.name ??
-            'Registrada'
-        );
+    const intensity = escapeHtml(runtime?.intensity?.name ?? 'Registrada');
 
-    const trigger =
-        escapeHtml(
-            runtime
-                ?.trigger
-                ?.publicText ??
-            'Registrado'
-        );
+    const trigger = escapeHtml(runtime?.trigger?.publicText ?? 'Registrado');
 
-    const cd =
-        runtime
-            ?.intensity
-            ?.awakeningCd;
+    const cd = runtime?.intensity?.awakeningCd;
 
-    const choice = await foundry
-        .applications
-        .api
-        .DialogV2
-        .wait({
-            classes: ['na-dual-soul-dialog', 'na-dual-soul-completed-dialog'],
-            window: {
-                title:
-                    `Cerimônia — ${item.name}`,
-            },
+    const choice = await foundry.applications.api.DialogV2.wait({
+        classes: ['na-dual-soul-dialog', 'na-dual-soul-completed-dialog'],
+        window: {
+            title: `Cerimônia — ${item.name}`,
+        },
 
-            content: `
+        content: `
                 <div class="na-csb-automation na-dual-soul-panel na-dual-soul-completed">
                     <span class="na-dual-soul-kicker">Vínculo permanente</span>
                     <h2>
@@ -579,10 +384,7 @@ async function showCompletedCeremony(
                         <p><span>Intensidade</span><strong>${intensity}</strong></p>
                         <p><span>Gatilho</span><strong>${trigger}</strong></p>
                         <p><span>CD base de Despertar</span><strong>${
-                            cd === null ||
-                            cd === undefined
-                                ? '—'
-                                : escapeHtml(cd)
+                            cd === null || cd === undefined ? '—' : escapeHtml(cd)
                         }</strong></p>
                     </div>
 
@@ -591,28 +393,34 @@ async function showCompletedCeremony(
                         <span>Esta Cerimônia consumiu 90% do PDV que o portador possuía ao concluí-la. O Primeiro Despertar não cobra esse custo novamente.</span>
                     </div>
 
-                    <p class="na-dual-soul-footnote">${game.user?.isGM
-                        ? 'O reset administrativo não devolve sangue. Ao concluir uma nova Cerimônia, 90% do PDV atual será oferecido novamente.'
-                        : 'A Cerimônia não pode ser rerrolada pelo jogador.'}</p>
+                    <p class="na-dual-soul-footnote">${
+                        game.user?.isGM
+                            ? 'O reset administrativo não devolve sangue. Ao concluir uma nova Cerimônia, 90% do PDV atual será oferecido novamente.'
+                            : 'A Cerimônia não pode ser rerrolada pelo jogador.'
+                    }</p>
                 </div>
             `,
 
-            modal: true,
-            rejectClose: false,
+        modal: true,
+        rejectClose: false,
 
-            buttons: [
-                ...(game.user?.isGM ? [{
-                    action: 'reset',
-                    label: 'GM — Resetar vínculo desta arma',
-                    callback: () => 'reset',
-                }] : []),
-                {
-                    action: 'close',
-                    label: 'Fechar',
-                    callback: () => true,
-                },
-            ],
-        });
+        buttons: [
+            ...(game.user?.isGM
+                ? [
+                      {
+                          action: 'reset',
+                          label: 'GM — Resetar vínculo desta arma',
+                          callback: () => 'reset',
+                      },
+                  ]
+                : []),
+            {
+                action: 'close',
+                label: 'Fechar',
+                callback: () => true,
+            },
+        ],
+    });
     if (choice === 'reset') {
         try {
             return await resetDualSoulBond(item);
@@ -622,71 +430,35 @@ async function showCompletedCeremony(
     }
 }
 
-export async function openDualSoulCeremony(
-    options = {}
-) {
-    const actor =
-        await resolveActor(
-            options
-        );
+export async function openDualSoulCeremony(options = {}) {
+    const actor = await resolveActor(options);
 
     if (!actor) {
-        return ui.notifications
-            ?.warn?.(
-                'Selecione o portador da Arma de Dupla Alma.'
-            );
+        return ui.notifications?.warn?.('Selecione o portador da Arma de Dupla Alma.');
     }
 
-    const item =
-        await chooseDualSoulWeapon(
-            actor,
-            options
-        );
+    const item = await chooseDualSoulWeapon(actor, options);
 
     if (!item) {
-        return ui.notifications
-            ?.warn?.(
-                'Nenhuma Arma de Dupla Alma válida foi encontrada.'
-            );
+        return ui.notifications?.warn?.('Nenhuma Arma de Dupla Alma válida foi encontrada.');
     }
 
-    const hydration =
-        await hydrateSpecialWeaponItem(
-            item
-        );
+    const hydration = await hydrateSpecialWeaponItem(item);
 
     if (!hydration?.ok) {
-        return ui.notifications
-            ?.error?.(
-                hydration?.reason ??
-                'Não foi possível hidratar os dados canônicos da arma.'
-            );
+        return ui.notifications?.error?.(
+            hydration?.reason ?? 'Não foi possível hidratar os dados canônicos da arma.'
+        );
     }
 
-    const localProps =
-        item.system?.props ?? {};
+    const localProps = item.system?.props ?? {};
 
-    const canonicalProps =
-        hydration
-            ?.canonical
-            ?.system
-            ?.props ??
-        {};
+    const canonicalProps = hydration?.canonical?.system?.props ?? {};
 
-    if (
-        dualSoulCeremonyCompleted(
-            item
-        )
-    ) {
-        const runtime =
-            getDualSoulCeremonyState(
-                item
-            );
+    if (dualSoulCeremonyCompleted(item)) {
+        const runtime = getDualSoulCeremonyState(item);
 
-        const completedAction = await showCompletedCeremony(
-            item,
-            runtime
-        );
+        const completedAction = await showCompletedCeremony(item, runtime);
         if (completedAction?.reset) return completedAction;
 
         return {
@@ -698,73 +470,34 @@ export async function openDualSoulCeremony(
         };
     }
 
-    const entityName =
-        String(
-            localProps.arma_entidade ??
-            canonicalProps.arma_entidade ??
-            ''
-        ).trim();
+    const entityName = String(
+        localProps.arma_entidade ?? canonicalProps.arma_entidade ?? ''
+    ).trim();
 
-    const demonName =
-        String(
-            localProps.arma_demonio ??
-            canonicalProps.arma_demonio ??
-            ''
-        ).trim();
+    const demonName = String(localProps.arma_demonio ?? canonicalProps.arma_demonio ?? '').trim();
 
-    if (
-        !entityName ||
-        !demonName
-    ) {
-        return ui.notifications
-            ?.error?.(
-                `${item.name} não possui Entidade e Demônio definidos.`
-            );
+    if (!entityName || !demonName) {
+        return ui.notifications?.error?.(`${item.name} não possui Entidade e Demônio definidos.`);
     }
 
-    const definition =
-        staticCeremonyDefinition(
-            canonicalProps,
-            localProps
-        );
+    const definition = staticCeremonyDefinition(canonicalProps, localProps);
 
-    const canonicalRitual = parseDualSoulJson(
-        canonicalProps.arma_ritual,
-        {}
-    );
-    const localRitual = parseDualSoulJson(
-        localProps.arma_ritual,
-        {}
-    );
-    const ritual = Object.keys(localRitual).length > 0
-        ? localRitual
-        : canonicalRitual;
+    const canonicalRitual = parseDualSoulJson(canonicalProps.arma_ritual, {});
+    const localRitual = parseDualSoulJson(localProps.arma_ritual, {});
+    const ritual = Object.keys(localRitual).length > 0 ? localRitual : canonicalRitual;
 
-    if (
-        !validCeremonyDefinition(
-            definition
-        )
-    ) {
-        return ui.notifications
-            ?.error?.(
-                `${item.name} não possui a Cerimônia canônica completa.`
-            );
+    if (!validCeremonyDefinition(definition)) {
+        return ui.notifications?.error?.(`${item.name} não possui a Cerimônia canônica completa.`);
     }
 
-    const confirmed =
-        await foundry
-            .applications
-            .api
-            .DialogV2
-            .confirm({
-                window: {
-                    title:
-                        'Cerimônia de Vínculo — IRREVERSÍVEL',
-                },
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: {
+            title: 'Cerimônia de Vínculo — IRREVERSÍVEL',
+        },
 
-                classes: ['na-dual-soul-dialog', 'na-blood-pact-dialog'],
+        classes: ['na-dual-soul-dialog', 'na-blood-pact-dialog'],
 
-                content: `
+        content: `
                     <div class="na-csb-automation na-dual-soul-panel">
                         <h2>
                             ${escapeHtml(item.name)}
@@ -818,9 +551,9 @@ export async function openDualSoulCeremony(
                     </div>
                 `,
 
-                modal: true,
-                rejectClose: false,
-            });
+        modal: true,
+        rejectClose: false,
+    });
 
     if (!confirmed) {
         return null;
@@ -839,12 +572,11 @@ export async function openDualSoulCeremony(
     });
     if (!test1Ready) return null;
 
-    const test1 =
-        await ceremonyRoll(
-            actor,
-            test1Formula,
-            `${item.name} — Cerimônia · Teste 1 · Lado Dominante`
-        );
+    const test1 = await ceremonyRoll(
+        actor,
+        test1Formula,
+        `${item.name} — Cerimônia · Teste 1 · Lado Dominante`
+    );
 
     const dominancePreview = dualSoulDominance(test1.total, {
         formula: test1Formula,
@@ -872,12 +604,11 @@ export async function openDualSoulCeremony(
     });
     if (!test2Ready) return null;
 
-    const test2 =
-        await ceremonyRoll(
-            actor,
-            '3d20',
-            `${item.name} — Cerimônia · Teste 2 · Intensidade do Vínculo`
-        );
+    const test2 = await ceremonyRoll(
+        actor,
+        '3d20',
+        `${item.name} — Cerimônia · Teste 2 · Intensidade do Vínculo`
+    );
 
     const intensityPreview = dualSoulIntensity(test2.total);
     await revealCeremonyResult({
@@ -899,32 +630,26 @@ export async function openDualSoulCeremony(
     });
     if (!test3Ready) return null;
 
-    const test3 =
-        await ceremonyRoll(
-            actor,
-            '3d20',
-            `${item.name} — Cerimônia · Teste 3 · Gatilho do Lado Adormecido`
-        );
+    const test3 = await ceremonyRoll(
+        actor,
+        '3d20',
+        `${item.name} — Cerimônia · Teste 3 · Gatilho do Lado Adormecido`
+    );
 
-    const result =
-        buildDualSoulCeremonyResult({
-            test1Total:
-                test1.total,
+    const result = buildDualSoulCeremonyResult({
+        test1Total: test1.total,
 
-            test1Formula,
+        test1Formula,
 
-            test2Total:
-                test2.total,
+        test2Total: test2.total,
 
-            test3Total:
-                test3.total,
+        test3Total: test3.total,
 
-            entityName,
-            demonName,
+        entityName,
+        demonName,
 
-            tests:
-                definition,
-        });
+        tests: definition,
+    });
 
     const triggerPreview = dualSoulTrigger(test3.total);
     await revealCeremonyResult({
@@ -940,15 +665,11 @@ export async function openDualSoulCeremony(
 
         completed: true,
 
-        completedAt:
-            new Date()
-                .toISOString(),
+        completedAt: new Date().toISOString(),
 
-        actorUuid:
-            actor.uuid ?? null,
+        actorUuid: actor.uuid ?? null,
 
-        itemUuid:
-            item.uuid ?? null,
+        itemUuid: item.uuid ?? null,
     };
 
     const ceremonyStored = {
@@ -956,97 +677,54 @@ export async function openDualSoulCeremony(
         runtime,
     };
 
-    const canonicalLink =
-        parseDualSoulJson(
-            canonicalProps
-                .dupla_alma_vinculo_json,
-            {}
-        );
+    const canonicalLink = parseDualSoulJson(canonicalProps.dupla_alma_vinculo_json, {});
 
-    const localLink =
-        parseDualSoulJson(
-            localProps
-                .dupla_alma_vinculo_json,
-            {}
-        );
+    const localLink = parseDualSoulJson(localProps.dupla_alma_vinculo_json, {});
 
     const linkStored = {
         ...canonicalLink,
         ...localLink,
 
-        entidade:
-            entityName,
+        entidade: entityName,
 
-        demonio:
-            demonName,
+        demonio: demonName,
 
-        intensidade:
-            result
-                .intensity
-                .name,
+        intensidade: result.intensity.name,
 
-        valor:
-            result
-                .intensity
-                .value,
+        valor: result.intensity.value,
 
         runtime: {
-            dominantKind:
-                result
-                    .dominance
-                    .dominantKind,
+            dominantKind: result.dominance.dominantKind,
 
-            dominantName:
-                result
-                    .dominance
-                    .dominantName,
+            dominantName: result.dominance.dominantName,
 
-            sleepingKind:
-                result
-                    .dominance
-                    .sleepingKind,
+            sleepingKind: result.dominance.sleepingKind,
 
-            sleepingName:
-                result
-                    .dominance
-                    .sleepingName,
+            sleepingName: result.dominance.sleepingName,
 
-            deepSleep:
-                result
-                    .dominance
-                    .deepSleep,
+            deepSleep: result.dominance.deepSleep,
 
-            awakeningCd:
-                result
-                    .intensity
-                    .awakeningCd,
+            awakeningCd: result.intensity.awakeningCd,
         },
     };
 
     let payment;
     try {
-        payment = bloodPactPayment(
-            actor.system?.props ?? {}
-        );
+        payment = bloodPactPayment(actor.system?.props ?? {});
     } catch (error) {
-        return ui.notifications
-            ?.warn?.(error.message);
+        return ui.notifications?.warn?.(error.message);
     }
 
-    const bloodConfirmed = await foundry
-        .applications
-        .api
-        .DialogV2
-        .confirm({
-            classes: ['na-dual-soul-dialog', 'na-blood-pact-dialog'],
-            window: {
-                title: `Cerimônia — Oferta de Sangue · ${item.name}`,
-            },
-            content: ceremonyBloodHtml(item, payment, ritual),
-            defaultYes: false,
-            modal: true,
-            rejectClose: false,
-        });
+    const bloodConfirmed = await foundry.applications.api.DialogV2.confirm({
+        classes: ['na-dual-soul-dialog', 'na-blood-pact-dialog'],
+        window: {
+            title: `Cerimônia — Oferta de Sangue · ${item.name}`,
+        },
+        content: ceremonyBloodHtml(item, payment, ritual),
+        defaultYes: false,
+        modal: true,
+        rejectClose: false,
+    });
 
     if (!bloodConfirmed) {
         return null;
@@ -1054,22 +732,18 @@ export async function openDualSoulCeremony(
 
     let latestPayment;
     try {
-        latestPayment = bloodPactPayment(
-            actor.system?.props ?? {}
-        );
+        latestPayment = bloodPactPayment(actor.system?.props ?? {});
     } catch (error) {
-        return ui.notifications
-            ?.warn?.(error.message);
+        return ui.notifications?.warn?.(error.message);
     }
 
     if (
         latestPayment.current !== payment.current ||
         latestPayment.damageBefore !== payment.damageBefore
     ) {
-        return ui.notifications
-            ?.warn?.(
-                'O PDV mudou durante a confirmação. Abra a Cerimônia novamente para conferir a oferta de sangue.'
-            );
+        return ui.notifications?.warn?.(
+            'O PDV mudou durante a confirmação. Abra a Cerimônia novamente para conferir a oferta de sangue.'
+        );
     }
 
     runtime.bloodPact = {
@@ -1082,8 +756,7 @@ export async function openDualSoulCeremony(
 
     await actor.update(
         {
-            'system.props.pdv_slayer_dano_tomado':
-                payment.damageAfter,
+            'system.props.pdv_slayer_dano_tomado': payment.damageAfter,
         },
         {
             naCsbAutomation: true,
@@ -1094,14 +767,9 @@ export async function openDualSoulCeremony(
         }
     );
 
-    const persistedDamage = Number(
-        actor.system?.props?.pdv_slayer_dano_tomado
-    );
+    const persistedDamage = Number(actor.system?.props?.pdv_slayer_dano_tomado);
 
-    if (
-        !Number.isFinite(persistedDamage) ||
-        persistedDamage !== payment.damageAfter
-    ) {
+    if (!Number.isFinite(persistedDamage) || persistedDamage !== payment.damageAfter) {
         throw new Error(
             'O Sangue de Pacto não foi persistido em Dano Tomado. A Cerimônia não foi gravada.'
         );
@@ -1110,35 +778,17 @@ export async function openDualSoulCeremony(
     try {
         await item.update(
             {
-            'system.props.arma_lado_dominante':
-                result
-                    .dominance
-                    .display,
+                'system.props.arma_lado_dominante': result.dominance.display,
 
-            'system.props.arma_vinculo_intensidade':
-                result
-                    .intensity
-                    .name,
+                'system.props.arma_vinculo_intensidade': result.intensity.name,
 
-            'system.props.arma_vinculo_valor':
-                result
-                    .intensity
-                    .value,
+                'system.props.arma_vinculo_valor': result.intensity.value,
 
-            'system.props.arma_gatilho_despertar':
-                result
-                    .trigger
-                    .publicText,
+                'system.props.arma_gatilho_despertar': result.trigger.publicText,
 
-            'system.props.dupla_alma_cerimonia_json':
-                JSON.stringify(
-                    ceremonyStored
-                ),
+                'system.props.dupla_alma_cerimonia_json': JSON.stringify(ceremonyStored),
 
-            'system.props.dupla_alma_vinculo_json':
-                JSON.stringify(
-                    linkStored
-                ),
+                'system.props.dupla_alma_vinculo_json': JSON.stringify(linkStored),
             },
             {
                 naCsbAutomation: true,
@@ -1151,8 +801,7 @@ export async function openDualSoulCeremony(
         try {
             await actor.update(
                 {
-                    'system.props.pdv_slayer_dano_tomado':
-                        payment.damageBefore,
+                    'system.props.pdv_slayer_dano_tomado': payment.damageBefore,
                 },
                 {
                     naCsbAutomation: true,
@@ -1171,17 +820,12 @@ export async function openDualSoulCeremony(
         throw error;
     }
 
-    const cd =
-        result
-            .intensity
-            .awakeningCd;
+    const cd = result.intensity.awakeningCd;
 
     await ChatMessage.create({
-        speaker:
-            ChatMessage
-                .getSpeaker({
-                    actor,
-                }),
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
 
         content: `
             <div class="na-csb-automation na-dual-soul-chat">
@@ -1205,47 +849,27 @@ export async function openDualSoulCeremony(
                     <strong>Teste 1:</strong>
                     ${escapeHtml(test1.total)}
                     →
-                    ${escapeHtml(
-                        result
-                            .dominance
-                            .display
-                    )}
+                    ${escapeHtml(result.dominance.display)}
                 </p>
 
                 <p>
                     <strong>Teste 2:</strong>
                     ${escapeHtml(test2.total)}
                     →
-                    ${escapeHtml(
-                        result
-                            .intensity
-                            .name
-                    )}
-                    (+${escapeHtml(
-                        result
-                            .intensity
-                            .value
-                    )})
+                    ${escapeHtml(result.intensity.name)}
+                    (+${escapeHtml(result.intensity.value)})
                 </p>
 
                 <p>
                     <strong>Teste 3:</strong>
                     ${escapeHtml(test3.total)}
                     →
-                    ${escapeHtml(
-                        result
-                            .trigger
-                            .publicText
-                    )}
+                    ${escapeHtml(result.trigger.publicText)}
                 </p>
 
                 <p>
                     <strong>CD base:</strong>
-                    ${
-                        cd === null
-                            ? '—'
-                            : escapeHtml(cd)
-                    }
+                    ${cd === null ? '—' : escapeHtml(cd)}
                 </p>
 
                 <p>
@@ -1270,10 +894,9 @@ export async function openDualSoulCeremony(
         `,
     });
 
-    ui.notifications
-        ?.info?.(
-            `${item.name}: vínculo concluído e selo rompido. PDV ${payment.current} → ${payment.remaining}.`
-        );
+    ui.notifications?.info?.(
+        `${item.name}: vínculo concluído e selo rompido. PDV ${payment.current} → ${payment.remaining}.`
+    );
 
     return {
         ok: true,

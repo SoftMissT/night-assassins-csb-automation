@@ -27,7 +27,11 @@ export function awakeningDuration(stage = '') {
 export function awakeningBloodCost(currentPdv = 0) {
     const current = Math.max(0, Math.trunc(Number(currentPdv) || 0));
     const remaining = Math.max(1, Math.ceil(current * 0.1));
-    return { current, remaining: Math.min(current, remaining), cost: Math.max(0, current - remaining) };
+    return {
+        current,
+        remaining: Math.min(current, remaining),
+        cost: Math.max(0, current - remaining),
+    };
 }
 
 export function awakeningRuntime({

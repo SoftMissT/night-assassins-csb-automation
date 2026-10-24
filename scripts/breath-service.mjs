@@ -47,10 +47,7 @@ import {
     FLAME_SYNERGY_PDR_COST,
     tickFlameBreathing,
 } from './flame-breathing-service.mjs';
-import {
-    clearStoneBreathingState,
-    tickStoneBreathing,
-} from './stone-breathing-service.mjs';
+import { clearStoneBreathingState, tickStoneBreathing } from './stone-breathing-service.mjs';
 import {
     buildMistBreathingPlan,
     clearMistBreathingState,
@@ -1314,8 +1311,7 @@ export function breathingItemsForActor(actor, breathingName) {
         .filter((item) => {
             const props = item?.system?.props ?? {};
             return (
-                normalizedBreathingName(props.respiracao_nome) === wanted &&
-                Boolean(props.forma_id)
+                normalizedBreathingName(props.respiracao_nome) === wanted && Boolean(props.forma_id)
             );
         })
         .sort(
@@ -1328,7 +1324,8 @@ export function breathingItemsForActor(actor, breathingName) {
 /** Abre o painel próprio de uma Respiração e reutiliza o pipeline canônico da Forma. */
 export async function openBreathingManager({ actorUuid, breathingName } = {}) {
     const doc = actorUuid ? await fromUuid(actorUuid) : null;
-    const actor = doc?.actor ?? doc ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user?.character;
+    const actor =
+        doc?.actor ?? doc ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user?.character;
     if (!actor) return ui.notifications?.warn?.('Nenhum personagem ativo.');
     if (!actor.isOwner && !game.user?.isGM)
         return ui.notifications?.error?.('Você não pode usar técnicas com este personagem.');
@@ -1346,7 +1343,9 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
         );
     }
     if (forms.length === 0)
-        return ui.notifications?.warn?.(`Nenhuma Forma da Respiração ${breathingName} foi encontrada.`);
+        return ui.notifications?.warn?.(
+            `Nenhuma Forma da Respiração ${breathingName} foi encontrada.`
+        );
 
     const options = forms
         .map((item) => {

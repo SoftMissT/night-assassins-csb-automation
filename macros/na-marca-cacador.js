@@ -3,26 +3,49 @@
 (async () => {
     const startedAt = performance.now();
     if (!canvas.ready) return ui.notifications.warn('Canvas não pronto.');
-
     const args = typeof scope !== 'undefined' ? (scope ?? {}) : {};
     const actor = args.actorUuid
         ? await fromUuid(args.actorUuid)
         : (canvas.tokens.controlled[0]?.actor ?? game.user.character);
     if (!actor) return ui.notifications.error('Sem personagem ativo.');
     if (!actor.isOwner) return ui.notifications.error('Você não pode alterar este personagem.');
-
     const { DialogV2 } = foundry.applications.api;
+    const huntersMark = game.modules.get('night-assassins-csb-automation')?.api?.huntersMark;
+    if (!huntersMark) return ui.notifications.error('Módulo Night Assassins não carregado.');
     const ATTRIBUTES = Object.freeze([
-        { key: 'vit', label: 'VIT' },
-        { key: 'dex', label: 'DEX' },
-        { key: 'for', label: 'FOR' },
-        { key: 'car', label: 'CAR' },
-        { key: 'fdv', label: 'FDV' },
-        { key: 'int', label: 'INT' },
-        { key: 'sab', label: 'SAB' },
+        {
+            key: 'vit',
+            label: 'VIT',
+        },
+        {
+            key: 'dex',
+            label: 'DEX',
+        },
+        {
+            key: 'for',
+            label: 'FOR',
+        },
+        {
+            key: 'car',
+            label: 'CAR',
+        },
+        {
+            key: 'fdv',
+            label: 'FDV',
+        },
+        {
+            key: 'int',
+            label: 'INT',
+        },
+        {
+            key: 'sab',
+            label: 'SAB',
+        },
     ]);
     const PHYSICAL = new Set(['vit', 'dex', 'for', 'fdv']);
-    const DIALOG_POSITION = Object.freeze({ width: 680 });
+    const DIALOG_POSITION = Object.freeze({
+        width: 680,
+    });
 
     function panel(content) {
         return `<div style="display:grid;gap:14px;padding:8px 4px;min-width:0">${content}</div>`;
@@ -82,11 +105,9 @@
         }
         return patch;
     }
-
     async function chooseScar(props, bornMarked) {
         const destinyScar = String(props.hab_marca_destino_atributo ?? '').toLowerCase();
         if (bornMarked && ATTRIBUTES.some(({ key }) => key === destinyScar)) return destinyScar;
-
         const allowed = bornMarked ? ATTRIBUTES : ATTRIBUTES.filter(({ key }) => PHYSICAL.has(key));
         const options = allowed
             .map(({ key, label }) => {
@@ -94,9 +115,10 @@
                 return `<option value="${key}">${label} (${current} → ${current + (bornMarked ? (PHYSICAL.has(key) ? 6 : 4) : 5)})</option>`;
             })
             .join('');
-
         const chosen = await DialogV2.wait({
-            window: { title: 'Marca do Caçador Atributo da Cicatriz' },
+            window: {
+                title: 'Marca do Caçador Atributo da Cicatriz',
+            },
             position: DIALOG_POSITION,
             content: panel(`
         <p style="margin:0">Escolha o atributo ligado à cicatriz.</p>
@@ -113,7 +135,11 @@
                     callback: (_event, _button, dialog) =>
                         String(dialog.element.querySelector('#na-marca-cicatriz')?.value ?? ''),
                 },
-                { action: 'cancelar', label: 'Cancelar', callback: () => null },
+                {
+                    action: 'cancelar',
+                    label: 'Cancelar',
+                    callback: () => null,
+                },
             ],
         });
         return allowed.some(({ key }) => key === chosen) ? chosen : null;
@@ -133,12 +159,13 @@
         if (total <= 95) return 20;
         return 35;
     }
-
     async function rollVisible(formula, flavor) {
         const roll = await new Roll(formula).evaluate();
         const message = await roll.toMessage({
             flavor,
-            speaker: ChatMessage.getSpeaker({ actor }),
+            speaker: ChatMessage.getSpeaker({
+                actor,
+            }),
         });
         if (message?.id) {
             try {
@@ -149,17 +176,14 @@
         }
         return roll;
     }
-
     async function awaken() {
         const props = actor.system.props ?? {};
         if (number(props.marca_despertada) === 1)
             return ui.notifications.info('A Marca já foi despertada.');
         if (level(props) < 12) return ui.notifications.warn('A Marca do Caçador exige Nível 12.');
-
         const bornMarked = isBornMarked(props);
         const scar = await chooseScar(props, bornMarked);
         if (!scar) return;
-
         if (!bornMarked) {
             const cd = awakeningCd(props);
             const fdv = attribute(props, 'fdv');
@@ -169,7 +193,6 @@
             );
             if (roll.total < cd) return ui.notifications.warn('A Marca não despertou.');
         }
-
         let remainingLife = number(props.vid_rest_num);
         if (!bornMarked && remainingLife <= 0) {
             const destinyBonus = isDestinyMark(props) && level(props) >= 12 ? 15 : 0;
@@ -181,10 +204,14 @@
             const age = number(props.idade);
             remainingLife =
                 age >= 25
-                    ? (await rollVisible('1d12', '<strong>Marca do Caçador</strong> meses restantes')).total / 12
+                    ? (
+                          await rollVisible(
+                              '1d12',
+                              '<strong>Marca do Caçador</strong> meses restantes'
+                          )
+                      ).total / 12
                     : Math.min(rolledYears, Math.max(1, 25 - age));
         }
-
         await actor.update({
             'system.props.marca_despertada': 1,
             'system.props.marca_ativa': 0,
@@ -197,7 +224,6 @@
         );
         return activate();
     }
-
     async function chooseActivation(props, bornMarked) {
         const breathLevel = Math.max(1, number(props.nvl_respiracao_num));
         const normalMax = 1 + breathLevel + (isLostDescendant(props) && !bornMarked ? 1 : 0);
@@ -205,12 +231,38 @@
             ? breathLevel
             : Math.min(normalMax, Math.max(0, Math.floor(number(props.vid_rest_num))));
         if (max < 1) return null;
-        const options = Array.from({ length: max }, (_, index) => index + 1)
+        const options = Array.from(
+            {
+                length: max,
+            },
+            (_, index) => index + 1
+        )
             .map(
                 (value) =>
                     `<option value="${value}">${value} ${bornMarked ? 'de Intensidade' : value === 1 ? 'Ano de Vida' : 'Anos de Vida'}</option>`
             )
             .join('');
+        // Overdrive (só Nascido Marcado): +1d20 por ano de vida queimado acima da Intensidade máxima.
+        const overdriveMax = huntersMark.markOverdriveLimit(props);
+        const overdriveOptions = Array.from(
+            {
+                length: overdriveMax + 1,
+            },
+            (_, index) => index
+        )
+            .map(
+                (value) =>
+                    `<option value="${value}">${value === 0 ? 'Sem Overdrive' : `${value} ${value === 1 ? 'Ano de Vida' : 'Anos de Vida'} (+${value}d20)`}</option>`
+            )
+            .join('');
+        const overdriveField =
+            bornMarked && overdriveMax > 0
+                ? `<div class="form-group" style="margin:0">
+          <label for="na-marca-overdrive"><strong>Overdrive</strong></label>
+          <select id="na-marca-overdrive" style="width:100%">${overdriveOptions}</select>
+          <p class="hint" style="margin:4px 0 0">Queima anos de vida, cobra 1d6 necrótico irredutível por ano ao encerrar e pode acionar a Maldição Final.</p>
+        </div>`
+                : '';
         return DialogV2.wait({
             window: {
                 title: bornMarked ? 'Ativar Marca Intensidade' : 'Ativar Marca Anos de Vida',
@@ -221,62 +273,62 @@
         <div class="form-group" style="margin:0">
           <label for="na-marca-potencia"><strong>${bornMarked ? 'Intensidade' : 'Anos queimados'}</strong></label>
           <select id="na-marca-potencia" style="width:100%">${options}</select>
-        </div>`),
+        </div>
+        ${overdriveField}`),
             modal: true,
             rejectClose: false,
             buttons: [
                 {
                     action: 'ativar',
                     label: 'Ativar Marca',
-                    callback: (_event, _button, dialog) =>
-                        number(dialog.element.querySelector('#na-marca-potencia')?.value),
+                    callback: (_event, _button, dialog) => ({
+                        power: number(dialog.element.querySelector('#na-marca-potencia')?.value),
+                        overdrive: number(
+                            dialog.element.querySelector('#na-marca-overdrive')?.value
+                        ),
+                    }),
                 },
-                { action: 'cancelar', label: 'Cancelar', callback: () => null },
+                {
+                    action: 'cancelar',
+                    label: 'Cancelar',
+                    callback: () => null,
+                },
             ],
         });
     }
-
     async function activate() {
         const props = actor.system.props ?? {};
         if (number(props.marca_despertada) !== 1) return awaken();
         if (number(props.marca_ativa) === 1) return ui.notifications.info('A Marca já está ativa.');
-
         const bornMarked = isBornMarked(props);
-        const power = await chooseActivation(props, bornMarked);
-        if (!power) return ui.notifications.warn('Não há potência válida para ativar a Marca.');
+        const choice = await chooseActivation(props, bornMarked);
+        if (!choice?.power)
+            return ui.notifications.warn('Não há potência válida para ativar a Marca.');
+        const fields = huntersMark.markActivationFields(props, choice);
         const scar = String(
             props.marca_atributo_cicatriz ?? props.hab_marca_destino_atributo ?? ''
         ).toLowerCase();
         if (!ATTRIBUTES.some(({ key }) => key === scar))
             return ui.notifications.error('Atributo da Cicatriz inválido.');
-
         await actor.update({
             'system.props.marca_ativa': 1,
-            'system.props.marca_anos_queimados': bornMarked ? 0 : power,
-            'system.props.marca_intensidade': bornMarked ? power : 0,
-            'system.props.marca_overdrive': 0,
-            'system.props.marca_dano_dados': power,
-            'system.props.marca_dano_faces': bornMarked ? 20 : 12,
-            'system.props.marca_critico_margem': bornMarked ? 18 : power >= 3 ? 17 : 19,
-            'system.props.marca_ataque_extra': 1,
+            ...Object.fromEntries(
+                Object.entries(fields).map(([key, value]) => [`system.props.${key}`, value])
+            ),
             'system.props.marca_corpo_recusa_usado': 0,
             'system.props.marca_corte_impossivel_usado': 0,
             'system.props.marca_resistencia_usada': 0,
             ...activeBonuses(bornMarked, scar),
         });
         ui.notifications.info(
-            `Marca ativa: +${power}d${bornMarked ? 20 : 12} de Dano de Ferida.`
+            `Marca ativa: +${fields.marca_dano_dados}d${fields.marca_dano_faces} de Dano de Ferida.`
         );
     }
-
     async function finish() {
         const props = actor.system.props ?? {};
         if (number(props.marca_ativa) !== 1)
             return ui.notifications.info('A Marca não está ativa.');
-        const bornMarked = isBornMarked(props);
-        const years = number(props.marca_anos_queimados) + number(props.marca_overdrive);
-        const activations = number(props.marca_ativacoes_dia) + 1;
-
+        const outcome = huntersMark.markFinishOutcome(props, level(props));
         await actor.update({
             'system.props.marca_ativa': 0,
             'system.props.marca_anos_queimados': 0,
@@ -284,23 +336,26 @@
             'system.props.marca_overdrive': 0,
             'system.props.marca_dano_dados': 0,
             'system.props.marca_dano_faces': 0,
-            'system.props.marca_critico_margem': 20,
-            'system.props.marca_ataque_extra': 0,
-            'system.props.marca_ativacoes_dia': activations,
-            'system.props.marca_exaustao_final': bornMarked ? 0 : Math.min(8, activations * 2),
-            'system.props.marca_dano_necrotico_dados': years,
-            'system.props.vid_rest_num': bornMarked
-                ? number(props.vid_rest_num)
-                : Math.max(0, number(props.vid_rest_num) - years),
+            'system.props.marca_ativacoes_dia': outcome.activations,
+            'system.props.marca_exaustao_final': outcome.exhaustion,
+            'system.props.marca_dano_necrotico_dados': outcome.necroticDice,
+            'system.props.vid_rest_num': Math.max(0, number(props.vid_rest_num) - outcome.lifeCost),
             ...emptyBonuses(),
         });
+        const costs = [];
+        if (outcome.necroticDice > 0)
+            costs.push(`${outcome.necroticDice}d6 de dano necrótico irredutível (pendente)`);
+        if (outcome.lifeCost > 0)
+            costs.push(
+                `${outcome.lifeCost} ano(s) de vida${outcome.destinyExtra ? ' (inclui +1 da Marca do Destino)' : ''}`
+            );
+        if (outcome.exhaustion > 0) costs.push(`Exaustão ${outcome.exhaustion} (pendente)`);
         ui.notifications.info(
-            years > 0
-                ? `Marca encerrada. Custo final pendente: ${years}d6 de dano necrótico irredutível.`
-                : 'Marca encerrada sem custo de vida.'
+            costs.length > 0
+                ? `Marca encerrada. Custos: ${costs.join('; ')}.`
+                : 'Marca encerrada sem custo.'
         );
     }
-
     async function showMenu() {
         const props = actor.system.props ?? {};
         const awakened = number(props.marca_despertada) === 1;
@@ -308,7 +363,9 @@
         const bornMarked = isBornMarked(props);
         const status = !awakened ? 'Não despertada' : active ? 'Ativa' : 'Despertada';
         const action = await DialogV2.wait({
-            window: { title: 'Marca do Caçador' },
+            window: {
+                title: 'Marca do Caçador',
+            },
             position: DIALOG_POSITION,
             content: panel(`
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
@@ -327,23 +384,42 @@
                           label: 'Despertar Marca',
                           callback: () => 'despertar',
                       },
-                      { action: 'cancelar', label: 'Cancelar', callback: () => null },
+                      {
+                          action: 'cancelar',
+                          label: 'Cancelar',
+                          callback: () => null,
+                      },
                   ]
                 : active
                   ? [
-                        { action: 'encerrar', label: 'Encerrar Marca', callback: () => 'encerrar' },
-                        { action: 'cancelar', label: 'Fechar', callback: () => null },
+                        {
+                            action: 'encerrar',
+                            label: 'Encerrar Marca',
+                            callback: () => 'encerrar',
+                        },
+                        {
+                            action: 'cancelar',
+                            label: 'Fechar',
+                            callback: () => null,
+                        },
                     ]
                   : [
-                        { action: 'ativar', label: 'Ativar Marca', callback: () => 'ativar' },
-                        { action: 'cancelar', label: 'Cancelar', callback: () => null },
+                        {
+                            action: 'ativar',
+                            label: 'Ativar Marca',
+                            callback: () => 'ativar',
+                        },
+                        {
+                            action: 'cancelar',
+                            label: 'Cancelar',
+                            callback: () => null,
+                        },
                     ],
         });
         if (action === 'despertar') return awaken();
         if (action === 'ativar') return activate();
         if (action === 'encerrar') return finish();
     }
-
     await showMenu();
     if (args.debug === true)
         ui.notifications.info(

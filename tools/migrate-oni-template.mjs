@@ -1,11 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const defaultSource = path.join(root, 'oni.json');
 const defaultTarget = path.join(root, 'src', 'templates', 'actors', 'oni-template.json');
-
 const PDV_DICE_LEVELS = Object.freeze({
     2: '1d4',
     3: '1d4',
@@ -41,7 +39,6 @@ function replaceOniResourceNames(value) {
         ])
     );
 }
-
 const ATTRS = ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'];
 
 function renameOniKeys(value) {
@@ -116,6 +113,7 @@ function removeSlayerOnlyComponents(template) {
         'progressao_oni_recursos_panel',
         'origem_oni_recursos_panel',
     ]);
+
     function prune(value) {
         if (Array.isArray(value)) {
             for (let index = value.length - 1; index >= 0; index -= 1) {
@@ -129,7 +127,6 @@ function removeSlayerOnlyComponents(template) {
         for (const child of Object.values(value)) prune(child);
     }
     prune(template.system);
-
     const actionPanel = findByKey(template, 'acoes_slayer_panel');
     if (actionPanel) actionPanel.key = 'acoes_oni_panel';
 }
@@ -154,7 +151,11 @@ function upsertHidden(template, name, value) {
     const hidden = template.system?.hidden;
     if (!Array.isArray(hidden)) throw new Error('system.hidden do Oni não é uma lista.');
     const existingIndex = hidden.findIndex((entry) => entry.name === name);
-    if (existingIndex < 0) hidden.push({ name, value });
+    if (existingIndex < 0)
+        hidden.push({
+            name,
+            value,
+        });
     else {
         hidden[existingIndex].value = value;
         template.system.hidden = hidden.filter(
@@ -218,12 +219,16 @@ function makePanel(key, contents, cssClass = '') {
 function configureOniLevelAndRank(template) {
     const level = findByKey(template, 'nvl_pj');
     if (!level) throw new Error('Dropdown nvl_pj não encontrado no template Oni.');
-    level.options = Array.from({ length: 21 }, (_, value) => ({
-        key: `nvl_${value}`,
-        value: String(value),
-    }));
+    level.options = Array.from(
+        {
+            length: 21,
+        },
+        (_, value) => ({
+            key: `nvl_${value}`,
+            value: String(value),
+        })
+    );
     level.defaultValue = 'nvl_0';
-
     const ranks = [
         'Não definido',
         'Oni Recém-Transformado',
@@ -254,7 +259,6 @@ function configureOniLevelAndRank(template) {
         `\${switchCase(nvl_pj,\n  ${args},\n  'Desconhecido'\n)}$`
     );
 }
-
 // Valores oficiais auditados contra MACRO-NA-FOUNDRY/Mecânicas para fazer na ficha/Onis/Origens/
 // Sessão 2026-08-25: 9 correções de PDV e 7 de PDK sobre os valores antigos.
 const ONI_ORIGIN_PDV_FIXO = Object.freeze({
@@ -278,7 +282,6 @@ const ONI_ORIGIN_PDV_FIXO = Object.freeze({
     monarca_demoniaco: 22,
     vampiro_de_linhagem: 19,
 });
-
 const ONI_ORIGIN_PDK_FIXO = Object.freeze({
     passado_triste: 2,
     personalidade_maligna: 3,
@@ -311,9 +314,7 @@ function configureOniOrigins(template) {
     if ([...keys].some((key) => !String(key).startsWith('origem_oni_'))) {
         throw new Error('O dropdown Oni contém origem que não usa o namespace origem_oni_.');
     }
-
     const originKey = origin.key;
-
     const pdvArgs = Object.entries(ONI_ORIGIN_PDV_FIXO)
         .flatMap(([key, value]) => [`'origem_oni_${key}'`, value])
         .concat([
@@ -328,7 +329,6 @@ function configureOniOrigins(template) {
             `oni_pdr_maximo_antes_queda+(oni_nivel_na_queda*2)+(fdv_oni_nvl1*3)`,
         ])
         .join(',\n  ');
-
     upsertHidden(
         template,
         'origem_oni_pdv_val',
@@ -357,15 +357,12 @@ function configureOniProgression(template) {
     for (const [level, sourceLevel] of Object.entries(inheritedVitSnapshots)) {
         upsertHidden(template, `vit_oni_nvl${level}`, `\${vit_oni_nvl${sourceLevel}}$`);
     }
-
     const pdvLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     const pdvArgs = pdvLevels.map((level) => `'nvl_${level}', pdv_oni_nvl${level}`).join(', ');
     upsertHidden(template, 'pdv_oni_total_conta', `\${switchCase(nvl_pj, ${pdvArgs}, 0)}$`);
-
     const pdkLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     const pdkArgs = pdkLevels.map((level) => `'nvl_${level}', pdk_oni_nvl${level}`).join(', ');
     upsertHidden(template, 'pdk_oni_total_conta', `\${switchCase(nvl_pj, ${pdkArgs}, 0)}$`);
-
     upsertHidden(
         template,
         'pdv_oni_atual_num',
@@ -429,30 +426,29 @@ function configureOniProgressionFields(template) {
         upsertHidden(template, name, '0');
     removeSlayerOnlyComponents(template);
 }
-
 export function migrateOniTemplate(source) {
     const migrated = renameOniKeys(replaceOniResourceNames(structuredClone(source)));
     migrated.name = 'oni_template';
     migrated.type = '_template';
     migrated._id = 'PQR15WSdSqBcN15w';
-    migrated.prototypeToken = { ...(migrated.prototypeToken ?? {}), name: 'oni_template' };
+    migrated.prototypeToken = {
+        ...(migrated.prototypeToken ?? {}),
+        name: 'oni_template',
+    };
     if (migrated.flags?.['custom-system-builder']) {
         delete migrated.flags['custom-system-builder'].templateHistory;
         delete migrated.flags['custom-system-builder'].templateHistoryRedo;
     }
-
     removeInvalidHiddenPlaceholders(migrated);
     removeCircularFormulas(migrated);
     removeSlayerOnlyComponents(migrated);
     configureOniActionButtons(migrated);
-
     configureOniLevelAndRank(migrated);
     configureOniOrigins(migrated);
     configureOniAttributes(migrated);
     configureOniProgression(migrated);
     configureOniBarsAndLabels(migrated);
     configureOniProgressionFields(migrated);
-
     // Remove aliases legados que não pertencem ao contrato Oni.
     const hidden = migrated.system?.hidden;
     if (Array.isArray(hidden)) {
@@ -460,12 +456,10 @@ export function migrateOniTemplate(source) {
             (h) => h.name !== 'origem_oni_pdr_val' && !String(h.name ?? '').includes('slayer')
         );
     }
-
     if (JSON.stringify(migrated).includes('pdr_oni'))
         throw new Error('Migração ONI deixou referências pdr_oni.');
     return migrated;
 }
-
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     const sourcePath = path.resolve(process.argv[2] ?? defaultSource);
     const targetPath = path.resolve(process.argv[3] ?? defaultTarget);

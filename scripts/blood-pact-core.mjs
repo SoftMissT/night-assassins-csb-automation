@@ -13,7 +13,9 @@ export function bloodPactPayment(props = {}) {
     const current = finiteField(props.pdv_slayer_atual);
     const taken = finiteField(props.pdv_slayer_dano_tomado);
     if (current === null || taken === null) {
-        throw new Error('PDV atual ou dano tomado não calculado. Reabra a ficha antes de realizar o pacto.');
+        throw new Error(
+            'PDV atual ou dano tomado não calculado. Reabra a ficha antes de realizar o pacto.'
+        );
     }
     const cost = awakeningBloodCost(current);
     return { ...cost, damageBefore: taken, damageAfter: taken + cost.cost };

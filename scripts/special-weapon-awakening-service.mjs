@@ -20,9 +20,7 @@ function structured(value, fallback = {}) {
     if (value && typeof value === 'object' && !Array.isArray(value)) return value;
     try {
         const parsed = JSON.parse(String(value || '{}'));
-        return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-            ? parsed
-            : fallback;
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : fallback;
     } catch {
         return fallback;
     }
@@ -71,7 +69,8 @@ async function chooseDualSoulWeapon(actor, options = {}) {
     const selected = await foundry.applications.api.DialogV2.wait({
         classes: ['na-dual-soul-dialog'],
         window: { title: 'Ativar Arma de Dupla Alma' },
-        content: '<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Arma de Dupla Alma</span><h2>Qual vínculo será ativado?</h2><p>Escolha a arma cuja Cerimônia já foi concluída.</p></div>',
+        content:
+            '<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Arma de Dupla Alma</span><h2>Qual vínculo será ativado?</h2><p>Escolha a arma cuja Cerimônia já foi concluída.</p></div>',
         modal: true,
         rejectClose: false,
         buttons: [
@@ -110,11 +109,16 @@ async function chooseEquilibriumSide(props = {}) {
     return foundry.applications.api.DialogV2.wait({
         classes: ['na-dual-soul-dialog'],
         window: { title: 'Equilíbrio Instável' },
-        content: '<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Equilíbrio Instável</span><h2>Quem responde ao despertar?</h2><p>Escolha o lado que ficará ativo neste Primeiro Despertar. A Cerimônia permanente não será alterada.</p></div>',
+        content:
+            '<div class="na-csb-automation na-dual-soul-panel"><span class="na-dual-soul-kicker">Equilíbrio Instável</span><h2>Quem responde ao despertar?</h2><p>Escolha o lado que ficará ativo neste Primeiro Despertar. A Cerimônia permanente não será alterada.</p></div>',
         modal: true,
         rejectClose: false,
         buttons: [
-            { action: 'entity', label: entity, callback: () => ({ kind: 'entidade', name: entity }) },
+            {
+                action: 'entity',
+                label: entity,
+                callback: () => ({ kind: 'entidade', name: entity }),
+            },
             { action: 'demon', label: demon, callback: () => ({ kind: 'demonio', name: demon }) },
             { action: 'cancel', label: 'Cancelar', callback: () => null },
         ],
@@ -152,31 +156,42 @@ async function sealSpecialWeapon(item) {
     if (!item?.update || !isDualSoulWeapon(item)) return false;
     const props = item.system?.props ?? {};
     const definition = awakeningDefinition(props);
-    await item.update({
-        'system.props.arma_especial_estado_atual': SPECIAL_WEAPON_AWAKENING_STATE.sealed,
-        'system.props.arma_especial_forma_atual': definition.sealedName,
-        'system.props.arma_especial_recurso_resumo': '',
-        [`system.props.${RUNTIME_KEY}`]: '{}',
-    }, {
-        naCsbAutomation: true,
-        naSpecialWeapon: true,
-        naLifeDeath: true,
-    });
+    await item.update(
+        {
+            'system.props.arma_especial_estado_atual': SPECIAL_WEAPON_AWAKENING_STATE.sealed,
+            'system.props.arma_especial_forma_atual': definition.sealedName,
+            'system.props.arma_especial_recurso_resumo': '',
+            [`system.props.${RUNTIME_KEY}`]: '{}',
+        },
+        {
+            naCsbAutomation: true,
+            naSpecialWeapon: true,
+            naLifeDeath: true,
+        }
+    );
     return true;
 }
 
 export async function awakenSpecialWeapon(options = {}) {
     let actor = await resolveActor(null, options);
     const item = await chooseDualSoulWeapon(actor, options);
-    if (!item) return ui.notifications?.warn?.('Selecione uma Arma de Dupla Alma vinculada ao portador.');
+    if (!item)
+        return ui.notifications?.warn?.('Selecione uma Arma de Dupla Alma vinculada ao portador.');
     actor = await resolveActor(item, options);
-    if (!actor?.update) return ui.notifications?.warn?.('A arma precisa estar vinculada a um Actor.');
-    if (!game.combat?.started) return ui.notifications?.warn?.('O Primeiro Despertar deve ser ativado durante um combate.');
+    if (!actor?.update)
+        return ui.notifications?.warn?.('A arma precisa estar vinculada a um Actor.');
+    if (!game.combat?.started)
+        return ui.notifications?.warn?.(
+            'O Primeiro Despertar deve ser ativado durante um combate.'
+        );
 
-    const usedCombat = item.getFlag?.(MODULE_ID, USED_COMBAT_FLAG)
-        ?? item.getFlag?.(MODULE_ID, LEGACY_YAMATO_USED_COMBAT_FLAG);
+    const usedCombat =
+        item.getFlag?.(MODULE_ID, USED_COMBAT_FLAG) ??
+        item.getFlag?.(MODULE_ID, LEGACY_YAMATO_USED_COMBAT_FLAG);
     if (usedCombat === game.combat.id)
-        return ui.notifications?.warn?.('O Primeiro Despertar desta arma já foi usado neste combate.');
+        return ui.notifications?.warn?.(
+            'O Primeiro Despertar desta arma já foi usado neste combate.'
+        );
 
     await hydrateSpecialWeaponItem(item);
     if (!dualSoulCeremonyCompleted(item))
@@ -189,7 +204,8 @@ export async function awakenSpecialWeapon(options = {}) {
 
     const ceremony = getDualSoulCeremonyState(item);
     let side = ceremonySide(ceremony, props);
-    if (ceremony?.dominance?.dominantKind === 'equilibrio') side = await chooseEquilibriumSide(props);
+    if (ceremony?.dominance?.dominantKind === 'equilibrio')
+        side = await chooseEquilibriumSide(props);
     if (!side) return null;
 
     const integration = integrationName(props);
@@ -219,17 +235,20 @@ export async function awakenSpecialWeapon(options = {}) {
     runtime.integration = integration;
     runtime.ceremonyDominance = ceremony?.dominance ?? null;
 
-    await item.update({
-        'system.props.arma_especial_estado_atual': SPECIAL_WEAPON_AWAKENING_STATE.first,
-        'system.props.arma_especial_forma_atual': definition.firstName,
-        'system.props.arma_especial_recurso_resumo': `${side.name} · ${integration} · ${duration} rodadas`,
-        [`system.props.${RUNTIME_KEY}`]: JSON.stringify(runtime),
-    }, {
-        naCsbAutomation: true,
-        naSpecialWeapon: true,
-        naLifeDeath: true,
-        naBloodPact: true,
-    });
+    await item.update(
+        {
+            'system.props.arma_especial_estado_atual': SPECIAL_WEAPON_AWAKENING_STATE.first,
+            'system.props.arma_especial_forma_atual': definition.firstName,
+            'system.props.arma_especial_recurso_resumo': `${side.name} · ${integration} · ${duration} rodadas`,
+            [`system.props.${RUNTIME_KEY}`]: JSON.stringify(runtime),
+        },
+        {
+            naCsbAutomation: true,
+            naSpecialWeapon: true,
+            naLifeDeath: true,
+            naBloodPact: true,
+        }
+    );
     await item.setFlag?.(MODULE_ID, USED_COMBAT_FLAG, game.combat.id);
 
     await ChatMessage.create({
@@ -249,13 +268,16 @@ export async function awakenYamato(options = {}) {
 export async function openSpecialWeaponAwakeningManager(options = {}) {
     let actor = await resolveActor(null, options);
     const item = await chooseDualSoulWeapon(actor, options);
-    if (!item) return ui.notifications?.warn?.('Selecione uma Arma de Dupla Alma vinculada ao portador.');
+    if (!item)
+        return ui.notifications?.warn?.('Selecione uma Arma de Dupla Alma vinculada ao portador.');
     actor = await resolveActor(item, options);
     await hydrateSpecialWeaponItem(item);
     const ceremony = getDualSoulCeremonyState(item);
-    const state = String(item.system?.props?.arma_especial_estado_atual ?? SPECIAL_WEAPON_AWAKENING_STATE.sealed);
+    const state = String(
+        item.system?.props?.arma_especial_estado_atual ?? SPECIAL_WEAPON_AWAKENING_STATE.sealed
+    );
     const ceremonyState = dualSoulCeremonyCompleted(item)
-        ? ceremony?.dominance?.display ?? 'Concluída'
+        ? (ceremony?.dominance?.display ?? 'Concluída')
         : 'NÃO REALIZADA';
     const choice = await foundry.applications.api.DialogV2.wait({
         classes: ['na-dual-soul-dialog'],
@@ -277,7 +299,8 @@ export async function openSpecialWeaponAwakeningManager(options = {}) {
 let registered = false;
 
 function isPrimaryGm() {
-    const primary = game.users?.filter((user) => user.active && user.isGM)
+    const primary = game.users
+        ?.filter((user) => user.active && user.isGM)
         .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0];
     return game.user?.isGM && primary?.id === game.user.id;
 }

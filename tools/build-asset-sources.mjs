@@ -2,21 +2,32 @@ import { createHash } from 'node:crypto';
 import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const assetsDirectory = path.join(root, 'assets', 'icons');
 const outputDirectory = path.join(root, 'build', 'compendium', 'artes');
-
 const MODULE_ID = 'night-assassins-csb-automation';
-
 const folders = Object.freeze({
-    breathing: { id: 'NAArtBreathing01', name: 'Respirações' },
-    weapons: { id: 'NAArtWeapons0001', name: 'Armas' },
-    items: { id: 'NAArtItems000001', name: 'Itens' },
-    macros: { id: 'NAArtMacros00001', name: 'Macros' },
-    templates: { id: 'NAArtTemplts0001', name: 'Templates' },
+    breathing: {
+        id: 'NAArtBreathing01',
+        name: 'Respirações',
+    },
+    weapons: {
+        id: 'NAArtWeapons0001',
+        name: 'Armas',
+    },
+    items: {
+        id: 'NAArtItems000001',
+        name: 'Itens',
+    },
+    macros: {
+        id: 'NAArtMacros00001',
+        name: 'Macros',
+    },
+    templates: {
+        id: 'NAArtTemplts0001',
+        name: 'Templates',
+    },
 });
-
 const labels = Object.freeze({
     resp_agua: 'Ícone Respiração da Água',
     resp_amor: 'Ícone Respiração do Amor',
@@ -72,8 +83,18 @@ function artDocument(relativeFile, index) {
             },
             templateSystemUniqueVersion: null,
             uniqueId: relativeFile,
-            display: { width: 600, height: 600, fix_size: false, pp_width: 64, pp_height: 64 },
-            header: { contents: [], key: 'custom_header', type: 'panel' },
+            display: {
+                width: 600,
+                height: 600,
+                fix_size: false,
+                pp_width: 64,
+                pp_height: 64,
+            },
+            header: {
+                contents: [],
+                key: 'custom_header',
+                type: 'panel',
+            },
             hidden: [],
             template: '',
             props: {},
@@ -83,7 +104,9 @@ function artDocument(relativeFile, index) {
         effects: [],
         folder: folderFor(relativeFile)?.id ?? null,
         sort: index * 100000,
-        ownership: { default: 0 },
+        ownership: {
+            default: 0,
+        },
         flags: {},
         _stats: {
             systemId: 'custom-system-builder',
@@ -95,9 +118,10 @@ function artDocument(relativeFile, index) {
         },
     };
 }
-
 async function listImagesRecursive(directory) {
-    const entries = await readdir(directory, { withFileTypes: true });
+    const entries = await readdir(directory, {
+        withFileTypes: true,
+    });
     const files = [];
     for (const entry of entries) {
         const full = path.join(directory, entry.name);
@@ -109,15 +133,21 @@ async function listImagesRecursive(directory) {
     }
     return files;
 }
-
 const files = (await listImagesRecursive(assetsDirectory)).sort();
-
-await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
+await rm(outputDirectory, {
+    recursive: true,
+    force: true,
+});
+await mkdir(outputDirectory, {
+    recursive: true,
+});
 await Promise.all(
     Object.values(folders).map((folder, index) =>
         writeFile(
-            path.join(outputDirectory, `${String(index).padStart(2, '0')}-folder-${folder.id}.json`),
+            path.join(
+                outputDirectory,
+                `${String(index).padStart(2, '0')}-folder-${folder.id}.json`
+            ),
             `${JSON.stringify(folderDocument(folder, index), null, 2)}\n`
         )
     )
@@ -133,5 +163,4 @@ await Promise.all(
         )
     )
 );
-
 console.log(`Preparados ${files.length} documentos de arte para o Compêndio de Arte.`);

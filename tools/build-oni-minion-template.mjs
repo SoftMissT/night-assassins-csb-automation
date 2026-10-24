@@ -1,10 +1,8 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = path.join(root, 'src', 'templates', 'actors', 'oni-minion-template.json');
-
 const MACRO = (id) =>
     `Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.${id}`;
 const ROLL = (id, args) =>
@@ -59,7 +57,12 @@ function numberField(key, label, defaultValue = 0, minVal = 0, maxVal = null) {
 }
 
 function textArea(key, label) {
-    return { ...base('textArea', key, label), rowSpan: 3, defaultValue: '', style: 'sheet' };
+    return {
+        ...base('textArea', key, label),
+        rowSpan: 3,
+        defaultValue: '',
+        style: 'sheet',
+    };
 }
 
 function label(key, value, color = '#FF2B4A', rollMessage = '') {
@@ -98,7 +101,10 @@ function select(key, label, options) {
         size: 'm-large',
         defaultValue: '',
         selectedOptionType: 'custom',
-        options: options.map(([optKey, optValue]) => ({ key: optKey, value: optValue })),
+        options: options.map(([optKey, optValue]) => ({
+            key: optKey,
+            value: optValue,
+        })),
     };
 }
 
@@ -115,7 +121,6 @@ function panel(key, title, contents, flow = 'grid-2') {
         titleStyle: 'default',
     };
 }
-
 const ATTRS = [
     ['vit', 'VIT', '#2ED36F', 'TESTE DE VITALIDADE', '#36D67A'],
     ['dex', 'DEX', '#28D7FF', 'TESTE DE DESTREZA', '#28D7FF'],
@@ -125,7 +130,6 @@ const ATTRS = [
     ['int', 'INT', '#F8EB4D', 'TESTE DE INTELIGÊNCIA', '#F8EB4D'],
     ['sab', 'SAB', '#D45CA4', 'TESTE DE SABEDORIA', '#D45CA4'],
 ];
-
 const attributeFields = ATTRS.flatMap(([key, title, color, test, rollColor]) => [
     numberField(`oni_minion_${key}_base`, `${title} base`, 0, 0, 20),
     label(
@@ -135,15 +139,21 @@ const attributeFields = ATTRS.flatMap(([key, title, color, test, rollColor]) => 
         ATTR_TEST_ROLL(title, test, rollColor)
     ),
 ]);
-
 const hidden = ATTRS.map(([key]) => ({
     name: `oni_minion_${key}_display`,
     value: `\${fallback(oni_minion_${key}_base,0)+fallback(oni_minion_${key}_temp,0)}$`,
 }));
-for (const [key] of ATTRS) hidden.push({ name: `oni_minion_${key}_temp`, value: '0' });
+for (const [key] of ATTRS)
+    hidden.push({
+        name: `oni_minion_${key}_temp`,
+        value: '0',
+    });
 // Alias canônicos (vit_display, for_display, ...) exigidos pelas macros de rolagem.
 for (const [key] of ATTRS)
-    hidden.push({ name: `${key}_display`, value: `\${oni_minion_${key}_display}$` });
+    hidden.push({
+        name: `${key}_display`,
+        value: `\${oni_minion_${key}_display}$`,
+    });
 hidden.push(
     {
         name: 'oni_minion_pdv_total',
@@ -162,7 +172,6 @@ hidden.push(
         value: '${max(0,oni_minion_pdk_total-fallback(oni_minion_pdk_gasto,0)+fallback(oni_minion_pdk_recuperado,0))}$',
     }
 );
-
 const template = {
     name: 'oni_minion_template',
     type: '_template',
@@ -229,7 +238,13 @@ const template = {
                 editable: false,
             },
         },
-        display: { width: 1200, height: 1200, fix_size: false, pp_width: 250, pp_height: 400 },
+        display: {
+            width: 1200,
+            height: 1200,
+            fix_size: false,
+            pp_width: 250,
+            pp_height: 400,
+        },
         templateSystemUniqueVersion: 1,
     },
     prototypeToken: {
@@ -237,15 +252,20 @@ const template = {
         displayName: 20,
         displayBars: 20,
         actorLink: false,
-        bar1: { attribute: 'oni_minion_pdv_barra' },
-        bar2: { attribute: 'oni_minion_pdk_barra' },
+        bar1: {
+            attribute: 'oni_minion_pdv_barra',
+        },
+        bar2: {
+            attribute: 'oni_minion_pdk_barra',
+        },
     },
     items: [],
     effects: [],
     flags: {},
     folder: null,
 };
-
-await mkdir(path.dirname(output), { recursive: true });
+await mkdir(path.dirname(output), {
+    recursive: true,
+});
 await writeFile(output, `${JSON.stringify(template, null, 2)}\n`);
 console.log(`Template Oni Minion gerado em ${output}`);

@@ -1,13 +1,28 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const folders = Object.freeze([
-    { id: 'NATplSlayer00001', name: 'Slayer', type: 'Actor' },
-    { id: 'NATplOni00000001', name: 'Oni', type: 'Actor' },
-    { id: 'NATplMinion00001', name: 'Oni Minion', type: 'Actor' },
-    { id: 'NATplNpc00000001', name: 'NPC', type: 'Actor' },
+    {
+        id: 'NATplSlayer00001',
+        name: 'Slayer',
+        type: 'Actor',
+    },
+    {
+        id: 'NATplOni00000001',
+        name: 'Oni',
+        type: 'Actor',
+    },
+    {
+        id: 'NATplMinion00001',
+        name: 'Oni Minion',
+        type: 'Actor',
+    },
+    {
+        id: 'NATplNpc00000001',
+        name: 'NPC',
+        type: 'Actor',
+    },
 ]);
 const templates = [
     {
@@ -31,28 +46,34 @@ const templates = [
         folder: 'NATplNpc00000001',
     },
 ];
-
 const outputDirectory = path.join(root, 'build', 'compendium', 'templates-de-ficha');
-await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
-
+await rm(outputDirectory, {
+    recursive: true,
+    force: true,
+});
+await mkdir(outputDirectory, {
+    recursive: true,
+});
 for (const [index, folder] of folders.entries()) {
     await writeFile(
         path.join(outputDirectory, `${String(index).padStart(2, '0')}-folder-${folder.id}.json`),
-        `${JSON.stringify({
-            _id: folder.id,
-            _key: `!folders!${folder.id}`,
-            name: folder.name,
-            type: folder.type,
-            sorting: 'a',
-            folder: null,
-            sort: index * 100000,
-            color: null,
-            flags: {},
-        }, null, 2)}\n`
+        `${JSON.stringify(
+            {
+                _id: folder.id,
+                _key: `!folders!${folder.id}`,
+                name: folder.name,
+                type: folder.type,
+                sorting: 'a',
+                folder: null,
+                sort: index * 100000,
+                color: null,
+                flags: {},
+            },
+            null,
+            2
+        )}\n`
     );
 }
-
 for (const template of templates) {
     if (template.id.length !== 16)
         throw new Error(`ID inválido para ${template.file}: ${template.id}`);
@@ -60,7 +81,10 @@ for (const template of templates) {
     source._id = template.id;
     source._key = `!actors!${template.id}`;
     source.folder = template.folder;
-    source.prototypeToken = { ...(source.prototypeToken ?? {}), name: source.name };
+    source.prototypeToken = {
+        ...(source.prototypeToken ?? {}),
+        name: source.name,
+    };
     source._stats = {
         ...(source._stats ?? {}),
         systemId: 'custom-system-builder',
@@ -71,11 +95,9 @@ for (const template of templates) {
         lastModifiedBy: null,
         compendiumSource: null,
     };
-
     await writeFile(
         path.join(outputDirectory, `${template.id}.json`),
         `${JSON.stringify(source, null, 2)}\n`
     );
 }
-
 console.log('Preparados os templates Slayer, Oni, Oni Minion e NPC para o Compêndio unificado.');

@@ -1,10 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const defaultPath = path.join(root, 'src', 'templates', 'actors', 'oni-template.json');
-
 // ─────────────────────────────────────────────────────────────────────────
 // Reconstrução estrutural da ficha Oni (P0).
 //
@@ -22,7 +20,6 @@ const defaultPath = path.join(root, 'src', 'templates', 'actors', 'oni-template.
 // aba antiga são eliminados; campos administrativos (dano tomado, curado,
 // extra, gasto) ficam visíveis em COMBATE para uso real de mesa.
 // ─────────────────────────────────────────────────────────────────────────
-
 const FOLEGO_KEYS = new Set(['folego_oni_titulo', 'folego_oni_atual', 'folego_oni_maximo']);
 const MARCA_TEMP_KEYS = new Set([
     'vit_marca_temp',
@@ -161,7 +158,12 @@ function panel(key, contents, { title = '', flow = 'row', cssClass = '' } = {}) 
         flow,
         align: 'left',
         verticalAlign: 'top',
-        ...(title ? { title, titleStyle: 'bold' } : {}),
+        ...(title
+            ? {
+                  title,
+                  titleStyle: 'bold',
+              }
+            : {}),
         contents,
     };
 }
@@ -251,7 +253,10 @@ function ensureOniCombatLedger(t, combatTab) {
     const extracted = removeAndCollectByKeys(t.system, ONI_LEDGER_KEYS);
     const existingByKey = new Map(extracted.reverse().map((node) => [node.key, node]));
     const ordered = [
-        label('PDV TOTAL', { size: 'na-sheet-size-md', role: 'vit' }),
+        label('PDV TOTAL', {
+            size: 'na-sheet-size-md',
+            role: 'vit',
+        }),
         normalizeOniLedgerNode(
             ensureNodeByKey(
                 existingByKey,
@@ -259,7 +264,10 @@ function ensureOniCombatLedger(t, combatTab) {
                 ledgerDisplayField('pdv_oni_total_valor', '${pdv_oni_total_conta}$', '#C1000C')
             )
         ),
-        label('PDV ATUAL', { size: 'na-sheet-size-md', role: 'vit' }),
+        label('PDV ATUAL', {
+            size: 'na-sheet-size-md',
+            role: 'vit',
+        }),
         normalizeOniLedgerNode(
             ensureNodeByKey(
                 existingByKey,
@@ -292,7 +300,10 @@ function ensureOniCombatLedger(t, combatTab) {
                 ledgerNumberField('pdv_oni_extra', 'PDV Extra')
             )
         ),
-        label('PDK TOTAL', { size: 'na-sheet-size-md', role: 'fdv' }),
+        label('PDK TOTAL', {
+            size: 'na-sheet-size-md',
+            role: 'fdv',
+        }),
         normalizeOniLedgerNode(
             ensureNodeByKey(
                 existingByKey,
@@ -300,7 +311,10 @@ function ensureOniCombatLedger(t, combatTab) {
                 ledgerDisplayField('pdk_oni_total_valor', '${pdk_oni_total_conta}$', '#B36CFF')
             )
         ),
-        label('PDK ATUAL', { size: 'na-sheet-size-md', role: 'fdv' }),
+        label('PDK ATUAL', {
+            size: 'na-sheet-size-md',
+            role: 'fdv',
+        }),
         normalizeOniLedgerNode(
             ensureNodeByKey(
                 existingByKey,
@@ -409,11 +423,10 @@ function itemContainer(key, title, category, tooltip) {
         nameAlign: 'left',
         nameLabel: 'Nome',
         templateFilter: [],
-        itemFilterFormula: `equalText(item.inventario_categoria, '${category}')`,
+        itemFilterFormula: `item.inventario_categoria ? equalText(item.inventario_categoria, '${category}') : 0`,
         sortPredicates: [],
     };
 }
-
 const ESPECIALIZACAO_OPTIONS = [
     ['oni_especializacao_escolha', 'Escolha sua Especialização'],
     ['oni_especializacao_artista_marcial', 'Artista Marcial'],
@@ -427,7 +440,6 @@ const ESPECIALIZACAO_OPTIONS = [
     ['oni_especializacao_titan', 'Titan'],
     ['oni_especializacao_toxico', 'Tóxico'],
 ];
-
 /** Remove nós cujo `key` está no conjunto informado (busca recursiva, preserva o resto). */
 function pruneByKeys(value, keys) {
     if (Array.isArray(value))
@@ -437,14 +449,12 @@ function pruneByKeys(value, keys) {
     for (const [prop, child] of Object.entries(value)) value[prop] = pruneByKeys(child, keys);
     return value;
 }
-
 /** Extrai (e remove da árvore) os nós com as keys informadas, preservando os objetos originais. */
 function extractByKeys(value, keys, out = []) {
     const kept = pruneByKeys(clone(value), new Set());
     findAll(value, (node) => typeof node.key === 'string' && keys.has(node.key), out);
     return out;
 }
-
 const NEW_TAB_KEYS = ['combate_oni_tab', 'configs_tab'];
 
 function numberField(key, labelText, tooltip, { defaultValue = '0' } = {}) {
@@ -472,11 +482,9 @@ function numberField(key, labelText, tooltip, { defaultValue = '0' } = {}) {
         controlsStyle: 'hover',
     };
 }
-
 /** Rank da Especialização Oni por nível decisão fixada pelo Operador. */
 const RANK_ESPECIALIZACAO_FORMULA =
     "${nvl_num>=19?'SS':nvl_num>=16?'S':nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':''}$";
-
 /**
  * Garante que toda propriedade referenciada por fórmula CSB do template
  * exista de fato (componente ou hidden) guarda incondicional contra a
@@ -540,12 +548,14 @@ function ensureLedgerIntegrity(t) {
                 );
         }
     }
-
     const hiddenNames = new Set((t.system.hidden ?? []).map((h) => h.name));
     if (!hiddenNames.has('rank_especializacao_oni')) {
         t.system.hidden = [
             ...(t.system.hidden ?? []),
-            { name: 'rank_especializacao_oni', value: RANK_ESPECIALIZACAO_FORMULA },
+            {
+                name: 'rank_especializacao_oni',
+                value: RANK_ESPECIALIZACAO_FORMULA,
+            },
         ];
     }
 }
@@ -556,13 +566,11 @@ function collectComponentKeys(t) {
         ...findAll(t.system.header, (n) => typeof n.key === 'string' && n.key !== ''),
     ].map((n) => n.key);
 }
-
 export function cleanOniTemplate(source) {
     const t = clone(source);
     const body = t.system.body;
     const tabbedPanel = findOne(body, (n) => n.type === 'tabbedPanel');
     if (!tabbedPanel) throw new Error('tabbedPanel não encontrado no template Oni.');
-
     // `system.hidden` sempre é higienizado, mesmo no ramo idempotente Fôlego,
     // Marca e dead code de Origens Slayer (origem_hab_1/2_display) podem
     // reaparecer via edição manual do JSON sem mexer na estrutura de abas.
@@ -570,7 +578,6 @@ export function cleanOniTemplate(source) {
     t.system.hidden = (t.system.hidden ?? []).filter(
         (entry) => !removedHiddenNames.has(entry.name)
     );
-
     // Guarda incondicional contra a classe exata do bug P0 original: qualquer
     // fórmula CSB referenciando uma propriedade que não existe em lugar nenhum
     // do template quebra a cadeia inteira (fallback(undefinedSymbol,0) ainda
@@ -579,14 +586,12 @@ export function cleanOniTemplate(source) {
     // (Testes, Especialização) podem reintroduzir a mesma classe de bug sem
     // tocar na estrutura de abas.
     ensureLedgerIntegrity(t);
-
     // Idempotente: se o template já está na estrutura nova, não reaplica (evita
     // corromper um template já reconstruído em re-execuções/testes).
     const currentTabKeys = tabbedPanel.contents.map((tb) => tb.key);
     if (NEW_TAB_KEYS.every((key) => currentTabKeys.includes(key))) {
         return repairCurrentOniTemplate(t, tabbedPanel);
     }
-
     const oldTabs = Object.fromEntries(tabbedPanel.contents.map((tb) => [tb.key, tb]));
     const {
         perfil_oni_tab: perfil,
@@ -607,7 +612,6 @@ export function cleanOniTemplate(source) {
         if (!node)
             throw new Error(`Aba original "${name}" não encontrada layout inesperado, abortando.`);
     }
-
     // ── 1. Extrair admin ledger fields e destruir Fôlego/Marca antes de mover blocos ──
     const adminFields = extractByKeys(combat, ADMIN_LEDGER_KEYS);
     // Labels legados (pdv_oni_total_valor etc.) mantidos ocultos por compat
@@ -619,7 +623,6 @@ export function cleanOniTemplate(source) {
     }));
     combat.contents = pruneByKeys(combat.contents, new Set([...FOLEGO_KEYS]));
     configs.contents = pruneByKeys(configs.contents, MARCA_TEMP_KEYS);
-
     // ── 2. Simplificar tabela PDV/PDK -> barra de recurso legível ──
     const oldTable = findOne(
         combat,
@@ -633,37 +636,51 @@ export function cleanOniTemplate(source) {
             panel(
                 'pdv_oni_barra_row',
                 [
-                    label('PDV', { size: 'na-sheet-size-md', role: 'vit' }),
+                    label('PDV', {
+                        size: 'na-sheet-size-md',
+                        role: 'vit',
+                    }),
                     resourceValueLabel('${pdv_oni_atual_num}$ / ${pdv_oni_total_conta}$', 'pdv'),
                 ],
-                { flow: 'grid-2' }
+                {
+                    flow: 'grid-2',
+                }
             ),
             panel(
                 'pdk_oni_barra_row',
                 [
-                    label('PDK', { size: 'na-sheet-size-md', role: 'fdv' }),
+                    label('PDK', {
+                        size: 'na-sheet-size-md',
+                        role: 'fdv',
+                    }),
                     resourceValueLabel('${pdk_oni_atual_num}$ / ${pdk_oni_total_conta}$', 'pdk'),
                 ],
-                { flow: 'grid-2' }
+                {
+                    flow: 'grid-2',
+                }
             ),
         ],
-        { title: 'Recursos', flow: 'vertical', cssClass: 'na-oni-resource-bars' }
+        {
+            title: 'Recursos',
+            flow: 'vertical',
+            cssClass: 'na-oni-resource-bars',
+        }
     );
     combat.contents.unshift(resourceBar);
-
     // ── 3. Perícias: mover do próprio tab para dentro de COMBATE (seção compacta) ──
     const periciasPanel = findOne(pericias, (n) => n.type === 'panel' && n.title === 'Pericias');
     if (periciasPanel) combat.contents.push(periciasPanel);
-
     // ── 4. Renomear Classe -> Especialização (dropdown do header) ──
     const classField = findOne(t.system.header, (n) => n.key === 'classe_escolhida');
     if (classField) {
         classField.key = 'oni_especializacao_id';
         classField.label = 'Especialização:';
         classField.defaultValue = 'oni_especializacao_escolha';
-        classField.options = ESPECIALIZACAO_OPTIONS.map(([key, value]) => ({ key, value }));
+        classField.options = ESPECIALIZACAO_OPTIONS.map(([key, value]) => ({
+            key,
+            value,
+        }));
     }
-
     // ── 5. Kekkijutsu: item container passa a viver dentro de COMBATE ──
     combat.contents.push(
         itemContainer(
@@ -673,31 +690,40 @@ export function cleanOniTemplate(source) {
             'Técnicas de sangue conhecidas pelo Oni.'
         )
     );
-
     // ── 6. Seção ESPECIALIZAÇÃO (dentro de CONFIG) ──
     const especializacaoSection = [
-        label('ESPECIALIZAÇÃO', { size: 'na-sheet-size-xl', role: 'car' }),
+        label('ESPECIALIZAÇÃO', {
+            size: 'na-sheet-size-xl',
+            role: 'car',
+        }),
         panel(
             'especializacao_oni_resumo_panel',
             [
                 label(
                     "Especialização atual: ${fallback(oni_especializacao_id,'oni_especializacao_escolha')}$",
-                    { size: 'na-sheet-size-md' }
+                    {
+                        size: 'na-sheet-size-md',
+                    }
                 ),
                 label("Rank da Especialização: ${fallback(rank_especializacao_oni,'—')}$", {
                     size: 'na-sheet-size-md',
                 }),
             ],
-            { title: 'Resumo', flow: 'vertical' }
+            {
+                title: 'Resumo',
+                flow: 'vertical',
+            }
         ),
     ];
     // "especializacao_oni_habilidades_display" (textArea vazio, sem uso) e seu
     // painel/label de título são órfãos aprovados para remoção não são
     // recriados na estrutura de 2 abas.
-
     // ── 7. Seção ORIGEM & PROGRESSÃO (dentro de CONFIG) ──
     const origemProgressaoSection = [
-        label('ORIGEM & PROGRESSÃO', { size: 'na-sheet-size-xl', role: 'car' }),
+        label('ORIGEM & PROGRESSÃO', {
+            size: 'na-sheet-size-xl',
+            role: 'car',
+        }),
         panel(
             'origem_oni_resumo_panel',
             [
@@ -705,28 +731,43 @@ export function cleanOniTemplate(source) {
                     size: 'na-sheet-size-md',
                 }),
             ],
-            { title: 'Origem', flow: 'vertical' }
+            {
+                title: 'Origem',
+                flow: 'vertical',
+            }
         ),
         panel(
             'progressao_oni_resumo_panel',
             [
-                label('Nível: ${nvl_num}$', { size: 'na-sheet-size-md' }),
-                label('Patente: ${rank_atual}$', { size: 'na-sheet-size-md' }),
-                label('PDV Máximo: ${pdv_oni_total_conta}$', { size: 'na-sheet-size-md' }),
-                label('PDK Máximo: ${pdk_oni_total_conta}$', { size: 'na-sheet-size-md' }),
+                label('Nível: ${nvl_num}$', {
+                    size: 'na-sheet-size-md',
+                }),
+                label('Patente: ${rank_atual}$', {
+                    size: 'na-sheet-size-md',
+                }),
+                label('PDV Máximo: ${pdv_oni_total_conta}$', {
+                    size: 'na-sheet-size-md',
+                }),
+                label('PDK Máximo: ${pdk_oni_total_conta}$', {
+                    size: 'na-sheet-size-md',
+                }),
             ],
-            { title: 'Progressão', flow: 'vertical' }
+            {
+                title: 'Progressão',
+                flow: 'vertical',
+            }
         ),
     ];
-
     // ── 8. Seção IDENTIDADE & INVENTÁRIO (mescla perfil/bio + inventario + notas, dentro de CONFIG) ──
     const identidadeInventarioSection = [
-        label('IDENTIDADE & INVENTÁRIO', { size: 'na-sheet-size-xl', role: 'car' }),
+        label('IDENTIDADE & INVENTÁRIO', {
+            size: 'na-sheet-size-xl',
+            role: 'car',
+        }),
         ...(perfil.contents ?? []),
         ...pruneByKeys(clone(inventario.contents ?? []), new Set(['inventario_oni_armas'])),
         ...(notas.contents ?? []),
     ];
-
     // ── 9. CONFIG / DADOS: seções movidas + campos administrativos (config renomeado) ──
     configs.contents = [
         ...especializacaoSection,
@@ -734,20 +775,17 @@ export function cleanOniTemplate(source) {
         ...identidadeInventarioSection,
         ...configs.contents,
     ];
-
     // ── 10. Recompor tabbedPanel na ordem final (2 abas) ──
     tabbedPanel.contents = [
         tab('combate_oni_tab', combat.contents),
         tab('configs_tab', configs.contents),
     ];
     repairCurrentOniTemplate(t, tabbedPanel);
-
     // (limpeza de system.hidden já aplicada incondicionalmente no topo da função)
     t.system.templateSystemUniqueVersion =
         Math.max(1, Number(t.system.templateSystemUniqueVersion) || 0) + 1;
     return t;
 }
-
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
     const sourcePath = path.resolve(process.argv[2] ?? defaultPath);
     const targetPath = path.resolve(process.argv[3] ?? sourcePath);

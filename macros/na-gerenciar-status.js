@@ -5,5 +5,7 @@ if (!moduleApi?.openStatusManager) {
     );
 }
 const macroArgs = typeof scope !== 'undefined' ? (scope ?? {}) : {};
-await moduleApi.openStatusManager({ actorUuid: macroArgs.actorUuid });
+await moduleApi.openStatusManager({
+    actorUuid: macroArgs.actorUuid,
+});
 return '';

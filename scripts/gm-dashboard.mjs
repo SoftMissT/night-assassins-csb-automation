@@ -340,6 +340,6 @@ export async function openGmDashboard() {
     });
 
     window.__NAGmDashboard = dialog;
-    dialog.render({ force: true });
+    await dialog.render({ force: true });
     return dialog;
 }

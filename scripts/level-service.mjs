@@ -53,9 +53,7 @@ export async function createLevelOneValues(actor) {
     if (!distributedValues) return false;
 
     const values =
-        kind === 'oni'
-            ? await applyOniCreationBonuses(distributedValues)
-            : distributedValues;
+        kind === 'oni' ? await applyOniCreationBonuses(distributedValues) : distributedValues;
     if (!values || !(await confirmSnapshot(values, currentValues, 1))) return false;
 
     const patch = buildSnapshotPatch(1, values, kind);

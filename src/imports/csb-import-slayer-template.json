@@ -2016,8 +2016,8 @@
                                                     "altRollMessageToChat": false,
                                                     "style": "button"
                                                 },
-                                        {
-                                            "key": "descanso_slayer_gerenciar",
+                                                {
+                                                    "key": "descanso_slayer_gerenciar",
                                                     "colSpan": 1,
                                                     "rowSpan": 1,
                                                     "cssClass": "",
@@ -2038,32 +2038,32 @@
                                                     "altRollMessage": "",
                                                     "rollMessageToChat": false,
                                                     "altRollMessageToChat": false,
-                                            "style": "button"
-                                        },
-                                        {
-                                            "key": "respiracao_recuperacao_slayer",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "Usar uma Forma da Respiração da Recuperação.",
-                                            "visibilityFormula": "",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "label",
-                                            "size": "full-size",
-                                            "icon": "",
-                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ffffff;\">Respiração</span>\n",
-                                            "prefix": "",
-                                            "suffix": "",
-                                            "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARecovery000001'))?.execute({actorUuid:entity.uuid}); return '';}%",
-                                            "altRollMessage": "",
-                                            "rollMessageToChat": false,
-                                            "altRollMessageToChat": false,
-                                            "style": "button"
-                                        }
+                                                    "style": "button"
+                                                },
+                                                {
+                                                    "key": "respiracao_recuperacao_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Usar uma Forma da Respiração da Recuperação.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ffffff;\">Respiração</span>\n",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARecovery000001'))?.execute({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
+                                                }
                                             ],
                                             "flow": "horizontal",
                                             "align": "center",
@@ -2813,7 +2813,7 @@
                                                     "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">USAR</span>",
                                                     "prefix": "",
                                                     "suffix": "",
-                                            "rollMessage": "%{const form=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!form)return ui.notifications.warn('Respiração não encontrada nesta linha.');await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.uuid,itemUuid:form.uuid}); return '';}%",
+                                                    "rollMessage": "%{const form=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:null;if(!form)return ui.notifications.warn('Respiração não encontrada nesta linha.');await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.uuid,itemUuid:form.uuid}); return '';}%",
                                                     "altRollMessage": "",
                                                     "rollMessageToChat": false,
                                                     "altRollMessageToChat": false,
@@ -14822,7 +14822,7 @@
                     },
                     {
                         "name": "hab_slayer_pdv_bonus",
-                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_tsuyoi', 1, 0) * switchCase(\n  nvl_pj,\n  'nvl_1', 2,\n  'nvl_2', 2,\n  'nvl_3', 2,\n  'nvl_4', 2,\n  'nvl_5', 2,\n  'nvl_6', 3,\n  'nvl_7', 3,\n  'nvl_8', 3,\n  'nvl_9', 3,\n  'nvl_10', 3,\n  'nvl_11', 3,\n  'nvl_12', 3,\n  0\n)}$"
+                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_tsuyoi', 1, 0) * switchCase(\n  nvl_pj,\n  'nvl_1', 2,\n  'nvl_2', 2,\n  'nvl_3', 2,\n  'nvl_4', 2,\n  'nvl_5', 2,\n  'nvl_6', 3,\n  'nvl_7', 3,\n  'nvl_8', 3,\n  'nvl_9', 3,\n  'nvl_10', 3,\n  'nvl_11', 3,\n  'nvl_12', 3,\n  'nvl_13', 3,\n  'nvl_14', 3,\n  0\n)}$"
                     },
                     {
                         "name": "hab_slayer_pdr_bonus",

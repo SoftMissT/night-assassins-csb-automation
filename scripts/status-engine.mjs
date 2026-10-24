@@ -557,9 +557,7 @@ export function resolveSlayerHealing(props = {}, requestedTotal = 0) {
             : active.has('corrupcao') || active.has('regeneracao_suprimida')
               ? 0.5
               : 1;
-    const poisonSuppressed = parseUserPoisonState(
-        props[USER_POISON_STATE_KEY]
-    ).healingSuppressed;
+    const poisonSuppressed = parseUserPoisonState(props[USER_POISON_STATE_KEY]).healingSuppressed;
     const afterStatus = Math.floor(delta * statusMultiplier);
     const applied = poisonSuppressed ? Math.ceil(afterStatus / 2) : afterStatus;
     const multiplier = statusMultiplier * (poisonSuppressed ? 0.5 : 1);

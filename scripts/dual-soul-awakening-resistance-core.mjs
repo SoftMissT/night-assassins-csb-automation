@@ -16,110 +16,59 @@
 
 export const DUAL_SOUL_RESISTANCE_VERSION = 1;
 
-export const DUAL_SOUL_KINDS = Object.freeze([
-    'entidade',
-    'demonio',
-]);
+export const DUAL_SOUL_KINDS = Object.freeze(['entidade', 'demonio']);
 
-export const DUAL_SOUL_RESISTANCE_ATTRIBUTES =
-    Object.freeze([
-        'FOR',
-        'VIT',
-    ]);
+export const DUAL_SOUL_RESISTANCE_ATTRIBUTES = Object.freeze(['FOR', 'VIT']);
 
-function finiteNumber(
-    value,
-    label
-) {
-    const parsed =
-        Number(value);
+function finiteNumber(value, label) {
+    const parsed = Number(value);
 
     if (!Number.isFinite(parsed)) {
-        throw new Error(
-            `${label} precisa ser numérico.`
-        );
+        throw new Error(`${label} precisa ser numérico.`);
     }
 
     return parsed;
 }
 
-export function normalizeDualSoulKind(
-    value
-) {
-    const normalized =
-        String(value ?? '')
-            .trim()
-            .toLocaleLowerCase('pt-BR')
-            .normalize('NFD')
-            .replace(
-                /[\u0300-\u036f]/gu,
-                ''
-            );
+export function normalizeDualSoulKind(value) {
+    const normalized = String(value ?? '')
+        .trim()
+        .toLocaleLowerCase('pt-BR')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/gu, '');
 
     if (normalized === 'entidade') {
         return 'entidade';
     }
 
-    if (
-        normalized === 'demonio'
-    ) {
+    if (normalized === 'demonio') {
         return 'demonio';
     }
 
     return null;
 }
 
-export function normalizeResistanceAttribute(
-    value
-) {
-    const attribute =
-        String(value ?? '')
-            .trim()
-            .toUpperCase();
+export function normalizeResistanceAttribute(value) {
+    const attribute = String(value ?? '')
+        .trim()
+        .toUpperCase();
 
-    if (
-        !DUAL_SOUL_RESISTANCE_ATTRIBUTES
-            .includes(attribute)
-    ) {
-        throw new Error(
-            'Resistência ao Despertar aceita somente FOR ou VIT.'
-        );
+    if (!DUAL_SOUL_RESISTANCE_ATTRIBUTES.includes(attribute)) {
+        throw new Error('Resistência ao Despertar aceita somente FOR ou VIT.');
     }
 
     return attribute;
 }
 
-export function isUnstableDualSoulCeremony(
-    ceremony = {}
-) {
-    const kind =
-        String(
-            ceremony
-                ?.dominance
-                ?.kind ??
-            ceremony
-                ?.dominance
-                ?.dominantKind ??
-            ''
-        )
-            .trim()
-            .toLocaleLowerCase('pt-BR');
+export function isUnstableDualSoulCeremony(ceremony = {}) {
+    const kind = String(ceremony?.dominance?.kind ?? ceremony?.dominance?.dominantKind ?? '')
+        .trim()
+        .toLocaleLowerCase('pt-BR');
 
-    return (
-        kind === 'equilibrio' ||
-        kind === 'equilíbrio'
-    );
+    return kind === 'equilibrio' || kind === 'equilíbrio';
 }
-export function challengerKindFromD2(
-    total
-) {
-    const value =
-        Math.trunc(
-            finiteNumber(
-                total,
-                'Resultado do 1d2'
-            )
-        );
+export function challengerKindFromD2(total) {
+    const value = Math.trunc(finiteNumber(total, 'Resultado do 1d2'));
 
     if (value === 1) {
         return 'entidade';
@@ -129,9 +78,7 @@ export function challengerKindFromD2(
         return 'demonio';
     }
 
-    throw new Error(
-        `Resultado inválido de 1d2: ${value}.`
-    );
+    throw new Error(`Resultado inválido de 1d2: ${value}.`);
 }
 
 /**
@@ -144,28 +91,13 @@ export function challengerKindFromD2(
  *   ninguém é dominante/adormecido.
  *   challenger é sorteado neste evento por 1d2.
  */
-export function resolveDualSoulChallenge({
-    ceremony,
-    challengerRollTotal = null,
-} = {}) {
-    if (
-        !ceremony ||
-        typeof ceremony !== 'object'
-    ) {
-        throw new Error(
-            'Cerimônia inválida.'
-        );
+export function resolveDualSoulChallenge({ ceremony, challengerRollTotal = null } = {}) {
+    if (!ceremony || typeof ceremony !== 'object') {
+        throw new Error('Cerimônia inválida.');
     }
 
-    if (
-        isUnstableDualSoulCeremony(
-            ceremony
-        )
-    ) {
-        const challengerKind =
-            challengerKindFromD2(
-                challengerRollTotal
-            );
+    if (isUnstableDualSoulCeremony(ceremony)) {
+        const challengerKind = challengerKindFromD2(challengerRollTotal);
 
         return {
             balance: 'unstable',
@@ -177,46 +109,21 @@ export function resolveDualSoulChallenge({
 
             challengerRoll: {
                 formula: '1d2',
-                total:
-                    Math.trunc(
-                        Number(
-                            challengerRollTotal
-                        )
-                    ),
+                total: Math.trunc(Number(challengerRollTotal)),
             },
         };
     }
 
-    const dominantKind =
-        normalizeDualSoulKind(
-            ceremony
-                ?.dominance
-                ?.dominantKind
-        );
+    const dominantKind = normalizeDualSoulKind(ceremony?.dominance?.dominantKind);
 
-    const sleepingKind =
-        normalizeDualSoulKind(
-            ceremony
-                ?.dominance
-                ?.sleepingKind
-        );
+    const sleepingKind = normalizeDualSoulKind(ceremony?.dominance?.sleepingKind);
 
-    if (
-        !dominantKind ||
-        !sleepingKind
-    ) {
-        throw new Error(
-            'Cerimônia estável sem lados dominante/adormecido válidos.'
-        );
+    if (!dominantKind || !sleepingKind) {
+        throw new Error('Cerimônia estável sem lados dominante/adormecido válidos.');
     }
 
-    if (
-        dominantKind ===
-        sleepingKind
-    ) {
-        throw new Error(
-            'Lado dominante e adormecido não podem ser iguais.'
-        );
+    if (dominantKind === sleepingKind) {
+        throw new Error('Lado dominante e adormecido não podem ser iguais.');
     }
 
     return {
@@ -225,8 +132,7 @@ export function resolveDualSoulChallenge({
         dominantKind,
         sleepingKind,
 
-        challengerKind:
-            sleepingKind,
+        challengerKind: sleepingKind,
 
         challengerRoll: null,
     };
@@ -260,103 +166,63 @@ export function buildDualSoulResistanceEvent({
 
     trigger = '',
 } = {}) {
-    const normalizedAttribute =
-        normalizeResistanceAttribute(
-            attribute
-        );
+    const normalizedAttribute = normalizeResistanceAttribute(attribute);
 
-    const resolvedAttributeValue =
-        finiteNumber(
-            attributeValue,
-            'Valor do atributo'
-        );
+    const resolvedAttributeValue = finiteNumber(attributeValue, 'Valor do atributo');
 
-    const resolvedRollTotal =
-        finiteNumber(
-            rollTotal,
-            'Resultado da Resistência'
-        );
+    const resolvedRollTotal = finiteNumber(rollTotal, 'Resultado da Resistência');
 
-    const resolvedDc =
-        finiteNumber(
-            dc,
-            'CD de Despertar'
-        );
+    const resolvedDc = finiteNumber(dc, 'CD de Despertar');
 
     if (resolvedDc <= 0) {
-        throw new Error(
-            `CD de Despertar inválida: ${resolvedDc}.`
-        );
+        throw new Error(`CD de Despertar inválida: ${resolvedDc}.`);
     }
 
-    const challenge =
-        resolveDualSoulChallenge({
-            ceremony,
-            challengerRollTotal,
-        });
+    const challenge = resolveDualSoulChallenge({
+        ceremony,
+        challengerRollTotal,
+    });
 
-    const success =
-        resolvedRollTotal >=
-        resolvedDc;
+    const success = resolvedRollTotal >= resolvedDc;
 
     return {
-        version:
-            DUAL_SOUL_RESISTANCE_VERSION,
+        version: DUAL_SOUL_RESISTANCE_VERSION,
 
-        eventId:
-            eventId ?? null,
+        eventId: eventId ?? null,
 
-        createdAt:
-            createdAt ?? null,
+        createdAt: createdAt ?? null,
 
-        pending:
-            !success,
+        pending: !success,
 
-        result:
-            success
-                ? 'success'
-                : 'failure',
+        result: success ? 'success' : 'failure',
 
-        balance:
-            challenge.balance,
+        balance: challenge.balance,
 
-        dominantKind:
-            challenge.dominantKind,
+        dominantKind: challenge.dominantKind,
 
-        sleepingKind:
-            challenge.sleepingKind,
+        sleepingKind: challenge.sleepingKind,
 
-        challengerKind:
-            challenge.challengerKind,
+        challengerKind: challenge.challengerKind,
 
-        challengerRoll:
-            challenge.challengerRoll,
+        challengerRoll: challenge.challengerRoll,
 
-        attribute:
-            normalizedAttribute,
+        attribute: normalizedAttribute,
 
-        attributeValue:
-            resolvedAttributeValue,
+        attributeValue: resolvedAttributeValue,
 
-        rollTotal:
-            resolvedRollTotal,
+        rollTotal: resolvedRollTotal,
 
-        dc:
-            resolvedDc,
+        dc: resolvedDc,
 
         resistanceRoll: {
-            formula:
-                `1d20 + ${normalizedAttribute}`,
+            formula: `1d20 + ${normalizedAttribute}`,
 
-            resolvedFormula:
-                `1d20 + ${resolvedAttributeValue}`,
+            resolvedFormula: `1d20 + ${resolvedAttributeValue}`,
 
-            total:
-                resolvedRollTotal,
+            total: resolvedRollTotal,
         },
 
-        trigger:
-            String(trigger ?? ''),
+        trigger: String(trigger ?? ''),
 
         actorUuid,
         itemUuid,
@@ -367,55 +233,30 @@ export function buildDualSoulResistanceEvent({
     };
 }
 
-export function parseDualSoulResistanceRuntime(
-    value,
-    fallback = {}
-) {
-    if (
-        value &&
-        typeof value === 'object' &&
-        !Array.isArray(value)
-    ) {
+export function parseDualSoulResistanceRuntime(value, fallback = {}) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
         return value;
     }
 
-    if (
-        typeof value !== 'string' ||
-        !value.trim()
-    ) {
+    if (typeof value !== 'string' || !value.trim()) {
         return fallback;
     }
 
     try {
-        const parsed =
-            JSON.parse(value);
+        const parsed = JSON.parse(value);
 
-        return (
-            parsed &&
-            typeof parsed === 'object' &&
-            !Array.isArray(parsed)
-        )
-            ? parsed
-            : fallback;
+        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : fallback;
     } catch {
         return fallback;
     }
 }
 
-export function hasPendingDualSoulResistance(
-    value
-) {
-    const runtime =
-        parseDualSoulResistanceRuntime(
-            value,
-            {}
-        );
+export function hasPendingDualSoulResistance(value) {
+    const runtime = parseDualSoulResistanceRuntime(value, {});
 
     return (
         runtime.pending === true &&
         runtime.result === 'failure' &&
-        DUAL_SOUL_KINDS.includes(
-            runtime.challengerKind
-        )
+        DUAL_SOUL_KINDS.includes(runtime.challengerKind)
     );
 }

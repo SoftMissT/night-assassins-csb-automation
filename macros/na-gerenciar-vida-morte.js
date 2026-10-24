@@ -6,7 +6,8 @@ if (!moduleApi?.openLifeDeathManager) {
     );
     return '';
 }
-
 const input = typeof scope !== 'undefined' && scope ? scope : {};
-await moduleApi.openLifeDeathManager({ actorUuid: input.actorUuid });
+await moduleApi.openLifeDeathManager({
+    actorUuid: input.actorUuid,
+});
 return '';

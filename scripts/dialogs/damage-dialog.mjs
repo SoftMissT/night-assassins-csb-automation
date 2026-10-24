@@ -63,7 +63,7 @@ function makeAttrCheckboxes(selAttrs, idx, attrValues) {
         const chk = selAttrs.includes(key) ? 'checked' : '';
         return `<label class="na-attr-label">
       <input type="checkbox" class="na-attr-chk" data-idx="${idx}" value="${key}" ${chk} />
-      <span class="na-attr-key" style="color:${color};">${label}</span>
+      <span class="na-attr-key" style="--na-attr-color:${color};">${label}</span>
       <span class="na-attr-val">${attrValues[key] ?? 0}</span>
     </label>`;
     }).join('');
@@ -71,7 +71,9 @@ function makeAttrCheckboxes(selAttrs, idx, attrValues) {
 
 function makeEntradaHtml(e, idx, attrValues) {
     const attackIndex =
-        Number.isInteger(Number(e.attackIndex)) && e.attackIndex !== '' ? Number(e.attackIndex) : '';
+        Number.isInteger(Number(e.attackIndex)) && e.attackIndex !== ''
+            ? Number(e.attackIndex)
+            : '';
     const source = String(e.source ?? '').trim();
     return `
   <div class="na-entrada" data-idx="${idx}">
@@ -212,9 +214,7 @@ function inlineSavePanelHtml() {
 
 function weaponPanelHtml(weaponCatalog) {
     const options = weaponCatalog
-        .map(
-            (entry, index) => `<option value="${index}">${escapeHtml(entry.label)}</option>`
-        )
+        .map((entry, index) => `<option value="${index}">${escapeHtml(entry.label)}</option>`)
         .join('');
     return `<section class="na-inline-panel" id="na-weapon-panel" hidden>
       <label class="na-label">Arma / perfil</label>
@@ -249,9 +249,12 @@ function breathingPanelHtml(breathingCatalog) {
 
 function contextChipsHtml({ breathing, weaponLabel, presetDraft }) {
     const chips = [];
-    if (breathing) chips.push(`<span class="na-dmg-chip na-dmg-chip-breath">${escapeHtml(breathing)}</span>`);
+    if (breathing)
+        chips.push(`<span class="na-dmg-chip na-dmg-chip-breath">${escapeHtml(breathing)}</span>`);
     if (weaponLabel)
-        chips.push(`<span class="na-dmg-chip na-dmg-chip-weapon">${escapeHtml(weaponLabel)}</span>`);
+        chips.push(
+            `<span class="na-dmg-chip na-dmg-chip-weapon">${escapeHtml(weaponLabel)}</span>`
+        );
     if (presetDraft) chips.push('<span class="na-dmg-chip na-dmg-chip-preset">Modo preset</span>');
     return chips.length ? `<div class="na-dmg-chips">${chips.join('')}</div>` : '';
 }
@@ -273,7 +276,8 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
         const formulas = [];
         container.querySelectorAll('.na-entrada').forEach((entry) => {
             const idx = entry.dataset.idx;
-            const dado = entry.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() ?? '';
+            const dado =
+                entry.querySelector(`.na-dado-inp[data-idx="${idx}"]`)?.value?.trim() ?? '';
             const fixo = Number(entry.querySelector(`.na-fixo-inp[data-idx="${idx}"]`)?.value) || 0;
             const attrs = [
                 ...entry.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`),
@@ -396,8 +400,7 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
                 resourceCost: Math.max(0, Number(root.querySelector('#na-dmg-pdr')?.value) || 0),
                 entries,
             };
-            if (!draft.name)
-                return globalThis.ui?.notifications?.warn?.('Dê um nome ao preset.');
+            if (!draft.name) return globalThis.ui?.notifications?.warn?.('Dê um nome ao preset.');
             const confirm = root.querySelector('#na-save-confirm');
             if (confirm) confirm.disabled = true;
             try {
@@ -513,6 +516,21 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
         });
     }
 
+    // Janela acompanha o conteúdo: ao crescer ou encolher (entradas, painéis),
+    // setPosition({ height: 'auto' }) remede e o core faz clamp do `top` dentro
+    // do viewport. Janela redimensionada à mão (altura numérica) fica como está.
+    const app = options.app;
+    const dialogEl = root.querySelector?.('.na-dmg-dialog');
+    if (app?.setPosition && dialogEl && typeof ResizeObserver === 'function') {
+        let frame = 0;
+        new ResizeObserver(() => {
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => {
+                if (app.position?.height === 'auto') app.setPosition({ height: 'auto' });
+            });
+        }).observe(dialogEl);
+    }
+
     renumber();
     updatePreview();
 }
@@ -567,15 +585,31 @@ export async function openDamageDialog({
     const presetsById = new Map(
         (Array.isArray(presets) ? presets : []).map((preset) => [String(preset.id), preset])
     );
-    const entradasIniciais = preEntradas
-        .map((e, i) => makeEntradaHtml(e, i, attrValues))
-        .join('');
+    const entradasIniciais = preEntradas.map((e, i) => makeEntradaHtml(e, i, attrValues)).join('');
 
     const title = presetDraft
         ? presetDraft.name
             ? `Preset: ${escapeHtml(presetDraft.name)}`
             : 'Novo preset de dano'
         : escapeHtml(nome || 'Rolar Dano');
+
+    // Preset e nome do ataque dividem a mesma linha (poupa uma faixa de altura).
+    const presetRow = presetRowHtml(presets, { presetDraft, onSavePreset });
+    const nameField = presetDraft
+        ? ''
+        : `<section class="na-dmg-field">
+      <label class="na-label">Nome do Ataque / Técnica</label>
+      <input type="text" id="na-dmg-nome" value="${escapeHtml(nome ?? '')}" placeholder="ex: Corte Celestial" />
+    </section>`;
+    const topline =
+        presetRow || nameField ? `<div class="na-dmg-topline">${presetRow}${nameField}</div>` : '';
+
+    const criticalToggle = presetDraft
+        ? ''
+        : `<label class="na-critical-toggle">
+        <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
+        <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>
+      </label>`;
 
     const content = `
   <div class="na-dmg-dialog">
@@ -589,17 +623,8 @@ export async function openDamageDialog({
 
     ${presetDraft ? presetFieldsHtml({ ...presetDraft, breathing: presetDraft.breathing ?? breathing }) : ''}
 
-    ${presetRowHtml(presets, { presetDraft, onSavePreset })}
+    ${topline}
     ${!presetDraft && onSavePreset ? inlineSavePanelHtml() : ''}
-
-    ${
-        presetDraft
-            ? ''
-            : `<section class="na-dmg-field">
-      <label class="na-label">Nome do Ataque / Técnica</label>
-      <input type="text" id="na-dmg-nome" value="${escapeHtml(nome ?? '')}" placeholder="ex: Corte Celestial" />
-    </section>`
-    }
 
     <div class="na-dmg-entries-head">
       <span class="na-dmg-entries-title">Entradas de dano</span>
@@ -616,23 +641,14 @@ export async function openDamageDialog({
     <section class="na-dmg-foot">
       <div class="na-dmg-resource">
         <label class="na-label">${resourceLabel} a gastar</label>
-        <input type="number" id="na-dmg-pdr" min="0" value="${Number.isFinite(Number(pdrCusto)) ? Number(pdrCusto) : 0}" placeholder="0" />
-        <span class="na-hint">somado a <code>${resourceKey}</code></span>
+        <input type="number" id="na-dmg-pdr" min="0" value="${Number.isFinite(Number(pdrCusto)) ? Number(pdrCusto) : 0}" placeholder="0" title="Somado a ${escapeHtml(resourceKey)}" />
       </div>
       <div class="na-dmg-total">
         <label class="na-label">Fórmula total</label>
         <div id="na-total-preview">0</div>
       </div>
+      ${criticalToggle}
     </section>
-
-    ${
-        presetDraft
-            ? ''
-            : `<label class="na-critical-toggle">
-      <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
-      <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>
-    </label>`
-    }
     <datalist id="na-preset-group-list">${groupListHtml()}</datalist>
   </div>`;
 
@@ -641,6 +657,7 @@ export async function openDamageDialog({
         const root = element?.querySelector ? element : element?.[0];
         if (!root?.querySelector?.('#na-add-btn')) return;
         bindDamageDialogInteractions(root, attrValues, {
+            app: dialog,
             presetsById,
             breathing,
             weaponCatalog,

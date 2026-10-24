@@ -15,10 +15,14 @@ function stripBlockquote(value = '') {
 }
 
 export function splitWeaponPresentation(value = '') {
-    const normalized = String(value ?? '').replace(/\r\n/gu, '\n').trim();
+    const normalized = String(value ?? '')
+        .replace(/\r\n/gu, '\n')
+        .trim();
     if (!normalized) return { description: '', ability: '' };
 
-    const abilityMatch = normalized.match(/(?:^|\n)\s*(?:#{1,6}\s*)?Habilidade\s*\n([\s\S]*?)(?:\n\s*---\s*$|$)/iu);
+    const abilityMatch = normalized.match(
+        /(?:^|\n)\s*(?:#{1,6}\s*)?Habilidade\s*\n([\s\S]*?)(?:\n\s*---\s*$|$)/iu
+    );
     const beforeAbility = abilityMatch ? normalized.slice(0, abilityMatch.index) : normalized;
     const description = beforeAbility
         .split(/\n\s*\n/u)
@@ -40,8 +44,6 @@ export function normalizeNormalWeaponProps(props = {}) {
         arma_requisito: cleanWeaponScalar(props.arma_requisito),
         arma_tipo: cleanWeaponScalar(props.arma_tipo),
         descricao: presentation.description,
-        arma_regra_completa: cleanWeaponScalar(
-            props.arma_regra_completa || presentation.ability
-        ),
+        arma_regra_completa: cleanWeaponScalar(props.arma_regra_completa || presentation.ability),
     };
 }

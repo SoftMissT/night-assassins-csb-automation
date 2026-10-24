@@ -8,12 +8,10 @@ import { mistFormById } from '../scripts/mist-breathing-data.mjs';
 import { metalFormById } from '../scripts/metal-breathing-data.mjs';
 import { snowFormById } from '../scripts/snow-breathing-data.mjs';
 import { markdownToFoundryHtml } from './compendium-catalog-utils.mjs';
-
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const catalogPath = path.join(root, 'catalogs', 'breathing.json');
 const outputDirectory = path.join(root, 'build', 'compendium', 'respiracoes');
 const templatePath = path.join(root, 'src', 'templates', 'items', 'breathing-form-template.json');
-
 export const BREATHING_CATALOG = Object.freeze([
     'Água',
     'Ameixeira',
@@ -60,7 +58,6 @@ export const BREATHING_CATALOG = Object.freeze([
     'Veneno',
     'Vento',
 ]);
-
 export const BREATHING_FOLDER_NAMES = Object.freeze([
     'Respiração da Água',
     'Respiração da Ameixeira',
@@ -107,7 +104,6 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
     'Respiração do Veneno',
     'Respiração do Vento',
 ]);
-
 /**
  * O catálogo mecânico (`catalogs/breathing.json`) contém dados de todas as
  * Respirações do jogo, mas o pacote distribuído publica apenas as Respirações
@@ -122,7 +118,6 @@ export const PUBLISHED_BREATHINGS = Object.freeze([
     'Pedra',
     'Vento',
 ]);
-
 const catalog = JSON.parse(await readFile(catalogPath, 'utf8'));
 if (catalog.format !== 1 || !Array.isArray(catalog.documents))
     throw new Error('Catálogo mecânico de Respirações inválido.');
@@ -158,7 +153,6 @@ catalog.documents = catalog.documents.map((document) =>
         ? templateDocument
         : document
 );
-
 for (const document of catalog.documents) {
     if (document.type !== 'equippableItem') continue;
     document.name = String(document.name ?? '').replace(/\s+[—–]\s+/gu, ': ');
@@ -178,11 +172,13 @@ for (const document of catalog.documents) {
             ? 1
             : 0;
     if (flame) {
-            document.system.props.tipo_manobra = flame.passive
+        document.system.props.tipo_manobra = flame.passive
             ? 'Passiva'
-            : ({ ataque: 'Ação de Ataque', especial: 'Ação Especial', reacao: 'Reação' }[
-                  flame.action
-              ] ?? flame.action);
+            : ({
+                  ataque: 'Ação de Ataque',
+                  especial: 'Ação Especial',
+                  reacao: 'Reação',
+              }[flame.action] ?? flame.action);
         for (let level = 1; level <= 4; level += 1) {
             const mechanics = flame.levels[level - 1];
             document.system.props[`tem_nvl${level}`] = mechanics ? 1 : 0;
@@ -205,8 +201,8 @@ for (const document of catalog.documents) {
         // Pedra usa o shape canônico (`acao`/`acoes`/`niveis[].custo/dano/tiposDano`);
         // mist/metal/snow seguem o formato legado (`action`/`actions`/`levels`).
         const action = stone
-            ? stone.acao ?? stone.acoes?.join(' + ') ?? ''
-            : curated.action ?? curated.actions?.join(' + ') ?? '';
+            ? (stone.acao ?? stone.acoes?.join(' + ') ?? '')
+            : (curated.action ?? curated.actions?.join(' + ') ?? '');
         document.system.props.tipo_manobra =
             {
                 ataque: 'Ação de Ataque',
@@ -252,13 +248,12 @@ for (const document of catalog.documents) {
             props[key] = markdownToFoundryHtml(props[key]);
     }
 }
-
 const flameSource = catalog.documents.find(
     (document) =>
-        document.type === 'equippableItem' &&
-        document.system?.props?.respiracao_nome === 'Chamas'
+        document.type === 'equippableItem' && document.system?.props?.respiracao_nome === 'Chamas'
 );
-if (!flameSource) throw new Error('Nenhuma Forma de Chamas disponível para gerar o Item principal.');
+if (!flameSource)
+    throw new Error('Nenhuma Forma de Chamas disponível para gerar o Item principal.');
 const flameFolder = catalog.documents.find(
     (document) => document.type === 'Item' && document._id === flameSource.folder
 );
@@ -336,7 +331,8 @@ Object.assign(flameHub.system.props, {
     respiracao_nome: 'Chamas',
     tipo_manobra: 'Respiração',
     nivel_req: 1,
-    descricao: '<p>Abra este Item para escolher e executar qualquer Forma conhecida da Respiração das Chamas.</p>',
+    descricao:
+        '<p>Abra este Item para escolher e executar qualquer Forma conhecida da Respiração das Chamas.</p>',
     forma_passiva: 0,
 });
 flameHub.folder = flameFolder._id;
@@ -352,9 +348,13 @@ for (let level = 1; level <= 4; level += 1) {
     });
 }
 catalog.documents.push(flameHub);
-
-await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
+await rm(outputDirectory, {
+    recursive: true,
+    force: true,
+});
+await mkdir(outputDirectory, {
+    recursive: true,
+});
 await Promise.all(
     catalog.documents.map((document, index) => {
         const id = document._id ?? `document-${index}`;
@@ -365,7 +365,6 @@ await Promise.all(
         );
     })
 );
-
 const folderCount = catalog.documents.filter((document) => document.type === 'Item').length;
 const itemCount =
     catalog.documents.filter(

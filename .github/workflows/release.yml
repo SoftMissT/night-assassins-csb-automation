@@ -104,6 +104,7 @@ jobs:
             packs \
             assets/icons \
             assets/fonts \
+            assets/media \
             README.md \
             CHANGELOG.md
           cd ../..
@@ -117,6 +118,7 @@ jobs:
           unzip -Z1 module.zip | grep -qx "assets/icons/weapons/katana_icon.webp"
           unzip -Z1 module.zip | grep -qx "assets/fonts/Orbitron-latin.woff2"
           unzip -Z1 module.zip | grep -qx "assets/fonts/Rajdhani-400-latin.woff2"
+          unzip -Z1 module.zip | grep -qx "assets/media/module-cover.webp"
           ! unzip -Z1 module.zip | grep -qx "catalogs/breathing.json"
 
       - name: Publish GitHub Release

@@ -44,6 +44,20 @@ describe('module distribution', () => {
         );
     });
 
+    it('declara a mídia do Setup e o arquivo existe no repositório', async () => {
+        const manifest = JSON.parse(
+            await readFile(new URL('../module.json', import.meta.url), 'utf8')
+        );
+        assert.ok(Array.isArray(manifest.media) && manifest.media.length > 0);
+        const prefix = `modules/${manifest.id}/`;
+        for (const media of manifest.media) {
+            assert.ok(['setup', 'cover', 'icon', 'screenshot'].includes(media.type), media.type);
+            assert.ok(media.url.startsWith(prefix), `${media.url} deve começar com ${prefix}`);
+            const bytes = await readFile(new URL(`../${media.url.slice(prefix.length)}`, import.meta.url));
+            assert.ok(bytes.length > 0, `${media.url} deve existir`);
+        }
+    });
+
     it('cataloga todo asset de icons/ (recursivo) no Compêndio de Arte', async () => {
         const { readdir } = await import('node:fs/promises');
         const path = await import('node:path');

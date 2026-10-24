@@ -6,37 +6,46 @@
 ![Custom System Builder](https://img.shields.io/badge/Custom_System_Builder-%E2%89%A55.2.1-5965f2)
 ![Dice So Nice](https://img.shields.io/badge/Dice_So_Nice!-obrigat%C3%B3rio-8a2be2)
 
-![Night Assassins CSB Automation](assets/nigh%20assassin%27s.png)
+![Night Assassins CSB Automation](assets/media/module-cover.webp)
 
 Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**, construído sobre o **Custom System Builder**. Ele distribui os templates oficiais, compêndios e macros usados para atributos, progressão, combate, Respirações, Kekkijutsus e manutenção dos dados do mundo.
 
+Versão declarada no manifesto: **0.11.86**.
+
+## Imagem do módulo
+
+A capa da instalação (tela de Setup do Foundry) e a imagem deste README são o mesmo arquivo:
+
+```text
+assets/media/module-cover.webp
+```
+
+Para trocar pela arte definitiva, substitua **esse arquivo** mantendo o nome e o caminho — o `module.json` aponta para ele em `media` e o `module.zip` publica a pasta `assets/media/`. Recomendado: WebP, 1280×640 (2:1), até 1 MB. O card do Setup usa `object-fit: cover`, então mantenha o assunto principal no centro e evite texto grande nas bordas. Nenhum outro arquivo precisa mudar.
+
 ## Requisitos
 
-| Dependência | Versão |
-| --- | ---: |
-| Foundry Virtual Tabletop | v14 |
-| Custom System Builder | 5.2.1 ou superior |
-| Dice So Nice! | Obrigatório |
-
-Versão declarada no manifesto: **0.11.84**.
+| Dependência              |            Versão |
+| ------------------------ | ----------------: |
+| Foundry Virtual Tabletop |               v14 |
+| Custom System Builder    | 5.2.1 ou superior |
+| Dice So Nice!            |       Obrigatório |
 
 ## Instalação
 
 ### Pelo Foundry (recomendado)
 
 1. Na tela inicial do Foundry, abra **Módulos de Jogo**.
-2. Clique em **Instalar Módulo**.
-3. Cole a URL do manifesto:
+2. Clique em **Instalar Módulo** e cole a URL do manifesto:
 
 ```text
 https://github.com/SoftMissT/night-assassins-csb-automation/releases/latest/download/module.json
 ```
 
-1. Instale o módulo.
-2. No mundo Night Assassins, abra **Gerenciar Módulos** e ative:
-   - Night Assassins CSB Automation;
-   - Dice So Nice!.
-3. Salve e recarregue o mundo.
+3. Instale o módulo.
+4. No mundo Night Assassins, abra **Gerenciar Módulos** e ative:
+    - Night Assassins CSB Automation;
+    - Dice So Nice!.
+5. Salve e recarregue o mundo.
 
 ### Instalação manual
 
@@ -63,12 +72,12 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 
 ## Estado das fichas
 
-| Ficha | Estado atual |
-| --- | --- |
-| **Slayer** | Abas Perícias, Combate, Habilidades e Config/Dados; progressão N1–N20, PDV/PDR, atributos, ações, Vida e Morte, Respirações e inventário. O fluxo compartilhado de armas normais está implementado e aguarda o gate final no Foundry para Acerto → crítico → Dano. |
-| **Oni** | Combate e Configurações/Dados; criação N1 com pool padrão ou sete d4 e três bônus +1 distintos; progressão N1–N20, PDV/PDK, Regeneração, Origens, Kekkijutsus, ações e resistências. Não recebe Vida e Morte de Slayer. |
-| **Oni Minion** | Ficha enxuta com tipos, pacotes de atributos, ataques, traços, fraquezas e PDV/PDK próprios. |
-| **NPC** | Ficha para NPCs com dados próprios. Participa do relay genérico e do mesmo motor de Acerto/Dano por armas normais usado pelo Slayer quando possui uma arma válida. |
+| Ficha          | Estado atual                                                                                                                                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Slayer**     | Abas Perícias, Combate, Habilidades e Config/Dados; progressão N1–N20, PDV/PDR, atributos, ações, Vida e Morte, Respirações e inventário. O fluxo compartilhado de armas normais está implementado e aguarda o gate final no Foundry para Acerto → crítico → Dano. |
+| **Oni**        | Combate e Configurações/Dados; criação N1 com pool padrão ou sete d4 e três bônus +1 distintos; progressão N1–N20, PDV/PDK, Regeneração, Origens, Kekkijutsus, ações e resistências. Não recebe Vida e Morte de Slayer.                                            |
+| **Oni Minion** | Ficha enxuta com tipos, pacotes de atributos, ataques, traços, fraquezas e PDV/PDK próprios.                                                                                                                                                                       |
+| **NPC**        | Ficha para NPCs com dados próprios. Participa do relay genérico e do mesmo motor de Acerto/Dano por armas normais usado pelo Slayer quando possui uma arma válida.                                                                                                 |
 
 ### Estado de validação
 
@@ -78,19 +87,20 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 - Gate de desempenho: aprovado após a remoção das varreduras pesadas do caminho crítico.
 - Armas normais Slayer/NPC: contrato e testes automatizados concluídos; validação runtime no Foundry ainda pendente.
 - Armas especiais: fora do fluxo atual e ainda não publicadas como mecânica concluída.
+- Tela de erro do CSB: o template NPC e o Slayer protegem o filtro de `inventario_categoria`; mundos antigos precisam reimportar o template para receber a fórmula corrigida.
 
 ## Respirações publicadas
 
 Somente Respirações com serviço de estado dedicado, testes e auditoria contra a fonte oficial entram no compêndio final.
 
-| Respiração | Conteúdo publicado | Estado |
-| --- | --- | --- |
-| **Chamas** | 9 Estilos + Esquentar | Auditada |
-| **Pedra** | 5 Estilos | Auditada |
-| **Névoa** | 8 Formas + 3 Padrões | Auditada |
-| **Metal** | 5 Formas + Martelo do Julgamento | Auditada |
-| **Neve** | 7 Formas + Congelar | Auditada |
-| **Vento** | 9 Estilos + Sangue Especial | Auditada |
+| Respiração | Conteúdo publicado               | Estado   |
+| ---------- | -------------------------------- | -------- |
+| **Chamas** | 9 Estilos + Esquentar            | Auditada |
+| **Pedra**  | 5 Estilos                        | Auditada |
+| **Névoa**  | 8 Formas + 3 Padrões             | Auditada |
+| **Metal**  | 5 Formas + Martelo do Julgamento | Auditada |
+| **Neve**   | 7 Formas + Congelar              | Auditada |
+| **Vento**  | 9 Estilos + Sangue Especial      | Auditada |
 
 O catálogo de trabalho contém outras Respirações, mas elas não são publicadas até receberem motor, auditoria e testes equivalentes.
 
@@ -107,15 +117,15 @@ O catálogo de trabalho contém outras Respirações, mas elas não são publica
 
 ## Compêndios
 
-| Compêndio | Conteúdo |
-| --- | --- |
-| **Macros Night Assassins** | Macros canônicas e ferramentas de reparo/diagnóstico |
-| **Night Assassins Templates de Ficha** | Slayer, Oni, Oni Minion e NPC |
-| **Night Assassin's Respirações** | Respirações publicadas e suas Formas |
-| **Night Assassin's Armas dos Caçadores** | Armas normais disponíveis para Slayer/NPC |
-| **Night Assassin's Arte** | Assets e ícones distribuídos pelo módulo |
+| Compêndio                                | Conteúdo                                             |
+| ---------------------------------------- | ---------------------------------------------------- |
+| **Macros Night Assassins**               | Macros canônicas e ferramentas de reparo/diagnóstico |
+| **Night Assassins Templates de Ficha**   | Slayer, Oni, Oni Minion e NPC                        |
+| **Night Assassin's Respirações**         | Respirações publicadas e suas Formas                 |
+| **Night Assassin's Armas dos Caçadores** | Armas normais disponíveis para Slayer/NPC            |
+| **Night Assassin's Arte**                | Assets e ícones distribuídos pelo módulo             |
 
-Os geradores consomem as fontes versionadas do projeto. Arquivos gerados em `build/` não são fonte de verdade e não devem ser editados manualmente.
+Os geradores consomem as fontes versionadas do projeto. Arquivos gerados em `build/` não são fonte de verdade e não devem ser editados manualmente. O `release.yml` reempacota os compêndios a partir de `src/` e `macros/` antes de publicar.
 
 ## Reparo de dados legados
 
@@ -129,14 +139,15 @@ Os reparos são idempotentes: executar novamente sobre um documento já corrigid
 
 ## Troubleshooting
 
-| Sintoma | Ação recomendada |
-| --- | --- |
+| Sintoma                               | Ação recomendada                                                                                                                 |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | Arma não aparece ou não possui perfil | Execute **Corrigir Armas dos Caçadores**, feche e reabra a ficha. Use um Item novo do compêndio para comparar com Items legados. |
-| Respiração ou Forma perdeu dados | Execute **Corrigir Respirações dos Caçadores** e reabra a ficha. |
-| Journal não abre ou não exporta | Confirme que está conectado como GM e use a macro **Diagnóstico de Erros** atualizada. |
-| Fórmula CSB mostra `ERROR` | Reimporte o template oficial do compêndio; Actors antigos podem manter fórmulas de versões anteriores. |
-| Asset retorna 404 | Confirme que `module.zip` contém `assets/icons/` e que a instalação não criou uma pasta duplicada. |
-| Mundo fica lento após ativar o módulo | Desative temporariamente a automação afetada, exporte o Journal de diagnóstico e informe versão do Foundry, CSB e módulo. |
+| Respiração ou Forma perdeu dados      | Execute **Corrigir Respirações dos Caçadores** e reabra a ficha.                                                                 |
+| Journal não abre ou não exporta       | Confirme que está conectado como GM e use a macro **Diagnóstico de Erros** atualizada.                                           |
+| Fórmula CSB mostra `ERROR`            | Reimporte o template oficial do compêndio; Actors antigos podem manter fórmulas de versões anteriores.                           |
+| Erros `compareText`/`equalText` no console | Reimporte o template do compêndio (NPC ou Slayer). A fórmula antiga fica salva no mundo até o template ser recarregado.      |
+| Asset retorna 404                     | Confirme que `module.zip` contém `assets/icons/`, `assets/fonts/` e `assets/media/`, e que a instalação não criou pasta duplicada. |
+| Mundo fica lento após ativar o módulo | Desative temporariamente a automação afetada, exporte o Journal de diagnóstico e informe versão do Foundry, CSB e módulo.        |
 
 ## Desenvolvimento
 
@@ -148,8 +159,8 @@ node --test
 git diff --check
 ```
 
-Não edite manualmente conteúdo gerado em `build/` ou nos diretórios de packs.
+Não edite manualmente conteúdo gerado em `build/` ou nos diretórios de packs. A capa do módulo é a exceção de asset: troque somente `assets/media/module-cover.webp`.
 
 ## Licença
 
-MIT
+MIT.

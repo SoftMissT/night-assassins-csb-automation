@@ -2,6 +2,12 @@
     "id": "night-assassins-csb-automation",
     "title": "Night Assassins CSB Automation",
     "description": "Automação de atributos, progressão e Habilidades Especiais de Night Assassins para Custom System Builder.",
+    "media": [
+        {
+            "type": "setup",
+            "url": "modules/night-assassins-csb-automation/assets/media/module-cover.webp"
+        }
+    ],
     "version": "0.11.86",
     "socket": true,
     "authors": [

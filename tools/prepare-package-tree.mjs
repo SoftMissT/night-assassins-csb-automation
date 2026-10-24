@@ -14,7 +14,7 @@ export const PACKAGE_ENTRIES = Object.freeze([
     'CHANGELOG.md',
 ]);
 /** Pastas de `assets/` que seguem no pacote. Só `icons` passa pela otimização do ffmpeg. */
-export const PACKAGE_ASSET_DIRS = Object.freeze(['icons', 'fonts']);
+export const PACKAGE_ASSET_DIRS = Object.freeze(['icons', 'fonts', 'media']);
 /**
  * Arquivos que só as ferramentas de build leem. Ficam no repositório e fora do
  * pacote: `breathing.json` pesa 2,35 MB e o runtime nunca o carrega (os Itens de

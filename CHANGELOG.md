@@ -1,4 +1,10 @@
 # Changelog
+## Não lançado — 2026-10-24 — capa do módulo e README
+
+- O `module.json` declara `media` do tipo `setup` apontando para `assets/media/module-cover.webp`; a pasta `assets/media/` passa a ser publicada no `module.zip` e o `release.yml` confere o arquivo. Teste de distribuição valida tipo, prefixo `modules/<id>/` e existência do arquivo.
+- `README.md` atualizado para a 0.11.86, com o caminho oficial da capa, numeração da instalação corrigida e troubleshooting do erro `compareText`/`equalText`.
+- A capa atual é um placeholder 1280×640 (989 KB) até a arte definitiva; a troca é substituir o mesmo arquivo, sem alterar caminho ou código.
+
 ## v0.11.86 — 2026-10-24
 
 Inclui o que estava em "Não lançado" desde 2026-10-13.

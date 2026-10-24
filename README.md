@@ -10,7 +10,7 @@
 
 Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**, construído sobre o **Custom System Builder**. Ele distribui os templates oficiais, compêndios e macros usados para atributos, progressão, combate, Respirações, Kekkijutsus e manutenção dos dados do mundo.
 
-Versão declarada no manifesto: **0.11.86**.
+Versão declarada no manifesto: **0.11.87**.
 
 ## Imagem do módulo
 
@@ -20,7 +20,7 @@ A capa da instalação (tela de Setup do Foundry) e a imagem deste README são o
 assets/media/module-cover.webp
 ```
 
-Para trocar pela arte definitiva, substitua **esse arquivo** mantendo o nome e o caminho — o `module.json` aponta para ele em `media` e o `module.zip` publica a pasta `assets/media/`. Recomendado: WebP, 1280×640 (2:1), até 1 MB. O card do Setup usa `object-fit: cover`, então mantenha o assunto principal no centro e evite texto grande nas bordas. Nenhum outro arquivo precisa mudar.
+Para trocar pela arte definitiva, substitua **esse arquivo** mantendo o nome e o caminho — o `module.json` aponta para ele em `media` e o `module.zip` publica a pasta `assets/media/`. Arte atual: WebP 1672×941 (16:9), 367 KB. O card do Setup usa `object-fit: cover`; conforme a largura da janela ele recorta as laterais ou o topo/base, então mantenha o assunto principal centralizado e evite texto grande nas bordas. Nenhum outro arquivo precisa mudar.
 
 ## Requisitos
 

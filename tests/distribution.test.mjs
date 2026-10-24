@@ -55,6 +55,8 @@ describe('module distribution', () => {
             assert.ok(media.url.startsWith(prefix), `${media.url} deve começar com ${prefix}`);
             const bytes = await readFile(new URL(`../${media.url.slice(prefix.length)}`, import.meta.url));
             assert.ok(bytes.length > 0, `${media.url} deve existir`);
+            assert.equal(bytes.subarray(0, 4).toString('ascii'), 'RIFF', `${media.url} deve ser WebP`);
+            assert.equal(bytes.subarray(8, 12).toString('ascii'), 'WEBP', `${media.url} deve ser WebP`);
         }
     });
 

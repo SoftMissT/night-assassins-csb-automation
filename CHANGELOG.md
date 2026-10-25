@@ -1,6 +1,34 @@
 # Changelog
 ## Não lançado
 
+## v0.11.91 — 2026-10-25 — Recuperação, Descanso, dano escolhido nas Respirações e layout dos itens
+
+### 2026-10-25 — dano da Forma escolhido pelo jogador e guardado
+
+- Vento, Chamas, Pedra e Neve: o diálogo da Forma traz "Dano da Forma" preenchido com o valor guardado do nível (`nvlN_dano`, que nasce com o da tabela). Trocar vale na hora e fica salvo no Item; fórmula livre com `@atributo`, validada antes de gastar PDR ou ação.
+- Só o dano base muda: Calor, Metal, Marca, derivados, custo, status e efeitos seguem automáticos. A troca alcança golpe extra e efeito pendente da mesma Forma e o dado repetido do Vento com investimento. Metal não tem dano de Forma (são estados); Água e Névoa ficam como estavam.
+- `scripts/breath-damage-choice.mjs` (novo); a Pedra recebe o dano pela rota canônica (`damageOverride`).
+
+### 2026-10-25 — Respiração da Recuperação conforme a regra
+
+- Sinfonia soma VIT×2 e FDV×2 e zera toda a Exaustão; Expurgo dá PDV temporário (o maior fica), remove Fadiga Espiritual e rola o reteste contra Envenenamento ou Paralisia; Choque deixa com exatamente 1 PDV e cria o status Choque Adrenérgico (ignora Exaustão por 1–2 rodadas, inclusive deslocamento e o Vulnerável da Exaustão 6).
+- Fadiga Espiritual corta o PDR recuperado pela metade; passiva Autocontrole Celular dá Vantagem em VIT com Envenenamento ou Hemorragia.
+- Diálogo só com as Formas do nível e a CD; resumo no chat; sem exigência de canvas.
+- PDV temporário (`pdv_slayer_extra`) absorve o dano antes do PDV.
+
+### 2026-10-25 — Descanso
+
+- PDV temporário acaba no Descanso Completo e na Recuperação Profunda.
+- Descanso de Oni: Campo dá metade do PDK e 1d4×VIT; Completo e Profunda enchem PDV e PDK; com Regeneração Suprimida recupera PDK mas não PDV. Registro antiabuso do Oni em flag do ator. O botão Descanso do Controle GM aceita Oni.
+
+### 2026-10-25 — layout completo dos templates de item
+
+- Arma e arma especial: cabeçalho em 4 colunas (nome em Orbitron, faixa de combate dano/crítico/alcance na cor do item, detalhes, propriedades/requisito). Especial: atributos do portador numa linha, Vínculo e Estado em 4 colunas, ações da Dupla Alma numa fileira de botões.
+- Kekkijutsu: cabeçalho em 4 colunas; Potenciação recolhida.
+- Corrige a v0.11.90: Efeito da Forma desalinhava em nível desligado; títulos recolhíveis seguiam em caixa-alta (seletor não casava com o DOM do CSB).
+- **Exige reimportar os templates no mundo.**
+- Testes: `node --test` 1298/1298. **Sem validação no Foundry.**
+
 ## v0.11.90 — 2026-10-25 — testes de atributo com bônus visíveis, templates de item e macros finas
 
 ### 2026-10-25 — a ficha passa a rolar pelo serviço completo, com cada bônus nomeado

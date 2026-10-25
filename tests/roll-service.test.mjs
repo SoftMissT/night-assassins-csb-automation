@@ -227,7 +227,7 @@ describe('roll-service', () => {
         assert.match(_formula, /\+ 4$/, "sem CD (cdVal=0) o bônus 'contra CD' não deve se aplicar");
     });
 
-    it('pede confirmação quando a Defesa não possui CD', async () => {
+    it('Bloqueio sem CD só pergunta "defendeu?" quando a interceptação de Chamas está pronta', async () => {
         _dialogReturn = {
             mode: 'normal',
             rollMode: 'publicroll',
@@ -240,14 +240,79 @@ describe('roll-service', () => {
             toMessage: async () => {},
             dice: [{ results: [{ result: 14, active: true }] }],
         };
-        const actor = makeActor({ props: { for_display: '4' } });
         let confirmations = 0;
         foundry.applications.api.DialogV2.confirm = async () => {
             confirmations += 1;
             return false;
         };
-        await rollTest({ actor, test: 'Bloqueio', attr: 'FOR' });
+        await rollTest({ actor: makeActor({ props: { for_display: '4' } }), test: 'Bloqueio', attr: 'FOR' });
+        await rollTest({ actor: makeActor({ props: { dex_display: '4' } }), test: 'Esquiva', attr: 'DEX' });
+        assert.equal(confirmations, 0, 'sem Chamas a resposta não muda nada');
+        const flame = makeActor({
+            props: { for_display: '4', resp_chamas_estado: JSON.stringify({ block: { intercept: true } }) },
+        });
+        await rollTest({ actor: flame, test: 'Bloqueio', attr: 'FOR' });
         assert.equal(confirmations, 1);
+    });
+});
+
+describe('roll-service: bônus visíveis antes e depois da rolagem', () => {
+    const dialogReturn = (extra = {}) => ({
+        mode: 'normal',
+        rollMode: 'publicroll',
+        secVal: 0,
+        secKey: '',
+        bonusRaw: '',
+        cdVal: 0,
+        ...extra,
+    });
+
+    it('o diálogo lista cada bônus automático com a origem e a prévia já soma todos', async () => {
+        let content = '';
+        foundry.applications.api.DialogV2.wait = async (config) => {
+            content = config.content;
+            return null;
+        };
+        const actor = makeActor({
+            props: { for_display: '4', hab_bloqueio_bonus: 3, metal_bloqueio_bonus: 4 },
+        });
+        await rollTest({ actor, test: 'Bloqueio', attr: 'FOR' });
+        foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+        assert.match(content, /Bônus automáticos/u);
+        assert.match(content, /\+3/u);
+        assert.match(content, /\+4/u);
+        assert.match(content, /1d20 \+ 4 \+ 7/u);
+    });
+
+    it('sem bônus o diálogo diz isso em vez de ficar vazio', async () => {
+        let content = '';
+        foundry.applications.api.DialogV2.wait = async (config) => {
+            content = config.content;
+            return null;
+        };
+        await rollTest({ actor: makeActor({ props: { int_display: '2' } }), test: 'História', attr: 'INT' });
+        foundry.applications.api.DialogV2.wait = async () => _dialogReturn;
+        assert.match(content, /Nenhum bônus automático/u);
+    });
+
+    it('o chat nomeia o secundário escolhido e separa o bônus manual dos derivados', async () => {
+        _dialogReturn = dialogReturn({ secVal: 2, secKey: 'dex', bonusRaw: '1d4' });
+        let flavor = '';
+        _rollResult = {
+            total: 15,
+            toMessage: async (data) => {
+                flavor = data.flavor;
+            },
+            dice: [{ results: [{ result: 9, active: true }] }],
+        };
+        const actor = makeActor({
+            props: { for_display: '4', dex_display: '2', hab_bloqueio_bonus: 3 },
+        });
+        await rollTest({ actor, test: 'Bloqueio', attr: 'FOR' });
+        assert.match(flavor, /\+ DEX = 2/u);
+        assert.match(flavor, /Bônus: 1d4(?! \+)/u);
+        assert.match(flavor, /Derivados: [^|]*\+3/u);
+        assert.match(_formula, /^1d20 \+ 4 \+ 2 \+ 1d4 \+ 3$/u);
     });
 });
 
@@ -283,4 +348,27 @@ describe('roll-service: visibilidade v14', () => {
             assert.equal('messageMode' in data, false);
         });
     }
+});
+
+describe('roll-dialog e macro Teste de Atributo', async () => {
+    const { previewFormula, autoBonusMarkup } = await import('../scripts/dialogs/roll-dialog.mjs');
+    const { readFile } = await import('node:fs/promises');
+
+    it('prévia: secundário, bônus automáticos (com sinal) e manual na mesma ordem da rolagem', () => {
+        assert.equal(previewFormula({ value: 4 }), '1d20 + 4');
+        assert.equal(previewFormula({ value: 4, secVal: 2, autoModifier: -2, bonusRaw: '+1d4' }), '1d20 + 4 + 2 - 2 + 1d4');
+    });
+
+    it('rótulo de bônus é escapado (sem HTML injetado)', () => {
+        const html = autoBonusMarkup(['<img src=x onerror=alert(1)> +2'], ['<b>nota</b>']);
+        assert.doesNotMatch(html, /<img|<b>/u);
+        assert.match(html, /&lt;img/u);
+    });
+
+    it('a macro só delega ao rollTest, sem diálogo nem rolagem própria', async () => {
+        const macro = await readFile(new URL('../macros/na-roll-mode.js', import.meta.url), 'utf8');
+        assert.ok(macro.split('\n').length < 30);
+        assert.match(macro, /moduleApi\.rollTest\(/u);
+        assert.doesNotMatch(macro, /DialogV2|Roll\.create|toMessage/u);
+    });
 });

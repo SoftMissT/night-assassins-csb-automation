@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-const macro = fs.readFileSync(new URL('../macros/na-marca-cacador.js', import.meta.url), 'utf8');
+const macro = fs.readFileSync(new URL('../scripts/slayer/hunter-mark-dialog.mjs', import.meta.url), 'utf8');
 const template = JSON.parse(
     fs.readFileSync(
         new URL('../src/templates/actors/slayer-template.json', import.meta.url),
@@ -56,4 +56,13 @@ test('Marca aguarda o Dice So Nice antes de processar o resultado da rolagem', (
     assert.match(macro, /await game\.dice3d\?\.waitFor3DAnimationByMessageID\?\./);
     assert.match(macro, /await rollVisible\(\s*`1d20/);
     assert.match(macro, /await rollVisible\(\s*`1d100/);
+});
+
+test('a macro da Marca é um adaptador fino e o módulo expõe o diálogo na API', () => {
+    const thin = fs.readFileSync(new URL('../macros/na-marca-cacador.js', import.meta.url), 'utf8');
+    const main = fs.readFileSync(new URL('../scripts/main.mjs', import.meta.url), 'utf8');
+    assert.ok(thin.split('\n').length < 15, 'a macro não deve voltar a carregar o fluxo');
+    assert.match(thin, /openHuntersMarkDialog/);
+    assert.doesNotMatch(thin, /DialogV2|actor\.update/);
+    assert.match(main, /openHuntersMarkDialog,/);
 });

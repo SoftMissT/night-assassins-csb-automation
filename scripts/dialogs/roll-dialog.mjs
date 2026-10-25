@@ -2,22 +2,41 @@
  * @fileoverview DialogV2 para rolagem geral de teste.
  */
 
-import { ATTRIBUTES, ATTR_NAMES, ATTR_COLORS } from '../constants.mjs';
+import { ATTRIBUTES } from '../constants.mjs';
 import { parseAttributeValue } from '../parsing.mjs';
 import { messageModeOptionsHtml } from '../damage-formula.mjs';
 
-function buildFormula(mode, val, secVal, bonusExtra) {
-    const dice = mode === 'advantage' ? '2d20kh1' : mode === 'disadvantage' ? '2d20kl1' : '1d20';
-    let base = `${dice} + ${val}`;
-    if (secVal) base += ` + ${secVal}`;
-    return bonusExtra ? `${base} ${bonusExtra}` : base;
+const escapeHtml = (value) =>
+    String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+
+const signed = (value) => (value >= 0 ? `+ ${value}` : `- ${Math.abs(value)}`);
+
+/**
+ * Prévia da fórmula: o mesmo desenho que o serviço rola, com os bônus automáticos
+ * somados num número só (o chat detalha cada um).
+ */
+export function previewFormula({ value, secVal = 0, autoModifier = 0, bonusRaw = '' }) {
+    let formula = `1d20 + ${value}`;
+    if (secVal) formula += ` + ${secVal}`;
+    if (autoModifier) formula += ` ${signed(autoModifier)}`;
+    const manual = String(bonusRaw ?? '').trim().replace(/^\+/, '');
+    return manual ? `${formula} + ${manual}` : formula;
 }
 
-function parseBonus(raw) {
-    const s = (raw || '').trim();
-    if (!s) return { extra: '', display: '' };
-    const clean = s.replace(/^\+/, '');
-    return { extra: clean ? `+ ${clean}` : '', display: s };
+/** Bloco "Bônus automáticos": o que a ficha já soma sozinha, com a origem de cada parcela. */
+export function autoBonusMarkup(bonuses = [], notes = []) {
+    const rows = bonuses.length
+        ? bonuses.map((label) => `<li>${escapeHtml(label)}</li>`).join('')
+        : '<li class="na-rm-auto-empty">Nenhum bônus automático neste teste.</li>';
+    const hints = notes.map((note) => `<li class="na-rm-auto-note">${escapeHtml(note)}</li>`).join('');
+    return `<div class="na-rm-auto" style="margin-bottom:12px;">
+        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Bônus automáticos</label>
+        <ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.5;">${rows}${hints}</ul>
+      </div>`;
 }
 
 /**
@@ -26,22 +45,29 @@ function parseBonus(raw) {
  * @param {Actor} options.actor
  * @param {string} options.test
  * @param {string} options.attr
- * @param {string} options.color
- * @returns {Promise<{mode:string,rollMode:string,secVal:number,bonusRaw:string,cdVal:number}|null>}
+ * @param {number} options.value valor final do atributo primário
+ * @param {string} [options.color]
+ * @param {string[]} [options.bonuses] rótulos dos bônus automáticos (já com sinal e valor)
+ * @param {string[]} [options.notes] avisos que não entram como número (Vantagem, bônus condicional)
+ * @param {number} [options.autoModifier] soma dos bônus automáticos, só para a prévia
+ * @returns {Promise<{mode:string,rollMode:string,secVal:number,secKey:string,bonusRaw:string,cdVal:number}|null>}
  */
-export async function openRollDialog({ actor, test, attr, value, color }) {
+export async function openRollDialog({
+    actor,
+    test,
+    attr,
+    value,
+    color,
+    bonuses = [],
+    notes = [],
+    autoModifier = 0,
+}) {
     const props = actor?.system?.props ?? {};
-    const attrValues = {};
-    for (const { key } of ATTRIBUTES) {
-        attrValues[key] = parseAttributeValue(props[`${key}_display`]);
-    }
-
     const primaryKey = attr ? attr.toLowerCase() : '';
     const secondaryOptions = [{ key: '', label: 'Nenhum', val: 0 }];
     for (const { key, label } of ATTRIBUTES) {
-        if (key !== primaryKey) {
-            secondaryOptions.push({ key, label, val: attrValues[key] });
-        }
+        if (key !== primaryKey)
+            secondaryOptions.push({ key, label, val: parseAttributeValue(props[`${key}_display`]) });
     }
 
     const secOptionsHtml = secondaryOptions
@@ -54,15 +80,16 @@ export async function openRollDialog({ actor, test, attr, value, color }) {
     const content = `
     <div class="na-csb-automation">
       <div style="margin-bottom:12px;">
-        ${attr ? `<div style="font-size:13px;color:${color || '#666'};margin-bottom:4px;font-weight:600;">${attr} = ${value}</div>` : ''}
-        <div id="na-rm-formula" style="font-family:monospace;font-size:14px;background:#120f14;color:#f7f7f7;padding:6px 8px;border-radius:3px;border:1px solid #4a3a2a;">1d20 + ${value}</div>
+        ${attr ? `<div style="font-size:13px;color:${escapeHtml(color || '#666')};margin-bottom:4px;font-weight:600;">${escapeHtml(attr)} = ${value}</div>` : ''}
+        <div id="na-rm-formula" style="font-family:monospace;font-size:14px;background:#120f14;color:#f7f7f7;padding:6px 8px;border-radius:3px;border:1px solid #4a3a2a;">${escapeHtml(previewFormula({ value, autoModifier }))}</div>
       </div>
+      ${autoBonusMarkup(bonuses, notes)}
       <div style="margin-bottom:12px;">
         <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Atributo Secundário (até 1)</label>
         <select id="na-rm-secattr" style="width:100%;padding:4px;box-sizing:border-box;">${secOptionsHtml}</select>
       </div>
       <div style="margin-bottom:12px;">
-        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Bônus Situacional?</label>
+        <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Bônus situacional (manual)</label>
         <input type="text" id="na-rm-bonus" placeholder="ex: 1d4, +2, 5" style="width:100%;padding:4px;box-sizing:border-box;" />
       </div>
       <div style="margin-bottom:12px;">
@@ -78,54 +105,48 @@ export async function openRollDialog({ actor, test, attr, value, color }) {
     </div>
   `;
 
+    const readForm = (mode) => (_event, button) => {
+        const form = button.form;
+        const sec = form.elements['na-rm-secattr'];
+        return {
+            mode,
+            rollMode: form.elements['na-rm-rollmode'].value ?? 'publicroll',
+            secVal: Number(sec.value) || 0,
+            secKey: sec.selectedOptions?.[0]?.dataset?.key ?? '',
+            bonusRaw: form.elements['na-rm-bonus'].value ?? '',
+            cdVal: Number(form.elements['na-rm-cd'].value) || 0,
+        };
+    };
+
+    // Prévia ao vivo: a fórmula acompanha o secundário e o bônus manual.
+    const render = (_event, dialog) => {
+        const root = dialog.element;
+        const display = root?.querySelector('#na-rm-formula');
+        const sec = root?.querySelector('#na-rm-secattr');
+        const bonus = root?.querySelector('#na-rm-bonus');
+        if (!display) return;
+        const update = () => {
+            display.textContent = previewFormula({
+                value,
+                secVal: Number(sec?.value) || 0,
+                autoModifier,
+                bonusRaw: bonus?.value ?? '',
+            });
+        };
+        sec?.addEventListener('change', update);
+        bonus?.addEventListener('input', update);
+    };
+
     const result = await foundry.applications.api.DialogV2.wait({
         window: { title: test },
         content,
         modal: true,
         rejectClose: false,
+        render,
         buttons: [
-            {
-                action: 'advantage',
-                label: 'Vantagem',
-                callback: (event, button) => {
-                    const form = button.form;
-                    return {
-                        mode: 'advantage',
-                        rollMode: form.elements['na-rm-rollmode'].value ?? 'publicroll',
-                        secVal: Number(form.elements['na-rm-secattr'].value) || 0,
-                        bonusRaw: form.elements['na-rm-bonus'].value ?? '',
-                        cdVal: Number(form.elements['na-rm-cd'].value) || 0,
-                    };
-                },
-            },
-            {
-                action: 'normal',
-                label: 'Normal',
-                callback: (event, button) => {
-                    const form = button.form;
-                    return {
-                        mode: 'normal',
-                        rollMode: form.elements['na-rm-rollmode'].value ?? 'publicroll',
-                        secVal: Number(form.elements['na-rm-secattr'].value) || 0,
-                        bonusRaw: form.elements['na-rm-bonus'].value ?? '',
-                        cdVal: Number(form.elements['na-rm-cd'].value) || 0,
-                    };
-                },
-            },
-            {
-                action: 'disadvantage',
-                label: 'Desvantagem',
-                callback: (event, button) => {
-                    const form = button.form;
-                    return {
-                        mode: 'disadvantage',
-                        rollMode: form.elements['na-rm-rollmode'].value ?? 'publicroll',
-                        secVal: Number(form.elements['na-rm-secattr'].value) || 0,
-                        bonusRaw: form.elements['na-rm-bonus'].value ?? '',
-                        cdVal: Number(form.elements['na-rm-cd'].value) || 0,
-                    };
-                },
-            },
+            { action: 'advantage', label: 'Vantagem', callback: readForm('advantage') },
+            { action: 'normal', label: 'Normal', default: true, callback: readForm('normal') },
+            { action: 'disadvantage', label: 'Desvantagem', callback: readForm('disadvantage') },
             { action: 'cancel', label: 'Cancelar', callback: () => null },
         ],
     });

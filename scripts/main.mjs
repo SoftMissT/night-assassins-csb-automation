@@ -1,7 +1,6 @@
 /**
  * @fileoverview Entry point do módulo Night Assassins CSB Automation.
  */
-
 import { MODULE_ID, ATTRIBUTES } from './constants.mjs';
 import { handleActorUpdate } from './trigger-router.mjs';
 import { rollTest } from './roll-service.mjs';
@@ -77,6 +76,8 @@ import {
     useBreathForm,
     openBreathingManager,
 } from './breath-service.mjs';
+import { launchBreathForm } from './breath-form-launcher.mjs';
+import { openHuntersMarkDialog } from './slayer/hunter-mark-dialog.mjs';
 import {
     openLifeDeathManager,
     parseLifeDeathState,
@@ -162,7 +163,6 @@ import {
     openDiagnosticReportDialog,
     registerDiagnosticCollector,
 } from './diagnostic-journal.mjs';
-
 /**
  * Wrapper público de rollDamage exposto em module.api ponto de entrada
  * real do botão "Dano" da ficha. Só aqui o diálogo "Dano ou Cura?" é
@@ -173,18 +173,21 @@ import {
  * fallback seguro "Dano" nos fluxos 100% automáticos.
  */
 async function rollDamagePublic(options = {}) {
-    return rollDamage({ promptHealOrDamage: true, ...options });
+    return rollDamage({
+        promptHealOrDamage: true,
+        ...options,
+    });
 }
-
 async function rollWeaponItemPublic(options = {}) {
-    return rollWeaponItem({ promptHealOrDamage: true, ...options });
+    return rollWeaponItem({
+        promptHealOrDamage: true,
+        ...options,
+    });
 }
-
 Hooks.once('init', () => {
     registerSettings();
     registerOniProgressionEngine();
 });
-
 /**
  * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
  * @param {Application} app
@@ -194,13 +197,11 @@ Hooks.once('init', () => {
 function tagNightAssassinsSheet(app, html) {
     const actor = app?.actor;
     if (!actor?.system?.props) return;
-
     // Detecção robusta via actorKind() (template id/flags/props), nunca por nome
     // do Actor evita que uma ficha Oni chamada "Slayer X" (ou vice-versa)
     // receba a paleta errada.
     const kind = actorKind(actor);
     if (!kind) return;
-
     const root = html?.[0] ?? html;
     const el = root instanceof HTMLElement ? root : null;
     const appEl =
@@ -213,7 +214,6 @@ function tagNightAssassinsSheet(app, html) {
         target?.classList?.add(kindClass);
     }
 }
-
 Hooks.once('ready', async () => {
     if (game.system.id !== 'custom-system-builder') {
         console.warn?.(
@@ -241,7 +241,6 @@ Hooks.once('ready', async () => {
     registerSpecialWeaponRuntime();
     registerSpecialWeaponAwakeningRuntime();
     registerDualSoulConsequenceRuntime();
-
     // Manutenções mundiais nunca rodam no boot. Elas atualizam Actors/Items e
     // cada escrita força o CSB a recomputar a ficha inteira. Permanecem
     // disponíveis na API para execução manual e consciente pelo GM.
@@ -254,7 +253,6 @@ Hooks.once('ready', async () => {
     });
     // Ficha de item do CSB 6.1 é ApplicationV1 (`EquippableItemSheet`).
     Hooks.on('renderItemSheet', tagItemSheet);
-
     if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
         Hooks.on('updateActor', handleActorUpdate);
         console.log(`[${MODULE_ID}] Hook updateActor REGISTRADO.`);
@@ -263,12 +261,10 @@ Hooks.once('ready', async () => {
             `[${MODULE_ID}] Hook updateActor NÃO registrado (desabilitado nas configurações).`
         );
     }
-
     if (game.settings.get(MODULE_ID, SETTINGS.enableDamageRelay)) {
         registerDamageRelay();
         registerHealRelay();
     }
-
     // Sincroniza somente o launcher GM; as macros funcionais ficam no Compendium.
     if (game.user.isGM) {
         void syncCanonicalMacros()
@@ -282,7 +278,6 @@ Hooks.once('ready', async () => {
                 ui.notifications.error(`Falha ao carregar macros Night Assassins: ${error.message}`)
             );
     }
-
     const module = game.modules.get(MODULE_ID);
     if (module) {
         module.api = {
@@ -320,6 +315,7 @@ Hooks.once('ready', async () => {
             resolveSlayerDerivedBonuses,
             derivedBonusSummary,
             huntersMark,
+            openHuntersMarkDialog,
             getRollStatusEffects,
             getDamageStatusEffects,
             mergeRollMode,
@@ -344,6 +340,7 @@ Hooks.once('ready', async () => {
             hasRecoveryBreathing,
             recoveryFormDefinition,
             useBreathForm,
+            launchBreathForm,
             openBreathingManager,
             openDamagePresetManager,
             attemptSnowRestrictionEscape,
@@ -403,20 +400,21 @@ Hooks.once('ready', async () => {
             repairBreathingItems,
         };
     }
-
     console.log?.(`[${MODULE_ID}] Módulo ativado.`);
 });
-
 /**
  * Diagnostica um Actor retornando estado legível.
  * @param {Actor} actor
  * @returns {object}
  */
 function diagnoseActor(actor) {
-    if (!actor) return { ok: false, reason: 'Actor não fornecido.' };
+    if (!actor)
+        return {
+            ok: false,
+            reason: 'Actor não fornecido.',
+        };
     const props = actor.system?.props ?? {};
     const issues = [];
-
     const hasLevel1 = ATTRIBUTES.some(
         (a) =>
             props[`${a.key}_nvl1`] !== undefined &&
@@ -424,19 +422,16 @@ function diagnoseActor(actor) {
             props[`${a.key}_nvl1`] !== ''
     );
     if (!hasLevel1) issues.push('Nível 1 incompleto.');
-
     const level = parseNumber(props.nvl_pj);
     const markBonus = parseNumber(props.hab_marca_destino_bonus);
     const markAttr = props.hab_marca_destino_atributo;
     const ability = normalizeAbilityKey(props.hab_escolhida);
-
     if (ability === 'hab_escolhida_marca_destino' && markBonus < 2 && hasLevel1) {
         issues.push('Marca do Destino pendente: bônus +2 não aplicado.');
     }
     if (level >= 6 && markBonus === 2 && ability === 'hab_escolhida_marca_destino') {
         issues.push('Marca do Destino pendente no nível 6: evolução para +3 não aplicada.');
     }
-
     return {
         ok: issues.length === 0,
         actor: actor.name,

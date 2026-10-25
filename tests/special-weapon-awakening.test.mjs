@@ -48,8 +48,8 @@ test('main e template expõem o manager nativo sem injeção DOM', () => {
     const template = fs.readFileSync(path.join(root, 'src', 'templates', 'items', 'special-slayer-weapon-template.json'), 'utf8');
     assert.match(main, /registerSpecialWeaponAwakeningRuntime/);
     assert.match(main, /openSpecialWeaponAwakeningManager/);
-    assert.match(template, /GERENCIAR DESPERTAR/);
-    assert.match(template, /HABILIDADES DA YAMATO/);
+    assert.match(template, /gerenciar despertar/iu);
+    assert.match(template, /habilidades da yamato/iu);
     assert.doesNotMatch(main, /prepend\(/);
 });
 

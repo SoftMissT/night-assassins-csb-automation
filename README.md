@@ -59,12 +59,11 @@ https://github.com/SoftMissT/night-assassins-csb-automation/releases/latest/down
 Ao entrar no mundo como GM, o módulo cria ou atualiza somente o launcher **Night Assassins Controle GM** na pasta **Night Assassins** do Diretório de Macros. As demais macros permanecem no Compendium **Macros Night Assassins**, que preserva os UUIDs usados pelos templates:
 
 - Controle GM;
-- Gerenciar Ações, Status, Resistências, Descanso e Vida e Morte;
-- Rolagens de Acerto e Dano;
-- Respiração, Kekkijutsu e Marca do Caçador;
-- Regeneração Oni;
-- Diagnóstico e exportação do Journal de erros;
-- Correção de Armas e Respirações legadas.
+- Gerenciar Ações, Status, Resistências, Descanso, Vida e Morte e Estados Avançados;
+- Teste de Atributo, Rolagem de Acerto e Rolagem de Dano;
+- Usar Forma de Respiração, Respiração da Recuperação e Marca do Caçador.
+
+As demais ferramentas do GM (Regeneração Oni, Dupla Alma, Interlúdio, diagnóstico, correções e armas duplicadas) não são macros soltas: ficam no botão **Ferramentas do GM**, dentro do **Controle GM**.
 
 As configurações ficam em **Configurações do Jogo → Night Assassins CSB Automation**.
 
@@ -86,12 +85,12 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 - Oni N1–N20: validado no Foundry; ajustes mecânicos adicionais continuam em desenvolvimento.
 - Gate de desempenho: aprovado após a remoção das varreduras pesadas do caminho crítico.
 - Armas normais Slayer/NPC: contrato e testes automatizados concluídos; validação runtime no Foundry ainda pendente.
-- Armas especiais: fora do fluxo atual e ainda não publicadas como mecânica concluída.
+- Armas especiais: os dados ficam num catálogo interno do módulo (`catalogs/`), usado pela Dupla Alma; o compêndio de armas guarda só armas normais e os templates de Item. Validação runtime ainda pendente.
 - Tela de erro do CSB: o template NPC e o Slayer protegem o filtro de `inventario_categoria`; mundos antigos precisam reimportar o template para receber a fórmula corrigida.
 
 ## Respirações publicadas
 
-Somente Respirações com serviço de estado dedicado, testes e auditoria contra a fonte oficial entram no compêndio final.
+Somente Respirações com serviço de estado dedicado, testes e auditoria contra a fonte oficial entram no catálogo interno (`catalogs/breathing-items.json`); o hub da ficha importa as Formas dele sob demanda.
 
 | Respiração | Conteúdo publicado               | Estado   |
 | ---------- | -------------------------------- | -------- |
@@ -119,10 +118,10 @@ O catálogo de trabalho contém outras Respirações, mas elas não são publica
 
 | Compêndio                                | Conteúdo                                             |
 | ---------------------------------------- | ---------------------------------------------------- |
-| **Macros Night Assassins**               | Macros canônicas e ferramentas de reparo/diagnóstico |
+| **Macros Night Assassins**               | Macros chamadas pelos templates (por UUID)           |
 | **Night Assassins Templates de Ficha**   | Slayer, Oni, Oni Minion e NPC                        |
-| **Night Assassin's Respirações**         | Respirações publicadas e suas Formas                 |
-| **Night Assassin's Armas dos Caçadores** | Armas normais disponíveis para Slayer/NPC            |
+| **Night Assassin's Respirações**         | Template de Respiração; as Formas são importadas do catálogo pelo hub da ficha |
+| **Night Assassin's Armas dos Caçadores** | Armas normais e templates de Item (arma, especial, Forma, Kekkijutsu) |
 | **Night Assassin's Arte**                | Assets e ícones distribuídos pelo módulo             |
 
 Os geradores consomem as fontes versionadas do projeto. Arquivos gerados em `build/` não são fonte de verdade e não devem ser editados manualmente. O `release.yml` reempacota os compêndios a partir de `src/` e `macros/` antes de publicar.
@@ -131,9 +130,12 @@ Os geradores consomem as fontes versionadas do projeto. Arquivos gerados em `bui
 
 Mundos antigos podem conter Items cujos IDs de template foram remapeados pelo CSB ou cujas propriedades mecânicas foram apagadas durante um reload.
 
-- **Corrigir Armas dos Caçadores:** reconhece armas pelos dados reais do Item e reidrata categoria, crítico, perfis e propriedades mecânicas a partir do catálogo canônico.
-- **Corrigir Respirações dos Caçadores:** sincroniza Items de Respiração com o compêndio canônico, preservando IDs remapeados pelo CSB.
-- **Diagnóstico de Erros:** cria, abre e exporta o Journal operacional do módulo para o GM.
+Todas ficam em **Controle GM → Ferramentas do GM → Manutenção do mundo**:
+
+- **Corrigir armas:** reconhece armas pelos dados reais do Item e reidrata categoria, crítico, perfis e propriedades mecânicas a partir do catálogo canônico.
+- **Corrigir Respirações:** sincroniza Items de Respiração com o catálogo interno, preservando IDs remapeados pelo CSB.
+- **Diagnóstico de erros:** cria, abre e exporta o Journal operacional do módulo para o GM.
+- **Armas duplicadas:** lista armas repetidas do personagem selecionado e exclui só o Item que você confirmar.
 
 Os reparos são idempotentes: executar novamente sobre um documento já corrigido não deve gerar alterações adicionais.
 
@@ -141,9 +143,9 @@ Os reparos são idempotentes: executar novamente sobre um documento já corrigid
 
 | Sintoma                               | Ação recomendada                                                                                                                 |
 | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Arma não aparece ou não possui perfil | Execute **Corrigir Armas dos Caçadores**, feche e reabra a ficha. Use um Item novo do compêndio para comparar com Items legados. |
-| Respiração ou Forma perdeu dados      | Execute **Corrigir Respirações dos Caçadores** e reabra a ficha.                                                                 |
-| Journal não abre ou não exporta       | Confirme que está conectado como GM e use a macro **Diagnóstico de Erros** atualizada.                                           |
+| Arma não aparece ou não possui perfil | Execute **Corrigir armas** (Controle GM → Ferramentas do GM), feche e reabra a ficha. Use um Item novo do compêndio para comparar. |
+| Respiração ou Forma perdeu dados      | Execute **Corrigir Respirações** (Ferramentas do GM) e reabra a ficha.                                                           |
+| Journal não abre ou não exporta       | Confirme que está conectado como GM e use **Diagnóstico de erros** em Ferramentas do GM.                                         |
 | Fórmula CSB mostra `ERROR`            | Reimporte o template oficial do compêndio; Actors antigos podem manter fórmulas de versões anteriores.                           |
 | Erros `compareText`/`equalText` no console | Reimporte o template do compêndio (NPC ou Slayer). A fórmula antiga fica salva no mundo até o template ser recarregado.      |
 | Asset retorna 404                     | Confirme que `module.zip` contém `assets/icons/`, `assets/fonts/` e `assets/media/`, e que a instalação não criou pasta duplicada. |

@@ -175,7 +175,7 @@ describe('Encerramento da Marca', () => {
 
 describe('ligação no pipeline e no macro (contrato estático)', () => {
     const hit = readFileSync(new URL('../scripts/hit-service.mjs', import.meta.url), 'utf8');
-    const macro = readFileSync(new URL('../macros/na-marca-cacador.js', import.meta.url), 'utf8');
+    const macro = readFileSync(new URL('../scripts/slayer/hunter-mark-dialog.mjs', import.meta.url), 'utf8');
     const main = readFileSync(new URL('../scripts/main.mjs', import.meta.url), 'utf8');
 
     it('hit-service usa a margem e o ataque adicional da Marca e não depende dos campos antigos', () => {

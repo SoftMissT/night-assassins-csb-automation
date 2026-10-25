@@ -53,6 +53,15 @@ describe('pele das fichas de item', () => {
             assert.match(css, new RegExp(`\\.na-item--${kind}\\b`), kind);
     });
 
+    it('a pele do item anula a caixa-alta que a ficha de ator força em título, aba e botão', async () => {
+        const css = await readFile(new URL('../styles/na-csb-automation.css', import.meta.url), 'utf8');
+        const block = css.slice(css.indexOf('ITENS —'));
+        assert.match(
+            block,
+            /\.na-item \.custom-system-panel-title,[^{]*\.na-item \.na-sheet-text[^{]*\{[^}]*text-transform:\s*none/u
+        );
+    });
+
     it('acento de cada Respiração passa AA (4,5:1) sobre o fundo da ficha', () => {
         const luminance = (hex) => {
             const [r, g, b] = hex.match(/\w\w/g).map((c) => {

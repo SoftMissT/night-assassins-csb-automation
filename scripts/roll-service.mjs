@@ -25,6 +25,13 @@ function naturalD20(roll) {
     );
 }
 
+const escapeHtml = (value) =>
+    String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+
 function getDice(mode) {
     if (mode === 'advantage') return '2d20kh1';
     if (mode === 'disadvantage') return '2d20kl1';
@@ -61,12 +68,17 @@ async function doRoll({
     mode,
     rollMode,
     secVal,
+    secKey = '',
     bonusRaw,
+    manualBonus,
+    derivedLabels = [],
     cdVal,
     statusEffects,
 }) {
     mode = mergeRollMode(mode, statusEffects.mode);
-    const { extra, display } = parseBonus(bonusRaw);
+    const { extra } = parseBonus(bonusRaw);
+    // O chat mostra só o bônus digitado em "Bônus"; os derivados vêm nomeados à parte.
+    const { display } = parseBonus(manualBonus ?? bonusRaw);
     const formula = buildFormula(mode, val, secVal, extra, statusEffects.modifier);
 
     let roll;
@@ -79,10 +91,13 @@ async function doRoll({
 
     const modeLabel = getModeLabel(mode);
     const attrLine = attr ? `${attr} = ${val}` : '';
-    const secLine = secVal ? ` + ${attr.toUpperCase?.() ?? '?'} = ${secVal}` : '';
-    const bonusLine = display ? ` | Bônus: ${display}` : '';
+    const secLine = secVal ? ` + ${ATTR_NAMES[secKey] ?? 'Secundário'} = ${secVal}` : '';
+    const bonusLine = display ? ` | Bônus: ${escapeHtml(display)}` : '';
+    const derivedLine = derivedLabels.length
+        ? ` | Derivados: ${escapeHtml(derivedLabels.join(', '))}`
+        : '';
     const statusLine = statusEffects.reasons.length
-        ? ` | Status: ${statusEffects.reasons.join(', ')}`
+        ? ` | Status: ${escapeHtml(statusEffects.reasons.join(', '))}`
         : '';
 
     let cdLine = '';
@@ -93,7 +108,7 @@ async function doRoll({
     }
 
     const message = await roll.toMessage({
-        flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' — ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
+        flavor: `<strong>${escapeHtml(test)}</strong> (${modeLabel})${attrLine ? ' — ' + escapeHtml(attrLine) : ''}${secLine}${bonusLine}${derivedLine}${statusLine}${cdLine}`,
         speaker: ChatMessage.getSpeaker({ actor }),
     }, { messageMode: resolveMessageMode(rollMode) });
     if (['Bloqueio', 'Esquiva'].includes(test) && naturalD20(roll) === 20)
@@ -202,12 +217,43 @@ export async function rollTest(options) {
             'Paralisia: falha automática em testes de FOR ou DEX que não sejam Defesa.'
         );
 
-    const dialogResult = await openRollDialog({ actor, test, attr, value: val, color });
+    // Tudo que a ficha soma sozinha é resolvido antes do diálogo, para o jogador
+    // ver de onde vem cada número antes de rolar.
+    const isDefense = ['Bloqueio', 'Esquiva'].includes(test);
+    const derivedChannel = derivedChannelForTest(test, options.modality ?? '');
+    const derivedSources = derivedChannel
+        ? (resolveSlayerDerivedBonuses(actor.system?.props ?? {}).channels[derivedChannel]
+              ?.sources ?? [])
+        : [];
+    const derivedTotal = derivedSources.reduce((sum, source) => sum + source.value, 0);
+    const derivedLabels = derivedSources.map(
+        (source) => `${source.label} ${source.value >= 0 ? '+' : ''}${source.value}`
+    );
+    const iceHeartTestBonus = isDefense
+        ? 0
+        : Number(parseSnowBreathingState(actor.system?.props?.resp_neve_estado).iceHeart?.testBonus) ||
+          0;
+    const notes = [];
+    if (
+        isDefense &&
+        parseMetalBreathingState(actor.system?.props?.resp_metal_estado).steelDefense
+            ?.defenseAdvantage
+    )
+        notes.push('Duro como Aço: Vantagem nesta defesa (gasta ao rolar)');
+    if (iceHeartTestBonus) notes.push(`Coração de Gelo +${iceHeartTestBonus} se houver CD`);
+
+    const dialogResult = await openRollDialog({
+        actor,
+        test,
+        attr,
+        value: val,
+        color,
+        bonuses: [...statusEffects.reasons, ...derivedLabels],
+        notes,
+        autoModifier: statusEffects.modifier + derivedTotal,
+    });
     if (!dialogResult) return;
 
-    const derivedChannel = derivedChannelForTest(test, options.modality ?? '');
-    const derivedBonuses = resolveSlayerDerivedBonuses(actor.system?.props ?? {});
-    const derivedTotal = derivedChannel ? (derivedBonuses.channels[derivedChannel]?.total ?? 0) : 0;
     const bonusRaw = [dialogResult.bonusRaw, derivedTotal ? String(derivedTotal) : '']
         .filter(Boolean)
         .join(' + ');
@@ -227,13 +273,9 @@ export async function rollTest(options) {
     // Shi no Kata: Aisu Hato N4: "+2 em quaisquer testes contra CD" — cobre
     // qualquer teste de atributo com Classe de Dificuldade que não seja
     // Bloqueio/Esquiva (já somados acima via blockBonus/dodgeBonus).
-    if (!['Bloqueio', 'Esquiva'].includes(test) && Number(dialogResult.cdVal) > 0) {
-        const snowIceHeartState = parseSnowBreathingState(actor.system?.props?.resp_neve_estado);
-        const iceHeartTestBonus = Number(snowIceHeartState.iceHeart?.testBonus) || 0;
-        if (iceHeartTestBonus) {
-            statusEffects.modifier += iceHeartTestBonus;
-            statusEffects.reasons.push(`Coração de Gelo +${iceHeartTestBonus}`);
-        }
+    if (iceHeartTestBonus && Number(dialogResult.cdVal) > 0) {
+        statusEffects.modifier += iceHeartTestBonus;
+        statusEffects.reasons.push(`Coração de Gelo +${iceHeartTestBonus}`);
     }
 
     const result = await doRoll({
@@ -244,14 +286,20 @@ export async function rollTest(options) {
         mode: dialogResult.mode,
         rollMode: dialogResult.rollMode,
         secVal: dialogResult.secVal,
+        secKey: dialogResult.secKey,
         bonusRaw,
+        manualBonus: dialogResult.bonusRaw,
+        derivedLabels,
         cdVal: dialogResult.cdVal,
         statusEffects,
     });
+    // "Defendeu?" só importa para a interceptação de Chamas no Bloqueio; perguntar
+    // em toda defesa era um clique a mais sem efeito.
+    const flameInterceptReady =
+        test === 'Bloqueio' &&
+        Boolean(parseFlameBreathingState(actor.system?.props?.resp_chamas_estado).block?.intercept);
     const defenseSucceeded =
-        result && ['Bloqueio', 'Esquiva'].includes(test)
-            ? await confirmDefenseSuccess(result, test)
-            : false;
+        result && flameInterceptReady ? await confirmDefenseSuccess(result, test) : false;
     if (defenseSucceeded && test === 'Bloqueio') {
         const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
         if (flameState.block?.intercept) {

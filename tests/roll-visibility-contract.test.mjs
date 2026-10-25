@@ -60,7 +60,6 @@ describe('rolagens: visibilidade no padrão do v14', () => {
             'scripts/dialogs/hit-dialog.mjs',
             'scripts/dialogs/roll-dialog.mjs',
             'scripts/dialogs/damage-dialog.mjs',
-            'macros/na-roll-mode.js',
         ]) {
             const source = await readFile(new URL(file, root), 'utf8');
             assert.doesNotMatch(source, /<option value="publicroll"/u, file);
@@ -76,7 +75,6 @@ describe('rolagens: visibilidade no padrão do v14', () => {
             'scripts/breath-service.mjs',
             'scripts/dual-soul-awakening-resistance-service.mjs',
             'scripts/dual-soul-ceremony-service.mjs',
-            'macros/na-roll-mode.js',
         ]) {
             const source = await readFile(new URL(file, root), 'utf8');
             assert.match(source, /\bmessageMode\b/u, file);

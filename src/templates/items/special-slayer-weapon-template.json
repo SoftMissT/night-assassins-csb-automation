@@ -382,7 +382,7 @@
                     "verticalAlign": "center",
                     "collapsible": false,
                     "defaultCollapsed": false,
-                    "title": "ATRIBUTOS DO PORTADOR",
+                    "title": "Atributos do portador",
                     "titleStyle": "default"
                 },
                 {
@@ -400,7 +400,7 @@
                     "type": "label",
                     "size": "full-size",
                     "icon": "",
-                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">ROLAR ATAQUE DA ARMA</span>",
+                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex\">Rolar ataque da arma</span>",
                     "prefix": "",
                     "suffix": "",
                     "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.rollSpecialWeaponItem({item:weapon,actor:bearer,actorUuid:bearer?.uuid,startWithHit:true});return '';}%",
@@ -663,7 +663,7 @@
                     "verticalAlign": "top",
                     "collapsible": true,
                     "defaultCollapsed": false,
-                    "title": "VÍNCULO DE DUPLA ALMA",
+                    "title": "Vínculo de Dupla Alma",
                     "titleStyle": "default"
                 },
                 {
@@ -766,7 +766,7 @@
                     "verticalAlign": "top",
                     "collapsible": true,
                     "defaultCollapsed": false,
-                    "title": "ESTADO DA ARMA",
+                    "title": "Estado da arma",
                     "titleStyle": "default"
                 },
                 {
@@ -798,7 +798,7 @@
                             "type": "label",
                             "size": "full-size",
                             "icon": "",
-                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">CERIMÔNIA DE VÍNCULO</span>",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">Cerimônia de vínculo</span>",
                             "prefix": "",
                             "suffix": "",
                             "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.openDualSoulCeremony({item:weapon,actor:bearer,actorUuid:bearer?.uuid,itemUuid:weapon?.uuid});return '';}%",
@@ -813,7 +813,7 @@
                     "verticalAlign": "top",
                     "collapsible": true,
                     "defaultCollapsed": false,
-                    "title": "CERIMÔNIA DE VÍNCULO",
+                    "title": "Cerimônia de vínculo",
                     "titleStyle": "default"
                 },
                 {
@@ -845,7 +845,7 @@
                             "type": "label",
                             "size": "full-size",
                             "icon": "",
-                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">RESISTIR AO DESPERTAR</span>",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">Resistir ao despertar</span>",
                             "prefix": "",
                             "suffix": "",
                             "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.openDualSoulAwakeningResistance({item:weapon,actor:bearer,actorUuid:bearer?.uuid,itemUuid:weapon?.uuid});return '';}%",
@@ -859,8 +859,8 @@
                     "align": "center",
                     "verticalAlign": "top",
                     "collapsible": true,
-                    "defaultCollapsed": false,
-                    "title": "RESISTÊNCIA AO DESPERTAR",
+                    "defaultCollapsed": true,
+                    "title": "Resistência ao despertar",
                     "titleStyle": "default"
                 },
                 {
@@ -892,7 +892,7 @@
                             "type": "label",
                             "size": "full-size",
                             "icon": "",
-                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">RESOLVER CONSEQUÊNCIA</span>",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">Resolver consequência</span>",
                             "prefix": "",
                             "suffix": "",
                             "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.openDualSoulConsequenceManager({item:weapon,actor:bearer,actorUuid:bearer?.uuid,itemUuid:weapon?.uuid});return '';}%",
@@ -906,8 +906,8 @@
                     "align": "center",
                     "verticalAlign": "top",
                     "collapsible": true,
-                    "defaultCollapsed": false,
-                    "title": "CONSEQUÊNCIA DE DUPLA ALMA",
+                    "defaultCollapsed": true,
+                    "title": "Consequência de Dupla Alma",
                     "titleStyle": "default"
                 },
                 {
@@ -939,7 +939,7 @@
                             "type": "label",
                             "size": "full-size",
                             "icon": "",
-                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">GERENCIAR DESPERTAR</span>",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">Gerenciar despertar</span>",
                             "prefix": "",
                             "suffix": "",
                             "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.openSpecialWeaponAwakeningManager({item:weapon,actor:bearer,actorUuid:bearer?.uuid});return '';}%",
@@ -954,7 +954,7 @@
                     "verticalAlign": "top",
                     "collapsible": true,
                     "defaultCollapsed": false,
-                    "title": "DESPERTAR DA YAMATO",
+                    "title": "Despertar da Yamato",
                     "titleStyle": "default"
                 },
                 {
@@ -986,7 +986,7 @@
                             "type": "label",
                             "size": "full-size",
                             "icon": "",
-                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">HABILIDADES DA YAMATO</span>",
+                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-fdv\">Habilidades da Yamato</span>",
                             "prefix": "",
                             "suffix": "",
                             "rollMessage": "%{const weapon=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const bearer=weapon?.parent?.documentName==='Actor'?weapon.parent:(entity?.documentName==='Actor'?entity:null);await game.modules.get('night-assassins-csb-automation')?.api?.openSpecialWeaponAbilities({item:weapon,actor:bearer,actorUuid:bearer?.uuid});return '';}%",
@@ -1001,7 +1001,7 @@
                     "verticalAlign": "top",
                     "collapsible": true,
                     "defaultCollapsed": false,
-                    "title": "HABILIDADES DA ARMA",
+                    "title": "Habilidades da arma",
                     "titleStyle": "default"
                 },
                 {
@@ -1042,7 +1042,7 @@
                     "verticalAlign": "top",
                     "collapsible": true,
                     "defaultCollapsed": true,
-                    "title": "REGRAS DA ARMA",
+                    "title": "Regras da arma",
                     "titleStyle": "default"
                 },
                 {
@@ -1537,7 +1537,7 @@
             "pp_width": 100,
             "pp_height": 100
         },
-        "templateSystemUniqueVersion": 1924098632,
+        "templateSystemUniqueVersion": 1924098633,
         "uniqueId": "NASpecialWeaponTpl00001"
     },
     "effects": [],

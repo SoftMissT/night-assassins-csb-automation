@@ -114,12 +114,54 @@
             "verticalAlign": "top",
             "contents": [
                 {
+                    "key": "kekki_dano_panel",
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "title": "Dano",
+                    "titleStyle": "bold",
+                    "contents": [
+                        {
+                            "key": "kekki_dmg_dice",
+                            "type": "textField",
+                            "size": "medium",
+                            "label": "Fórmula de Dano",
+                            "defaultValue": ""
+                        },
+                        {
+                            "key": "kekki_dmg_type",
+                            "type": "select",
+                            "size": "medium",
+                            "label": "Tipo de Dano",
+                            "defaultValue": "cortante",
+                            "options": [
+                                { "key": "cortante", "value": "Cortante" },
+                                { "key": "perfurante", "value": "Perfurante" },
+                                { "key": "concussao", "value": "Concussão" },
+                                { "key": "corte", "value": "Corte" },
+                                { "key": "fogo", "value": "Fogo" },
+                                { "key": "gelo", "value": "Gelo" },
+                                { "key": "raio", "value": "Raio" },
+                                { "key": "mental", "value": "Mental" },
+                                { "key": "necrotico", "value": "Necrótico" },
+                                { "key": "radiante", "value": "Radiante" },
+                                { "key": "veneno", "value": "Veneno" },
+                                { "key": "acididade", "value": "Acidez" },
+                                { "key": "thunder", "value": "Trovão" },
+                                { "key": "force", "value": "Força" },
+                                { "key": "sonico", "value": "Sônico" }
+                            ]
+                        }
+                    ]
+                },
+                {
                     "key": "kekki_custo_panel",
                     "type": "panel",
                     "flow": "grid-4",
                     "align": "left",
                     "verticalAlign": "top",
-                    "title": "CUSTO & ALCANCE",
+                    "title": "Custo e alcance",
                     "titleStyle": "bold",
                     "contents": [
                         {
@@ -182,7 +224,7 @@
                     "flow": "grid-3",
                     "align": "left",
                     "verticalAlign": "top",
-                    "title": "TESTE / CD",
+                    "title": "Teste e CD",
                     "titleStyle": "bold",
                     "contents": [
                         {
@@ -219,48 +261,6 @@
                     ]
                 },
                 {
-                    "key": "kekki_dano_panel",
-                    "type": "panel",
-                    "flow": "grid-2",
-                    "align": "left",
-                    "verticalAlign": "top",
-                    "title": "DANO",
-                    "titleStyle": "bold",
-                    "contents": [
-                        {
-                            "key": "kekki_dmg_dice",
-                            "type": "textField",
-                            "size": "medium",
-                            "label": "Fórmula de Dano",
-                            "defaultValue": ""
-                        },
-                        {
-                            "key": "kekki_dmg_type",
-                            "type": "select",
-                            "size": "medium",
-                            "label": "Tipo de Dano",
-                            "defaultValue": "cortante",
-                            "options": [
-                                { "key": "cortante", "value": "Cortante" },
-                                { "key": "perfurante", "value": "Perfurante" },
-                                { "key": "concussao", "value": "Concussão" },
-                                { "key": "corte", "value": "Corte" },
-                                { "key": "fogo", "value": "Fogo" },
-                                { "key": "gelo", "value": "Gelo" },
-                                { "key": "raio", "value": "Raio" },
-                                { "key": "mental", "value": "Mental" },
-                                { "key": "necrotico", "value": "Necrótico" },
-                                { "key": "radiante", "value": "Radiante" },
-                                { "key": "veneno", "value": "Veneno" },
-                                { "key": "acididade", "value": "Acidez" },
-                                { "key": "thunder", "value": "Trovão" },
-                                { "key": "force", "value": "Força" },
-                                { "key": "sonico", "value": "Sônico" }
-                            ]
-                        }
-                    ]
-                },
-                {
                     "key": "kekki_limite_panel",
                     "type": "panel",
                     "flow": "grid-1",
@@ -282,7 +282,7 @@
                     "flow": "grid-3",
                     "align": "left",
                     "verticalAlign": "top",
-                    "title": "POTENCIAÇÃO (opcional)",
+                    "title": "Potenciação (opcional)",
                     "titleStyle": "bold",
                     "contents": [
                         {
@@ -346,7 +346,7 @@
                     "type": "label",
                     "size": "full-size",
                     "icon": "",
-                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-oni-kekki-use-label\">USAR KEKKIJUTSU</span>",
+                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-oni-kekki-use-label\">Usar Kekkijutsu</span>",
                     "tooltip": "Valida nível/PDK/ação, rola o teste (se houver) e o dano, e consome PDK.",
                     "rollMessage": "%{const item=(typeof linkedEntity!=='undefined'&&linkedEntity)?linkedEntity:entity;const owner=item?.parent?.documentName==='Actor'?item.parent:null;return await game.modules.get('night-assassins-csb-automation')?.api?.useKekkijutsuItem?.({item,actor:owner,actorUuid:owner?.uuid});}%",
                     "altRollMessage": "",
@@ -364,7 +364,7 @@
             "pp_width": 100,
             "pp_height": 100
         },
-        "templateSystemUniqueVersion": 1,
+        "templateSystemUniqueVersion": 2,
         "uniqueId": "NAKekkijutsuTpl001"
     },
     "effects": [],

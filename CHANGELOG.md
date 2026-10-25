@@ -1,6 +1,8 @@
 # Changelog
 ## Não lançado
 
+## v0.11.89 — 2026-10-25 — menu de ferramentas do GM e Compêndio enxuto
+
 ### 2026-10-25 — menu de ferramentas no Controle GM; 11 macros soltas saem do Compêndio
 
 - O Controle GM ganha o menu "Ferramentas do GM" (`scripts/gm-tools.mjs`): um botão por ferramenta, agrupado em Personagem selecionado, Dupla Alma e Manutenção do mundo. Cobre Descanso, Status, Ações, Resistências, Vida e Morte, Recuperação, Estados avançados, Interlúdio, Regeneração Oni, Atributos por nível, as 4 de Dupla Alma, Diagnóstico de erros, Corrigir armas, Corrigir Respirações e Armas duplicadas (`weapon-duplicates-tool.mjs`, portada da macro, com confirmação por Item).

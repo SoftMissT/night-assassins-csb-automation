@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { beforeEach, describe, it } from 'node:test';
 import {
     breathingItemPatch,
     buildCanonicalBreathMap,
@@ -32,6 +32,10 @@ const canonicalForm = {
 };
 
 describe('breath-migration', () => {
+    beforeEach(() => {
+        globalThis.game = { user: { isGM: true } };
+    });
+
     it('constrói o mapa canônico por nome e forma_id', () => {
         const map = buildCanonicalBreathMap([canonicalForm, { name: 'Não Forma', type: 'item' }]);
         assert.ok(map.byName.get('chamas2estiloceuemchamasascendentes'));
@@ -128,6 +132,7 @@ describe('breath-migration', () => {
         ];
         // Respirações fora do Compêndio: o reparo lê o catálogo interno, nunca o pack.
         globalThis.game = {
+            user: { isGM: true },
             packs: {
                 get: () => {
                     throw new Error('não deve ler o Compêndio');
@@ -141,15 +146,23 @@ describe('breath-migration', () => {
         delete globalThis.game;
     });
 
+    it('bloqueia reparo direto para usuário não-GM', async () => {
+        globalThis.game.user.isGM = false;
+        await assert.rejects(
+            repairBreathingItems({ actors: [], documents: [canonicalForm] }),
+            /Somente o GM/u
+        );
+    });
+
     it('retorna vazio sem Actors no ambiente de testes', async () => {
-        globalThis.game = {};
+        globalThis.game = { user: { isGM: true } };
         const result = await repairBreathingItems({ documents: [canonicalForm] });
         assert.deepEqual(result, { actors: 0, items: 0 });
         delete globalThis.game;
     });
 
     it('sem documentos injetados, usa o catálogo interno distribuído', async () => {
-        globalThis.game = {};
+        globalThis.game = { user: { isGM: true } };
         const actors = [
             {
                 items: [

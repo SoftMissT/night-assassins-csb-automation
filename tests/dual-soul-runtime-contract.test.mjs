@@ -142,20 +142,12 @@ test(
 test(
     'macro genérica está registrada',
     async () => {
-        const builder =
-            await source(
-                'tools/build-macro-sources.mjs'
-            );
+        // Ferramenta do GM: vive no menu do Controle GM, não mais como macro solta.
+        const builder = await source('tools/build-macro-sources.mjs');
+        const tools = await source('scripts/gm-tools.mjs');
 
-        assert.match(
-            builder,
-            /NADualSoulCer001/
-        );
-
-        assert.match(
-            builder,
-            /na-cerimonia-vinculo\.js/
-        );
+        assert.doesNotMatch(builder, /NADualSoulCer001/);
+        assert.match(tools, /api: 'openDualSoulCeremony'/);
     }
 );
 

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { beforeEach, describe, it } from 'node:test';
 import {
     canonicalWeaponForItem,
     rehydrateSlayerWeaponItem,
@@ -32,6 +32,10 @@ const armedItem = {
 };
 
 describe('weapon-migration', () => {
+    beforeEach(() => {
+        globalThis.game = { user: { isGM: true } };
+    });
+
     it('gera o patch de resumos para uma arma com perfis', () => {
         const changes = weaponRepairChanges(armedItem);
         assert.ok(changes);
@@ -102,6 +106,14 @@ describe('weapon-migration', () => {
         assert.equal(result.actors, 1);
         assert.equal(result.items, 1);
         assert.equal(calls, 1);
+    });
+
+    it('bloqueia reparo direto para usuário não-GM', async () => {
+        globalThis.game.user.isGM = false;
+        await assert.rejects(
+            repairSlayerWeaponItems({ actors: [], canonicalWeapons: [] }),
+            /Somente o GM/u
+        );
     });
 
     it('retorna vazio sem Actors no ambiente de testes', async () => {

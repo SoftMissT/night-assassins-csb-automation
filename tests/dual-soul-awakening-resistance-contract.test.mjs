@@ -318,19 +318,11 @@ test(
 test(
     'macro genérica da Resistência está registrada',
     async () => {
-        const builder =
-            await source(
-                'tools/build-macro-sources.mjs'
-            );
+        // Ferramenta do GM: vive no menu do Controle GM, não mais como macro solta.
+        const builder = await source('tools/build-macro-sources.mjs');
+        const tools = await source('scripts/gm-tools.mjs');
 
-        assert.match(
-            builder,
-            /NADualSoulRes001/
-        );
-
-        assert.match(
-            builder,
-            /na-resistir-despertar\.js/
-        );
+        assert.doesNotMatch(builder, /NADualSoulRes001/);
+        assert.match(tools, /api: 'openDualSoulAwakeningResistance'/);
     }
 );

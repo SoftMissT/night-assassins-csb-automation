@@ -232,20 +232,12 @@ test(
 test(
     'macro e painel CSB chamam Consequence Manager',
     async () => {
-        const builder =
-            await source(
-                'tools/build-macro-sources.mjs'
-            );
+        // Ferramenta do GM: vive no menu do Controle GM, não mais como macro solta.
+        const builder = await source('tools/build-macro-sources.mjs');
+        const tools = await source('scripts/gm-tools.mjs');
 
-        assert.match(
-            builder,
-            /NADualSoulCon001/
-        );
-
-        assert.match(
-            builder,
-            /na-resolver-consequencia-dual-soul\.js/
-        );
+        assert.doesNotMatch(builder, /NADualSoulCon001/);
+        assert.match(tools, /api: 'openDualSoulConsequenceManager'/);
 
         const template =
             JSON.parse(

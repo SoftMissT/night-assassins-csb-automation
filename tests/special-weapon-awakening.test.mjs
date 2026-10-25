@@ -65,18 +65,11 @@ test('Primeiro Despertar é genérico e mantém o alias Yamato', () => {
     assert.doesNotMatch(service, /function isYamato/);
 });
 
-test('macro canônica retira qualquer Arma de Dupla Alma do selamento', () => {
-    const macro = fs.readFileSync(
-        path.join(root, 'macros', 'na-despertar-arma-dual-soul.js'),
-        'utf8'
-    );
-    const builder = fs.readFileSync(
-        path.join(root, 'tools', 'build-macro-sources.mjs'),
-        'utf8'
-    );
-    assert.match(macro, /awakenSpecialWeapon/);
-    assert.match(builder, /na-despertar-arma-dual-soul\.js/);
-    assert.match(builder, /NADualSoulAwk001/);
+test('o menu do GM retira qualquer Arma de Dupla Alma do selamento', () => {
+    const tools = fs.readFileSync(path.join(root, 'scripts', 'gm-tools.mjs'), 'utf8');
+    const builder = fs.readFileSync(path.join(root, 'tools', 'build-macro-sources.mjs'), 'utf8');
+    assert.match(tools, /api: 'awakenSpecialWeapon'/);
+    assert.doesNotMatch(builder, /NADualSoulAwk001/);
 });
 
 test('as 17 fontes especiais definem Estado Selado, Primeiro Despertar e Ritual', () => {

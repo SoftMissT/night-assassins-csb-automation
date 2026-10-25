@@ -213,12 +213,11 @@ describe('module distribution', () => {
         assert.deepEqual(actor.effects, []);
     });
 
-    it('inclui as doze macros canônicas', async () => {
+    it('inclui as 13 macros canônicas do Compêndio', async () => {
         const files = [
             'na-roll-mode.js',
             'na-acerto-roll.js',
             'na_roll_damage.js',
-            'na-attribute-level-snapshot.js',
             'na-marca-cacador.js',
             'na-gm-control.js',
             'na-gerenciar-resistencias.js',
@@ -227,9 +226,8 @@ describe('module distribution', () => {
             'na-gerenciar-descanso.js',
             'na-resp-usar-forma.js',
             'na-gerenciar-vida-morte.js',
-            'na-corrigir-armas.js',
-            'na-diagnosticar-armas-duplicadas.js',
-            'na-corrigir-respiracoes.js',
+            'na-respiracao-recuperacao.js',
+            'na-gerenciar-estados-avancados.js',
         ];
 
         for (const file of files) {
@@ -261,7 +259,7 @@ describe('module distribution', () => {
         const directory = new URL('../build/compendium/macros/', import.meta.url);
         const folderFiles = (await readdir(directory)).filter((file) => file.includes('-folder-'));
 
-        assert.equal(folderFiles.length, 5);
+        assert.equal(folderFiles.length, 4);
         for (const file of folderFiles) {
             const folder = JSON.parse(await readFile(new URL(file, directory), 'utf8'));
             assert.match(folder._id, /^[A-Za-z0-9]{16}$/u, `${file} deve usar ID Foundry de 16 caracteres`);

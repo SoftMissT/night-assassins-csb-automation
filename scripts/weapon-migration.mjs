@@ -207,6 +207,8 @@ export async function repairSlayerWeaponItems({
     actors = globalThis.game?.actors?.contents ?? [],
     canonicalWeapons,
 } = {}) {
+    if (!globalThis.game?.user?.isGM)
+        throw new Error('Somente o GM pode corrigir armas dos Caçadores.');
     const sources = canonicalWeapons ?? (await loadCanonicalSlayerWeapons());
     const updates = actors
         .map((actor) => {

@@ -817,6 +817,9 @@
     --na-gm-gold: #f2b632;
     --na-gm-red: #ff3342;
     --na-gm-cyan: #18e3eb;
+    --na-gm-ink: #f5f0e8;
+    --na-gm-muted: #9e96a5;
+    --na-gm-line: #37313e;
     height: 100%;
     min-height: 0;
     display: flex;
@@ -3482,4 +3485,66 @@
     .na-item * {
         transition: none !important;
     }
+}
+
+/* Menu de ferramentas do Controle GM (substitui macros soltas do Compêndio). */
+.na-gm-tools {
+    flex: 0 0 auto;
+    margin: 7px 10px 0;
+    border: 1px solid var(--na-gm-line);
+    border-radius: 3px;
+    background: #111015;
+}
+.na-gm-tools > summary {
+    padding: 7px 10px;
+    cursor: pointer;
+    color: var(--na-gm-ink);
+    font: 700 11px/1 var(--na-gm-font);
+    letter-spacing: 0.04em;
+}
+.na-gm-tools[open] > summary {
+    border-bottom: 1px solid var(--na-gm-line);
+}
+.na-gm-tool-group {
+    padding: 8px 10px 2px;
+}
+.na-gm-tool-group h4 {
+    margin: 0 0 5px;
+    color: var(--na-gm-muted);
+    font: 600 11px/1.2 var(--na-gm-font);
+    border: 0;
+}
+.na-gm-tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 5px;
+    padding-bottom: 6px;
+}
+.na-gm-tool {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 28px;
+    padding: 4px 8px;
+    border: 1px solid var(--na-gm-line);
+    border-radius: 3px;
+    background: transparent;
+    color: var(--na-gm-ink);
+    font: 600 11px/1.2 var(--na-gm-font);
+    text-align: left;
+    cursor: pointer;
+}
+.na-gm-tool:hover,
+.na-gm-tool:focus-visible {
+    border-color: var(--na-gold-dim);
+    color: var(--na-gold);
+    outline: none;
+}
+.na-gm-tool:focus-visible {
+    outline: 2px solid var(--na-gold-dim);
+    outline-offset: 1px;
+}
+.na-gm-tools[open] {
+    max-height: 46vh;
+    overflow-y: auto;
 }

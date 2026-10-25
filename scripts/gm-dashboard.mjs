@@ -1,5 +1,6 @@
 import { parseNumber } from './parsing.mjs';
 import { actorKind } from './actor-kind.mjs';
+import { gmToolsMarkup, runGmTool } from './gm-tools.mjs';
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -220,6 +221,7 @@ function renderDashboard(data) {
         <button type="button" class="na-gm-close" title="Fechar"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </header>
+    ${gmToolsMarkup()}
     <label class="na-gm-mini-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar personagem..." autocomplete="off" /></label>
     <div class="na-gm-mini-sections">${dashboardSections(data)}</div>
   </section>`;
@@ -260,6 +262,11 @@ function bindDashboard(dialog, element) {
     root.querySelector('.na-gm-refresh')?.addEventListener('click', () => refreshDashboard(root));
     root.querySelector('.na-gm-minimize')?.addEventListener('click', () => void dialog.minimize());
     root.querySelector('.na-gm-close')?.addEventListener('click', () => void dialog.close());
+    // Menu de ferramentas: uma delegação só; o painel não fecha ao abrir uma ferramenta.
+    root.querySelector('.na-gm-tools')?.addEventListener('click', (event) => {
+        const button = event.target.closest?.('[data-gm-tool]');
+        if (button) void runGmTool(button.dataset.gmTool);
+    });
     bindRowActions(root);
 
     let refreshTimer = null;

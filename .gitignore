@@ -64,3 +64,8 @@ PRIMER.md
 # pacotes locais de build
 module-*.zip
 como-estao-as-coisas.html
+
+# artefatos de teste local (Playwright)
+.playwright-cli/
+.playwright-mcp/
+output/

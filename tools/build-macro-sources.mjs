@@ -19,10 +19,6 @@ const MACRO_FOLDERS = Object.freeze([
         name: 'Ficha Slayer',
     },
     {
-        id: 'NAMacroWeapon001',
-        name: 'Armas e Armas Especiais',
-    },
-    {
         id: 'NAMacroGMTool001',
         name: 'GM e Manutenção',
     },
@@ -34,35 +30,21 @@ const folderFor = (file) => {
         [
             'na-resp-usar-forma.js',
             'na-respiracao-recuperacao.js',
-            'na-corrigir-respiracoes.js',
         ].includes(file)
     )
         return 'NAMacroBreath001';
     if (
         [
-            'na-attribute-level-snapshot.js',
             'na-marca-cacador.js',
             'na-gerenciar-acoes.js',
             'na-gerenciar-descanso.js',
             'na-gerenciar-estados-avancados.js',
-            'na-gerenciar-interludio.js',
             'na-gerenciar-resistencias.js',
             'na-gerenciar-status.js',
             'na-gerenciar-vida-morte.js',
         ].includes(file)
     )
         return 'NAMacroSheet0001';
-    if (
-        [
-            'na-corrigir-armas.js',
-            'na-diagnosticar-armas-duplicadas.js',
-            'na-cerimonia-vinculo.js',
-            'na-resistir-despertar.js',
-            'na-resolver-consequencia-dual-soul.js',
-            'na-despertar-arma-dual-soul.js',
-        ].includes(file)
-    )
-        return 'NAMacroWeapon001';
     return 'NAMacroGMTool001';
 };
 
@@ -87,11 +69,6 @@ const macros = [
         name: 'Night Assassins Rolagem de Dano',
     },
     {
-        id: 'NAAttrLevel00001',
-        file: 'na-attribute-level-snapshot.js',
-        name: 'Night Assassins Atributos por Nível',
-    },
-    {
         id: 'NAHunterMark0001',
         file: 'na-marca-cacador.js',
         name: 'Night Assassins Marca do Caçador',
@@ -100,12 +77,6 @@ const macros = [
         id: 'NAGMControl00001',
         file: 'na-gm-control.js',
         name: 'Night Assassins Controle GM',
-    },
-    {
-        id: 'NADiagnostic0001',
-        file: 'na-diagnostico-erros.js',
-        name: 'Night Assassins Diagnóstico de Erros',
-        icon: 'na-gm-control_icon.webp',
     },
     {
         id: 'NAResistance0001',
@@ -121,12 +92,6 @@ const macros = [
         id: 'NAActionManage01',
         file: 'na-gerenciar-acoes.js',
         name: 'Night Assassins Gerenciar Ações',
-    },
-    {
-        id: 'NAOniRegen000001',
-        file: 'na-regeneracao-oni.js',
-        name: 'Night Assassins Regeneração Oni',
-        icon: 'na-gerenciar-acoes_icon.webp',
     },
     {
         id: 'NARestManage0001',
@@ -153,51 +118,6 @@ const macros = [
         id: 'NAAdvStates00001',
         file: 'na-gerenciar-estados-avancados.js',
         name: 'Night Assassins Estados Avançados',
-    },
-    {
-        id: 'NAInterlude00001',
-        file: 'na-gerenciar-interludio.js',
-        name: 'Night Assassins Gerenciar Interludio',
-    },
-    {
-        id: 'NAWeaponRepair01',
-        file: 'na-corrigir-armas.js',
-        name: 'Night Assassins Corrigir Armas dos Caçadores',
-    },
-    {
-        id: 'NAWeaponDiag0001',
-        file: 'na-diagnosticar-armas-duplicadas.js',
-        name: 'Night Assassins Diagnosticar Armas Duplicadas',
-        icon: 'na-gm-control_icon.webp',
-    },
-    {
-        id: 'NABreathRepair01',
-        file: 'na-corrigir-respiracoes.js',
-        name: 'Night Assassins Corrigir Respirações dos Caçadores',
-    },
-    {
-        id: 'NADualSoulCer001',
-        file: 'na-cerimonia-vinculo.js',
-        name: 'Night Assassins Cerimônia de Vínculo',
-        icon: 'na-marca-cacador_icon.webp',
-    },
-    {
-        id: 'NADualSoulRes001',
-        file: 'na-resistir-despertar.js',
-        name: 'Night Assassins Resistir ao Despertar',
-        icon: 'na-gerenciar-resistencias_icon.webp',
-    },
-    {
-        id: 'NADualSoulCon001',
-        file: 'na-resolver-consequencia-dual-soul.js',
-        name: 'Night Assassins Resolver Consequência Dual Soul',
-        icon: 'na-gerenciar-resistencias_icon.webp',
-    },
-    {
-        id: 'NADualSoulAwk001',
-        file: 'na-despertar-arma-dual-soul.js',
-        name: 'Night Assassins Retirar Arma do Selamento',
-        icon: 'na-marca-cacador_icon.webp',
     },
 ];
 await rm(outputDirectory, {

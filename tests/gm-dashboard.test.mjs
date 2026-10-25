@@ -233,7 +233,12 @@ describe('gm-dashboard', () => {
         assert.match(config.content, /Inimigos/);
         assert.match(config.content, /Zenitsu/);
         assert.match(config.content, /Gyutaro/);
-        assert.doesNotMatch(config.content, /Classe|Origem|Respiração|Esquiva|Bloqueio/);
+        // O painel de combate segue sem dados de ficha. O menu de ferramentas é outra
+        // região (rótulos de botão como "Corrigir Respirações"), por isso fica de fora.
+        const combatBoard = config.content.replace(/<details class="na-gm-tools">[\s\S]*?<\/details>/u, '');
+        assert.doesNotMatch(combatBoard, /Classe|Origem|Respiração|Esquiva|Bloqueio/);
+        assert.match(config.content, /<details class="na-gm-tools">/);
+        assert.match(config.content, /data-gm-tool="ceremony"/);
         assert.doesNotMatch(config.content, /<img\b/);
         assert.equal(config.position.width, 780);
         assert.equal(config.modal, false);

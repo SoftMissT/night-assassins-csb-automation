@@ -126,10 +126,15 @@ describe('breath-migration', () => {
                 },
             },
         ];
+        // Respirações fora do Compêndio: o reparo lê o catálogo interno, nunca o pack.
         globalThis.game = {
-            packs: { get: () => ({ getDocuments: () => Promise.resolve([canonicalForm]) }) },
+            packs: {
+                get: () => {
+                    throw new Error('não deve ler o Compêndio');
+                },
+            },
         };
-        const result = await repairBreathingItems({ actors });
+        const result = await repairBreathingItems({ actors, documents: [canonicalForm] });
         assert.equal(result.actors, 1);
         assert.equal(result.items, 1);
         assert.equal(calls, 1);
@@ -137,11 +142,28 @@ describe('breath-migration', () => {
     });
 
     it('retorna vazio sem Actors no ambiente de testes', async () => {
-        globalThis.game = {
-            packs: { get: () => ({ getDocuments: () => Promise.resolve([canonicalForm]) }) },
-        };
-        const result = await repairBreathingItems();
+        globalThis.game = {};
+        const result = await repairBreathingItems({ documents: [canonicalForm] });
         assert.deepEqual(result, { actors: 0, items: 0 });
+        delete globalThis.game;
+    });
+
+    it('sem documentos injetados, usa o catálogo interno distribuído', async () => {
+        globalThis.game = {};
+        const actors = [
+            {
+                items: [
+                    {
+                        id: 'chamas2',
+                        name: 'Fogo Desconhecido',
+                        system: { template: 'tplMundo', props: { forma_id: 'chamas_02' } },
+                    },
+                ],
+                updateEmbeddedDocuments: (_type, updates) => Promise.resolve(updates),
+            },
+        ];
+        const result = await repairBreathingItems({ actors });
+        assert.equal(result.actors, 1);
         delete globalThis.game;
     });
 });

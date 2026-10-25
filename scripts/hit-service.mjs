@@ -6,6 +6,7 @@ import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openHitConfirmationDialog, openHitDialog } from './dialogs/hit-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
+import { resolveMessageMode } from './damage-formula.mjs';
 import { consumeOniActions, consumeSlayerActions, recoverSlayerFolego } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { parseWaterBreathingState } from './breath-service.mjs';
@@ -186,8 +187,7 @@ async function doRoll({
         let message = await roll.toMessage({
             flavor: `${actionLabel ? `${actionLabel} · ` : ''}Acerto${countLine} (${modeLabel}) ${attrName} ${attrVal}${bonusLine}${statusLine}${cdLine}`,
             speaker: ChatMessage.getSpeaker({ actor }),
-            rollMode,
-        });
+        }, { messageMode: resolveMessageMode(rollMode) });
         await waitForHitRoll3d(message);
         let usedMetalReroll = false;
         if (metalReroll && roll.total < 10) {
@@ -203,8 +203,7 @@ async function doRoll({
                 message = await roll.toMessage({
                     flavor: `<strong>O Dobro ou Nada</strong> nova rolagem de Acerto`,
                     speaker: ChatMessage.getSpeaker({ actor }),
-                    rollMode,
-                });
+                }, { messageMode: resolveMessageMode(rollMode) });
                 await waitForHitRoll3d(message);
                 usedMetalReroll = true;
             }

@@ -250,3 +250,37 @@ describe('roll-service', () => {
         assert.equal(confirmations, 1);
     });
 });
+
+describe('roll-service: visibilidade v14', () => {
+    for (const [legacy, expected] of [
+        ['publicroll', 'public'],
+        ['gmroll', 'gm'],
+        ['blindroll', 'blind'],
+        ['selfroll', 'self'],
+        ['gm', 'gm'],
+    ]) {
+        it(`teste de atributo em "${legacy}" chega ao core como messageMode "${expected}"`, async () => {
+            _dialogReturn = {
+                mode: 'normal',
+                rollMode: legacy,
+                secVal: 0,
+                bonusRaw: '',
+                cdVal: 0,
+            };
+            let data;
+            let options;
+            _rollResult = {
+                total: 15,
+                toMessage: async (messageData, messageOptions) => {
+                    data = messageData;
+                    options = messageOptions;
+                },
+                dice: [{ results: [{ result: 1, active: true }] }],
+            };
+            await rollTest({ actor: makeActor(), test: 'Teste', attr: 'FOR', value: 5 });
+            assert.equal(options?.messageMode, expected);
+            assert.equal('rollMode' in data, false);
+            assert.equal('messageMode' in data, false);
+        });
+    }
+});

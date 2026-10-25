@@ -1,4 +1,22 @@
 import { createHash } from 'node:crypto';
+import { readFile, rename, writeFile } from 'node:fs/promises';
+
+/**
+ * Grava só se o conteúdo mudou, via temporário + rename. Os builds rodam dentro
+ * da suíte de testes e reescrevem catálogos versionados que outros testes leem
+ * em paralelo: nunca deixar um leitor ver arquivo pela metade.
+ * @param {string} file
+ * @param {string} content
+ * @returns {Promise<boolean>} true quando gravou
+ */
+export async function writeFileIfChanged(file, content) {
+    const current = await readFile(file, 'utf8').catch(() => null);
+    if (current === content) return false;
+    const temporary = `${file}.${process.pid}.tmp`;
+    await writeFile(temporary, content, 'utf8');
+    await rename(temporary, file);
+    return true;
+}
 export function stableId(namespace, value) {
     return createHash('sha1').update(`${namespace}:${value}`).digest('hex').slice(0, 16);
 }

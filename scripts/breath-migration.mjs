@@ -1,7 +1,5 @@
 import { MODULE_ID } from './constants.mjs';
-
-const PACK_ID = `${MODULE_ID}.night-assassins-respiracoes`;
-const BREATH_TEMPLATE_ID = 'NABreathTpl00001';
+import { BREATH_TEMPLATE_ID, loadBreathingCatalog } from './breathing-catalog.mjs';
 
 function normalizeKey(value) {
     return String(value ?? '')
@@ -143,13 +141,12 @@ export function breathingItemPatch(item, canonical) {
  */
 export async function repairBreathingItems({
     actors = globalThis.game?.actors?.contents ?? [],
+    documents,
 } = {}) {
     if (actors.length === 0) return { actors: 0, items: 0 };
-    const pack = game.packs.get(PACK_ID);
-    if (!pack) throw new Error(`Compendium ${PACK_ID} não encontrado.`);
-
-    const documents = await pack.getDocuments();
-    const { byName, byId } = buildCanonicalBreathMap(documents);
+    // Formas fora do Compêndio desde 2026-10-25: a fonte canônica é o catálogo interno.
+    const canonicalDocuments = documents ?? (await loadBreathingCatalog());
+    const { byName, byId } = buildCanonicalBreathMap(canonicalDocuments);
 
     const updatesPerActor = actors
         .map((actor) => {

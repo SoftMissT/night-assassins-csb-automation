@@ -1,4 +1,5 @@
 import { TIPOS_ACAO } from '../constants.mjs';
+import { messageModeOptionsHtml } from '../damage-formula.mjs';
 
 /**
  * @fileoverview DialogV2 para rolagem de acerto.
@@ -97,10 +98,7 @@ export async function openHitDialog({
       <label class="na-hit-field">
         <span>Visibilidade da rolagem</span>
         <select id="na-ac-rollmode">
-          <option value="publicroll">Rolar Público</option>
-          <option value="gmroll">Rolar Privado (GM)</option>
-          <option value="blindroll">Rolar Cego (GM)</option>
-          <option value="selfroll">Rolar Para Si</option>
+          ${messageModeOptionsHtml()}
         </select>
       </label>
     </div>

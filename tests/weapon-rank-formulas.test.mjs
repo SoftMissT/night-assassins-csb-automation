@@ -3,6 +3,14 @@ import { readdir, readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 import { normalizeRankFormulas, RANK_DICE } from '../tools/build-weapon-sources.mjs';
 
+/** As armas especiais saíram do Compêndio e vivem no catálogo interno. */
+async function specialCatalogDocuments() {
+    const catalog = JSON.parse(
+        await readFile(new URL('../catalogs/special-weapons.json', import.meta.url), 'utf8')
+    );
+    return catalog.documents;
+}
+
 describe('geração sistêmica de fórmulas por Rank', () => {
     it('gera uma fórmula por Rank para cada perfil de ataque', () => {
         const profiles = [
@@ -85,18 +93,7 @@ describe('geração sistêmica de fórmulas por Rank', () => {
     });
 
     it('Rebellion recebe a progressão evolutiva D a SS', async () => {
-        const directory = new URL('../build/compendium/armas-slayer/', import.meta.url);
-        const files = (await readdir(directory)).filter((file) => file.endsWith('.json'));
-        const documents = await Promise.all(
-            files.map(async (file) =>
-                JSON.parse(
-                    await readFile(
-                        new URL(`../build/compendium/armas-slayer/${file}`, import.meta.url),
-                        'utf8'
-                    )
-                )
-            )
-        );
+        const documents = await specialCatalogDocuments();
         const rebellion = documents.find((document) => document.name === 'Rebellion');
         assert.ok(rebellion);
         const formulas = JSON.parse(rebellion.system.props.arma_formulas_por_rank_json);
@@ -105,18 +102,7 @@ describe('geração sistêmica de fórmulas por Rank', () => {
     });
 
     it('todas as dezessete armas especiais preservam perfis e progressão D a SS', async () => {
-        const directory = new URL('../build/compendium/armas-slayer/', import.meta.url);
-        const files = (await readdir(directory)).filter((file) => file.endsWith('.json'));
-        const documents = await Promise.all(
-            files.map(async (file) =>
-                JSON.parse(
-                    await readFile(
-                        new URL(`../build/compendium/armas-slayer/${file}`, import.meta.url),
-                        'utf8'
-                    )
-                )
-            )
-        );
+        const documents = await specialCatalogDocuments();
         const specialWeapons = documents.filter(
             (document) =>
                 document.type === 'equippableItem' &&

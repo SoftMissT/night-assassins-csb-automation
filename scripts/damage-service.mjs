@@ -83,27 +83,11 @@ import {
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
-
-function buildEntryFormula(dado, fixo, selAttrs = [], attrValues) {
-    const parts = [];
-    const cleanDado = (dado || '').trim();
-    if (cleanDado) parts.push(cleanDado);
-
-    if (fixo !== 0) {
-        if (parts.length === 0) parts.push(String(fixo));
-        else parts.push(fixo > 0 ? `+ ${fixo}` : `- ${Math.abs(fixo)}`);
-    }
-
-    for (const k of selAttrs) {
-        const v = attrValues[k] ?? 0;
-        if (v !== 0) {
-            if (parts.length === 0) parts.push(String(v));
-            else parts.push(v > 0 ? `+ ${v}` : `- ${Math.abs(v)}`);
-        }
-    }
-
-    return parts.length > 0 ? parts.join(' ') : '0';
-}
+import {
+    buildEntryFormula,
+    isValidDamageFormula,
+    resolveMessageMode,
+} from './damage-formula.mjs';
 
 function markDamageFormula(props, entries) {
     if (parseNumber(props.marca_ativa) !== 1) return '';
@@ -255,27 +239,13 @@ export function buildWeaponDamageCatalog(actor) {
 }
 
 /**
- * Catálogos de dano disponíveis para o diálogo: armas e Formas de Respiração
- * (com fallback ao Compêndio quando o Actor não porta as Formas).
+ * Catálogo de dano disponível para o diálogo: perfis das armas do Actor.
+ * O "+ Respiração" saiu em 2026-10-25: o dano de Forma entra pela fórmula livre.
  * @param {Actor} actor
- * @returns {Promise<{weaponCatalog:object[],breathingCatalog:object[]}>}
+ * @returns {Promise<{weaponCatalog:object[]}>}
  */
 export async function buildDamageCatalogs(actor) {
-    const weaponCatalog = buildWeaponDamageCatalog(actor);
-    let breathingCatalog = [];
-    if (isSlayerActor(actor)) {
-        const { buildBreathingDamageCatalog } = await import('./items/attack-builder.mjs');
-        breathingCatalog = buildBreathingDamageCatalog(actor);
-        if (breathingCatalog.length === 0) {
-            const pack = game.packs?.get?.(
-                'night-assassins-csb-automation.night-assassins-respiracoes'
-            );
-            const documents = pack ? await pack.getDocuments() : [];
-            if (documents.length > 0)
-                breathingCatalog = buildBreathingDamageCatalog(actor, { items: documents });
-        }
-    }
-    return { weaponCatalog, breathingCatalog };
+    return { weaponCatalog: buildWeaponDamageCatalog(actor) };
 }
 
 async function chooseWeaponProfile(profiles) {
@@ -448,7 +418,7 @@ export async function rollDamage(options = {}) {
 
     const presetStore = parseDamagePresets(props[DAMAGE_PRESETS_KEY]);
     const breathingContext = String(options.breathing ?? '').trim();
-    const { weaponCatalog, breathingCatalog } = await buildDamageCatalogs(actor);
+    const { weaponCatalog } = await buildDamageCatalogs(actor);
     const dialogResult = await openDamageDialog({
         actor,
         nome: options.nome ?? '',
@@ -461,7 +431,6 @@ export async function rollDamage(options = {}) {
         breathing: breathingContext,
         weaponLabel: options.weaponLabel ?? '',
         weaponCatalog,
-        breathingCatalog,
         onSavePreset: async ({ name, group, breathing, resourceCost, entries }) => {
             const saved = await saveDamagePreset(actor, {
                 name,
@@ -506,6 +475,11 @@ export async function rollDamage(options = {}) {
     const formulaParts = entradas.map((e) =>
         buildEntryFormula(e.dado, e.fixo, e.selAttrs, attrValues)
     );
+    const invalidIndex = formulaParts.findIndex((formula) => !isValidDamageFormula(formula));
+    if (invalidIndex >= 0)
+        return ui.notifications?.warn?.(
+            `Entrada ${invalidIndex + 1}: fórmula inválida "${formulaParts[invalidIndex]}". Use dados e atributos (ex.: 2d6 + @for).`
+        );
     let specs = entradas
         .map((entry, index) => ({
             label:
@@ -1626,14 +1600,15 @@ export async function rollDamage(options = {}) {
           ? '<div>Alvo solicitado, mas a ficha não foi atualizada</div>'
           : '<div>Nenhum alvo ficha não atualizada</div>';
     const flavor = `<div><strong>${nome}</strong>${critical ? ' · CRÍTICO' : ''}${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(' · ')}</div>` : ''}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
-    const messageMode = game.settings?.get?.('core', 'messageMode') ?? 'public';
     const chatData = {
         speaker: ChatMessage.getSpeaker({ actor }),
         flavor,
         rolls,
-        messageMode,
     };
-    const message = await ChatMessage.create(chatData);
+    // v14: a visibilidade só vale como opção de criação (ChatMessage#_preCreate).
+    const message = await ChatMessage.create(chatData, {
+        messageMode: resolveMessageMode(dialogResult.messageMode),
+    });
     await waitForDamageRolls3d(message);
 }
 

@@ -120,6 +120,8 @@ jobs:
           unzip -Z1 module.zip | grep -qx "assets/fonts/Rajdhani-400-latin.woff2"
           unzip -Z1 module.zip | grep -qx "assets/media/module-cover.webp"
           ! unzip -Z1 module.zip | grep -qx "catalogs/breathing.json"
+          unzip -Z1 module.zip | grep -qx "catalogs/special-weapons.json"
+          unzip -Z1 module.zip | grep -qx "catalogs/breathing-items.json"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2

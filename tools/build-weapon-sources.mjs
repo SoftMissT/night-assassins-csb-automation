@@ -7,10 +7,11 @@ import {
     collectCsbFieldSchema,
     sanitizeSpecialWeaponProps,
 } from '../scripts/special-weapon-schema.mjs';
-import { markdownToFoundryHtml } from './compendium-catalog-utils.mjs';
+import { markdownToFoundryHtml, writeFileIfChanged } from './compendium-catalog-utils.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const catalogPath = path.join(root, 'catalogs', 'slayer-weapons.json');
 const outputDirectory = path.join(root, 'build', 'compendium', 'armas-slayer');
+const specialCatalogPath = path.join(root, 'catalogs', 'special-weapons.json');
 const catalog = JSON.parse(await readFile(catalogPath, 'utf8'));
 if (catalog.format !== 1 || !Array.isArray(catalog.documents))
     throw new Error('Catálogo mecânico de armas Slayer inválido.');
@@ -188,9 +189,12 @@ function specialWeaponAwakeningStates(props = {}) {
         ],
     };
 }
+// Ordem fixa: `readdir` não garante ordem entre NTFS e o ext4 do CI, e o
+// catálogo interno gerado é versionado.
 const specialSourceDocuments = await Promise.all(
     (await readdir(SPECIAL_SOURCE_DIRECTORY))
         .filter((file) => file.endsWith('.json'))
+        .sort()
         .map(async (file) =>
             JSON.parse(await readFile(path.join(SPECIAL_SOURCE_DIRECTORY, file), 'utf8'))
         )
@@ -210,9 +214,8 @@ const publishedSpecialDocuments = specialSourceDocuments
         folder: SPECIAL_FOLDER_ID,
     }));
 const sourceDocuments = catalog.documents.filter((document) => {
-    if (String(document._key ?? '').startsWith('!folders!')) {
-        return [BASIC_FOLDER_ID, SPECIAL_FOLDER_ID].includes(document._id);
-    }
+    // A pasta de especiais ficou vazia: as 17 saíram do Compêndio (2026-10-25).
+    if (String(document._key ?? '').startsWith('!folders!')) return document._id === BASIC_FOLDER_ID;
     if (document.type === '_equippableItemTemplate') return document._id === weaponTemplate._id;
     if (document.type === 'equippableItem') return PUBLISHED_WEAPONS.has(document.name);
     return false;
@@ -329,15 +332,32 @@ const documents = [...sourceDocuments, specialWeaponTemplate, ...publishedSpecia
         };
     }
 );
+// Armas especiais: fora do Compêndio, mas os dados canônicos seguem no módulo
+// para a Dupla Alma hidratar armas do mundo (`special-weapon-service`).
+const isSpecialItem = (document) =>
+    document.type === 'equippableItem' &&
+    String(document.system?.props?.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
+const specialCatalog = {
+    format: 1,
+    generatedBy: 'tools/build-weapon-sources.mjs',
+    documents: documents.filter(isSpecialItem),
+};
+if (specialCatalog.documents.length !== PUBLISHED_SPECIAL_WEAPONS.size)
+    throw new Error(
+        `Catálogo de armas especiais incompleto: ${specialCatalog.documents.length}/${PUBLISHED_SPECIAL_WEAPONS.size}.`
+    );
+await writeFileIfChanged(specialCatalogPath, `${JSON.stringify(specialCatalog, null, 2)}\n`);
+const packDocuments = documents.filter((document) => !isSpecialItem(document));
+
 await mkdir(outputDirectory, {
     recursive: true,
 });
-const outputFiles = documents.map((document, index) => {
+const outputFiles = packDocuments.map((document, index) => {
     const id = document._id ?? `document-${index}`;
     return `${String(index).padStart(3, '0')}-${id}.json`;
 });
 await Promise.all(
-    documents.map((document, index) =>
+    packDocuments.map((document, index) =>
         writeFile(
             path.join(outputDirectory, outputFiles[index]),
             `${JSON.stringify(document, null, 2)}\n`
@@ -354,7 +374,9 @@ await Promise.all(
             })
         )
 );
-const itemCount = documents.filter(
+const itemCount = packDocuments.filter(
     (document) => document._key?.startsWith('!items!') && !String(document.type).startsWith('_')
 ).length;
-console.info(`Preparados ${itemCount} Items de armas Slayer.`);
+console.info(
+    `Preparados ${itemCount} Items de armas Slayer; ${specialCatalog.documents.length} especiais no catálogo interno.`
+);

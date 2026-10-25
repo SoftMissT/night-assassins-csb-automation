@@ -22,9 +22,31 @@ async function sourceDocuments(directory) {
     );
 }
 
+/**
+ * Respirações fora do Compêndio (2026-10-25): o pack leva só o template de Forma
+ * e o resto vive em `catalogs/breathing-items.json`. A união preserva o contrato.
+ */
+async function breathingDocuments() {
+    const pack = await sourceDocuments('../build/compendium/respiracoes/');
+    const internal = JSON.parse(
+        await readFile(new URL('../catalogs/breathing-items.json', import.meta.url), 'utf8')
+    );
+    return [...pack, ...internal.documents];
+}
+
+describe('pack de Respirações', () => {
+    it('o Compêndio publica só o template de Forma', async () => {
+        const pack = await sourceDocuments('../build/compendium/respiracoes/');
+        assert.deepEqual(
+            pack.map((document) => document._id),
+            ['NABreathTpl00001']
+        );
+    });
+});
+
 describe('catálogo de Respirações', () => {
     it('o catálogo de fonte conhece as 44 Respirações do sistema, mas publica as 6 com motor dedicado', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const folders = documents.filter(
             (document) =>
                 String(document._key).startsWith('!folders!') &&
@@ -71,7 +93,7 @@ describe('catálogo de Respirações', () => {
     });
 
     it('Água não é publicada no pack Foundry (sem motor de estado dedicado ainda)', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const water = documents.filter(
             (document) =>
                 document.type === 'equippableItem' &&
@@ -85,7 +107,7 @@ describe('catálogo de Respirações', () => {
     });
 
     it('publica Chamas com ações e níveis mecânicos canônicos', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const flames = documents.filter(
             (document) =>
                 document.type === 'equippableItem' &&
@@ -125,7 +147,7 @@ describe('catálogo de Respirações', () => {
     });
 
     it('publica as 6 Respirações com motor como Items mecânicos', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const items = documents.filter((document) => document.type === 'equippableItem');
         const expected = new Map([
             ['Chamas', { count: 9, passive: 'chamas_01' }],
@@ -175,7 +197,7 @@ describe('catálogo de Respirações', () => {
     });
 
     it('publica o Item principal da Respiração das Chamas', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const flameHub = documents.find(
             (item) => item.system?.props?.forma_id === 'hub_chamas'
         );
@@ -208,7 +230,7 @@ describe('catálogo de Respirações', () => {
     });
 
     it('usa os ícones locais disponíveis sem fabricar assets ausentes', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const items = documents.filter((document) => document.type === 'equippableItem');
         for (const [breathing, file] of Object.entries(BREATHING_ICONS)) {
             if (!PUBLISHED_BREATHINGS.includes(breathing)) continue;
@@ -241,7 +263,7 @@ describe('catálogo de Respirações', () => {
 });
 
 it('publica as Formas de Pedra com nome em português e preserva o japonês separado', async () => {
-    const documents = await sourceDocuments('../build/compendium/respiracoes/');
+    const documents = await breathingDocuments();
     const form = documents.find(
         (document) => document.type === 'equippableItem' && document.system?.props?.forma_id === 'pedra_01'
     );
@@ -252,7 +274,7 @@ it('publica as Formas de Pedra com nome em português e preserva o japonês sepa
 });
 
 it('publica Chamas na pasta pública e sem travessão artificial', async () => {
-    const documents = await sourceDocuments('../build/compendium/respiracoes/');
+    const documents = await breathingDocuments();
     assert.equal(documents.some((document) => String(document.name).includes('Interno')), false);
     const flameFolder = documents.find(
         (document) => document.type === 'Item' && document.name === 'Respiração das Chamas'
@@ -266,18 +288,48 @@ it('publica Chamas na pasta pública e sem travessão artificial', async () => {
     assert.equal(flameForm.name.includes(' — '), false);
 });
 
+async function specialWeaponCatalog() {
+    return JSON.parse(
+        await readFile(new URL('../catalogs/special-weapons.json', import.meta.url), 'utf8')
+    );
+}
+
 describe('catálogo de armas Slayer', () => {
-    it('publica quatro armas normais e as dezessete armas especiais oficiais', async () => {
+    it('o Compêndio publica só as quatro armas normais e os dois templates', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
-        assert.equal(
-            documents.filter((document) => String(document._key).startsWith('!folders!')).length,
-            2
-        );
+        const packWeapons = documents.filter((document) => document.type === 'equippableItem');
+        assert.deepEqual(packWeapons.map((item) => item.name).sort(), [
+            'Cutelos Gêmeos',
+            'Double Blade',
+            'Katana',
+            'Manoplas / Soqueiras',
+        ]);
         assert.equal(
             documents.filter((document) => document.type === '_equippableItemTemplate').length,
             2
         );
-        const weapons = documents.filter((document) => document.type === 'equippableItem');
+        assert.ok(documents.some((document) => document._id === 'NASpecialWeaponTpl00001'));
+        const folders = documents.filter((document) => String(document._key).startsWith('!folders!'));
+        assert.deepEqual(
+            folders.map((folder) => folder._id),
+            ['02e48b1127bca24a'],
+            'pasta de especiais vazia não é publicada'
+        );
+    });
+
+    it('as dezessete especiais vivem no catálogo interno, fora do Compêndio', async () => {
+        const catalog = await specialWeaponCatalog();
+        assert.equal(catalog.format, 1);
+        assert.equal(catalog.documents.length, 17);
+        assert.ok(catalog.documents.every((item) => item.system.props.arma_categoria === 'especial'));
+    });
+
+    it('armas normais do Compêndio e especiais do catálogo seguem o contrato de dados', async () => {
+        const documents = await sourceDocuments('../build/compendium/armas-slayer/');
+        const weapons = [
+            ...documents.filter((document) => document.type === 'equippableItem'),
+            ...(await specialWeaponCatalog()).documents,
+        ];
         assert.deepEqual(weapons.map((item) => item.name).sort(), [
             'Boosted Gear Manoplas do Imperador Dragão Vermelho',
             'Correntes de Jade Ceifadoras de Chi',
@@ -435,7 +487,10 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /startWithHit/);
         assert.match(serialized, /return '';/);
         assert.doesNotMatch(serialized, /arma_rank_ss_formula|arma_imagem_vertical/);
-        const weapons = documents.filter((document) => document.type === 'equippableItem');
+        const weapons = [
+            ...documents.filter((document) => document.type === 'equippableItem'),
+            ...(await specialWeaponCatalog()).documents,
+        ];
         assert.ok(
             weapons.every(
                 (item) =>
@@ -462,7 +517,7 @@ describe('catálogo de armas Slayer', () => {
     });
 
     it('publica passivas sem botão de ativação manual', async () => {
-        const documents = await sourceDocuments('../build/compendium/respiracoes/');
+        const documents = await breathingDocuments();
         const template = documents.find((document) => document.type === '_equippableItemTemplate');
         const serialized = JSON.stringify(template.system);
         assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
@@ -470,7 +525,10 @@ describe('catálogo de armas Slayer', () => {
 
     it('publica os vinte e um ícones locais sem campo de arte vertical', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
-        const weapons = documents.filter((document) => document.type === 'equippableItem');
+        const weapons = [
+            ...documents.filter((document) => document.type === 'equippableItem'),
+            ...(await specialWeaponCatalog()).documents,
+        ];
         const illustrated = weapons.filter((item) => item.system?.props?.arma_imagem_vertical);
         const customIcons = weapons.filter((item) =>
             item.img?.startsWith('modules/night-assassins-csb-automation/assets/icons/weapons/')

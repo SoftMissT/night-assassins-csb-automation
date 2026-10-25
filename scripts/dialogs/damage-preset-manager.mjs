@@ -191,7 +191,7 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
     if (action.action === 'new' || (action.action === 'edit' && selected)) {
         const draft = action.action === 'edit' ? selected : null;
         const { buildDamageCatalogs } = await import('../damage-service.mjs');
-        const { weaponCatalog, breathingCatalog } = await buildDamageCatalogs(actor);
+        const { weaponCatalog } = await buildDamageCatalogs(actor);
         const editor = await openDamageDialog({
             actor,
             nome: draft?.name ?? '',
@@ -201,7 +201,6 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
             presets: store.presets,
             breathing: draft?.breathing ?? defaultBreathing,
             weaponCatalog,
-            breathingCatalog,
             presetDraft: {
                 id: draft?.id,
                 name: draft?.name ?? '',

@@ -102,6 +102,30 @@ describe('hit-service', () => {
         assert.match(_formula, /\+ 6$/);
     });
 
+    it('envia a visibilidade escolhida como options.messageMode do v14', async () => {
+        _dialogReturn = [
+            { mode: 'normal', rollMode: 'gmroll', bonusRaw: '', cdVal: 0, rollCount: 1 },
+            { hit: false, continue: false },
+        ];
+        let messageData;
+        let messageOptions;
+        _rollResult = {
+            total: 12,
+            toMessage: async (data, options) => {
+                messageData = data;
+                messageOptions = options;
+                return { id: 'mode-hit' };
+            },
+            dice: [{ results: [{ result: 8, active: true }] }],
+        };
+        const actor = makeActor({ props: { acerto_label: 'acerto_label_dex', dex_display: '4' } });
+
+        await rollHit({ actor, autoDamage: false });
+
+        assert.equal(messageOptions?.messageMode, 'gm');
+        assert.equal('rollMode' in messageData, false);
+    });
+
     it('consome e persiste a Ação de Ataque na ficha Slayer', async () => {
         _dialogReturn = [
             {

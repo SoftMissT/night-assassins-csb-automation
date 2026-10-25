@@ -16,7 +16,12 @@ import { slayerWeaponRank, weaponProfilesForActor } from './weapon-service.mjs';
 
 export const SPECIAL_WEAPON_PENDING_FLAG = 'specialWeaponPending';
 export const YAMATO_NAME = "Yamato The Rift-Walker's Legacy";
-const SPECIAL_WEAPON_PACK = `${MODULE_ID}.night-assassins-armas-slayer`;
+/** Campos que só existem em arma especial já vinculada à Dupla Alma. */
+const DUAL_SOUL_DATA_KEYS = Object.freeze([
+    'dupla_alma_vinculo_json',
+    'dupla_alma_cerimonia_json',
+    'dupla_alma_despertar_json',
+]);
 
 function normalizeText(value = '') {
     return String(value ?? '')
@@ -82,28 +87,56 @@ async function resolveBearer(item, options = {}) {
     return canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character ?? null;
 }
 
+let specialCatalogPromise = null;
+
+/**
+ * As armas especiais saíram do Compêndio (2026-10-25); os dados canônicos vivem
+ * em `catalogs/special-weapons.json`, carregado só quando a Dupla Alma precisa.
+ * @returns {Promise<Map<string, object>>} documento por nome
+ */
+function specialWeaponCatalog() {
+    specialCatalogPromise ??= import('../catalogs/special-weapons.json', {
+        with: { type: 'json' },
+    })
+        .then(({ default: catalog }) => {
+            const documents = Array.isArray(catalog?.documents) ? catalog.documents : [];
+            return new Map(documents.map((document) => [document.name, document]));
+        })
+        .catch((error) => {
+            specialCatalogPromise = null;
+            throw error;
+        });
+    return specialCatalogPromise;
+}
+
 async function canonicalSpecialWeapon(item) {
     const name = String(item?.system?.props?.arma_nome ?? item?.name ?? '').trim();
     if (!name) return null;
-    const pack =
-        game.packs?.get?.(SPECIAL_WEAPON_PACK) ??
-        [...(game.packs ?? [])].find(
-            (entry) =>
-                entry.metadata?.packageName === MODULE_ID &&
-                entry.metadata?.name === 'night-assassins-armas-slayer'
-        );
-    if (!pack) return null;
-    const index = await pack.getIndex({ fields: ['name'] });
-    const hit = index.find((entry) => entry.name === name);
-    return hit ? pack.getDocument(hit._id) : null;
+    return (await specialWeaponCatalog()).get(name) ?? null;
 }
 
 export async function hydrateSpecialWeaponItem(item) {
     if (!item) return { ok: false, reason: 'Item inválido.' };
     if (item.pack) return { ok: true, canonical: item, patch: {} };
     if (!item.update) return { ok: false, reason: 'Item inválido.' };
-    const canonical = await canonicalSpecialWeapon(item);
-    if (!canonical) return { ok: false, reason: 'Arma não encontrada no Compendium oficial.' };
+    let canonical = null;
+    try {
+        canonical = await canonicalSpecialWeapon(item);
+    } catch (error) {
+        console.warn?.(`[${MODULE_ID}] Catálogo de armas especiais indisponível`, error);
+    }
+    if (!canonical) {
+        // Arma do mundo fora do catálogo: vale o que ela já carrega.
+        const local = item.system?.props ?? {};
+        // A própria arma é a fonte (como no ramo `item.pack`): os consumidores
+        // leem `canonical.system.props` e não podem receber `{}`.
+        if (DUAL_SOUL_DATA_KEYS.some((key) => !emptyRuntimeValue(local[key])))
+            return { ok: true, canonical: item, patch: {} };
+        return {
+            ok: false,
+            reason: 'Arma especial sem dados da Dupla Alma: use uma arma oficial ou preencha o vínculo na ficha.',
+        };
+    }
 
     const local = item.system?.props ?? {};
     const source = canonical.system?.props ?? {};

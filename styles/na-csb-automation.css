@@ -3126,9 +3126,23 @@
 /* Rodapé: recurso, fórmula total e crítico numa linha ----------------------- */
 .na-dmg-foot {
     display: grid;
-    grid-template-columns: 150px minmax(0, 1fr) 210px;
+    grid-template-columns: 130px minmax(0, 1fr) 150px 210px;
     gap: 10px;
     align-items: end;
+}
+.na-dmg-dialog .na-dmg-visibility select {
+    width: 100%;
+}
+/* Fórmula livre que o Roll do core recusa: aviso antes de rolar. */
+.na-dmg-dialog .na-entrada.na-entry-invalid {
+    border-color: var(--na-red);
+}
+.na-dmg-dialog .na-entrada.na-entry-invalid .na-dado-inp {
+    border-color: var(--na-red);
+}
+.na-dmg-dialog .na-entrada.na-entry-invalid .na-linha-preview {
+    color: var(--na-red);
+    border-color: var(--na-red);
 }
 /* Modo preset não tem "Foi crítico?": a coluna sobrando vira espaço da fórmula. */
 .na-dmg-foot:not(:has(.na-critical-toggle)) {
@@ -3308,4 +3322,164 @@
     color: var(--na-dmg-muted);
     border: 1px dashed var(--na-dmg-line);
     border-radius: 10px;
+}
+
+/* =============================================================================
+   ITENS — "a lâmina que muda de cor" (2026-10-25)
+   Fichas de item do CSB 6.1 (ApplicationV1). `tagItemSheet` põe na janela
+   .na-sheet .na-item .na-item--<tipo> [.na-item--resp-<respiração>]. Os
+   seletores miram a `key` de cada componente, que o CSB já usa como classe:
+   os templates JSON não mudam e nada precisa ser reimportado.
+   Um acento por item; todo o resto é o neutro escuro da ficha.
+   ============================================================================= */
+.na-item {
+    --na-item-accent: var(--na-gold-dim);
+    --na-item-accent-2: var(--na-item-accent);
+    --na-item-tint: color-mix(in srgb, var(--na-item-accent) 12%, transparent);
+}
+.na-item--arma {
+    --na-item-accent: #d8b45d;
+}
+/* Arma especial: Entidade (azul) e Demônio (vermelho) dividem a lâmina. */
+.na-item--especial {
+    --na-item-accent: #00d9ff;
+    --na-item-accent-2: #ff2b4a;
+}
+.na-item--kekki {
+    --na-item-accent: #ff2b4a;
+}
+.na-item--forma {
+    --na-item-accent: #e6e0d2;
+}
+.na-item--resp-chamas {
+    --na-item-accent: #ff8a3d;
+}
+.na-item--resp-agua {
+    --na-item-accent: #4fa8ff;
+}
+.na-item--resp-metal {
+    --na-item-accent: #c3ccd6;
+}
+.na-item--resp-neve {
+    --na-item-accent: #bfe9ff;
+}
+.na-item--resp-nevoa {
+    --na-item-accent: #a9c1d6;
+}
+.na-item--resp-pedra {
+    --na-item-accent: #c9a77a;
+}
+.na-item--resp-vento {
+    --na-item-accent: #5fe3a1;
+}
+
+/* A lâmina: único gesto da pele. Fio na base da barra de título, com o brilho
+   (hamon) concentrado no centro. */
+.na-item .window-header {
+    position: relative;
+    border-bottom: 0;
+}
+.na-item .window-header::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--na-item-accent) 18%,
+        color-mix(in srgb, var(--na-item-accent) 55%, #fff) 50%,
+        var(--na-item-accent-2) 82%,
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+/* Painéis: sem sombra de card; o título carrega o acento. */
+.na-item .custom-system-panel {
+    box-shadow: none;
+    border-color: color-mix(in srgb, var(--na-item-accent) 22%, var(--na-line));
+    background: rgba(14, 12, 18, 0.72);
+}
+.na-item .custom-system-panel > summary,
+.na-item .custom-system-panel-title {
+    color: var(--na-item-accent);
+    letter-spacing: 0.06em;
+    background: linear-gradient(90deg, var(--na-item-tint), transparent 60%);
+}
+.na-item .custom-system-panel[open] > summary {
+    color: var(--na-item-accent);
+}
+
+/* Número e fórmula: o que o jogador consulta no combate, em mono. */
+.na-item input[type='number'],
+.na-item .arma_perfis_resumo,
+.na-item [class*='_formula'],
+.na-item .kekki_dano_panel input {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Abas da Forma: a ativa ganha a cor da Respiração, não o dourado do Slayer. */
+.na-item--forma nav.custom-tabs a.item.active,
+.na-item--forma .custom-tabs a.item.active {
+    color: var(--na-item-accent) !important;
+    border-color: color-mix(in srgb, var(--na-item-accent) 45%, transparent);
+    background: linear-gradient(180deg, var(--na-item-tint), transparent);
+    text-shadow: none !important;
+}
+/* Níveis 1 a 4: é sequência real, então a marca à esquerda cresce com o nível. */
+.na-item--forma .nvl1_panel,
+.na-item--forma .nvl2_panel,
+.na-item--forma .nvl3_panel,
+.na-item--forma .nvl4_panel {
+    border-left: 2px solid color-mix(in srgb, var(--na-item-accent) 30%, transparent);
+}
+.na-item--forma .nvl2_panel {
+    border-left-color: color-mix(in srgb, var(--na-item-accent) 50%, transparent);
+}
+.na-item--forma .nvl3_panel {
+    border-left-color: color-mix(in srgb, var(--na-item-accent) 72%, transparent);
+}
+.na-item--forma .nvl4_panel {
+    border-left-color: var(--na-item-accent);
+}
+
+/* Dupla Alma: os blocos do vínculo leem como um grupo, com a lâmina dividida. */
+.na-item--especial .arma_especial_dupla_alma,
+.na-item--especial .arma_especial_estado,
+.na-item--especial .dupla_alma_cerimonia_ui,
+.na-item--especial .dupla_alma_resistencia_ui,
+.na-item--especial .dupla_alma_consequencia_ui,
+.na-item--especial .arma_especial_despertar_ui {
+    border-left: 2px solid transparent;
+    border-image: linear-gradient(180deg, var(--na-item-accent), var(--na-item-accent-2)) 1;
+}
+
+/* Kekkijutsu: Potenciação é opcional e fica um degrau abaixo. */
+.na-item--kekki .kekki_potenciacao_panel > summary,
+.na-item--kekki .kekki_potenciacao_panel .custom-system-panel-title {
+    color: var(--na-muted);
+}
+
+/* Ação do item (Usar Forma, Usar Kekkijutsu, rolar arma). */
+.na-item .custom-system-sheet-button,
+.na-item button.custom-system-label-root {
+    border-color: color-mix(in srgb, var(--na-item-accent) 55%, transparent);
+    background: linear-gradient(180deg, var(--na-item-tint), rgba(0, 0, 0, 0.35));
+    color: var(--na-ink);
+    min-height: 24px;
+}
+.na-item .custom-system-sheet-button:hover,
+.na-item button.custom-system-label-root:hover {
+    border-color: var(--na-item-accent);
+}
+.na-item :is(button, a, input, select, textarea, summary):focus-visible {
+    outline: 2px solid var(--na-item-accent);
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .na-item * {
+        transition: none !important;
+    }
 }

@@ -102,11 +102,13 @@ test('as 17 fontes especiais definem Estado Selado, Primeiro Despertar e Ritual'
 });
 
 test('o build faz todas as 17 armas nascerem Seladas em sua forma canônica', () => {
-    const directory = path.join(root, 'build', 'compendium', 'armas-slayer');
-    const weapons = fs.readdirSync(directory)
-        .filter((file) => file.endsWith('.json'))
-        .map((file) => JSON.parse(fs.readFileSync(path.join(directory, file), 'utf8')))
-        .filter((document) => document.system?.props?.arma_categoria === 'especial');
+    // Fora do Compêndio desde 2026-10-25: o build grava as 17 no catálogo interno.
+    const catalog = JSON.parse(
+        fs.readFileSync(path.join(root, 'catalogs', 'special-weapons.json'), 'utf8')
+    );
+    const weapons = catalog.documents.filter(
+        (document) => document.system?.props?.arma_categoria === 'especial'
+    );
 
     assert.equal(weapons.length, 17);
     for (const weapon of weapons) {

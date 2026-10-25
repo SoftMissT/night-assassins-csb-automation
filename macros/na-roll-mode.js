@@ -155,8 +155,7 @@
         await roll.toMessage({
             flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
             speaker: ChatMessage.getSpeaker(),
-            rollMode,
-        });
+        }, { messageMode: rollMode });
     }
     // ── Dialog Content (estilos inline mínimos, look nativo Foundry) ───────
     const secOptionsHtml = secondaryOptions
@@ -187,10 +186,7 @@
     <div style="margin-bottom:6px;">
       <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Modo de Rolagem</label>
       <select id="na-rm-rollmode" style="width:100%;padding:4px;box-sizing:border-box;">
-        <option value="publicroll">Rolar Público</option>
-        <option value="gmroll">Rolar Privado (GM)</option>
-        <option value="blindroll">Rolar Cego (GM)</option>
-        <option value="selfroll">Rolar Para Si</option>
+        ${[['public', 'Público'], ['gm', 'Privado (GM)'], ['blind', 'Cego (GM)'], ['self', 'Para si']].map(([key, label]) => `<option value="${key}"${key === (game.settings.get('core', 'messageMode') || 'public') ? ' selected' : ''}>${label}</option>`).join('')}
       </select>
     </div>
   `;
@@ -214,7 +210,7 @@
         const form = button.form;
         return {
             bonusRaw: form?.querySelector('#na-rm-bonus')?.value ?? '',
-            rollMode: form?.querySelector('#na-rm-rollmode')?.value ?? 'publicroll',
+            rollMode: form?.querySelector('#na-rm-rollmode')?.value ?? 'public',
             secVal: Number(form?.querySelector('#na-rm-secattr')?.value) || 0,
             cdVal: Number(form?.querySelector('#na-rm-cd')?.value) || 0,
         };

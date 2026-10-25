@@ -8,6 +8,7 @@ import { rollTest } from './roll-service.mjs';
 import { rollHit } from './hit-service.mjs';
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from './damage-service.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
+import { tagItemSheet } from './item-sheet-skin.mjs';
 import {
     createLevelOneValues,
     processLevelGain,
@@ -247,8 +248,12 @@ Hooks.once('ready', async () => {
     Hooks.on('renderActorSheet', tagNightAssassinsSheet);
     Hooks.on('renderActorSheetV2', tagNightAssassinsSheet);
     Hooks.on('renderApplicationV2', (app, element) => {
+        // ItemSheetV2 também expõe `actor` (o dono): item nunca leva a pele do Actor.
+        if (app?.document?.documentName === 'Item') return tagItemSheet(app, element);
         if (app?.actor) tagNightAssassinsSheet(app, element);
     });
+    // Ficha de item do CSB 6.1 é ApplicationV1 (`EquippableItemSheet`).
+    Hooks.on('renderItemSheet', tagItemSheet);
 
     if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
         Hooks.on('updateActor', handleActorUpdate);

@@ -1,6 +1,6 @@
 /**
  * @fileoverview DialogV2 único para rolar dano: múltiplas entradas, presets do
- * usuário e inclusão inline de dano de arma e de Formas de Respiração.
+ * usuário, inclusão inline de dano de arma, fórmula livre e visibilidade.
  *
  * Sem diálogos aninhados: seleções e o salvar de preset acontecem em painéis
  * embutidos, evitando o backdrop de modal que travava o diálogo de baixo.
@@ -9,6 +9,12 @@
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO } from '../constants.mjs';
 import { parseAttributeValue } from '../parsing.mjs';
 import { PRESET_GROUPS, groupedPresets, presetGroupLabel } from '../damage-preset-service.mjs';
+import {
+    buildEntryFormula,
+    isValidDamageFormula,
+    messageModeOptionsHtml,
+    resolveMessageMode,
+} from '../damage-formula.mjs';
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -18,25 +24,11 @@ function escapeHtml(value) {
         .replaceAll('"', '&quot;');
 }
 
-function buildEntryFormula(dado, fixo, selAttrs, attrValues) {
-    const parts = [];
-    const cleanDado = (dado || '').trim();
-    if (cleanDado) parts.push(cleanDado);
-
-    if (fixo !== 0) {
-        if (parts.length === 0) parts.push(String(fixo));
-        else parts.push(fixo > 0 ? `+ ${fixo}` : `- ${Math.abs(fixo)}`);
-    }
-
-    for (const k of selAttrs) {
-        const v = attrValues[k] ?? 0;
-        if (v !== 0) {
-            if (parts.length === 0) parts.push(String(v));
-            else parts.push(v > 0 ? `+ ${v}` : `- ${Math.abs(v)}`);
-        }
-    }
-
-    return parts.length > 0 ? parts.join(' ') : '0';
+function messageModeSelectHtml() {
+    return `<div class="na-dmg-visibility">
+        <label class="na-label" for="na-dmg-mode">Visibilidade</label>
+        <select id="na-dmg-mode" name="na-dmg-mode">${messageModeOptionsHtml()}</select>
+      </div>`;
 }
 
 function makeAcaoOpts(sel) {
@@ -82,7 +74,7 @@ function makeEntradaHtml(e, idx, attrValues) {
     <div class="na-entry-bar">
       <span class="na-entry-num" title="Entrada">${idx + 1}</span>
       <select class="na-acao-sel" data-idx="${idx}" title="Tipo de Ação">${makeAcaoOpts(e.tipoAcao)}</select>
-      <input type="text" class="na-dado-inp" data-idx="${idx}" value="${escapeHtml(e.dado ?? '')}" placeholder="dados (3d8)" title="Dado(s)" />
+      <input type="text" class="na-dado-inp" data-idx="${idx}" value="${escapeHtml(e.dado ?? '')}" placeholder="fórmula: 2d6+1d4, 4d6kh3, 1d8 + @for" title="Fórmula livre do Foundry. @vit @dex @for @car @fdv @int @sab usam o valor da ficha." spellcheck="false" autocomplete="off" />
       <input type="number" class="na-fixo-inp" data-idx="${idx}" value="${e.fixo ?? 0}" placeholder="+fixo" title="Fixo adicional" />
       <span class="na-entry-source-label" title="${escapeHtml(source)}">${escapeHtml(source)}</span>
       <button type="button" class="na-remove-btn" data-idx="${idx}" title="Remover entrada">✕</button>
@@ -226,27 +218,6 @@ function weaponPanelHtml(weaponCatalog) {
     </section>`;
 }
 
-function breathingPanelHtml(breathingCatalog) {
-    const breathingOptions = breathingCatalog
-        .map(
-            (group) =>
-                `<option value="${escapeHtml(group.breathing)}">${escapeHtml(group.breathing)}</option>`
-        )
-        .join('');
-    return `<section class="na-inline-panel" id="na-breath-panel" hidden>
-      <div class="na-row-grid">
-        <div><label class="na-label">Respiração</label><select id="na-breath-breathing">${breathingOptions}</select></div>
-        <div><label class="na-label">Forma</label><select id="na-breath-form"></select></div>
-        <div><label class="na-label">Nível</label><select id="na-breath-level"></select></div>
-      </div>
-      <div class="na-inline-actions">
-        <button type="button" id="na-breath-add" class="na-btn na-btn-gold">Adicionar</button>
-        <button type="button" id="na-breath-cancel" class="na-btn">Cancelar</button>
-        <span class="na-hint" id="na-breath-hint"></span>
-      </div>
-    </section>`;
-}
-
 function contextChipsHtml({ breathing, weaponLabel, presetDraft }) {
     const chips = [];
     if (breathing)
@@ -283,8 +254,10 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
                 ...entry.querySelectorAll(`.na-attr-chk[data-idx="${idx}"]:checked`),
             ].map((checkbox) => checkbox.value);
             const formula = buildEntryFormula(dado, fixo, attrs, attrValues);
+            const valid = formula === '0' || isValidDamageFormula(formula);
+            entry.classList.toggle('na-entry-invalid', !valid);
             const preview = entry.querySelector('.na-linha-preview');
-            if (preview) preview.textContent = `= ${formula}`;
+            if (preview) preview.textContent = valid ? `= ${formula}` : `Fórmula inválida: ${formula}`;
             if (formula !== '0') formulas.push(formula);
         });
         if (totalPreview) totalPreview.textContent = formulas.length ? formulas.join('  +  ') : '0';
@@ -436,86 +409,6 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
         });
     }
 
-    // Respiração (inline) ---------------------------------------------------
-    const breathButton = root.querySelector?.('#na-breath-btn');
-    if (breathButton) {
-        const catalog = options.breathingCatalog ?? [];
-        const breathingSelect = root.querySelector('#na-breath-breathing');
-        const formSelect = root.querySelector('#na-breath-form');
-        const levelSelect = root.querySelector('#na-breath-level');
-        const hint = root.querySelector('#na-breath-hint');
-
-        const currentGroup = () =>
-            catalog.find((group) => group.breathing === breathingSelect?.value) ?? catalog[0];
-
-        const updateHint = () => {
-            const group = currentGroup();
-            const form = group?.forms.find((entry) => entry.key === formSelect?.value);
-            const entries = form?.levels?.[Number(levelSelect?.value)] ?? [];
-            if (hint)
-                hint.textContent = entries.length
-                    ? entries.map((entry) => entry.dado || 'dano').join(' + ')
-                    : '—';
-        };
-        const fillLevels = () => {
-            const group = currentGroup();
-            const form =
-                group?.forms.find((entry) => entry.key === formSelect?.value) ?? group?.forms[0];
-            const levels = form
-                ? Object.keys(form.levels)
-                      .map(Number)
-                      .sort((left, right) => left - right)
-                : [];
-            if (levelSelect)
-                levelSelect.innerHTML = levels
-                    .map((level) => `<option value="${level}">Nível ${level}</option>`)
-                    .join('');
-            updateHint();
-        };
-        const fillForms = () => {
-            const group = currentGroup();
-            if (formSelect)
-                formSelect.innerHTML = (group?.forms ?? [])
-                    .map(
-                        (form) =>
-                            `<option value="${escapeHtml(form.key)}">${escapeHtml(form.formName)}</option>`
-                    )
-                    .join('');
-            fillLevels();
-        };
-
-        breathingSelect?.addEventListener('change', fillForms);
-        formSelect?.addEventListener('change', fillLevels);
-        levelSelect?.addEventListener('change', updateHint);
-
-        breathButton.addEventListener('click', () => {
-            if (catalog.length === 0)
-                return globalThis.ui?.notifications?.warn?.(
-                    'Nenhuma Forma de Respiração encontrada neste personagem.'
-                );
-            const panel = root.querySelector('#na-breath-panel');
-            const willShow = panel?.hidden !== false;
-            if (willShow && panel && !panel.dataset.ready) {
-                fillForms();
-                panel.dataset.ready = '1';
-            }
-            setPanel('#na-breath-panel', willShow);
-        });
-        root.querySelector('#na-breath-cancel')?.addEventListener('click', () =>
-            setPanel('#na-breath-panel', false)
-        );
-        root.querySelector('#na-breath-add')?.addEventListener('click', () => {
-            const group = currentGroup();
-            const form =
-                group?.forms.find((entry) => entry.key === formSelect?.value) ?? group?.forms[0];
-            const entries = form?.levels?.[Number(levelSelect?.value)] ?? [];
-            if (entries.length === 0)
-                return globalThis.ui?.notifications?.warn?.('Nível sem dano nesta Forma.');
-            appendEntries(entries, `${group?.breathing ?? ''} ${form?.formName ?? ''}`.trim());
-            setPanel('#na-breath-panel', false);
-        });
-    }
-
     // Janela acompanha o conteúdo: ao crescer ou encolher (entradas, painéis),
     // setPosition({ height: 'auto' }) remede e o core faz clamp do `top` dentro
     // do viewport. Janela redimensionada à mão (altura numérica) fica como está.
@@ -554,7 +447,6 @@ export async function openDamageDialog({
     breathing = '',
     weaponLabel = '',
     weaponCatalog = [],
-    breathingCatalog = [],
     onSavePreset = null,
 }) {
     const props = actor?.system?.props ?? {};
@@ -631,11 +523,9 @@ export async function openDamageDialog({
       <div class="na-dmg-entries-actions">
         <button type="button" id="na-add-btn" class="na-btn">+ Entrada</button>
         <button type="button" id="na-weapon-btn" class="na-btn">+ Dano da arma</button>
-        <button type="button" id="na-breath-btn" class="na-btn">+ Respiração</button>
       </div>
     </div>
     ${weaponCatalog.length ? weaponPanelHtml(weaponCatalog) : ''}
-    ${breathingCatalog.length ? breathingPanelHtml(breathingCatalog) : ''}
     <div id="na-entradas-container">${entradasIniciais}</div>
 
     <section class="na-dmg-foot">
@@ -647,6 +537,7 @@ export async function openDamageDialog({
         <label class="na-label">Fórmula total</label>
         <div id="na-total-preview">0</div>
       </div>
+      ${presetDraft ? '' : messageModeSelectHtml()}
       ${criticalToggle}
     </section>
     <datalist id="na-preset-group-list">${groupListHtml()}</datalist>
@@ -661,7 +552,6 @@ export async function openDamageDialog({
             presetsById,
             breathing,
             weaponCatalog,
-            breathingCatalog,
             onSavePreset,
         });
     });
@@ -718,6 +608,9 @@ export async function openDamageDialog({
                               Number(form.querySelector('#na-dmg-pdr')?.value) || 0
                           ),
                           critical: Boolean(form.querySelector('#na-dmg-critical')?.checked),
+                          messageMode: resolveMessageMode(
+                              form.querySelector('#na-dmg-mode')?.value
+                          ),
                           entradas: entries,
                       };
                   },

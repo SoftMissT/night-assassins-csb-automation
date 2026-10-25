@@ -1051,8 +1051,10 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
     if (damageRoll) {
         chatData.rolls = [damageRoll];
     }
-    chatData.messageMode = game.settings?.get?.('core', 'messageMode') ?? 'public';
-    await ChatMessage.create(chatData);
+    // v14: visibilidade só vale como opção de criação (ChatMessage#_preCreate).
+    await ChatMessage.create(chatData, {
+        messageMode: game.settings?.get?.('core', 'messageMode') || 'public',
+    });
 }
 
 export async function applyBreathingStatus(targetActor, key, effect) {
@@ -1334,11 +1336,15 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
         (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
     );
     if (forms.length === 0) {
-        const pack = game.packs?.get?.(
-            'night-assassins-csb-automation.night-assassins-respiracoes'
+        // Formas fora do Compêndio: importa uma vez do catálogo interno para a
+        // ficha, para o uuid valer no encadeamento de ataque.
+        const { importBreathingForms } = await import('./breathing-catalog.mjs');
+        const imported = await importBreathingForms(actor, breathingName);
+        if (!imported.ok) return ui.notifications?.warn?.(imported.reason);
+        ui.notifications?.info?.(
+            `${imported.created.length} Forma(s) da Respiração ${breathingName} adicionada(s) à ficha.`
         );
-        const documents = pack ? await pack.getDocuments() : [];
-        forms = breathingItemsForActor({ items: documents }, breathingName).filter(
+        forms = breathingItemsForActor(actor, breathingName).filter(
             (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
         );
     }

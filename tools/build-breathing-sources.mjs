@@ -7,10 +7,11 @@ import { stoneFormById } from '../scripts/stone-breathing-data.mjs';
 import { mistFormById } from '../scripts/mist-breathing-data.mjs';
 import { metalFormById } from '../scripts/metal-breathing-data.mjs';
 import { snowFormById } from '../scripts/snow-breathing-data.mjs';
-import { markdownToFoundryHtml } from './compendium-catalog-utils.mjs';
+import { markdownToFoundryHtml, writeFileIfChanged } from './compendium-catalog-utils.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const catalogPath = path.join(root, 'catalogs', 'breathing.json');
 const outputDirectory = path.join(root, 'build', 'compendium', 'respiracoes');
+const internalCatalogPath = path.join(root, 'catalogs', 'breathing-items.json');
 const templatePath = path.join(root, 'src', 'templates', 'items', 'breathing-form-template.json');
 export const BREATHING_CATALOG = Object.freeze([
     'Água',
@@ -348,6 +349,18 @@ for (let level = 1; level <= 4; level += 1) {
     });
 }
 catalog.documents.push(flameHub);
+// Respirações fora do Compêndio (2026-10-25): o pack publica só o template de
+// Forma; Formas, hub e pastas seguem no módulo para o reparo e a reserva de
+// runtime (`breath-migration`, `breath-service`).
+const isPackDocument = (document) => document._id === templateDocument._id;
+const internalCatalog = {
+    format: 1,
+    generatedBy: 'tools/build-breathing-sources.mjs',
+    documents: catalog.documents.filter((document) => !isPackDocument(document)),
+};
+await writeFileIfChanged(internalCatalogPath, `${JSON.stringify(internalCatalog, null, 2)}\n`);
+const packDocuments = catalog.documents.filter(isPackDocument);
+if (packDocuments.length !== 1) throw new Error('Template de Forma ausente do pack.');
 await rm(outputDirectory, {
     recursive: true,
     force: true,
@@ -356,7 +369,7 @@ await mkdir(outputDirectory, {
     recursive: true,
 });
 await Promise.all(
-    catalog.documents.map((document, index) => {
+    packDocuments.map((document, index) => {
         const id = document._id ?? `document-${index}`;
         const kind = document.type === 'Item' ? 'folder' : 'item';
         return writeFile(
@@ -365,9 +378,10 @@ await Promise.all(
         );
     })
 );
-const folderCount = catalog.documents.filter((document) => document.type === 'Item').length;
-const itemCount =
-    catalog.documents.filter(
-        (document) => document._key?.startsWith('!items!') && document.type !== 'Item'
-    ).length - 1;
-console.info(`Preparados ${itemCount} Items em ${folderCount} pastas de Respiração.`);
+const folderCount = internalCatalog.documents.filter((document) => document.type === 'Item').length;
+const itemCount = internalCatalog.documents.filter(
+    (document) => document._key?.startsWith('!items!') && document.type !== 'Item'
+).length;
+console.info(
+    `Pack de Respirações: só o template. Catálogo interno: ${itemCount} Items em ${folderCount} pastas.`
+);

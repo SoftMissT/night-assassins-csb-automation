@@ -4,6 +4,7 @@
 
 import { ATTRIBUTES, ATTR_NAMES, ATTR_COLORS } from '../constants.mjs';
 import { parseAttributeValue } from '../parsing.mjs';
+import { messageModeOptionsHtml } from '../damage-formula.mjs';
 
 function buildFormula(mode, val, secVal, bonusExtra) {
     const dice = mode === 'advantage' ? '2d20kh1' : mode === 'disadvantage' ? '2d20kl1' : '1d20';
@@ -71,10 +72,7 @@ export async function openRollDialog({ actor, test, attr, value, color }) {
       <div style="margin-bottom:6px;">
         <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Modo de Rolagem</label>
         <select id="na-rm-rollmode" style="width:100%;padding:4px;box-sizing:border-box;">
-          <option value="publicroll">Rolar Público</option>
-          <option value="gmroll">Rolar Privado (GM)</option>
-          <option value="blindroll">Rolar Cego (GM)</option>
-          <option value="selfroll">Rolar Para Si</option>
+          ${messageModeOptionsHtml()}
         </select>
       </div>
     </div>

@@ -508,8 +508,10 @@ describe('damage-service', () => {
         const notices = [];
         ui.notifications.info = (message) => notices.push(message);
         let chatData;
-        ChatMessage.create = async (data) => {
+        let chatOptions;
+        ChatMessage.create = async (data, options) => {
             chatData = data;
+            chatOptions = options;
             return data;
         };
         _rollResult = { total: 8, toMessage: async () => {} };
@@ -517,10 +519,60 @@ describe('damage-service', () => {
         await rollDamage({ actor: attacker });
 
         assert.equal(chatData.rolls.length, 2);
-        assert.equal(chatData.messageMode, 'gm');
+        // v14 só aplica a visibilidade por options.messageMode (ChatMessage#_preCreate).
+        assert.equal(chatOptions?.messageMode, 'gm');
+        assert.equal('messageMode' in chatData, false);
         assert.match(chatData.flavor, /Cortante/);
         assert.match(chatData.flavor, /Ferida/);
         assert.match(notices[0], /recebeu 16 de dano \(8 de Ferida\)/);
+    });
+
+    it('respeita a visibilidade escolhida no diálogo e resolve @atributo na fórmula livre', async () => {
+        game.user.isGM = true;
+        game.settings = {
+            get: (namespace, key) =>
+                namespace === 'core' && key === 'messageMode' ? 'public' : undefined,
+        };
+        game.user.targets = new Set();
+        _dialogReturn = {
+            nome: 'Fórmula livre',
+            pdrGasto: 0,
+            messageMode: 'blind',
+            entradas: [
+                {
+                    dado: '2d6 + @for',
+                    fixo: 1,
+                    selAttrs: [],
+                    selTiposDano: ['cortante'],
+                    tipoAcao: '',
+                },
+            ],
+        };
+        const attacker = makeActor({
+            id: 'free',
+            uuid: 'Actor.free',
+            props: { nome_slayer: 'Slayer', for_display: '3' },
+        });
+        const formulas = [];
+        const previousCreate = Roll.create;
+        Roll.create = (formula) => {
+            formulas.push(formula);
+            return previousCreate(formula);
+        };
+        let chatOptions;
+        ChatMessage.create = async (data, options) => {
+            chatOptions = options;
+            return data;
+        };
+        _rollResult = { total: 9, toMessage: async () => {} };
+        try {
+            await rollDamage({ actor: attacker, builder: false });
+        } finally {
+            Roll.create = previousCreate;
+        }
+
+        assert.deepEqual(formulas, ['2d6 + 3 + 1']);
+        assert.equal(chatOptions?.messageMode, 'blind');
     });
 
     it('imunidade da Névoa remove o crítico antes da resistência', async () => {

@@ -1,4 +1,33 @@
 # Changelog
+## Não lançado
+
+## v0.11.88 — 2026-10-25 — dano livre, visibilidade, Compêndio enxuto e pele das fichas de item
+
+### 2026-10-25 — pele das fichas de item ("a lâmina que muda de cor")
+
+- **Causa encontrada:** a ficha de item do CSB 6.1 é ApplicationV1 (`EquippableItemSheet`) e o módulo só marcava ficha de Actor (`renderActorSheet`/`renderApplicationV2`). Arma, arma especial, Forma e Kekkijutsu abriam no visual cru do CSB.
+- `scripts/item-sheet-skin.mjs` classifica o item pelos dados (robusto ao id de template remapeado no mundo) e marca a janela com `na-sheet na-item na-item--<arma|especial|forma|kekki>` e `na-item--resp-<respiração>`. Hooks `renderItemSheet` e `renderApplicationV2` (item nunca recebe a pele do Actor dono).
+- CSS (bloco `ITENS`): um acento por item — arma dourada, especial azul/vermelho (Entidade/Demônio), Kekkijutsu vermelho, Forma na cor da sua Respiração (7 cores com contraste AA testado sobre o fundo). Fio de lâmina na barra de título, painéis sem sombra com o título no acento, números e fórmulas em mono, níveis 1–4 da Forma com marca crescente, blocos da Dupla Alma agrupados, foco visível e `prefers-reduced-motion`.
+- **Templates JSON não mudaram:** o CSS mira a `key` dos componentes, que o CSB já aplica como classe. Nenhuma `key` em risco e nada a reimportar; basta atualizar o módulo.
+- `tests/item-sheet-skin.test.mjs` (7). `node --test` 1222/1222. **Não renderizado:** Foundry desligado nesta sessão.
+
+### 2026-10-25 — dano com fórmula livre e visibilidade que funciona
+
+- **Fórmula livre por entrada:** o campo de dados do diálogo de dano aceita qualquer fórmula do Foundry (`2d6+1d4`, `4d6kh3`, `1d8 + @for`). `@vit @dex @for @car @fdv @int @sab` usam o valor da ficha (negativo entra entre parênteses); o fixo e os atributos marcados continuam somados depois. A prévia marca em vermelho a entrada que o `Roll.validate` do core recusa, e o serviço avisa "Entrada N: fórmula inválida" antes de gastar ação ou recurso.
+- **Visibilidade no dano:** o rodapé ganhou o seletor Público / Privado (GM) / Cego / Só para mim, que começa no modo atual do chat.
+- **Correção (bug real, v14):** o `ChatMessage#_preCreate` do 14.367 só aplica `options.messageMode`. Dano e Respiração mandavam `messageMode` dentro dos dados da mensagem; Acerto e testes de atributo mandavam `rollMode` dentro do `messageData` do `Roll#toMessage`. Todos eram descartados, e o seletor "Visibilidade da rolagem" do Acerto e dos testes nunca teve efeito. Agora todos usam `options.messageMode`; a Dupla Alma deixou de ler a configuração `core.rollMode`, depreciada no v14.
+- Fonte única em `scripts/damage-formula.mjs` (substitui as duas cópias de `buildEntryFormula`, do diálogo e do serviço). Testes: `tests/damage-formula.test.mjs` (7) e regressões em `damage-service` e `hit-service`; o teste antigo que conferia `chatData.messageMode` validava o próprio bug e foi corrigido.
+- Verificação: `node --test` 1187/1187. **Sem validação no Foundry.**
+- Acerto e testes de atributo deixam de abrir em "Público" fixo: os três diálogos usam o mesmo seletor (`messageModeOptionsHtml`) e começam no modo atual do chat. Sem isso, a correção acima faria um GM com o chat em privado rolar público sem perceber.
+
+### 2026-10-25 — armas especiais e Respirações fora do Compêndio
+
+- **Decisão do operador:** o Compêndio deixa de mostrar as 17 armas especiais e as Formas de Respiração. Os dois packs continuam declarados (UUIDs preservados) e passam a publicar só os templates: `night-assassins-armas-slayer` = 4 armas normais + `NAWeaponTpl00001` + `NASpecialWeaponTpl00001`; `night-assassins-respiracoes` = `NABreathTpl00001`. Conferido por `fvtt package unpack`.
+- **Mecânica preservada por catálogo interno** (gerado pelo build, versionado e no ZIP, carregado sob demanda por `import()`): `catalogs/special-weapons.json` (17 armas) alimenta a hidratação da Dupla Alma, que antes buscava a arma no pack e pararia com "Arma não encontrada no Compendium oficial"; arma do mundo fora do catálogo mas com dados `dupla_alma_*` segue funcionando. `catalogs/breathing-items.json` (47 Items, 7 pastas) alimenta o reparo "Corrigir Respirações" e o hub: ao abrir uma Respiração sem Formas na ficha, o módulo importa as Formas uma vez (`createEmbeddedDocuments`, Items reais para o encadeamento de ataque), com o template de Forma do mundo ou, para o GM, importado do pack com `keepId`.
+- **"+ Respiração" removido do diálogo de dano**, junto com a leitura do pack no `buildDamageCatalogs`; dano de Forma entra pela fórmula livre ou pelo uso da Forma.
+- Builds gravam os catálogos de forma atômica e só quando o conteúdo muda (rodam dentro da suíte). `release.yml` confere os dois catálogos no ZIP.
+- Testes: `special-weapon-catalog` (4), `breathing-catalog` (5), reparo sem pack; `item-catalogs`, `weapon-rank-formulas` e `special-weapon-awakening` passam a validar a união pack + catálogo, sem asserção removida, mais o contrato novo de cada pack. `node --test` 1206/1206 em três rodadas. **Sem validação no Foundry.**
+
 ## v0.11.87 — 2026-10-24 — capa do módulo e README
 
 - O `module.json` declara `media` do tipo `setup` apontando para `assets/media/module-cover.webp`; a pasta `assets/media/` passa a ser publicada no `module.zip` e o `release.yml` confere o arquivo. Teste de distribuição valida tipo, prefixo `modules/<id>/` e existência do arquivo.

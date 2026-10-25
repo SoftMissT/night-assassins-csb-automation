@@ -246,7 +246,7 @@ async function ceremonyRoll(actor, formula, flavor) {
             flavor,
         },
         {
-            rollMode: game.settings.get('core', 'rollMode'),
+            messageMode: game.settings.get('core', 'messageMode'),
         }
     );
 

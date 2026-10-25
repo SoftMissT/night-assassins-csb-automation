@@ -58,11 +58,11 @@ function actorItems(actor) {
     }
 }
 
-function currentRollMode() {
+function currentMessageMode() {
     try {
-        return game.settings.get('core', 'rollMode') ?? 'publicroll';
+        return game.settings.get('core', 'messageMode') || 'public';
     } catch {
-        return 'publicroll';
+        return 'public';
     }
 }
 
@@ -203,9 +203,7 @@ async function mechanicalRoll({ actor, formula, flavor } = {}) {
         }),
 
         flavor,
-
-        rollMode: currentRollMode(),
-    });
+    }, { messageMode: currentMessageMode() });
 
     return roll;
 }
@@ -496,9 +494,7 @@ export async function openDualSoulAwakeningResistance(options = {}) {
             }),
 
             flavor: `<strong>Equilíbrio Instável — Desafiante</strong> · 1 = Entidade · 2 = Demônio · Resultado: <strong>${escapeHtml(challengerRoll.total)}</strong> → ${escapeHtml(challengerName)}`,
-
-            rollMode: currentRollMode(),
-        });
+        }, { messageMode: currentMessageMode() });
     } else {
         challenge = resolveDualSoulChallenge({
             ceremony,
@@ -576,9 +572,7 @@ export async function openDualSoulAwakeningResistance(options = {}) {
         }),
 
         flavor: `<strong>Resistência ao Despertar</strong> · ${escapeHtml(challengerName)} desafia · ${escapeHtml(attribute)} = ${escapeHtml(chosenValue)} · CD ${escapeHtml(dc)} → <strong>${resultLabel}</strong>`,
-
-        rollMode: currentRollMode(),
-    });
+    }, { messageMode: currentMessageMode() });
 
     /*
      * ÚNICA escrita mecânica deste slice.

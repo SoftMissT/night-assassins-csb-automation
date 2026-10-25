@@ -3,6 +3,7 @@
  */
 
 import { ATTR_NAMES, MODULE_ID } from './constants.mjs';
+import { resolveMessageMode } from './damage-formula.mjs';
 import { parseAttributeValue } from './parsing.mjs';
 import { openRollDialog } from './dialogs/roll-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
@@ -94,8 +95,7 @@ async function doRoll({
     const message = await roll.toMessage({
         flavor: `<strong>${test}</strong> (${modeLabel})${attrLine ? ' — ' + attrLine : ''}${secLine}${bonusLine}${statusLine}${cdLine}`,
         speaker: ChatMessage.getSpeaker({ actor }),
-        rollMode: rollMode,
-    });
+    }, { messageMode: resolveMessageMode(rollMode) });
     if (['Bloqueio', 'Esquiva'].includes(test) && naturalD20(roll) === 20)
         await recoverSlayerFolego(actor, 1);
     return { roll, message, success };

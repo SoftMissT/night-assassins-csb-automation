@@ -280,6 +280,8 @@ export const STATUS_SLAYER = Object.freeze([
     { key: 'fadiga_mental', label: 'Fadiga Mental', category: 'Fadiga' },
     { key: 'ofegante', label: 'Ofegante', category: 'Mobilidade' },
     { key: 'encorajado', label: 'Encorajado', category: 'Benéfico' },
+    // Respiração da Recuperação, 3ª Forma: ignora as penalidades de Exaustão enquanto durar.
+    { key: 'choque_adrenergico', label: 'Choque Adrenérgico', category: 'Benéfico' },
 ]);
 
 /** Status que realmente causam dano automático no início do turno. */

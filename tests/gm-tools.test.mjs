@@ -65,10 +65,20 @@ describe('gm-tools: execução', () => {
     it('ferramenta de Slayer recusa Oni', async () => {
         const notices = setup({
             controlled: [token('Actor.oni', { template: 'pqr15wsdsqbcn15w' })],
-            api: { openRestManager: () => assert.fail('não deve rodar') },
+            api: { openResistanceManager: () => assert.fail('não deve rodar') },
         });
-        assert.equal(await runGmTool('rest'), false);
+        assert.equal(await runGmTool('resistances'), false);
         assert.match(notices.warn[0], /Caçadores/u);
+    });
+
+    it('Descanso vale para Oni também', async () => {
+        const calls = [];
+        setup({
+            controlled: [token('Actor.oni', { template: 'pqr15wsdsqbcn15w' })],
+            api: { openRestManager: (o) => calls.push(o) },
+        });
+        assert.equal(await runGmTool('rest'), true);
+        assert.deepEqual(calls, [{ actorUuid: 'Actor.oni' }]);
     });
 
     it('gerenciador usa o token selecionado; sem seleção passa null', async () => {

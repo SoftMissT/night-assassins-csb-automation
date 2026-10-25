@@ -24,7 +24,7 @@
                     "contents": [
                         {
                             "key": "arma_nome",
-                            "colSpan": 1,
+                            "colSpan": 4,
                             "rowSpan": 1,
                             "cssClass": "",
                             "role": 0,
@@ -43,41 +43,21 @@
                             "autocomplete": ""
                         },
                         {
-                            "key": "arma_categoria",
-                            "colSpan": 1,
+                            "key": "arma_perfis_resumo",
+                            "colSpan": 2,
                             "rowSpan": 1,
                             "cssClass": "",
                             "role": 0,
                             "editRole": 0,
                             "permission": 0,
-                            "tooltip": "",
+                            "tooltip": "Resumo visual lido pela tabela ARMAS do Slayer. Ex: 3 + 1/2 FOR ou DEX.",
                             "visibilityFormula": "",
                             "editableFormula": "",
                             "escapeHTML": false,
                             "type": "textField",
                             "size": "full-size",
-                            "label": "Categoria",
-                            "defaultValue": "especial",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
-                        },
-                        {
-                            "key": "arma_tipo",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 0,
-                            "editRole": 0,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "Tipo de arma",
-                            "defaultValue": "Corpo a corpo",
+                            "label": "Dano / Perfil",
+                            "defaultValue": "",
                             "charList": "",
                             "maxLength": null,
                             "autocomplete": ""
@@ -108,21 +88,21 @@
                             "inputStyle": "text"
                         },
                         {
-                            "key": "arma_perfis_resumo",
+                            "key": "arma_alcance",
                             "colSpan": 1,
                             "rowSpan": 1,
                             "cssClass": "",
                             "role": 0,
                             "editRole": 0,
                             "permission": 0,
-                            "tooltip": "Resumo visual lido pela tabela ARMAS do Slayer. Ex: 3 + 1/2 FOR ou DEX.",
+                            "tooltip": "",
                             "visibilityFormula": "",
                             "editableFormula": "",
                             "escapeHTML": false,
                             "type": "textField",
-                            "size": "full-size",
-                            "label": "Dano / Perfil",
-                            "defaultValue": "",
+                            "size": "medium",
+                            "label": "Alcance",
+                            "defaultValue": "1,5m",
                             "charList": "",
                             "maxLength": null,
                             "autocomplete": ""
@@ -148,7 +128,7 @@
                             "autocomplete": ""
                         },
                         {
-                            "key": "arma_alcance",
+                            "key": "arma_tipo",
                             "colSpan": 1,
                             "rowSpan": 1,
                             "cssClass": "",
@@ -160,29 +140,29 @@
                             "editableFormula": "",
                             "escapeHTML": false,
                             "type": "textField",
-                            "size": "medium",
-                            "label": "Alcance",
-                            "defaultValue": "1,5m",
+                            "size": "full-size",
+                            "label": "Tipo de arma",
+                            "defaultValue": "Corpo a corpo",
                             "charList": "",
                             "maxLength": null,
                             "autocomplete": ""
                         },
                         {
-                            "key": "arma_propriedades",
+                            "key": "arma_categoria",
                             "colSpan": 1,
                             "rowSpan": 1,
                             "cssClass": "",
                             "role": 0,
                             "editRole": 0,
                             "permission": 0,
-                            "tooltip": "Sem markdown. Ex: Acuidade / Ryōtō / Nitoryu.",
+                            "tooltip": "",
                             "visibilityFormula": "",
                             "editableFormula": "",
                             "escapeHTML": false,
                             "type": "textField",
                             "size": "full-size",
-                            "label": "Propriedades",
-                            "defaultValue": "",
+                            "label": "Categoria",
+                            "defaultValue": "especial",
                             "charList": "",
                             "maxLength": null,
                             "autocomplete": ""
@@ -208,8 +188,28 @@
                             "autocomplete": ""
                         },
                         {
+                            "key": "arma_propriedades",
+                            "colSpan": 2,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "Sem markdown. Ex: Acuidade / Ryōtō / Nitoryu.",
+                            "visibilityFormula": "",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "textField",
+                            "size": "full-size",
+                            "label": "Propriedades",
+                            "defaultValue": "",
+                            "charList": "",
+                            "maxLength": null,
+                            "autocomplete": ""
+                        },
+                        {
                             "key": "arma_requisito",
-                            "colSpan": 1,
+                            "colSpan": 2,
                             "rowSpan": 1,
                             "cssClass": "",
                             "role": 0,
@@ -228,7 +228,7 @@
                             "autocomplete": ""
                         }
                     ],
-                    "flow": "grid-2",
+                    "flow": "grid-4",
                     "align": "center",
                     "verticalAlign": "top",
                     "collapsible": false,
@@ -377,7 +377,7 @@
                             "style": "bold"
                         }
                     ],
-                    "flow": "grid-2",
+                    "flow": "grid-4",
                     "align": "center",
                     "verticalAlign": "center",
                     "collapsible": false,
@@ -658,7 +658,7 @@
                             "autocomplete": ""
                         }
                     ],
-                    "flow": "grid-2",
+                    "flow": "grid-4",
                     "align": "center",
                     "verticalAlign": "top",
                     "collapsible": true,
@@ -761,7 +761,7 @@
                             "autocomplete": ""
                         }
                     ],
-                    "flow": "grid-2",
+                    "flow": "grid-4",
                     "align": "center",
                     "verticalAlign": "top",
                     "collapsible": true,
@@ -811,7 +811,7 @@
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
-                    "collapsible": true,
+                    "collapsible": false,
                     "defaultCollapsed": false,
                     "title": "Cerimônia de vínculo",
                     "titleStyle": "default"
@@ -858,8 +858,8 @@
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
-                    "collapsible": true,
-                    "defaultCollapsed": true,
+                    "collapsible": false,
+                    "defaultCollapsed": false,
                     "title": "Resistência ao despertar",
                     "titleStyle": "default"
                 },
@@ -905,8 +905,8 @@
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
-                    "collapsible": true,
-                    "defaultCollapsed": true,
+                    "collapsible": false,
+                    "defaultCollapsed": false,
                     "title": "Consequência de Dupla Alma",
                     "titleStyle": "default"
                 },
@@ -952,7 +952,7 @@
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
-                    "collapsible": true,
+                    "collapsible": false,
                     "defaultCollapsed": false,
                     "title": "Despertar da Yamato",
                     "titleStyle": "default"
@@ -999,7 +999,7 @@
                     "flow": "vertical",
                     "align": "center",
                     "verticalAlign": "top",
-                    "collapsible": true,
+                    "collapsible": false,
                     "defaultCollapsed": false,
                     "title": "Habilidades da arma",
                     "titleStyle": "default"
@@ -1537,7 +1537,7 @@
             "pp_width": 100,
             "pp_height": 100
         },
-        "templateSystemUniqueVersion": 1924098633,
+        "templateSystemUniqueVersion": 1924098634,
         "uniqueId": "NASpecialWeaponTpl00001"
     },
     "effects": [],

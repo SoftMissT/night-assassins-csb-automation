@@ -36,6 +36,7 @@ export async function runCanonicalBreathingForm({
     formaId,
     level,
     runtime,
+    damageOverride = null,
 } = {}) {
     const notify = runtime?.notify;
     if (!actor || !runtime) return { ok: false, reason: 'Pipeline canônico sem actor ou runtime.' };
@@ -45,7 +46,11 @@ export async function runCanonicalBreathingForm({
 
     const resolved = resolveLevel(form, level);
     if (!resolved.ok) return refusal(notify, resolved.reason);
-    const dados = resolved.dados;
+    // Dano escolhido pelo jogador (guardado no Item) substitui só o dano base da Forma.
+    const dados =
+        damageOverride && resolved.dados.dano
+            ? { ...resolved.dados, dano: damageOverride }
+            : resolved.dados;
 
     const breathLevel = Math.max(1, Math.trunc(Number(runtime.getBreathLevel?.()) || 1));
     if (level > breathLevel)

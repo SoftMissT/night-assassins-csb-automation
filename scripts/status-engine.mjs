@@ -200,12 +200,22 @@ export async function applySlayerDamage(actor, amount, context = {}) {
     const woundBase = Math.min(requested, requestedWound);
     const demonicBonus = context.isDemonic && state.active.includes('corrupcao') ? 2 : 0;
     const normalBase = requested - woundBase + demonicBonus;
-    const normalResolution = resolveIncomingDamage(state, normalBase, context);
-    const woundResolution = resolveIncomingDamage(state, woundBase, context);
+    // Choque Adrenérgico ignora as penalidades de Exaustão, inclusive o Vulnerável da Exaustão 6.
+    const incomingState = state.active.includes('choque_adrenergico')
+        ? { ...state, exhaustion: 0 }
+        : state;
+    const normalResolution = resolveIncomingDamage(incomingState, normalBase, context);
+    const woundResolution = resolveIncomingDamage(incomingState, woundBase, context);
+    // PDV temporário (`pdv_slayer_extra`) absorve o dano antes do PDV, o normal primeiro.
+    const temporary = parseNumber(props.pdv_slayer_extra);
+    const absorbedNormal = Math.min(temporary, normalResolution.damage);
+    const absorbedWound = Math.min(temporary - absorbedNormal, woundResolution.damage);
+    const temporaryAbsorbed = absorbedNormal + absorbedWound;
     const resolution = {
-        damage: normalResolution.damage,
-        woundDamage: woundResolution.damage,
+        damage: normalResolution.damage - absorbedNormal,
+        woundDamage: woundResolution.damage - absorbedWound,
         vulnerable: normalResolution.vulnerable || woundResolution.vulnerable,
+        temporaryAbsorbed,
     };
     const currentDamage = parseNumber(props.pdv_slayer_dano_tomado);
     const currentWounds = parseNumber(props.pdv_slayer_dano_ferida);
@@ -224,6 +234,9 @@ export async function applySlayerDamage(actor, amount, context = {}) {
         {
             'system.props.pdv_slayer_dano_tomado': currentDamage + resolution.damage,
             'system.props.pdv_slayer_dano_ferida': currentWounds + resolution.woundDamage,
+            ...(temporaryAbsorbed > 0
+                ? { 'system.props.pdv_slayer_extra': temporary - temporaryAbsorbed }
+                : {}),
             ...statePatch(state),
             ...windUpdate,
         },

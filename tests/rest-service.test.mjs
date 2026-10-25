@@ -105,3 +105,67 @@ test('Respiração da Recuperação: Fadigas exigem descanso completo e Ofegante
     assert.equal(restEligibleStatuses('complete').includes('fadiga_mental'), true);
     assert.equal(restEligibleStatuses('deep').includes('ofegante'), false);
 });
+
+test('PDV temporário (extra) acaba no Descanso Completo e na Profunda, mas fica no de Campo', () => {
+    const props = baseProps({ pdv_slayer_extra: 7 });
+    const field = buildRestPatch(props, { tier: 'field', fieldPdvRoll: 4, record: {} });
+    assert.equal(field.patch['system.props.pdv_slayer_extra'], undefined);
+    for (const tier of ['complete', 'deep']) {
+        const rest = buildRestPatch(props, { tier, record: {} });
+        assert.equal(rest.patch['system.props.pdv_slayer_extra'], 0, tier);
+        assert.equal(rest.temporaryCleared, true);
+        // O PDV real volta ao máximo sem o temporário: 20 - 2 de Ferida.
+        assert.equal(rest.resources.pdvMaximum, 18, tier);
+    }
+});
+
+function oniProps(overrides = {}) {
+    return {
+        vit_display: 3,
+        pdv_oni_total_conta: 40,
+        pdv_oni_dano_ferida: 0,
+        pdv_oni_extra: 0,
+        pdv_oni_dano_tomado: 25,
+        pdv_oni_curado: 0,
+        pdk_oni_total_conta: 10,
+        pdk_oni_extra: 0,
+        pdk_oni_gasto_valor: 8,
+        pdk_oni_curado: 0,
+        status_oni_dados: JSON.stringify({ version: 2, active: [], exhaustion: 3, effects: {} }),
+        ...overrides,
+    };
+}
+
+test('Oni: Descanso Completo enche PDV e PDK, reduz Exaustão e guarda o registro na flag', () => {
+    const rest = buildRestPatch(oniProps(), { tier: 'complete', record: { tier: 'complete' } });
+    assert.equal(rest.kind, 'oni');
+    assert.equal(rest.energyLabel, 'PDK');
+    assert.equal(rest.pdvRecovered, 25);
+    assert.equal(rest.pdrRecovered, 8);
+    assert.equal(rest.patch['system.props.pdv_oni_dano_tomado'], 0);
+    assert.equal(rest.patch['system.props.pdk_oni_gasto_valor'], 0);
+    assert.equal(rest.patch['system.props.status_oni_exaustao'], 1);
+    assert.deepEqual(rest.patch['flags.night-assassins-csb-automation.restRecord'], { tier: 'complete' });
+    assert.equal(rest.patch['system.props.folego_slayer_atual'], undefined, 'Oni não tem Fôlego');
+    assert.ok(!Object.keys(rest.patch).some((key) => key.includes('slayer')), 'nada de campo de Slayer');
+});
+
+test('Oni: Campo dá metade do PDK e 1d4 × VIT de PDV', () => {
+    const rest = buildRestPatch(oniProps(), { tier: 'field', fieldPdvRoll: 9, record: {} });
+    assert.equal(rest.pdvRecovered, 9);
+    assert.equal(rest.pdrRecovered, 5);
+    assert.equal(rest.patch['system.props.pdk_oni_curado'], 5);
+});
+
+test('Oni com Regeneração Suprimida recupera PDK, mas não PDV', () => {
+    const props = oniProps({
+        status_oni_dados: JSON.stringify({ version: 2, active: ['regeneracao_suprimida'], exhaustion: 0, effects: {} }),
+    });
+    for (const tier of ['field', 'complete']) {
+        const rest = buildRestPatch(props, { tier, fieldPdvRoll: 9, record: {} });
+        assert.equal(rest.pdvBlocked, true, tier);
+        assert.equal(rest.pdvRecovered, 0, tier);
+        assert.equal(rest.patch['system.props.pdv_oni_dano_tomado'], undefined, tier);
+        assert.ok(rest.pdrRecovered > 0, tier);
+    }
+});

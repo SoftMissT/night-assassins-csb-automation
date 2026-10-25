@@ -30,6 +30,11 @@ import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { parseNumber } from './parsing.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
 import { consumeSlayerActions } from './action-service.mjs';
+import {
+    applyChosenDamageToPatch,
+    CHOSEN_DAMAGE_BREATHINGS,
+    resolveChosenDamage,
+} from './breath-damage-choice.mjs';
 import { resolveWaterDamageTypes, waterFormById } from './water-breathing-data.mjs';
 import { flameFormById } from './flame-breathing-data.mjs';
 import { mistFormById } from './mist-breathing-data.mjs';
@@ -354,16 +359,35 @@ async function resolveActorFromItem(item, fallbackUuid) {
     return game?.user?.character ?? null;
 }
 
+const escapeAttr = (value) =>
+    String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;');
+
+/** O jogador escolhe o dano quando a Respiração está na lista e algum nível tem dano. */
+function offersDamageChoice(form, levels) {
+    return CHOSEN_DAMAGE_BREATHINGS.has(form.respiracao) && levels.some((level) => level.dano);
+}
+
 function buildDialogHtml(form, pdrCurrent, breathLevel) {
-    const levelOptions = form.levels
-        .filter((level) => level.level <= breathLevel)
+    const allowed = form.levels.filter((level) => level.level <= breathLevel);
+    const levelOptions = allowed
         .map((l) => {
-            const danoTxt = l.dano ? ` · Dano: ${l.dano}` : '';
+            const danoTxt = l.dano ? ` · Dano: ${escapeAttr(l.dano)}` : '';
             const statusTxt = l.status ? ` · Status: ${l.status}` : '';
             const buffTxt = l.buff ? ` · Buff: ${l.buff}` : '';
-            return `<option value="${l.level}">Nível ${l.level} ${l.custo} PDR${danoTxt}${statusTxt}${buffTxt}</option>`;
+            return `<option value="${l.level}" data-dano="${escapeAttr(l.dano)}">Nível ${l.level} ${l.custo} PDR${danoTxt}${statusTxt}${buffTxt}</option>`;
         })
         .join('');
+    const damageHtml = offersDamageChoice(form, allowed)
+        ? `<div style="margin-bottom:8px;">
+        <label style="font-size:13px;">Dano da Forma (fica guardado para este nível):</label>
+        <input type="text" name="na-breath-damage" value="${escapeAttr(allowed[0]?.dano)}" placeholder="ex.: 2d6 + @for" style="width:100%;margin-top:4px;font-family:'JetBrains Mono',monospace;">
+        <div style="font-size:11px;color:#888;margin-top:2px;">Bônus de Respiração, Marca e derivados continuam somando à parte.</div>
+      </div>`
+        : '';
 
     const reqHtml = form.temRequisito
         ? `<div class="na-breath-req" style="color:#FF2B4A;font-size:12px;margin-bottom:6px;">⚠ Requisito: ${form.requisito}</div>`
@@ -388,6 +412,7 @@ function buildDialogHtml(form, pdrCurrent, breathLevel) {
         <label style="font-size:13px;">Escolha o nível:</label>
         <select name="na-breath-level" style="width:100%;margin-top:4px;">${levelOptions}</select>
       </div>
+      ${damageHtml}
       <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;">
         <span>PDR disponível: <strong>${pdrCurrent}</strong></span>
       </div>
@@ -752,9 +777,21 @@ async function openBreathDialog({ form, pdrCurrent, breathLevel }) {
         return null;
     }
     const html = buildDialogHtml({ ...form, levels: allowedLevels }, pdrCurrent, breathLevel);
+    // Trocar o nível traz o dano guardado daquele nível, até o jogador digitar o seu.
+    const render = (_event, dialog) => {
+        const select = dialog.element?.querySelector('[name="na-breath-level"]');
+        const input = dialog.element?.querySelector('[name="na-breath-damage"]');
+        if (!select || !input) return;
+        let edited = false;
+        input.addEventListener('input', () => (edited = true));
+        select.addEventListener('change', () => {
+            if (!edited) input.value = select.selectedOptions[0]?.dataset.dano ?? '';
+        });
+    };
     const result = await foundry.applications.api.DialogV2.wait({
         window: { title: `Respiração da ${form.respiracao} ${form.nome}` },
         content: html,
+        render,
         buttons: [
             {
                 action: 'usar',
@@ -763,7 +800,8 @@ async function openBreathDialog({ form, pdrCurrent, breathLevel }) {
                     const level = Number(
                         dialog.element.querySelector('[name="na-breath-level"]')?.value ?? 1
                     );
-                    return { level };
+                    const damage = dialog.element.querySelector('[name="na-breath-damage"]')?.value;
+                    return { level, damage: damage ?? null };
                 },
             },
             { action: 'close', label: 'Cancelar', default: true, callback: () => null },
@@ -1553,6 +1591,34 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         return;
     }
 
+    // Dano escolhido pelo jogador: valida antes de gastar qualquer recurso e guarda no Item.
+    let damageChoice = null;
+    if (offersDamageChoice(form, [selected]) && dialogResult.damage !== null) {
+        const attrValues = Object.fromEntries(
+            ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'].map((key) => [
+                key,
+                parseNumber(props[`${key}_display`]),
+            ])
+        );
+        const chosen = resolveChosenDamage(dialogResult.damage, selected.dano, attrValues);
+        if (!chosen.ok) {
+            ui.notifications?.warn?.(chosen.reason);
+            return;
+        }
+        if (chosen.formula && chosen.formula !== selected.dano)
+            await item.update({ [`system.props.nvl${selected.level}_dano`]: chosen.formula });
+        const tableForm =
+            flameFormById(form.id) ?? windFormById(form.id) ?? snowFormById(form.id) ?? null;
+        damageChoice = {
+            formId: form.id,
+            // O plano escreve o dano da tabela; é ele que o escolhido substitui.
+            base: String(tableForm?.levels?.[selected.level - 1]?.damage ?? selected.dano ?? ''),
+            chosen: chosen.formula,
+        };
+        // Formas sem Acerto rolam direto de `selected.dano`: passa a valer o escolhido.
+        if (chosen.formula) selected.dano = chosen.formula;
+    }
+
     // Respiração migrada: o dado canônico assume daqui (rota legada abaixo
     // permanece para as demais até a leva de cada uma).
     if (isMigrated(form.respiracao)) {
@@ -1563,6 +1629,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             formaId: props.forma_id,
             level: selected.level,
             runtime,
+            damageOverride: damageChoice?.chosen || null,
         });
     }
 
@@ -1621,6 +1688,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         .map((action) => normalizeManobra(action) ?? action);
     const tipoManobra = tiposManobra[0] ?? null;
     const patch = { ...plan.patch };
+    if (damageChoice) Object.assign(patch, applyChosenDamageToPatch(patch, damageChoice));
     const actionResult = { ok: true };
 
     if (tiposManobra.length) {

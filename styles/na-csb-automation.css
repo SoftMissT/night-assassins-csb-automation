@@ -3404,20 +3404,21 @@
     border-color: color-mix(in srgb, var(--na-item-accent) 22%, var(--na-line));
     background: rgba(14, 12, 18, 0.72);
 }
-.na-item .custom-system-panel > summary,
-.na-item .custom-system-panel-title {
+/* Título de painel recolhível: o CSB monta `details > summary > span.custom-system-panel-<estilo>`
+   dentro do painel pai, então o seletor é de descendente, não `> summary`. */
+.na-item summary,
+.na-item summary > :is(span, h3) {
     color: var(--na-item-accent);
-    letter-spacing: 0.06em;
-    background: linear-gradient(90deg, var(--na-item-tint), transparent 60%);
 }
-.na-item .custom-system-panel[open] > summary {
-    color: var(--na-item-accent);
+.na-item summary {
+    background: linear-gradient(90deg, var(--na-item-tint), transparent 60%);
 }
 
 /* Rótulos em caixa baixa com peso: a ficha de ator força caixa-alta espaçada em
    título, aba, botão e `.na-sheet-text`; no item o texto do template vale como escrito.
    Abreviações como FOR/DEX seguem em caixa-alta porque estão assim no template. */
-.na-item .custom-system-panel > summary,
+.na-item summary,
+.na-item summary > :is(span, h3),
 .na-item .custom-system-panel-title,
 .na-item nav.custom-tabs a.item,
 .na-item .custom-tabs a.item,
@@ -3427,9 +3428,93 @@
     text-transform: none;
     letter-spacing: 0.02em;
 }
-.na-item .custom-system-panel > summary,
-.na-item .custom-system-panel-title {
+.na-item summary > :is(span, h3) {
     font-size: 12px;
+}
+
+/* -- Layout (fase 2): o template ordena e divide as colunas (`colSpan` nativo
+   do CSB); aqui só a hierarquia. Rótulo pequeno e calmo, valor em destaque. -- */
+.na-item .custom-system-component-root > label {
+    display: block;
+    margin: 0 0 2px;
+    color: var(--na-muted);
+    font: 600 11px/1.2 var(--na-font-body);
+    letter-spacing: 0.02em;
+    text-transform: none;
+}
+/* Nome do item: o único Orbitron da ficha, sublinhado pela lâmina. */
+.na-item :is(.arma_nome, .kekki_nome, .nome_forma) input {
+    font-family: var(--na-font-display);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--na-ink);
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid var(--na-item-accent);
+    border-radius: 0;
+}
+/* Faixa de combate: dano, crítico, alcance e custo na cor do item. */
+.na-item
+    :is(
+        .arma_perfis_resumo,
+        .arma_critico,
+        .arma_alcance,
+        .kekki_dmg_dice,
+        .kekki_pdk_custo,
+        .kekki_alcance
+    )
+    input {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--na-item-accent);
+}
+/* Arma especial: as ações da Dupla Alma (um botão cada) numa fileira, não empilhadas. */
+.na-item--especial .arma_especial_body > div {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 6px;
+}
+.na-item--especial .arma_especial_body > div > * {
+    grid-column: 1 / -1;
+}
+.na-item--especial
+    .arma_especial_body
+    > div
+    > :is(
+        .dupla_alma_cerimonia_ui,
+        .dupla_alma_resistencia_ui,
+        .dupla_alma_consequencia_ui,
+        .arma_especial_despertar_ui,
+        .arma_especial_habilidades_ui
+    ) {
+    grid-column: auto;
+    margin: 0;
+}
+/* Forma: a tabela de níveis tem colunas próprias e o Efeito fica sempre na 5ª.
+   Campo oculto vira `<div style="display:none">` e sai do grid; sem a coluna fixa,
+   o Efeito de um nível desligado escorregava para a coluna do custo. */
+.na-item--forma .grid-6col {
+    grid-template-columns: 24px 56px 64px 92px minmax(0, 1fr) 96px;
+    gap: 6px;
+    align-items: center;
+}
+.na-item--forma :is(.nvl1_efeito, .nvl2_efeito, .nvl3_efeito, .nvl4_efeito) {
+    grid-column: 5;
+}
+/* Janela estreita: 4 colunas viram 2 (o span de 3–4 vira linha inteira). */
+.na-item .window-content {
+    container-type: inline-size;
+}
+@container (max-width: 520px) {
+    .na-item .grid-4col {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .na-item .grid-4col > :is(.grid-span-3, .grid-span-4) {
+        grid-column: 1 / -1;
+    }
 }
 
 /* Número e fórmula: o que o jogador consulta no combate, em mono. */

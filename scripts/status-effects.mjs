@@ -21,6 +21,8 @@ function statusContext(props = {}) {
     } catch (_) {
         exhaustionImmune = false;
     }
+    // Choque Adrenérgico (Recuperação, 3ª Forma): status com duração em rodadas.
+    if (state.active.includes('choque_adrenergico')) exhaustionImmune = true;
     return {
         active: new Set(state.active),
         exhaustion: exhaustionImmune ? 0 : storedExhaustion,
@@ -58,8 +60,8 @@ export function mergeRollMode(requested = 'normal', forced = 'normal') {
     return modes.has('advantage') ? 'advantage' : 'disadvantage';
 }
 
-function forcedMode(active, disadvantage) {
-    const advantage = active.has('vantagem');
+function forcedMode(active, disadvantage, extraAdvantage = false) {
+    const advantage = active.has('vantagem') || extraAdvantage;
     const hasDisadvantage = active.has('desvantagem') || disadvantage;
     if (advantage === hasDisadvantage) return 'normal';
     return advantage ? 'advantage' : 'disadvantage';
@@ -172,11 +174,21 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
         modifier += 1;
         reasons.push('Encorajado +1 Iniciativa');
     }
+    // Respiração da Recuperação, passiva Autocontrole Celular: Vantagem para resistir a
+    // Envenenamento e Hemorragia. Todo Slayer tem a Respiração (nvl_respiracao_num) e o
+    // sistema resiste a esses status com VIT.
+    const cellularControl =
+        !attack &&
+        !defense &&
+        attribute === 'VIT' &&
+        props.nvl_respiracao_num !== undefined &&
+        (active.has('envenenamento') || active.has('hemorragia'));
+    if (cellularControl) reasons.push('Autocontrole Celular: Vantagem');
 
     return {
         blocked,
         autoFail,
-        mode: forcedMode(active, disadvantage),
+        mode: forcedMode(active, disadvantage, cellularControl),
         modifier,
         reasons,
         exhaustion,
@@ -227,10 +239,8 @@ export function isReactionBlocked(props = {}) {
 export function getStatusCapabilities(props = {}) {
     const state = parseStatusState(props.status_slayer_dados);
     const active = new Set(state.active);
-    const exhaustion = Math.max(
-        state.exhaustion,
-        Number.parseInt(props.status_slayer_exaustao, 10) || 0
-    );
+    // Mesma fonte das rolagens: imunidade à Exaustão (Névoa, Choque Adrenérgico) vale aqui também.
+    const { exhaustion } = statusContext(props);
     const hypothermiaStacks = active.has('hipotermia')
         ? Math.max(1, state.effects?.hipotermia?.stacks || 1)
         : 0;

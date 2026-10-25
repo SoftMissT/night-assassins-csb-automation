@@ -3,6 +3,7 @@
  */
 
 import { MODULE_ID, STATUS_SLAYER } from './constants.mjs';
+import { actorKind } from './actor-kind.mjs';
 import { parseNumber } from './parsing.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import {
@@ -91,59 +92,114 @@ export function restEligibleStatuses(tier) {
     return [];
 }
 
-function resourceSnapshot(props = {}) {
+/**
+ * Chaves de recurso por tipo de ator. A regra de descanso é a mesma para Slayer
+ * (PDR, Fôlego) e Oni (PDK, sem Fôlego); só mudam os campos da ficha. A ficha Oni
+ * não tem campo de registro de descanso, então o antiabuso dele vai numa flag.
+ */
+const REST_CONTRACTS = Object.freeze({
+    slayer: Object.freeze({
+        kind: 'slayer',
+        energyLabel: 'PDR',
+        pdvTotal: 'pdv_slayer_total_conta',
+        wound: 'pdv_slayer_dano_ferida',
+        pdvExtra: 'pdv_slayer_extra',
+        pdvHealed: 'pdv_slayer_curado',
+        pdvDamage: 'pdv_slayer_dano_tomado',
+        energyTotal: 'pdr_slayer_total_conta',
+        energyBonus: 'metal_slayer_pdr_bonus',
+        energyExtra: 'pdr_slayer_extra',
+        energyHealed: 'pdr_slayer_curado',
+        energySpent: 'pdr_slayer_gasto_valor',
+        status: 'status_slayer_dados',
+        summary: 'status_slayer_resumo',
+        exhaustion: 'status_slayer_exaustao',
+        breath: 'folego_slayer_atual',
+        recordPath: 'system.props.descanso_slayer_dados',
+    }),
+    oni: Object.freeze({
+        kind: 'oni',
+        energyLabel: 'PDK',
+        pdvTotal: 'pdv_oni_total_conta',
+        wound: 'pdv_oni_dano_ferida',
+        pdvExtra: 'pdv_oni_extra',
+        pdvHealed: 'pdv_oni_curado',
+        pdvDamage: 'pdv_oni_dano_tomado',
+        energyTotal: 'pdk_oni_total_conta',
+        energyBonus: null,
+        energyExtra: 'pdk_oni_extra',
+        energyHealed: 'pdk_oni_curado',
+        energySpent: 'pdk_oni_gasto_valor',
+        status: 'status_oni_dados',
+        summary: 'status_oni_resumo',
+        exhaustion: 'status_oni_exaustao',
+        breath: null,
+        recordPath: `flags.${MODULE_ID}.restRecord`,
+    }),
+});
+
+/** Mesmo critério do `status-engine`: ficha com status de Oni e sem status de Slayer é Oni. */
+export function restContract(props = {}) {
+    return props.status_oni_dados !== undefined && props.status_slayer_dados === undefined
+        ? REST_CONTRACTS.oni
+        : REST_CONTRACTS.slayer;
+}
+
+function resourceSnapshot(props = {}, contract = restContract(props)) {
     const pdvMaximum = Math.max(
         0,
-        parseNumber(props.pdv_slayer_total_conta) -
-            parseNumber(props.pdv_slayer_dano_ferida) +
-            parseNumber(props.pdv_slayer_extra)
+        parseNumber(props[contract.pdvTotal]) -
+            parseNumber(props[contract.wound]) +
+            parseNumber(props[contract.pdvExtra])
     );
     const pdvCurrent = clamp(
-        pdvMaximum +
-            parseNumber(props.pdv_slayer_curado) -
-            parseNumber(props.pdv_slayer_dano_tomado),
+        pdvMaximum + parseNumber(props[contract.pdvHealed]) - parseNumber(props[contract.pdvDamage]),
         0,
         pdvMaximum
     );
     const pdrMaximum = Math.max(
         0,
-        parseNumber(props.pdr_slayer_total_conta) +
-            parseNumber(props.metal_slayer_pdr_bonus) +
-            parseNumber(props.pdr_slayer_extra)
+        parseNumber(props[contract.energyTotal]) +
+            (contract.energyBonus ? parseNumber(props[contract.energyBonus]) : 0) +
+            parseNumber(props[contract.energyExtra])
     );
     const pdrCurrent = clamp(
         pdrMaximum +
-            parseNumber(props.pdr_slayer_curado) -
-            parseNumber(props.pdr_slayer_gasto_valor),
+            parseNumber(props[contract.energyHealed]) -
+            parseNumber(props[contract.energySpent]),
         0,
         pdrMaximum
     );
-    const breathMaximum = Math.max(
-        0,
-        parseNumber(props.folego_slayer_maximo) || 2 + parseNumber(props.fdv_display)
-    );
+    const breathMaximum = contract.breath
+        ? Math.max(0, parseNumber(props.folego_slayer_maximo) || 2 + parseNumber(props.fdv_display))
+        : 0;
     return { pdvMaximum, pdvCurrent, pdrMaximum, pdrCurrent, breathMaximum };
 }
 
 export function buildRestPatch(props = {}, resolution = {}) {
     const tier = resolution.tier;
     if (!RESTS[tier]) throw new Error('Benefício de descanso inválido.');
+    const contract = restContract(props);
     const woundHealing =
         tier === 'deep'
             ? Math.min(
-                  parseNumber(props.pdv_slayer_dano_ferida),
+                  parseNumber(props[contract.wound]),
                   Math.max(0, Number(resolution.woundHealing) || 0)
               )
             : 0;
-    const resourceProps =
-        woundHealing > 0
-            ? {
-                  ...props,
-                  pdv_slayer_dano_ferida: parseNumber(props.pdv_slayer_dano_ferida) - woundHealing,
-              }
-            : props;
-    const resources = resourceSnapshot(resourceProps);
-    const state = parseStatusState(props.status_slayer_dados);
+    // PDV temporário (extra) acaba no Descanso Completo e na Recuperação Profunda.
+    const clearsTemporary = tier !== 'field' && parseNumber(props[contract.pdvExtra]) > 0;
+    const resourceProps = {
+        ...props,
+        ...(woundHealing > 0
+            ? { [contract.wound]: parseNumber(props[contract.wound]) - woundHealing }
+            : {}),
+        ...(clearsTemporary ? { [contract.pdvExtra]: 0 } : {}),
+    };
+    const resources = resourceSnapshot(resourceProps, contract);
+    const state = parseStatusState(props[contract.status]);
+    // Oni com Regeneração Suprimida não recupera PDV descansando enquanto o efeito durar.
+    const pdvBlocked = contract.kind === 'oni' && state.active.includes('regeneracao_suprimida');
     const allowed = new Set(restEligibleStatuses(tier));
     if (tier === 'deep') DEEP_TREATMENT_STATUSES.forEach((key) => allowed.add(key));
     const removed = [...new Set(resolution.removeStatuses ?? [])].filter(
@@ -168,48 +224,66 @@ export function buildRestPatch(props = {}, resolution = {}) {
         exhaustion,
         exhaustionMilestones: state.exhaustionMilestones.filter((level) => exhaustion >= level),
     };
+    const prop = (key) => `system.props.${key}`;
     const patch = {
-        'system.props.folego_slayer_atual': resources.breathMaximum,
-        'system.props.status_slayer_dados': JSON.stringify(nextState),
-        'system.props.status_slayer_resumo': formatStatusSummary(active, exhaustion),
-        'system.props.status_slayer_exaustao': exhaustion,
-        'system.props.descanso_slayer_dados': JSON.stringify(resolution.record),
+        [prop(contract.status)]: JSON.stringify(nextState),
+        [prop(contract.summary)]: formatStatusSummary(active, exhaustion),
+        [prop(contract.exhaustion)]: exhaustion,
+        // Slayer guarda o registro na ficha (texto); Oni, na flag do ator (objeto).
+        [contract.recordPath]:
+            contract.kind === 'slayer' ? JSON.stringify(resolution.record) : resolution.record ?? null,
     };
+    if (contract.breath) patch[prop(contract.breath)] = resources.breathMaximum;
     if (woundHealing > 0)
-        patch['system.props.pdv_slayer_dano_ferida'] =
-            parseNumber(props.pdv_slayer_dano_ferida) - woundHealing;
+        patch[prop(contract.wound)] = parseNumber(props[contract.wound]) - woundHealing;
+    if (clearsTemporary) patch[prop(contract.pdvExtra)] = 0;
     // Passiva Sangue Especial (Respiração do Vento): cicatrizes/bônus de VIT
     // acumulados na batalha só se consolidam permanentemente no Descanso
     // Longo ("Recuperação Profunda"), conforme o .md ("após um descanso
     // longo, aplicados após a última batalha").
-    if (tier === 'deep' && props[WIND_STATE_KEY]) {
+    if (tier === 'deep' && contract.kind === 'slayer' && props[WIND_STATE_KEY]) {
         const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
         Object.assign(patch, windStatePatch(consolidateWindScars(windState)));
     }
     let pdvRecovered = 0;
     let pdrRecovered = 0;
     if (tier === 'field') {
-        pdvRecovered = Math.min(
-            Math.max(0, resources.pdvMaximum - resources.pdvCurrent),
-            Math.max(0, Number(resolution.fieldPdvRoll) || 0)
-        );
+        pdvRecovered = pdvBlocked
+            ? 0
+            : Math.min(
+                  Math.max(0, resources.pdvMaximum - resources.pdvCurrent),
+                  Math.max(0, Number(resolution.fieldPdvRoll) || 0)
+              );
         pdrRecovered = Math.min(
             Math.max(0, resources.pdrMaximum - resources.pdrCurrent),
             Math.floor(resources.pdrMaximum / 2)
         );
-        patch['system.props.pdv_slayer_curado'] =
-            parseNumber(props.pdv_slayer_curado) + pdvRecovered;
-        patch['system.props.pdr_slayer_curado'] =
-            parseNumber(props.pdr_slayer_curado) + pdrRecovered;
+        patch[prop(contract.pdvHealed)] = parseNumber(props[contract.pdvHealed]) + pdvRecovered;
+        patch[prop(contract.energyHealed)] =
+            parseNumber(props[contract.energyHealed]) + pdrRecovered;
     } else {
-        pdvRecovered = Math.max(0, resources.pdvMaximum - resources.pdvCurrent);
         pdrRecovered = Math.max(0, resources.pdrMaximum - resources.pdrCurrent);
-        patch['system.props.pdv_slayer_dano_tomado'] = 0;
-        patch['system.props.pdv_slayer_curado'] = 0;
-        patch['system.props.pdr_slayer_gasto_valor'] = 0;
-        patch['system.props.pdr_slayer_curado'] = 0;
+        patch[prop(contract.energySpent)] = 0;
+        patch[prop(contract.energyHealed)] = 0;
+        if (!pdvBlocked) {
+            pdvRecovered = Math.max(0, resources.pdvMaximum - resources.pdvCurrent);
+            patch[prop(contract.pdvDamage)] = 0;
+            patch[prop(contract.pdvHealed)] = 0;
+        }
     }
-    return { patch, removed, exhaustion, pdvRecovered, pdrRecovered, woundHealing, resources };
+    return {
+        patch,
+        removed,
+        exhaustion,
+        pdvRecovered,
+        pdrRecovered,
+        woundHealing,
+        resources,
+        kind: contract.kind,
+        energyLabel: contract.energyLabel,
+        pdvBlocked,
+        temporaryCleared: clearsTemporary,
+    };
 }
 
 function primaryActiveGm() {
@@ -226,7 +300,7 @@ async function resolveActor(actorUuid) {
         const actor = document?.actor ?? document;
         if (actor?.documentName === 'Actor' || actor?.system?.props) return actor;
     }
-    return canvas.tokens.controlled[0]?.actor ?? game.user?.character ?? null;
+    return (canvas?.ready ? canvas.tokens.controlled[0]?.actor : null) ?? game.user?.character ?? null;
 }
 
 async function requestRestChoice(actor) {
@@ -272,8 +346,12 @@ function statusChoices(active, tier) {
 
 async function requestGmApproval(actor, requester, request, tier, fieldRoll) {
     const props = actor.system?.props ?? {};
-    const state = parseStatusState(props.status_slayer_dados);
-    const previous = parseRestData(props.descanso_slayer_dados);
+    const contract = restContract(props);
+    const state = parseStatusState(props[contract.status]);
+    const previous =
+        contract.kind === 'slayer'
+            ? parseRestData(props.descanso_slayer_dados)
+            : (actor.getFlag?.(MODULE_ID, 'restRecord') ?? null);
     const choices = statusChoices(state.active, tier);
     return foundry.applications.api.DialogV2.wait({
         window: { title: 'Autorizar descanso do Slayer' },
@@ -309,8 +387,8 @@ async function requestGmApproval(actor, requester, request, tier, fieldRoll) {
               : ''
       }
       ${
-          parseNumber(props.pdv_slayer_dano_ferida) > 0
-              ? `<div class="form-group"><label>PDV máximo devolvido por tratamento importante</label><div class="form-fields"><input type="number" name="woundHealing" min="0" max="${parseNumber(props.pdv_slayer_dano_ferida)}" value="0"></div></div>
+          parseNumber(props[contract.wound]) > 0
+              ? `<div class="form-group"><label>PDV máximo devolvido por tratamento importante</label><div class="form-fields"><input type="number" name="woundHealing" min="0" max="${parseNumber(props[contract.wound])}" value="0"></div></div>
         <p class="hint">Ferida não é apagada pelo descanso. Informe somente o valor autorizado por tratamento, item, técnica ou cena entre arcos.</p>`
               : ''
       }
@@ -428,7 +506,8 @@ async function applyApprovedRest(actor, requester, request) {
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `<div class="na-rest-card"><strong>${escapeHtml(RESTS[tier].label)} — ${escapeHtml(actor.name)}</strong><hr>
-      <p>PDV recuperado: <strong>${result.pdvRecovered}</strong> · PDR recuperado: <strong>${result.pdrRecovered}</strong> · Fôlego restaurado.</p>
+      <p>PDV recuperado: <strong>${result.pdvRecovered}</strong>${result.pdvBlocked ? ' (Regeneração Suprimida)' : ''} · ${result.energyLabel} recuperado: <strong>${result.pdrRecovered}</strong>${result.kind === 'slayer' ? ' · Fôlego restaurado' : ''}.</p>
+      ${result.temporaryCleared ? '<p>PDV temporário encerrado.</p>' : ''}
       <p>Exaustão atual: <strong>${result.exhaustion}</strong>${result.removed.length ? ` · Removidos: ${escapeHtml(result.removed.map((key) => STATUS_LABELS.get(key) ?? key).join(', '))}` : ''}</p>
       ${result.woundHealing ? `<p>Ferida tratada: <strong>${result.woundHealing}</strong> de PDV máximo devolvido.</p>` : ''}
       ${treatments.notes.length ? `<p>${escapeHtml(treatments.notes.join(' '))}</p>` : ''}</div>`,
@@ -475,9 +554,10 @@ export function registerRestEngine() {
 }
 
 export async function openRestManager({ actorUuid } = {}) {
-    if (!canvas.ready) return ui.notifications.warn('Canvas não pronto.');
     const actor = await resolveActor(actorUuid);
     if (!actor) return ui.notifications.warn('Não há personagem ativo.');
+    if (!['slayer', 'oni'].includes(actorKind(actor)))
+        return ui.notifications.warn('Descanso existe para Caçadores e Onis.');
     if (!actor.isOwner && !game.user.isGM)
         return ui.notifications.error('Você não pode solicitar descanso para este personagem.');
     const request = await requestRestChoice(actor);

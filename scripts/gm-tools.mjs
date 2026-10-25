@@ -45,7 +45,7 @@ async function repairSummary(api, apiName, { title, noun, nothing }) {
 }
 
 export const GM_TOOLS = Object.freeze([
-    { key: 'rest', group: 'personagem', icon: 'fa-bed', label: 'Descanso', api: 'openRestManager', kind: 'slayer', run: manager('openRestManager') },
+    { key: 'rest', group: 'personagem', icon: 'fa-bed', label: 'Descanso', api: 'openRestManager', run: manager('openRestManager') },
     { key: 'status', group: 'personagem', icon: 'fa-heart-crack', label: 'Status', api: 'openStatusManager', run: manager('openStatusManager') },
     { key: 'actions', group: 'personagem', icon: 'fa-hourglass-half', label: 'Ações', api: 'openActionManager', run: manager('openActionManager') },
     { key: 'resistances', group: 'personagem', icon: 'fa-shield-halved', label: 'Resistências', api: 'openResistanceManager', kind: 'slayer', run: manager('openResistanceManager') },

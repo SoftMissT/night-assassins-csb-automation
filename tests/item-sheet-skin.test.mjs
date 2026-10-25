@@ -62,6 +62,19 @@ describe('pele das fichas de item', () => {
         );
     });
 
+    it('título recolhível é mirado pelo DOM real do CSB (details > summary dentro do painel pai)', async () => {
+        const css = await readFile(new URL('../styles/na-csb-automation.css', import.meta.url), 'utf8');
+        const block = css.slice(css.indexOf('ITENS —'));
+        // `.custom-system-panel > summary` nunca casa: o summary fica dentro de <details>.
+        assert.doesNotMatch(block, /\.custom-system-panel > summary/u);
+        assert.match(block, /\.na-item summary > :is\(span, h3\)/u);
+    });
+
+    it('Forma: Efeito preso na 5ª coluna para o nível desligado não desalinhar a tabela', async () => {
+        const css = await readFile(new URL('../styles/na-csb-automation.css', import.meta.url), 'utf8');
+        assert.match(css, /\.nvl1_efeito, \.nvl2_efeito, \.nvl3_efeito, \.nvl4_efeito\)\s*\{\s*grid-column: 5;/u);
+    });
+
     it('acento de cada Respiração passa AA (4,5:1) sobre o fundo da ficha', () => {
         const luminance = (hex) => {
             const [r, g, b] = hex.match(/\w\w/g).map((c) => {
@@ -74,7 +87,9 @@ describe('pele das fichas de item', () => {
             const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
             return (hi + 0.05) / (lo + 0.05);
         };
-        for (const [slug, hex] of Object.entries(BREATHING_ACCENTS))
+        // A faixa de combate escreve o valor na cor do item: arma, especial e Kekkijutsu também passam.
+        const itemAccents = { arma: '#d8b45d', especial: '#00d9ff', especial2: '#ff2b4a', kekki: '#ff2b4a' };
+        for (const [slug, hex] of Object.entries({ ...BREATHING_ACCENTS, ...itemAccents }))
             assert.ok(ratio(hex, '#121018') >= 4.5, `${slug} ${hex}: ${ratio(hex, '#121018').toFixed(2)}`);
     });
 });

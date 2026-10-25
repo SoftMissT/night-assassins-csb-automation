@@ -98,15 +98,64 @@ describe('templates de Item: redesenho', () => {
         }
     });
 
-    it('Dupla Alma: situacionais nascem recolhidas, o resto aberto, e o Despertar segue só da Yamato', () => {
+    it('Dupla Alma: ações de um botão não recolhem (viram fileira) e o Despertar segue só da Yamato', () => {
         const system = systemOf('special-slayer-weapon-template.json');
-        for (const key of ['dupla_alma_resistencia_ui', 'dupla_alma_consequencia_ui'])
-            assert.equal(findByKey(system, key).defaultCollapsed, true, key);
-        for (const key of ['dupla_alma_cerimonia_ui', 'arma_especial_estado'])
-            assert.equal(findByKey(system, key).defaultCollapsed, false, key);
+        for (const key of [
+            'dupla_alma_cerimonia_ui',
+            'dupla_alma_resistencia_ui',
+            'dupla_alma_consequencia_ui',
+            'arma_especial_despertar_ui',
+            'arma_especial_habilidades_ui',
+        ])
+            assert.equal(findByKey(system, key).collapsible, false, key);
+        for (const key of ['arma_especial_dupla_alma', 'arma_especial_estado', 'arma_especial_regras'])
+            assert.equal(findByKey(system, key).collapsible, true, key);
         assert.equal(
             findByKey(system, 'arma_especial_despertar_ui').visibilityFormula,
             'equalText(arma_nome, "Yamato The Rift-Walker\'s Legacy")'
         );
+    });
+
+    for (const file of ['slayer-weapon-template.json', 'special-slayer-weapon-template.json'])
+        it(`${file}: cabeçalho em 4 colunas com nome, faixa de combate e detalhes`, () => {
+            const system = systemOf(file);
+            const header = system.header.contents.find((panel) =>
+                panel.contents?.some((c) => c.key === 'arma_nome')
+            );
+            assert.equal(header.flow, 'grid-4');
+            assert.deepEqual(
+                header.contents.map((c) => c.key),
+                [
+                    'arma_nome',
+                    'arma_perfis_resumo',
+                    'arma_critico',
+                    'arma_alcance',
+                    'arma_tipos_dano_resumo',
+                    'arma_tipo',
+                    'arma_categoria',
+                    'arma_modo_uso',
+                    'arma_propriedades',
+                    'arma_requisito',
+                ]
+            );
+            const span = Object.fromEntries(header.contents.map((c) => [c.key, c.colSpan ?? 1]));
+            // Cada linha soma 4 colunas: 4 | 2+1+1 | 1+1+1+1 | 2+2.
+            assert.deepEqual(
+                [span.arma_nome, span.arma_perfis_resumo, span.arma_propriedades, span.arma_requisito],
+                [4, 2, 2, 2]
+            );
+        });
+
+    it('Kekkijutsu: cabeçalho em 4 colunas e Potenciação recolhida', () => {
+        const system = systemOf('kekkijutsu-item-template.json');
+        assert.equal(system.header.flow, 'grid-4');
+        assert.deepEqual(
+            system.header.contents.map((c) => c.key),
+            ['kekki_nome', 'kekki_rank', 'kekki_acao', 'kekki_origem', 'kekki_nivel_desbloqueio', 'kekki_id']
+        );
+        assert.equal(system.header.contents[0].colSpan, 4);
+        const potenciacao = findByKey(system, 'kekki_potenciacao_panel');
+        assert.equal(potenciacao.collapsible, true);
+        assert.equal(potenciacao.defaultCollapsed, true);
     });
 });

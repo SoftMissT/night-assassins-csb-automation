@@ -1,6 +1,32 @@
 # Changelog
 ## Não lançado
 
+## v0.11.90 — 2026-10-25 — testes de atributo com bônus visíveis, templates de item e macros finas
+
+### 2026-10-25 — a ficha passa a rolar pelo serviço completo, com cada bônus nomeado
+
+- **Causa encontrada:** as 4 fichas (Slayer, Oni, Oni Minion, NPC) chamavam a macro legada "Teste de Atributo" (`na-roll-mode.js`, 265 linhas), que só aplicava status. O `rollTest` do módulo, com bônus derivados (Habilidade Especial), Respirações em Bloqueio/Esquiva (Ondulação, Metalizado, Neblina, Coração de Gelo), gasto da Vantagem de Duro como Aço, Fôlego no 20 natural de defesa e interceptação de Chamas, não era chamado por nenhum template.
+- A macro vira adaptador de 20 linhas para `rollTest` (mesmo ID, nome e pasta: os templates não mudam).
+- O diálogo de teste ganha **Bônus automáticos**: cada parcela com nome e valor, avisos que não viram número (Vantagem de Duro como Aço, Coração de Gelo +2 se houver CD) e prévia da fórmula ao vivo, já com tudo somado. O campo manual vira "Bônus situacional (manual)".
+- Chat: `Bônus:` mostra só o manual, `Derivados:` nomeia cada bônus, e o atributo secundário sai com o nome certo (antes repetia o primário). Texto do chat e do diálogo escapado.
+- "Defendeu?" só é perguntado no Bloqueio com a interceptação de Chamas pronta, o único caso em que a resposta tem efeito.
+- A fórmula final não mudou; os testes que a fixam seguem iguais.
+
+### 2026-10-25 — fase 2 dos templates de item
+
+- Títulos e botões em caixa normal nos 4 templates; o bloco ITENS anula a caixa-alta que a ficha de ator força em título, aba, botão e `.na-sheet-text`.
+- Kekkijutsu abre com o Dano. Arma especial: Resistência e Consequência da Dupla Alma nascem recolhidas; o Despertar segue só da Yamato.
+- Forma: custo, dano e status do nível desligado (`tem_nvlN`) ficam ocultos; a caixa e o efeito continuam visíveis (a caixa vive dentro do painel do nível, e 11 Formas têm efeito em nível desligado).
+- `templateSystemUniqueVersion` sobe nos três templates que o têm. **Exige reimportar os templates no mundo**; Items já criados guardam o template antigo.
+- `tests/item-template-keys.test.mjs`: nenhuma `key` dos 4 templates pode sumir (base congelada antes do redesenho).
+
+### 2026-10-25 — macros pesadas viram adaptadores
+
+- "Usar Forma de Respiração": 131 → 19 linhas; a resolução do Item vai para `scripts/breath-form-launcher.mjs` (API `launchBreathForm`), com o rótulo do seletor agora escapado.
+- "Marca do Caçador": 428 → 7 linhas; o fluxo foi movido sem alteração para `scripts/slayer/hunter-mark-dialog.mjs` (API `openHuntersMarkDialog`).
+- README e AGENTS: menu de Ferramentas do GM, 13 macros, catálogos internos, CSB 6.1.2.
+- Testes: `node --test` 1265/1265. **Sem validação no Foundry.**
+
 ## v0.11.89 — 2026-10-25 — menu de ferramentas do GM e Compêndio enxuto
 
 ### 2026-10-25 — menu de ferramentas no Controle GM; 11 macros soltas saem do Compêndio

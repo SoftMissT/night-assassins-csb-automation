@@ -1,6 +1,8 @@
 # Changelog
 ## Não lançado
 
+## v0.11.92 — 2026-10-26 — exclusão de preset no diálogo de dano
+
 ### 2026-10-26 — exclusão de preset no diálogo de dano
 
 - O seletor de presets agora oferece **Excluir preset** após uma seleção válida.

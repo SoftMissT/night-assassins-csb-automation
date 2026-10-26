@@ -2864,6 +2864,9 @@
     gap: 8px;
     align-items: center;
 }
+.na-dmg-presets-row #na-delete-preset-btn {
+    grid-column: 2;
+}
 /* Botões ------------------------------------------------------------------- */
 .na-btn {
     min-height: 34px;

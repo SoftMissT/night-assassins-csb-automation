@@ -1,6 +1,16 @@
 # Changelog
 ## Não lançado
 
+### 2026-10-26 — exclusão de preset no diálogo de dano
+
+- O seletor de presets agora oferece **Excluir preset** após uma seleção válida.
+- A confirmação é inline, sem abrir outro `DialogV2`; cancelar não grava e o
+  diálogo permanece aberto após a exclusão.
+- Persistência relê o estado atual do Actor e remove somente o ID confirmado.
+- O botão de excluir não aparece no modo de edição de preset, onde não há painel
+  de confirmação.
+- Testes: `node --test` 1303/1303. **Sem validação no Foundry.**
+
 ## v0.11.91 — 2026-10-25 — Recuperação, Descanso, dano escolhido nas Respirações e layout dos itens
 
 ### 2026-10-25 — dano da Forma escolhido pelo jogador e guardado

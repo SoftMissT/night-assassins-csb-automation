@@ -6,7 +6,10 @@ import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
 import { DAMAGE_PRESETS_KEY, parseDamagePresets, presetGroupKey } from './damage-preset-service.mjs';
-import { saveDamagePreset } from './dialogs/damage-preset-manager.mjs';
+import {
+    deleteDamagePreset,
+    saveDamagePreset,
+} from './dialogs/damage-preset-manager.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
 import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
 import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
@@ -441,6 +444,12 @@ export async function rollDamage(options = {}) {
             });
             if (!saved.ok) ui.notifications?.warn?.(saved.reason);
             else ui.notifications?.info?.(`Preset "${saved.preset?.name ?? name}" salvo.`);
+        },
+        onDeletePreset: async (id) => {
+            const deleted = await deleteDamagePreset(actor, id);
+            if (!deleted.ok) ui.notifications?.warn?.(deleted.reason);
+            else ui.notifications?.info?.(`Preset "${deleted.preset.name}" excluído.`);
+            return deleted.ok;
         },
     });
     if (!dialogResult) return;

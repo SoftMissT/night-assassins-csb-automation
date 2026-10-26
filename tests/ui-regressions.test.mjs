@@ -36,6 +36,18 @@ test('diálogo de dano re-ajusta a janela pelo setPosition do core quando o cont
     assert.match(dialog, /app\.setPosition\(\{ height: 'auto' \}\)/u);
 });
 
+test('diálogo de dano permite excluir preset com confirmação inline', async () => {
+    const [dialog, service] = await Promise.all([
+        read('scripts/dialogs/damage-dialog.mjs'),
+        read('scripts/damage-service.mjs'),
+    ]);
+    assert.match(dialog, /id="na-delete-preset-btn"[^>]*disabled/u);
+    assert.match(dialog, /id="na-delete-preset-panel" role="alertdialog"/u);
+    assert.match(dialog, /await options\.onDeletePreset\(id\)/u);
+    assert.match(service, /onDeletePreset:\s*async \(id\)/u);
+    assert.match(service, /deleteDamagePreset\(actor, id\)/u);
+});
+
 test('cor do atributo no diálogo de dano mantém contraste (piso de luminosidade OKLCH)', async () => {
     const [dialog, css] = await Promise.all([
         read('scripts/dialogs/damage-dialog.mjs'),

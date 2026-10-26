@@ -99,6 +99,31 @@ export async function saveDamagePreset(actor, draft = {}) {
 }
 
 /**
+ * Exclui um preset após revalidar permissão e o estado atual do Actor.
+ * @param {Actor} actor
+ * @param {string} id
+ * @returns {Promise<{ok:boolean,presets?:object[],preset?:object,reason?:string}>}
+ */
+export async function deleteDamagePreset(actor, id) {
+    if (!actor) return { ok: false, reason: 'Nenhum personagem ativo.' };
+    if (!canEdit(actor))
+        return { ok: false, reason: 'Você não pode excluir presets deste personagem.' };
+    const store = parseDamagePresets(actor.system?.props?.[DAMAGE_PRESETS_KEY]);
+    const selected = store.presets.find((preset) => String(preset.id) === String(id));
+    if (!selected) return { ok: false, reason: 'Este preset não existe mais.' };
+    const presets = removeDamagePreset(store.presets, id);
+    try {
+        await actor.update(damagePresetsPatch(presets), {
+            naCsbAutomation: true,
+            naDamagePresets: true,
+        });
+    } catch (_) {
+        return { ok: false, reason: 'Não foi possível excluir o preset.' };
+    }
+    return { ok: true, presets, preset: selected };
+}
+
+/**
  * Abre o gerenciador de presets de dano do Actor.
  * @param {{actorUuid?:string,group?:string,breathing?:string}} options
  * @returns {Promise<void>}
@@ -181,10 +206,8 @@ export async function openDamagePresetManager({ actorUuid, group, breathing } = 
             modal: true,
         });
         if (!confirmed) return openDamagePresetManager({ actorUuid: actor.uuid, group, breathing });
-        await actor.update(damagePresetsPatch(removeDamagePreset(store.presets, selected.id)), {
-            naCsbAutomation: true,
-            naDamagePresets: true,
-        });
+        const result = await deleteDamagePreset(actor, selected.id);
+        if (!result.ok) ui.notifications?.warn?.(result.reason);
         return openDamagePresetManager({ actorUuid: actor.uuid, group, breathing });
     }
 

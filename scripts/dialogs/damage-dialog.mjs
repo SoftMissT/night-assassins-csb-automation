@@ -138,12 +138,16 @@ function presetOptionsHtml(presets, selected = '') {
         .join('');
 }
 
-function presetRowHtml(presets, { presetDraft, onSavePreset }) {
+function presetRowHtml(presets, { presetDraft, onSavePreset, onDeletePreset }) {
     const hasPresets = Array.isArray(presets) && presets.length > 0;
     if (!hasPresets && !onSavePreset) return '';
     const saveButton = onSavePreset
         ? '<button type="button" id="na-save-preset-btn" class="na-btn na-btn-gold">Salvar como preset</button>'
         : '';
+    const deleteButton =
+        !presetDraft && hasPresets && onDeletePreset
+            ? '<button type="button" id="na-delete-preset-btn" class="na-btn" disabled>Excluir preset</button>'
+            : '';
     return `<section class="na-dmg-presets">
       <label class="na-label">Preset de dano</label>
       <div class="na-dmg-presets-row">
@@ -151,6 +155,7 @@ function presetRowHtml(presets, { presetDraft, onSavePreset }) {
             hasPresets ? '<option value="">Aplicar preset</option>' : ''
         }${presetOptionsHtml(presets, presetDraft?.id ?? '')}</select>
         ${saveButton}
+        ${deleteButton}
       </div>
     </section>`;
 }
@@ -200,6 +205,17 @@ function inlineSavePanelHtml() {
         <button type="button" id="na-save-confirm" class="na-btn na-btn-gold">Salvar preset</button>
         <button type="button" id="na-save-cancel" class="na-btn">Cancelar</button>
         <span class="na-hint">Custo, ação, calor, crítico e passivas seguem oficiais.</span>
+      </div>
+    </section>`;
+}
+
+function inlineDeletePanelHtml() {
+    return `<section class="na-inline-panel" id="na-delete-preset-panel" role="alertdialog" aria-labelledby="na-delete-preset-question" aria-describedby="na-delete-preset-warning" hidden>
+      <span id="na-delete-preset-question">Excluir o preset <strong id="na-delete-preset-name"></strong>?</span>
+      <span id="na-delete-preset-warning" class="na-hint">Esta ação não pode ser desfeita.</span>
+      <div class="na-inline-actions">
+        <button type="button" id="na-delete-confirm" class="na-btn">Excluir preset</button>
+        <button type="button" id="na-delete-cancel" class="na-btn">Cancelar</button>
       </div>
     </section>`;
 }
@@ -320,7 +336,10 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     const presetSelect = root.querySelector?.('#na-preset-sel');
     if (presetSelect && typeof options.presetsById?.get === 'function') {
         presetSelect.addEventListener('change', () => {
+            setPanel('#na-delete-preset-panel', false);
             const preset = options.presetsById.get(presetSelect.value);
+            const deleteButton = root.querySelector('#na-delete-preset-btn');
+            if (deleteButton) deleteButton.disabled = !preset;
             if (!preset) return;
             const nomeInput = root.querySelector('#na-dmg-nome');
             if (nomeInput) nomeInput.value = preset.name ?? '';
@@ -333,6 +352,56 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
             const groupInput = root.querySelector('#na-preset-group');
             if (groupInput && preset.group) groupInput.value = preset.group;
             renderEntries(preset.entries);
+        });
+    }
+
+    // Excluir preset (inline) ----------------------------------------------
+    const deleteToggle = root.querySelector?.('#na-delete-preset-btn');
+    if (deleteToggle && presetSelect && typeof options.onDeletePreset === 'function') {
+        deleteToggle.addEventListener('click', () => {
+            const preset = options.presetsById.get(presetSelect.value);
+            if (!preset) return;
+            const name = root.querySelector('#na-delete-preset-name');
+            if (name) name.textContent = preset.name ?? '';
+            setPanel('#na-delete-preset-panel', true);
+            root.querySelector('#na-delete-confirm')?.focus();
+        });
+        root.querySelector('#na-delete-cancel')?.addEventListener('click', () => {
+            setPanel('#na-delete-preset-panel', false);
+            deleteToggle.focus();
+        });
+        root.querySelector('#na-delete-confirm')?.addEventListener('click', async () => {
+            const id = presetSelect.value;
+            const preset = options.presetsById.get(id);
+            if (!preset) return;
+            const confirm = root.querySelector('#na-delete-confirm');
+            const cancel = root.querySelector('#na-delete-cancel');
+            const panel = root.querySelector('#na-delete-preset-panel');
+            deleteToggle.disabled = true;
+            if (confirm) confirm.disabled = true;
+            if (cancel) cancel.disabled = true;
+            presetSelect.disabled = true;
+            panel?.setAttribute('aria-busy', 'true');
+            let focusTarget = confirm;
+            try {
+                const deleted = await options.onDeletePreset(id);
+                if (deleted === false) return;
+                options.presetsById.delete(id);
+                const option = [...presetSelect.options].find((entry) => entry.value === id);
+                const group = option?.parentElement;
+                option?.remove();
+                if (group?.tagName === 'OPTGROUP' && group.children.length === 0) group.remove();
+                presetSelect.value = '';
+                setPanel('#na-delete-preset-panel', false);
+                focusTarget = presetSelect;
+            } finally {
+                panel?.removeAttribute('aria-busy');
+                presetSelect.disabled = false;
+                deleteToggle.disabled = !options.presetsById.has(presetSelect.value);
+                if (confirm) confirm.disabled = false;
+                if (cancel) cancel.disabled = false;
+                focusTarget?.focus();
+            }
         });
     }
 
@@ -448,6 +517,7 @@ export async function openDamageDialog({
     weaponLabel = '',
     weaponCatalog = [],
     onSavePreset = null,
+    onDeletePreset = null,
 }) {
     const props = actor?.system?.props ?? {};
     const attrValues = {};
@@ -486,7 +556,7 @@ export async function openDamageDialog({
         : escapeHtml(nome || 'Rolar Dano');
 
     // Preset e nome do ataque dividem a mesma linha (poupa uma faixa de altura).
-    const presetRow = presetRowHtml(presets, { presetDraft, onSavePreset });
+    const presetRow = presetRowHtml(presets, { presetDraft, onSavePreset, onDeletePreset });
     const nameField = presetDraft
         ? ''
         : `<section class="na-dmg-field">
@@ -517,6 +587,7 @@ export async function openDamageDialog({
 
     ${topline}
     ${!presetDraft && onSavePreset ? inlineSavePanelHtml() : ''}
+    ${!presetDraft && onDeletePreset ? inlineDeletePanelHtml() : ''}
 
     <div class="na-dmg-entries-head">
       <span class="na-dmg-entries-title">Entradas de dano</span>
@@ -553,6 +624,7 @@ export async function openDamageDialog({
             breathing,
             weaponCatalog,
             onSavePreset,
+            onDeletePreset,
         });
     });
 

@@ -1,6 +1,16 @@
 # Changelog
 ## Não lançado
 
+## v0.11.94 — 2026-10-26 — caixas de tipo e atributo visíveis no diálogo de dano
+
+### 2026-10-26 — estado marcado legível no diálogo de dano
+
+- Chips de atributo e tipo de dano marcados ganham fundo dourado sólido, texto escuro e ✓.
+  Antes o marcado era um dourado a 18% sobre o fundo escuro e passava por desmarcado na mesa.
+- Verificado num harness com o `foundry2.css` do Foundry 14.367 e o JS do módulo (Playwright):
+  VIT, INT, Cortante e Ferida marcam e ficam distintos. Teste em `tests/ui-regressions.test.mjs`.
+- Testes: `node --test` 1315/1315. Sem validação no mundo real (outros módulos não entraram no harness).
+
 ## v0.11.93 — 2026-10-26 — Bônus Fixos, Kekkijutsu no Oni e fichas reorganizadas
 
 ### 2026-10-26 — Bônus Fixos nas fichas, Kekkijutsu no Oni e Ferida no PDV do Oni

@@ -8,7 +8,7 @@
             "url": "modules/night-assassins-csb-automation/assets/media/module-cover.webp"
         }
     ],
-    "version": "0.11.93",
+    "version": "0.11.94",
     "socket": true,
     "authors": [
         {
@@ -85,7 +85,7 @@
     },
     "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
     "manifest": "https://raw.githubusercontent.com/SoftMissT/night-assassins-csb-automation/main/module.json",
-    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.93/module.zip",
+    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.11.94/module.zip",
     "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
     "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
     "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"

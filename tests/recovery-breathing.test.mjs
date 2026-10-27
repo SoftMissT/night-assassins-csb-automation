@@ -147,6 +147,7 @@ describe('Recuperação: efeitos no resto do sistema', () => {
         };
         const result = await applySlayerDamage(actor, 10, { isAttack: false });
         assert.equal(result.temporaryAbsorbed, 6);
+        assert.equal(result.appliedDamage, 10, 'o aviso de dano mostra o golpe inteiro, não 0');
         assert.equal(updates[0]['system.props.pdv_slayer_extra'], 0);
         assert.equal(updates[0]['system.props.pdv_slayer_dano_tomado'], 10 + 4);
     });

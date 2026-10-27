@@ -1,6 +1,27 @@
 # Changelog
 ## Não lançado
 
+### 2026-10-26 — Bônus Fixos nas fichas, Kekkijutsu no Oni e Ferida no PDV do Oni
+
+- Slayer, Oni, Oni Minion e NPC ganham o bloco **Bônus Fixos** (Acerto, Dano, Defesa/Testes).
+  Acerto soma em todo Acerto; Dano soma em toda rolagem de dano;
+  Defesa/Testes soma em Bloqueio, Esquiva e testes de atributo e
+  aparece como "Bônus da ficha" no diálogo e no chat. Ficha sem as keys soma 0.
+- Ficha de Oni volta a ter a lista **Kekkijutsu** (rank, PDK, dano, alcance e botão Usar);
+  itens antigos sem `inventario_categoria` entram pela key `kekki_nome`.
+- PDV atual, máximo e barra do Oni descontam `pdv_oni_dano_ferida`, como no Slayer; antes o
+  dano de Ferida no Oni era gravado e não aparecia no PDV.
+- Fichas reorganizadas pela ordem de uso (Slayer, Oni, NPC): PDV e PDR/PDK lado a lado no
+  topo; atributos com a linha de temporários embaixo, num painel só; botões de combate antes
+  das listas; Bônus Fixos; Armas/Formas ou Kekkijutsu; Status e Vida e Morte recolhíveis.
+  As 18 perícias do Slayer vão para a aba **Perícias**. Espaçadores vazios saem; nenhuma key
+  muda (teste `tests/sheet-layout.test.mjs`).
+- Dano no Slayer: `applySlayerDamage` devolve `appliedDamage`. O aviso "recebeu N de dano"
+  mostrava sempre 0, e o Calor das Chamas lia o dano acumulado em vez do golpe.
+- Diálogo de dano: o ajuste de altura parava com `TypeError` (`setPosition`) depois de fechar.
+- Templates de ator com `templateSystemUniqueVersion` +1: **reimportar** as quatro fichas.
+- Testes: `node --test` 1314/1314. **Sem validação no Foundry.**
+
 ## v0.11.92 — 2026-10-26 — exclusão de preset no diálogo de dano
 
 ### 2026-10-26 — exclusão de preset no diálogo de dano

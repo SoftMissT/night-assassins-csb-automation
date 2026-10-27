@@ -85,7 +85,7 @@ import {
 } from './breath-passives.mjs';
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
-import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
+import { resolveSlayerDerivedBonuses, sheetBonusValue } from './derived-bonus-service.mjs';
 import {
     buildEntryFormula,
     isValidDamageFormula,
@@ -532,6 +532,15 @@ export async function rollDamage(options = {}) {
             });
         }
     }
+    // "Bônus Fixos" da ficha: soma em todo dano, de qualquer tipo de ficha.
+    const sheetDamage = sheetBonusValue(props, 'dano');
+    if (sheetDamage)
+        specs.push({
+            label: 'Bônus da ficha',
+            types: [],
+            formula: String(sheetDamage),
+            derived: true,
+        });
     const injectBreathing = options.skipBreathingInjection !== true;
     if (injectBreathing && breathingDamage?.formula && hasAttackDamage) {
         const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) =>

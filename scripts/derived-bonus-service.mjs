@@ -14,7 +14,32 @@ export const DERIVED_BONUS_CHANNELS = Object.freeze([
     'danoFixo',
     'iniciativa',
     'pdrMaximo',
+    'teste',
 ]);
+
+/**
+ * Bônus fixos que o jogador digita na ficha ("Bônus Fixos"). Cada template usa
+ * o próprio prefixo de key; a primeira key presente na ficha vale. Ficha sem a
+ * key (template antigo, sem reimportar) soma 0.
+ */
+export const SHEET_BONUS_KEYS = Object.freeze({
+    acerto: [
+        'bonus_acerto_slayer',
+        'bonus_acerto_oni',
+        'oni_minion_bonus_acerto',
+        'npc_bonus_acerto',
+    ],
+    dano: ['bonus_dano_slayer', 'bonus_dano_oni', 'oni_minion_bonus_dano', 'npc_bonus_dano'],
+    teste: ['bonus_teste_slayer', 'bonus_teste_oni', 'oni_minion_bonus_teste', 'npc_bonus_teste'],
+});
+
+/** @param {object} props @param {'acerto'|'dano'|'teste'} channel @returns {number} */
+export function sheetBonusValue(props = {}, channel) {
+    const key = (SHEET_BONUS_KEYS[channel] ?? []).find((candidate) =>
+        Object.prototype.hasOwnProperty.call(props, candidate)
+    );
+    return key ? parseNumber(props[key]) : 0;
+}
 
 function abilityFallback(props, channel) {
     const ability = normalizeAbilityKey(props.hab_escolhida);
@@ -131,6 +156,17 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
         add({ channel, value, label: 'Metal / Cor', origin: 'Metal' });
     }
 
+    // Acerto e Testes da ficha entram como fonte rotulada. O Dano da ficha não: vale
+    // em toda rolagem e o damage-service soma direto, fora da trava de ataque.
+    for (const channel of ['acerto', 'teste']) {
+        add({
+            channel,
+            value: sheetBonusValue(props, channel),
+            label: 'Bônus da ficha',
+            origin: 'Ficha',
+        });
+    }
+
     const poison = resolvedProp(
         props,
         'metal_dano_veneno',
@@ -197,6 +233,7 @@ export function derivedBonusSummary(resolved) {
         ['Percepção visual', 'percepcaoVisual'],
         ['Percepção auditiva', 'percepcaoAuditiva'],
         ['Dano', 'danoFixo'],
+        ['Testes', 'teste'],
     ];
     return labels
         .map(

@@ -221,10 +221,13 @@ export async function rollTest(options) {
     // ver de onde vem cada número antes de rolar.
     const isDefense = ['Bloqueio', 'Esquiva'].includes(test);
     const derivedChannel = derivedChannelForTest(test, options.modality ?? '');
-    const derivedSources = derivedChannel
-        ? (resolveSlayerDerivedBonuses(actor.system?.props ?? {}).channels[derivedChannel]
-              ?.sources ?? [])
-        : [];
+    // O "Bônus da ficha" de Defesa/Testes vale em todo teste, menos no Acerto,
+    // que tem campo próprio.
+    const derivedChannels = resolveSlayerDerivedBonuses(actor.system?.props ?? {}).channels;
+    const derivedSources = [
+        ...(derivedChannel ? (derivedChannels[derivedChannel]?.sources ?? []) : []),
+        ...(derivedChannel === 'acerto' ? [] : derivedChannels.teste.sources),
+    ];
     const derivedTotal = derivedSources.reduce((sum, source) => sum + source.value, 0);
     const derivedLabels = derivedSources.map(
         (source) => `${source.label} ${source.value >= 0 ? '+' : ''}${source.value}`

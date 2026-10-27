@@ -485,12 +485,15 @@ function bindDamageDialogInteractions(root, attrValues, options = {}) {
     const dialogEl = root.querySelector?.('.na-dmg-dialog');
     if (app?.setPosition && dialogEl && typeof ResizeObserver === 'function') {
         let frame = 0;
-        new ResizeObserver(() => {
+        const observer = new ResizeObserver(() => {
             cancelAnimationFrame(frame);
             frame = requestAnimationFrame(() => {
+                // Diálogo já fechado: o elemento sai do DOM e setPosition quebraria.
+                if (!dialogEl.isConnected || !app.element) return observer.disconnect();
                 if (app.position?.height === 'auto') app.setPosition({ height: 'auto' });
             });
-        }).observe(dialogEl);
+        });
+        observer.observe(dialogEl);
     }
 
     renumber();

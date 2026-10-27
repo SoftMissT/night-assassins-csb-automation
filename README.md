@@ -73,10 +73,10 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 
 | Ficha          | Estado atual                                                                                                                                                                                                                                                       |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Slayer**     | Abas Perícias, Combate, Habilidades e Config/Dados; progressão N1–N20, PDV/PDR, atributos, ações, Vida e Morte, Respirações e inventário. O fluxo compartilhado de armas normais está implementado e aguarda o gate final no Foundry para Acerto → crítico → Dano. |
-| **Oni**        | Combate e Configurações/Dados; criação N1 com pool padrão ou sete d4 e três bônus +1 distintos; progressão N1–N20, PDV/PDK, Regeneração, Origens, Kekkijutsus, ações e resistências. Não recebe Vida e Morte de Slayer.                                            |
+| **Slayer**     | Abas Combate, Perícias, Habilidades e Config/Dados. Combate na ordem de uso: PDV/PDR, atributos com temporários, botões de combate, Bônus Fixos, Armas, Formas, Status e Vida e Morte. Progressão N1–N20, ações e Respirações. |
+| **Oni**        | Combate e Configurações/Dados; Combate na mesma ordem (PDV/PDK, atributos, combate, Bônus Fixos, lista de **Kekkijutsu** com botão Usar, Status). Criação N1, progressão N1–N20, Regeneração, Origens e resistências. A Ferida desconta do PDV. |
 | **Oni Minion** | Ficha enxuta com tipos, pacotes de atributos, ataques, traços, fraquezas e PDV/PDK próprios.                                                                                                                                                                       |
-| **NPC**        | Ficha para NPCs com dados próprios. Participa do relay genérico e do mesmo motor de Acerto/Dano por armas normais usado pelo Slayer quando possui uma arma válida.                                                                                                 |
+| **NPC**        | PDV/PDR no topo, atributos, combate, Bônus Fixos, armas e Personalidade recolhível. Participa do relay genérico e do motor de Acerto/Dano por armas normais. |
 
 ### Estado de validação
 
@@ -87,6 +87,7 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 - Armas normais Slayer/NPC: contrato e testes automatizados concluídos; validação runtime no Foundry ainda pendente.
 - Armas especiais: os dados ficam num catálogo interno do módulo (`catalogs/`), usado pela Dupla Alma; o compêndio de armas guarda só armas normais e os templates de Item. Validação runtime ainda pendente.
 - Tela de erro do CSB: o template NPC e o Slayer protegem o filtro de `inventario_categoria`; mundos antigos precisam reimportar o template para receber a fórmula corrigida.
+- v0.11.93 (Bônus Fixos, Kekkijutsu no Oni, Ferida no PDV do Oni e fichas reorganizadas): testes automatizados concluídos; validação no Foundry pendente. Reimporte as quatro fichas de ator.
 
 ## Respirações publicadas
 
@@ -111,6 +112,7 @@ O catálogo de trabalho contém outras Respirações, mas elas não são publica
 - **Dano entre atores:** relay genérico para Slayer, Oni, Oni Minion e NPC, com aprovação do GM quando aplicável.
 - **Dice So Nice!:** rolagens mecânicas devem aguardar e exibir os dados 3D antes da mensagem final de resultado.
 - **Bônus derivados:** resolvedor central para atributos, Metal/Cor, Respiração, Status e Habilidades Especiais.
+- **Bônus Fixos da ficha:** Slayer, Oni, Oni Minion e NPC têm campos de Acerto (todo Acerto), Dano (toda rolagem de dano) e Defesa/Testes (Bloqueio, Esquiva e testes de atributo), mostrados como "Bônus da ficha". Fichas antigas precisam reimportar o template para ganhar os campos.
 - **Oni:** progressão, Regeneração, Origens, Kekkijutsus, Classes, Especializações e painel do GM.
 - **Diagnóstico:** Journal exclusivo do GM, filtrado para eventos atribuídos ao módulo.
 

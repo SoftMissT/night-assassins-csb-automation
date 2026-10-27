@@ -244,6 +244,9 @@ export async function applySlayerDamage(actor, amount, context = {}) {
     );
     return {
         ...resolution,
+        // Dano deste golpe (inclui o absorvido pelo PDV temporário). Sem este campo o
+        // aviso "recebeu N de dano" mostrava 0 e o Calor das Chamas lia o dano acumulado.
+        appliedDamage: resolution.damage + resolution.woundDamage + temporaryAbsorbed,
         normalDamage: resolution.damage,
         removed,
         totalDamage: currentDamage + resolution.damage,

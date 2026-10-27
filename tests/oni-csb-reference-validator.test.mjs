@@ -61,6 +61,8 @@ const CSB_SYSTEM_PROPS = new Set(
     ])
 );
 
+// `rowLayout` de itemContainer roda no escopo do Item (`item.<key>`), não do Actor:
+// fica fora da varredura do Actor e é validado contra o template do Item abaixo.
 function collect(value, predicate, out = []) {
     if (Array.isArray(value)) {
         for (const e of value) collect(e, predicate, out);
@@ -68,7 +70,7 @@ function collect(value, predicate, out = []) {
     }
     if (!value || typeof value !== 'object') return out;
     if (predicate(value)) out.push(value);
-    for (const c of Object.values(value)) collect(c, predicate, out);
+    for (const [name, c] of Object.entries(value)) if (name !== 'rowLayout') collect(c, predicate, out);
     return out;
 }
 
@@ -165,6 +167,37 @@ describe('Validador de referências CSB — Oni (guarda contra props órfãs)', 
                 `Propriedades órfãs referenciadas em fórmulas CSB do template Oni (causariam undefined em runtime):\n${report}`
             );
         }
+    });
+
+    it('colunas do contêiner de Kekkijutsu leem keys que existem no template de Kekkijutsu', async () => {
+        const read = async (file) =>
+            JSON.parse(await readFile(new URL(`../src/templates/${file}`, import.meta.url), 'utf8'));
+        const oni = await read('actors/oni-template.json');
+        const kekki = await read('items/kekkijutsu-item-template.json');
+        const [container] = collect(oni.system.body, (n) => n.key === 'inventario_oni_kekkijutsus');
+        assert.ok(container, 'a ficha de Oni precisa da lista de Kekkijutsu');
+        assert.equal(container.type, 'itemContainer');
+        assert.match(container.itemFilterFormula, /^item\.inventario_categoria \?/);
+        const itemKeys = new Set(
+            collect([kekki.system.header, kekki.system.body], (n) => typeof n.key === 'string' && n.key).map(
+                (n) => n.key
+            )
+        );
+        const referenced = container.rowLayout.flatMap((column) =>
+            [...String(column.value ?? '').matchAll(/item\.([a-z0-9_]+)/g)].map((m) => m[1])
+        );
+        assert.ok(referenced.length > 0);
+        for (const key of referenced) assert.ok(itemKeys.has(key), `item.${key} não existe no Kekkijutsu`);
+        assert.ok(container.rowLayout.some((column) => /useKekkijutsuItem/.test(column.rollMessage)));
+    });
+
+    it('PDV atual e máximo do Oni descontam a Ferida, como no Slayer', async () => {
+        const oni = JSON.parse(
+            await readFile(new URL('../src/templates/actors/oni-template.json', import.meta.url), 'utf8')
+        );
+        const atual = oni.system.hidden.find((entry) => entry.name === 'pdv_oni_atual_num');
+        assert.match(atual.value, /pdv_oni_total_conta-pdv_oni_dano_ferida/);
+        assert.match(oni.system.attributeBar.pdv_oni_barra.max, /-pdv_oni_dano_ferida/);
     });
 
     it('regressão direta: pdv_oni_ganho_nvl2..12 existem como componentes reais (não só na fórmula)', async () => {

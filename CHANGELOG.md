@@ -1,6 +1,8 @@
 # Changelog
 ## Não lançado
 
+## v0.11.93 — 2026-10-26 — Bônus Fixos, Kekkijutsu no Oni e fichas reorganizadas
+
 ### 2026-10-26 — Bônus Fixos nas fichas, Kekkijutsu no Oni e Ferida no PDV do Oni
 
 - Slayer, Oni, Oni Minion e NPC ganham o bloco **Bônus Fixos** (Acerto, Dano, Defesa/Testes).

@@ -78,3 +78,14 @@ test('template de Forma não exibe campo japonês nem campo vazio', async () => 
         /"key":""[^}]*"type":"textField"[^}]*"label":""/u
     );
 });
+
+test('chip marcado no diálogo de dano usa fundo sólido e ✓, não o dourado a 18%', async () => {
+    const css = await read('styles/na-csb-automation.css');
+    const checked = css.match(
+        /\.na-dmg-dialog :is\(\.na-attr-label, \.na-dano-label\):has\(> input:checked\) \{([^}]*)\}/
+    );
+    assert.ok(checked, 'regra do estado marcado ausente');
+    assert.match(checked[1], /background: var\(--na-dmg-gold\)/);
+    assert.doesNotMatch(checked[1], /0\.18/);
+    assert.match(css, /:has\(> input:checked\) > span:first-of-type::before \{\s*content: '✓ ';/);
+});

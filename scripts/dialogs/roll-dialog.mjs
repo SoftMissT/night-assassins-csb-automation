@@ -147,7 +147,9 @@ export async function openRollDialog({
             { action: 'advantage', label: 'Vantagem', callback: readForm('advantage') },
             { action: 'normal', label: 'Normal', default: true, callback: readForm('normal') },
             { action: 'disadvantage', label: 'Desvantagem', callback: readForm('disadvantage') },
-            { action: 'cancel', label: 'Cancelar', callback: () => null },
+            // DialogV2 usa o action quando o callback retorna null/undefined;
+            // false mantém o cancelamento falso para o chamador.
+            { action: 'cancel', label: 'Cancelar', callback: () => false },
         ],
     });
 

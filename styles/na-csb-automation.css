@@ -1277,7 +1277,7 @@
     --na-font-body: 'Rajdhani', 'Segoe UI', sans-serif;
 }
 /* --- Label / title / stat text (from migrated templates) --- */
-.na-sheet-text {
+.na-sheet .na-sheet-text {
     font-family: var(--na-font-display);
     font-weight: 700;
     text-transform: uppercase;
@@ -1286,74 +1286,74 @@
     color: var(--na-ink);
     display: inline-block;
 }
-.na-sheet-title {
+.na-sheet .na-sheet-title {
     color: var(--na-gold);
     text-shadow: 0 0 12px rgba(255, 215, 0, 0.22);
 }
-.na-sheet-label {
+.na-sheet .na-sheet-label {
     color: var(--na-muted);
 }
-.na-sheet-stat {
+.na-sheet .na-sheet-stat {
     font-variant-numeric: tabular-nums;
     text-shadow: 0 0 10px currentColor;
 }
-.na-sheet-size-sm {
+.na-sheet .na-sheet-size-sm {
     font-size: 12px;
     letter-spacing: 0.1em;
 }
-.na-sheet-size-md {
+.na-sheet .na-sheet-size-md {
     font-size: 16px;
 }
-.na-sheet-size-lg {
+.na-sheet .na-sheet-size-lg {
     font-size: 18px;
 }
-.na-sheet-size-xl {
+.na-sheet .na-sheet-size-xl {
     font-size: 22px;
     letter-spacing: 0.14em;
 }
-.na-sheet-role-vit {
+.na-sheet .na-sheet-role-vit {
     color: var(--na-vit);
 }
-.na-sheet-role-dex {
+.na-sheet .na-sheet-role-dex {
     color: var(--na-dex);
 }
-.na-sheet-role-for {
+.na-sheet .na-sheet-role-for {
     color: var(--na-for);
 }
-.na-sheet-role-car {
+.na-sheet .na-sheet-role-car {
     color: var(--na-car);
 }
-.na-sheet-role-fdv {
+.na-sheet .na-sheet-role-fdv {
     color: var(--na-fdv);
 }
-.na-sheet-role-int {
+.na-sheet .na-sheet-role-int {
     color: var(--na-int);
 }
-.na-sheet-role-sab {
+.na-sheet .na-sheet-role-sab {
     color: var(--na-sab);
 }
-.na-sheet-role-accent-gold {
+.na-sheet .na-sheet-role-accent-gold {
     color: var(--na-gold);
 }
-.na-sheet-role-accent-lime {
+.na-sheet .na-sheet-role-accent-lime {
     color: var(--na-green);
 }
-.na-sheet-role-accent-cyan {
+.na-sheet .na-sheet-role-accent-cyan {
     color: var(--na-cyan);
 }
-.na-sheet-role-accent-red {
+.na-sheet .na-sheet-role-accent-red {
     color: var(--na-red);
 }
-.na-sheet-glow {
+.na-sheet .na-sheet-glow {
     text-shadow: 0 0 8px currentColor;
 }
-.na-sheet-stat.na-sheet-role-vit,
-.na-sheet-stat.na-sheet-role-dex,
-.na-sheet-stat.na-sheet-role-for,
-.na-sheet-stat.na-sheet-role-car,
-.na-sheet-stat.na-sheet-role-fdv,
-.na-sheet-stat.na-sheet-role-int,
-.na-sheet-stat.na-sheet-role-sab {
+.na-sheet .na-sheet-stat.na-sheet-role-vit,
+.na-sheet .na-sheet-stat.na-sheet-role-dex,
+.na-sheet .na-sheet-stat.na-sheet-role-for,
+.na-sheet .na-sheet-stat.na-sheet-role-car,
+.na-sheet .na-sheet-stat.na-sheet-role-fdv,
+.na-sheet .na-sheet-stat.na-sheet-role-int,
+.na-sheet .na-sheet-stat.na-sheet-role-sab {
     font-size: 25px;
     letter-spacing: 0.08em;
 }

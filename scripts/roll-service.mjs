@@ -255,7 +255,7 @@ export async function rollTest(options) {
         notes,
         autoModifier: statusEffects.modifier + derivedTotal,
     });
-    if (!dialogResult) return;
+    if (!dialogResult || dialogResult === 'cancel') return;
 
     const bonusRaw = [dialogResult.bonusRaw, derivedTotal ? String(derivedTotal) : '']
         .filter(Boolean)

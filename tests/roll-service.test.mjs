@@ -44,6 +44,20 @@ describe('roll-service', () => {
         assert.strictEqual(called, false);
     });
 
+    it('cancela quando DialogV2 devolve a ação legada cancel', async () => {
+        _dialogReturn = 'cancel';
+        let called = false;
+        _rollResult = {
+            total: 15,
+            toMessage: async () => {
+                called = true;
+            },
+            dice: [{ results: [{ result: 1, active: true }] }],
+        };
+        await rollTest({ actor: makeActor(), test: 'Teste', attr: 'FOR', value: 5 });
+        assert.strictEqual(called, false);
+    });
+
     it('rola normal quando dialog retorna dados', async () => {
         _dialogReturn = {
             mode: 'normal',

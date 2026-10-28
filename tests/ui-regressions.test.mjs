@@ -68,6 +68,12 @@ test('Controle GM respeita a largura útil do viewport estreito', async () => {
     assert.doesNotMatch(css, /@media\s*\(max-width:\s*620px\)[\s\S]*?min-width:\s*360px/isu);
 });
 
+test('skin do Actor fica desligado até a ficha ser validada no Foundry', async () => {
+    const [main, css] = await Promise.all([read('scripts/main.mjs'), read('styles/na-csb-automation.css')]);
+    assert.doesNotMatch(main, /Hooks\.on\('renderActorSheet(?:V2)?',\s*tagNightAssassinsSheet\)/u);
+    assert.match(css, /\.na-sheet \.na-sheet-text\s*\{/u);
+});
+
 test('template de Forma não exibe campo japonês nem campo vazio', async () => {
     const template = JSON.parse(await read('src/templates/items/breathing-form-template.json'));
     const serialized = JSON.stringify(template);

@@ -1,6 +1,15 @@
 # Changelog
 ## Não lançado
 
+## v0.11.95 — 2026-10-28 — cancelamento de testes e rollback seguro da skin de Actor
+
+- Corrigido o cancelamento do diálogo de Teste de Atributo: DialogV2 não transforma
+  mais "Cancelar" em uma rolagem e o serviço recusa a ação legada `cancel`.
+- Skin visual do Actor desligada até validação renderizada no Foundry; classes de texto
+  continuam escopadas a `.na-sheet` e a pele das fichas de Item permanece ativa.
+- QA Foundry 14.367 com o Actor `LLM`: cancelamento deixou mensagens em 199 e rolagens novas em 0; console sem erros.
+- Testes: `node --test` 1318/1318; sem reimportação de templates ou mutação de dados do mundo.
+
 ## v0.11.94 — 2026-10-26 — caixas de tipo e atributo visíveis no diálogo de dano
 
 ### 2026-10-26 — estado marcado legível no diálogo de dano

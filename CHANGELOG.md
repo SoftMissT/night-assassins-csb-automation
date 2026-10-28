@@ -1,6 +1,17 @@
 # Changelog
 ## Não lançado
 
+### 2026-10-28 — fórmula da Forma na sintaxe do CSB
+
+- `tem_requisito != true && tem_requisito != 1` usava `&&`; o parser do CSB é
+  mathjs e rejeita a expressão (`Value expected`), derrubando o campo Requisito e
+  enchendo o console a cada Forma aberta. Passa a usar `and`.
+- Fonte e catálogos corrigidos; o pack de Respirações regenerado carrega a fórmula
+  nova. As 15 Formas do mundo tiveram o `system.body` migrado no lugar, sem
+  reimportar (registro em `output/world-backup/20261028-formula-migration.json`).
+- Teste novo varre `src/templates` e `catalogs` e proíbe `&&`/`||` em
+  `visibilityFormula`/`editableFormula`. 1320/1320.
+
 ### 2026-10-28 — pele das fichas de Item volta a aplicar
 
 - `tagItemSheet` tratava `HTMLElement` como jQuery (`element[0]`). Num `<form>`,

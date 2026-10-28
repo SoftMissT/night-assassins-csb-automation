@@ -1,5 +1,19 @@
 # Lições do projeto
 
+## 2026-10-28 - a ficha de Item lê o template do pack, não o body do Item
+
+- **Erro:** migrei o `system.body` de 15 Formas e o erro da fórmula continuou; o pack ainda tinha a fórmula velha.
+- **Causa:** o `TemplateSystem` resolve o corpo pelo template (`NABreathTpl00001`) no Compêndio; o `body` do Item é cópia secundária.
+- **Correção:** corrigi a fonte e o pack, publiquei a 0.11.97; o `body` dos itens foi migrado como cinto de segurança.
+- **Regra preventiva:** antes de migrar `body` de Item, conferir de onde a ficha lê; template do pack manda.
+
+## 2026-10-28 - `visibilityFormula` é mathjs, não JavaScript
+
+- **Erro:** `tem_requisito != true && tem_requisito != 1` derrubava o campo Requisito com `Value expected`.
+- **Causa:** o parser do CSB é mathjs; `&&` e `||` não existem. O operador é `and`/`or`.
+- **Correção:** fórmula passou a `tem_requisito != true and tem_requisito != 1`; teste novo proíbe `&&`/`||` em `visibilityFormula`/`editableFormula`.
+- **Regra preventiva:** fórmula de visibilidade/edição usa a sintaxe do mathjs; o teste `tests/csb-formula-syntax.test.mjs` é o gate.
+
 ## 2026-10-28 - `HTMLElement` não é jQuery: `form[0]` é o primeiro input
 
 - **Erro:** a pele das fichas de Item nunca aplicava; `na-sheet`/`na-item` iam para o primeiro input do form.

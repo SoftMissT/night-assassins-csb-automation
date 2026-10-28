@@ -1,6 +1,18 @@
 # Changelog
 ## Não lançado
 
+## v0.11.96 — 2026-10-28 — pele do Actor religada
+
+### 2026-10-28 — pele do Actor religada
+
+- A v0.11.95 tirou `tagNightAssassinsSheet` dos hooks e deixou as regras `.na-sheet`
+  sem classe: a ficha do Actor voltou ao visual do CSB e os textos dos templates
+  perderam fonte e cor.
+- `renderActorSheet`, `renderActorSheetV2` e o ramo de Actor do `renderApplicationV2`
+  voltam a marcar `.na-sheet` (e a classe do tipo) na ficha.
+- Teste de regressão invertido para exigir os hooks. Testes: 1318/1318.
+  **Gate renderizado no Foundry: pendente.**
+
 ## v0.11.95 — 2026-10-28 — cancelamento de testes e rollback seguro da skin de Actor
 
 - Corrigido o cancelamento do diálogo de Teste de Atributo: DialogV2 não transforma

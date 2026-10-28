@@ -1,6 +1,8 @@
 # Changelog
 ## Não lançado
 
+## v0.11.97 — 2026-10-28 — pele de Item e fórmula da Forma
+
 ### 2026-10-28 — fórmula da Forma na sintaxe do CSB
 
 - `tem_requisito != true && tem_requisito != 1` usava `&&`; o parser do CSB é

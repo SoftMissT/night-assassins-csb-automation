@@ -1,6 +1,13 @@
 # Lições do projeto
 
-## 2026-10-28 — DialogV2 devolve a ação quando o callback retorna null
+## 2026-10-28 - rollback da pele derrubou os textos dos templates
+
+- **Erro:** desligar a pele do Actor tirou também `.na-sheet-text` e as cores dos templates; a ficha inteira perdeu a tipografia, não só o chrome.
+- **Causa:** as classes de texto dos templates foram escopadas a `.na-sheet` no mesmo release em que o hook que aplicava a classe saiu.
+- **Correção:** `tagNightAssassinsSheet` religado nos hooks de Actor; CSS intacto.
+- **Regra preventiva:** rollback de skin separa chrome de tipografia — ou mantém a classe e desliga só o bloco de chrome.
+
+## 2026-10-28 - DialogV2 devolve a ação quando o callback retorna null
 
 - **Erro:** cancelar o diálogo de Teste de Atributo ainda chamava a rolagem.
 - **Causa:** no Foundry 14.367, `DialogV2` usa o identificador da ação quando o callback retorna `null` ou `undefined`; o serviço recebia a string `cancel`.

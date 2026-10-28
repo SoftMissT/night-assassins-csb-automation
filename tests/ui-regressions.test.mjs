@@ -68,9 +68,11 @@ test('Controle GM respeita a largura útil do viewport estreito', async () => {
     assert.doesNotMatch(css, /@media\s*\(max-width:\s*620px\)[\s\S]*?min-width:\s*360px/isu);
 });
 
-test('skin do Actor fica desligado até a ficha ser validada no Foundry', async () => {
+test('skin do Actor marca as fichas com .na-sheet nos dois hooks de render', async () => {
     const [main, css] = await Promise.all([read('scripts/main.mjs'), read('styles/na-csb-automation.css')]);
-    assert.doesNotMatch(main, /Hooks\.on\('renderActorSheet(?:V2)?',\s*tagNightAssassinsSheet\)/u);
+    assert.match(main, /function tagNightAssassinsSheet\(/u);
+    assert.match(main, /Hooks\.on\('renderActorSheet', tagNightAssassinsSheet\)/u);
+    assert.match(main, /Hooks\.on\('renderActorSheetV2', tagNightAssassinsSheet\)/u);
     assert.match(css, /\.na-sheet \.na-sheet-text\s*\{/u);
 });
 

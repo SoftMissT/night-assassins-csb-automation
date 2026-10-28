@@ -188,6 +188,32 @@ Hooks.once('init', () => {
     registerSettings();
     registerOniProgressionEngine();
 });
+/**
+ * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
+ * @param {Application} app
+ * @param {JQuery|HTMLElement} html
+ * @returns {void}
+ */
+function tagNightAssassinsSheet(app, html) {
+    const actor = app?.actor;
+    if (!actor?.system?.props) return;
+    // Detecção robusta via actorKind() (template id/flags/props), nunca por nome
+    // do Actor evita que uma ficha Oni chamada "Slayer X" (ou vice-versa)
+    // receba a paleta errada.
+    const kind = actorKind(actor);
+    if (!kind) return;
+    const root = html?.[0] ?? html;
+    const el = root instanceof HTMLElement ? root : null;
+    const appEl =
+        app?.element instanceof HTMLElement
+            ? app.element
+            : (el?.closest?.('.app, .application') ?? el);
+    const kindClass = `na-${kind.replaceAll('_', '-')}-sheet`;
+    for (const target of [appEl, el]) {
+        target?.classList?.add('na-sheet');
+        target?.classList?.add(kindClass);
+    }
+}
 Hooks.once('ready', async () => {
     if (game.system.id !== 'custom-system-builder') {
         console.warn?.(
@@ -215,11 +241,14 @@ Hooks.once('ready', async () => {
     registerSpecialWeaponRuntime();
     registerSpecialWeaponAwakeningRuntime();
     registerDualSoulConsequenceRuntime();
-    // A pele visual do Actor fica desligada até passar pelo gate visual no Foundry.
-    // A pele dos Items continua registrada porque é independente da ficha.
+    // A pele do Actor volta a ser aplicada; o gate visual é a ficha aberta no
+    // Foundry 14.367 (se quebrar, este par de hooks é o ponto de rollback).
+    Hooks.on('renderActorSheet', tagNightAssassinsSheet);
+    Hooks.on('renderActorSheetV2', tagNightAssassinsSheet);
     Hooks.on('renderApplicationV2', (app, element) => {
         // ItemSheetV2 também expõe `actor` (o dono): item nunca leva a pele do Actor.
         if (app?.document?.documentName === 'Item') return tagItemSheet(app, element);
+        if (app?.actor) tagNightAssassinsSheet(app, element);
     });
     // Ficha de item do CSB 6.1 é ApplicationV1 (`EquippableItemSheet`).
     Hooks.on('renderItemSheet', tagItemSheet);

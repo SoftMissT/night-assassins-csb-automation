@@ -1,6 +1,16 @@
 # Changelog
 ## Não lançado
 
+### 2026-10-28 — pele das fichas de Item volta a aplicar
+
+- `tagItemSheet` tratava `HTMLElement` como jQuery (`element[0]`). Num `<form>`,
+  `form[0]` é o primeiro input: `na-sheet`/`na-item` iam para o input e a janela
+  ficava sem pele desde a 0.11.88.
+- `sheetElement()` usa o `HTMLElement` direto e só desembrulha objeto indexável
+  (jQuery). A ficha de Item recebe o acento e o fio do header de novo.
+- Regressão com form falso em `tests/item-sheet-skin.test.mjs`; 1319/1319.
+  Verificado no mundo com a 0.11.96: classes no form aplicam `#d8b45d` e o fio de 3px.
+
 ## v0.11.96 — 2026-10-28 — pele do Actor religada
 
 ### 2026-10-28 — pele do Actor religada

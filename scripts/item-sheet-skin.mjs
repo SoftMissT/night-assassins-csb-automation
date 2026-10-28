@@ -75,6 +75,12 @@ export function itemSheetClasses(item) {
     return classes;
 }
 
+function sheetElement(value) {
+    if (typeof HTMLElement !== 'undefined' && value instanceof HTMLElement) return value;
+    const first = value?.[0];
+    return typeof HTMLElement !== 'undefined' && first instanceof HTMLElement ? first : null;
+}
+
 /**
  * Hook `renderItemSheet` (V1) e `renderApplicationV2` (caso o CSB migre).
  * @param {Application} app
@@ -84,11 +90,10 @@ export function tagItemSheet(app, html) {
     const item = app?.item ?? (app?.document?.documentName === 'Item' ? app.document : null);
     const classes = itemSheetClasses(item);
     if (classes.length === 0) return;
-    const root = html?.[0] ?? html;
-    const element = root instanceof HTMLElement ? root : null;
+    // HTMLFormElement expõe [0] como o primeiro controle: nunca indexar um
+    // HTMLElement como se fosse jQuery, ou a pele vai parar num input.
+    const element = sheetElement(html);
     const appElement =
-        (app?.element?.[0] ?? app?.element) instanceof HTMLElement
-            ? (app.element[0] ?? app.element)
-            : element?.closest?.('.app, .application');
+        sheetElement(app?.element) ?? element?.closest?.('.app, .application') ?? element;
     for (const target of [appElement, element]) target?.classList?.add(...classes);
 }

@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import { BREATHING_ACCENTS, itemSheetClasses, itemSheetKind } from '../scripts/item-sheet-skin.mjs';
+import { BREATHING_ACCENTS, itemSheetClasses, itemSheetKind, tagItemSheet } from '../scripts/item-sheet-skin.mjs';
 
 const item = (props = {}, extra = {}) => ({ type: 'equippableItem', system: { props, ...extra } });
 
@@ -43,6 +43,26 @@ describe('pele das fichas de item', () => {
     it('item que não é do sistema não recebe classe nenhuma', () => {
         assert.deepEqual(itemSheetClasses(item({ inventario_categoria: 'consumivel' })), []);
         assert.deepEqual(itemSheetClasses(null), []);
+    });
+
+    it('marca o form da ficha, nunca o primeiro input (HTMLFormElement expõe [0])', () => {
+        const Original = globalThis.HTMLElement;
+        class FakeElement {
+            constructor() {
+                this.classes = new Set();
+                this.classList = { add: (...names) => names.forEach((name) => this.classes.add(name)) };
+            }
+        }
+        globalThis.HTMLElement = FakeElement;
+        try {
+            const form = new FakeElement();
+            form[0] = new FakeElement();
+            tagItemSheet({ item: item({ arma_nome: 'Katana' }), element: form }, form);
+            assert.deepEqual([...form.classes], ['na-sheet', 'na-item', 'na-item--arma']);
+            assert.deepEqual([...form[0].classes], []);
+        } finally {
+            globalThis.HTMLElement = Original;
+        }
     });
 
     it('cada cor de Respiração existe no CSS, e o CSS cobre os 4 tipos', async () => {

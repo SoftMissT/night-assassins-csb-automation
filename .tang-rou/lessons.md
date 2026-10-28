@@ -1,5 +1,12 @@
 # Lições do projeto
 
+## 2026-10-28 - `HTMLElement` não é jQuery: `form[0]` é o primeiro input
+
+- **Erro:** a pele das fichas de Item nunca aplicava; `na-sheet`/`na-item` iam para o primeiro input do form.
+- **Causa:** `tagItemSheet` fazia `html?.[0] ?? html` e `app.element?.[0] ?? app.element`. `HTMLFormElement` expõe `[0]` como o primeiro controle, então o `instanceof HTMLElement` aprovava o input.
+- **Correção:** `sheetElement()` usa o `HTMLElement` direto e só desembrulha objeto indexável (jQuery); regressão com form falso.
+- **Regra preventiva:** ao aceitar jQuery ou HTMLElement, testar `instanceof HTMLElement` antes de indexar; em `<form>`, índice numérico é controle, não filho.
+
 ## 2026-10-28 - rollback da pele derrubou os textos dos templates
 
 - **Erro:** desligar a pele do Actor tirou também `.na-sheet-text` e as cores dos templates; a ficha inteira perdeu a tipografia, não só o chrome.

@@ -1,367 +1,482 @@
-/**
- * @fileoverview Respiração da Recuperação: ações internas do próprio Slayer.
- *
- * Regra: `docs/Sistema/02 - Combate/Respirações de Suporte/Respiração da Recuperação.md`.
- * A conta fica em `recoveryOutcome` (pura, testável); o diálogo, os dados e o chat
- * ficam em `openRecoveryManager`.
- */
+/** Respiração da Recuperação — Kaifuku no Kokyu. */
 import { consumeSlayerActions } from './action-service.mjs';
 import { parseNumber } from './parsing.mjs';
-import { getRollStatusEffects } from './status-effects.mjs';
+import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
-
-const FORMS = Object.freeze({
-    coagulação: {
-        label: '1ª Forma — Coagulação Forçada',
-        action: 'especial',
-        test: true,
-        pdv: ['2d6', '3d6', '4d6', '5d6'],
-        pdr: ['2d6', '3d6', '4d6', '5d6'],
-        effect: 'Estanca Sangramento e Hemorragia.',
-        removes: ['sangramento', 'hemorragia'],
+export const RECOVERY_STATE_KEY = 'resp_recuperacao_estado';
+const LEVELS = Object.freeze({
+    1: {
+        pdv: '2d8',
+        pdr: '1d6',
+        dc: 14,
     },
-    expurgo: {
-        label: '2ª Forma — Expurgo Térmico',
-        action: 'especial',
-        test: true,
-        // PDV temporários (vão para `pdv_slayer_extra`), não cura.
-        temporary: ['', '2d6', '3d6', '4d6'],
-        pdr: ['', '2d6', '3d6', '4d6'],
-        reteste: [0, 2, 4, 6],
-        effect: 'PDV temporários, reteste contra Envenenamento ou Paralisia e remove Fadiga Espiritual.',
-        removes: ['fadiga_espiritual'],
+    2: {
+        pdv: '3d8',
+        pdr: '2d6',
+        dc: 14,
     },
-    choque: {
-        label: '3ª Forma — Choque Adrenérgico',
-        action: 'reacao',
-        test: false,
-        pdr: ['2d6', '3d6', '4d6', '5d6'],
-        rounds: [1, 1, 2, 2],
-        effect: 'Ao chegar a 0 PDV, fica com 1 PDV e ignora a Exaustão por algumas rodadas.',
-        removes: [],
+    3: {
+        pdv: '4d8',
+        pdr: '2d6',
+        dc: 14,
     },
-    sinfonia: {
-        label: '4ª Forma — Sinfonia dos Pulmões',
-        action: 'completa',
-        test: true,
-        pdv: ['', '', '6d8', '8d8'],
-        pdr: ['', '', '6d8', '8d8'],
-        attrMultiplier: 2,
-        effect: 'Remove toda Exaustão e as Fadigas. Deixa Ofegante, passe ou não no teste.',
-        removes: ['fadiga_corporal', 'fadiga_espiritual', 'fadiga_mental'],
+    4: {
+        pdv: '4d10',
+        pdr: '3d6',
+        dc: 12,
+    },
+    5: {
+        pdv: '5d10',
+        pdr: '3d6',
+        dc: 12,
+    },
+    6: {
+        pdv: '6d10',
+        pdr: '4d6',
+        dc: 12,
+    },
+    7: {
+        pdv: '7d10',
+        pdr: '4d6',
+        dc: 12,
+    },
+    8: {
+        pdv: '7d12',
+        pdr: '5d8',
+        dc: 10,
+    },
+    9: {
+        pdv: '8d12',
+        pdr: '5d8',
+        dc: 10,
+    },
+    10: {
+        pdv: '9d12',
+        pdr: '6d8',
+        dc: 10,
+    },
+    11: {
+        pdv: '10d12',
+        pdr: '6d8',
+        dc: 10,
+    },
+    12: {
+        pdv: '11d12',
+        pdr: '7d8',
+        dc: 8,
+    },
+    13: {
+        pdv: '12d12',
+        pdr: '8d8',
+        dc: 8,
+    },
+    14: {
+        pdv: '14d12',
+        pdr: '9d8',
+        dc: 8,
     },
 });
-
-/** Dificuldade base do teste de FDV por Nível de Respiração. */
-const DIFFICULTY = Object.freeze([14, 12, 10, 8]);
-
-const n = (v) => Math.max(0, Math.trunc(parseNumber(v)));
-const levelOf = (props) =>
-    Math.min(
-        4,
-        Math.max(
-            1,
-            n(props.nvl_respiracao_num ?? props.respiracao_nivel ?? props.nivel_respiracao) || 1
-        )
-    );
+const n = (value) => Math.max(0, Math.trunc(parseNumber(value)));
+const levelOf = (props = {}) => Math.min(14, Math.max(1, n(props.nvl_num) || 1));
 const attr = (props, key) => n(props[`${key}_display`] ?? props[key]);
-
+export const RECOVERY_FORMS = Object.freeze({
+    recuperacao: {
+        formId: 'recuperacao',
+        label: 'Respiração da Recuperação',
+        action: 'especial',
+        test: true,
+        cost: 0,
+    },
+});
 export function recoveryBreathingLevel(props = {}) {
     return levelOf(props);
 }
-/** Todo Slayer possui esta respiração; o nível da ficha define as Formas disponíveis. */
 export function hasRecoveryBreathing(actor) {
-    return actor?.type === 'slayer' || actor?.system?.props?.nvl_respiracao_num !== undefined;
+    return actor?.type === 'slayer' || actor?.system?.props?.nvl_num !== undefined;
 }
-export function recoveryFormDefinition(formId, level) {
-    const form = FORMS[formId];
-    if (!form) return null;
-    const index = Math.min(4, Math.max(1, n(level) || 1)) - 1;
+export function recoveryFormDefinition(formId = 'recuperacao', level) {
+    const normalized = formId === 'coagulação' || formId === 'coagulacao' ? 'recuperacao' : formId;
+    if (normalized !== 'recuperacao') return null;
+    const current = Math.min(14, Math.max(1, n(level) || 1));
     return {
-        ...form,
-        formId,
-        level: index + 1,
-        dc: form.test ? DIFFICULTY[index] : 0,
-        pdv: form.pdv?.[index] ?? '',
-        temporary: form.temporary?.[index] ?? '',
-        pdr: form.pdr?.[index] ?? '',
-        reteste: form.reteste?.[index] ?? 0,
-        rounds: form.rounds?.[index] ?? 0,
-        attrMultiplier: form.attrMultiplier ?? 1,
-        // Forma disponível no nível quando a tabela tem valor para ele.
-        available: Boolean(form.pdr?.[index]),
+        ...RECOVERY_FORMS.recuperacao,
+        level: current,
+        ...LEVELS[current],
+        available: true,
     };
 }
 
-function currentResources(props) {
+function activeCombatId() {
+    return globalThis.game?.combat?.id ?? 'fora-combate';
+}
+export function parseRecoveryState(value, currentCombatId = activeCombatId()) {
+    const fallback = {
+        version: 1,
+        combatId: currentCombatId,
+        attempted: false,
+        succeeded: false,
+        lastChanceUsed: false,
+    };
+    if (!value) return fallback;
+    try {
+        const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+        if (!parsed || parsed.combatId !== currentCombatId) return fallback;
+        return {
+            ...fallback,
+            attempted: parsed.attempted === true,
+            succeeded: parsed.succeeded === true,
+            lastChanceUsed: parsed.lastChanceUsed === true,
+        };
+    } catch {
+        return fallback;
+    }
+}
+
+function statePatch(state) {
+    return {
+        [`system.props.${RECOVERY_STATE_KEY}`]: JSON.stringify(state),
+    };
+}
+export function currentRecoveryResources(props = {}) {
     const pdvMax = Math.max(
         0,
-        n(props.pdv_slayer_total_conta) -
+        n(props.pdv_slayer_total ?? props.pdv_slayer_total_conta) -
             n(props.pdv_slayer_dano_ferida) +
             n(props.pdv_slayer_extra)
     );
     const pdvRaw = pdvMax + n(props.pdv_slayer_curado) - n(props.pdv_slayer_dano_tomado);
     const pdv = Math.min(pdvMax, Math.max(0, pdvRaw));
+    const derivedPdr = n(resolveSlayerDerivedBonuses(props).channels.pdrMaximo.total);
+    const storedPdrMax = n(props.pdr_slayer_total);
     const pdrMax = Math.max(
         0,
-        n(props.pdr_slayer_total_conta) +
-            n(props.metal_slayer_pdr_bonus) +
+        (storedPdrMax ||
+            n(props.pdr_slayer_total_conta) + n(props.metal_slayer_pdr_bonus) + derivedPdr) +
             n(props.pdr_slayer_extra)
     );
     const pdr = Math.min(
         pdrMax,
         Math.max(0, pdrMax + n(props.pdr_slayer_curado) - n(props.pdr_slayer_gasto_valor))
     );
-    return { pdvMax, pdvRaw, pdv, pdrMax, pdr };
+    return {
+        pdvMax,
+        pdvRaw,
+        pdv,
+        pdrMax,
+        pdr,
+    };
 }
-
-/**
- * Resultado de uma Forma já rolada: patch da ficha e linhas do resumo.
- * @param {object} args
- * @param {string} args.formId
- * @param {object} args.props
- * @param {boolean} args.success passou no teste de FDV (Choque não tem teste)
- * @param {number} [args.pdvRoll] total rolado de PDV (cura ou temporário)
- * @param {number} [args.pdrRoll] total rolado de PDR
- * @param {boolean} [args.naturalTwenty]
- * @param {string[]} [args.alsoRemove] status removidos por fora (reteste do Expurgo)
- */
 export function recoveryOutcome({
-    formId,
     props = {},
     success,
     pdvRoll = 0,
     pdrRoll = 0,
     naturalTwenty = false,
-    alsoRemove = [],
+    recoveryState,
+    currentCombatId = activeCombatId(),
+    lastChance = false,
 }) {
     const level = levelOf(props);
-    const def = recoveryFormDefinition(formId, level);
+    const def = recoveryFormDefinition('recuperacao', level);
+    const resources = currentRecoveryResources(props);
     const status = parseStatusState(props.status_slayer_dados);
-    const resources = currentResources(props);
-    const patch = {};
-    const summary = [];
-    let exhaustion = Math.max(status.exhaustion, Number.parseInt(props.status_slayer_exaustao, 10) || 0);
-    let active = [...status.active];
-    const effects = { ...status.effects };
-    const remove = (keys) => {
-        const gone = active.filter((key) => keys.includes(key));
-        active = active.filter((key) => !keys.includes(key));
-        for (const key of gone) delete effects[key];
-        return gone;
+    const previous = parseRecoveryState(
+        recoveryState ?? props[RECOVERY_STATE_KEY],
+        currentCombatId
+    );
+    const state = {
+        ...previous,
+        combatId: currentCombatId,
+        attempted: true,
+        lastChanceUsed: lastChance || previous.lastChanceUsed,
     };
-
-    if (success) {
-        // Fadiga Espiritual (antes da Forma) corta pela metade o PDR recuperado.
-        const halved = status.active.includes('fadiga_espiritual');
-        let pdrGain = pdrRoll + (naturalTwenty ? 2 * level : 0);
-        if (halved) pdrGain = Math.floor(pdrGain / 2);
-        const pdrApplied = Math.min(Math.max(0, resources.pdrMax - resources.pdr), pdrGain);
-        if (pdrApplied > 0) {
-            patch['system.props.pdr_slayer_curado'] = n(props.pdr_slayer_curado) + pdrApplied;
-            summary.push(`+${pdrApplied} PDR${halved ? ' (metade, Fadiga Espiritual)' : ''}`);
-        }
-        if (def.temporary) {
-            // PDV temporário não acumula: fica o maior.
-            const current = n(props.pdv_slayer_extra);
-            if (pdvRoll > current) patch['system.props.pdv_slayer_extra'] = pdvRoll;
-            summary.push(`${Math.max(current, pdvRoll)} PDV temporários`);
-        } else if (formId === 'choque') {
-            // Fica com exatamente 1 PDV, mesmo que o dano tenha passado do zero.
-            const curado = n(props.pdv_slayer_curado);
-            patch['system.props.pdv_slayer_curado'] = curado + (1 - resources.pdvRaw);
-            summary.push('fica com 1 PDV');
-        } else if (def.pdv) {
-            const pdvApplied = Math.min(Math.max(0, resources.pdvMax - resources.pdv), pdvRoll);
-            if (pdvApplied > 0) {
-                patch['system.props.pdv_slayer_curado'] = n(props.pdv_slayer_curado) + pdvApplied;
-                summary.push(`+${pdvApplied} PDV`);
+    const patch = {
+        ...statePatch(state),
+    };
+    const summary = [];
+    if (!success) {
+        summary.push('falhou: a Ação Especial foi gasta e pode tentar novamente');
+        return {
+            patch,
+            summary,
+            def,
+            state,
+        };
+    }
+    state.succeeded = true;
+    patch[`system.props.${RECOVERY_STATE_KEY}`] = JSON.stringify(state);
+    const spiritualFatigue = status.active.includes('fadiga_espiritual');
+    let pdrGain = n(pdrRoll) + (naturalTwenty ? 2 * level : 0);
+    if (spiritualFatigue) pdrGain = Math.floor(pdrGain / 2);
+    const pdvApplied = Math.min(Math.max(0, resources.pdvMax - resources.pdv), n(pdvRoll));
+    const pdrApplied = Math.min(Math.max(0, resources.pdrMax - resources.pdr), pdrGain);
+    if (pdvApplied > 0) {
+        patch['system.props.pdv_slayer_curado'] = n(props.pdv_slayer_curado) + pdvApplied;
+        summary.push(`+${pdvApplied} PDV`);
+    }
+    if (pdrApplied > 0) {
+        patch['system.props.pdr_slayer_curado'] = n(props.pdr_slayer_curado) + pdrApplied;
+        summary.push(`+${pdrApplied} PDR${spiritualFatigue ? ' (metade, Fadiga Espiritual)' : ''}`);
+    }
+    const active = [...status.active];
+    const effects = {
+        ...status.effects,
+    };
+    if (level >= 4)
+        for (const key of ['sangramento', 'hemorragia']) {
+            const index = active.indexOf(key);
+            if (index >= 0) {
+                active.splice(index, 1);
+                delete effects[key];
+                summary.push(`${key} removido`);
             }
         }
-        const removed = remove([...def.removes, ...alsoRemove]);
-        if (removed.length) summary.push(`remove ${removed.join(', ')}`);
-        if (formId === 'sinfonia' && exhaustion > 0) {
-            summary.push(`Exaustão ${exhaustion} → 0`);
-            exhaustion = 0;
-            patch['system.props.status_slayer_exaustao'] = 0;
+    if (level >= 8 && active.includes('envenenamento')) {
+        patch['system.props.resp_recuperacao_veneno_ignorar'] = 1;
+        summary.push('ignora o próximo dano periódico de Envenenamento');
+    }
+    if (level >= 12) {
+        const fatigue = ['fadiga_corporal', 'fadiga_espiritual', 'fadiga_mental'].find((key) =>
+            active.includes(key)
+        );
+        if (fatigue) {
+            patch['system.props.resp_recuperacao_fadiga_suspensa'] = 1;
+            summary.push(`${fatigue} suspensa até o início do próximo turno`);
         }
-        if (formId === 'choque') {
-            if (!active.includes('choque_adrenergico')) active.push('choque_adrenergico');
-            effects.choque_adrenergico = {
-                remainingTurns: def.rounds,
-                sourceName: 'Respiração da Recuperação',
-                tick: 'start',
-            };
-            summary.push(`ignora Exaustão por ${def.rounds} ${def.rounds === 1 ? 'rodada' : 'rodadas'}`);
-        }
-    } else summary.push('falhou: sem efeito, a ação foi gasta');
-
-    if (formId === 'sinfonia' && !active.includes('ofegante')) {
-        active.push('ofegante');
-        summary.push('fica Ofegante');
     }
     patch['system.props.status_slayer_dados'] = JSON.stringify({
         ...status,
         active,
-        exhaustion,
-        effects: Object.fromEntries(Object.entries(effects).filter(([key]) => active.includes(key))),
+        effects,
     });
-    patch['system.props.status_slayer_resumo'] = formatStatusSummary(active, exhaustion);
-    return { patch, summary, def };
+    patch['system.props.status_slayer_resumo'] = formatStatusSummary(active, status.exhaustion);
+    if (naturalTwenty) summary.push(`crítico: +${2 * level} PDR antes dos máximos`);
+    return {
+        patch,
+        summary,
+        def,
+        state,
+    };
 }
-
 async function rollFormula(formula, actor, flavor) {
-    if (!formula) return 0;
     const roll = await new Roll(formula).evaluate();
-    await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }), flavor });
+    await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
+        flavor,
+    });
     return n(roll.total);
 }
-
-const escapeHtml = (value) =>
-    String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;');
-
-/**
- * Reteste do Expurgo Térmico contra Envenenamento ou Paralisia, com o bônus do nível.
- * Usa a CD guardada no status; sem ela, pergunta. Devolve os status vencidos.
- */
-async function expurgoRetest(actor, props, bonus) {
+async function resolveActor(actorUuid) {
+    const document = actorUuid ? await fromUuid(actorUuid) : null;
+    return (
+        document?.actor ??
+        document ??
+        (globalThis.canvas?.ready ? globalThis.canvas.tokens.controlled[0]?.actor : null) ??
+        globalThis.game?.user?.character ??
+        null
+    );
+}
+export async function attemptLastChance(actor, { combatId = activeCombatId() } = {}) {
+    if (!actor?.update)
+        return {
+            ok: false,
+            reason: 'Actor inválido.',
+        };
+    const props = actor.system?.props ?? {};
+    const state = parseRecoveryState(props[RECOVERY_STATE_KEY], combatId);
+    if (state.attempted || state.lastChanceUsed)
+        return {
+            ok: false,
+            reason: 'A Recuperação já foi tentada neste combate.',
+        };
+    if (parseStatusState(props.status_slayer_dados).active.includes('ofegante'))
+        return {
+            ok: false,
+            reason: 'Ofegante impede ativar Respirações.',
+        };
+    if (!actor.isOwner && !globalThis.game?.user?.isGM)
+        return {
+            ok: false,
+            reason: 'Você não pode usar esta Reação.',
+        };
+    if (foundry.applications.api.DialogV2.confirm) {
+        const confirmed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+                title: 'Última Chance',
+            },
+            content:
+                '<p>O ataque reduziria este personagem a 0 PDV. Tentar Respiração da Recuperação como Reação?</p>',
+            rejectClose: false,
+        });
+        if (!confirmed)
+            return {
+                ok: false,
+                reason: 'Última Chance cancelada.',
+            };
+    }
+    const action = await consumeSlayerActions(actor, ['reacao']);
+    if (!action.ok)
+        return {
+            ok: false,
+            reason: action.reason,
+        };
+    const roll = await Roll.create(`1d20 + ${attr(props, 'fdv')}`).evaluate();
+    const naturalTwenty = (roll.dice?.[0]?.results?.[0]?.result ?? 0) === 20;
+    const success = n(roll.total) >= 15 || naturalTwenty;
+    await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
+        flavor: `Última Chance — Respiração da Recuperação (CD 15): ${success ? 'Sucesso' : 'Falha'}`,
+    });
+    const def = recoveryFormDefinition('recuperacao', levelOf(props));
+    const pdvRoll = success
+        ? await rollFormula(`${def.pdv} + ${attr(props, 'vit')}`, actor, 'Última Chance — PDV')
+        : 0;
+    const pdrRoll = success
+        ? await rollFormula(`${def.pdr} + ${attr(props, 'fdv')}`, actor, 'Última Chance — PDR')
+        : 0;
+    const outcome = recoveryOutcome({
+        props,
+        success,
+        pdvRoll,
+        pdrRoll,
+        naturalTwenty,
+        recoveryState: state,
+        currentCombatId: combatId,
+        lastChance: true,
+    });
+    await actor.update(outcome.patch, {
+        naCsbAutomation: true,
+        naBreathing: true,
+    });
+    return {
+        ok: true,
+        success,
+        patch: outcome.patch,
+        summary: outcome.summary,
+    };
+}
+export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
+    const actor = await resolveActor(actorUuid);
+    if (!actor) return globalThis.ui?.notifications?.warn?.('Nenhum personagem ativo.');
+    if (!actor.isOwner && !globalThis.game?.user?.isGM)
+        return globalThis.ui?.notifications?.error?.('Você não pode usar esta Respiração.');
+    if (mode === 'lastChance') return attemptLastChance(actor);
+    const props = actor.system?.props ?? {};
     const status = parseStatusState(props.status_slayer_dados);
-    const targets = ['envenenamento', 'paralisia'].filter((key) => status.active.includes(key));
-    if (!targets.length) return [];
-    const labels = { envenenamento: 'Envenenamento', paralisia: 'Paralisia' };
-    const chosen = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Expurgo Térmico — reteste' },
+    if (status.active.includes('ofegante'))
+        return globalThis.ui?.notifications?.warn?.('Ofegante impede ativar Respirações.');
+    if (status.active.includes('a_beira_da_morte'))
+        return globalThis.ui?.notifications?.warn?.('À Beira da Morte impede a ativação normal.');
+    const id = activeCombatId();
+    const state = parseRecoveryState(props[RECOVERY_STATE_KEY], id);
+    const resources = currentRecoveryResources(props);
+    if (state.succeeded)
+        return globalThis.ui?.notifications?.warn?.(
+            'Respiração da Recuperação já teve sucesso neste combate.'
+        );
+    if (resources.pdv <= 0)
+        return globalThis.ui?.notifications?.warn?.(
+            'Use Última Chance antes de entrar À Beira da Morte.'
+        );
+    const level = levelOf(props);
+    const def = recoveryFormDefinition('recuperacao', level);
+    const result = await foundry.applications.api.DialogV2.wait({
+        window: {
+            title: 'Respiração da Recuperação',
+        },
         modal: true,
         rejectClose: false,
-        content: `<p>Repetir o teste contra qual status? Bônus +${bonus}.</p>
-            <select name="status">${targets.map((key) => `<option value="${key}">${labels[key]}</option>`).join('')}</select>
-            <label style="display:block;margin-top:8px">CD (vazio usa a do status)
-              <input type="number" name="dc" min="1" max="99" value="${status.effects[targets[0]]?.saveDc || ''}"></label>`,
+        content: `<p>Nível de personagem ${level}. Custo: 0 PDR. CD ${def.dc}.</p><p>PDV: ${def.pdv} + VIT · PDR: ${def.pdr} + FDV.</p>`,
         buttons: [
             {
-                action: 'roll',
-                label: 'Rolar reteste',
+                action: 'use',
+                label: 'Usar',
                 default: true,
-                callback: (_e, b) => ({
-                    key: b.form.elements.status.value,
-                    dc: Number(b.form.elements.dc.value) || 0,
-                }),
+                callback: () => 'use',
             },
-            { action: 'skip', label: 'Sem reteste', callback: () => null },
+            {
+                action: 'cancel',
+                label: 'Cancelar',
+                callback: () => false,
+            },
         ],
     });
-    if (!chosen) return [];
-    const effect = status.effects[chosen.key] ?? {};
-    const dc = chosen.dc || effect.saveDc || 0;
-    if (dc <= 0) {
-        ui.notifications.warn('Sem CD: o reteste não foi rolado.');
-        return [];
-    }
-    const saveAttr = effect.saveAttr || 'VIT';
-    // A passiva Autocontrole Celular dá Vantagem em VIT contra Envenenamento.
-    const mode = getRollStatusEffects(props, { test: 'Resistência', attr: saveAttr }).mode;
-    const dice = mode === 'advantage' ? '2d20kh1' : mode === 'disadvantage' ? '2d20kl1' : '1d20';
-    const roll = await new Roll(`${dice} + ${attr(props, saveAttr.toLowerCase())} + ${bonus}`).evaluate();
-    const passed = n(roll.total) >= dc;
+    if (result !== 'use' && result !== true) return null;
+    const action = await consumeSlayerActions(actor, ['especial']);
+    if (!action.ok) return globalThis.ui?.notifications?.warn?.(action.reason);
+    const roll = await new Roll(`1d20 + ${attr(props, 'fdv')}`).evaluate();
+    const naturalTwenty = (roll.dice?.[0]?.results?.[0]?.result ?? 0) === 20;
+    const success = n(roll.total) >= def.dc || naturalTwenty;
     await roll.toMessage({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        flavor: `<strong>Expurgo Térmico</strong> — reteste contra ${labels[chosen.key]} (${saveAttr} +${bonus}, CD ${dc}): ${passed ? 'Sucesso' : 'Falha'}`,
-    });
-    return passed ? [chosen.key] : [];
-}
-
-export async function openRecoveryManager({ actorUuid } = {}) {
-    const doc = actorUuid ? await fromUuid(actorUuid) : null;
-    const actor =
-        doc?.actor ??
-        doc ??
-        (canvas?.ready ? canvas.tokens.controlled[0]?.actor : null) ??
-        game.user?.character;
-    if (!actor) return ui.notifications.warn('Nenhum personagem ativo.');
-    if (!actor.isOwner && !game.user.isGM)
-        return ui.notifications.error('Você não pode usar esta Respiração.');
-    const props = actor.system?.props ?? {};
-    const level = levelOf(props);
-    const status = parseStatusState(props.status_slayer_dados);
-    const atZero = currentResources(props).pdv <= 0;
-    const options = Object.keys(FORMS)
-        .map((formId) => recoveryFormDefinition(formId, level))
-        .filter((def) => def.available && (def.formId !== 'choque' || atZero))
-        .map(
-            (def) =>
-                `<option value="${def.formId}">${escapeHtml(def.label)}${def.test ? ` (FDV CD ${def.dc})` : ' (sem teste)'}</option>`
-        );
-    if (status.active.includes('ofegante'))
-        options.push('<option value="recuperar_folego">Recuperar o fôlego (remove Ofegante, Ação Especial)</option>');
-    const hint = atZero ? '' : '<p class="hint">Choque Adrenérgico só aparece com o personagem em 0 PDV.</p>';
-    const result = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Respiração da Recuperação' },
-        modal: true,
-        rejectClose: false,
-        content: `<p>Nível ${level}. As Formas custam 0 PDR.</p><select name="form">${options.join('')}</select>${hint}`,
-        buttons: [
-            { action: 'use', label: 'Usar', default: true, callback: (_e, b) => b.form.elements.form.value },
-            { action: 'cancel', label: 'Cancelar', callback: () => null },
-        ],
-    });
-    if (!result) return null;
-
-    if (result === 'recuperar_folego') {
-        const action = await consumeSlayerActions(actor, ['especial']);
-        if (!action.ok) return ui.notifications.warn(action.reason);
-        const active = status.active.filter((key) => key !== 'ofegante');
-        const patch = {
-            'system.props.status_slayer_dados': JSON.stringify({ ...status, active }),
-            'system.props.status_slayer_resumo': formatStatusSummary(active, status.exhaustion),
-        };
-        await actor.update(patch, { naCsbAutomation: true, naBreathing: true });
-        return { ok: true, form: result, success: true, patch };
-    }
-
-    const def = recoveryFormDefinition(result, level);
-    if (!def?.available) return ui.notifications.warn('Esta Forma não está disponível neste nível.');
-    if (result === 'choque' && !atZero)
-        return ui.notifications.warn('Choque Adrenérgico só pode ser usado ao chegar a 0 PDV.');
-    const action = await consumeSlayerActions(actor, [def.action]);
-    if (!action.ok) return ui.notifications.warn(action.reason);
-
-    let success = true;
-    let naturalTwenty = false;
-    if (def.test) {
-        const roll = await new Roll(`1d20 + ${attr(props, 'fdv')}`).evaluate();
-        await roll.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: `${def.label} — FDV CD ${def.dc}`,
-        });
-        naturalTwenty = (roll.dice?.[0]?.results?.[0]?.result ?? 0) === 20;
-        success = n(roll.total) >= def.dc || naturalTwenty;
-    }
-    let pdvRoll = 0;
-    let pdrRoll = 0;
-    let alsoRemove = [];
-    if (success) {
-        const vit = attr(props, 'vit') * def.attrMultiplier;
-        const fdv = attr(props, 'fdv') * def.attrMultiplier;
-        const pdvFormula = def.pdv || def.temporary;
-        pdvRoll = await rollFormula(
-            pdvFormula ? `${pdvFormula} + ${vit}` : '',
+        speaker: ChatMessage.getSpeaker({
             actor,
-            `${def.label} — ${def.temporary ? 'PDV temporários' : 'recuperação de PDV'}`
-        );
-        pdrRoll = await rollFormula(def.pdr ? `${def.pdr} + ${fdv}` : '', actor, `${def.label} — recuperação de PDR`);
-        if (result === 'expurgo') alsoRemove = await expurgoRetest(actor, props, def.reteste);
-    }
-    const outcome = recoveryOutcome({ formId: result, props, success, pdvRoll, pdrRoll, naturalTwenty, alsoRemove });
-    await actor.update(outcome.patch, { naCsbAutomation: true, naBreathing: true });
-    await ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<p><strong>${escapeHtml(def.label)}</strong>${naturalTwenty ? ' — 20 natural' : ''}: ${escapeHtml(outcome.summary.join('; '))}.</p>`,
+        }),
+        flavor: `${def.label} — FDV CD ${def.dc}: ${success ? 'Sucesso' : 'Falha'}`,
     });
-    return { ok: true, form: result, success, patch: outcome.patch };
+    const pdvRoll = success
+        ? await rollFormula(`${def.pdv} + ${attr(props, 'vit')}`, actor, 'Recuperação — PDV')
+        : 0;
+    const pdrRoll = success
+        ? await rollFormula(`${def.pdr} + ${attr(props, 'fdv')}`, actor, 'Recuperação — PDR')
+        : 0;
+    const outcome = recoveryOutcome({
+        props,
+        success,
+        pdvRoll,
+        pdrRoll,
+        naturalTwenty,
+        recoveryState: state,
+        currentCombatId: id,
+    });
+    await actor.update(outcome.patch, {
+        naCsbAutomation: true,
+        naBreathing: true,
+    });
+    await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({
+            actor,
+        }),
+        content: `<p><strong>${def.label}</strong>: ${outcome.summary.join('; ')}.</p>`,
+    });
+    return {
+        ok: true,
+        success,
+        patch: outcome.patch,
+        summary: outcome.summary,
+    };
 }
-
-export { FORMS as RECOVERY_FORMS };
+export function registerRecoveryBreathingEngine() {
+    const reset = async (combat) => {
+        if (!globalThis.game?.user?.isGM || combat?.started === false) return;
+        for (const combatant of combat?.combatants ?? []) {
+            const actor = combatant.actor;
+            if (!actor?.update || actor.type !== 'slayer') continue;
+            await actor.update(
+                statePatch({
+                    version: 1,
+                    combatId: combat.id,
+                    attempted: false,
+                    succeeded: false,
+                    lastChanceUsed: false,
+                }),
+                {
+                    naCsbAutomation: true,
+                    naBreathing: true,
+                }
+            );
+        }
+    };
+    Hooks.on('combatStart', (combat) => void reset(combat));
+    Hooks.on(
+        'combatEnd',
+        (combat) =>
+            void reset({
+                ...combat,
+                id: `${combat.id}:ended`,
+            })
+    );
+}

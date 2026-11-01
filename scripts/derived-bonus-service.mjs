@@ -30,12 +30,68 @@ export const SHEET_BONUS_KEYS = Object.freeze({
         'npc_bonus_acerto',
     ],
     dano: ['bonus_dano_slayer', 'bonus_dano_oni', 'oni_minion_bonus_dano', 'npc_bonus_dano'],
+    bloqueio: [
+        'bonus_bloqueio_slayer',
+        'bonus_bloqueio_oni',
+        'oni_minion_bonus_bloqueio',
+        'npc_bonus_bloqueio',
+    ],
+    esquiva: [
+        'bonus_esquiva_slayer',
+        'bonus_esquiva_oni',
+        'oni_minion_bonus_esquiva',
+        'npc_bonus_esquiva',
+    ],
+    percepcaoVisual: [
+        'bonus_percepcao_visual_slayer',
+        'bonus_percepcao_visual_oni',
+        'oni_minion_bonus_percepcao_visual',
+        'npc_bonus_percepcao_visual',
+    ],
+    percepcaoAuditiva: [
+        'bonus_percepcao_auditiva_slayer',
+        'bonus_percepcao_auditiva_oni',
+        'oni_minion_bonus_percepcao_auditiva',
+        'npc_bonus_percepcao_auditiva',
+    ],
+    socialVoz: [
+        'bonus_social_voz_slayer',
+        'bonus_social_voz_oni',
+        'oni_minion_bonus_social_voz',
+        'npc_bonus_social_voz',
+    ],
+    iniciativa: [
+        'bonus_iniciativa_slayer',
+        'bonus_iniciativa_oni',
+        'oni_minion_bonus_iniciativa',
+        'npc_bonus_iniciativa',
+    ],
+    pdrMaximo: [
+        'bonus_pdr_maximo_slayer',
+        'bonus_pdr_maximo_oni',
+        'oni_minion_bonus_pdr_maximo',
+        'npc_bonus_pdr_maximo',
+    ],
     teste: ['bonus_teste_slayer', 'bonus_teste_oni', 'oni_minion_bonus_teste', 'npc_bonus_teste'],
 });
 
-/** @param {object} props @param {'acerto'|'dano'|'teste'} channel @returns {number} */
+const SHEET_CHANNELS = Object.freeze([
+    'acerto',
+    'bloqueio',
+    'esquiva',
+    'percepcaoVisual',
+    'percepcaoAuditiva',
+    'socialVoz',
+    'danoFixo',
+    'iniciativa',
+    'pdrMaximo',
+    'teste',
+]);
+
+/** @param {object} props @param {string} channel @returns {number} */
 export function sheetBonusValue(props = {}, channel) {
-    const key = (SHEET_BONUS_KEYS[channel] ?? []).find((candidate) =>
+    const keyName = channel === 'danoFixo' ? 'dano' : channel;
+    const key = (SHEET_BONUS_KEYS[keyName] ?? []).find((candidate) =>
         Object.prototype.hasOwnProperty.call(props, candidate)
     );
     return key ? parseNumber(props[key]) : 0;
@@ -156,13 +212,12 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
         add({ channel, value, label: 'Metal / Cor', origin: 'Metal' });
     }
 
-    // Acerto e Testes da ficha entram como fonte rotulada. O Dano da ficha não: vale
-    // em toda rolagem e o damage-service soma direto, fora da trava de ataque.
-    for (const channel of ['acerto', 'teste']) {
+    for (const channel of SHEET_CHANNELS) {
+        const keyName = channel === 'danoFixo' ? 'dano' : channel;
         add({
             channel,
-            value: sheetBonusValue(props, channel),
-            label: 'Bônus da ficha',
+            value: sheetBonusValue(props, keyName),
+            label: `Bônus da ficha (${channel})`,
             origin: 'Ficha',
         });
     }
@@ -221,6 +276,8 @@ export function derivedChannelForTest(test, modality = '') {
     if (normalized.includes('esquiva')) return 'esquiva';
     if (normalized.includes('percepc') && normalized.includes('audit')) return 'percepcaoAuditiva';
     if (normalized.includes('percepc')) return 'percepcaoVisual';
+    if (normalized.includes('iniciativ')) return 'iniciativa';
+    if (normalized.includes('social') || normalized.includes('voz')) return 'socialVoz';
     return null;
 }
 
@@ -232,7 +289,10 @@ export function derivedBonusSummary(resolved) {
         ['Esquiva', 'esquiva'],
         ['Percepção visual', 'percepcaoVisual'],
         ['Percepção auditiva', 'percepcaoAuditiva'],
+        ['Social / voz', 'socialVoz'],
         ['Dano', 'danoFixo'],
+        ['Iniciativa', 'iniciativa'],
+        ['PDR máximo', 'pdrMaximo'],
         ['Testes', 'teste'],
     ];
     return labels
@@ -288,7 +348,7 @@ export async function openDerivedBonusAudit(options = {}) {
     return foundry.applications.api.DialogV2.wait({
         window: { title: `Auditar bônus ${actor.name}` },
         content,
-        buttons: [{ action: 'close', label: 'Fechar', default: true, callback: () => resolved }],
+        buttons: [{ action: 'close', label: 'Fechar', default: true, callback: () => false }],
         rejectClose: false,
     });
 }

@@ -5,6 +5,7 @@
 import { ATTRIBUTES, MODULE_ID } from './constants.mjs';
 import { changedProp, parseNumber } from './parsing.mjs';
 import { consumeSlayerActions } from './action-service.mjs';
+import { attemptLastChance, hasRecoveryBreathing } from './recovery-breathing-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 
 const TURN_FLAG = 'lastLifeDeathTurn';
@@ -451,6 +452,10 @@ export async function reconcileActor(actor, options = {}) {
         if (!state.dead && parseNumber(props.status_slayer_exaustao) >= 8) {
             await markDead(actor, state, 'Exaustão Nível 8 morte sem Teste.');
         } else if (pdv <= 0 && !state.dying && !state.dead) {
+            if (maximum > 0 && hasRecoveryBreathing(actor)) {
+                const recovery = await attemptLastChance(actor, { combatId: game.combat?.id });
+                if (recovery?.success) return;
+            }
             const decision =
                 maximum <= 0
                     ? await confirmDirectDeath(

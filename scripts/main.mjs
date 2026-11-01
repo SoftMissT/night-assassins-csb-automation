@@ -65,9 +65,11 @@ import {
 } from './rest-service.mjs';
 import {
     openRecoveryManager,
+    attemptLastChance,
     recoveryBreathingLevel,
     hasRecoveryBreathing,
     recoveryFormDefinition,
+    registerRecoveryBreathingEngine,
 } from './recovery-breathing-service.mjs';
 import {
     attemptSnowRestrictionEscape,
@@ -157,6 +159,12 @@ import {
     resolveSlayerDerivedBonuses,
 } from './derived-bonus-service.mjs';
 import {
+    openCombatManeuverManager,
+    registerCombatManeuverEngine,
+    resolveCombatManeuverBonuses,
+    useCombatManeuver,
+} from './combat-maneuver-service.mjs';
+import {
     exportDiagnosticJournal,
     openDiagnosticJournal,
     openDiagnosticManager,
@@ -224,6 +232,8 @@ Hooks.once('ready', async () => {
     registerDiagnosticCollector();
     registerStatusEngine();
     registerActionEngine();
+    registerRecoveryBreathingEngine();
+    registerCombatManeuverEngine();
     registerRestEngine();
     registerBreathingEngine();
     registerOniRegenerationEngine();
@@ -335,6 +345,10 @@ Hooks.once('ready', async () => {
             resolveRestTier,
             restEligibleStatuses,
             openRecoveryManager,
+            attemptLastChance,
+            openCombatManeuverManager,
+            useCombatManeuver,
+            resolveCombatManeuverBonuses,
             recoveryBreathingLevel,
             hasRecoveryBreathing,
             recoveryFormDefinition,

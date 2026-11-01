@@ -62,4 +62,16 @@ describe('contrato oficial NPC e Oni Minion', () => {
         assert.match(byKey.get('npc_roll_esquiva').rollMessage, /test:'Esquiva'/);
         assert.match(byKey.get('npc_roll_dano').rollMessage, /NADamageRoll0001/);
     });
+
+    it('expõe o gerenciador de Status e o armazenamento compatível no NPC', async () => {
+        const npc = await template('npc-template.json');
+        const byKey = new Map(components(npc.system.body).map((entry) => [entry.key, entry]));
+        const hidden = new Map(npc.system.hidden.map(({ name, value }) => [name, value]));
+
+        assert.match(byKey.get('npc_status_gerenciar').rollMessage, /NAStatusManage01/);
+        assert.match(byKey.get('npc_status_display').value, /\$\{status_slayer_resumo\}\$/);
+        assert.equal(hidden.get('status_slayer_dados'), '');
+        assert.equal(hidden.get('status_slayer_resumo'), 'Nenhum status');
+        assert.equal(hidden.get('status_slayer_exaustao'), '0');
+    });
 });

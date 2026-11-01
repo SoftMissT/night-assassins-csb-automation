@@ -5,11 +5,12 @@
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
-import { DAMAGE_PRESETS_KEY, parseDamagePresets, presetGroupKey } from './damage-preset-service.mjs';
 import {
-    deleteDamagePreset,
-    saveDamagePreset,
-} from './dialogs/damage-preset-manager.mjs';
+    DAMAGE_PRESETS_KEY,
+    parseDamagePresets,
+    presetGroupKey,
+} from './damage-preset-service.mjs';
+import { deleteDamagePreset, saveDamagePreset } from './dialogs/damage-preset-manager.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
 import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
 import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
@@ -74,23 +75,20 @@ import {
 } from './snow-breathing-service.mjs';
 import { resolveBreathingDefense } from './breathing-defense.mjs';
 import {
+    consumeCombatManeuverPending,
+    resolveCombatManeuverBonuses,
+} from './combat-maneuver-service.mjs';
+import {
     consumeWindPending,
     parseWindBreathingState,
     windStatePatch,
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
-import {
-    parseBreathPassiveState,
-    passiveStatePatch,
-} from './breath-passives.mjs';
+import { parseBreathPassiveState, passiveStatePatch } from './breath-passives.mjs';
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
 import { resolveSlayerDerivedBonuses, sheetBonusValue } from './derived-bonus-service.mjs';
-import {
-    buildEntryFormula,
-    isValidDamageFormula,
-    resolveMessageMode,
-} from './damage-formula.mjs';
+import { buildEntryFormula, isValidDamageFormula, resolveMessageMode } from './damage-formula.mjs';
 
 function markDamageFormula(props, entries) {
     if (parseNumber(props.marca_ativa) !== 1) return '';
@@ -533,7 +531,7 @@ export async function rollDamage(options = {}) {
         }
     }
     // "Bônus Fixos" da ficha: soma em todo dano, de qualquer tipo de ficha.
-    const sheetDamage = sheetBonusValue(props, 'dano');
+    const sheetDamage = attackerKind === 'slayer' ? 0 : sheetBonusValue(props, 'dano');
     if (sheetDamage)
         specs.push({
             label: 'Bônus da ficha',
@@ -699,9 +697,7 @@ export async function rollDamage(options = {}) {
 
     let rolls;
     try {
-        rolls = await Promise.all(
-            specs.map((spec) => Roll.create(spec.formula).evaluate())
-        );
+        rolls = await Promise.all(specs.map((spec) => Roll.create(spec.formula).evaluate()));
     } catch (_) {
         ui.notifications?.error?.(
             `Fórmula inválida: ${specs.map((spec) => spec.formula).join(' + ')}`
@@ -876,6 +872,16 @@ export async function rollDamage(options = {}) {
             const targetActor =
                 interceptorActor?.documentName === 'Actor' ? interceptorActor : protectedActor;
             const intercepted = targetActor.uuid !== protectedActor.uuid;
+            const maneuverBonuses =
+                attackerKind === 'slayer'
+                    ? resolveCombatManeuverBonuses(actor, {
+                          targetUuid: targetActor.uuid,
+                          channel: 'dano',
+                      })
+                    : {
+                          damageBonus: 0,
+                          maxDamage: false,
+                      };
             const heatMap = targetActor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {};
             const heatBefore = Number(heatMap?.[actor.id]?.heat) || 0;
             let rengokuBonus = 0;
@@ -884,6 +890,14 @@ export async function rollDamage(options = {}) {
                 ...component,
                 types: [...component.types],
             }));
+            if (maneuverBonuses.damageBonus) {
+                amount += maneuverBonuses.damageBonus;
+                targetComponents.push({
+                    label: 'Manobra',
+                    types: [],
+                    subtotal: maneuverBonuses.damageBonus,
+                });
+            }
             const targetMist = parseMistBreathingState(
                 targetActor.system?.props?.resp_nevoa_estado
             );
@@ -1251,6 +1265,13 @@ export async function rollDamage(options = {}) {
                         damageTypes,
                         components: targetComponents,
                         flame: flameContext,
+                    }).then(async (result) => {
+                        if (attackerKind === 'slayer')
+                            await consumeCombatManeuverPending(actor, {
+                                targetUuid: targetActor.uuid,
+                                part: 'damage',
+                            });
+                        return result;
                     });
                 // Oni completo, Oni Minion e NPC compartilham o mesmo relay de dano
                 // (chaves distintas resolvidas dentro do relay por tipo de ator).
@@ -1263,6 +1284,13 @@ export async function rollDamage(options = {}) {
                         components: targetComponents,
                         requireApproval: true,
                         flame: flameContext,
+                    }).then(async (result) => {
+                        if (attackerKind === 'slayer')
+                            await consumeCombatManeuverPending(actor, {
+                                targetUuid: targetActor.uuid,
+                                part: 'damage',
+                            });
+                        return result;
                     });
                 return Promise.reject(
                     new Error(
@@ -1272,7 +1300,9 @@ export async function rollDamage(options = {}) {
             }
         ),
     ]);
-    const failedDamage = results.slice(pending.length).filter((result) => result.status === 'rejected');
+    const failedDamage = results
+        .slice(pending.length)
+        .filter((result) => result.status === 'rejected');
     if (failedDamage.length > 0) {
         const reason = failedDamage[0]?.reason?.message ?? 'Falha desconhecida no relay de dano.';
         ui.notifications?.error?.(`O dano não foi aplicado ao alvo: ${reason}`);
@@ -1683,8 +1713,7 @@ export async function rollWeaponItem(options = {}) {
     if (specialPending && Number(specialPending.damageBonus) !== 0) {
         profiles = profiles.map((profile) => ({
             ...profile,
-            dano_fixo:
-                (Number(profile.dano_fixo) || 0) + (Number(specialPending.damageBonus) || 0),
+            dano_fixo: (Number(profile.dano_fixo) || 0) + (Number(specialPending.damageBonus) || 0),
         }));
     }
 

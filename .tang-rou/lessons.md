@@ -41,3 +41,24 @@
 - **Causa:** hooks de render aplicavam `.na-sheet` a toda ficha Night Assassins, enquanto o CSS forçava fundo, inputs, painéis, medidores e tipografia.
 - **Correção:** skin do Actor desligada; classes de texto ficaram escopadas a `.na-sheet`; skin de Item permanece independente.
 - **Regra preventiva:** qualquer skin de ficha precisa passar pelo gate renderizado antes de ser registrada nos hooks de Actor.
+
+## 2026-11-01 — interpolação de escapes ao registrar sessão
+
+- **Erro:** o primeiro bloco de abertura escrito no L0 transformou barra-t em tab e barra-zero em NUL.
+- **Causa:** o comando PowerShell foi montado em template literal JavaScript, que interpretou as barras invertidas antes de chegar ao shell.
+- **Correção:** o bloco recém-adicionado foi substituído por escrita literal com String.raw/here-string; o L0 foi relido e ficou sem NUL/tab.
+- **Regra preventiva:** ao escrever Markdown via functions.exec, usar payload literal sem escapes interpretáveis e sempre fazer read-back procurando caracteres de controle.
+
+## 2026-11-01 — escopo corrigido pelo operador para bônus, recuperação e manobras
+
+- **Erro:** o escopo inicial tratava os bônus manuais como Acerto/Testes e a Respiração da Recuperação como uma extensão das quatro Formas existentes.
+- **Causa:** a implementação atual foi tomada como limite do pedido antes de fixar a regra de mesa fornecida pelo operador.
+- **Correção:** o operador confirmou todos os canais derivados para edição manual, substituição pela tabela de nível de personagem 1–14 e gerenciador completo das 27 Manobras de Combate.
+- **Regra preventiva:** quando o operador fornece uma regra de mesa completa, separar o contrato desejado da compatibilidade atual e confirmar o escopo antes de fechar a SPEC.
+
+## 2026-11-01 — ficha de NPC também precisa de Status
+
+- **Erro:** os bônus manuais foram adicionados ao template de NPC, mas o painel/estado de Status não entrou na ficha.
+- **Causa:** o escopo foi verificado para os canais numéricos e não para a paridade funcional da ficha.
+- **Correção:** adicionar ao NPC o painel de Status usando o contrato existente do módulo, sem alterar IDs ou ownership.
+- **Regra preventiva:** ao ampliar uma ficha, conferir campos, ações, status e integração visual contra os templates equivalentes antes de fechar a mudança.

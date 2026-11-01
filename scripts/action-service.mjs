@@ -303,9 +303,10 @@ export function registerActionEngine() {
 }
 
 async function resetCombatActions(combat, { resetRound = false, fillFolego = false } = {}) {
-    if (!isPrimaryGm() || !combat?.started) return;
+    if (!isPrimaryGm() || !combat || combat.started === false) return;
     const actor = combat.combatant?.actor;
-    const key = `${combat.id}:${combat.round}:${combat.turn}:${actor?.id ?? 'none'}:${resetRound}:${fillFolego}`;
+    const actorId = actor?.id ?? combat.combatant?.actorId ?? 'none';
+    const key = `${combat.id}:${combat.round}:${combat.turn}:${actorId}:${resetRound}:${fillFolego}`;
     if (combat.getFlag?.(MODULE_ID, ACTION_FLAG) === key) return;
     await combat.setFlag?.(MODULE_ID, ACTION_FLAG, key);
     const actors = [...(combat.combatants ?? [])]
@@ -320,7 +321,7 @@ async function resetCombatActions(combat, { resetRound = false, fillFolego = fal
             state.round = emptyUses(ROUND_KEYS);
             changed = true;
         }
-        if (candidate === actor) {
+        if (candidate?.id && candidate.id === actorId) {
             state.turn = emptyUses(TURN_KEYS);
             changed = true;
         }
@@ -329,12 +330,16 @@ async function resetCombatActions(combat, { resetRound = false, fillFolego = fal
                 ? oniActionPatch(state, props)
                 : actionPatch(state, props)
             : {};
-        if (!oni && (fillFolego || candidate === actor))
+        if (!oni && (fillFolego || (candidate?.id && candidate.id === actorId)))
             Object.assign(patch, slayerFolegoPatch(props, { full: fillFolego }));
         if (Object.keys(patch).length > 0)
             await candidate.update(patch, { naCsbAutomation: true, naActionEconomy: true });
     });
-    await Promise.allSettled(jobs);
+    const results = await Promise.allSettled(jobs);
+    for (const result of results) {
+        if (result.status === 'rejected')
+            console.error?.(`[${MODULE_ID}] Falha ao restaurar ações do combate`, result.reason);
+    }
 }
 
 async function resolveActor(options = {}) {

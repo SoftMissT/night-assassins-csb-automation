@@ -299,6 +299,7 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         Number.parseInt(props[contract.exhaustion], 10) || 0
     );
     const stateBeforeTiming = JSON.stringify(state);
+    const recoveryFatigueSuspended = parseNumber(props.resp_recuperacao_fadiga_suspensa) > 0;
     const active = new Set(state.active);
     const messages = [];
     let statusDamageTotal = parseNumber(props[contract.damage]);
@@ -347,6 +348,11 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         if ((effect?.tick ?? defaultTiming) !== timing) continue;
 
         if (damageKeys.has(key)) {
+            if (key === 'envenenamento' && timing === 'start' && parseNumber(props.resp_recuperacao_veneno_ignorar) > 0) {
+                messages.push('Envenenamento: dano periódico ignorado pela Respiração da Recuperação');
+                if (decrementEffect(state, key)) messages.push(`${key} expirou`);
+                continue;
+            }
             const formula = key === 'em_chamas' ? '1d4' : effect?.damageFormula;
             if (
                 FINITE_SOURCE_DAMAGE.has(key) &&
@@ -412,6 +418,10 @@ export async function processActorStatusTiming(actor, timing = 'start') {
     }
 
     const patch = actorStatusPatch(actor, state);
+    if (recoveryFatigueSuspended && timing === 'start')
+        patch['system.props.resp_recuperacao_fadiga_suspensa'] = 0;
+    if (parseNumber(props.resp_recuperacao_veneno_ignorar) > 0 && timing === 'start')
+        patch['system.props.resp_recuperacao_veneno_ignorar'] = 0;
     const stateChanged = JSON.stringify(state) !== stateBeforeTiming;
     const summaryChanged = patch[`system.props.${contract.summary}`] !== props[contract.summary];
     const exhaustionChanged =

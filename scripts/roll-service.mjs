@@ -13,6 +13,7 @@ import { consumeMetalSteelDefense, parseMetalBreathingState } from './metal-brea
 import { parseMistBreathingState } from './mist-breathing-service.mjs';
 import { parseSnowBreathingState } from './snow-breathing-service.mjs';
 import { derivedChannelForTest, resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
+import { resolveCombatManeuverBonuses } from './combat-maneuver-service.mjs';
 
 function naturalD20(roll) {
     return Math.max(
@@ -224,9 +225,23 @@ export async function rollTest(options) {
     // O "Bônus da ficha" de Defesa/Testes vale em todo teste, menos no Acerto,
     // que tem campo próprio.
     const derivedChannels = resolveSlayerDerivedBonuses(actor.system?.props ?? {}).channels;
+    const maneuverTargetUuid = [...(globalThis.game?.user?.targets ?? [])][0]?.actor?.uuid ?? '';
+    const maneuverBonuses = resolveCombatManeuverBonuses(actor, {
+        targetUuid: maneuverTargetUuid,
+        channel: derivedChannel ?? '',
+    });
     const derivedSources = [
         ...(derivedChannel ? (derivedChannels[derivedChannel]?.sources ?? []) : []),
         ...(derivedChannel === 'acerto' ? [] : derivedChannels.teste.sources),
+        ...(maneuverBonuses.defenseBonus && ['bloqueio', 'esquiva'].includes(derivedChannel)
+            ? [
+                  {
+                      value: maneuverBonuses.defenseBonus,
+                      label: 'Manobra',
+                      origin: 'Manobra de Combate',
+                  },
+              ]
+            : []),
     ];
     const derivedTotal = derivedSources.reduce((sum, source) => sum + source.value, 0);
     const derivedLabels = derivedSources.map(
@@ -270,6 +285,8 @@ export async function rollTest(options) {
         dialogResult.mode = mergeRollMode(dialogResult.mode, 'advantage');
         metalSteelPatch = consumeMetalSteelDefense(metalState).patch;
     }
+    if (maneuverBonuses.advantage)
+        dialogResult.mode = mergeRollMode(dialogResult.mode, 'advantage');
     if (metalSteelPatch)
         await actor.update(metalSteelPatch, { naCsbAutomation: true, naBreathing: true });
 

@@ -45,6 +45,10 @@ import {
     snowStatePatch,
     spendFreezeForRestriction,
 } from './snow-breathing-service.mjs';
+import {
+    consumeCombatManeuverPending,
+    resolveCombatManeuverBonuses,
+} from './combat-maneuver-service.mjs';
 
 async function waitForHitRoll3d(message) {
     const wait = globalThis.game?.dice3d?.waitFor3DAnimationByMessageID;
@@ -433,6 +437,11 @@ export async function rollHit(options) {
     const targetedActors = [...(game.user?.targets ?? [])]
         .map((token) => token.actor)
         .filter(Boolean);
+    const maneuverTargetUuid = targetedActors[0]?.uuid ?? '';
+    const maneuverBonuses = resolveCombatManeuverBonuses(actor, {
+        targetUuid: maneuverTargetUuid,
+        channel: 'acerto',
+    });
     const combatantActors = [...(game.combat?.combatants ?? [])]
         .map((combatant) => combatant.actor)
         .filter(Boolean);
@@ -480,16 +489,28 @@ export async function rollHit(options) {
         flameTier.hit +
         dazzlePenalty;
     const derivedBonuses = resolveSlayerDerivedBonuses(props, {
-        runtimeSources: breathBonus
-            ? [
-                  {
-                      channel: 'acerto',
-                      value: breathBonus,
-                      label: 'Efeitos ativos',
-                      origin: 'Respiração',
-                  },
-              ]
-            : [],
+        runtimeSources: [
+            ...(breathBonus
+                ? [
+                      {
+                          channel: 'acerto',
+                          value: breathBonus,
+                          label: 'Efeitos ativos',
+                          origin: 'Respiração',
+                      },
+                  ]
+                : []),
+            ...(maneuverBonuses.attackBonus
+                ? [
+                      {
+                          channel: 'acerto',
+                          value: maneuverBonuses.attackBonus,
+                          label: 'Manobra',
+                          origin: 'Manobra de Combate',
+                      },
+                  ]
+                : []),
+        ],
     });
     const hitBonus = derivedBonuses.channels.acerto.total;
     const directBonus = Number(options.bonus) || 0;
@@ -527,6 +548,7 @@ export async function rollHit(options) {
         breathHit?.advantage ||
         flameHit?.advantage ||
         mistHit?.advantage ||
+        maneuverBonuses.advantage ||
         windAdvantageAvailable
             ? mergeRollMode(dialogResult.mode, 'advantage')
             : dialogResult.mode;
@@ -636,6 +658,11 @@ export async function rollHit(options) {
         stopOnMiss: mistHit?.stopOnMiss === true,
         markMargin,
     });
+    if (result)
+        await consumeCombatManeuverPending(actor, {
+            targetUuid: maneuverTargetUuid,
+            part: 'hit',
+        });
     if (poisonExtraAttack && result && combatRound !== null)
         await actor.setFlag?.(MODULE_ID, 'poisonExtraAttack', {
             round: combatRound,

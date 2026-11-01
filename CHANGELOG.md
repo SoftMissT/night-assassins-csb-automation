@@ -1,6 +1,15 @@
 # Changelog
 ## Não lançado
 
+## v0.12.0 — 2026-11-01 — bônus, recuperação, ações, Status e Manobras
+
+- Bônus Fixos agora cobrem Acerto, Bloqueio, Esquiva, Percepções, Social, Iniciativa, Dano, PDR máximo e Testes nos quatro templates de Actor; a auditoria GM lista as fontes e fecha corretamente no `DialogV2`.
+- Reset automático de ações usa o ID do Actor, restaura ações por turno/rodada e recupera 1 Fôlego; falhas de atualização ficam registradas no console.
+- Respiração da Recuperação foi substituída pela tabela de personagem 1–14, com estado por combate, máximos de PDV/PDR, crítico, fadigas, efeitos adicionais e Última Chance.
+- NPC passou a expor gerenciamento e resumo de Status com o contrato `status_slayer_*` usado pelo motor.
+- Catálogo e gerenciador de Manobras de Combate foram adicionados, com Fôlego separado das ações, marcadores e efeitos pendentes integrados às rolagens. O texto de origem forneceu 26 manobras nomeadas.
+- Testes: `node --test` (1323/1323).
+
 ## v0.11.97 — 2026-10-28 — pele de Item e fórmula da Forma
 
 ### 2026-10-28 — fórmula da Forma na sintaxe do CSB

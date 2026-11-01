@@ -3,6 +3,7 @@
  */
 
 import { parseStatusState } from './status-service.mjs';
+import { parseNumber } from './parsing.mjs';
 import { parseUserPoisonState, USER_POISON_STATE_KEY } from './slayer/poison-user-service.mjs';
 
 function statusContext(props = {}) {
@@ -76,6 +77,7 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
     const defense = kind === 'defense' || testName === 'bloqueio' || testName === 'esquiva';
     const resistance = testName.includes('resist');
     const initiative = testName.includes('iniciativa');
+    const recoveryFatigueSuspended = parseNumber(props.resp_recuperacao_fadiga_suspensa) > 0;
     const reasons = [];
     let modifier = 0;
     let disadvantage = false;
@@ -106,11 +108,11 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
         modifier -= 2;
         reasons.push('Exaustão 2 −2 DEX');
     }
-    if (active.has('fadiga_espiritual') && attribute === 'FDV' && resistance) {
+    if (!recoveryFatigueSuspended && active.has('fadiga_espiritual') && attribute === 'FDV' && resistance) {
         modifier -= 2;
         reasons.push('Fadiga Espiritual −2 resistência FDV');
     }
-    if (active.has('fadiga_mental') && (attribute === 'SAB' || initiative)) {
+    if (!recoveryFatigueSuspended && active.has('fadiga_mental') && (attribute === 'SAB' || initiative)) {
         disadvantage = true;
         reasons.push('Fadiga Mental: Desvantagem');
     }
@@ -181,7 +183,7 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
         !attack &&
         !defense &&
         attribute === 'VIT' &&
-        props.nvl_respiracao_num !== undefined &&
+        (props.nvl_num !== undefined || props.nvl_respiracao_num !== undefined) &&
         (active.has('envenenamento') || active.has('hemorragia'));
     if (cellularControl) reasons.push('Autocontrole Celular: Vantagem');
 
@@ -197,6 +199,7 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
 
 export function getDamageStatusEffects(props = {}) {
     const { active, exhaustion } = statusContext(props);
+    const recoveryFatigueSuspended = parseNumber(props.resp_recuperacao_fadiga_suspensa) > 0;
     const reasons = [];
     let modifier = 0;
     let pdrSurcharge = 0;
@@ -204,11 +207,11 @@ export function getDamageStatusEffects(props = {}) {
         modifier -= 1;
         reasons.push('Exaustão 1 −1 Dano');
     }
-    if (active.has('fadiga_espiritual')) {
+    if (!recoveryFatigueSuspended && active.has('fadiga_espiritual')) {
         pdrSurcharge = 1;
         reasons.push('Fadiga Espiritual +1 PDR');
     }
-    const criticalAllowed = !active.has('fadiga_corporal');
+    const criticalAllowed = recoveryFatigueSuspended || !active.has('fadiga_corporal');
     if (!criticalAllowed) reasons.push('Fadiga Corporal impede crítico');
     const blocked =
         lifeDeathBlocked(props) ||

@@ -204,7 +204,7 @@ test('nível 14 oferece escolha exclusiva entre bônus de PDV e PDR nos hidden t
 
     assert.equal(
         hidden.get('pdr_slayer_total'),
-        "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
+        "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+bonus_pdr_maximo_slayer+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
     );
 });
 

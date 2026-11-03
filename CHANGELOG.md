@@ -1,6 +1,14 @@
 # Changelog
 ## Não lançado
 
+## v0.12.1 — 2026-11-03 — armas normais completas e correção de NPC
+
+- `armas-slayer` passa a publicar as 26 armas normais canônicas do catálogo; as 17 armas especiais continuam no catálogo interno.
+- NPCs deixam de herdar o bloqueio de Vida e Morte do Slayer quando Actors antigos carregam essa key legada; Status explícito continua bloqueando ações normalmente.
+- Regressões adicionadas para o contrato de NPC e cobertura integral do pack de armas.
+- Validação: `node --test` (1324/1324), testes focados de armas (60/60), build com 26 Items normais + 2 templates.
+- Gate pendente: QA renderizado/runtime no Foundry v14.367 após instalar a release.
+
 ## v0.12.0 — 2026-11-01 — bônus, recuperação, ações, Status e Manobras
 
 - Bônus Fixos agora cobrem Acerto, Bloqueio, Esquiva, Percepções, Social, Iniciativa, Dano, PDR máximo e Testes nos quatro templates de Actor; a auditoria GM lista as fontes e fecha corretamente no `DialogV2`.

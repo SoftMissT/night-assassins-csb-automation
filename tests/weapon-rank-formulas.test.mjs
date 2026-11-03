@@ -89,7 +89,7 @@ describe('geração sistêmica de fórmulas por Rank', () => {
             assert.deepEqual(formulas, {});
         }
 
-        assert.equal(weaponsChecked, 4);
+        assert.equal(weaponsChecked, 26);
     });
 
     it('Rebellion recebe a progressão evolutiva D a SS', async () => {

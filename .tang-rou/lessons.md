@@ -62,3 +62,17 @@
 - **Causa:** o escopo foi verificado para os canais numéricos e não para a paridade funcional da ficha.
 - **Correção:** adicionar ao NPC o painel de Status usando o contrato existente do módulo, sem alterar IDs ou ownership.
 - **Regra preventiva:** ao ampliar uma ficha, conferir campos, ações, status e integração visual contra os templates equivalentes antes de fechar a mudança.
+
+## 2026-11-03 — NPC bloqueado como incapacitado
+
+- **Erro:** fichas de NPC não conseguiam rolar Acerto, Dano e Testes; o serviço avisava que o personagem estava incapacitado.
+- **Causa:** o guard compartilhado de Status confiava em `vida_morte_slayer_dados` mesmo quando um Actor NPC importado carregava essa key legada; a reprodução real foi `CHAERI · ESCONDENDO-SE DE PAPARAZZI` com `dying=true`, embora o Actor fosse classificado como `npc`.
+- **Correção:** `lifeDeathBlocked` ignora essa key somente quando o contrato identifica NPC; Status explícito (`atordoamento`, etc.) continua sendo respeitado. Regressão cobre rolagem e dano.
+- **Regra preventiva:** guards de mecânicas específicas devem validar o contrato do template antes de interpretar keys legadas; não remover o bloqueio de Status legítimo.
+
+## 2026-11-03 — cobertura incompleta das armas normais
+
+- **Erro:** o escopo anterior tratou as quatro armas normais publicadas como se fossem o conjunto completo do sistema; as 22 restantes existiam na fonte e no catálogo, mas não chegavam ao Compêndio distribuído.
+- **Causa:** `tools/build-weapon-sources.mjs` mantinha uma allowlist manual de quatro nomes (`PUBLISHED_WEAPONS`) sem um teste que comparasse a saída contra `data/catalog-source/weapons/`.
+- **Correção:** ampliar a publicação para todas as 26 armas normais canônicas e congelar o contrato com teste de contagem/nomes e template.
+- **Regra preventiva:** inventariar fonte, catálogo, build e pack como camadas separadas; nenhuma allowlist parcial pode representar “todas” sem teste de cobertura.

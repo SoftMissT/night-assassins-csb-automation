@@ -28,12 +28,15 @@ const specialTemplatePath = path.join(
 const specialWeaponTemplate = JSON.parse(await readFile(specialTemplatePath, 'utf8'));
 specialWeaponTemplate._key = `!items!${specialWeaponTemplate._id}`;
 const specialWeaponFieldSchema = collectCsbFieldSchema(specialWeaponTemplate);
-const PUBLISHED_WEAPONS = new Set([
-    'Katana',
-    'Double Blade',
-    'Manoplas / Soqueiras',
-    'Cutelos Gêmeos',
-]);
+const PUBLISHED_WEAPONS = new Set(
+    catalog.documents
+        .filter(
+            (document) =>
+                document.type === 'equippableItem' &&
+                document.system?.props?.arma_categoria !== 'especial'
+        )
+        .map((document) => document.name)
+);
 const BASIC_FOLDER_ID = '02e48b1127bca24a';
 const SPECIAL_FOLDER_ID = '1d69316b98fed3ee';
 const SPECIAL_SOURCE_DIRECTORY = path.join(root, 'data', 'catalog-source', 'weapons', 'especiais');

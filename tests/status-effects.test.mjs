@@ -209,3 +209,24 @@ test('À Beira da Morte bloqueia ataque, defesa, dano, movimento e reação', ()
     assert.equal(capabilities.spiritualActionsAllowed, false);
     assert.equal(capabilities.reactionsAllowed, false);
 });
+
+test('NPC ignora estado legado de Vida e Morte do Slayer, mas mantém Status explícito', () => {
+    const npc = {
+        npc_nome: 'NPC de teste',
+        npc_pdv_base: 10,
+        status_slayer_dados: JSON.stringify({ version: 2, active: [], exhaustion: 0 }),
+        vida_morte_slayer_dados: JSON.stringify({ version: 1, dying: true, dead: false }),
+    };
+    assert.equal(
+        getRollStatusEffects(npc, { test: 'Atletismo', attr: 'FOR' }).blocked,
+        false
+    );
+    assert.equal(getDamageStatusEffects(npc).blocked, false);
+    assert.equal(
+        getRollStatusEffects(
+            { ...npc, status_slayer_dados: JSON.stringify({ active: ['atordoamento'] }) },
+            { test: 'Atletismo', attr: 'FOR' }
+        ).blocked,
+        true
+    );
+});

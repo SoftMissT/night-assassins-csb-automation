@@ -294,16 +294,19 @@ async function specialWeaponCatalog() {
     );
 }
 
+async function normalWeaponSourceNames() {
+    return (await sourceDocuments('../data/catalog-source/weapons/'))
+        .map((document) => document.name)
+        .sort();
+}
+
 describe('catálogo de armas Slayer', () => {
-    it('o Compêndio publica só as quatro armas normais e os dois templates', async () => {
+    it('o Compêndio publica todas as armas normais canônicas e os dois templates', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         const packWeapons = documents.filter((document) => document.type === 'equippableItem');
-        assert.deepEqual(packWeapons.map((item) => item.name).sort(), [
-            'Cutelos Gêmeos',
-            'Double Blade',
-            'Katana',
-            'Manoplas / Soqueiras',
-        ]);
+        const expectedNames = await normalWeaponSourceNames();
+        assert.equal(expectedNames.length, 26);
+        assert.deepEqual(packWeapons.map((item) => item.name).sort(), expectedNames);
         assert.equal(
             documents.filter((document) => document.type === '_equippableItemTemplate').length,
             2
@@ -330,29 +333,11 @@ describe('catálogo de armas Slayer', () => {
             ...documents.filter((document) => document.type === 'equippableItem'),
             ...(await specialWeaponCatalog()).documents,
         ];
-        assert.deepEqual(weapons.map((item) => item.name).sort(), [
-            'Boosted Gear Manoplas do Imperador Dragão Vermelho',
-            'Correntes de Jade Ceifadoras de Chi',
-            'Cutelos Gêmeos',
-            'Cérbero',
-            'Double Blade',
-            'Gilgamesh Yoroi do Sol',
-            'Gumbai Leque do Pilar Quebrado',
-            'Gáe Bolg Espinho do Destino Selado',
-            "Imperator's Edge Estandarte das Cem Legiões",
-            'Impurity Arms Punhos Gêmeos de Kegare',
-            'Katana',
-            'Manoplas / Soqueiras',
-            'Moonfang Runkah',
-            'Orochimaru Jakkojin',
-            'Playful Cloud Sansetsukon da Nuvem Irônica',
-            'Rebellion',
-            'Red Queen Motor Carmesim',
-            'Weal and Woe Lanças Gêmeas de Obsidiana Umbral',
-            'Woldo Lua do Exílio',
-            "Yamato The Rift-Walker's Legacy",
-            'Êxtase Tesoura da Névoa Sagrada',
-        ]);
+        const expectedNames = [
+            ...(await normalWeaponSourceNames()),
+            ...(await specialWeaponCatalog()).documents.map((item) => item.name),
+        ].sort();
+        assert.deepEqual(weapons.map((item) => item.name).sort(), expectedNames);
         assert.ok(weapons.every((item) => item.system?.props?.inventario_categoria === 'arma'));
         assert.ok(
             weapons.every((item) =>
@@ -362,7 +347,7 @@ describe('catálogo de armas Slayer', () => {
         );
         const normalWeapons = weapons.filter((item) => item.system.props.arma_categoria !== 'especial');
         const specialWeapons = weapons.filter((item) => item.system.props.arma_categoria === 'especial');
-        assert.equal(normalWeapons.length, 4);
+        assert.equal(normalWeapons.length, 26);
         assert.equal(specialWeapons.length, 17);
         assert.ok(normalWeapons.every((item) => item.system?.template === 'NAWeaponTpl00001'));
         assert.ok(
@@ -523,7 +508,7 @@ describe('catálogo de armas Slayer', () => {
         assert.match(serialized, /"key":"tab_usar"[^}]+"visibilityFormula":"forma_passiva != 1"/);
     });
 
-    it('publica os vinte e um ícones locais sem campo de arte vertical', async () => {
+    it('publica os quarenta e três ícones locais sem campo de arte vertical', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         const weapons = [
             ...documents.filter((document) => document.type === 'equippableItem'),
@@ -534,7 +519,7 @@ describe('catálogo de armas Slayer', () => {
             item.img?.startsWith('modules/night-assassins-csb-automation/assets/icons/weapons/')
         );
         assert.equal(illustrated.length, 0);
-        assert.equal(customIcons.length, 21);
+        assert.equal(customIcons.length, 43);
         for (const item of customIcons) {
             const relativePath = item.img.replace('modules/night-assassins-csb-automation/', '../');
             await access(new URL(relativePath, import.meta.url));

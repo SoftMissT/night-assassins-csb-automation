@@ -32,7 +32,17 @@ function statusContext(props = {}) {
     };
 }
 
+function isNpcProps(props = {}) {
+    return (
+        Object.prototype.hasOwnProperty.call(props, 'npc_nome') ||
+        Object.prototype.hasOwnProperty.call(props, 'npc_pdv_base') ||
+        Object.prototype.hasOwnProperty.call(props, 'npc_template_atual')
+    );
+}
+
 function lifeDeathBlocked(props = {}) {
+    // NPC não tem contrato de Vida e Morte do Slayer; ignore keys legadas de Actors importados.
+    if (isNpcProps(props)) return false;
     try {
         let raw = props.vida_morte_slayer_dados;
         if (!raw) return false;

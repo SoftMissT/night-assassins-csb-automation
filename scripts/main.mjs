@@ -8,6 +8,9 @@ import { rollHit } from './hit-service.mjs';
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from './damage-service.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { tagItemSheet } from './item-sheet-skin.mjs';
+import { attachItemSheetHud, openItemDamageProfileEditor } from './item-sheet-hud.mjs';
+import { saveItemDamageProfile } from './item-damage-profile.mjs';
+import { openItemCreator } from './item-creator.mjs';
 import {
     createLevelOneValues,
     processLevelGain,
@@ -113,6 +116,7 @@ import {
 import * as slayerProgression from './slayer/progression-service.mjs';
 import * as slayerOrigins from './slayer/origin-contracts.mjs';
 import * as slayerClasses from './slayer/class-contracts.mjs';
+import * as slayerClassRuntime from './slayer/class-runtime.mjs';
 import * as slayerAdvancedStates from './slayer/advanced-states.mjs';
 import * as oniProgression from './oni/progression-service.mjs';
 import { oniReadyCatchUp, registerOniProgressionEngine } from './oni/progression-engine.mjs';
@@ -257,11 +261,17 @@ Hooks.once('ready', async () => {
     Hooks.on('renderActorSheetV2', tagNightAssassinsSheet);
     Hooks.on('renderApplicationV2', (app, element) => {
         // ItemSheetV2 também expõe `actor` (o dono): item nunca leva a pele do Actor.
-        if (app?.document?.documentName === 'Item') return tagItemSheet(app, element);
+        if (app?.document?.documentName === 'Item') {
+            tagItemSheet(app, element);
+            return attachItemSheetHud(app, element);
+        }
         if (app?.actor) tagNightAssassinsSheet(app, element);
     });
     // Ficha de item do CSB 6.1 é ApplicationV1 (`EquippableItemSheet`).
-    Hooks.on('renderItemSheet', tagItemSheet);
+    Hooks.on('renderItemSheet', (app, element) => {
+        tagItemSheet(app, element);
+        attachItemSheetHud(app, element);
+    });
     if (game.settings.get(MODULE_ID, SETTINGS.enableSheetAutomation)) {
         Hooks.on('updateActor', handleActorUpdate);
         console.log(`[${MODULE_ID}] Hook updateActor REGISTRADO.`);
@@ -356,6 +366,9 @@ Hooks.once('ready', async () => {
             launchBreathForm,
             openBreathingManager,
             openDamagePresetManager,
+            openItemDamageProfileEditor,
+            saveItemDamageProfile,
+            openItemCreator,
             attemptSnowRestrictionEscape,
             triggerSnowOpportunityAttack,
             openLifeDeathManager,
@@ -382,6 +395,7 @@ Hooks.once('ready', async () => {
                 progression: slayerProgression,
                 origins: slayerOrigins,
                 classes: slayerClasses,
+                runtime: slayerClassRuntime,
                 advancedStates: slayerAdvancedStates,
                 openAdvancedStatesManager,
             },

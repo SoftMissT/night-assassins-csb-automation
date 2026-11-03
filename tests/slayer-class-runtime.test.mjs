@@ -20,6 +20,11 @@ import {
     resetClassTurnState,
     resetClassRoundState,
     classEventContext,
+    classAbilityAtLevel,
+    dualBreathingRankPlan,
+    dualBreathingCompositeCost,
+    companionOniRankPlan,
+    companionOniSocialBonus,
 } from '../scripts/slayer/class-runtime.mjs';
 
 describe('class-runtime - rank resolution', () => {
@@ -40,6 +45,39 @@ describe('class-runtime - rank resolution', () => {
     it('nivel 12+ rank SS', () => {
         assert.equal(resolveClassRank('classe_mb', 12), 'SS');
         assert.equal(resolveClassRank('classe_mb', 14), 'SS');
+    });
+});
+
+describe('class-runtime - classes Slayer complementares', () => {
+    it('resolve a habilidade da classe de duas respirações pela progressão oficial', () => {
+        const result = classAbilityAtLevel('classe_usuario_de_duas_resp', 8);
+        assert.equal(result.rank, 'A');
+        assert.equal(result.ability.id, 'tecnica_derivada');
+        assert.equal(result.ability.derivedTechniques, 1);
+        assert.equal(result.ability.extraCost.pdr, 1);
+    });
+
+    it('expõe o plano de Forma Composta e calcula seu custo oficial', () => {
+        const plan = dualBreathingRankPlan('SS');
+        assert.equal(plan.id, 'forma_composta');
+        assert.equal(plan.requiresOnePrice, true);
+        assert.equal(dualBreathingCompositeCost(4, 2, 3), 9);
+    });
+
+    it('resolve o plano do Companheiro de Oni e o bônus social do rank S', () => {
+        const plan = companionOniRankPlan('S');
+        assert.equal(plan.id, 'presenca_intimidadora');
+        assert.equal(companionOniSocialBonus('S'), 2);
+        assert.equal(companionOniSocialBonus('C'), 0);
+    });
+
+    it('recusa rank inexistente sem inventar habilidade', () => {
+        assert.deepEqual(classAbilityAtLevel('classe_usuario_de_duas_resp', 2), {
+            rank: null,
+            ability: null,
+        });
+        assert.equal(dualBreathingRankPlan('X'), null);
+        assert.equal(companionOniRankPlan('X'), null);
     });
 });
 

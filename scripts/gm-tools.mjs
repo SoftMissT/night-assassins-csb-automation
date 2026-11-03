@@ -105,6 +105,15 @@ export const GM_TOOLS = Object.freeze([
         needs: 'actor',
         run: async (_api, actor) => diagnoseDuplicateWeapons(actor),
     },
+    {
+        key: 'create-item',
+        group: 'mundo',
+        icon: 'fa-box-open',
+        label: 'Criar Item do catálogo',
+        needs: 'actor',
+        api: 'openItemCreator',
+        run: manager('openItemCreator'),
+    },
 ]);
 
 function moduleApi() {

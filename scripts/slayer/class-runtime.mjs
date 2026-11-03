@@ -1,4 +1,8 @@
-import { classRankAtLevel, masterBattleLevelElevenPlan } from './class-contracts.mjs';
+import {
+    classRankAtLevel,
+    masterBattleLevelElevenPlan,
+    slayerClassContract,
+} from './class-contracts.mjs';
 
 const RANK_ORDER = ['C', 'B', 'A', 'S', 'SS'];
 const RANK_LEVELS = Object.freeze({ C: 4, B: 6, A: 8, S: 11, SS: 12 });
@@ -11,6 +15,36 @@ function integer(value, fallback = 0) {
 export function resolveClassRank(classKey, level) {
     if (!classKey) return null;
     return classRankAtLevel(level);
+}
+
+export function classAbilityAtLevel(classKey, level) {
+    const rank = resolveClassRank(classKey, level);
+    if (!rank) return { rank: null, ability: null };
+    return { rank, ability: structuredClone(slayerClassContract(classKey).ranks[rank]) };
+}
+
+export function dualBreathingRankPlan(rank) {
+    const normalized = String(rank ?? '').toUpperCase();
+    if (!RANK_ORDER.includes(normalized)) return null;
+    return structuredClone(slayerClassContract('classe_usuario_de_duas_resp').ranks[normalized]);
+}
+
+export function dualBreathingCompositeCost(primaryCost, secondaryCost, compatibility, pdr = 2) {
+    const primary = Math.max(0, integer(primaryCost));
+    const secondary = Math.max(0, integer(secondaryCost));
+    const bond = Math.max(0, integer(compatibility));
+    const extra = Math.max(0, integer(pdr));
+    return Math.max(primary, secondary) + bond + extra;
+}
+
+export function companionOniRankPlan(rank) {
+    const normalized = String(rank ?? '').toUpperCase();
+    if (!RANK_ORDER.includes(normalized)) return null;
+    return structuredClone(slayerClassContract('classe_companheiro_oni').ranks[normalized]);
+}
+
+export function companionOniSocialBonus(rank) {
+    return companionOniRankPlan(rank)?.bonusCar ?? 0;
 }
 
 export function classStateKey(classKey, suffix) {

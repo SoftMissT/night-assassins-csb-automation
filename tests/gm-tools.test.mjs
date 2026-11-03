@@ -41,7 +41,7 @@ describe('gm-tools: registro', () => {
             'rest', 'status', 'actions', 'resistances', 'life-death', 'recovery', 'advanced-states',
             'interlude', 'oni-regen', 'attribute-snapshot',
             'ceremony', 'resistance-awakening', 'consequence', 'awaken',
-            'diagnostic', 'repair-weapons', 'repair-breathings', 'duplicate-weapons',
+            'diagnostic', 'repair-weapons', 'repair-breathings', 'duplicate-weapons', 'create-item',
         ])
             assert.ok(keys.includes(key), key);
     });
@@ -151,6 +151,16 @@ describe('gm-tools: execução', () => {
         const notices = setup({ api: { openRestManager: () => { throw new Error('falhou aqui'); } } });
         assert.equal(await runGmTool('rest'), false);
         assert.match(notices.error[0], /falhou aqui/u);
+    });
+
+    it('criador de Item usa o Actor selecionado e exige API do módulo', async () => {
+        const calls = [];
+        setup({
+            controlled: [token('Actor.a')],
+            api: { openItemCreator: (options) => calls.push(options) },
+        });
+        assert.equal(await runGmTool('create-item'), true);
+        assert.deepEqual(calls, [{ actorUuid: 'Actor.a' }]);
     });
 
     it('snapshot de atributos usa o nível da ficha', async () => {

@@ -3580,6 +3580,55 @@
     color: var(--na-muted);
 }
 
+.na-item-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    margin: 0 0 0.7rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--na-item-accent) 35%, var(--na-line));
+    border-left: 3px solid var(--na-item-accent);
+    background: linear-gradient(90deg, var(--na-item-tint), transparent 78%);
+}
+
+.na-item-toolbar-label {
+    margin-right: auto;
+    color: var(--na-item-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.na-item-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--na-item-accent) 42%, var(--na-line));
+    color: var(--na-text);
+    background: color-mix(in srgb, var(--na-item-accent) 8%, transparent);
+    cursor: pointer;
+}
+
+.na-item-action:hover,
+.na-item-action:focus-visible {
+    border-color: var(--na-item-accent);
+    background: color-mix(in srgb, var(--na-item-accent) 18%, transparent);
+}
+
+.na-item-action-primary {
+    border-color: var(--na-item-accent);
+    color: var(--na-item-accent);
+}
+
+.na-item-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
 /* Ação do item (Usar Forma, Usar Kekkijutsu, rolar arma). */
 .na-item .custom-system-sheet-button,
 .na-item button.custom-system-label-root {

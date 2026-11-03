@@ -10,7 +10,7 @@
 
 Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**, construído sobre o **Custom System Builder**. Ele distribui os templates oficiais, compêndios e macros usados para atributos, progressão, combate, Respirações, Kekkijutsus e manutenção dos dados do mundo.
 
-Versão declarada no manifesto: **0.11.87**.
+Versão declarada no manifesto: **0.12.2**.
 
 ## Imagem do módulo
 

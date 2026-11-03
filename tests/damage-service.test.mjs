@@ -862,6 +862,56 @@ describe('damage-service', () => {
         assert.deepEqual(formulas, ['1d10 + 14']);
     });
 
+    it('usa o perfil de dano salvo no Item como entrada inicial', async () => {
+        game.user.targets = new Set();
+        const actor = makeActor({
+            props: {
+                nvl_num: 2,
+                for_display: 4,
+                dex_display: 3,
+                nome_slayer: 'Slayer',
+                pdv_slayer_total_valor: 20,
+            },
+        });
+        actor.documentName = 'Actor';
+        const item = {
+            name: 'Katana',
+            parent: actor,
+            system: {
+                props: {
+                    arma_nome: 'Katana',
+                    arma_categoria: 'basica',
+                    arma_perfis_ataque: [{ nome: 'Base', dano_fixo: 3, atributos: [], tipos_dano: ['cortante'] }],
+                    na_dano_perfil: JSON.stringify({
+                        version: 1,
+                        entries: [{ tipoAcao: 'ataque', dado: '1d8', fixo: 2, attrs: [], tiposDano: ['cortante'] }],
+                    }),
+                },
+            },
+        };
+        const previousWait = foundry.applications.api.DialogV2.wait;
+        const contents = [];
+        foundry.applications.api.DialogV2.wait = async (options) => {
+            contents.push(options.content);
+            return {
+                nome: 'Katana',
+                pdrGasto: 0,
+                entradas: [{ dado: '1d8', fixo: 2, selAttrs: [], selTiposDano: ['cortante'], tipoAcao: 'ataque' }],
+            };
+        };
+        try {
+            Roll.create = (formula) => ({
+                evaluate: async () => ({ total: 7, dice: [] }),
+                formula,
+            });
+            await rollWeaponItem({ item });
+            assert.match(contents[0], /1d8/);
+            assert.doesNotMatch(contents[0], /3 \+/, 'não voltou ao perfil canônico antigo');
+        } finally {
+            foundry.applications.api.DialogV2.wait = previousWait;
+        }
+    });
+
     it('soma FDV ao maior valor entre metade de FOR ou DEX', async () => {
         game.user.targets = new Set();
         const actor = makeActor({

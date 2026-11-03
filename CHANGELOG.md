@@ -1,6 +1,14 @@
 # Changelog
 ## Não lançado
 
+## v0.12.2 — 2026-11-03 — HUD de Item, perfis de dano e criador de Items
+
+- HUD de armas agora oferece rolar ataque, rolar dano, salvar perfil de dano no próprio Item e recarregar munição quando aplicável.
+- Perfil `na_dano_perfil` valida entradas e fórmulas antes de persistir; presets do Actor continuam disponíveis.
+- Controle GM ganhou **Criar Item do catálogo**, usando o Compêndio canônico e preservando o template do mundo.
+- Runtime expõe planos testáveis para Usuário de Duas Respirações e Companheiro de Oni, sem inventar efeitos fora do catálogo.
+- QA renderizado no Foundry v14.367 ainda é necessário para fechar a HUD e o fluxo de criação.
+
 ## v0.12.1 — 2026-11-03 — armas normais completas e correção de NPC
 
 - `armas-slayer` passa a publicar as 26 armas normais canônicas do catálogo; as 17 armas especiais continuam no catálogo interno.

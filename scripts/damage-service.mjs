@@ -11,6 +11,7 @@ import {
     presetGroupKey,
 } from './damage-preset-service.mjs';
 import { deleteDamagePreset, saveDamagePreset } from './dialogs/damage-preset-manager.mjs';
+import { itemDamageProfileFromProps } from './item-damage-profile.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
 import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
 import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
@@ -1717,14 +1718,22 @@ export async function rollWeaponItem(options = {}) {
         }));
     }
 
+    const savedProfile = !specialWeaponItem ? itemDamageProfileFromProps(itemProps) : null;
     const result = await rollDamage({
         actor,
         nome: itemProps.arma_nome || item.name,
-        weaponProfiles: profiles,
+        ...(savedProfile
+            ? {
+                  entradas: savedProfile.entries,
+                  builder: false,
+              }
+            : {
+                  weaponProfiles: profiles,
+                  weaponAttackIndex: Number.isInteger(options.weaponAttackIndex)
+                      ? options.weaponAttackIndex
+                      : null,
+              }),
         weaponItem: item,
-        weaponAttackIndex: Number.isInteger(options.weaponAttackIndex)
-            ? options.weaponAttackIndex
-            : null,
         tipoAcao: 'ataque',
         critical: options.critical === true,
         actionId: options.actionId,

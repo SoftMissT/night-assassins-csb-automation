@@ -111,3 +111,21 @@
 - **Causa:** useBreathForm passava formaId: props.forma_id, mas props era a ficha do ator; os testes do pipeline injetam formaId direto e nunca passavam pelo useBreathForm.
 - **Correção:** formaId lido de item.system.props.forma_id, com teste de regressão; o pipeline grava o PDR na key do ator (pdrSpentKey).
 - **Regra preventiva:** toda rota nova testada com fake precisa de pelo menos um uso real no Foundry (ou um teste que passe pela função pública) antes de virar "migrada".
+
+## 2026-11-16 — Respirações ausentes no Compêndio
+- **Erro:** o operador informou que as Respirações de Som, Chamas, Vento, Neve, Metal, Pedra, Água, Raposa e Eclipse não aparecem no Compêndio.
+- **Causa:** o build passou a filtrar `packDocuments` para somente `NABreathTpl00001`; os testes e o pack LevelDB perpetuaram essa decisão, embora os Items existissem no catálogo interno.
+- **Correção:** o gerador voltou a materializar `catalog.documents` inteiro no pack; o catálogo interno continua como espelho de runtime, e os testes agora verificam o Compêndio real.
+- **Regra preventiva:** toda Respiração deve ser conferida em fonte, catálogo, gerador, pack e manifesto; testes estáticos não substituem confirmar o Compêndio no Foundry.
+
+## 2026-11-16 — Armas Especiais fora do Compêndio
+- **Erro:** o operador reforçou que Armas Especiais também devem permanecer fora do Compêndio.
+- **Causa:** a fronteira entre armas normais publicadas e dados especiais internos precisa ser conferida no gerador e no pack, não apenas na ficha visual.
+- **Correção:** auditar `build-weapon-sources.mjs`, o catálogo interno e os testes; remover qualquer publicação especial sem tocar nas armas normais.
+- **Regra preventiva:** o pack de armas publica somente armas normais canônicas; Armas Especiais ficam no catálogo interno e precisam de teste explícito de ausência no pack.
+
+## 2026-11-16 — Respirações confirmadas antes do release
+- **Erro:** a entrega das Armas Especiais podia deixar dúvida sobre as Respirações publicadas no mesmo release.
+- **Causa:** os packs são gerados por pipelines separados, e validar um não prova a presença do outro.
+- **Correção:** conferir o pack de Respirações independentemente, com as 11 Respirações e suas Formas, antes do commit e do release.
+- **Regra preventiva:** nenhum release é declarado pronto sem verificar cada pack alterado, seus nomes publicados e os assets do manifesto.

@@ -45,7 +45,7 @@ function owner({ isOwner = true } = {}) {
     };
 }
 
-describe('Formas de Respiração fora do Compêndio', () => {
+describe('Formas de Respiração e espelho interno', () => {
     it('o catálogo interno distribuído traz as Formas das 11 Respirações publicadas', async () => {
         const catalog = await loadBreathingCatalog();
         const names = new Set(

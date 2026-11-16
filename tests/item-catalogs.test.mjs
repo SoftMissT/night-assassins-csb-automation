@@ -22,25 +22,18 @@ async function sourceDocuments(directory) {
     );
 }
 
-/**
- * Respirações fora do Compêndio (2026-10-25): o pack leva só o template de Forma
- * e o resto vive em `catalogs/breathing-items.json`. A união preserva o contrato.
- */
+/** O pack contém os documentos publicados; o catálogo interno é um espelho de runtime. */
 async function breathingDocuments() {
-    const pack = await sourceDocuments('../build/compendium/respiracoes/');
-    const internal = JSON.parse(
-        await readFile(new URL('../catalogs/breathing-items.json', import.meta.url), 'utf8')
-    );
-    return [...pack, ...internal.documents];
+    return sourceDocuments('../build/compendium/respiracoes/');
 }
 
 describe('pack de Respirações', () => {
-    it('o Compêndio publica só o template de Forma', async () => {
+    it('o Compêndio publica template, pastas, hubs e Formas', async () => {
         const pack = await sourceDocuments('../build/compendium/respiracoes/');
-        assert.deepEqual(
-            pack.map((document) => document._id),
-            ['NABreathTpl00001']
-        );
+        assert.ok(pack.length > 1);
+        assert.ok(pack.some((document) => document._id === 'NABreathTpl00001'));
+        assert.ok(pack.some((document) => document.type === 'Item'));
+        assert.ok(pack.some((document) => document.type === 'equippableItem'));
     });
 });
 
@@ -298,17 +291,18 @@ async function normalWeaponSourceNames() {
 }
 
 describe('catálogo de armas Slayer', () => {
-    it('o Compêndio publica todas as armas normais canônicas e os dois templates', async () => {
+    it('o Compêndio publica todas as armas normais canônicas e somente o template normal', async () => {
         const documents = await sourceDocuments('../build/compendium/armas-slayer/');
         const packWeapons = documents.filter((document) => document.type === 'equippableItem');
         const expectedNames = await normalWeaponSourceNames();
         assert.equal(expectedNames.length, 26);
         assert.deepEqual(packWeapons.map((item) => item.name).sort(), expectedNames);
+        assert.equal(documents.filter((document) => document.type === '_equippableItemTemplate').length, 1);
         assert.equal(
-            documents.filter((document) => document.type === '_equippableItemTemplate').length,
-            2
+            documents.some((document) => document._id === 'NASpecialWeaponTpl00001'),
+            false,
+            'o template de Arma Especial também fica fora do Compêndio'
         );
-        assert.ok(documents.some((document) => document._id === 'NASpecialWeaponTpl00001'));
         const folders = documents.filter((document) => String(document._key).startsWith('!folders!'));
         assert.deepEqual(
             folders.map((folder) => folder._id),
@@ -481,8 +475,11 @@ describe('catálogo de armas Slayer', () => {
             ),
             'o resumo continua sendo gerado nos Items publicados para alimentar a tabela do Actor'
         );
-        const specialTemplate = documents.find(
-            (document) => document._id === 'NASpecialWeaponTpl00001'
+        const specialTemplate = JSON.parse(
+            await readFile(
+                new URL('../src/templates/items/special-slayer-weapon-template.json', import.meta.url),
+                'utf8'
+            )
         );
         const specialSerialized = JSON.stringify(specialTemplate.system);
         // Contrato v0.3.2: o template especial expõe áreas próprias para

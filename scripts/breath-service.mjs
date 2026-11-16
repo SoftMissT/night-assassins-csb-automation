@@ -1395,7 +1395,7 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
         (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
     );
     if (forms.length === 0) {
-        // Formas fora do Compêndio: importa uma vez do catálogo interno para a
+        // Importa uma vez do espelho interno para a
         // ficha, para o uuid valer no encadeamento de ataque.
         const { importBreathingForms } = await import('./breathing-catalog.mjs');
         const imported = await importBreathingForms(actor, breathingName);

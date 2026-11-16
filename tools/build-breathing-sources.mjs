@@ -354,18 +354,15 @@ for (let level = 1; level <= 4; level += 1) {
     });
 }
 catalog.documents.push(flameHub);
-// Respirações fora do Compêndio (2026-10-25): o pack publica só o template de
-// Forma; Formas, hub e pastas seguem no módulo para o reparo e a reserva de
-// runtime (`breath-migration`, `breath-service`).
-const isPackDocument = (document) => document._id === templateDocument._id;
 const internalCatalog = {
     format: 1,
     generatedBy: 'tools/build-breathing-sources.mjs',
-    documents: catalog.documents.filter((document) => !isPackDocument(document)),
+    documents: catalog.documents.filter((document) => document._id !== templateDocument._id),
 };
 await writeFileIfChanged(internalCatalogPath, `${JSON.stringify(internalCatalog, null, 2)}\n`);
-const packDocuments = catalog.documents.filter(isPackDocument);
-if (packDocuments.length !== 1) throw new Error('Template de Forma ausente do pack.');
+const packDocuments = catalog.documents;
+if (!packDocuments.some((document) => document._id === templateDocument._id))
+    throw new Error('Template de Forma ausente do pack.');
 await rm(outputDirectory, {
     recursive: true,
     force: true,
@@ -388,5 +385,5 @@ const itemCount = internalCatalog.documents.filter(
     (document) => document._key?.startsWith('!items!') && document.type !== 'Item'
 ).length;
 console.info(
-    `Pack de Respirações: só o template. Catálogo interno: ${itemCount} Items em ${folderCount} pastas.`
+    `Pack de Respirações: ${packDocuments.length} documentos. Catálogo interno: ${itemCount} Items em ${folderCount} pastas.`
 );

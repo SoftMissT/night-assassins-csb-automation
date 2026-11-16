@@ -1,10 +1,9 @@
 /**
- * @fileoverview Formas de Respiração fora do Compêndio (2026-10-25).
+ * @fileoverview Espelho interno das Formas de Respiração publicadas.
  *
- * O pack `night-assassins-respiracoes` publica só o template de Forma. As Formas,
- * o hub e as pastas vivem em `catalogs/breathing-items.json`, carregado sob
- * demanda, e servem a dois fluxos: o reparo de Items do mundo e a importação
- * única para a ficha quando o hub é aberto sem nenhuma Forma.
+ * O pack `night-assassins-respiracoes` publica os mesmos documentos. O espelho em
+ * `catalogs/breathing-items.json`, carregado sob demanda, serve ao reparo de Items
+ * do mundo e à importação única para a ficha quando o hub é aberto sem Formas.
  */
 
 import { MODULE_ID } from './constants.mjs';

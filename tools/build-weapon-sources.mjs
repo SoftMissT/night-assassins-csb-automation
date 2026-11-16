@@ -350,7 +350,9 @@ if (specialCatalog.documents.length !== PUBLISHED_SPECIAL_WEAPONS.size)
         `Catálogo de armas especiais incompleto: ${specialCatalog.documents.length}/${PUBLISHED_SPECIAL_WEAPONS.size}.`
     );
 await writeFileIfChanged(specialCatalogPath, `${JSON.stringify(specialCatalog, null, 2)}\n`);
-const packDocuments = documents.filter((document) => !isSpecialItem(document));
+const packDocuments = documents.filter(
+    (document) => !isSpecialItem(document) && document._id !== specialWeaponTemplate._id
+);
 
 await mkdir(outputDirectory, {
     recursive: true,

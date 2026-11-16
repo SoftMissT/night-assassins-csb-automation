@@ -130,7 +130,7 @@ describe('breath-migration', () => {
                 },
             },
         ];
-        // Respirações fora do Compêndio: o reparo lê o catálogo interno, nunca o pack.
+        // O reparo lê o espelho interno, sem depender do pack durante a migração.
         globalThis.game = {
             user: { isGM: true },
             packs: {

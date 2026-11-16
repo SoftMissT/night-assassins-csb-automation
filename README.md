@@ -10,7 +10,7 @@
 
 Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**, construído sobre o **Custom System Builder**. Ele distribui os templates oficiais, compêndios e macros usados para atributos, progressão, combate, Respirações, Kekkijutsus e manutenção dos dados do mundo.
 
-Versão declarada no manifesto: **0.12.5**.
+Versão declarada no manifesto: **0.12.6**.
 
 ## Imagem do módulo
 
@@ -85,24 +85,17 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 - Oni N1–N20: validado no Foundry; ajustes mecânicos adicionais continuam em desenvolvimento.
 - Gate de desempenho: aprovado após a remoção das varreduras pesadas do caminho crítico.
 - Armas normais Slayer/NPC: contrato e testes automatizados concluídos; validação runtime no Foundry ainda pendente.
-- Armas especiais: os dados ficam num catálogo interno do módulo (`catalogs/`), usado pela Dupla Alma; o compêndio de armas guarda só armas normais e os templates de Item. Validação runtime ainda pendente.
+- Armas especiais: os dados ficam num catálogo interno do módulo (`catalogs/`), usado pela Dupla Alma; o compêndio de armas guarda só armas normais e o template de arma normal. Validação runtime ainda pendente.
 - Tela de erro do CSB: o template NPC e o Slayer protegem o filtro de `inventario_categoria`; mundos antigos precisam reimportar o template para receber a fórmula corrigida.
 - v0.11.93 (Bônus Fixos, Kekkijutsu no Oni, Ferida no PDV do Oni e fichas reorganizadas): testes automatizados concluídos; validação no Foundry pendente. Reimporte as quatro fichas de ator.
 
 ## Respirações publicadas
 
-Somente Respirações com serviço de estado dedicado, testes e auditoria contra a fonte oficial entram no catálogo interno (`catalogs/breathing-items.json`); o hub da ficha importa as Formas dele sob demanda.
+O Compêndio `night-assassins-respiracoes` publica o template, as pastas, os hubs e as Formas das 11 Respirações aprovadas. `catalogs/breathing-items.json` permanece como espelho interno para o reparo de Items e a importação sob demanda na ficha.
 
-| Respiração | Conteúdo publicado               | Estado   |
-| ---------- | -------------------------------- | -------- |
-| **Chamas** | 9 Estilos + Esquentar            | Auditada |
-| **Pedra**  | 5 Estilos                        | Auditada |
-| **Névoa**  | 8 Formas + 3 Padrões             | Auditada |
-| **Metal**  | 5 Formas + Martelo do Julgamento | Auditada |
-| **Neve**   | 7 Formas + Congelar              | Auditada |
-| **Vento**  | 9 Estilos + Sangue Especial      | Auditada |
-
-O catálogo de trabalho contém outras Respirações, mas elas não são publicadas até receberem motor, auditoria e testes equivalentes.
+| Respirações publicadas |
+| ---------------------- |
+| **Água**, **Chamas**, **Eclipse**, **Metal**, **Neve**, **Névoa**, **Pedra**, **Raposa**, **Som**, **Sonhos** e **Vento** |
 
 ## Sistemas e automações
 
@@ -123,7 +116,7 @@ O catálogo de trabalho contém outras Respirações, mas elas não são publica
 | **Macros Night Assassins**               | Macros chamadas pelos templates (por UUID)           |
 | **Night Assassins Templates de Ficha**   | Slayer, Oni, Oni Minion e NPC                        |
 | **Night Assassin's Respirações**         | Template de Respiração; as Formas são importadas do catálogo pelo hub da ficha |
-| **Night Assassin's Armas dos Caçadores** | Armas normais e templates de Item (arma, especial, Forma, Kekkijutsu) |
+| **Night Assassin's Armas dos Caçadores** | Armas normais e template de Arma normal |
 | **Night Assassin's Arte**                | Assets e ícones distribuídos pelo módulo             |
 
 Os geradores consomem as fontes versionadas do projeto. Arquivos gerados em `build/` não são fonte de verdade e não devem ser editados manualmente. O `release.yml` reempacota os compêndios a partir de `src/` e `macros/` antes de publicar.

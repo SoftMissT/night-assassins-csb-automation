@@ -1,4 +1,10 @@
 # Changelog
+## v0.12.6 — 2026-11-16 — Compêndios de Respirações e Armas Especiais
+
+- **Respirações no Compêndio:** o pack publica template, pastas, hubs e Formas das 11 Respirações aprovadas (Água, Chamas, Eclipse, Metal, Neve, Névoa, Pedra, Raposa, Som, Sonhos e Vento). `catalogs/breathing-items.json` continua como espelho interno para reparo e importação sob demanda.
+- **Armas Especiais fora do Compêndio:** o pack de armas publica somente as 26 armas normais e o template normal; as 17 Armas Especiais permanecem em `catalogs/special-weapons.json`.
+- **Testes:** `node --test` 1545/1545; validação renderizada no Foundry ainda pendente.
+
 ## v0.12.5 — 2026-11-16 — fichas no padrão do Slayer, Formas que voltam a funcionar e Status com dano contínuo
 
 - **Formas de Pedra, Som, Sonhos, Raposa e Eclipse voltam a funcionar.** Desde a v0.11.85 toda Forma dessas Respirações respondia "Forma desconhecida": `useBreathForm` passava o `forma_id` da ficha do ator, não do item. Os testes do pipeline injetavam o id direto e não pegavam o erro. Teste de regressão novo.

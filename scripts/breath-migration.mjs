@@ -171,7 +171,7 @@ export async function repairBreathingItems({
     if (!globalThis.game?.user?.isGM)
         throw new Error('Somente o GM pode corrigir Respirações dos Caçadores.');
     if (actors.length === 0) return { actors: 0, items: 0 };
-    // Formas fora do Compêndio desde 2026-10-25: a fonte canônica é o catálogo interno.
+    // O espelho interno continua sendo a fonte do reparo, mesmo com as Formas no pack.
     const canonicalDocuments = documents ?? (await loadBreathingCatalog());
     const { byName, byId } = buildCanonicalBreathMap(canonicalDocuments);
 

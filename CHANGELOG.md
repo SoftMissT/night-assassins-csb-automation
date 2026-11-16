@@ -1,5 +1,13 @@
 # Changelog
-## Não lançado
+## v0.12.3 — 2026-11-16 — ficha de NPC: painel de vida, notas e Respiração da Recuperação
+
+- **Ficha de NPC redesenhada.** Corpo reorganizado na ordem de uso: Vida, ajuste manual (recolhido), Atributos, Combate, Armas, **Notas** e **Configuração** (recolhida e só para GM, com atributos base, PDV/PDR base, nível da Recuperação e Bônus Fixos). A aba "CONFIGS/DADOS" saiu.
+- **Painel de Vida:** botões **DANO** e **CURAR** pedem o valor num diálogo e usam o relay existente (`applyOniDamage` e `applyHealTo`, que já mapeiam NPC para `npc_pdv_dano` e `npc_pdv_curado`); **RECUPERAÇÃO** chama a macro de compêndio `NARecovery000001`. API nova: `module.api.openNpcVitals({ actorUuid, mode })` (`scripts/npc-vitals-service.mjs`).
+- **Notas:** Personalidade, Tom / Maneira de falar e História / Contexto saíram da ficha; entra `npc_notas`, campo novo e vazio. O texto antigo continua salvo nas keys `npc_personalidade*` do ator, só não aparece.
+- **Respiração da Recuperação no NPC:** dropdown `npc_recuperacao_nivel` (Sem Respiração, Nível 1 a 14). `recovery-breathing-service.mjs` escolhe as keys por `actorKind`: o NPC lê `npc_*` e grava a cura em `npc_pdv_curado` e `npc_pdr_recuperado`; o Slayer não mudou. A tabela de dados e CDs é a mesma. O NPC pode usar a técnica com 0 PDV (não há fluxo de Vida e Morte para NPC); a Última Chance automática continua só no Slayer.
+- Correção de caixa nos rótulos ("RECUPERADO", "Bloqueio"). `templateSystemUniqueVersion` 3711888120 → 3711888121.
+- Testes: `tests/npc-sheet-vitals-recovery.test.mjs` (12) e `tests/distribution.test.mjs` atualizado; `node --test` 1354/1354. SPEC em `specs/2026-11-16-ficha-npc-recuperacao.md` (a pasta `specs/` é ignorada pelo git).
+- **Sem validação no Foundry.** Reimportar o template do NPC no mundo e testar DANO, CURAR e RECUPERAÇÃO (níveis 1, 7 e 14). `build/` e `packs/` não foram regenerados.
 
 ## v0.12.2 — 2026-11-03 — HUD de Item, perfis de dano e criador de Items
 

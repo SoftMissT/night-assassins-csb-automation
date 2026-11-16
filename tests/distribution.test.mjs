@@ -193,20 +193,17 @@ describe('module distribution', () => {
             )
         );
         const serialized = JSON.stringify(actor.system);
-        // 2026-08-25: ficha NPC substituída pelo layout real exportado do Foundry pelo
-        // operador (template_npc_atual_que eu fiz.json). As keys narrativas antigas
-        // (npc_tom/npc_aparencia/npc_contexto/npc_notas_gm) não existem mais nesse
-        // layout os três blocos de texto livre agora são npc_personalidade
-        // ("Personalidade"), npc_personalidade_copy1 ("História / Contexto") e
-        // npc_personalidade_copy1_copy2 ("Tom / Maneira de falar"). Nomes de key
-        // preservados exatamente como o operador montou (fora de escopo renomear).
+        // 2026-11-16: Personalidade, Tom e História saíram da ficha de NPC; entra o campo
+        // NOTAS (npc_notas) e a configuração fica num painel recolhido (npc_configuracao).
+        for (const key of ['npc_nome', 'npc_notas', 'npc_configuracao', 'npc_recuperacao_nivel']) {
+            assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
+        }
         for (const key of [
-            'npc_nome',
             'npc_personalidade',
             'npc_personalidade_copy1',
             'npc_personalidade_copy1_copy2',
         ]) {
-            assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
+            assert.doesNotMatch(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
         }
         assert.deepEqual(actor.system.attributeBar, {});
         assert.deepEqual(actor.items, []);

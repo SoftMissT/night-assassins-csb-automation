@@ -7,6 +7,7 @@ import { rollTest } from './roll-service.mjs';
 import { rollHit } from './hit-service.mjs';
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from './damage-service.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
+import { openNpcVitals } from './npc-vitals-service.mjs';
 import { tagItemSheet } from './item-sheet-skin.mjs';
 import { attachItemSheetHud, openItemDamageProfileEditor } from './item-sheet-hud.mjs';
 import { saveItemDamageProfile } from './item-damage-profile.mjs';
@@ -355,6 +356,7 @@ Hooks.once('ready', async () => {
             resolveRestTier,
             restEligibleStatuses,
             openRecoveryManager,
+            openNpcVitals,
             attemptLastChance,
             openCombatManeuverManager,
             useCombatManeuver,

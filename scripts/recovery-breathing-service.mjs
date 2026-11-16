@@ -1,5 +1,6 @@
 /** Respiração da Recuperação — Kaifuku no Kokyu. */
 import { consumeSlayerActions } from './action-service.mjs';
+import { actorKind } from './actor-kind.mjs';
 import { parseNumber } from './parsing.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
@@ -77,7 +78,17 @@ const LEVELS = Object.freeze({
     },
 });
 const n = (value) => Math.max(0, Math.trunc(parseNumber(value)));
-const levelOf = (props = {}) => Math.min(14, Math.max(1, n(props.nvl_num) || 1));
+const isNpcProps = (props = {}) => actorKind({ system: { props } }) === 'npc';
+// Slayer: nível do personagem (mínimo 1). NPC: dropdown `npc_recuperacao_nivel` ("rec_nivel_0".."rec_nivel_14"),
+// onde 0 significa que o NPC não tem a técnica.
+const levelOf = (props = {}) =>
+    isNpcProps(props)
+        ? Math.min(14, n(props.npc_recuperacao_nivel))
+        : Math.min(14, Math.max(1, n(props.nvl_num) || 1));
+const healKeys = (props = {}) =>
+    isNpcProps(props)
+        ? { pdv: 'system.props.npc_pdv_curado', pdr: 'system.props.npc_pdr_recuperado' }
+        : { pdv: 'system.props.pdv_slayer_curado', pdr: 'system.props.pdr_slayer_curado' };
 const attr = (props, key) => n(props[`${key}_display`] ?? props[key]);
 export const RECOVERY_FORMS = Object.freeze({
     recuperacao: {
@@ -92,7 +103,9 @@ export function recoveryBreathingLevel(props = {}) {
     return levelOf(props);
 }
 export function hasRecoveryBreathing(actor) {
-    return actor?.type === 'slayer' || actor?.system?.props?.nvl_num !== undefined;
+    const props = actor?.system?.props ?? {};
+    if (isNpcProps(props)) return levelOf(props) >= 1;
+    return actor?.type === 'slayer' || props.nvl_num !== undefined;
 }
 export function recoveryFormDefinition(formId = 'recuperacao', level) {
     const normalized = formId === 'coagulação' || formId === 'coagulacao' ? 'recuperacao' : formId;
@@ -138,6 +151,19 @@ function statePatch(state) {
     };
 }
 export function currentRecoveryResources(props = {}) {
+    if (isNpcProps(props)) {
+        const pdvMax = n(props.npc_pdv_base);
+        const pdvRaw = pdvMax + n(props.npc_pdv_curado) - n(props.npc_pdv_dano);
+        const pdrMax = n(props.npc_pdr_base);
+        const pdrRaw = pdrMax + n(props.npc_pdr_recuperado) - n(props.npc_pdr_gasto_valor);
+        return {
+            pdvMax,
+            pdvRaw,
+            pdv: Math.min(pdvMax, Math.max(0, pdvRaw)),
+            pdrMax,
+            pdr: Math.min(pdrMax, Math.max(0, pdrRaw)),
+        };
+    }
     const pdvMax = Math.max(
         0,
         n(props.pdv_slayer_total ?? props.pdv_slayer_total_conta) -
@@ -210,12 +236,14 @@ export function recoveryOutcome({
     if (spiritualFatigue) pdrGain = Math.floor(pdrGain / 2);
     const pdvApplied = Math.min(Math.max(0, resources.pdvMax - resources.pdv), n(pdvRoll));
     const pdrApplied = Math.min(Math.max(0, resources.pdrMax - resources.pdr), pdrGain);
+    const keys = healKeys(props);
+    const healed = (path) => n(props[path.replace('system.props.', '')]);
     if (pdvApplied > 0) {
-        patch['system.props.pdv_slayer_curado'] = n(props.pdv_slayer_curado) + pdvApplied;
+        patch[keys.pdv] = healed(keys.pdv) + pdvApplied;
         summary.push(`+${pdvApplied} PDV`);
     }
     if (pdrApplied > 0) {
-        patch['system.props.pdr_slayer_curado'] = n(props.pdr_slayer_curado) + pdrApplied;
+        patch[keys.pdr] = healed(keys.pdr) + pdrApplied;
         summary.push(`+${pdrApplied} PDR${spiritualFatigue ? ' (metade, Fadiga Espiritual)' : ''}`);
     }
     const active = [...status.active];
@@ -371,6 +399,11 @@ export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
         return globalThis.ui?.notifications?.warn?.('Ofegante impede ativar Respirações.');
     if (status.active.includes('a_beira_da_morte'))
         return globalThis.ui?.notifications?.warn?.('À Beira da Morte impede a ativação normal.');
+    const npc = isNpcProps(props);
+    if (npc && levelOf(props) < 1)
+        return globalThis.ui?.notifications?.warn?.(
+            'Este NPC não tem a Respiração da Recuperação. Escolha um nível na Configuração.'
+        );
     const id = activeCombatId();
     const state = parseRecoveryState(props[RECOVERY_STATE_KEY], id);
     const resources = currentRecoveryResources(props);
@@ -378,7 +411,7 @@ export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
         return globalThis.ui?.notifications?.warn?.(
             'Respiração da Recuperação já teve sucesso neste combate.'
         );
-    if (resources.pdv <= 0)
+    if (!npc && resources.pdv <= 0)
         return globalThis.ui?.notifications?.warn?.(
             'Use Última Chance antes de entrar À Beira da Morte.'
         );
@@ -454,7 +487,7 @@ export function registerRecoveryBreathingEngine() {
         if (!globalThis.game?.user?.isGM || combat?.started === false) return;
         for (const combatant of combat?.combatants ?? []) {
             const actor = combatant.actor;
-            if (!actor?.update || actor.type !== 'slayer') continue;
+            if (!actor?.update || !(actor.type === 'slayer' || ['slayer', 'npc'].includes(actorKind(actor)))) continue;
             await actor.update(
                 statePatch({
                     version: 1,

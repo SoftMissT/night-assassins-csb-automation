@@ -13,6 +13,7 @@ import { consumeMetalSteelDefense, parseMetalBreathingState } from './metal-brea
 import { parseMistBreathingState } from './mist-breathing-service.mjs';
 import { parseSnowBreathingState } from './snow-breathing-service.mjs';
 import { derivedChannelForTest, resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
+import { actorBuffSources } from './breathing-buffs.mjs';
 import { resolveCombatManeuverBonuses } from './combat-maneuver-service.mjs';
 
 function naturalD20(roll) {
@@ -224,7 +225,9 @@ export async function rollTest(options) {
     const derivedChannel = derivedChannelForTest(test, options.modality ?? '');
     // O "Bônus da ficha" de Defesa/Testes vale em todo teste, menos no Acerto,
     // que tem campo próprio.
-    const derivedChannels = resolveSlayerDerivedBonuses(actor.system?.props ?? {}).channels;
+    const derivedChannels = resolveSlayerDerivedBonuses(actor.system?.props ?? {}, {
+        runtimeSources: actorBuffSources(actor),
+    }).channels;
     const maneuverTargetUuid = [...(globalThis.game?.user?.targets ?? [])][0]?.actor?.uuid ?? '';
     const maneuverBonuses = resolveCombatManeuverBonuses(actor, {
         targetUuid: maneuverTargetUuid,

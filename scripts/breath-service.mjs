@@ -26,6 +26,7 @@
  */
 
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
+import { resolveAttributeRefs } from './damage-formula.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { parseNumber } from './parsing.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
@@ -95,7 +96,7 @@ import {
     parseBreathPassiveState,
     passiveStatePatch,
 } from './breath-passives.mjs';
-import { isMigrated } from './breathing-contract.mjs';
+import { isMigrated, resolveForm } from './breathing-contract.mjs';
 import { runCanonicalBreathingForm } from './breathing-pipeline.mjs';
 
 const MANOBRA_MAP = {
@@ -1429,8 +1430,22 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
  * O pipeline não importa os serviços diretamente (evita ciclo); tudo que ele
  * consome entra por aqui — trocável por um fake nos testes.
  */
+function actorAttributeValues(target, fallbackProps) {
+    const source = target?.system?.props ?? fallbackProps ?? {};
+    return Object.fromEntries(
+        ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'].map((key) => [
+            key,
+            parseNumber(source[`${key}_display`]),
+        ])
+    );
+}
+
 function buildCanonicalRuntime(actor, props, item) {
     return {
+        attrValue: (target, key) => actorAttributeValues(target, props)[String(key).toLowerCase()] ?? 0,
+        resolveFormula: (target, formula) =>
+            resolveAttributeRefs(formula, actorAttributeValues(target, props)),
+        getRound: () => (game.combat?.started ? (game.combat.round ?? null) : null),
         notify: ui.notifications,
         consumeActions: (target, types) => consumeSlayerActions(target, types, { update: false }),
         applyPatch: (target, patch) =>
@@ -1540,6 +1555,13 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         const targetActor = [...(game.user?.targets ?? [])][0]?.actor ?? null;
         const granted = await grantActiveSnowBlizzard(actor, targetActor);
         if (!granted.ok) ui.notifications?.warn?.(granted.reason);
+        return;
+    }
+    // Passiva declarada no dado canônico (Troca Equivalente, Olhos Escarlate...): sem ação nem PDR.
+    if (isMigrated(form.respiracao) && resolveForm(form.respiracao, form.id)?.passiva) {
+        ui.notifications?.info?.(
+            `${form.nome ?? form.id} é uma passiva: não gasta ação nem PDR. Leia a descrição na Forma.`
+        );
         return;
     }
     if (isPassiveItem(form.id)) {

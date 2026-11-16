@@ -63,6 +63,28 @@ function stripDescriptionChatFlag(body) {
     return changed;
 }
 
+// Campos que o catálogo define e que o Item do mundo não deve ter diferentes: tipo, nível mínimo,
+// níveis liberados e custo por nível. Descrição e qualquer dado do jogador ficam de fora.
+const STRUCTURE_KEYS = Object.freeze([
+    'tipo_manobra',
+    'nivel_req',
+    ...[1, 2, 3, 4].flatMap((level) => [`tem_nvl${level}`, `nvl${level}_custo`]),
+]);
+
+/**
+ * Patch só dos campos estruturais que divergem do catálogo (comparação como texto).
+ * @returns {Record<string, unknown>} vazio quando a estrutura já está em dia.
+ */
+function structuralDrift(props, canonicalProps) {
+    const drift = {};
+    for (const key of STRUCTURE_KEYS) {
+        if (!(key in canonicalProps)) continue;
+        if (String(props[key]) !== String(canonicalProps[key]))
+            drift[`system.props.${key}`] = canonicalProps[key];
+    }
+    return drift;
+}
+
 export function breathingItemPatch(item, canonical) {
     if (!item) return null;
     const props = item?.system?.props ?? {};
@@ -84,7 +106,10 @@ export function breathingItemPatch(item, canonical) {
         Boolean(props.forma_id) &&
         Boolean(props.respiracao_nome) &&
         hasLevels(props);
-    if (alreadyCanonical) return null;
+    if (alreadyCanonical) {
+        const drift = canonical ? structuralDrift(props, canonical.system?.props ?? {}) : {};
+        return Object.keys(drift).length > 0 ? { _id: item.id ?? item._id, ...drift } : null;
+    }
 
     if (canonical) {
         const canonicalProps = canonical.system?.props ?? {};

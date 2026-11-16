@@ -89,6 +89,7 @@ import { parseBreathPassiveState, passiveStatePatch } from './breath-passives.mj
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
 import { resolveSlayerDerivedBonuses, sheetBonusValue } from './derived-bonus-service.mjs';
+import { actorBuffSources } from './breathing-buffs.mjs';
 import { buildEntryFormula, isValidDamageFormula, resolveMessageMode } from './damage-formula.mjs';
 
 function markDamageFormula(props, entries) {
@@ -513,7 +514,9 @@ export async function rollDamage(options = {}) {
                 entry.tipoAcao === 'completa'
         );
     if (attackerKind === 'slayer' && hasAttackDamage) {
-        const derivedBonuses = resolveSlayerDerivedBonuses(props);
+        const derivedBonuses = resolveSlayerDerivedBonuses(props, {
+            runtimeSources: actorBuffSources(actor),
+        });
         const fixedDamage = derivedBonuses.channels.danoFixo.total;
         if (fixedDamage)
             specs.push({

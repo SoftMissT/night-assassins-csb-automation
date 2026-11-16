@@ -14,6 +14,10 @@ import { SNOW_FORMS } from './snow-breathing-data.mjs';
 import { METAL_FORMS } from './metal-breathing-data.mjs';
 import { WIND_FORMS } from './wind-breathing-data.mjs';
 import { WATER_BREATHING_FORMS } from './water-breathing-data.mjs';
+import { SOUND_FORMS } from './sound-breathing-data.mjs';
+import { DREAM_FORMS } from './dream-breathing-data.mjs';
+import { FOX_FORMS } from './fox-breathing-data.mjs';
+import { ECLIPSE_FORMS } from './eclipse-breathing-data.mjs';
 
 export const CONTRACT_VERSION = 1;
 export const MAX_FORMULA_LENGTH = 80;
@@ -25,7 +29,7 @@ export const SAFE_FORMULA = /^[a-zA-Z0-9_\s+\-*/().,@]+$/u;
  * Respirações já migradas para o pipeline canônico. Cresce uma por leva.
  * Enquanto não estiver aqui, a Respiração permanece na rota legada.
  */
-export const MIGRATED_BREATHINGS = new Set(['Pedra']);
+export const MIGRATED_BREATHINGS = new Set(['Pedra', 'Som', 'Sonhos', 'Raposa', 'Eclipse']);
 
 export function isMigrated(respiracao) {
     return MIGRATED_BREATHINGS.has(canonicalBreathing(respiracao));
@@ -47,6 +51,13 @@ const BREATHING_ALIASES = new Map([
     ['wind', 'Vento'],
     ['agua', 'Água'],
     ['water', 'Água'],
+    ['som', 'Som'],
+    ['sound', 'Som'],
+    ['sonhos', 'Sonhos'],
+    ['dream', 'Sonhos'],
+    ['raposa', 'Raposa'],
+    ['fox', 'Raposa'],
+    ['eclipse', 'Eclipse'],
 ]);
 
 function normalizeToken(value) {
@@ -186,6 +197,10 @@ const REGISTRY = new Map([
     ['Metal', METAL_FORMS],
     ['Vento', WIND_FORMS],
     ['Água', WATER_BREATHING_FORMS],
+    ['Som', SOUND_FORMS],
+    ['Sonhos', DREAM_FORMS],
+    ['Raposa', FOX_FORMS],
+    ['Eclipse', ECLIPSE_FORMS],
 ]);
 
 /**

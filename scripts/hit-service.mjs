@@ -66,6 +66,7 @@ import {
 } from './breath-passives.mjs';
 import { SETTINGS } from './settings.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
+import { actorBuffSources } from './breathing-buffs.mjs';
 
 function naturalD20(roll) {
     return Math.max(
@@ -490,6 +491,7 @@ export async function rollHit(options) {
         dazzlePenalty;
     const derivedBonuses = resolveSlayerDerivedBonuses(props, {
         runtimeSources: [
+            ...actorBuffSources(actor),
             ...(breathBonus
                 ? [
                       {

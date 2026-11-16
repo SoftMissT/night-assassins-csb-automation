@@ -1,0 +1,667 @@
+{
+  "fonte": "Night Assassin's V25.1 (PDF oficial). Eclipse: Beginning Hour pp. 23–26; demais: PDF principal (Água p.40, Chamas p.41, Som p.46, Vento p.50, Sonhos p.58, Raposa p.65). Custos conferidos contra o texto do PDF; ver nota do audit.",
+  "gerado_em": "2026-11-16",
+  "respiracoes": {
+    "Vento": [
+      {
+        "ord": 1,
+        "name": "Redemoinho de Poeira",
+        "tipo": "Ataque",
+        "costs": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "nota": "dano por PDR investido (variável); Variação 2 custa 3 PDR"
+      },
+      {
+        "ord": 2,
+        "name": "Garras do Vento Puro",
+        "tipo": "Única",
+        "costs": [
+          "X",
+          4,
+          4,
+          5
+        ]
+      },
+      {
+        "ord": 3,
+        "name": "Árvore Balançando ao Vapor da Montanha",
+        "tipo": "1º Uso = Ataque / 2º Uso = Reação",
+        "costs": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "nota": "1º uso 3 PDR (Ataque), 2º uso 2 PDR (Reação)"
+      },
+      {
+        "ord": 4,
+        "name": "Tempestade Crescente de Poeira",
+        "tipo": "Única",
+        "costs": [
+          4,
+          4,
+          5,
+          5
+        ]
+      },
+      {
+        "ord": 5,
+        "name": "Vendaval de Inverno",
+        "tipo": "Única + Ataque",
+        "costs": [
+          3,
+          3,
+          4,
+          4
+        ]
+      },
+      {
+        "ord": 6,
+        "name": "Tempestade da Fumaça Escurecedora",
+        "tipo": "Ataque",
+        "costs": [
+          "X",
+          5,
+          5,
+          5
+        ]
+      },
+      {
+        "ord": 7,
+        "name": "Ventania Rajadas Repentinas",
+        "tipo": "Especial",
+        "costs": [
+          4,
+          4,
+          5,
+          5
+        ]
+      },
+      {
+        "ord": 8,
+        "name": "Corte da Primeira Ventania",
+        "tipo": "Completa",
+        "costs": [
+          "X",
+          "X",
+          6,
+          6
+        ]
+      },
+      {
+        "ord": 9,
+        "name": "Tufão Idaten",
+        "tipo": "Completa",
+        "costs": [
+          "X",
+          "X",
+          "X",
+          8
+        ]
+      }
+    ],
+    "Água": [
+      {
+        "ord": 1,
+        "name": "Barra de Superfície da Água",
+        "tipo": "Única",
+        "costs": [
+          1,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 2,
+        "name": "Roda D'Água",
+        "tipo": "Ataque ou Especial",
+        "costs": [
+          2,
+          3,
+          3,
+          4
+        ]
+      },
+      {
+        "ord": 3,
+        "name": "Dança da Corrente Rápida",
+        "tipo": "Completa",
+        "costs": [
+          2,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 4,
+        "name": "Maré Impressionante",
+        "tipo": "Especial",
+        "costs": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "nota": "1 PDR por reativação do trigger"
+      },
+      {
+        "ord": 5,
+        "name": "Chuva Misericordiosa de um Dia Seco",
+        "tipo": "Especial",
+        "costs": [
+          "X",
+          0,
+          0,
+          0
+        ],
+        "nota": "não custa PDR; recupera PDR igual ao Nível de Respiração se finalizar"
+      },
+      {
+        "ord": 6,
+        "name": "Torção de Hidromassagem",
+        "tipo": "Ataque",
+        "costs": [
+          4,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "ord": 7,
+        "name": "Gota de Chuva Penetrante",
+        "tipo": "Reação",
+        "costs": [
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "ord": 8,
+        "name": "Força da Cascata",
+        "tipo": "Completa",
+        "costs": [
+          5,
+          5,
+          6,
+          6
+        ]
+      },
+      {
+        "ord": 9,
+        "name": "Respingos de Água",
+        "tipo": "Única",
+        "costs": [
+          2,
+          2,
+          4,
+          4
+        ]
+      },
+      {
+        "ord": 10,
+        "name": "O Dragão da Mudança",
+        "tipo": "Completa",
+        "costs": [
+          "X",
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "ord": 11,
+        "name": "Calmaria",
+        "tipo": "Reação",
+        "costs": [
+          "X",
+          4,
+          4,
+          4
+        ]
+      }
+    ],
+    "Chamas": [
+      {
+        "ord": 3,
+        "name": "Esquentar *(Passiva leia antes das demais técnicas)*",
+        "tipo": "Passiva",
+        "costs": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "nota": "passiva Esquentar, sem custo"
+      },
+      {
+        "ord": 1,
+        "name": "Fogo Desconhecido / Tempestade Ígnea",
+        "tipo": "Especial",
+        "costs": [
+          2,
+          3,
+          3,
+          4
+        ]
+      },
+      {
+        "ord": 2,
+        "name": "Céu em Chamas Ascendentes",
+        "tipo": "Ataque",
+        "costs": [
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 4,
+        "name": "Ondulação da Chama Fluorescente",
+        "tipo": "Reação",
+        "costs": [
+          1,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "ord": 5,
+        "name": "Tigre Ardente",
+        "tipo": "Ataque",
+        "costs": [
+          3,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "ord": 6,
+        "name": "Tormenta de Chamas",
+        "tipo": "Ataque",
+        "costs": [
+          "X",
+          "X",
+          6,
+          8
+        ]
+      },
+      {
+        "ord": 7,
+        "name": "Cauterizar",
+        "tipo": "Especial",
+        "costs": [
+          2,
+          3,
+          3,
+          4
+        ]
+      },
+      {
+        "ord": 8,
+        "name": "Ignição",
+        "tipo": "Especial",
+        "costs": [
+          "X",
+          "X",
+          5,
+          5
+        ]
+      },
+      {
+        "ord": 9,
+        "name": "Rengoku",
+        "tipo": "Ataque",
+        "costs": [
+          "X",
+          4,
+          4,
+          5
+        ]
+      }
+    ],
+    "Raposa": [
+      {
+        "ord": 1,
+        "name": "Cauda da Primavera",
+        "tipo": "Ataque",
+        "costs": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "ord": 2,
+        "name": "Cauda Solar",
+        "tipo": "Especial",
+        "costs": [
+          2,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 3,
+        "name": "Cauda do Outono",
+        "tipo": "Reação",
+        "costs": [
+          "X",
+          3,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 4,
+        "name": "Cauda Lunar",
+        "tipo": "Única",
+        "costs": [
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "ord": 5,
+        "name": "Cauda do Inverno",
+        "tipo": "Completa",
+        "costs": [
+          3,
+          3,
+          4,
+          4
+        ]
+      },
+      {
+        "ord": 6,
+        "name": "Cauda da Sacerdotisa",
+        "tipo": "Movimento",
+        "costs": [
+          "X",
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "ord": 7,
+        "name": "Cauda do Profeta",
+        "tipo": "Ataque",
+        "costs": [
+          "X",
+          6,
+          6,
+          6
+        ]
+      },
+      {
+        "ord": 8,
+        "name": "Cauda dos Espíritos",
+        "tipo": "Ataque",
+        "costs": [
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "ord": 9,
+        "name": "O Canto Final da Raposa",
+        "tipo": "Completa",
+        "costs": [
+          "X",
+          "X",
+          "X",
+          5
+        ]
+      }
+    ],
+    "Eclipse": [
+      {
+        "ord": 1,
+        "name": "União Solar-Lunar",
+        "tipo": "Variável",
+        "costs": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "nota": "custo = PDR da técnica do aliado + 1"
+      },
+      {
+        "ord": 2,
+        "name": "Luz e Sombra",
+        "tipo": "Ataque",
+        "costs": [
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "ord": 3,
+        "name": "Pseudo-Anoitecer",
+        "tipo": "Reação",
+        "costs": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "nota": "Acerto 4 PDR / Esquiva 6 PDR"
+      },
+      {
+        "ord": 4,
+        "name": "Eclipse Escaldante",
+        "tipo": "Única",
+        "costs": [
+          3,
+          3,
+          4,
+          4
+        ]
+      },
+      {
+        "ord": 5,
+        "name": "Eclipse Verdadeiro",
+        "tipo": "Completa",
+        "costs": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "nota": "custo não informado no PDF"
+      }
+    ],
+    "Som": [
+      {
+        "ord": 1,
+        "name": "Rugido",
+        "tipo": "Única",
+        "costs": [
+          1,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 2,
+        "name": "Silêncio",
+        "tipo": "Especial",
+        "costs": [
+          2,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 3,
+        "name": "Resquício Sonoro",
+        "tipo": "Única",
+        "costs": [
+          3,
+          3,
+          4,
+          4
+        ]
+      },
+      {
+        "ord": 4,
+        "name": "Sinos da Morte de Avīci",
+        "tipo": "Ataque",
+        "costs": [
+          3,
+          4,
+          4,
+          5
+        ]
+      },
+      {
+        "ord": 5,
+        "name": "Sinfonia das Cordas Estridentes",
+        "tipo": "Especial",
+        "costs": [
+          3,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "ord": 6,
+        "name": "Sinfonia Imortal",
+        "tipo": "Completa",
+        "costs": [
+          4,
+          4,
+          5,
+          5
+        ],
+        "nota": "+2 PDR só na Reação do Canto dos Pássaros"
+      }
+    ],
+    "Sonhos": [
+      {
+        "ord": 1,
+        "name": "Hora de Dormir",
+        "tipo": "Única",
+        "costs": [
+          1,
+          1,
+          2,
+          2
+        ]
+      },
+      {
+        "ord": 2,
+        "name": "Ilusão de Ótica",
+        "tipo": "Ataque",
+        "costs": [
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "ord": 3,
+        "name": "Estrela Cadente",
+        "tipo": "Única",
+        "costs": [
+          2,
+          2,
+          3,
+          3
+        ]
+      },
+      {
+        "ord": 4,
+        "name": "Mar de Memórias",
+        "tipo": "Especial",
+        "costs": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "ord": 5,
+        "name": "Radar Noturno",
+        "tipo": "Única",
+        "costs": [
+          2,
+          2,
+          2,
+          2
+        ]
+      },
+      {
+        "ord": 6,
+        "name": "Domínio dos Pesadelos",
+        "tipo": "Ataque",
+        "costs": [
+          "X",
+          5,
+          6,
+          6
+        ]
+      },
+      {
+        "ord": 7,
+        "name": "Teoria do Caos",
+        "tipo": "Especial",
+        "costs": [
+          "X",
+          5,
+          5,
+          5
+        ]
+      },
+      {
+        "ord": 8,
+        "name": "Raio de Luz da Morte",
+        "tipo": "Ataque",
+        "costs": [
+          7,
+          8,
+          10,
+          12
+        ]
+      },
+      {
+        "ord": 9,
+        "name": "Fantasia Final",
+        "tipo": "Completa",
+        "costs": [
+          "X",
+          7,
+          9,
+          10
+        ]
+      }
+    ]
+  }
+}

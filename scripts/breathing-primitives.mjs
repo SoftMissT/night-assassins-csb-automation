@@ -44,7 +44,11 @@ export async function aplicarStatusPrimitive({ primitive, target, runtime } = {}
 export async function curaPrimitive({ primitive, actor, runtime } = {}) {
     if (!actor || !primitive) return { healed: 0 };
     let healed = 0;
-    const formula = String(primitive.formula ?? '').trim();
+    const rawFormula = String(primitive.formula ?? '').trim();
+    // `@fdv`, `@sab`... viram o valor do atributo do usuário (o runtime sabe resolver).
+    const formula = rawFormula
+        ? String(runtime?.resolveFormula?.(actor, rawFormula) ?? rawFormula)
+        : '';
     if (formula && typeof runtime?.roll === 'function') {
         const roll = await runtime.roll(formula);
         healed = Math.max(0, Math.trunc(Number(roll?.total) || 0));
@@ -58,16 +62,42 @@ export async function curaPrimitive({ primitive, actor, runtime } = {}) {
     return { healed };
 }
 
+// Bônus do buff: número ou soma de termos ("@sab + @car", "@sab", "2"), onde @atributo é do usuário.
+function resolveBuffMod(value, actor, runtime) {
+    if (typeof value === 'number') return Math.trunc(value);
+    return String(value ?? '')
+        .split('+')
+        .reduce((sum, part) => {
+            const term = part.trim();
+            const ref = term.match(/^@([a-z]+)$/iu);
+            if (ref)
+                return sum + Math.trunc(Number(runtime?.attrValue?.(actor, ref[1].toLowerCase())) || 0);
+            const number = Number(term);
+            return sum + (Number.isFinite(number) ? Math.trunc(number) : 0);
+        }, 0);
+}
+
 /**
- * Grava um buff temporário no Actor (expiração fora daqui, nos ticks).
+ * Grava um buff temporário no Actor com a rodada de início e a de expiração. Quem lê é
+ * `breathing-buffs.mjs` (entra no agregador de bônus e expira por rodada).
  */
 export async function buffPrimitive({ primitive, actor, runtime } = {}) {
     if (!actor || !primitive || typeof runtime?.setBuffs !== 'function') return { applied: false };
+    const turns = Math.max(1, Math.trunc(Number(primitive.turnos) || 1));
+    const startRound = runtime.getRound?.() ?? null;
+    const mods = Object.fromEntries(
+        Object.entries(primitive.mods ?? {}).map(([key, value]) => [
+            key,
+            resolveBuffMod(value, actor, runtime),
+        ])
+    );
     const buff = {
         id: String(primitive.id ?? primitive.label ?? 'buff').trim() || 'buff',
         label: String(primitive.label ?? 'Buff').trim() || 'Buff',
-        mods: { ...(primitive.mods ?? {}) },
-        turns: Math.max(1, Math.trunc(Number(primitive.turnos) || 1)),
+        mods,
+        turns,
+        startRound,
+        expiresRound: startRound === null ? null : startRound + turns,
     };
     await runtime.setBuffs(actor, buff);
     return { applied: true, buff };

@@ -97,3 +97,11 @@ test('chip marcado no diálogo de dano usa fundo sólido e ✓, não o dourado a
     assert.doesNotMatch(checked[1], /0\.18/);
     assert.match(css, /:has\(> input:checked\) > span:first-of-type::before \{\s*content: '✓ ';/);
 });
+
+test('diálogo de Status: dano/turnos ficam sob o status marcado', async () => {
+    const source = await read('scripts/status-service.mjs');
+    const css = await read('styles/na-csb-automation.css');
+    assert.ok(!source.includes('Configuração mecânica'), 'sem a tabela solta no fim do diálogo');
+    assert.match(source, /na-status-cell[\s\S]*configByKey\.get\(status\.key\)/);
+    assert.match(css, /\.na-status-cell:not\(:has\(input\[name='na-status'\]:checked\)\) \.na-status-config/);
+});

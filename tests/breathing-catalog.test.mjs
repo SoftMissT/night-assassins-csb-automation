@@ -46,14 +46,16 @@ function owner({ isOwner = true } = {}) {
 }
 
 describe('Formas de Respiração fora do Compêndio', () => {
-    it('o catálogo interno distribuído traz as Formas das 6 Respirações', async () => {
+    it('o catálogo interno distribuído traz as Formas das 11 Respirações publicadas', async () => {
         const catalog = await loadBreathingCatalog();
         const names = new Set(
             catalog
                 .filter((document) => document.type === 'equippableItem')
                 .map((document) => document.system.props.respiracao_nome)
         );
-        assert.deepEqual([...names].sort(), ['Chamas', 'Metal', 'Neve', 'Névoa', 'Pedra', 'Vento']);
+        assert.deepEqual([...names].sort(), [
+            'Água', 'Chamas', 'Eclipse', 'Metal', 'Neve', 'Névoa', 'Pedra', 'Raposa', 'Som', 'Sonhos', 'Vento',
+        ].sort());
     });
 
     it('seleciona as Formas da Respiração pedida, sem o hub, na ordem', () => {

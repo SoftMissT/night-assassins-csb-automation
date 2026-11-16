@@ -197,26 +197,6 @@ export async function openStatusManager({ actorUuid, draft = null } = {}) {
         if (!categories.has(status.category)) categories.set(status.category, []);
         categories.get(status.category).push(status);
     }
-    const sections = [...categories]
-        .map(
-            ([category, statuses]) => `
-    <fieldset style="border:1px solid #433b34;padding:8px;margin:0;">
-      <legend>${escapeHtml(category)}</legend>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;">
-        ${statuses
-            .map(
-                (
-                    status
-                ) => `<label style="display:flex;align-items:center;gap:7px;padding:5px 7px;background:#171411;">
-          <input type="checkbox" name="na-status" value="${escapeHtml(status.key)}" ${selected.has(status.key) ? 'checked' : ''}>
-          <span>${escapeHtml(status.label)}</span>
-        </label>`
-            )
-            .join('')}
-      </div>
-    </fieldset>`
-        )
-        .join('');
     const configurable = [
         { key: 'sangramento', label: 'Sangramento', damage: 'source', duration: 'source' },
         { key: 'hemorragia', label: 'Hemorragia', damage: 'source', duration: 'source' },
@@ -240,54 +220,74 @@ export async function openStatusManager({ actorUuid, draft = null } = {}) {
         { key: 'silenciado', label: 'Silenciado', save: 'FDV' },
         { key: 'suprimido', label: 'Suprimido', duration: 'source', save: 'FDV' },
     ];
-    const configRows = configurable
-        .map((config) => {
-            const { key, label } = config;
-            const effect = state.effects[key] ?? {};
-            const damageInput =
-                config.damage === 'source'
-                    ? `<input name="effect.${key}.formula" value="${escapeHtml(effect.damageFormula ?? '')}" placeholder="Dano da fonte">`
-                    : config.damage === '1d4'
-                      ? `<span title="Dano fixo">1d4 fixo</span>`
-                      : `<span>—</span>`;
-            const turnsInput =
-                config.duration === 'source' || config.defaultTurns
-                    ? `<input type="number" min="1" step="1" name="effect.${key}.turns" value="${effect.remainingTurns ?? config.defaultTurns ?? ''}" placeholder="Turnos" title="Quantidade de turnos definida pela fonte">`
-                    : `<span>Manual</span>`;
-            const stacksInput = config.stacks
-                ? `<input type="number" min="1" max="99" name="effect.${key}.stacks" value="${effect.stacks ?? 1}" title="Pilhas">`
-                : `<span>—</span>`;
-            const saveInput = config.save
-                ? `<select name="effect.${key}.attr">${['VIT', 'DEX', 'FOR', 'CAR', 'FDV', 'INT', 'SAB'].map((attr) => `<option value="${attr}" ${(effect.saveAttr || config.save) === attr ? 'selected' : ''}>${attr}</option>`).join('')}</select>`
-                : `<span>—</span>`;
-            const dcInput = config.save
-                ? `<input type="number" min="0" max="99" name="effect.${key}.dc" value="${effect.saveDc || config.defaultDc || 0}" placeholder="CD">`
-                : `<span>—</span>`;
-            return `<div style="display:grid;grid-template-columns:1.4fr 1fr .65fr .55fr .7fr .65fr 1fr;gap:5px;align-items:center;padding:5px;background:#171411;">
-      <strong>${escapeHtml(label)}</strong>
-      ${damageInput}${turnsInput}${stacksInput}${saveInput}${dcInput}
-      <input name="effect.${key}.source" value="${escapeHtml(effect.sourceName ?? '')}" placeholder="Fonte">
-    </div>`;
-        })
+    const configRows = configurable.map((config) => {
+        const { key } = config;
+        const effect = state.effects[key] ?? {};
+        const damageInput =
+            config.damage === 'source'
+                ? `<input name="effect.${key}.formula" value="${escapeHtml(effect.damageFormula ?? '')}" placeholder="Dano da fonte">`
+                : config.damage === '1d4'
+                  ? `<span title="Dano fixo">1d4 fixo</span>`
+                  : `<span>—</span>`;
+        const turnsInput =
+            config.duration === 'source' || config.defaultTurns
+                ? `<input type="number" min="1" step="1" name="effect.${key}.turns" value="${effect.remainingTurns ?? config.defaultTurns ?? ''}" placeholder="Turnos" title="Quantidade de turnos definida pela fonte">`
+                : `<span>Manual</span>`;
+        const stacksInput = config.stacks
+            ? `<input type="number" min="1" max="99" name="effect.${key}.stacks" value="${effect.stacks ?? 1}" title="Pilhas">`
+            : `<span>—</span>`;
+        const saveInput = config.save
+            ? `<select name="effect.${key}.attr">${['VIT', 'DEX', 'FOR', 'CAR', 'FDV', 'INT', 'SAB'].map((attr) => `<option value="${attr}" ${(effect.saveAttr || config.save) === attr ? 'selected' : ''}>${attr}</option>`).join('')}</select>`
+            : `<span>—</span>`;
+        const dcInput = config.save
+            ? `<input type="number" min="0" max="99" name="effect.${key}.dc" value="${effect.saveDc || config.defaultDc || 0}" placeholder="CD">`
+            : `<span>—</span>`;
+        const field = (label, input) =>
+            input.startsWith('<span')
+                ? ''
+                : `<label class="na-status-field"><span>${label}</span>${input}</label>`;
+        return [
+            key,
+            `<div class="na-status-config">${field('Dano/turno', damageInput)}${
+                config.damage === '1d4' ? '<span class="na-status-fixed">1d4 por turno</span>' : ''
+            }${field('Turnos', turnsInput)}${field('Pilhas', stacksInput)}${field('Teste', saveInput)}${field(
+                'CD',
+                dcInput
+            )}${field('Fonte', `<input name="effect.${key}.source" value="${escapeHtml(effect.sourceName ?? '')}" placeholder="Técnica ou Oni">`)}</div>`,
+        ];
+    });
+    const configByKey = new Map(configRows);
+    const sections = [...categories]
+        .map(
+            ([category, statuses]) => `
+    <fieldset style="border:1px solid #433b34;padding:8px;margin:0;">
+      <legend>${escapeHtml(category)}</legend>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;">
+        ${statuses
+            .map(
+                (status) => `<div class="na-status-cell">
+          <label style="display:flex;align-items:center;gap:7px;padding:5px 7px;">
+            <input type="checkbox" name="na-status" value="${escapeHtml(status.key)}" ${selected.has(status.key) ? 'checked' : ''}>
+            <span>${escapeHtml(status.label)}</span>
+          </label>
+          ${configByKey.get(status.key) ?? ''}
+        </div>`
+            )
+            .join('')}
+      </div>
+    </fieldset>`
+        )
         .join('');
 
     const result = await foundry.applications.api.DialogV2.wait({
         window: { title: `Status — ${actor.name}` },
-        content: `<div style="display:grid;gap:8px;max-height:650px;overflow:auto;padding-right:4px;">
+        content: `<div class="na-status-dialog" style="display:grid;gap:8px;max-height:650px;overflow:auto;padding-right:4px;">
+      ${draft?.errors?.length ? `<div role="alert" style="border-left:4px solid #d64545;background:#2a1515;padding:8px;color:#ffb5b5;">${draft.errors.map(escapeHtml).join('<br>')}</div>` : ''}
       <label style="display:flex;align-items:center;gap:10px;padding:8px;background:#241d18;">
         <strong>Exaustão acumulada</strong>
         <input type="number" name="na-exhaustion" min="0" max="8" step="1" value="${state.exhaustion}" style="width:70px;">
       </label>
       ${sections}
-      <fieldset style="border:1px solid #433b34;padding:8px;margin:0;">
-        <legend>Configuração mecânica</legend>
-        <p class="hint">Somente Sangramento, Hemorragia, Envenenamento, Corroído e Em Chamas causam dano no início do turno. “Fonte” significa que fórmula ou duração vêm da técnica.</p>
-        ${draft?.errors?.length ? `<div style="border-left:4px solid #d64545;background:#2a1515;padding:8px;color:#ffb5b5;">${draft.errors.map(escapeHtml).join('<br>')}</div>` : ''}
-        <div style="display:grid;grid-template-columns:1.4fr 1fr .65fr .55fr .7fr .65fr 1fr;gap:5px;padding:5px 8px;color:#d7ad5b;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">
-          <strong>Status</strong><strong>Dano/turno</strong><strong>Turnos</strong><strong>Pilhas</strong><strong>Teste</strong><strong>CD</strong><strong>Fonte</strong>
-        </div>
-        <div style="display:grid;gap:4px;">${configRows}</div>
-      </fieldset>
     </div>`,
         position: { width: 920 },
         modal: true,

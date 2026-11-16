@@ -75,8 +75,9 @@ export async function runCanonicalBreathingForm({
     }
     if (custoTotal > 0) {
         const props = runtime.getProps?.(actor) ?? {};
-        patch['system.props.pdr_slayer_gasto_valor'] =
-            Math.max(0, Math.trunc(Number(props.pdr_slayer_gasto_valor) || 0)) + custoTotal;
+        const spentKey = runtime.pdrSpentKey ?? 'pdr_slayer_gasto_valor';
+        patch[`system.props.${spentKey}`] =
+            Math.max(0, Math.trunc(Number(props[spentKey]) || 0)) + custoTotal;
     }
     // Consumo só depois da decisão de uso: cancelar o diálogo de Acerto não
     // paga ação, PDR nem feeds (o legado estornava via rollbackPatch).

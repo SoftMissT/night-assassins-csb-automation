@@ -11,7 +11,7 @@ const isSpacer = (node) => node.type === 'panel' && !node.key && (node.contents 
 
 // Ordem de uso na mesa: recursos → atributos → combate → bônus → itens → estado.
 describe('Layout das fichas de ator', () => {
-    it('Slayer: recursos no topo, combate antes das listas e perícias em aba própria', async () => {
+    it('Slayer: organização da ficha do operador, sem espaçadores nem painéis recolhidos', async () => {
         const tabs = (await read('slayer')).system.body.contents[0].contents;
         assert.deepEqual(
             tabs.map((tab) => tab.key),
@@ -19,17 +19,29 @@ describe('Layout das fichas de ator', () => {
         );
         const combat = tabs[0].contents;
         assert.ok(!combat.some(isSpacer), 'sem painéis espaçadores vazios');
-        assert.ok(keys([combat[0]]).includes('pdv_slayer_atual_valor_display'));
-        assert.ok(keys([combat[0]]).includes('pdr_slayer_atual_valor_display'));
+        assert.ok(!combat.some((node) => node.collapsible), 'nada recolhido na aba de combate');
+        assert.ok(keys([combat[1]]).includes('bonus_atr_vit_valor_temp'), 'temporários na linha dos atributos');
+        assert.ok(keys(combat.slice(2, 4)).includes('pdv_slayer_atual_valor_display'));
+        assert.ok(keys(combat.slice(2, 4)).includes('pdr_slayer_atual_valor_display'));
         const order = combat.map((node) => node.key).filter(Boolean);
         assert.deepEqual(order, [
             'combat_slayer_panel',
+            'acoes_slayer_panel',
             'inventario_slayer_armas',
             'skills_slayer_respiracoes',
-            'acoes_slayer_panel',
         ]);
-        assert.equal(tabs[1].contents[1].contents.length, 18, 'as 18 perícias foram para a aba nova');
-        assert.ok(keys([combat[2]]).includes('bonus_atr_vit_valor_temp'), 'temporários na linha dos atributos');
+        const manage = combat.find((node) => node.key === 'acoes_slayer_panel').contents;
+        assert.deepEqual(
+            manage.slice(0, 6).map((node) => node.key),
+            [
+                'acoes_slayer_gerenciar', 'acoes_slayer_display',
+                'resistencia_slayer_gerenciar', 'status_slayer_resistencias_display',
+                'status_slayer_gerenciar', 'status_slayer_display',
+            ],
+            'gerenciadores em pares botão | resumo'
+        );
+        assert.equal(manage.at(-1).key, 'armas_proficientes');
+        assert.equal(tabs[1].contents[1].contents.length, 18, 'as 18 perícias ficam na aba própria');
     });
 
     it('Oni: recursos no topo, Kekkijutsu depois do combate', async () => {
@@ -45,8 +57,10 @@ describe('Layout das fichas de ator', () => {
     it('NPC: recursos no topo e combate antes das armas', async () => {
         const body = (await read('npc')).system.body.contents;
         assert.ok(!body.some(isSpacer));
-        assert.ok(keys([body[0]]).includes('pdv_npc_atual_valor_display'));
-        const order = body.map((node) => node.key).filter(Boolean);
+        const ficha = body[0].contents[0].contents;
+        assert.ok(keys(ficha.slice(0, 4)).includes('pdv_npc_atual_valor_display'));
+        const order = ficha.map((node) => node.key).filter(Boolean);
+        assert.ok(order.indexOf('npc_combat') > -1);
         assert.ok(order.indexOf('npc_combat') < order.indexOf('inventario_npc_armas'));
     });
 });

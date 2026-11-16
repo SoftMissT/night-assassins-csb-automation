@@ -76,3 +76,38 @@
 - **Causa:** `tools/build-weapon-sources.mjs` mantinha uma allowlist manual de quatro nomes (`PUBLISHED_WEAPONS`) sem um teste que comparasse a saída contra `data/catalog-source/weapons/`.
 - **Correção:** ampliar a publicação para todas as 26 armas normais canônicas e congelar o contrato com teste de contagem/nomes e template.
 - **Regra preventiva:** inventariar fonte, catálogo, build e pack como camadas separadas; nenhuma allowlist parcial pode representar “todas” sem teste de cobertura.
+
+## 2026-11-16 — botões DANO/CURAR na ficha de NPC sem pedido
+
+- **Erro:** a v0.12.3 pôs na ficha de NPC um painel Vida com botões DANO e CURAR (openNpcVitals); o operador reclamou que isso não pertence à ficha.
+- **Causa:** "reorganizar a ficha" foi lido como licença para criar ações novas; o dano já chega pelo fluxo de ataque com aceite do GM.
+- **Correção:** remover os botões do template de NPC; manter o serviço só se outro chamador usar.
+- **Regra preventiva:** redesenho de ficha reorganiza o que existe; ação nova na ficha só com pedido explícito do operador.
+
+## 2026-11-16 — ficha de NPC complicada: colapsáveis e caixas duplicadas
+
+- **Erro:** a ficha de NPC escondia o ajuste de vida e a Configuração em painéis colapsados, duplicava PDV/PDR (display + campo) e deixava Notas no fim da página.
+- **Causa:** usei colapsável e painel extra para "organizar" em vez de reduzir; o operador quer ver e editar direto.
+- **Correção:** Notas em aba própria, Configuração visível, campos de vida editáveis no próprio bloco de vida, sem colapsáveis.
+- **Regra preventiva:** em ficha de jogo, nada essencial fica colapsado; um dado aparece uma vez; menos caixas vence mais caixas.
+
+## 2026-11-16 — layout próprio no NPC em vez do padrão da ficha de Slayer
+
+- **Erro:** redesenhei o NPC com linhas e cartões novos; o operador achou o visual ruim e faltou o Gerenciar Ações.
+- **Causa:** tratei o NPC como projeto novo em vez de copiar o sistema visual da ficha de Slayer, que é a referência do operador.
+- **Correção:** remontar o NPC com os mesmos componentes, classes e ordem da ficha de Slayer exportada do mundo, incluindo Gerenciar Ações.
+- **Regra preventiva:** sistema de design existente vence; em ficha nova, começar copiando a ficha de referência e só remover o que não se aplica.
+
+## 2026-11-16 — NPC com nível separado da Recuperação e sem Respirações
+
+- **Erro:** a Recuperação do NPC dependia de um seletor próprio (npc_recuperacao_nivel) e a ficha não tinha Formas de Respiração; o operador esperava o mesmo modelo do Slayer.
+- **Causa:** a v0.12.3 modelou o NPC como caso especial em vez de reaproveitar o contrato do Slayer (nível do personagem + container de Respirações).
+- **Correção:** o campo Nível do NPC alimenta a Recuperação como nvl_num no Slayer; a ficha ganha o container de Formas de Respiração.
+- **Regra preventiva:** NPC é um Slayer simplificado; toda mecânica do Slayer usada pelo NPC lê o mesmo tipo de dado, sem seletor paralelo.
+
+## 2026-11-16 — Respirações migradas recusavam toda Forma no Foundry
+
+- **Erro:** Pedra, Som, Sonhos, Raposa e Eclipse respondiam "Forma desconhecida: ." ao usar qualquer Forma, desde a v0.11.85.
+- **Causa:** useBreathForm passava formaId: props.forma_id, mas props era a ficha do ator; os testes do pipeline injetam formaId direto e nunca passavam pelo useBreathForm.
+- **Correção:** formaId lido de item.system.props.forma_id, com teste de regressão; o pipeline grava o PDR na key do ator (pdrSpentKey).
+- **Regra preventiva:** toda rota nova testada com fake precisa de pelo menos um uso real no Foundry (ou um teste que passe pela função pública) antes de virar "migrada".

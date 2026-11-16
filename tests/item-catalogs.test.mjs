@@ -45,7 +45,7 @@ describe('pack de Respirações', () => {
 });
 
 describe('catálogo de Respirações', () => {
-    it('o catálogo de fonte conhece as 44 Respirações do sistema, mas publica as 6 com motor dedicado', async () => {
+    it('o catálogo de fonte conhece as 44 Respirações do sistema, e publica as 11 pedidas pelo operador', async () => {
         const documents = await breathingDocuments();
         const folders = documents.filter(
             (document) =>
@@ -61,8 +61,8 @@ describe('catálogo de Respirações', () => {
         assert.equal(BREATHING_FOLDER_NAMES.length, 44);
         assert.equal(
             PUBLISHED_BREATHINGS.length,
-            6,
-            'publica as Respirações com motor dedicado e auditoria concluída'
+            11,
+            '2026-11-16: operador pediu Água, Som, Sonhos, Eclipse e Raposa além das 6 com motor'
         );
         assert.equal(
             folders.length,
@@ -92,18 +92,15 @@ describe('catálogo de Respirações', () => {
         );
     });
 
-    it('Água não é publicada no pack Foundry (sem motor de estado dedicado ainda)', async () => {
+    it('publica as Respirações pedidas pelo operador (inclui Água, Som, Sonhos, Eclipse, Raposa)', async () => {
         const documents = await breathingDocuments();
-        const water = documents.filter(
-            (document) =>
-                document.type === 'equippableItem' &&
-                document.system?.props?.respiracao_nome === 'Água'
+        const names = new Set(
+            documents
+                .filter((document) => document.type === 'equippableItem')
+                .map((document) => document.system?.props?.respiracao_nome)
         );
-        assert.equal(
-            water.length,
-            0,
-            'Água fica de fora até receber o mesmo tratamento de auditoria/motor das 6 publicadas'
-        );
+        for (const name of ['Vento', 'Chamas', 'Som', 'Sonhos', 'Água', 'Pedra', 'Metal', 'Eclipse', 'Raposa', 'Neve'])
+            assert.ok(names.has(name), `${name} publicada`);
     });
 
     it('publica Chamas com ações e níveis mecânicos canônicos', async () => {

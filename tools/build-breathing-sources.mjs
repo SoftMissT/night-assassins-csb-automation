@@ -112,11 +112,16 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
  * hub; as demais voltam em 2026-09-28 após ficarem de fora no piloto.
  */
 export const PUBLISHED_BREATHINGS = Object.freeze([
+    'Água',
     'Chamas',
+    'Eclipse',
     'Metal',
     'Neve',
     'Névoa',
     'Pedra',
+    'Raposa',
+    'Som',
+    'Sonhos',
     'Vento',
 ]);
 const catalog = JSON.parse(await readFile(catalogPath, 'utf8'));

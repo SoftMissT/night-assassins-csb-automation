@@ -3712,3 +3712,53 @@
     max-height: 46vh;
     overflow-y: auto;
 }
+
+/* Ficha de NPC: a aba Notas é só o texto, então a caixa ocupa a aba. */
+.na-npc-notas prose-mirror,
+.na-npc-notas .editor-content {
+    min-height: 22rem;
+}
+
+/* Diálogo de Status: dano, turnos e fonte ficam sob o status marcado. */
+.na-status-dialog .na-status-cell {
+    background: #171411;
+}
+.na-status-dialog .na-status-config {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 6px 10px;
+    padding: 0 7px 8px 31px;
+}
+.na-status-dialog .na-status-cell:not(:has(input[name='na-status']:checked)) .na-status-config {
+    display: none;
+}
+.na-status-dialog label.na-status-field {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    margin: 0;
+    font-size: 11px;
+    color: #d7ad5b;
+}
+.na-status-dialog label.na-status-field :is(input, select) {
+    width: 8rem;
+    flex: none;
+}
+.na-status-dialog .na-status-fixed {
+    font-size: 12px;
+    color: #c9bda8;
+}
+
+/* Arma: dano por perfil (uma linha cada) e tipos de dano, sem cortar. */
+.na-item .na-weapon-summary-value {
+    display: block;
+    margin-top: 2px;
+    white-space: pre-line;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--na-item-accent, var(--na-gold));
+}

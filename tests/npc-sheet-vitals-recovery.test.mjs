@@ -38,7 +38,7 @@ const npcProps = (extra = {}) => ({
     npc_pdr_base: 20,
     npc_pdr_gasto_valor: 15,
     npc_pdr_recuperado: 0,
-    npc_recuperacao_nivel: 'rec_nivel_7',
+    npc_nivel: 7,
     vit_display: 4,
     fdv_display: 3,
     status_slayer_dados: JSON.stringify({ active: [], exhaustion: 0, effects: {} }),
@@ -63,17 +63,50 @@ describe('ficha de NPC: layout', () => {
         assert.deepEqual([...counts].filter(([, count]) => count > 1), []);
     });
 
-    it('configuração fica num painel recolhido por padrão, só para GM, com as bases e o nível', () => {
+    it('abas Combate, Configuração (GM) e Notas; nada essencial recolhido', () => {
+        const tabs = template.system.body.contents[0];
+        assert.equal(tabs.type, 'tabbedPanel');
+        assert.deepEqual(
+            tabs.contents.map((tab) => [tab.key, tab.name]),
+            [['npc_ficha_tab', 'Combate'], ['npc_config_tab', 'Configuração'], ['npc_notas_tab', 'Notas']]
+        );
+        assert.equal(tabs.contents[1].role, 4);
+        assert.deepEqual(tabs.contents[2].contents.map((node) => node.key), ['npc_notas']);
+        assert.deepEqual(all.filter((node) => node.collapsible).map((node) => node.key), []);
+        const ficha = new Set(components(tabs.contents[0]).map((node) => node.key));
+        for (const key of ['npc_pdv_dano', 'npc_pdv_curado', 'npc_pdr_gasto_valor', 'npc_pdr_recuperado'])
+            assert.ok(ficha.has(key), `${key} editável na aba Ficha`);
+    });
+
+    it('cabeçalho tem Nível (1–14) e só linhas completas de array', () => {
+        const nivel = byKey.get('npc_nivel');
+        assert.equal(nivel?.type, 'numberField');
+        assert.equal(nivel.label, 'Nível');
+        assert.equal(nivel.minVal, '1');
+        assert.equal(nivel.maxVal, '14');
+        const rows = template.system.header.contents[0].contents;
+        assert.ok(rows.every((row) => Array.isArray(row) && row.length === 2 && row.every(Boolean)));
+        const manage = components(byKey.get('npc_acoes_panel')).map((node) => node.key);
+        assert.ok(manage.includes('acerto_label'), 'Escolha como Acerta fica junto dos gerenciadores');
+    });
+
+    it('GERENCIAR AÇÕES usa a macro e o contrato de ações do Slayer', () => {
+        assert.match(byKey.get('npc_acoes_gerenciar').rollMessage, /NAActionManage01/);
+        assert.match(byKey.get('npc_acoes_display').value, /acoes_slayer_resumo/);
+        for (const key of ['acoes_slayer_dados', 'acoes_slayer_resumo', 'acoes_slayer_ataque_bonus'])
+            assert.ok(byKey.has(key), `${key} guardado na Configuração`);
+    });
+
+    it('configuração tem as bases e o nível, visível na sua aba', () => {
         const panel = byKey.get('npc_configuracao');
         assert.equal(panel?.type, 'panel');
-        assert.equal(panel.collapsible, true);
-        assert.equal(panel.defaultCollapsed, true);
+        assert.ok(!panel.collapsible);
         assert.equal(panel.role, 4);
         const inside = new Set(components(panel).map((node) => node.key));
         for (const key of [
             'npc_vit_base', 'npc_dex_base', 'npc_for_base', 'npc_car_base', 'npc_fdv_base',
             'npc_int_base', 'npc_sab_base', 'npc_pdv_base', 'npc_pdr_base',
-            'npc_recuperacao_nivel', 'npc_bonus_acerto', 'npc_bonus_dano', 'npc_bonus_pdr_maximo',
+            'nvl_respiracao', 'npc_bonus_acerto', 'npc_bonus_dano', 'npc_bonus_pdr_maximo',
         ])
             assert.ok(inside.has(key), `${key} deve estar na configuração`);
     });
@@ -99,37 +132,33 @@ describe('ficha de NPC: layout', () => {
 });
 
 describe('ficha de NPC: painel de vida e Recuperação', () => {
-    it('tem o dropdown de nível 0–14 com padrão sem Respiração', () => {
-        const select = byKey.get('npc_recuperacao_nivel');
-        assert.equal(select?.type, 'select');
-        assert.equal(select.defaultValue, 'rec_nivel_0');
-        assert.deepEqual(
-            select.options.map((option) => option.key),
-            Array.from({ length: 15 }, (_, level) => `rec_nivel_${level}`)
-        );
-        assert.equal(select.options[0].value, 'Sem Respiração');
-        assert.equal(select.options[14].value, 'Nível 14');
+    it('Nível de Respiração (1–4) e Formas de Respiração como no Slayer', () => {
+        assert.equal(byKey.has('npc_recuperacao_nivel'), false);
+        const breath = byKey.get('nvl_respiracao');
+        assert.equal(breath?.type, 'numberField');
+        assert.equal(breath.minVal, '1');
+        assert.equal(breath.maxVal, '4');
+        const forms = byKey.get('npc_respiracoes');
+        assert.equal(forms?.type, 'itemContainer');
+        assert.deepEqual(forms.templateFilter, ['NABreathTpl00001']);
+        assert.match(JSON.stringify(forms.rowLayout), /NARespFormUse001/);
     });
 
-    it('DANO, CURAR e RECUPERAÇÃO chamam o serviço certo com o ator da ficha', () => {
-        assert.match(byKey.get('npc_vida_dano').rollMessage, /openNpcVitals/);
-        assert.match(byKey.get('npc_vida_dano').rollMessage, /mode:\s*'damage'/);
-        assert.match(byKey.get('npc_vida_dano').rollMessage, /actorUuid:\s*entity\.uuid/);
-        assert.match(byKey.get('npc_vida_curar').rollMessage, /openNpcVitals/);
-        assert.match(byKey.get('npc_vida_curar').rollMessage, /mode:\s*'heal'/);
+    it('não tem botões DANO/CURAR: dano chega pelo fluxo de ataque com aceite do GM', () => {
+        assert.equal(byKey.has('npc_vida_dano'), false);
+        assert.equal(byKey.has('npc_vida_curar'), false);
+    });
+
+    it('RECUPERAÇÃO chama a macro com o ator da ficha', () => {
         assert.match(byKey.get('npc_roll_recuperacao').rollMessage, /NARecovery000001/);
         assert.match(byKey.get('npc_roll_recuperacao').rollMessage, /actorUuid:entity\.uuid/);
     });
 
-    it('o nível numérico sai da key do dropdown e 0 desliga a técnica', () => {
+    it('o nível da Recuperação é o Nível do NPC (1–14), como nvl_num no Slayer', () => {
         assert.equal(recoveryBreathingLevel(npcProps()), 7);
-        assert.equal(recoveryBreathingLevel(npcProps({ npc_recuperacao_nivel: 'rec_nivel_14' })), 14);
-        assert.equal(recoveryBreathingLevel(npcProps({ npc_recuperacao_nivel: 'rec_nivel_0' })), 0);
+        assert.equal(recoveryBreathingLevel(npcProps({ npc_nivel: 20 })), 14);
+        assert.equal(recoveryBreathingLevel(npcProps({ npc_nivel: '' })), 1);
         assert.equal(hasRecoveryBreathing({ type: 'npc', system: { props: npcProps() } }), true);
-        assert.equal(
-            hasRecoveryBreathing({ type: 'npc', system: { props: npcProps({ npc_recuperacao_nivel: 'rec_nivel_0' }) } }),
-            false
-        );
     });
 
     it('recursos do NPC vêm das keys npc_*', () => {

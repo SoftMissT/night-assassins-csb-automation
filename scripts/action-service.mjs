@@ -2,6 +2,7 @@
  * @fileoverview Economia de ações do Slayer, persistência e gerenciador DialogV2.
  */
 
+import { actorKind } from './actor-kind.mjs';
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
 import { getDamageStatusEffects, getStatusCapabilities } from './status-effects.mjs';
@@ -10,9 +11,14 @@ const TURN_KEYS = Object.freeze(['movimento', 'ataque', 'especial']);
 const ROUND_KEYS = Object.freeze(['unica', 'reacao']);
 const ACTION_FLAG = 'lastActionReset';
 
+// NPC usa o mesmo contrato de ações do Slayer (acoes_slayer_dados/resumo).
 function isSlayerActor(actor) {
     const props = actor?.system?.props ?? {};
-    return props.nome_slayer !== undefined || props.pdv_slayer_total_valor !== undefined;
+    return (
+        props.nome_slayer !== undefined ||
+        props.pdv_slayer_total_valor !== undefined ||
+        actorKind(actor) === 'npc'
+    );
 }
 
 function isOniActor(actor) {

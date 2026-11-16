@@ -210,3 +210,26 @@ describe('breathing-pipeline — roteamento canônico/legado', () => {
         assert.equal(flame.niveis[0].custo, 2);
     });
 });
+
+describe('breathing-pipeline — recursos do NPC', () => {
+    test('com pdrSpentKey do NPC, o custo cai em npc_pdr_gasto_valor', async () => {
+        const actor = makeActor({ npc_pdr_gasto_valor: 2 });
+        const runtime = fakeRuntime({
+            pdrSpentKey: 'npc_pdr_gasto_valor',
+            getProps: (target) => target.system.props,
+        });
+        const result = await run(runtime, { actor });
+        assert.deepEqual(result, { ok: true });
+        assert.equal(runtime.calls.patches[0]['system.props.npc_pdr_gasto_valor'], 5);
+        assert.equal(runtime.calls.patches[0]['system.props.pdr_slayer_gasto_valor'], undefined);
+    });
+});
+
+describe('breath-service — rota canônica lê o forma_id do item', () => {
+    test('useBreathForm não passa o forma_id da ficha do ator', async () => {
+        const { readFile } = await import('node:fs/promises');
+        const source = await readFile(new URL('../scripts/breath-service.mjs', import.meta.url), 'utf8');
+        const call = source.slice(source.indexOf('return runCanonicalBreathingForm({'));
+        assert.match(call.slice(0, 400), /formaId:\s*item\.system\?\.props\?\.forma_id/);
+    });
+});

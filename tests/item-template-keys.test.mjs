@@ -116,7 +116,36 @@ describe('templates de Item: redesenho', () => {
         );
     });
 
-    for (const file of ['slayer-weapon-template.json', 'special-slayer-weapon-template.json'])
+    it('slayer-weapon-template.json: cabeçalho de identidade; dano e tipos no bloco arma_contexto', () => {
+        const system = systemOf('slayer-weapon-template.json');
+        const header = system.header.contents.find((panel) =>
+            panel.contents?.some((c) => c.key === 'arma_nome')
+        );
+        assert.equal(header.flow, 'grid-4');
+        assert.deepEqual(
+            header.contents.map((c) => [c.key, c.colSpan]),
+            [
+                ['arma_nome', 4],
+                ['arma_critico', 1],
+                ['arma_alcance', 1],
+                ['arma_tipo', 2],
+                ['arma_propriedades', 4],
+                ['arma_categoria', 1],
+                ['arma_modo_uso', 1],
+                ['arma_requisito', 2],
+            ]
+        );
+        const context = JSON.stringify(findByKey(system, 'arma_contexto'));
+        assert.match(context, /\$\{arma_perfis_resumo\}\$/);
+        assert.match(context, /\$\{arma_tipos_dano_resumo\}\$/);
+        assert.ok(!/for_display|dex_display/.test(context), 'sem FOR/DEX do portador na ficha do item');
+        const runtime = findByKey(system, 'arma_runtime_data');
+        assert.equal(runtime.visibilityFormula, 'false');
+        for (const key of ['arma_perfis_resumo', 'arma_tipos_dano_resumo'])
+            assert.ok(findByKey(runtime, key), `${key} guardado fora da vista`);
+    });
+
+    for (const file of ['special-slayer-weapon-template.json'])
         it(`${file}: cabeçalho em 4 colunas com nome, faixa de combate e detalhes`, () => {
             const system = systemOf(file);
             const header = system.header.contents.find((panel) =>

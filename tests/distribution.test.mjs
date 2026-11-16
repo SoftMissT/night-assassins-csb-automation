@@ -194,8 +194,8 @@ describe('module distribution', () => {
         );
         const serialized = JSON.stringify(actor.system);
         // 2026-11-16: Personalidade, Tom e História saíram da ficha de NPC; entra o campo
-        // NOTAS (npc_notas) e a configuração fica num painel recolhido (npc_configuracao).
-        for (const key of ['npc_nome', 'npc_notas', 'npc_configuracao', 'npc_recuperacao_nivel']) {
+        // NOTAS (npc_notas); 2026-11-16b: Notas e Configuração viram abas próprias.
+        for (const key of ['npc_nome', 'npc_notas', 'npc_configuracao', 'npc_nivel', 'nvl_respiracao']) {
             assert.match(serialized, new RegExp(`\\\"key\\\":\\\"${key}\\\"`));
         }
         for (const key of [

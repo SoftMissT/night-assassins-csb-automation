@@ -197,7 +197,27 @@ function getFormData(item) {
     };
 }
 
+const isNpcProps = (props = {}) => actorKind({ system: { props } }) === 'npc';
+
+// Keys de recurso gravadas pelas Formas: o NPC tem as suas (npc_pdr_*, npc_pdv_*).
+function resourceKeys(props = {}) {
+    return isNpcProps(props)
+        ? { pdrSpent: 'npc_pdr_gasto_valor', pdvHealed: 'npc_pdv_curado' }
+        : { pdrSpent: 'pdr_slayer_gasto_valor', pdvHealed: 'pdv_slayer_curado' };
+}
+
 function slayerPdrInfo(props = {}) {
+    if (isNpcProps(props)) {
+        const pdrMax = Math.max(0, parseNumber(props.npc_pdr_base));
+        const pdrCurrent = Math.max(
+            0,
+            Math.min(
+                pdrMax,
+                pdrMax + parseNumber(props.npc_pdr_recuperado) - parseNumber(props.npc_pdr_gasto_valor)
+            )
+        );
+        return { pdrMax, pdrCurrent };
+    }
     const pdrMax = Math.max(
         0,
         parseNumber(props.pdr_slayer_total_conta) +
@@ -1452,6 +1472,7 @@ function buildCanonicalRuntime(actor, props, item) {
             target.update(patch, { naCsbAutomation: true, naBreathing: true }),
         getProps: (target) => target.system?.props ?? props,
         getPdrCurrent: () => slayerPdrInfo(actor.system?.props ?? props).pdrCurrent,
+        pdrSpentKey: resourceKeys(actor.system?.props ?? props).pdrSpent,
         getBreathLevel: () => getBreathLevel(actor.system?.props ?? props),
         resolveCardTargets: () =>
             [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean),
@@ -1648,7 +1669,8 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         return runCanonicalBreathingForm({
             actor,
             respiracao: form.respiracao,
-            formaId: props.forma_id,
+            // forma_id é do item; `props` aqui é a ficha do ator.
+            formaId: item.system?.props?.forma_id,
             level: selected.level,
             runtime,
             damageOverride: damageChoice?.chosen || null,
@@ -1726,15 +1748,16 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     }
 
     if (custoFinal > 0) {
-        const pdrGastoAtual = parseNumber(props.pdr_slayer_gasto_valor);
-        patch['system.props.pdr_slayer_gasto_valor'] = pdrGastoAtual + custoFinal;
+        const { pdrSpent } = resourceKeys(props);
+        patch[`system.props.${pdrSpent}`] = parseNumber(props[pdrSpent]) + custoFinal;
     }
 
     let flameHealingRoll = null;
     if (isFlameForm && plan.state?.healing) {
         flameHealingRoll = await Roll.create(plan.state.healing.formula).evaluate();
-        patch['system.props.pdv_slayer_curado'] =
-            parseNumber(props.pdv_slayer_curado) +
+        const { pdvHealed } = resourceKeys(props);
+        patch[`system.props.${pdvHealed}`] =
+            parseNumber(props[pdvHealed]) +
             Math.max(0, Math.trunc(Number(flameHealingRoll.total) || 0));
         if (plan.state.healing.removeBleeding) {
             const status = parseStatusState(props.status_slayer_dados);

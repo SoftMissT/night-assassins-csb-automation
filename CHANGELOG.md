@@ -1,4 +1,16 @@
 # Changelog
+## v0.12.5 — 2026-11-16 — fichas no padrão do Slayer, Formas que voltam a funcionar e Status com dano contínuo
+
+- **Formas de Pedra, Som, Sonhos, Raposa e Eclipse voltam a funcionar.** Desde a v0.11.85 toda Forma dessas Respirações respondia "Forma desconhecida": `useBreathForm` passava o `forma_id` da ficha do ator, não do item. Os testes do pipeline injetavam o id direto e não pegavam o erro. Teste de regressão novo.
+- **Respirações publicadas:** Água, Som, Sonhos, Eclipse e Raposa entram no catálogo interno (antes só Chamas, Metal, Neve, Névoa, Pedra e Vento). As cinco novas não passaram pela mesma auditoria de motor das seis antigas.
+- **Ficha de NPC no padrão do Slayer:** abas Combate, Configuração (só GM) e Notas; atributos, PDV/PDR (títulos em cima, valores e campos embaixo), Combate, gerenciadores em pares, Armas e Formas de Respiração. Saíram os botões DANO e CURAR e os painéis recolhidos. Campo **Nível** no cabeçalho.
+- **NPC usa as mecânicas do Slayer:** GERENCIAR AÇÕES (mesmo contrato `acoes_slayer_*`, inclusive reset por rodada e consumo automático); Respiração da Recuperação pelo Nível do NPC (o seletor `npc_recuperacao_nivel` saiu); "Nível de Respiração" (1–4) libera as Formas; Formas gastam o PDR do NPC (`npc_pdr_gasto_valor`).
+- **Ficha de Slayer:** organização da ficha do operador; sem painéis espaçadores vazios; "Ações e Status" e "Vida e Morte" sempre abertos, com título; gerenciadores em pares botão | resumo; títulos de PDV/PDR em tamanho médio.
+- **Ficha de arma normal:** cabeçalho de identidade (Nome; Crítico, Alcance, Tipo; Propriedades; Categoria, Modo, Requisito); bloco de Dano com um perfil por linha e tipos de dano inteiros; sem FOR/DEX do portador.
+- **Status com dano contínuo:** Dano/turno, Turnos e Fonte aparecem sob o status marcado (Sangramento, Hemorragia, Envenenamento…), não numa tabela no fim; o erro de validação aparece no topo do diálogo.
+- `templateSystemUniqueVersion` subiu em NPC, Slayer e arma normal: **reimportar os três templates** no mundo.
+- Testes: `node --test` 1545/1545. GitNexus `detect-changes`: risco crítico (Respirações, Ações e Status). Validado no Foundry de teste 14.367 (instância isolada): fichas renderizadas, Ações, Recuperação, Formas de Névoa e Som, diálogo de Status. Água, Sonhos, Raposa e Eclipse foram importadas, sem uso de Forma; abas Habilidades e Config do Slayer não foram abertas.
+
 ## v0.12.4 — 2026-11-16 — Respirações do PDF V25.1: dados corrigidos e Som, Sonhos, Raposa e Eclipse automatizadas
 
 - **Fonte:** Vento, Água, Chamas, Raposa, Eclipse, Som e Sonhos passam a seguir o PDF oficial Night Assassin's V25.1 (decisão do operador, exceção à regra do "mais atual"). Eclipse vem do Beginning Hour.

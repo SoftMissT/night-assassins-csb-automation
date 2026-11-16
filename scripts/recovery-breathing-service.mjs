@@ -79,12 +79,9 @@ const LEVELS = Object.freeze({
 });
 const n = (value) => Math.max(0, Math.trunc(parseNumber(value)));
 const isNpcProps = (props = {}) => actorKind({ system: { props } }) === 'npc';
-// Slayer: nível do personagem (mínimo 1). NPC: dropdown `npc_recuperacao_nivel` ("rec_nivel_0".."rec_nivel_14"),
-// onde 0 significa que o NPC não tem a técnica.
+// Nível do personagem (1–14): Slayer em `nvl_num`, NPC em `npc_nivel`.
 const levelOf = (props = {}) =>
-    isNpcProps(props)
-        ? Math.min(14, n(props.npc_recuperacao_nivel))
-        : Math.min(14, Math.max(1, n(props.nvl_num) || 1));
+    Math.min(14, Math.max(1, n(isNpcProps(props) ? props.npc_nivel : props.nvl_num) || 1));
 const healKeys = (props = {}) =>
     isNpcProps(props)
         ? { pdv: 'system.props.npc_pdv_curado', pdr: 'system.props.npc_pdr_recuperado' }
@@ -104,8 +101,7 @@ export function recoveryBreathingLevel(props = {}) {
 }
 export function hasRecoveryBreathing(actor) {
     const props = actor?.system?.props ?? {};
-    if (isNpcProps(props)) return levelOf(props) >= 1;
-    return actor?.type === 'slayer' || props.nvl_num !== undefined;
+    return isNpcProps(props) || actor?.type === 'slayer' || props.nvl_num !== undefined;
 }
 export function recoveryFormDefinition(formId = 'recuperacao', level) {
     const normalized = formId === 'coagulação' || formId === 'coagulacao' ? 'recuperacao' : formId;
@@ -400,10 +396,6 @@ export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
     if (status.active.includes('a_beira_da_morte'))
         return globalThis.ui?.notifications?.warn?.('À Beira da Morte impede a ativação normal.');
     const npc = isNpcProps(props);
-    if (npc && levelOf(props) < 1)
-        return globalThis.ui?.notifications?.warn?.(
-            'Este NPC não tem a Respiração da Recuperação. Escolha um nível na Configuração.'
-        );
     const id = activeCombatId();
     const state = parseRecoveryState(props[RECOVERY_STATE_KEY], id);
     const resources = currentRecoveryResources(props);

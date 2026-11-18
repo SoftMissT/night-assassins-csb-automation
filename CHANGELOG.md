@@ -2,6 +2,12 @@
 
 ## Em desenvolvimento
 
+## v0.13.1 — 2026-11-17 — Recuperação, Marca no NPC e ações de turno
+
+- **Respiração da Recuperação:** o uso normal exige estar com metade dos PDV e PDR máximos ou menos, tem CD crescente por nível e recupera 75% do total. Pode ser repetido enquanto cumprir as condições e só gasta Ação Especial se o personagem estiver em combate.
+- **NPC:** a aba Combate ganha o gerenciador da Marca do Caçador. O despertar usa nível e idade da ficha, e os bônus da Marca entram nos atributos.
+- **Ações:** Movimento, Ataque e Especial voltam quando o Foundry confirma o turno do combatente. Única e Reação continuam recarregando na virada de rodada.
+
 ## v0.13.0 — 2026-11-17 — Criar Arma e Respirações no diálogo de Dano
 
 - **Respirações na macro de Dano:** o seletor de ataque volta a abrir com as Formas portadas por Slayer e NPC. O dano usa o nível liberado da Forma e desconta o PDR no campo da ficha que rolou.

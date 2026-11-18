@@ -1128,6 +1128,30 @@
 											"style": "button"
 										},
 										{
+											"key": "npc_marca_gerenciar",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Despertar, ativar, consultar ou encerrar a Marca do Caçador.",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "label",
+											"size": "full-size",
+											"icon": "",
+											"value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-sm na-sheet-role-car\">MARCA DO CAÇADOR</span>\n",
+											"prefix": "",
+											"suffix": "",
+											"rollMessage": "%{await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NAHunterMark0001'))?.execute({actorUuid:entity.uuid}); return '';}%",
+											"altRollMessage": "",
+											"rollMessageToChat": false,
+											"altRollMessageToChat": false,
+											"style": "button"
+										},
+										{
 											"key": "acerto_label",
 											"colSpan": 1,
 											"rowSpan": 1,
@@ -2574,35 +2598,39 @@
 			},
 			{
 				"name": "vit_display",
-				"value": "${npc_vit_base}$"
+				"value": "${npc_vit_base+(vit_marca_temp ? vit_marca_temp : 0)}$"
 			},
 			{
 				"name": "dex_display",
-				"value": "${npc_dex_base}$"
+				"value": "${npc_dex_base+(dex_marca_temp ? dex_marca_temp : 0)}$"
 			},
 			{
 				"name": "for_display",
-				"value": "${npc_for_base}$"
+				"value": "${npc_for_base+(for_marca_temp ? for_marca_temp : 0)}$"
 			},
 			{
 				"name": "car_display",
-				"value": "${npc_car_base}$"
+				"value": "${npc_car_base+(car_marca_temp ? car_marca_temp : 0)}$"
 			},
 			{
 				"name": "fdv_display",
-				"value": "${npc_fdv_base}$"
+				"value": "${npc_fdv_base+(fdv_marca_temp ? fdv_marca_temp : 0)}$"
 			},
 			{
 				"name": "int_display",
-				"value": "${npc_int_base}$"
+				"value": "${npc_int_base+(int_marca_temp ? int_marca_temp : 0)}$"
 			},
 			{
 				"name": "sab_display",
-				"value": "${npc_sab_base}$"
+				"value": "${npc_sab_base+(sab_marca_temp ? sab_marca_temp : 0)}$"
+			},
+			{
+				"name": "nvl_respiracao_num",
+				"value": "${nvl_respiracao}$"
 			}
 		],
 		"attributeBar": {},
-		"templateSystemUniqueVersion": 3711888126
+		"templateSystemUniqueVersion": 3711888127
 	},
 	"prototypeToken": {
 		"name": "npc_template_atual",

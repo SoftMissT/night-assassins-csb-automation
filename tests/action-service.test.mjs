@@ -281,11 +281,11 @@ describe('action-service', () => {
         assert.equal(actor.system.props.folego_slayer_atual, 6);
         assert.equal((await recoverSlayerFolego(actor)).changed, false);
     });
-    it('hook de turno restaura o Actor por id mesmo com instâncias diferentes', async () => {
-        let updateCombat;
+    it('restaura o NPC do combatente que entra e só recarrega Reação ao mudar a rodada', async () => {
+        let turnChange;
         globalThis.Hooks = {
             on: (name, callback) => {
-                if (name === 'updateCombat') updateCombat = callback;
+                if (name === 'combatTurnChange') turnChange = callback;
             },
         };
         game.user = {
@@ -299,60 +299,52 @@ describe('action-service', () => {
                 active: true,
             },
         ];
-        const stored = makeSlayer({
-            fdv_display: 4,
-            folego_slayer_atual: 2,
-            acoes_slayer_dados: JSON.stringify({
-                version: 1,
-                turn: {
-                    movimento: 1,
-                    ataque: 1,
-                    especial: 1,
-                },
-                round: {
-                    unica: 1,
-                    reacao: 1,
-                },
-            }),
+        const spent = {
+            turn: { movimento: 1, ataque: 1, especial: 1 },
+            round: { unica: 1, reacao: 1 },
+        };
+        const npc = makeActor({
+            uuid: 'Scene.scene.Token.npc.Actor.actor_001',
+            props: {
+                npc_nome: 'NPC',
+                fdv_display: 4,
+                folego_slayer_atual: 2,
+                acoes_slayer_dados: JSON.stringify(spent),
+            },
         });
-        stored.id = 'actor-1';
-        let patch;
-        stored.update = async (changes) => {
-            patch = changes;
-            stored.system.props.acoes_slayer_dados = changes['system.props.acoes_slayer_dados'];
-            stored.system.props.folego_slayer_atual = changes['system.props.folego_slayer_atual'];
-        };
-        const combatActor = {
-            ...stored,
-            id: 'actor-1',
-        };
+        const other = makeSlayer({ acoes_slayer_dados: JSON.stringify(spent) });
+        for (const actor of [npc, other]) {
+            actor.update = async (patch) => {
+                for (const [key, value] of Object.entries(patch))
+                    actor.system.props[key.replace('system.props.', '')] = value;
+            };
+        }
+        const active = { id: 'npc-turn', actor: npc };
+        const previous = { id: 'slayer-turn', actor: other };
+        const combatants = [previous, active];
+        combatants.get = (id) => combatants.find((entry) => entry.id === id);
         const combat = {
             id: 'combat-1',
             started: true,
-            round: 1,
-            turn: 2,
-            combatant: {
-                actor: combatActor,
-                actorId: 'actor-1',
-            },
-            combatants: [
-                {
-                    actor: stored,
-                },
-            ],
-            getFlag: () => undefined,
-            setFlag: async () => {},
+            combatant: previous,
+            combatants,
         };
         registerActionEngine();
-        updateCombat(combat, {
-            turn: 2,
-        });
-        await new Promise((resolve) => setTimeout(resolve, 0));
-        assert.equal(patch['system.props.folego_slayer_atual'], 3);
-        assert.deepEqual(parseActionState(patch['system.props.acoes_slayer_dados']).turn, {
+        const activeState = { round: 1, turn: 1, combatantId: active.id };
+        await turnChange(combat, { round: 1 }, activeState);
+        const stateOf = (actor) => parseActionState(actor.system.props.acoes_slayer_dados);
+        assert.equal(npc.system.props.folego_slayer_atual, 3);
+        assert.deepEqual(stateOf(npc).turn, {
             movimento: 0,
             ataque: 0,
             especial: 0,
         });
+        assert.deepEqual(stateOf(npc).round, spent.round);
+        assert.deepEqual(stateOf(other).turn, spent.turn);
+
+        await turnChange(combat, activeState, { round: 2, turn: 0, combatantId: previous.id });
+        assert.deepEqual(stateOf(npc).round, { unica: 0, reacao: 0 });
+        assert.deepEqual(stateOf(other).round, { unica: 0, reacao: 0 });
+        assert.equal(npc.system.props.folego_slayer_atual, 3);
     });
 });

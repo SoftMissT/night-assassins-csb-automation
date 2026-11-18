@@ -297,49 +297,38 @@ function isPrimaryGm() {
 }
 
 export function registerActionEngine() {
-    Hooks.on(
-        'combatStart',
-        (combat) => void resetCombatActions(combat, { resetRound: true, fillFolego: true })
+    Hooks.on('combatTurnChange', (combat, prior, current) =>
+        resetCombatActions(combat, prior, current)
     );
-    Hooks.on('updateCombat', (combat, changes) => {
-        if (!isPrimaryGm()) return;
-        if (Object.hasOwn(changes, 'round')) void resetCombatActions(combat, { resetRound: true });
-        else if (Object.hasOwn(changes, 'turn')) void resetCombatActions(combat);
-    });
 }
 
-async function resetCombatActions(combat, { resetRound = false, fillFolego = false } = {}) {
-    if (!isPrimaryGm() || !combat || combat.started === false) return;
-    const actor = combat.combatant?.actor;
-    const actorId = actor?.id ?? combat.combatant?.actorId ?? 'none';
-    const key = `${combat.id}:${combat.round}:${combat.turn}:${actorId}:${resetRound}:${fillFolego}`;
+async function resetCombatActions(combat, prior, current) {
+    if (!isPrimaryGm() || !combat?.started || !current?.combatantId) return;
+    const active = combat.combatants.get(current.combatantId);
+    if (!active) return;
+    const resetRound = prior?.round !== current.round;
+    const fillFolego = !(prior?.round > 0);
+    const key = `${combat.id}:${current.round}:${current.turn}:${active.id}`;
     if (combat.getFlag?.(MODULE_ID, ACTION_FLAG) === key) return;
     await combat.setFlag?.(MODULE_ID, ACTION_FLAG, key);
-    const actors = [...(combat.combatants ?? [])]
-        .map((combatant) => combatant.actor)
-        .filter((candidate) => isSlayerActor(candidate) || isOniActor(candidate));
-    const jobs = actors.map(async (candidate) => {
+    const combatants = resetRound ? [active, ...combat.combatants] : [active];
+    const seen = new Set();
+    const jobs = combatants.map(async (combatant) => {
+        const candidate = combatant.actor;
+        if (!isSlayerActor(candidate) && !isOniActor(candidate)) return;
+        const actorKey = candidate.uuid ?? candidate;
+        if (seen.has(actorKey)) return;
+        seen.add(actorKey);
         const props = candidate.system?.props ?? {};
         const oni = isOniActor(candidate) && !isSlayerActor(candidate);
         const state = parseActionState(props[oni ? 'acoes_oni_dados' : 'acoes_slayer_dados']);
-        let changed = false;
-        if (resetRound) {
-            state.round = emptyUses(ROUND_KEYS);
-            changed = true;
-        }
-        if (candidate?.id && candidate.id === actorId) {
-            state.turn = emptyUses(TURN_KEYS);
-            changed = true;
-        }
-        const patch = changed
-            ? oni
-                ? oniActionPatch(state, props)
-                : actionPatch(state, props)
-            : {};
-        if (!oni && (fillFolego || (candidate?.id && candidate.id === actorId)))
+        const ownTurn = combatant.id === active.id;
+        if (resetRound) state.round = emptyUses(ROUND_KEYS);
+        if (ownTurn) state.turn = emptyUses(TURN_KEYS);
+        const patch = oni ? oniActionPatch(state, props) : actionPatch(state, props);
+        if (!oni && (fillFolego || ownTurn))
             Object.assign(patch, slayerFolegoPatch(props, { full: fillFolego }));
-        if (Object.keys(patch).length > 0)
-            await candidate.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+        await candidate.update(patch, { naCsbAutomation: true, naActionEconomy: true });
     });
     const results = await Promise.allSettled(jobs);
     for (const result of results) {

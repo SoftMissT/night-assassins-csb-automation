@@ -5,6 +5,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
     currentRecoveryResources,
+    openRecoveryManager,
     parseRecoveryState,
     recoveryFormDefinition,
     recoveryOutcome,
@@ -30,10 +31,10 @@ const recoveryOf = (patch) => JSON.parse(patch['system.props.resp_recuperacao_es
 describe('Respiração da Recuperação — tabela 1–14', () => {
     it('expõe exatamente os dados e CDs dos 14 níveis de personagem', () => {
         const expected = [
-            ['2d8', '1d6', 14], ['3d8', '2d6', 14], ['4d8', '2d6', 14], ['4d10', '3d6', 12],
-            ['5d10', '3d6', 12], ['6d10', '4d6', 12], ['7d10', '4d6', 12], ['7d12', '5d8', 10],
-            ['8d12', '5d8', 10], ['9d12', '6d8', 10], ['10d12', '6d8', 10], ['11d12', '7d8', 8],
-            ['12d12', '8d8', 8], ['14d12', '9d8', 8],
+            ['2d8', '1d6', 16], ['3d8', '2d6', 16], ['4d8', '2d6', 16], ['4d10', '3d6', 17],
+            ['5d10', '3d6', 17], ['6d10', '4d6', 17], ['7d10', '4d6', 17], ['7d12', '5d8', 18],
+            ['8d12', '5d8', 18], ['9d12', '6d8', 18], ['10d12', '6d8', 18], ['11d12', '7d8', 19],
+            ['12d12', '8d8', 19], ['14d12', '9d8', 19],
         ];
         assert.deepEqual(expected.map((_, index) => {
             const def = recoveryFormDefinition('recuperacao', index + 1);
@@ -43,7 +44,7 @@ describe('Respiração da Recuperação — tabela 1–14', () => {
 });
 
 describe('Respiração da Recuperação — resultado', () => {
-    it('cura PDV/PDR até os máximos e marca um sucesso por combate', () => {
+    it('cura PDV/PDR até os máximos e registra o sucesso para o fluxo de Última Chance', () => {
         const props = baseProps({ nvl_num: 4 }, { active: [], exhaustion: 0, effects: {} });
         const result = recoveryOutcome({ props, success: true, pdvRoll: 99, pdrRoll: 99, currentCombatId: 'c1' });
         assert.equal(result.patch['system.props.pdv_slayer_curado'], 10);
@@ -61,16 +62,19 @@ describe('Respiração da Recuperação — resultado', () => {
         assert.match(result.summary[0], /pode tentar novamente/u);
     });
 
-    it('20 natural soma 2 PDR por nível antes do teto e Fadiga Espiritual reduz o total', () => {
+    it('ganhos normais recebem o redutor, incluindo o crítico, e Última Chance mantém o ganho', () => {
         const normal = recoveryOutcome({ props: baseProps({ nvl_num: 3 }), success: true, pdrRoll: 4, naturalTwenty: true, currentCombatId: 'c1' });
-        assert.equal(normal.patch['system.props.pdr_slayer_curado'], 10);
+        assert.equal(normal.patch['system.props.pdr_slayer_curado'], 7);
+        const reaction = recoveryOutcome({ props: baseProps({ nvl_num: 3 }), success: true, pdvRoll: 9, pdrRoll: 4, naturalTwenty: true, currentCombatId: 'c1', lastChance: true });
+        assert.equal(reaction.patch['system.props.pdv_slayer_curado'], 9);
+        assert.equal(reaction.patch['system.props.pdr_slayer_curado'], 10);
         const tired = recoveryOutcome({
             props: baseProps({ nvl_num: 3 }, { active: ['fadiga_espiritual'], exhaustion: 0, effects: {} }),
             success: true,
             pdrRoll: 9,
             currentCombatId: 'c1',
         });
-        assert.equal(tired.patch['system.props.pdr_slayer_curado'], 4);
+        assert.equal(tired.patch['system.props.pdr_slayer_curado'], 3);
     });
 
     it('Nível 4 remove Sangramento/Hemorragia e Nível 8 agenda um veneno ignorado', () => {
@@ -86,19 +90,60 @@ describe('Respiração da Recuperação — resultado', () => {
     });
 
     it('Nível 12 suspende uma fadiga até o início do próximo turno', () => {
-        const result = recoveryOutcome({
-            props: baseProps({ nvl_num: 12 }, { active: ['fadiga_mental'], exhaustion: 0, effects: {} }),
-            success: true,
-            pdvRoll: 1,
-            pdrRoll: 1,
-            currentCombatId: 'c1',
-        });
+        const props = baseProps({ nvl_num: 12 }, { active: ['fadiga_mental'], exhaustion: 0, effects: {} });
+        const result = recoveryOutcome({ props, success: true, currentCombatId: 'c1' });
         assert.equal(result.patch['system.props.resp_recuperacao_fadiga_suspensa'], 1);
         assert.ok(result.summary.some((line) => line.includes('fadiga_mental')));
+        const outside = recoveryOutcome({ props, success: true, currentCombatId: null });
+        assert.equal(outside.patch['system.props.resp_recuperacao_fadiga_suspensa'], undefined);
     });
 
     it('estado de outro combate começa limpo e os máximos incluem bônus de PDR', () => {
         assert.equal(parseRecoveryState(JSON.stringify({ combatId: 'old', succeeded: true }), 'new').succeeded, false);
         assert.deepEqual(currentRecoveryResources(baseProps({ bonus_pdr_maximo_slayer: 3 })).pdrMax, 23);
     });
+});
+
+it('uso normal pode repetir fora de combate e exige os dois limites de recursos', async () => {
+    const legacy = JSON.stringify({ combatId: 'fora-combate', attempted: true, succeeded: true });
+    const props = baseProps({ pdv_slayer_dano_tomado: 14, resp_recuperacao_estado: legacy });
+    const actor = {
+        isOwner: true,
+        system: { props },
+        update: async (patch) => {
+            for (const [key, value] of Object.entries(patch))
+                props[key.replace('system.props.', '')] = value;
+        },
+    };
+    game.user.character = actor;
+    game.combat = { id: 'outra-luta', started: true, combatants: [] };
+    let opened = 0;
+    foundry.applications.api.DialogV2.wait = async () => {
+        opened++;
+        return 'use';
+    };
+    globalThis.Roll = class {
+        constructor(formula) {
+            this.total = formula.startsWith('1d20 +') ? 19 : 4;
+        }
+        async evaluate() { return this; }
+        async toMessage() {}
+    };
+    ChatMessage.create = async () => {};
+
+    await openRecoveryManager();
+    props.pdv_slayer_dano_tomado = 18;
+    props.pdr_slayer_gasto_valor = 9;
+    await openRecoveryManager();
+    assert.equal(opened, 0);
+
+    props.pdr_slayer_gasto_valor = 13;
+    assert.equal((await openRecoveryManager()).success, true);
+    assert.equal((await openRecoveryManager()).success, true);
+    await openRecoveryManager();
+    assert.equal(opened, 2);
+    assert.equal(props.pdv_slayer_curado, 6);
+    assert.equal(props.pdr_slayer_curado, 6);
+    assert.equal(props.resp_recuperacao_estado, legacy);
+    assert.equal(props.acoes_slayer_dados, undefined);
 });

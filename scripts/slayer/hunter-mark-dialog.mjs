@@ -2,9 +2,11 @@
  * @fileoverview Diálogo e fluxo da Marca do Caçador (despertar, ativar, encerrar).
  *
  * Antes vivia inteiro na macro "Marca do Caçador"; a macro agora é só um adaptador.
- * A lógica foi movida sem alteração; as regras puras ficam em `hunter-mark.mjs`.
+ * As regras puras ficam em `hunter-mark.mjs`.
  */
 
+import { actorKind } from '../actor-kind.mjs';
+import { resolveActorReference } from '../core/combat-context.mjs';
 import * as huntersMark from './hunter-mark.mjs';
 
 /**
@@ -14,10 +16,11 @@ export async function openHuntersMarkDialog(args = {}) {
     const startedAt = performance.now();
     if (!canvas.ready) return ui.notifications.warn('Canvas não pronto.');
     const actor = args.actorUuid
-        ? await fromUuid(args.actorUuid)
+        ? await resolveActorReference(args.actorUuid)
         : (canvas.tokens.controlled[0]?.actor ?? game.user.character);
     if (!actor) return ui.notifications.error('Sem personagem ativo.');
     if (!actor.isOwner) return ui.notifications.error('Você não pode alterar este personagem.');
+    const npc = actorKind(actor) === 'npc';
     const { DialogV2 } = foundry.applications.api;
     const ATTRIBUTES = Object.freeze([
         {
@@ -70,7 +73,7 @@ export async function openHuntersMarkDialog(args = {}) {
     }
 
     function level(props) {
-        return number(props.nvl_num ?? props.nvl_pj);
+        return number(npc ? props.npc_nivel : (props.nvl_num ?? props.nvl_pj));
     }
 
     function attribute(props, key) {
@@ -189,6 +192,9 @@ export async function openHuntersMarkDialog(args = {}) {
             return ui.notifications.info('A Marca já foi despertada.');
         if (level(props) < 12) return ui.notifications.warn('A Marca do Caçador exige Nível 12.');
         const bornMarked = isBornMarked(props);
+        const age = number(npc ? props.npc_idade : props.idade);
+        if (npc && !bornMarked && number(props.vid_rest_num) <= 0 && age <= 0)
+            return ui.notifications.warn('Informe a idade do NPC para calcular a vida restante.');
         const scar = await chooseScar(props, bornMarked);
         if (!scar) return;
         if (!bornMarked) {
@@ -208,7 +214,6 @@ export async function openHuntersMarkDialog(args = {}) {
                 '<strong>Marca do Caçador</strong> determinação da vida restante'
             );
             const rolledYears = lifeYears(roll.total);
-            const age = number(props.idade);
             remainingLife =
                 age >= 25
                     ? (

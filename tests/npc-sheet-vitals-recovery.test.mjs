@@ -46,6 +46,16 @@ const npcProps = (extra = {}) => ({
 });
 
 describe('ficha de NPC: layout', () => {
+    it('abre a Marca canônica e usa seus bônus nos sete atributos do NPC', () => {
+        const mark = byKey.get('npc_marca_gerenciar');
+        assert.equal(mark?.style, 'button');
+        assert.match(mark.rollMessage, /Macro\.NAHunterMark0001/);
+        const hidden = new Map(template.system.hidden.map(({ name, value }) => [name, value]));
+        assert.equal(hidden.get('nvl_respiracao_num'), '${nvl_respiracao}$');
+        for (const key of ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'])
+            assert.ok(hidden.get(`${key}_display`).includes(`${key}_marca_temp`), key);
+    });
+
     it('não tem mais Personalidade, Tom nem História, e ganha NOTAS vazio', () => {
         for (const key of ['npc_personalidade', 'npc_personalidade_copy1', 'npc_personalidade_copy1_copy2'])
             assert.equal(byKey.has(key), false, key);
@@ -170,16 +180,16 @@ describe('ficha de NPC: painel de vida e Recuperação', () => {
     it('nível 7: cura PDV e PDR nas keys do NPC, respeitando os máximos', () => {
         const result = recoveryOutcome({ props: npcProps(), success: true, pdvRoll: 99, pdrRoll: 99, currentCombatId: 'c1' });
         assert.equal(result.def.level, 7);
-        assert.equal(result.def.dc, 12);
+        assert.equal(result.def.dc, 17);
         assert.equal(result.patch['system.props.npc_pdv_curado'], 12);
         assert.equal(result.patch['system.props.npc_pdr_recuperado'], 15);
         assert.equal(result.patch['system.props.pdv_slayer_curado'], undefined);
         assert.equal(JSON.parse(result.patch['system.props.resp_recuperacao_estado']).succeeded, true);
     });
 
-    it('crítico soma 2 PDR por nível e Fadiga Espiritual corta o PDR pela metade', () => {
+    it('crítico entra no ganho reduzido e Fadiga Espiritual corta o PDR pela metade', () => {
         const normal = recoveryOutcome({ props: npcProps({ npc_pdr_gasto_valor: 20 }), success: true, pdrRoll: 4, naturalTwenty: true, currentCombatId: 'c1' });
-        assert.equal(normal.patch['system.props.npc_pdr_recuperado'], 18);
+        assert.equal(normal.patch['system.props.npc_pdr_recuperado'], 13);
         const tired = recoveryOutcome({
             props: npcProps({
                 npc_pdr_gasto_valor: 20,
@@ -187,7 +197,7 @@ describe('ficha de NPC: painel de vida e Recuperação', () => {
             }),
             success: true, pdrRoll: 4, naturalTwenty: true, currentCombatId: 'c1',
         });
-        assert.equal(tired.patch['system.props.npc_pdr_recuperado'], 9);
+        assert.equal(tired.patch['system.props.npc_pdr_recuperado'], 6);
     });
 });
 

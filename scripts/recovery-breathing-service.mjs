@@ -3,78 +3,81 @@ import { consumeSlayerActions } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { parseNumber } from './parsing.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
+import { getDamageStatusEffects } from './status-effects.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 export const RECOVERY_STATE_KEY = 'resp_recuperacao_estado';
+const NORMAL_RECOVERY_RATIO = 0.75;
+const normalRecoveryInProgress = new Set();
 const LEVELS = Object.freeze({
     1: {
         pdv: '2d8',
         pdr: '1d6',
-        dc: 14,
+        dc: 16,
     },
     2: {
         pdv: '3d8',
         pdr: '2d6',
-        dc: 14,
+        dc: 16,
     },
     3: {
         pdv: '4d8',
         pdr: '2d6',
-        dc: 14,
+        dc: 16,
     },
     4: {
         pdv: '4d10',
         pdr: '3d6',
-        dc: 12,
+        dc: 17,
     },
     5: {
         pdv: '5d10',
         pdr: '3d6',
-        dc: 12,
+        dc: 17,
     },
     6: {
         pdv: '6d10',
         pdr: '4d6',
-        dc: 12,
+        dc: 17,
     },
     7: {
         pdv: '7d10',
         pdr: '4d6',
-        dc: 12,
+        dc: 17,
     },
     8: {
         pdv: '7d12',
         pdr: '5d8',
-        dc: 10,
+        dc: 18,
     },
     9: {
         pdv: '8d12',
         pdr: '5d8',
-        dc: 10,
+        dc: 18,
     },
     10: {
         pdv: '9d12',
         pdr: '6d8',
-        dc: 10,
+        dc: 18,
     },
     11: {
         pdv: '10d12',
         pdr: '6d8',
-        dc: 10,
+        dc: 18,
     },
     12: {
         pdv: '11d12',
         pdr: '7d8',
-        dc: 8,
+        dc: 19,
     },
     13: {
         pdv: '12d12',
         pdr: '8d8',
-        dc: 8,
+        dc: 19,
     },
     14: {
         pdv: '14d12',
         pdr: '9d8',
-        dc: 8,
+        dc: 19,
     },
 });
 const n = (value) => Math.max(0, Math.trunc(parseNumber(value)));
@@ -210,14 +213,16 @@ export function recoveryOutcome({
         ...previous,
         combatId: currentCombatId,
         attempted: true,
+        succeeded: success === true || previous.succeeded,
         lastChanceUsed: lastChance || previous.lastChanceUsed,
     };
-    const patch = {
-        ...statePatch(state),
-    };
+    const patch = currentCombatId === null ? {} : statePatch(state);
     const summary = [];
     if (!success) {
-        summary.push('falhou: a Ação Especial foi gasta e pode tentar novamente');
+        if (lastChance) summary.push('falhou: a Reação foi gasta');
+        else if (currentCombatId !== null)
+            summary.push('falhou: a Ação Especial foi gasta e pode tentar novamente');
+        else summary.push('falhou: pode tentar novamente enquanto cumprir as condições');
         return {
             patch,
             summary,
@@ -225,12 +230,12 @@ export function recoveryOutcome({
             state,
         };
     }
-    state.succeeded = true;
-    patch[`system.props.${RECOVERY_STATE_KEY}`] = JSON.stringify(state);
     const spiritualFatigue = status.active.includes('fadiga_espiritual');
-    let pdrGain = n(pdrRoll) + (naturalTwenty ? 2 * level : 0);
+    const ratio = lastChance ? 1 : NORMAL_RECOVERY_RATIO;
+    const pdvGain = Math.floor(n(pdvRoll) * ratio);
+    let pdrGain = Math.floor((n(pdrRoll) + (naturalTwenty ? 2 * level : 0)) * ratio);
     if (spiritualFatigue) pdrGain = Math.floor(pdrGain / 2);
-    const pdvApplied = Math.min(Math.max(0, resources.pdvMax - resources.pdv), n(pdvRoll));
+    const pdvApplied = Math.min(Math.max(0, resources.pdvMax - resources.pdv), pdvGain);
     const pdrApplied = Math.min(Math.max(0, resources.pdrMax - resources.pdr), pdrGain);
     const keys = healKeys(props);
     const healed = (path) => n(props[path.replace('system.props.', '')]);
@@ -259,7 +264,7 @@ export function recoveryOutcome({
         patch['system.props.resp_recuperacao_veneno_ignorar'] = 1;
         summary.push('ignora o próximo dano periódico de Envenenamento');
     }
-    if (level >= 12) {
+    if (level >= 12 && currentCombatId !== null) {
         const fatigue = ['fadiga_corporal', 'fadiga_espiritual', 'fadiga_mental'].find((key) =>
             active.includes(key)
         );
@@ -274,7 +279,7 @@ export function recoveryOutcome({
         effects,
     });
     patch['system.props.status_slayer_resumo'] = formatStatusSummary(active, status.exhaustion);
-    if (naturalTwenty) summary.push(`crítico: +${2 * level} PDR antes dos máximos`);
+    if (naturalTwenty) summary.push(`crítico: +${2 * level} PDR no cálculo da recuperação`);
     return {
         patch,
         summary,
@@ -383,39 +388,54 @@ export async function attemptLastChance(actor, { combatId = activeCombatId() } =
         summary: outcome.summary,
     };
 }
+function normalRecoveryBlockReason(props) {
+    const status = parseStatusState(props.status_slayer_dados);
+    if (status.active.includes('ofegante'))
+        return 'Ofegante impede ativar Respirações.';
+    if (status.active.includes('a_beira_da_morte'))
+        return 'À Beira da Morte impede a ativação normal.';
+    const resources = currentRecoveryResources(props);
+    if (resources.pdv <= 0)
+        return 'A Recuperação normal exige pelo menos 1 PDV.';
+    if (getDamageStatusEffects(props).blocked)
+        return 'Este personagem está incapacitado e não pode usar a Recuperação.';
+    if (resources.pdv * 2 > resources.pdvMax)
+        return 'A Recuperação exige estar com metade dos PDV máximos ou menos.';
+    if (resources.pdrMax <= 0 || resources.pdr * 2 > resources.pdrMax)
+        return 'A Recuperação exige ter gasto pelo menos metade dos PDR máximos.';
+    return null;
+}
+
 export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
     const actor = await resolveActor(actorUuid);
     if (!actor) return globalThis.ui?.notifications?.warn?.('Nenhum personagem ativo.');
     if (!actor.isOwner && !globalThis.game?.user?.isGM)
         return globalThis.ui?.notifications?.error?.('Você não pode usar esta Respiração.');
     if (mode === 'lastChance') return attemptLastChance(actor);
-    const props = actor.system?.props ?? {};
-    const status = parseStatusState(props.status_slayer_dados);
-    if (status.active.includes('ofegante'))
-        return globalThis.ui?.notifications?.warn?.('Ofegante impede ativar Respirações.');
-    if (status.active.includes('a_beira_da_morte'))
-        return globalThis.ui?.notifications?.warn?.('À Beira da Morte impede a ativação normal.');
-    const npc = isNpcProps(props);
-    const id = activeCombatId();
-    const state = parseRecoveryState(props[RECOVERY_STATE_KEY], id);
-    const resources = currentRecoveryResources(props);
-    if (state.succeeded)
-        return globalThis.ui?.notifications?.warn?.(
-            'Respiração da Recuperação já teve sucesso neste combate.'
-        );
-    if (!npc && resources.pdv <= 0)
-        return globalThis.ui?.notifications?.warn?.(
-            'Use Última Chance antes de entrar À Beira da Morte.'
-        );
-    const level = levelOf(props);
-    const def = recoveryFormDefinition('recuperacao', level);
+    const key = actor.uuid ?? actor;
+    if (normalRecoveryInProgress.has(key)) return null;
+    normalRecoveryInProgress.add(key);
+    try {
+        return await useNormalRecovery(actor);
+    } finally {
+        normalRecoveryInProgress.delete(key);
+    }
+}
+
+async function useNormalRecovery(actor) {
+    const propsBefore = actor.system?.props ?? {};
+    const blocked = normalRecoveryBlockReason(propsBefore);
+    if (blocked) return globalThis.ui?.notifications?.warn?.(blocked);
+    const preview = recoveryFormDefinition('recuperacao', levelOf(propsBefore));
     const result = await foundry.applications.api.DialogV2.wait({
         window: {
             title: 'Respiração da Recuperação',
         },
         modal: true,
         rejectClose: false,
-        content: `<p>Nível de personagem ${level}. Custo: 0 PDR. CD ${def.dc}.</p><p>PDV: ${def.pdv} + VIT · PDR: ${def.pdr} + FDV.</p>`,
+        content: `<p>Nível ${preview.level}. Teste de FDV, CD ${preview.dc}. Custo: 0 PDR.</p>
+            <p>Recupera 75% do total, arredondado para baixo: ${preview.pdv} + VIT em PDV e ${preview.pdr} + FDV em PDR.</p>
+            <p>Exige até metade dos PDV e PDR máximos. Em combate, gasta Ação Especial.</p>`,
         buttons: [
             {
                 action: 'use',
@@ -431,8 +451,21 @@ export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
         ],
     });
     if (result !== 'use' && result !== true) return null;
-    const action = await consumeSlayerActions(actor, ['especial']);
-    if (!action.ok) return globalThis.ui?.notifications?.warn?.(action.reason);
+    const props = actor.system?.props ?? {};
+    const nowBlocked = normalRecoveryBlockReason(props);
+    if (nowBlocked) return globalThis.ui?.notifications?.warn?.(nowBlocked);
+    const def = recoveryFormDefinition('recuperacao', levelOf(props));
+    const combat = globalThis.game?.combat;
+    const participates =
+        combat?.started &&
+        [...(combat.combatants ?? [])].some(
+            ({ actor: participant }) => participant === actor || (actor.uuid && participant?.uuid === actor.uuid)
+        );
+    const combatId = participates ? combat.id : null;
+    if (participates) {
+        const action = await consumeSlayerActions(actor, ['especial']);
+        if (!action.ok) return globalThis.ui?.notifications?.warn?.(action.reason);
+    }
     const roll = await new Roll(`1d20 + ${attr(props, 'fdv')}`).evaluate();
     const naturalTwenty = (roll.dice?.[0]?.results?.[0]?.result ?? 0) === 20;
     const success = n(roll.total) >= def.dc || naturalTwenty;
@@ -454,13 +487,10 @@ export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
         pdvRoll,
         pdrRoll,
         naturalTwenty,
-        recoveryState: state,
-        currentCombatId: id,
+        currentCombatId: combatId,
     });
-    await actor.update(outcome.patch, {
-        naCsbAutomation: true,
-        naBreathing: true,
-    });
+    if (Object.keys(outcome.patch).length)
+        await actor.update(outcome.patch, { naCsbAutomation: true, naBreathing: true });
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({
             actor,

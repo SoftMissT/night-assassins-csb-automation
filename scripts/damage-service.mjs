@@ -508,7 +508,8 @@ export async function rollDamage(options = {}) {
             formula: formulaParts[index],
         }))
         .filter((spec) => spec.formula !== '0');
-    const markFormula = attackerKind === 'slayer' ? markDamageFormula(props, entradas) : '';
+    const markFormula =
+        attackerKind === 'slayer' || attackerKind === 'npc' ? markDamageFormula(props, entradas) : '';
     if (markFormula)
         specs.push({ label: 'Marca do Caçador', types: ['ferida'], formula: markFormula });
     const breathingState = parseWaterBreathingState(

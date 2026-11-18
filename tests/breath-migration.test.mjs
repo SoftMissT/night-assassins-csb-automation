@@ -79,6 +79,53 @@ describe('breath-migration', () => {
         assert.equal(patch.system.template, 'RuntimeBreathTpl42');
     });
 
+    it('troca Cauterizar por Universo Flamejante sem reimportar ou perder fórmulas personalizadas', async () => {
+        const changes = [];
+        const old = {
+            id: 'forma-da-ficha',
+            name: 'Chamas — 7º Estilo Cauterizar',
+            ownership: { default: 2, player: 3 },
+            flags: { mesa: { favorito: true } },
+            system: {
+                template: 'TemplateDoMundo',
+                props: {
+                    nome_forma: 'Cauterizar',
+                    respiracao_nome: 'Chamas',
+                    tipo_manobra: 'Especial',
+                    tem_requisito: 1,
+                    nvl1_dano: '1d6',
+                    nvl2_dano: '3d10 + @for',
+                    anotacao: 'Preservar',
+                },
+            },
+        };
+        const actors = [{
+            items: [old],
+            updateEmbeddedDocuments: async (type, updates) => {
+                assert.equal(type, 'Item');
+                changes.push(...updates);
+            },
+        }];
+        assert.equal((await repairBreathingItems({ actors })).items, 1);
+        const [patch] = changes;
+        assert.equal(patch._id, old.id);
+        assert.equal(patch.name, 'Chamas: 7º Estilo Universo Flamejante');
+        assert.equal(patch['system.props.forma_id'], 'chamas_07');
+        assert.equal(patch['system.props.forma_ataque_padrao'], 1);
+        assert.equal(patch['system.props.tipo_manobra'], 'Ação Única');
+        assert.equal(patch['system.props.tem_requisito'], 0);
+        assert.equal(patch['system.props.nvl1_dano'], '2d10');
+        assert.equal(patch['system.props.nvl4_dano'], '5d10');
+        assert.equal(patch['system.props.nvl4_custo'], 7);
+        for (const preserved of ['system.props.nvl2_dano', 'system.props.anotacao', 'system.template', 'flags', 'ownership'])
+            assert.equal(preserved in patch, false, preserved);
+        Object.assign(old, { name: patch.name });
+        for (const [key, value] of Object.entries(patch)) {
+            if (key.startsWith('system.props.')) old.system.props[key.slice(13)] = value;
+        }
+        assert.deepEqual(await repairBreathingItems({ actors }), { actors: 0, items: 0 });
+    });
+
     it('é idempotente: item já canônico não gera patch', () => {
         assert.equal(breathingItemPatch(canonicalForm, canonicalForm), null);
     });

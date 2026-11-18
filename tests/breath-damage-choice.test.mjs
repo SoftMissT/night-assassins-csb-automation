@@ -107,7 +107,8 @@ describe('dano escolhido: validação e guarda', () => {
         const source = await readFile(new URL('../scripts/breath-service.mjs', import.meta.url), 'utf8');
         const choiceAt = source.indexOf('resolveChosenDamage(dialogResult.damage');
         assert.ok(choiceAt > 0);
-        assert.ok(choiceAt < source.indexOf('if (isMigrated(form.respiracao))'), 'antes de qualquer rota de uso');
+        const canonicalAt = source.indexOf("if (isMigrated(form.respiracao) && !form.id.startsWith('custom_'))");
+        assert.ok(canonicalAt > choiceAt, 'antes da separação entre o fluxo canônico e o personalizado');
         assert.match(source, /item\.update\(\{ \[`system\.props\.nvl\$\{selected\.level\}_dano`\]: chosen\.formula \}\)/u);
         assert.match(source, /damageOverride: damageChoice\?\.chosen/u);
     });

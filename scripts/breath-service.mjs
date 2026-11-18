@@ -46,6 +46,7 @@ import {
     buildFlameBreathingPlan,
     clearFlameBreathingState,
     flameStatePatch,
+    flameTurnKey,
     parseFlameBreathingState,
     resolveFlameRengokuAllies,
     FLAME_HEAT_FLAG,
@@ -101,6 +102,7 @@ import { runCanonicalBreathingForm } from './breathing-pipeline.mjs';
 
 const MANOBRA_MAP = {
     unica: 'unica',
+    'acao unica': 'unica',
     u00fanica: 'unica',
     ataque: 'ataque',
     'acao de ataque': 'ataque',
@@ -111,6 +113,7 @@ const MANOBRA_MAP = {
     livre: 'livre',
     'acao livre': 'livre',
     reaka: 'reacao',
+    reacao: 'reacao',
     'reakatilde;o': 'reacao',
     reação: 'reacao',
     'rea\\u00e7\\u00e3o': 'reacao',
@@ -169,13 +172,15 @@ function getFormData(item) {
     }
     return {
         id: String(props.forma_id ?? catalog?.id ?? ''),
-        nome: String(catalog?.name ?? props.nome_jp ?? props.nome_forma ?? item?.name ?? 'Forma'),
-        jp: String(catalog?.ptName ?? props.nome_forma ?? ''),
+        nome: String(catalog?.name ?? (props.nome_jp || props.nome_forma || item?.name || 'Forma')),
+        jp: String(catalog?.ptName ?? (props.nome_jp ? props.nome_forma ?? '' : '')),
         respiracao: String(props.respiracao_nome ?? ''),
         tipo: String(catalog?.action ?? catalog?.actions?.[0] ?? props.tipo_manobra ?? ''),
         nivelReq: parseNumber(props.nivel_req),
-        descricao: String(props.descricao ?? ''),
-        temRequisito: parseNumber(props.tem_requisito) === 1,
+        descricao: catalog?.id === 'chamas_07'
+            ? 'Prepara o próximo Ataque Padrão do turno. A arma ganha 3 pontos de Esquentar. No acerto, o alvo recebe 2 pontos adicionais e faz um teste de VIT para evitar Derrubado.'
+            : String(props.descricao ?? ''),
+        temRequisito: catalog?.id !== 'chamas_07' && parseNumber(props.tem_requisito) === 1,
         requisito: String(props.requisito_texto ?? ''),
         baseTypes,
         levels:
@@ -186,7 +191,9 @@ function getFormData(item) {
                               level: index + 1,
                               custo: level.cost,
                               dano: level.damage ?? '',
-                              efeito: props[`nvl${index + 1}_efeito`] ?? '',
+                              efeito: catalog.id === 'chamas_07'
+                                  ? `Avanço de até ${level.advance.toLocaleString('pt-BR')} m no próximo Ataque Padrão. Não gasta Movimento. Respeite obstáculos e Ataques de Oportunidade.`
+                                  : (props[`nvl${index + 1}_efeito`] ?? ''),
                               status: '',
                               buff: '',
                               tiposDano: baseTypes,
@@ -389,16 +396,18 @@ const escapeAttr = (value) =>
 
 /** O jogador escolhe o dano quando a Respiração está na lista e algum nível tem dano. */
 function offersDamageChoice(form, levels) {
-    return CHOSEN_DAMAGE_BREATHINGS.has(form.respiracao) && levels.some((level) => level.dano);
+    return form.id !== 'chamas_07' &&
+        CHOSEN_DAMAGE_BREATHINGS.has(form.respiracao) && levels.some((level) => level.dano);
 }
 
 function buildDialogHtml(form, pdrCurrent, breathLevel) {
+    const richText = form.id.startsWith('custom_') ? escapeAttr : (value) => value;
     const allowed = form.levels.filter((level) => level.level <= breathLevel);
     const levelOptions = allowed
         .map((l) => {
             const danoTxt = l.dano ? ` · Dano: ${escapeAttr(l.dano)}` : '';
-            const statusTxt = l.status ? ` · Status: ${l.status}` : '';
-            const buffTxt = l.buff ? ` · Buff: ${l.buff}` : '';
+            const statusTxt = l.status ? ` · Status: ${richText(l.status)}` : '';
+            const buffTxt = l.buff ? ` · Buff: ${richText(l.buff)}` : '';
             return `<option value="${l.level}" data-dano="${escapeAttr(l.dano)}">Nível ${l.level} ${l.custo} PDR${danoTxt}${statusTxt}${buffTxt}</option>`;
         })
         .join('');
@@ -411,7 +420,7 @@ function buildDialogHtml(form, pdrCurrent, breathLevel) {
         : '';
 
     const reqHtml = form.temRequisito
-        ? `<div class="na-breath-req" style="color:#FF2B4A;font-size:12px;margin-bottom:6px;">⚠ Requisito: ${form.requisito}</div>`
+        ? `<div class="na-breath-req" style="color:#FF2B4A;font-size:12px;margin-bottom:6px;">⚠ Requisito: ${richText(form.requisito)}</div>`
         : '';
 
     const lvlReqHtml =
@@ -422,13 +431,13 @@ function buildDialogHtml(form, pdrCurrent, breathLevel) {
     return `
     <div class="na-breath-dialog">
       <div style="margin-bottom:8px;">
-        <strong style="font-size:15px;">${form.nome}</strong>
-        ${form.jp ? `<div style="font-size:12px;color:#888;">${form.jp}</div>` : ''}
-        <div style="font-size:12px;color:#aaa;">${form.respiracao} · ${form.tipo}</div>
+        <strong style="font-size:15px;">${escapeAttr(form.nome)}</strong>
+        ${form.jp ? `<div style="font-size:12px;color:#888;">${escapeAttr(form.jp)}</div>` : ''}
+        <div style="font-size:12px;color:#aaa;">${escapeAttr(form.respiracao)} · ${escapeAttr(form.tipo)}</div>
       </div>
       ${reqHtml}
       ${lvlReqHtml}
-      <div style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.4;">${form.descricao}</div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.4;">${richText(form.descricao)}</div>
       <div style="margin-bottom:8px;">
         <label style="font-size:13px;">Escolha o nível:</label>
         <select name="na-breath-level" style="width:100%;margin-top:4px;">${levelOptions}</select>
@@ -1075,26 +1084,27 @@ async function collectCuratedChoices(actor, form, level, props) {
 }
 
 async function postBreathChat({ actor, form, selected, damageRoll }) {
+    const richText = form.id.startsWith('custom_') ? escapeAttr : (value) => value;
     const danoLine = damageRoll
         ? `<div style="margin-top:6px;">Dano rolado: <strong>${damageRoll.total}</strong> <button class="na-breath-damage-die" style="border:none;background:none;cursor:pointer;color:#28D7FF;font-size:11px;">(ver dados)</button></div>`
         : '';
     const statusLine = selected.status
-        ? `<div style="color:#FF9100;">Status: ${selected.status}</div>`
+        ? `<div style="color:#FF9100;">Status: ${richText(selected.status)}</div>`
         : '';
     const buffLine = selected.buff
-        ? `<div style="color:#2EFF7A;">Buff (self): ${selected.buff}</div>`
+        ? `<div style="color:#2EFF7A;">Buff (self): ${richText(selected.buff)}</div>`
         : '';
     const efeitoLine = selected.efeito
-        ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${selected.efeito}</div>`
+        ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${richText(selected.efeito)}</div>`
         : '';
 
     const flavor = `
     <div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;">
       <div style="font-size:14px;">
-        <strong>${form.nome}</strong>
-        ${form.jp ? `<span style="font-size:11px;color:#888;"> ${form.jp}</span>` : ''}
+        <strong>${escapeAttr(form.nome)}</strong>
+        ${form.jp ? `<span style="font-size:11px;color:#888;"> ${escapeAttr(form.jp)}</span>` : ''}
       </div>
-      <div style="font-size:12px;color:#888;">${form.respiracao} · ${form.tipo} · Nível ${selected.level}</div>
+      <div style="font-size:12px;color:#888;">${escapeAttr(form.respiracao)} · ${escapeAttr(form.tipo)} · Nível ${selected.level}</div>
       <div style="margin-top:4px;">Custo: <strong>${selected.custo} PDR</strong></div>
       ${danoLine}
       ${statusLine}
@@ -1664,7 +1674,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
 
     // Respiração migrada: o dado canônico assume daqui (rota legada abaixo
     // permanece para as demais até a leva de cada uma).
-    if (isMigrated(form.respiracao)) {
+    if (isMigrated(form.respiracao) && !form.id.startsWith('custom_')) {
         const runtime = buildCanonicalRuntime(actor, props, item);
         return runCanonicalBreathingForm({
             actor,
@@ -1693,6 +1703,15 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     if (choices?.cancelled) {
         if (choices.reason) ui.notifications?.warn?.(choices.reason);
         return;
+    }
+    if (form.id === 'chamas_07') {
+        const combat = game.combat;
+        const turnKey = flameTurnKey(combat);
+        if (!turnKey || combat.combatant?.actor?.uuid !== actor.uuid) {
+            ui.notifications?.warn?.('Universo Flamejante deve ser preparado no seu turno.');
+            return;
+        }
+        choices.turnKey = turnKey;
     }
     const plan = isWaterForm
         ? buildWaterBreathingPlan(form.id, selected.level, props, choices)
@@ -1752,25 +1771,6 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         patch[`system.props.${pdrSpent}`] = parseNumber(props[pdrSpent]) + custoFinal;
     }
 
-    let flameHealingRoll = null;
-    if (isFlameForm && plan.state?.healing) {
-        flameHealingRoll = await Roll.create(plan.state.healing.formula).evaluate();
-        const { pdvHealed } = resourceKeys(props);
-        patch[`system.props.${pdvHealed}`] =
-            parseNumber(props[pdvHealed]) +
-            Math.max(0, Math.trunc(Number(flameHealingRoll.total) || 0));
-        if (plan.state.healing.removeBleeding) {
-            const status = parseStatusState(props.status_slayer_dados);
-            status.active = status.active.filter((key) => key !== 'sangramento');
-            delete status.effects.sangramento;
-            patch['system.props.status_slayer_dados'] = JSON.stringify(status);
-            patch['system.props.status_slayer_resumo'] = status.active.length
-                ? status.active.join(' · ')
-                : 'Nenhum status ativo';
-        }
-        delete plan.state.healing;
-        Object.assign(patch, flameStatePatch(plan.state));
-    }
     let rollbackPatch = null;
     if (Object.keys(patch).length > 0) {
         rollbackPatch = snapshotActorPatch(actor, patch);
@@ -1853,7 +1853,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     }
 
     const flameNeedsAttackResolution =
-        isFlameForm && Boolean(plan.state?.nextHit || plan.state?.pendingDamage);
+        isFlameForm && form.id !== 'chamas_07' && Boolean(plan.state?.nextHit || plan.state?.pendingDamage);
     const mistNeedsAttackResolution =
         isMistForm && ['nevoa_01', 'nevoa_02', 'nevoa_04', 'nevoa_06'].includes(form.id);
     const metalNeedsAttackResolution = isMetalForm && form.id === 'metal_06';
@@ -1941,12 +1941,6 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     if (damageRoll && game.dice3d?.showForRoll)
         await game.dice3d.showForRoll(damageRoll, game.user, true);
     await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
-    if (flameHealingRoll) {
-        await flameHealingRoll.toMessage({
-            speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: `<strong>Shichi no Kata Yaki Suru</strong> recuperação de PDV`,
-        });
-    }
 }
 
 function primaryActiveGm() {
@@ -2093,6 +2087,16 @@ export function registerBreathingEngine() {
                 await actor.update(tick.patch, { naCsbAutomation: true, naBreathing: true });
             })();
         }
+    });
+    Hooks.on('combatTurnChange', (combat, prior) => {
+        if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id) return;
+        if (!prior?.combatantId) return;
+        const actor = combat.combatants.get(prior.combatantId)?.actor;
+        if (!actor?.system?.props?.resp_chamas_estado) return;
+        const state = parseFlameBreathingState(actor.system.props.resp_chamas_estado);
+        if (!state.flamingUniverse || state.flamingUniverse.turnKey === flameTurnKey(combat)) return;
+        delete state.flamingUniverse;
+        void actor.update(flameStatePatch(state), { naCsbAutomation: true, naBreathing: true });
     });
     Hooks.on('combatEnd', clearCombatFlames);
     Hooks.on('deleteCombat', clearCombatFlames);

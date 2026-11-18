@@ -104,7 +104,7 @@ describe('ficha de NPC: layout', () => {
         assert.match(byKey.get('npc_acoes_gerenciar').rollMessage, /NAActionManage01/);
         assert.match(byKey.get('npc_acoes_display').value, /acoes_slayer_resumo/);
         for (const key of ['acoes_slayer_dados', 'acoes_slayer_resumo', 'acoes_slayer_ataque_bonus'])
-            assert.ok(byKey.has(key), `${key} guardado na Configuração`);
+            assert.ok(byKey.has(key), `${key} guardado na aba Combate`);
     });
 
     it('configuração tem as bases e o nível, visível na sua aba', () => {
@@ -115,10 +115,49 @@ describe('ficha de NPC: layout', () => {
         const inside = new Set(components(panel).map((node) => node.key));
         for (const key of [
             'npc_vit_base', 'npc_dex_base', 'npc_for_base', 'npc_car_base', 'npc_fdv_base',
-            'npc_int_base', 'npc_sab_base', 'npc_pdv_base', 'npc_pdr_base',
-            'nvl_respiracao', 'npc_bonus_acerto', 'npc_bonus_dano', 'npc_bonus_pdr_maximo',
+            'npc_int_base', 'npc_sab_base', 'npc_pdv_base', 'npc_pdr_base', 'nvl_respiracao',
         ])
             assert.ok(inside.has(key), `${key} deve estar na configuração`);
+    });
+
+    it('Bônus Fixos e bônus de ação ficam na aba Combate, visíveis como no Slayer', () => {
+        const ficha = new Set(components(template.system.body.contents[0].contents[0]).map((node) => node.key));
+        for (const key of ['npc_bonus_acerto', 'npc_bonus_dano', 'npc_bonus_teste',
+            'npc_bonus_bloqueio', 'npc_bonus_esquiva', 'npc_bonus_percepcao_visual',
+            'npc_bonus_percepcao_auditiva', 'npc_bonus_social_voz', 'npc_bonus_iniciativa',
+            'npc_bonus_pdr_maximo', 'acoes_slayer_ataque_bonus', 'acoes_slayer_movimento_bonus',
+            'acoes_slayer_especial_bonus', 'acoes_slayer_reacao_bonus'])
+            assert.ok(ficha.has(key), `${key} deve estar na aba Combate`);
+        assert.equal(byKey.get('npc_dados_combate').role, 0);
+        for (const key of ['acoes_slayer_ataque_bonus', 'acoes_slayer_movimento_bonus',
+            'acoes_slayer_especial_bonus', 'acoes_slayer_reacao_bonus']) {
+            assert.equal(byKey.get(key).role, 0, `${key} visível`);
+            assert.equal(byKey.get(key).editRole, 0, `${key} editável`);
+        }
+        for (const key of ['acoes_slayer_dados', 'acoes_slayer_resumo'])
+            assert.equal(byKey.get(key).role, 4, `${key} continua interno ao GM`);
+    });
+
+    it('expõe os sete bônus temporários logo abaixo dos atributos do NPC', () => {
+        const ficha = template.system.body.contents[0].contents[0];
+        const grid = components(ficha).find((node) =>
+            Array.isArray(node.contents) &&
+            node.contents.some((field) => field?.key === 'npc_for_display_label')
+        );
+        assert.ok(grid);
+        const attributes = ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'];
+        for (const [index, attr] of attributes.entries()) {
+            const key = `bonus_atr_${attr}_valor_temp`;
+            const field = grid.contents[index + 14];
+            assert.equal(grid.contents[index + 7].key, `npc_${attr}_display_label`);
+            assert.equal(field.key, key);
+            assert.equal(field.type, 'numberField');
+            assert.equal(field.role, 0);
+            assert.equal(field.editRole, 0);
+            assert.equal(field.defaultValue, '0');
+            assert.equal(template.system.hidden.find((node) => node.name === `${attr}_display`).value,
+                '${' + `npc_${attr}_base+(${attr}_marca_temp ? ${attr}_marca_temp : 0)+(${key} ? ${key} : 0)` + '}$');
+        }
     });
 
     it('mantém as keys de contrato (vida, status, hidden)', () => {

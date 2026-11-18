@@ -21,6 +21,7 @@
  */
 import { actorWeapons, isPassiveItem } from './breath-passives.mjs';
 import { actorKind } from './actor-kind.mjs';
+import { chosenBreathing, formsForBreathing } from './breathing-choice.mjs';
 
 export function canChainBreathForms(actor) {
     const kind = actorKind(actor);
@@ -35,7 +36,9 @@ export function canChainBreathForms(actor) {
  * passivas automáticas que não se "usam" no sentido de uma técnica).
  */
 export function listChainableBreathForms(actor, { excludeItemUuid = '' } = {}) {
-    return [...(actor?.items ?? [])]
+    const breathing = chosenBreathing(actor?.system?.props ?? {});
+    const source = formsForBreathing([...(actor?.items ?? [])], breathing);
+    return source
         .filter((item) => {
             if (item.uuid === excludeItemUuid) return false;
             const props = item.system?.props ?? {};
@@ -140,6 +143,7 @@ export async function resolveAutoDamage({
                 damageOnly: true,
                 weaponAttackIndex: Number.isInteger(attempt.attackIndex) ? attempt.attackIndex : 0,
                 classBasicAttack,
+                ...(attempt.flamingUniverse ? { flamingUniverse: attempt.flamingUniverse } : {}),
             });
         } else {
             const entradas =

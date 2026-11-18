@@ -191,4 +191,37 @@ describe('damage-relay', () => {
         assert.equal(patches[0]['system.props.pdv_oni_dano_tomado'], 7);
         assert.equal(patches[1]['system.props.status_oni_exaustao'], 1);
     });
+
+    it('Universo Flamejante aplica o mesmo dano no sucesso e na falha do teste de VIT', async () => {
+        game.user.isGM = true;
+        const originalRoll = Roll.create;
+        try {
+            for (const total of [14, 15]) {
+                const updates = {};
+                let heatMap;
+                Roll.create = (formula) => {
+                    assert.equal(formula, '1d20 + (3)');
+                    return { evaluate: async () => ({ total, toMessage: async () => {} }) };
+                };
+                const actor = {
+                    id: 'npc',
+                    name: 'NPC',
+                    isOwner: true,
+                    system: { props: { npc_nome: 'NPC', npc_pdv_dano: 0, vit_display: 3 } },
+                    setFlag: async (_module, _key, value) => { heatMap = value; },
+                    update: async (patch) => Object.assign(updates, patch),
+                };
+                const result = await applyOniDamage(actor, 7, {
+                    damageTypes: ['cortante'],
+                    flame: { sourceId: 'slayer', heat: 3, knockdownDc: 15 },
+                });
+                assert.equal(result.appliedDamage, 7);
+                assert.equal(heatMap.slayer.heat, 3);
+                const status = updates['system.props.status_slayer_dados'];
+                assert.equal(Boolean(status && JSON.parse(status).active.includes('derrubado')), total < 15);
+            }
+        } finally {
+            Roll.create = originalRoll;
+        }
+    });
 });

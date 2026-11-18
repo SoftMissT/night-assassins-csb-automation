@@ -252,8 +252,7 @@ function refreshDashboard(root) {
     filterRows(root);
 }
 
-function bindDashboard(dialog, element) {
-    const root = element instanceof HTMLElement ? element : element?.[0];
+function bindDashboard(dialog, root) {
     if (!root) return;
 
     root.querySelector('.na-gm-mini-search input')?.addEventListener('input', () =>
@@ -290,8 +289,7 @@ function bindDashboard(dialog, element) {
         clearTimeout(refreshTimer);
         refreshTimer = setTimeout(() => refreshDashboard(root), 50);
     });
-    Hooks.once('closeDialogV2', (app) => {
-        if (app !== dialog) return;
+    dialog.addEventListener('close', () => {
         clearTimeout(refreshTimer);
         Hooks.off('updateActor', updateHook);
         Hooks.off('updateCombat', combatHook);
@@ -299,7 +297,7 @@ function bindDashboard(dialog, element) {
         Hooks.off('createCombatant', createCombatantHook);
         Hooks.off('deleteCombatant', deleteCombatantHook);
         if (window.__NAGmDashboard === dialog) window.__NAGmDashboard = null;
-    });
+    }, { once: true });
 
     requestAnimationFrame(() =>
         dialog.setPosition({
@@ -342,11 +340,8 @@ export async function openGmDashboard() {
         ],
     });
 
-    Hooks.once('renderDialogV2', (app, element) => {
-        if (app === dialog) bindDashboard(dialog, element);
-    });
-
     window.__NAGmDashboard = dialog;
     await dialog.render({ force: true });
+    bindDashboard(dialog, dialog.element);
     return dialog;
 }

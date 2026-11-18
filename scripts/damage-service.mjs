@@ -4,6 +4,7 @@
 
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
 import {
     DAMAGE_PRESETS_KEY,
@@ -222,7 +223,7 @@ export function buildWeaponDamageCatalog(actor) {
     const actorProps = actor?.system?.props ?? {};
     const attrValues = {};
     for (const { key } of ATTRIBUTES)
-        attrValues[key] = parseAttributeValue(actorProps[`${key}_display`]);
+        attrValues[key] = resolveSheetAttribute(actor, key) ?? 0;
     const catalog = [];
     for (const item of actor?.items ?? []) {
         if (!isWeaponItem(item)) continue;
@@ -351,7 +352,7 @@ export async function rollDamage(options = {}) {
         );
     const attrValues = {};
     for (const { key } of ATTRIBUTES) {
-        attrValues[key] = parseAttributeValue(props[`${key}_display`]);
+        attrValues[key] = resolveSheetAttribute(actor, key) ?? 0;
     }
 
     const hasExplicitDamage =
@@ -462,6 +463,7 @@ export async function rollDamage(options = {}) {
     const nome = dialogResult.nome ?? 'Dano';
     const entradas = Array.isArray(dialogResult.entradas) ? dialogResult.entradas : [];
     let critical = dialogResult.critical === true;
+    const splitTargets = dialogResult.splitTargets === true;
     if (critical && !statusEffects.criticalAllowed) {
         critical = false;
         ui.notifications?.warn?.(
@@ -486,7 +488,7 @@ export async function rollDamage(options = {}) {
     const actionResult =
         options.skipActionConsumption === true
             ? { ok: true, patch: {} }
-            : attackerKind === 'oni'
+            : attackerKind === 'oni' || attackerKind === 'oni_minion'
               ? await consumeOniActions(actor, actionTypes, { update: false })
               : await consumeSlayerActions(actor, actionTypes, { update: false });
     if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
@@ -564,14 +566,22 @@ export async function rollDamage(options = {}) {
         if (breathingDamage.critical) critical = true;
     }
     const flameState = parseFlameBreathingState(
-        attackerKind === 'slayer' ? props.resp_chamas_estado : ''
+        ['slayer', 'npc'].includes(attackerKind) ? props.resp_chamas_estado : ''
     );
     const hasFlameBreathing =
         Boolean(props.resp_chamas_estado) ||
         [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === 'Chamas');
     const flameDamage = flameState.pendingDamage;
+    const universe = options.flamingUniverse;
     const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
-    const flameTechnique = Boolean(flameDamage?.technique && hasAttackDamage);
+    const flameTechnique = Boolean((flameDamage?.technique || universe) && hasAttackDamage);
+    if (universe)
+        specs.push({
+            label: 'Universo Flamejante',
+            types: ['cortante'],
+            formula: universe.formula,
+            flame: true,
+        });
     if (flameDamage?.critical === true && hasAttackDamage) critical = true;
     if (injectBreathing && flameDamage?.formula && hasAttackDamage)
         specs.push({
@@ -844,7 +854,7 @@ export async function rollDamage(options = {}) {
     }
 
     const damageRequests = [];
-    const targets = game?.user?.targets;
+    const targets = universe ? new Set([universe.target]) : game?.user?.targets;
     // Estigma da Névoa: "ao acertar qualquer ataque, pode atordoar o inimigo
     // por 1 turno" benefício único por ataque bem-sucedido (não por alvo em
     // AOE), consumido aqui porque este é o ponto em que um acerto com dano
@@ -860,7 +870,8 @@ export async function rollDamage(options = {}) {
         canvas?.tokens?.controlled?.find((token) => token.actor?.uuid === actor.uuid) ??
         null;
     if (targets && targets.size > 0 && finalDamage > 0) {
-        for (const targetToken of targets) {
+        const targetList = [...targets];
+        for (const [targetIndex, targetToken] of targetList.entries()) {
             if (flameDamage?.areaMeters && attackerToken && canvas?.grid?.measurePath) {
                 const distance =
                     Number(
@@ -898,9 +909,14 @@ export async function rollDamage(options = {}) {
             const heatMap = targetActor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {};
             const heatBefore = Number(heatMap?.[actor.id]?.heat) || 0;
             let rengokuBonus = 0;
-            let amount = finalDamage;
+            let amount = splitTargets
+                ? splitAmongTargets(finalDamage, targetList.length, targetIndex)
+                : finalDamage;
             let targetComponents = components.map((component) => ({
                 ...component,
+                subtotal: splitTargets
+                    ? splitAmongTargets(component.subtotal, targetList.length, targetIndex)
+                    : component.subtotal,
                 types: [...component.types],
             }));
             if (maneuverBonuses.damageBonus) {
@@ -1262,7 +1278,8 @@ export async function rollDamage(options = {}) {
                     hasFlameBreathing && hasAttackDamage
                         ? {
                               sourceId: actor.id,
-                              heat: 1 + Math.max(0, Number(flameState.activeForm?.enemyHeat) || 0),
+                              heat: 1 + Math.max(0, Number(universe?.enemyHeat ?? flameState.activeForm?.enemyHeat) || 0),
+                              knockdownDc: universe?.knockdownDc,
                               blockPenalty: Number(flameDamage?.blockPenalty) || 0,
                               blockPenaltyTurns: Number(flameDamage?.blockPenaltyTurns) || 0,
                               exhaustionOnHit: Number(flameDamage?.exhaustionOnHit) || 0,
@@ -1646,21 +1663,11 @@ export async function rollDamage(options = {}) {
             }
         }
     }
-    const componentLines = components
-        .map((component) => {
-            const labels =
-                component.types
-                    .map((key) => TIPOS_DANO.find((type) => type.key === key)?.label ?? key)
-                    .join(' · ') || 'Sem tipo';
-            return `<div><strong>${component.label}</strong> ${labels}: <strong>${component.subtotal}</strong></div>`;
-        })
-        .join('');
-    const targetLine = appliedTargets.length
-        ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${target.amount}${target.wound ? `, Ferida ${target.wound}` : ''})`).join(', ')}</div>`
-        : damageRequests.length
-          ? '<div>Alvo solicitado, mas a ficha não foi atualizada</div>'
-          : '<div>Nenhum alvo ficha não atualizada</div>';
-    const flavor = `<div><strong>${nome}</strong>${critical ? ' · CRÍTICO' : ''}${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${statusEffects.reasons.length ? `<div>Status: ${statusEffects.reasons.join(' · ')}</div>` : ''}${componentLines}<hr><div><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
+    const flavor = buildDamageFlavor({
+        nome, breathing: dialogResult.breathing || breathingContext,
+        critical, pdrGasto, reasons: statusEffects.reasons,
+        components, finalDamage, appliedTargets, damageRequests,
+    });
     const chatData = {
         speaker: ChatMessage.getSpeaker({ actor }),
         flavor,
@@ -1671,6 +1678,64 @@ export async function rollDamage(options = {}) {
         messageMode: resolveMessageMode(dialogResult.messageMode),
     });
     await waitForDamageRolls3d(message);
+}
+
+/** Regra de mesa: dividir o total igualmente entre os alvos; sobra para os primeiros. */
+export function splitAmongTargets(total, count, index) {
+    const value = Math.max(0, Math.trunc(Number(total) || 0));
+    const parts = Math.max(1, Math.trunc(Number(count) || 1));
+    const base = Math.floor(value / parts);
+    return base + (index < value % parts ? 1 : 0);
+}
+
+export const DAMAGE_TYPE_COLORS = Object.freeze({
+    cortante: '#ff5b6e', perfurante: '#ffb35c', concussao: '#d9d24a', trovejante: '#ffe45c',
+    sonoro: '#9b8cff', solar: '#ffcf6b', fogo: '#ff7a2f', congelante: '#6fd8ff',
+    acido: '#a6e34a', eletrico: '#ffe95c', impacto: '#ff9a55', mental: '#c58cff',
+    venenoso: '#8fd14f', necrotico: '#b15cff', ferida: '#ff4d4d',
+    sangramento: '#e04343', envenenamento: '#7fbf3f',
+});
+
+export function damageTypeLabel(key) {
+    const label = TIPOS_DANO.find((type) => type.key === key)?.label ?? String(key ?? 'Sem tipo');
+    const color = DAMAGE_TYPE_COLORS[key] ?? '#d9c7a3';
+    return `<span style="color:${color};font-weight:700">${label}</span>`;
+}
+
+export const BREATHING_CHAT_COLORS = Object.freeze({
+    Água: '#6fd8ff', Chamas: '#ff7a2f', Eclipse: '#b15cff', Metal: '#d9d24a',
+    Neve: '#a9e6ff', Névoa: '#9b8cff', Pedra: '#c2a25c', Raposa: '#ffb35c',
+    Som: '#ffcf6b', Sonhos: '#c58cff', Vento: '#8fd14f',
+});
+
+/** Tipos coloridos, cabeçalho da respiração e banner de crítico no chat de dano. */
+export function buildDamageFlavor({ nome, breathing = '', critical, pdrGasto, reasons = [], components = [], finalDamage, appliedTargets = [], damageRequests = [] }) {
+    const escape = (value) => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    const breathingLine = breathing
+        ? `<div style="font-weight:800;letter-spacing:.06em;color:${BREATHING_CHAT_COLORS[breathing] ?? '#d9c7a3'}">${escape(breathing)}</div>`
+        : '';
+    const labels = (types) => (types ?? []).map(damageTypeLabel).join(' · ') || 'Sem tipo';
+    const componentLines = components
+        .map((component) => {
+            const types = component.types ?? [];
+            const perType = types.length > 1
+                ? `<div style="padding-left:12px;font-size:12px;">${types
+                      .map((type, index) => `${damageTypeLabel(type)}: <strong>${splitAmongTargets(component.subtotal, types.length, index)}</strong>`)
+                      .join(' · ')}</div>`
+                : '';
+            return `<div><strong>${component.label}</strong> ${labels(types)}: <strong>${component.subtotal}</strong></div>${perType}`;
+        })
+        .join('');
+    const targetLine = appliedTargets.length
+        ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${target.amount}${target.wound ? `, Ferida ${target.wound}` : ''})`).join(', ')}</div>`
+        : damageRequests.length
+          ? '<div>Alvo solicitado, mas a ficha não foi atualizada</div>'
+          : '<div>Nenhum alvo ficha não atualizada</div>';
+    const critBanner = critical
+        ? '<div style="font-size:22px;font-weight:900;letter-spacing:.12em;color:#ffe08a;text-shadow:0 0 14px #ff7a00;margin:6px 0;">⚔ CRÍTICO ⚔</div>'
+        : '';
+    const totalStyle = critical ? 'font-size:18px;font-weight:900;color:#ffe08a;' : '';
+    return `${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
 }
 
 /**
@@ -1753,6 +1818,7 @@ export async function rollWeaponItem(options = {}) {
         forceAttackDamage: options.forceAttackDamage === true,
         promptHealOrDamage: options.promptHealOrDamage === true,
         classBasicAttack: options.classBasicAttack === true,
+        ...(options.flamingUniverse ? { flamingUniverse: options.flamingUniverse } : {}),
     });
 
     if (specialPending) {

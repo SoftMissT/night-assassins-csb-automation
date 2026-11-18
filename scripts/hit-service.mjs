@@ -2,10 +2,11 @@
  * @fileoverview Serviço de rolagem de acerto.
  */
 
-import { parseAttributeValue, parseNumber } from './parsing.mjs';
+import { parseNumber } from './parsing.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { openHitConfirmationDialog, openHitDialog } from './dialogs/hit-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
-import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
+import { ATTR_COLORS, MODULE_ID, TIPOS_ACAO } from './constants.mjs';
 import { resolveMessageMode } from './damage-formula.mjs';
 import { consumeOniActions, consumeSlayerActions, recoverSlayerFolego } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
@@ -15,6 +16,7 @@ import {
     consumeFlamePending,
     flameStatePatch,
     flameWeaponHeat,
+    flamingUniverseForAttack,
     parseFlameBreathingState,
     synchronizeFlameWeapon,
 } from './flame-breathing-service.mjs';
@@ -340,26 +342,15 @@ export async function rollHit(options) {
     }
     const acertoLabel = props.acerto_label ?? '';
 
-    let attrName = '';
-    let attrVal = 0;
-    let color = '';
-
-    if (acertoLabel === 'acerto_label_dex') {
-        if (!Object.prototype.hasOwnProperty.call(props, 'dex_display'))
-            return ui.notifications?.error?.('A ficha não possui a key dex_display.');
-        attrName = 'DEX';
-        attrVal = parseAttributeValue(props.dex_display);
-        color = '#28D7FF';
-    } else if (acertoLabel === 'acerto_label_for') {
-        if (!Object.prototype.hasOwnProperty.call(props, 'for_display'))
-            return ui.notifications?.error?.('A ficha não possui a key for_display.');
-        attrName = 'FOR';
-        attrVal = parseAttributeValue(props.for_display);
-        color = '#C1000C';
-    } else {
+    if (!['acerto_label_dex', 'acerto_label_for'].includes(acertoLabel)) {
         ui.notifications?.warn?.("Escolha DEX ou FOR no campo 'Como Acerta'.");
         return;
     }
+    let attrName = acertoLabel === 'acerto_label_for' ? 'FOR' : 'DEX';
+    let attrVal = resolveSheetAttribute(actor, attrName);
+    const color = ATTR_COLORS[attrName.toLowerCase()];
+    if (attrVal === null)
+        return ui.notifications?.error?.(`A ficha não possui um valor válido para ${attrName}.`);
 
     const statusEffects = getRollStatusEffects(props, {
         test: 'Acerto',
@@ -373,7 +364,7 @@ export async function rollHit(options) {
 
     const passiveState = parseBreathPassiveState(props.resp_passivas_estado);
     const flameState = parseFlameBreathingState(props.resp_chamas_estado);
-    const strength = parseAttributeValue(props.for_display);
+    const strength = resolveSheetAttribute(actor, 'FOR');
     const criticalFloor = game.settings?.get?.(MODULE_ID, SETTINGS.criticalFloor) ?? 1;
     const allWeapons = actorWeapons(actor).map((weapon) => ({
         ...weapon,
@@ -381,7 +372,7 @@ export async function rollHit(options) {
             base: weapon.critical,
             state: passiveState,
             weaponId: weapon.id,
-            strength,
+            strength: strength ?? 0,
             floor: criticalFloor,
         }),
     }));
@@ -584,7 +575,9 @@ export async function rollHit(options) {
             : attrName;
     if (selectedWeaponAttribute !== attrName) {
         attrName = selectedWeaponAttribute;
-        attrVal = parseAttributeValue(props[`${attrName.toLowerCase()}_display`]);
+        attrVal = resolveSheetAttribute(actor, attrName);
+        if (attrVal === null)
+            return ui.notifications?.error?.(`A ficha não possui um valor válido para ${attrName}.`);
     }
     const finalStatusEffects = getRollStatusEffects(props, {
         test: 'Acerto',
@@ -595,6 +588,23 @@ export async function rollHit(options) {
         return ui.notifications?.warn?.('Este personagem está incapacitado e não pode atacar.');
     if (finalStatusEffects.autoFail)
         return ui.notifications?.warn?.('Paralisia: falha automática neste Acerto.');
+
+    const universe =
+        dialogResult.actionType === 'ataque' &&
+        !classTechniquePending &&
+        !metalState.nextHit &&
+        options.skipActionConsumption !== true &&
+        options.autoDamage !== false &&
+        weapon?.id
+            ? flamingUniverseForAttack(flameState, { combat: game.combat, weaponId: weapon.id, props, strength })
+            : null;
+    const universeTarget = universe
+        ? [...(game.user?.targets ?? [])].find((token) => token.actor && token.actor.uuid !== actor.uuid)
+        : null;
+    if (universe && !universeTarget)
+        return ui.notifications?.warn?.('Marque o alvo do Ataque Padrão com Universo Flamejante.');
+    if (universe && strength === null)
+        return ui.notifications?.error?.('Universo Flamejante exige FOR configurada para calcular a CD.');
 
     const poisonRank =
         props.classe_escolhida === 'classe_usuario_de_veneno'
@@ -639,7 +649,7 @@ export async function rollHit(options) {
     );
     if (options.skipActionConsumption !== true && dialogResult.actionType) {
         const actionResult =
-            actorKind(actor) === 'oni'
+            actorKind(actor) === 'oni' || actorKind(actor) === 'oni_minion'
                 ? await consumeOniActions(actor, [dialogResult.actionType])
                 : await consumeSlayerActions(actor, [dialogResult.actionType]);
         if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
@@ -877,6 +887,14 @@ export async function rollHit(options) {
             naBreathing: true,
         });
     }
+    if (universe && result?.attempts?.length) {
+        // O primeiro golpe gasta o preparo mesmo quando erra ou há outros golpes no perfil.
+        const latest = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
+        delete latest.flamingUniverse;
+        await actor.update(flameStatePatch(latest), { naCsbAutomation: true, naBreathing: true });
+        if (result.attempts[0].hit)
+            result.attempts[0].flamingUniverse = { ...universe, target: universeTarget };
+    }
     const finalResult = result ? { ...result, weapon } : result;
 
     // Continuação automática pós-Acerto: dispara o dano sem exigir clique
@@ -888,7 +906,7 @@ export async function rollHit(options) {
     // com arma pura ou com Forma.
     if (finalResult?.hits > 0 && options.autoDamage !== false) {
         const { confirmChainedForma, resolveAutoDamage } = await import('./attack-follow-up.mjs');
-        const chained = await confirmChainedForma(actor);
+        const chained = !universe && await confirmChainedForma(actor);
         if (!chained) {
             const actionLabel = TIPOS_ACAO.find(
                 (entry) => entry.key === dialogResult.actionType

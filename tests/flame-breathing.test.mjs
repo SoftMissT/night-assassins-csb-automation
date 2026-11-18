@@ -9,6 +9,8 @@ import {
     consumeFlameInterception,
     consumeFlamePending,
     flameWeaponHeat,
+    flameTurnKey,
+    flamingUniverseForAttack,
     FLAME_SYNERGY_BREATHINGS,
     parseFlameBreathingState,
     resolveFlameRengokuAllies,
@@ -60,13 +62,9 @@ describe('Respiração das Chamas', () => {
         assert.equal(plan.state.pendingDamage.blockPenalty, -2);
     });
 
-    it('bloqueia formas indisponíveis e requisito de Cauterizar', () => {
+    it('bloqueia formas indisponíveis e libera Universo desde o primeiro nível', () => {
         assert.equal(buildFlameBreathingPlan('chamas_06', 2, {}).ok, false);
-        assert.match(buildFlameBreathingPlan('chamas_07', 1, {}).reason, /5 Pontos/);
-        assert.equal(
-            buildFlameBreathingPlan('chamas_07', 1, { resp_chamas_estado: '{"weaponHeat":5}' }).ok,
-            true
-        );
+        assert.equal(buildFlameBreathingPlan('chamas_07', 1).ok, true);
     });
 
     it('Rengoku calcula CD com CAR final', () => {
@@ -299,14 +297,27 @@ describe('Respiração das Chamas combos e regras da missão', () => {
         assert.equal(n4.cost, 8);
     });
 
-    it('Cauterizar exige 5 de Esquentar mas não os consome', () => {
-        const plan = buildFlameBreathingPlan('chamas_07', 4, {
-            resp_chamas_estado: JSON.stringify({ weaponHeat: 7 }),
-        });
-        assert.equal(plan.ok, true);
-        assert.equal(plan.state.weaponHeat, 7);
-        assert.equal(plan.state.healing.removeBleeding, true);
-        assert.equal(plan.cost, 4);
+    it('Universo prepara apenas o Ataque Padrão da arma, com CD e validade no turno', () => {
+        const combat = { id: 'c', started: true, round: 1, turn: 0 };
+        const choices = { synchronizedWeapon: { id: 'katana' }, turnKey: flameTurnKey(combat) };
+        for (const [index, [cost, formula, advance]] of [
+            [3, '2d10', 3], [4, '3d10', 4.5], [6, '4d10', 6], [7, '5d10', 7.5],
+        ].entries()) {
+            const plan = buildFlameBreathingPlan('chamas_07', index + 1, {}, choices);
+            assert.equal(plan.action, 'unica');
+            assert.equal(plan.cost, cost);
+            assert.equal(plan.selected.advance, advance);
+            assert.equal(plan.state.weaponHeat, 3);
+            assert.equal(plan.state.nextHit, undefined);
+            assert.equal(plan.state.pendingDamage, undefined);
+            const attack = { combat, weaponId: 'katana', props: { for_display: 4, nvl_num: 7 } };
+            assert.deepEqual(flamingUniverseForAttack(plan.state, attack), {
+                formula, enemyHeat: 2, knockdownDc: 15,
+            });
+            assert.equal(flamingUniverseForAttack(plan.state, { ...attack, weaponId: 'outra' }), null);
+            assert.equal(flamingUniverseForAttack(plan.state, { ...attack, combat: { ...combat, turn: 1 } }), null);
+            assert.equal(tickFlameBreathing(plan.state).state.flamingUniverse, undefined);
+        }
     });
 });
 

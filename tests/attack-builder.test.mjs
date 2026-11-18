@@ -67,6 +67,10 @@ describe('attack-builder', () => {
             const actor = makeActor({ props });
             actor.items = catalog.documents.filter(i => wanted.includes(i.system?.props?.respiracao_nome));
             const model = createAttackBuilderModel(actor);
+            assert.ok(!model.breathing.some(({ item }) => item.system.props.forma_id === 'chamas_07'));
+            assert.ok(buildBreathingDamageCatalog(actor).every(({ forms }) =>
+                forms.every(({ formName }) => !formName.includes('Universo Flamejante'))
+            ));
             assert.deepEqual(
                 [...new Set(model.breathing.map(e => e.definition.metadata.breathing))].sort(),
                 [...wanted].sort(),
@@ -105,8 +109,9 @@ describe('attack-builder', () => {
         assert.equal(result.resourceCost, 3);
     });
 
-    it('reconhece uma arma legada sem array de perfis e gera ataque rolável', () => {
-        const actor = makeActor({ props: { nvl_num: 1, dex_display: 5 } });
+    it('monta dano de arma legada com a DEX base e a Marca quando falta dex_display', () => {
+        const actor = makeActor({ props: { npc_nome: 'Caçador NPC', npc_dex_base: 3, dex_marca_temp: 2 } });
+        delete actor.system.props.dex_display;
         actor.items = [
             {
                 id: 'legacy-weapon',

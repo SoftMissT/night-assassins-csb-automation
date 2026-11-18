@@ -25,8 +25,103 @@ Roll.create = (formula) => {
 };
 
 import { rollHit, attemptBonusFormula } from '../scripts/hit-service.mjs';
+import { buildFlameBreathingPlan, flameTurnKey } from '../scripts/flame-breathing-service.mjs';
 
 describe('hit-service', () => {
+    it('o primeiro Ataque Padrão consome Universo mesmo se errar e o segundo golpe acertar', async () => {
+        const previousGame = game;
+        const previousChat = ChatMessage.create;
+        const combat = { id: 'c', started: true, round: 1, turn: 2, combatants: [] };
+        globalThis.game = { ...game, combat, user: { ...game.user, targets: new Set() } };
+        try {
+            for (const firstHit of [false, true]) {
+                const targetActor = makeActor({ id: 'alvo', uuid: 'Actor.alvo', props: {
+                    nome_slayer: 'Alvo',
+                    pdv_slayer_total_conta: 100,
+                    atr_vit_valor_config: 3,
+                } });
+                delete targetActor.system.props.vit_display;
+                const targetFlags = {};
+                targetActor.getFlag = (_module, key) => targetFlags[key];
+                targetActor.setFlag = async (_module, key, value) => { targetFlags[key] = value; };
+                targetActor.update = async (patch) => {
+                    for (const [key, value] of Object.entries(patch))
+                        targetActor.system.props[key.replace('system.props.', '')] = value;
+                };
+                const target = { actor: targetActor };
+                game.user.targets = new Set([target]);
+                const item = {
+                    id: 'w1',
+                    name: 'Nichirin',
+                    system: { props: {
+                        arma_nome: 'Nichirin',
+                        arma_critico: 20,
+                        arma_perfis_ataque: [{ nome: 'Corte', dano_dados: '1d6', tipos_dano: ['cortante'] }],
+                    } },
+                };
+                const state = buildFlameBreathingPlan('chamas_07', 1, {}, {
+                    synchronizedWeapon: item,
+                    turnKey: flameTurnKey(combat),
+                }).state;
+                const actor = makeActor({ props: {
+                    nome_slayer: 'Slayer',
+                    nvl_num: 7,
+                    acerto_label: 'acerto_label_for',
+                    atr_for_valor_config: 2,
+                    for_marca_temp: 2,
+                    resp_chamas_estado: JSON.stringify(state),
+                } });
+                delete actor.system.props.for_display;
+                actor.items = { [Symbol.iterator]: [item][Symbol.iterator].bind([item]), get: () => item };
+                actor.update = async (patch) => {
+                    for (const [key, value] of Object.entries(patch))
+                        actor.system.props[key.replace('system.props.', '')] = value;
+                };
+                const damageFlavors = [];
+                const saveFormulas = [];
+                const previousCreate = Roll.create;
+                Roll.create = (formula) => {
+                    if (formula === '1d20 + (3)') saveFormulas.push(formula);
+                    return previousCreate(formula);
+                };
+                ChatMessage.create = async (data) => {
+                    if (data.flavor?.includes('Nichirin')) damageFlavors.push(data.flavor);
+                    return data;
+                };
+                const damage = {
+                    nome: 'Nichirin', pdrGasto: 0,
+                    entradas: [{ dado: '1d6', fixo: 4, selAttrs: [], selTiposDano: ['cortante'], tipoAcao: 'ataque' }],
+                };
+                _dialogReturn = [
+                    { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0, rollCount: 2,
+                        actionType: 'ataque', weaponId: 'w1', weaponProfileIndex: 0 },
+                    { hit: firstHit, continue: true },
+                    { hit: true, continue: false },
+                    damage,
+                    ...(firstHit ? [damage] : []),
+                ];
+                const result = await rollHit({ actor }).finally(() => { Roll.create = previousCreate; });
+                assert.equal(result.attempts.length, 2);
+                assert.equal(saveFormulas.length, firstHit ? 1 : 0);
+                assert.deepEqual(result.attempts[0].flamingUniverse, firstHit
+                    ? { formula: '2d10', enemyHeat: 2, knockdownDc: 15, target } : undefined);
+                assert.equal(result.attempts[1].flamingUniverse, undefined);
+                assert.equal(JSON.parse(actor.system.props.resp_chamas_estado).flamingUniverse, undefined);
+                assert.equal(JSON.parse(actor.system.props.acoes_slayer_dados).turn.ataque, 1);
+                assert.equal(damageFlavors.filter((flavor) => flavor.includes('Universo Flamejante')).length,
+                    firstHit ? 1 : 0);
+                assert.equal(targetFlags.flameHeat[actor.id].heat, firstHit ? 4 : 1);
+                assert.equal(
+                    JSON.parse(targetActor.system.props.status_slayer_dados ?? '{}').active?.includes('derrubado') === true,
+                    firstHit,
+                );
+            }
+        } finally {
+            globalThis.game = previousGame;
+            ChatMessage.create = previousChat;
+            _dialogReturn = null;
+        }
+    });
     it('repete o bônus situacional em cada acerto da sequência', () => {
         assert.equal(attemptBonusFormula({ situational: '+3', secondary: '+1', chain: '+2' }), '+3 +1 +2');
         assert.equal(attemptBonusFormula({ situational: '+3' }), '+3');
@@ -100,6 +195,19 @@ describe('hit-service', () => {
         await rollHit({ actor });
         assert.strictEqual(called, true);
         assert.match(_formula, /\+ 6$/);
+    });
+
+    it('usa FOR base e Marca no Acerto de um NPC sem for_display', async () => {
+        _dialogReturn = { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0 };
+        const actor = makeActor({ props: {
+            npc_nome: 'NPC',
+            acerto_label: 'acerto_label_for',
+            npc_for_base: 5,
+            for_marca_temp: 2,
+        } });
+        delete actor.system.props.for_display;
+        await rollHit({ actor, autoDamage: false });
+        assert.match(_formula, /^1d20 \+ 7$/);
     });
 
     it('envia a visibilidade escolhida como options.messageMode do v14', async () => {

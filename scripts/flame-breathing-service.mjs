@@ -4,6 +4,30 @@ import { flameFormById, flameWeaponTier } from './flame-breathing-data.mjs';
 export const FLAME_STATE_KEY = 'resp_chamas_estado';
 export const FLAME_HEAT_FLAG = 'flameHeat';
 
+export function flameTurnKey(combat) {
+    return combat?.started && Number.isInteger(combat.turn)
+        ? `${combat.id}:${combat.round}:${combat.turn}:${combat.combatant?.id ?? ''}`
+        : null;
+}
+
+export function flamingUniverseForAttack(
+    state,
+    { combat, weaponId, props = {}, strength = parseNumber(props.for_display) } = {}
+) {
+    const ready = state.flamingUniverse;
+    if (!ready?.turnKey || ready.turnKey !== flameTurnKey(combat) || ready.weaponId !== weaponId)
+        return null;
+    const form = flameFormById('chamas_07');
+    const level = form.levels[ready.level - 1];
+    if (!level) return null;
+    const characterLevel = Math.max(0, parseNumber(props.npc_nivel ?? props.nvl_num ?? props.nvl_pj));
+    return {
+        formula: level.damage,
+        enemyHeat: form.enemyHeat,
+        knockdownDc: 8 + (strength ?? 0) + Math.floor(characterLevel / 2),
+    };
+}
+
 function normalizeWeaponRef(weapon = null) {
     const id = String(weapon?.id ?? weapon?.weaponId ?? '');
     if (!id) return null;
@@ -93,14 +117,6 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
     const currentHeat = synchronizedWeapon
         ? flameWeaponHeat(state, synchronizedWeapon.id)
         : Math.max(state.weaponHeat, parseNumber(props.resp_chamas_calor_arma));
-    if (currentHeat < (form.minimumWeaponHeat ?? 0)) {
-        return {
-            ok: false,
-            noCost: true,
-            reason: `Cauterizar exige ao menos ${form.minimumWeaponHeat} Pontos de Esquentar na arma.`,
-        };
-    }
-
     // Fila de efeitos pendentes da 1ª Forma: cada efeito tem identidade e ciclo
     // próprio (available → armed → used/consumed), então efeitos diferentes
     // nunca se sobrescrevem — mesmo com técnicas encadeadas no mesmo turno.
@@ -119,10 +135,11 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
     const next = synchronizedWeapon
         ? synchronizeFlameWeapon(state, synchronizedWeapon, form.weaponHeat ?? 0)
         : { ...state, weaponHeat };
-    Object.assign(next, {
-        activeForm: { id: form.id, level, enemyHeat: form.enemyHeat ?? 0 },
-        pendingEffects,
-    });
+    if (form.id !== 'chamas_07')
+        Object.assign(next, {
+            activeForm: { id: form.id, level, enemyHeat: form.enemyHeat ?? 0 },
+            pendingEffects,
+        });
     const pendingHit = {};
     const pendingDamage = {};
 
@@ -198,10 +215,10 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
         });
     }
     if (form.id === 'chamas_07')
-        next.healing = {
-            source: form.id,
-            formula: selected.healing,
-            removeBleeding: selected.removeBleeding === true,
+        next.flamingUniverse = {
+            turnKey: choices.turnKey,
+            weaponId: synchronizedWeapon?.id ?? '',
+            level,
         };
     if (form.id === 'chamas_08')
         next.ignition = {
@@ -416,6 +433,7 @@ export function tickFlameBreathing(rawState) {
     delete state.activeForm;
     delete state.block;
     delete state.healing;
+    delete state.flamingUniverse;
     delete state.flameOne;
     delete state.rengokuAllies;
     delete state.pendingEffects;

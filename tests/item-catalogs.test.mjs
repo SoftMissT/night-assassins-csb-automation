@@ -136,6 +136,35 @@ describe('catálogo de Respirações', () => {
         assert.equal(storm.system.props.nvl3_dano, '8d8');
     });
 
+    it('publica Universo Flamejante na ID original com quatro níveis e dano de Ataque Padrão', async () => {
+        const matches = (await breathingDocuments()).filter(
+            (item) => item.system?.props?.forma_id === 'chamas_07'
+        );
+        assert.equal(matches.length, 1);
+        const [item] = matches;
+        const props = item.system.props;
+        assert.equal(item._id, 'a727909055343ba2');
+        assert.equal(item.name, 'Chamas: 7º Estilo Universo Flamejante');
+        assert.equal(props.tipo_manobra, 'Ação Única');
+        assert.equal(props.forma_ataque_padrao, 1);
+        assert.equal(props.tem_requisito, 0);
+        assert.match(props.descricao, /3 Pontos de Esquentar na arma/u);
+        assert.match(props.descricao, /2 Pontos de Esquentar adicionais/u);
+        assert.doesNotMatch(props.descricao, /Cauterizar/u);
+        const levels = [1, 2, 3, 4].map((level) => [
+            props[`tem_nvl${level}`],
+            props[`nvl${level}_custo`],
+            props[`nvl${level}_dano`],
+            props[`nvl${level}_tipos_dano`],
+        ]);
+        assert.deepEqual(levels, [
+            [1, 3, '2d10', 'cortante'],
+            [1, 4, '3d10', 'cortante'],
+            [1, 6, '4d10', 'cortante'],
+            [1, 7, '5d10', 'cortante'],
+        ]);
+    });
+
     it('publica as 6 Respirações com motor como Items mecânicos', async () => {
         const documents = await breathingDocuments();
         const items = documents.filter((document) => document.type === 'equippableItem');

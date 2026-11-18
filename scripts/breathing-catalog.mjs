@@ -71,24 +71,30 @@ export function breathingFormsFromCatalog(documents, breathingName) {
  * @returns {Promise<string>}
  */
 export async function resolveBreathTemplateId(actor) {
-    const owned = [...(actor?.items ?? [])].find(
-        (item) => item?.system?.props?.inventario_categoria === 'respiracao' && item.system?.template
-    );
-    if (owned) return String(owned.system.template);
-    const world = globalThis.game?.items?.find?.(
-        (item) => item.type === '_equippableItemTemplate' && item.id === BREATH_TEMPLATE_ID
-    );
+    const worldItems = globalThis.game?.items;
+    const isTemplate = (item) => item?.type === '_equippableItemTemplate';
+    for (const item of actor?.items ?? []) {
+        if (item?.system?.props?.inventario_categoria !== 'respiracao' || !item.system.template)
+            continue;
+        const ownedTemplate = worldItems?.get?.(item.system.template);
+        if (isTemplate(ownedTemplate)) return ownedTemplate.id;
+    }
+    const canonical = worldItems?.get?.(BREATH_TEMPLATE_ID);
+    if (isTemplate(canonical)) return canonical.id;
+    const world = worldItems?.find?.((item) => isTemplate(item) &&
+        (item.id === BREATH_TEMPLATE_ID || item.system?.uniqueId === BREATH_TEMPLATE_ID ||
+            item.name === 'NA Respiração - Forma'));
     if (world) return world.id;
     if (!globalThis.game?.user?.isGM) return '';
     const pack = globalThis.game?.packs?.get?.(TEMPLATE_PACK_ID);
     if (!pack) return '';
-    const imported = await globalThis.game.items.importFromCompendium(
+    const imported = await worldItems?.importFromCompendium?.(
         pack,
         BREATH_TEMPLATE_ID,
         {},
         { keepId: true }
     );
-    return imported?.id ?? '';
+    return isTemplate(imported) ? imported.id : '';
 }
 
 /**

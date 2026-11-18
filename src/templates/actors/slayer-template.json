@@ -2010,6 +2010,55 @@
                                             "style": "button"
                                         },
                                         {
+                                            "key": "resp_chamas_titulo",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "Estado do Fogo Fátuo e dos bônus da Respiração das Chamas.",
+                                            "visibilityFormula": "",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "label",
+                                            "size": "full-size",
+                                            "icon": "",
+                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ff8a3d;\">FOGO FÁTUO</span>\n",
+                                            "prefix": "",
+                                            "suffix": "",
+                                            "rollMessage": "",
+                                            "altRollMessage": "",
+                                            "rollMessageToChat": false,
+                                            "altRollMessageToChat": false,
+                                            "style": "label"
+                                        },
+                                        {
+                                            "key": "resp_chamas_display",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "Calor acumulado e bônus da Respiração das Chamas.",
+                                            "visibilityFormula": "",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "label",
+                                            "size": "full-size",
+                                            "icon": "",
+                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ff8a3d;\">${resp_chamas_resumo}$</span>\n",
+                                            "prefix": "",
+                                            "suffix": "",
+                                            "rollMessage": "",
+                                            "altRollMessage": "",
+                                            "rollMessageToChat": false,
+                                            "altRollMessageToChat": false,
+                                            "style": "label",
+                                            "align": "right"
+                                        },
+                                        {
                                             "key": "armas_proficientes",
                                             "colSpan": 2,
                                             "rowSpan": 1,
@@ -14505,7 +14554,7 @@
                 "editable": false
             }
         },
-        "templateSystemUniqueVersion": 1588828445
+        "templateSystemUniqueVersion": 2720657597
     },
     "prototypeToken": {
         "name": "slayer_template",

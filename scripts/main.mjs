@@ -12,6 +12,7 @@ import { tagItemSheet } from './item-sheet-skin.mjs';
 import { attachItemSheetHud, openItemDamageProfileEditor } from './item-sheet-hud.mjs';
 import { saveItemDamageProfile } from './item-damage-profile.mjs';
 import { openItemCreator } from './item-creator.mjs';
+import { openFormCreator } from './form-creator.mjs';
 import {
     createLevelOneValues,
     processLevelGain,
@@ -371,6 +372,7 @@ Hooks.once('ready', async () => {
             openItemDamageProfileEditor,
             saveItemDamageProfile,
             openItemCreator,
+            openFormCreator,
             attemptSnowRestrictionEscape,
             triggerSnowOpportunityAttack,
             openLifeDeathManager,

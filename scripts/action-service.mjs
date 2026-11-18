@@ -26,12 +26,17 @@ function isOniActor(actor) {
     return (
         props.nome_oni !== undefined ||
         props.acoes_oni_dados !== undefined ||
-        props.pdk_oni_gasto_valor !== undefined
+        props.pdk_oni_gasto_valor !== undefined ||
+        actorKind(actor) === 'oni_minion'
     );
 }
 
 function emptyUses(keys) {
     return Object.fromEntries(keys.map((key) => [key, 0]));
+}
+
+function refreshActionSheet(actor) {
+    actor.sheet?.render?.(false);
 }
 
 export function defaultActionState() {
@@ -225,7 +230,10 @@ export async function consumeSlayerActions(actor, types, { update = true } = {})
     for (const key of TURN_KEYS) state.turn[key] += required.turn[key];
     for (const key of ROUND_KEYS) state.round[key] += required.round[key];
     const patch = actionPatch(state, props);
-    if (update) await actor.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+    if (update) {
+        await actor.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+        refreshActionSheet(actor);
+    }
     return { ok: true, state, patch, summary: actionSummary(state, props) };
 }
 
@@ -236,6 +244,7 @@ export async function resetSlayerActions(actor, scope = 'all') {
     if (scope === 'turn' || scope === 'all') state.turn = emptyUses(TURN_KEYS);
     if (scope === 'round' || scope === 'all') state.round = emptyUses(ROUND_KEYS);
     await actor.update(actionPatch(state, props), { naCsbAutomation: true, naActionEconomy: true });
+    refreshActionSheet(actor);
     return state;
 }
 
@@ -267,7 +276,10 @@ export async function consumeOniActions(actor, types, { update = true } = {}) {
     for (const key of TURN_KEYS) state.turn[key] += required.turn[key];
     for (const key of ROUND_KEYS) state.round[key] += required.round[key];
     const patch = oniActionPatch(state, props);
-    if (update) await actor.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+    if (update) {
+        await actor.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+        refreshActionSheet(actor);
+    }
     return { ok: true, state, patch, summary: oniActionSummary(state, props) };
 }
 
@@ -281,6 +293,7 @@ export async function resetOniActions(actor, scope = 'all') {
         naCsbAutomation: true,
         naActionEconomy: true,
     });
+    refreshActionSheet(actor);
     return state;
 }
 
@@ -329,6 +342,7 @@ async function resetCombatActions(combat, prior, current) {
         if (!oni && (fillFolego || ownTurn))
             Object.assign(patch, slayerFolegoPatch(props, { full: fillFolego }));
         await candidate.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+        refreshActionSheet(candidate);
     });
     const results = await Promise.allSettled(jobs);
     for (const result of results) {
@@ -428,7 +442,9 @@ async function openOniActionManager(actor) {
         window: { title: `Ações Oni ${actor.name}` },
         content: `<div class="na-action-manager"><p><strong>Deslocamento:</strong> ${Math.max(0, parseNumber(props.deslocamento_oni))}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p></div>`,
         buttons: [
-            { action: 'regenerate', label: 'Regeneração Oni', callback: () => 'regenerate' },
+            ...(actorKind(actor) === 'oni_minion'
+                ? []
+                : [{ action: 'regenerate', label: 'Regeneração Oni', callback: () => 'regenerate' }]),
             {
                 action: 'use',
                 label: 'Usar ação',

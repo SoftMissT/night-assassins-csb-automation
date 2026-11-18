@@ -1,6 +1,8 @@
 import { MODULE_ID } from './constants.mjs';
 import { BREATH_TEMPLATE_ID, loadBreathingCatalog } from './breathing-catalog.mjs';
 
+const LEGACY_CAUTERIZE_NAME = 'chamas7estilocauterizar';
+
 function normalizeKey(value) {
     return String(value ?? '')
         .trim()
@@ -31,6 +33,8 @@ export function buildCanonicalBreathMap(documents) {
             .toLocaleLowerCase('pt-BR');
         if (nameKey) byName.set(nameKey, document);
         if (idKey) byId.set(idKey, document);
+        if (idKey === 'chamas_07' && Number(props.forma_ataque_padrao) === 1)
+            byName.set(LEGACY_CAUTERIZE_NAME, document);
     }
     return { byName, byId };
 }
@@ -68,8 +72,53 @@ function stripDescriptionChatFlag(body) {
 const STRUCTURE_KEYS = Object.freeze([
     'tipo_manobra',
     'nivel_req',
+    'forma_ataque_padrao',
     ...[1, 2, 3, 4].flatMap((level) => [`tem_nvl${level}`, `nvl${level}_custo`]),
 ]);
+
+function replaceLegacyCauterize(item, canonical) {
+    const props = item.system?.props ?? {};
+    const source = canonical?.system?.props ?? {};
+    const itemName = normalizeKey(item.name);
+    if (
+        source.forma_id !== 'chamas_07' ||
+        Number(source.forma_ataque_padrao) !== 1 ||
+        (normalizeKey(props.nome_forma) !== 'cauterizar' && itemName !== LEGACY_CAUTERIZE_NAME)
+    )
+        return null;
+    const patch = structuralDrift(props, source);
+    for (const key of [
+        'inventario_categoria',
+        'forma_id',
+        'forma_ordem',
+        'forma_passiva',
+        'respiracao_nome',
+        'nome_forma',
+        'nome_jp',
+        'descricao',
+        'tem_requisito',
+        'requisito_texto',
+        'gatilho_texto',
+        'notas_texto',
+        'tipo_dano_base',
+    ]) {
+        if (Object.hasOwn(source, key)) patch[`system.props.${key}`] = source[key];
+    }
+    for (const level of [1, 2, 3, 4]) {
+        const prefix = `nvl${level}_`;
+        const formula = String(props[`${prefix}dano`] ?? '').trim();
+        for (const field of ['efeito', 'tipos_dano', 'status', 'buff', 'dano']) {
+            const key = prefix + field;
+            if (
+                Object.hasOwn(source, key) &&
+                (field !== 'dano' || !formula || formula === `${level}d6`)
+            )
+                patch[`system.props.${key}`] = source[key];
+        }
+    }
+    if (itemName === LEGACY_CAUTERIZE_NAME || itemName === 'cauterizar') patch.name = canonical.name;
+    return patch;
+}
 
 /**
  * Patch só dos campos estruturais que divergem do catálogo (comparação como texto).
@@ -98,6 +147,17 @@ export function breathingItemPatch(item, canonical) {
     const related = Boolean(canonical) || isBreathingLike(props) || chatSpam;
     if (!related) return null;
     const runtimeTemplateId = String(item.system?.template ?? '').trim();
+    const cauterizePatch = replaceLegacyCauterize(item, canonical);
+    if (cauterizePatch)
+        return {
+            _id: item.id ?? item._id,
+            ...cauterizePatch,
+            ...(!runtimeTemplateId
+                ? { 'system.template': canonical.system?.template ?? BREATH_TEMPLATE_ID }
+                : {}),
+            ...(chatSpam ? { 'system.body': item.system?.body } : {}),
+            ...(ownershipFix ? { ownership: ownershipFix } : {}),
+        };
     const alreadyCanonical =
         !chatSpam &&
         !ownershipFix &&

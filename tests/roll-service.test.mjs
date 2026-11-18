@@ -82,6 +82,19 @@ describe('roll-service', () => {
         assert.match(_formula, /\+ 7$/);
     });
 
+    it('lê o Bloqueio de NPC sem alias calculado e preserva FOR zero', async () => {
+        _dialogReturn = { mode: 'normal', rollMode: 'publicroll', secVal: 0, bonusRaw: '', cdVal: 0 };
+        const actor = makeActor({ props: {
+            npc_nome: 'NPC', npc_for_base: 4, for_marca_temp: 2,
+        } });
+        delete actor.system.props.for_display;
+        await rollTest({ actor, test: 'Bloqueio', attr: 'FOR' });
+        assert.match(_formula, /^1d20 \+ 6$/);
+        actor.system.props.for_display = '<span>0</span>';
+        await rollTest({ actor, test: 'Bloqueio', attr: 'FOR' });
+        assert.match(_formula, /^1d20 \+ 0$/);
+    });
+
     it('soma Habilidade Especial e Metal em Bloqueio', async () => {
         _dialogReturn = {
             mode: 'normal',

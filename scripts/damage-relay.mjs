@@ -1,8 +1,9 @@
 import { MODULE_ID } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { applySlayerDamage } from './status-engine.mjs';
 import { addFlameEnemyHeat, FLAME_HEAT_FLAG } from './flame-breathing-service.mjs';
-import { parseStatusState } from './status-service.mjs';
+import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import { actorKind, isSlayerActor } from './actor-kind.mjs';
 
 const SOCKET_NAME = `module.${MODULE_ID}`;
@@ -73,6 +74,7 @@ function normalizeDamageContext(context = {}) {
                 ? {
                       sourceId: String(context.flame.sourceId ?? '').slice(0, 64),
                       heat: Math.max(0, Math.min(5, Math.trunc(Number(context.flame.heat) || 0))),
+                      knockdownDc: Math.max(0, Math.min(1000, Math.trunc(Number(context.flame.knockdownDc) || 0))),
                       blockPenalty: Math.max(
                           -10,
                           Math.min(0, Math.trunc(Number(context.flame.blockPenalty) || 0))
@@ -105,8 +107,9 @@ async function applyFlameAfterDamage(actor, context, appliedDamage) {
     await actor.setFlag(MODULE_ID, FLAME_HEAT_FLAG, heat.state);
 
     const slayer = isSlayerActor(actor);
-    const dataKey = slayer ? 'status_slayer_dados' : 'status_oni_dados';
-    const exhaustionKey = slayer ? 'status_slayer_exaustao' : 'status_oni_exaustao';
+    const prefix = slayer || actorKind(actor) === 'npc' ? 'status_slayer' : 'status_oni';
+    const dataKey = `${prefix}_dados`;
+    const exhaustionKey = `${prefix}_exaustao`;
     const props = actor.system?.props ?? {};
     const status = parseStatusState(props[dataKey]);
     const thresholdExhaustion = heat.thresholds.filter((value) =>
@@ -133,8 +136,21 @@ async function applyFlameAfterDamage(actor, context, appliedDamage) {
             sourceName: 'Brasas Ardentes 50',
         };
     }
-    if (thresholdExhaustion + conditionalExhaustion > 0 || heat.thresholds.includes(50))
+    let knockedDown = false;
+    if (flame.knockdownDc > 0) {
+        const vit = resolveSheetAttribute(actor, 'VIT') ?? 0;
+        const save = await Roll.create(`1d20 + (${vit})`).evaluate();
+        knockedDown = save.total < flame.knockdownDc;
+        await save.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: `Universo Flamejante · VIT CD ${flame.knockdownDc} · ${knockedDown ? 'Derrubado' : 'Permanece de pé'}`,
+        });
+        if (knockedDown && !status.active.includes('derrubado')) status.active.push('derrubado');
+    }
+    if (thresholdExhaustion + conditionalExhaustion > 0 || heat.thresholds.includes(50) || knockedDown) {
         patch[`system.props.${dataKey}`] = JSON.stringify(status);
+        patch[`system.props.${prefix}_resumo`] = formatStatusSummary(status.active, status.exhaustion);
+    }
     if (flame.blockPenalty < 0 && flame.blockPenaltyTurns > 0) {
         await actor.setFlag(MODULE_ID, 'flameBlockPenalty', {
             value: flame.blockPenalty,

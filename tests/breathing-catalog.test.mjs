@@ -8,6 +8,7 @@ import {
     breathingFormsFromCatalog,
     importBreathingForms,
     loadBreathingCatalog,
+    resolveBreathTemplateId,
 } from '../scripts/breathing-catalog.mjs';
 
 function form(id, breathing, formaId, ordem) {
@@ -102,5 +103,27 @@ describe('Formas de Respiração e espelho interno', () => {
         assert.equal(result.ok, false);
         assert.match(result.reason, /template/iu);
         assert.equal(actor.created.length, 0);
+    });
+
+    it('ignora referência órfã e encontra template importado com outro ID', async () => {
+        const previous = game.items;
+        const imported = {
+            id: 'novaIdNoMundo0001',
+            type: '_equippableItemTemplate',
+            system: { uniqueId: 'NABreathTpl00001' },
+        };
+        const actor = owner();
+        actor.items.push({
+            system: { template: 'idAusente', props: { inventario_categoria: 'respiracao' } },
+        });
+        game.items = {
+            get: (id) => id === imported.id ? imported : undefined,
+            find: (predicate) => predicate(imported) ? imported : undefined,
+        };
+        try {
+            assert.equal(await resolveBreathTemplateId(actor), imported.id);
+        } finally {
+            game.items = previous;
+        }
     });
 });

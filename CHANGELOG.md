@@ -2,6 +2,18 @@
 
 ## Em desenvolvimento
 
+## v0.13.3 — 2026-11-18 — Criador de Formas, Universo Flamejante e fichas
+
+- **Controle GM:** em **Ferramentas do GM → Criar Forma de Respiração**, o GM pode usar a ficha selecionada ou escolher uma ficha quando estiver sem token. O formulário grava os quatro níveis e aceita templates já importados. Os níveis se reorganizam conforme a largura da janela e os botões permanecem visíveis durante a rolagem.
+- **Formas personalizadas:** usam os dados do próprio Item, inclusive Ação Única e Reação. O seletor de Dano, o lançador e o encadeamento respeitam a Respiração escolhida na ficha.
+- **Chamas — Universo Flamejante:** substitui Cauterizar no mesmo Item. A Ação Única prepara o próximo Ataque Padrão do turno, aquece a arma e indica a distância de avanço. No acerto, soma dano Cortante e pede VIT contra 8 + FOR + metade do nível de personagem arredondada para baixo. **Corrigir Respirações** atualiza as cópias canônicas antigas.
+- **NPC:** os sete bônus temporários de atributo, os Bônus Fixos e os bônus de ação ficam editáveis na aba Combate. O atributo final soma base, bônus temporário e Marca do Caçador.
+- **Acerto e Testes:** NPC, Slayer, Oni e Oni Minion usam os valores configurados e os bônus quando o atributo calculado está ausente. A mesma leitura vale para dano de arma, Universo Flamejante e Resistência ao Despertar.
+- **Ações:** a ficha atualiza o resumo ao consumir ou restaurar ações. Oni Minion ganha o gerenciador, o consumo automático e a restauração no início de seu turno.
+- **Ficha Slayer:** o painel Fogo Fátuo mostra o calor acumulado, os bônus de acerto e dano e a arma sincronizada.
+- **Diálogo e chat de dano:** opção para dividir o dano entre alvos como regra de mesa, valores separados por tipo e destaque para acerto crítico.
+- **Atualização de fichas existentes:** atualizar os templates de NPC, Oni Minion e Slayer para receber os novos campos e painéis.
+
 ## v0.13.2 — 2026-11-18 — Criar Arma aceita template importado
 
 - **Criar Arma:** a macro encontra o template "NA Arma - Slayer" mesmo quando ele foi importado do compêndio com `_id` e `system.uniqueId` novos (resolve por `system.uniqueId` e nome) e importa o template canônico do compêndio quando ele ainda não existe no mundo. O Item criado usa o `_id` real do template encontrado.

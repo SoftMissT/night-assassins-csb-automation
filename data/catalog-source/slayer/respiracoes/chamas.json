@@ -222,26 +222,19 @@
         },
         {
             "estilo": 7,
-            "nome_pt": "Cauterizar",
-            "nome_romaji": "Shichi no Kata Yaki Suru",
-            "tipo_manobra": "Especial",
-            "descricao": "Passa a arma quente sobre as próprias feridas, cauterizando e estancando sangramentos.",
-            "requisito": "Ter pelo menos 5 Pontos de Esquentar na arma",
+            "nome_pt": "Universo Flamejante",
+            "nome_romaji": "Shichi no Kata - Kien Banshō 「七ノ型・気炎万象」",
+            "tipo_manobra": "Única",
+            "descricao": "Prepara o próximo Ataque Padrão deste turno com um avanço e um corte vertical descendente. O corte ainda usa a Ação de Ataque.",
+            "ganho_pontos_arma": "+3 Pontos de Esquentar na arma na ativação",
+            "ganho_pontos_inimigo": "+2 Pontos de Esquentar adicionais no inimigo acertado",
+            "impacto_descendente": "No acerto, VIT contra CD 8 + FOR + metade do Nível de Personagem arredondada para baixo. Na falha, Derrubado.",
+            "execucao": "O avanço não consome Movimento e respeita obstáculos e Ataques de Oportunidade. Dano adicional em um Ataque Padrão neste turno; expira ao fim do turno, não concede outro ataque e não se transfere a uma técnica. O 3º Estilo, Esquentar, mantém seus benefícios.",
             "niveis": [
-                { "nivel": 1, "cura": "1d6 de PDV", "efeito_adicional": null, "custo": "2 PDR" },
-                { "nivel": 2, "cura": "2d6 de PDV", "efeito_adicional": null, "custo": "3 PDR" },
-                {
-                    "nivel": 3,
-                    "cura": "3d6 de PDV",
-                    "efeito_adicional": "Cura status de sangramento",
-                    "custo": "3 PDR"
-                },
-                {
-                    "nivel": 4,
-                    "cura": "4d6 de PDV",
-                    "efeito_adicional": "Cura status de sangramento",
-                    "custo": "4 PDR"
-                }
+                { "nivel": 1, "dano_adicional": "2d10 de dano Cortante", "avanco": "3 m", "custo": "3 PDR" },
+                { "nivel": 2, "dano_adicional": "3d10 de dano Cortante", "avanco": "4,5 m", "custo": "4 PDR" },
+                { "nivel": 3, "dano_adicional": "4d10 de dano Cortante", "avanco": "6 m", "custo": "6 PDR" },
+                { "nivel": 4, "dano_adicional": "5d10 de dano Cortante", "avanco": "7,5 m", "custo": "7 PDR" }
             ]
         },
         {

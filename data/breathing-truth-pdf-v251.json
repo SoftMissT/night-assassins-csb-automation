@@ -300,14 +300,15 @@
       },
       {
         "ord": 7,
-        "name": "Cauterizar",
-        "tipo": "Especial",
+        "name": "Universo Flamejante",
+        "tipo": "Única",
         "costs": [
-          2,
           3,
-          3,
-          4
-        ]
+          4,
+          6,
+          7
+        ],
+        "nota": "Regra do operador de 2026-11-18; substitui Cauterizar (Especial, 2/3/3/4 PDR) do PDF."
       },
       {
         "ord": 8,

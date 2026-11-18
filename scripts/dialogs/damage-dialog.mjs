@@ -571,10 +571,16 @@ export async function openDamageDialog({
 
     const criticalToggle = presetDraft
         ? ''
-        : `<label class="na-critical-toggle">
-        <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
-        <span><strong>Foi crítico?</strong><small>Dobra o dano final deste ataque antes da resistência.</small></span>
-      </label>`;
+        : `<div class="na-dmg-toggles">
+        <label class="na-critical-toggle">
+          <input type="checkbox" id="na-dmg-critical" ${critical ? 'checked' : ''} />
+          <span><strong>Foi crítico?</strong><small>Dobra o dano final.</small></span>
+        </label>
+        <label class="na-critical-toggle">
+          <input type="checkbox" id="na-dmg-split-targets" />
+          <span><strong>Dividir entre alvos</strong><small>Reparte entre os alvos.</small></span>
+        </label>
+      </div>`;
 
     const content = `
   <div class="na-dmg-dialog">
@@ -683,6 +689,10 @@ export async function openDamageDialog({
                               Number(form.querySelector('#na-dmg-pdr')?.value) || 0
                           ),
                           critical: Boolean(form.querySelector('#na-dmg-critical')?.checked),
+                          breathing: String(breathing ?? ''),
+                          splitTargets: Boolean(
+                              form.querySelector('#na-dmg-split-targets')?.checked
+                          ),
                           messageMode: resolveMessageMode(
                               form.querySelector('#na-dmg-mode')?.value
                           ),

@@ -573,7 +573,7 @@ describe('damage-service', () => {
         assert.match(notices[0], /recebeu 16 de dano \(8 de Ferida\)/);
     });
 
-    it('respeita a visibilidade escolhida no diálogo e resolve @atributo na fórmula livre', async () => {
+    it('respeita a visibilidade e resolve @for na fórmula livre sem for_display', async () => {
         game.user.isGM = true;
         game.settings = {
             get: (namespace, key) =>
@@ -597,8 +597,9 @@ describe('damage-service', () => {
         const attacker = makeActor({
             id: 'free',
             uuid: 'Actor.free',
-            props: { nome_slayer: 'Slayer', for_display: '3' },
+            props: { nome_slayer: 'Slayer', atr_for_valor_config: 2, for_marca_temp: 1 },
         });
+        delete attacker.system.props.for_display;
         const formulas = [];
         const previousCreate = Roll.create;
         Roll.create = (formula) => {

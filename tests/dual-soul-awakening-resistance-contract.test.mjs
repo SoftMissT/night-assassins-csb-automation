@@ -88,17 +88,12 @@ test(
 
         assert.match(
             code,
-            /for_display/
+            /resolveSheetAttribute\(actor, attribute\)/
         );
 
         assert.match(
             code,
-            /vit_display/
-        );
-
-        assert.match(
-            code,
-            /parseAttributeValue/
+            /attributeValue\(actor, 'FOR'\)[\s\S]*attributeValue\(actor, 'VIT'\)/
         );
 
         assert.match(

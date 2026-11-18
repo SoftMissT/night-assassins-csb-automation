@@ -98,6 +98,14 @@ export const GM_TOOLS = Object.freeze([
             }),
     },
     {
+        key: 'create-form',
+        group: 'mundo',
+        icon: 'fa-wind',
+        label: 'Criar Forma de Respiração',
+        api: 'openFormCreator',
+        run: manager('openFormCreator'),
+    },
+    {
         key: 'duplicate-weapons',
         group: 'mundo',
         icon: 'fa-clone',

@@ -102,6 +102,41 @@ describe('action-service', () => {
             especial: 0,
         });
     });
+    it('Oni Minion consome e restaura ações pelo contrato Oni (actorKind oni_minion)', async () => {
+        const actor = makeActor({
+            props: {
+                oni_minion_nome: 'Lacaio',
+            },
+        });
+        actor.update = async (patch) => {
+            if (patch['system.props.acoes_oni_dados'] !== undefined) {
+                actor.system.props.acoes_oni_dados = patch['system.props.acoes_oni_dados'];
+                actor.system.props.acoes_oni_resumo = patch['system.props.acoes_oni_resumo'];
+            }
+        };
+        const consumed = await consumeOniActions(actor, 'ataque');
+        assert.equal(consumed.ok, true);
+        assert.equal(consumed.state.turn.ataque, 1);
+        assert.equal(actor.system.props.acoes_slayer_dados, undefined);
+        await resetOniActions(actor, 'turn');
+        assert.deepEqual(parseActionState(actor.system.props.acoes_oni_dados).turn, {
+            movimento: 0,
+            ataque: 0,
+            especial: 0,
+        });
+    });
+    it('atualiza a ficha ao consumir e restaurar ações', async () => {
+        let renders = 0;
+        const actor = makeSlayer();
+        actor.sheet = { render: () => { renders += 1; } };
+        actor.update = async (patch) => {
+            if (patch['system.props.acoes_slayer_dados'] !== undefined)
+                actor.system.props.acoes_slayer_dados = patch['system.props.acoes_slayer_dados'];
+        };
+        await consumeSlayerActions(actor, 'ataque');
+        await resetSlayerActions(actor, 'turn');
+        assert.equal(renders, 2, 'uma renderização por gravação de ações');
+    });
     it('Ação Única mantém teto 1 e bônus amplia as demais', () => {
         assert.deepEqual(
             actionMaximums({

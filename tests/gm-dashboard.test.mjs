@@ -172,7 +172,13 @@ describe('gm-dashboard', () => {
 
     it('abre painel legível, sem retratos, não modal e com fechamento explícito', async () => {
         let config;
+        let toolClick;
+        const dispatched = [];
+        const removedHooks = [];
         game.user.isGM = true;
+        game.modules = new Map([['night-assassins-csb-automation', {
+            api: { openFormCreator: (options) => dispatched.push(options) },
+        }]]);
         const zenitsu = {
             name: 'Actor Zenitsu',
             uuid: 'Actor.zenitsu',
@@ -209,16 +215,26 @@ describe('gm-dashboard', () => {
             },
         };
         globalThis.window = { innerWidth: 1280, innerHeight: 900, __NAGmDashboard: null };
-        globalThis.Hooks = { once: () => undefined, on: () => 1, off: () => undefined };
-        class MockDialogV2 {
+        globalThis.Hooks = { on: () => 1, off: (name) => removedHooks.push(name) };
+        globalThis.requestAnimationFrame = (callback) => callback();
+        class MockDialogV2 extends EventTarget {
             constructor(value) {
+                super();
                 config = value;
             }
             render() {
                 this.rendered = true;
+                this.element = {
+                    querySelector: (selector) => selector === '.na-gm-tools' ? {
+                        addEventListener: (_name, handler) => { toolClick = handler; },
+                    } : null,
+                    querySelectorAll: () => [],
+                };
             }
+            setPosition() {}
             async close() {
                 this.closed = true;
+                this.dispatchEvent(new Event('close'));
             }
             async minimize() {
                 this.minimized = true;
@@ -239,6 +255,9 @@ describe('gm-dashboard', () => {
         assert.doesNotMatch(combatBoard, /Classe|Origem|Respiração|Esquiva|Bloqueio/);
         assert.match(config.content, /<details class="na-gm-tools">/);
         assert.match(config.content, /data-gm-tool="ceremony"/);
+        assert.match(config.content, /data-gm-tool="create-form"/);
+        toolClick({ target: { closest: () => ({ dataset: { gmTool: 'create-form' } }) } });
+        assert.deepEqual(dispatched, [{ actorUuid: null }]);
         assert.doesNotMatch(config.content, /<img\b/);
         assert.equal(config.position.width, 780);
         assert.equal(config.modal, false);
@@ -250,5 +269,7 @@ describe('gm-dashboard', () => {
         );
         await config.buttons[0].callback();
         assert.equal(dialog.closed, true);
+        assert.equal(window.__NAGmDashboard, null);
+        assert.equal(removedHooks.length, 5);
     });
 });

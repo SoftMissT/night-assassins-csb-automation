@@ -8,7 +8,6 @@ import {
     weaponPropertyMechanics,
     weaponProfilesFromProps,
 } from '../weapon-service.mjs';
-
 const text = (value, fallback = '') => String(value ?? fallback).trim();
 const number = (value, fallback = 0) => (Number.isFinite(Number(value)) ? Number(value) : fallback);
 const list = (value) =>
@@ -63,7 +62,6 @@ function weaponDamage(profile = {}) {
         },
     ];
 }
-
 export function normalizeWeaponTechnique(
     item,
     { profileIndex = 0, ownerKind = 'slayer', sourceItemUuid } = {}
@@ -75,7 +73,10 @@ export function normalizeWeaponTechnique(
             nome: 'Ataque Base',
             dano_dados: props.arma_dano_dados,
             dano_fixo: props.arma_dano_fixo,
-            atributos: list(props.arma_dano_atributo).map((key) => ({ key, multiplicador: 1 })),
+            atributos: list(props.arma_dano_atributo).map((key) => ({
+                key,
+                multiplicador: 1,
+            })),
             tipos_dano: props.arma_tipos_dano,
             alcance: props.arma_alcance,
         };
@@ -93,7 +94,14 @@ export function normalizeWeaponTechnique(
             ? props.arma_requisitos_estruturados
             : [],
         costs: {
-            actions: [{ type: 'ataque', amount: 1, timing: 'reserve', refund: 'cancel' }],
+            actions: [
+                {
+                    type: 'ataque',
+                    amount: 1,
+                    timing: 'reserve',
+                    refund: 'cancel',
+                },
+            ],
             resources: [],
         },
         targeting: {
@@ -132,8 +140,12 @@ export function normalizeWeaponTechnique(
         damage: weaponDamage(profile),
         statuses: Array.isArray(profile.status_estruturados) ? profile.status_estruturados : [],
         effects: Array.isArray(profile.efeitos_estruturados) ? profile.efeitos_estruturados : [],
-        lifecycle: { scope: 'instant' },
-        chat: { summary: text(profile.formula_texto, props.arma_nome) },
+        lifecycle: {
+            scope: 'instant',
+        },
+        chat: {
+            summary: text(profile.formula_texto, props.arma_nome),
+        },
         metadata: {
             category: text(props.arma_categoria, 'basica'),
             profileIndex,
@@ -153,7 +165,6 @@ export function normalizeWeaponTechnique(
     });
     return validateTechniqueDefinition(definition);
 }
-
 export function normalizeBreathingTechnique(
     item,
     { level = 1, ownerKind = 'slayer', sourceItemUuid } = {}
@@ -189,7 +200,14 @@ export function normalizeBreathingTechnique(
             actions:
                 passive || !action
                     ? []
-                    : [{ type: action, amount: 1, timing: 'reserve', refund: 'cancel' }],
+                    : [
+                          {
+                              type: action,
+                              amount: 1,
+                              timing: 'reserve',
+                              refund: 'cancel',
+                          },
+                      ],
             resources:
                 number(props[`${prefix}_custo`]) > 0
                     ? [
@@ -221,7 +239,12 @@ export function normalizeBreathingTechnique(
                   },
         defense:
             props[`${prefix}_defesa_estruturada`] ??
-            (passive ? null : { allowed: ['esquiva', 'bloqueio'], onSuccess: 'negate' }),
+            (passive
+                ? null
+                : {
+                      allowed: ['esquiva', 'bloqueio'],
+                      onSuccess: 'negate',
+                  }),
         damage: formula
             ? [
                   {
@@ -237,13 +260,24 @@ export function normalizeBreathingTechnique(
         statuses: Array.isArray(props[`${prefix}_status_estruturados`])
             ? props[`${prefix}_status_estruturados`]
             : rawStatus
-              ? [{ id: rawStatus, lifecycle: { scope: 'manual' } }]
+              ? [
+                    {
+                        id: rawStatus,
+                        lifecycle: {
+                            scope: 'manual',
+                        },
+                    },
+                ]
               : [],
         effects: Array.isArray(props[`${prefix}_efeitos_estruturados`])
             ? props[`${prefix}_efeitos_estruturados`]
             : [],
-        lifecycle: props[`${prefix}_ciclo_estruturado`] ?? { scope: 'instant' },
-        chat: { summary: text(props[`${prefix}_efeito`], props.descricao) },
+        lifecycle: props[`${prefix}_ciclo_estruturado`] ?? {
+            scope: 'instant',
+        },
+        chat: {
+            summary: text(props[`${prefix}_efeito`], props.descricao),
+        },
         metadata: {
             breathing: text(props.respiracao_nome),
             formId: text(props.forma_id),

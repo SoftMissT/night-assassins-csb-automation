@@ -27,7 +27,7 @@ import {
     isDualSoulWeapon,
 } from './dual-soul-ceremony-service.mjs';
 
-import { parseAttributeValue } from './parsing.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 
 import { hydrateSpecialWeaponItem } from './special-weapon-service.mjs';
 
@@ -169,15 +169,9 @@ async function chooseDualSoulWeapon(actor, options = {}) {
 }
 
 function attributeValue(actor, attribute) {
-    const key = attribute === 'FOR' ? 'for_display' : 'vit_display';
-
-    const props = actor?.system?.props ?? {};
-
-    if (!Object.prototype.hasOwnProperty.call(props, key)) {
-        throw new Error(`A ficha não possui a key ${key}.`);
-    }
-
-    return parseAttributeValue(props[key]);
+    const value = resolveSheetAttribute(actor, attribute);
+    if (value === null) throw new Error(`A ficha não possui um valor válido para ${attribute}.`);
+    return value;
 }
 
 function soulName(kind, props = {}) {

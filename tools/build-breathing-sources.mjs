@@ -184,6 +184,7 @@ for (const document of catalog.documents) {
                   ataque: 'Ação de Ataque',
                   especial: 'Ação Especial',
                   reacao: 'Reação',
+                  unica: 'Ação Única',
               }[flame.action] ?? flame.action);
         for (let level = 1; level <= 4; level += 1) {
             const mechanics = flame.levels[level - 1];

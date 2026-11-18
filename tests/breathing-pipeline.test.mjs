@@ -233,4 +233,49 @@ describe('breath-service — rota canônica lê o forma_id do item', () => {
         const call = source.slice(source.indexOf('return runCanonicalBreathingForm({'));
         assert.match(call.slice(0, 400), /formaId:\s*item\.system\?\.props\?\.forma_id/);
     });
+
+    test('Forma personalizada de Pedra usa seus níveis e consome Ação Única com o custo cadastrado', async () => {
+        const { setupFoundryMocks, resetFoundryMocks } = await import('./fixtures/foundry-mock.mjs');
+        const { useBreathForm } = await import('../scripts/breath-service.mjs');
+        setupFoundryMocks();
+        foundry.utils = {
+            deepClone: structuredClone,
+            getProperty: (object, path) => path.split('.').reduce((slot, key) => slot?.[key], object),
+        };
+        try {
+            const actor = makeActor({
+                nome_slayer: 'Slayer',
+                nvl_respiracao_num: 2,
+                pdr_slayer_total_conta: 15,
+            });
+            actor.isOwner = true;
+            let patch;
+            actor.update = async (changes) => { patch = changes; };
+            const item = {
+                parent: actor,
+                system: { props: {
+                    forma_id: 'custom_pedra',
+                    respiracao_nome: 'Pedra',
+                    nome_forma: 'Postura de Teste',
+                    nome_jp: '',
+                    tipo_manobra: 'Ação Única',
+                    nivel_req: 2,
+                    tem_nvl2: 1,
+                    nvl2_custo: 3,
+                    nvl2_efeito: 'Um efeito descritivo.',
+                } },
+            };
+            globalThis.fromUuid = async () => item;
+            foundry.applications.api.DialogV2.wait = async ({ window }) => {
+                assert.match(window.title, /Postura de Teste/);
+                return { level: 2, damage: null };
+            };
+            ChatMessage.create = async () => {};
+            await useBreathForm({ itemUuid: 'Actor.slayer.Item.custom' });
+            assert.equal(patch['system.props.pdr_slayer_gasto_valor'], 8);
+            assert.equal(JSON.parse(patch['system.props.acoes_slayer_dados']).round.unica, 1);
+        } finally {
+            resetFoundryMocks();
+        }
+    });
 });

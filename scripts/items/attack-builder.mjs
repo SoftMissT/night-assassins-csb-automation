@@ -1,10 +1,13 @@
-import { parseAttributeValue, parseNumber } from '../parsing.mjs';
+import { parseNumber } from '../parsing.mjs';
+import { resolveSheetAttribute } from '../sheet-attributes.mjs';
 import { weaponProfilesForActor } from '../weapon-service.mjs';
 import {
     normalizeBreathingTechnique,
     normalizeWeaponTechnique,
 } from './item-technique-normalizers.mjs';
 import { actorKind } from '../actor-kind.mjs';
+import { chosenBreathing, formsForBreathing } from '../breathing-choice.mjs';
+import { canonicalBreathing } from '../breathing-contract.mjs';
 import { oniUnarmedProfile } from '../oni/progression-service.mjs';
 const WEAPON_TEMPLATE_IDS = new Set(['NAWeaponTpl00001', 'NASpecialWeaponTpl00001']);
 const BREATH_TEMPLATE_ID = 'NABreathTpl00001';
@@ -40,11 +43,10 @@ function isBreathingForm(item) {
 }
 
 function attributeValues(actor) {
-    const props = actor?.system?.props ?? {};
     return Object.fromEntries(
         ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'].map((key) => [
             key,
-            parseAttributeValue(props[`${key}_display`]),
+            resolveSheetAttribute(actor, key) ?? 0,
         ])
     );
 }
@@ -188,12 +190,16 @@ export function definitionDamageEntries(definition, actor) {
  */
 export function buildBreathingDamageCatalog(actor, { items } = {}) {
     const ownerKind = actorKind(actor);
-    if (ownerKind !== 'slayer') return [];
-    const sourceItems = Array.isArray(items) ? items : itemsOf(actor);
+    if (!['slayer', 'npc'].includes(ownerKind)) return [];
+    const sourceItems = formsForBreathing(
+        Array.isArray(items) ? items : itemsOf(actor),
+        chosenBreathing(actor?.system?.props ?? {})
+    );
     const groups = new Map();
     for (const item of sourceItems) {
         if (!isBreathingForm(item)) continue;
         const props = itemProps(item);
+        if (props.forma_id === 'chamas_07' || parseNumber(props.forma_ataque_padrao) === 1) continue;
         const breathing = String(props.respiracao_nome || '').trim();
         const formName = String(props.nome_forma || item?.name || '').trim();
         if (!breathing || !formName) continue;
@@ -224,6 +230,7 @@ export function createAttackBuilderModel(actor) {
     const actorProps = actor?.system?.props ?? {};
     const ownerKind = actorKind(actor);
     const breathingLevel = selectedLevel(actor);
+    const chosen = chosenBreathing(actorProps);
     const weapons = [];
     const breathing = [];
     const innate = ownerKind === 'oni' ? oniUnarmedDefinitions(actor) : [];
@@ -259,6 +266,8 @@ export function createAttackBuilderModel(actor) {
             });
         }
         if (['slayer', 'npc'].includes(ownerKind) && isBreathingForm(item)) {
+            if (props.forma_id === 'chamas_07' || parseNumber(props.forma_ataque_padrao) === 1) continue;
+            if (chosen && canonicalBreathing(String(props.respiracao_nome ?? '')) !== chosen) continue;
             if (parseNumber(props.nivel_req) > breathingLevel) continue;
             for (
                 let level = breathingLevel;

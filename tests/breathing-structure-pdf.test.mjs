@@ -4,7 +4,8 @@ import { describe, it } from 'node:test';
 
 /**
  * Contrato dos campos estruturados das Respirações Vento, Água, Chamas, Raposa, Eclipse, Som e
- * Sonhos contra o PDF oficial V25.1 (`data/breathing-truth-pdf-v251.json`). Antes desta correção
+ * Sonhos contra a referência V25.1 e as revisões do operador em `data/breathing-truth-pdf-v251.json`.
+ * Antes desta correção
  * o catálogo repetia o custo do nível 1 nos quatro níveis, deixava `tipo_manobra` como
  * "Não informada" e não bloqueava os níveis indisponíveis, então a ficha cobrava PDR errado.
  */

@@ -12,7 +12,6 @@ function cleanName(actor) {
     const name = String(actor?.name ?? actor?.prototypeToken?.name ?? '').trim();
     return name || 'Desconhecido';
 }
-
 export function classifyCombatant(actor) {
     const kind = actorKind(actor);
     if (kind === 'oni_minion') return 'oni_minion';
@@ -20,7 +19,6 @@ export function classifyCombatant(actor) {
     if (kind === 'slayer') return 'slayer';
     return 'npc';
 }
-
 export function slayerPanelData(actor) {
     if (!isSlayerActor(actor)) return null;
     const props = actor?.system?.props ?? {};
@@ -46,7 +44,6 @@ export function slayerPanelData(actor) {
         exaustao: integer(props.status_slayer_exaustao),
     });
 }
-
 export function oniPanelData(actor) {
     if (!isOniActor(actor)) return null;
     const props = actor?.system?.props ?? {};
@@ -88,7 +85,6 @@ export function oniPanelData(actor) {
         autoRegen: Boolean(regenProfile.automaticStartTurnFormula),
     });
 }
-
 export function minionPanelData(actor) {
     if (!isOniMinionActor(actor)) return null;
     const props = actor?.system?.props ?? {};
@@ -119,7 +115,6 @@ export function minionPanelData(actor) {
         fraqueza: props.oni_minion_fraqueza ?? '',
     });
 }
-
 export function buildGmPanelData(actors = []) {
     const slayers = [];
     const onis = [];

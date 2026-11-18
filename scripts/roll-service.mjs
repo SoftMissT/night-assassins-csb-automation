@@ -4,7 +4,7 @@
 
 import { ATTR_NAMES, MODULE_ID } from './constants.mjs';
 import { resolveMessageMode } from './damage-formula.mjs';
-import { parseAttributeValue } from './parsing.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { openRollDialog } from './dialogs/roll-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
 import { recoverSlayerFolego } from './action-service.mjs';
@@ -163,12 +163,11 @@ export async function rollTest(options) {
 
     const test = options.test ?? 'Teste';
     const attr = options.attr ?? '';
-    const displayKey = `${String(attr).toLowerCase()}_display`;
-    if (!Object.prototype.hasOwnProperty.call(actor.system?.props ?? {}, displayKey)) {
-        ui.notifications?.error?.(`A ficha não possui a key ${displayKey}.`);
+    const val = resolveSheetAttribute(actor, attr);
+    if (val === null) {
+        ui.notifications?.error?.(`A ficha não possui um valor válido para ${String(attr).toUpperCase()}.`);
         return;
     }
-    const val = parseAttributeValue(actor.system?.props?.[displayKey]);
     const color = options.color ?? '';
     const statusEffects = getRollStatusEffects(actor.system?.props, {
         test,

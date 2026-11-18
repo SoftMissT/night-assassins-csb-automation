@@ -91,6 +91,26 @@ test('A suspensão da Recuperação preserva os efeitos de Fadiga Espiritual da 
     assert.equal(getDamageStatusEffects(current).pdrSurcharge, 1);
 });
 
+test('A Recuperação suspende somente a Fadiga registrada', () => {
+    const current = props(['fadiga_corporal', 'fadiga_mental']);
+    current.resp_recuperacao_fadiga_suspensa = 'fadiga_corporal';
+    assert.equal(getDamageStatusEffects(current).criticalAllowed, true);
+    assert.equal(getRollStatusEffects(current, { test: 'Iniciativa', attr: 'DEX' }).mode, 'disadvantage');
+    current.resp_recuperacao_fadiga_suspensa = 'fadiga_mental';
+    assert.equal(getDamageStatusEffects(current).criticalAllowed, false);
+    assert.equal(getRollStatusEffects(current, { test: 'Iniciativa', attr: 'DEX' }).mode, 'normal');
+});
+
+test('Autocontrole Celular favorece resistências aos dois status no Slayer e no NPC', () => {
+    for (const character of [{ nvl_num: 7 }, { npc_nivel: 7 }]) {
+        const current = { ...props(['envenenamento']), ...character };
+        assert.equal(getRollStatusEffects(current, { test: 'Teste de VIT', attr: 'VIT' }).mode, 'normal');
+        assert.equal(getRollStatusEffects(current, { test: 'Resistência a Asfixia', attr: 'VIT' }).mode, 'normal');
+        assert.equal(getRollStatusEffects(current, { test: 'Resistência a Envenenamento', attr: 'VIT' }).mode, 'advantage');
+        assert.equal(getRollStatusEffects(current, { test: 'Resistência a Hemorragia', attr: 'VIT' }).mode, 'advantage');
+    }
+});
+
 test('Fadiga Corporal impede crítico e Exaustão reduz ataque e dano', () => {
     const current = props(['fadiga_corporal'], 4);
     const attack = getRollStatusEffects(current, { test: 'Acerto', attr: 'DEX', kind: 'attack' });

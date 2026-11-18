@@ -87,7 +87,9 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
     const defense = kind === 'defense' || testName === 'bloqueio' || testName === 'esquiva';
     const resistance = testName.includes('resist');
     const initiative = testName.includes('iniciativa');
-    const recoveryFatigueSuspended = parseNumber(props.resp_recuperacao_fadiga_suspensa) > 0;
+    const recoveryFatigue = props.resp_recuperacao_fadiga_suspensa;
+    const mentalFatigueSuspended =
+        recoveryFatigue === 'fadiga_mental' || parseNumber(recoveryFatigue) > 0;
     const reasons = [];
     let modifier = 0;
     let disadvantage = false;
@@ -122,7 +124,7 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
         modifier -= 2;
         reasons.push('Fadiga Espiritual −2 resistência FDV');
     }
-    if (!recoveryFatigueSuspended && active.has('fadiga_mental') && (attribute === 'SAB' || initiative)) {
+    if (!mentalFatigueSuspended && active.has('fadiga_mental') && (attribute === 'SAB' || initiative)) {
         disadvantage = true;
         reasons.push('Fadiga Mental: Desvantagem');
     }
@@ -186,15 +188,15 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
         modifier += 1;
         reasons.push('Encorajado +1 Iniciativa');
     }
-    // Respiração da Recuperação, passiva Autocontrole Celular: Vantagem para resistir a
-    // Envenenamento e Hemorragia. Todo Slayer tem a Respiração (nvl_respiracao_num) e o
-    // sistema resiste a esses status com VIT.
     const cellularControl =
         !attack &&
         !defense &&
         attribute === 'VIT' &&
-        (props.nvl_num !== undefined || props.nvl_respiracao_num !== undefined) &&
-        (active.has('envenenamento') || active.has('hemorragia'));
+        (props.nvl_num !== undefined ||
+            props.nvl_respiracao_num !== undefined ||
+            props.npc_nivel !== undefined) &&
+        resistance &&
+        /\b(envenenamento|hemorragia)\b/.test(testName);
     if (cellularControl) reasons.push('Autocontrole Celular: Vantagem');
 
     return {
@@ -209,7 +211,9 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
 
 export function getDamageStatusEffects(props = {}) {
     const { active, exhaustion } = statusContext(props);
-    const recoveryFatigueSuspended = parseNumber(props.resp_recuperacao_fadiga_suspensa) > 0;
+    const recoveryFatigue = props.resp_recuperacao_fadiga_suspensa;
+    const physicalFatigueSuspended =
+        recoveryFatigue === 'fadiga_corporal' || parseNumber(recoveryFatigue) > 0;
     const reasons = [];
     let modifier = 0;
     let pdrSurcharge = 0;
@@ -221,7 +225,7 @@ export function getDamageStatusEffects(props = {}) {
         pdrSurcharge = 1;
         reasons.push('Fadiga Espiritual +1 PDR');
     }
-    const criticalAllowed = recoveryFatigueSuspended || !active.has('fadiga_corporal');
+    const criticalAllowed = physicalFatigueSuspended || !active.has('fadiga_corporal');
     if (!criticalAllowed) reasons.push('Fadiga Corporal impede crítico');
     const blocked =
         lifeDeathBlocked(props) ||

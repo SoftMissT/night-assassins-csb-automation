@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.13.5 — 2026-11-18 — Dados e efeitos da Recuperação
+
+- **Respiração da Recuperação:** quatro faixas de dados do nível 1 ao 14. PDV vai de `2d8 + VIT` a `5d8 + VIT` e PDR de `1d6 + FDV` a `4d6 + FDV`. O uso normal aplica 75% e usa CDs de FDV 16–19. A Última Chance usa a mesma tabela com CD 15 e 100% dos resultados.
+- **Vida e Morte:** o PDV usa o total calculado da ficha, com Ferida descontada uma vez. A Última Chance evita a queda quando a cura deixa o Slayer acima de 0 PDV.
+- **Efeitos da Recuperação:** a imunidade de nível 8 consome o próximo dano de Envenenamento no início ou no fim do turno. Dano periódico no NPC é gravado no PDV da própria ficha. O nível 12 suspende apenas a Fadiga selecionada até o próximo turno. Autocontrole Celular concede Vantagem à resistência de VIT a Envenenamento ou Hemorragia.
+
 ## v0.13.4 — 2026-11-18 — Recuperação, atributos e Controle GM
 
 - **Respiração da Recuperação:** escolha só PDV quando houver vida faltando, só PDR quando tiver gasto pelo menos metade ou ambos quando cumprir as duas condições. O teste usa FDV da ficha e rola apenas os recursos escolhidos. A tabela e os exemplos estão no jornal do compêndio Night Assassins Regras.

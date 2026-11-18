@@ -3,7 +3,7 @@
  */
 
 import { ATTRIBUTES, MODULE_ID } from './constants.mjs';
-import { changedProp, parseNumber } from './parsing.mjs';
+import { changedProp, parseNumber, slayerMaxPdv } from './parsing.mjs';
 import { consumeSlayerActions } from './action-service.mjs';
 import { attemptLastChance, hasRecoveryBreathing } from './recovery-breathing-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
@@ -76,14 +76,7 @@ export function parseLifeDeathState(raw) {
     }
 }
 
-export function slayerMaxPdv(props = {}) {
-    return Math.max(
-        0,
-        parseNumber(props.pdv_slayer_total_conta) -
-            parseNumber(props.pdv_slayer_dano_ferida) +
-            parseNumber(props.pdv_slayer_extra)
-    );
-}
+export { slayerMaxPdv };
 
 export function slayerCurrentPdv(props = {}) {
     return Math.max(
@@ -167,12 +160,7 @@ function statusPatch(props, { add = [], remove = [], exhaustion = 0, blockReacti
 }
 
 function damageForCurrent(props, desired) {
-    const maximum = Math.max(
-        0,
-        parseNumber(props.pdv_slayer_total_conta) -
-            parseNumber(props.pdv_slayer_dano_ferida) +
-            parseNumber(props.pdv_slayer_extra)
-    );
+    const maximum = slayerMaxPdv(props);
     return Math.max(0, maximum + parseNumber(props.pdv_slayer_curado) - Math.max(0, desired));
 }
 
@@ -454,7 +442,7 @@ export async function reconcileActor(actor, options = {}) {
         } else if (pdv <= 0 && !state.dying && !state.dead) {
             if (maximum > 0 && hasRecoveryBreathing(actor)) {
                 const recovery = await attemptLastChance(actor, { combatId: game.combat?.id });
-                if (recovery?.success) return;
+                if (recovery?.success && slayerCurrentPdv(actor.system.props) > 0) return;
             }
             const decision =
                 maximum <= 0
@@ -477,7 +465,7 @@ export async function reconcileActor(actor, options = {}) {
                     await markDead(actor, state, 'Quarta queda no mesmo combate.');
                 else
                     await actor.update(
-                        { ...lifePatch(state), ...statusPatch(props, { add: ['derrubado'] }) },
+                        { ...lifePatch(state), ...statusPatch(actor.system.props, { add: ['derrubado'] }) },
                         { naCsbAutomation: true, naLifeDeath: true }
                     );
             }

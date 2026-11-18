@@ -21,6 +21,14 @@ export function parseNumber(raw) {
     return match ? Number(match[0]) : 0;
 }
 
+export function slayerMaxPdv(props = {}) {
+    const sheetTotal = Number(String(props.pdv_slayer_total ?? '').trim().replace(',', '.') || NaN);
+    const total = Number.isFinite(sheetTotal)
+        ? sheetTotal
+        : parseNumber(props.pdv_slayer_total_conta) - parseNumber(props.pdv_slayer_dano_ferida);
+    return Math.max(0, total + parseNumber(props.pdv_slayer_extra));
+}
+
 /**
  * Alias semântico para valores de atributo finais (podem vir como Label HTML).
  * @param {unknown} raw

@@ -225,7 +225,7 @@ describe('gm-dashboard', () => {
             render() {
                 this.rendered = true;
                 this.element = {
-                    querySelector: (selector) => selector === '.na-gm-tools' ? {
+                    querySelector: (selector) => selector === '.na-gm-commands' ? {
                         addEventListener: (_name, handler) => { toolClick = handler; },
                     } : null,
                     querySelectorAll: () => [],
@@ -244,14 +244,14 @@ describe('gm-dashboard', () => {
 
         const dialog = await openGmDashboard();
 
-        assert.match(config.content, /Controle de Combate/);
+        assert.match(config.content, /aria-label="Controles de combate"/);
         assert.match(config.content, /Caçadores/);
         assert.match(config.content, /Inimigos/);
         assert.match(config.content, /Zenitsu/);
         assert.match(config.content, /Gyutaro/);
         // O painel de combate segue sem dados de ficha. O menu de ferramentas é outra
         // região (rótulos de botão como "Corrigir Respirações"), por isso fica de fora.
-        const combatBoard = config.content.replace(/<details class="na-gm-tools">[\s\S]*?<\/details>/u, '');
+        const combatBoard = config.content.split('<div class="na-gm-mini-sections">')[1];
         assert.doesNotMatch(combatBoard, /Classe|Origem|Respiração|Esquiva|Bloqueio/);
         assert.match(config.content, /<details class="na-gm-tools">/);
         assert.match(config.content, /data-gm-tool="ceremony"/);
@@ -262,7 +262,10 @@ describe('gm-dashboard', () => {
         assert.equal(config.position.width, 780);
         assert.equal(config.modal, false);
         assert.equal(config.window.minimizable, true);
-        assert.match(config.content, /na-gm-minimize/);
+        assert.match(config.content, /aria-label="Atualizar combate"/);
+        assert.doesNotMatch(config.content, /na-gm-minimize|na-gm-close|VISÃO DO MESTRE/);
+        assert.ok(config.content.indexOf('data-gm-tool="create-form"') <
+            config.content.indexOf('<details class="na-gm-tools">'));
         assert.deepEqual(
             config.buttons.map(({ action }) => action),
             ['close']

@@ -2,12 +2,18 @@
 import { consumeSlayerActions } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { parseNumber } from './parsing.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 export const RECOVERY_STATE_KEY = 'resp_recuperacao_estado';
 const NORMAL_RECOVERY_RATIO = 0.75;
 const normalRecoveryInProgress = new Set();
+const RECOVERY_CHOICE_LABELS = Object.freeze({
+    pdv: 'Só PDV',
+    pdr: 'Só PDR',
+    both: 'PDV e PDR',
+});
 const LEVELS = Object.freeze({
     1: {
         pdv: '2d8',
@@ -89,7 +95,7 @@ const healKeys = (props = {}) =>
     isNpcProps(props)
         ? { pdv: 'system.props.npc_pdv_curado', pdr: 'system.props.npc_pdr_recuperado' }
         : { pdv: 'system.props.pdv_slayer_curado', pdr: 'system.props.pdr_slayer_curado' };
-const attr = (props, key) => n(props[`${key}_display`] ?? props[key]);
+const attr = (props, key) => n(resolveSheetAttribute({ system: { props } }, key) ?? props[key]);
 export const RECOVERY_FORMS = Object.freeze({
     recuperacao: {
         formId: 'recuperacao',
@@ -230,11 +236,9 @@ export function recoveryOutcome({
             state,
         };
     }
-    const spiritualFatigue = status.active.includes('fadiga_espiritual');
     const ratio = lastChance ? 1 : NORMAL_RECOVERY_RATIO;
     const pdvGain = Math.floor(n(pdvRoll) * ratio);
-    let pdrGain = Math.floor((n(pdrRoll) + (naturalTwenty ? 2 * level : 0)) * ratio);
-    if (spiritualFatigue) pdrGain = Math.floor(pdrGain / 2);
+    const pdrGain = Math.floor((n(pdrRoll) + (naturalTwenty ? 2 * level : 0)) * ratio);
     const pdvApplied = Math.min(Math.max(0, resources.pdvMax - resources.pdv), pdvGain);
     const pdrApplied = Math.min(Math.max(0, resources.pdrMax - resources.pdr), pdrGain);
     const keys = healKeys(props);
@@ -245,7 +249,7 @@ export function recoveryOutcome({
     }
     if (pdrApplied > 0) {
         patch[keys.pdr] = healed(keys.pdr) + pdrApplied;
-        summary.push(`+${pdrApplied} PDR${spiritualFatigue ? ' (metade, Fadiga Espiritual)' : ''}`);
+        summary.push(`+${pdrApplied} PDR`);
     }
     const active = [...status.active];
     const effects = {
@@ -265,7 +269,7 @@ export function recoveryOutcome({
         summary.push('ignora o próximo dano periódico de Envenenamento');
     }
     if (level >= 12 && currentCombatId !== null) {
-        const fatigue = ['fadiga_corporal', 'fadiga_espiritual', 'fadiga_mental'].find((key) =>
+        const fatigue = ['fadiga_corporal', 'fadiga_mental'].find((key) =>
             active.includes(key)
         );
         if (fatigue) {
@@ -388,22 +392,23 @@ export async function attemptLastChance(actor, { combatId = activeCombatId() } =
         summary: outcome.summary,
     };
 }
-function normalRecoveryBlockReason(props) {
+function normalRecoveryBlockReason(props, resources) {
     const status = parseStatusState(props.status_slayer_dados);
     if (status.active.includes('ofegante'))
         return 'Ofegante impede ativar Respirações.';
     if (status.active.includes('a_beira_da_morte'))
         return 'À Beira da Morte impede a ativação normal.';
-    const resources = currentRecoveryResources(props);
     if (resources.pdv <= 0)
         return 'A Recuperação normal exige pelo menos 1 PDV.';
     if (getDamageStatusEffects(props).blocked)
         return 'Este personagem está incapacitado e não pode usar a Recuperação.';
-    if (resources.pdv * 2 > resources.pdvMax)
-        return 'A Recuperação exige estar com metade dos PDV máximos ou menos.';
-    if (resources.pdrMax <= 0 || resources.pdr * 2 > resources.pdrMax)
-        return 'A Recuperação exige ter gasto pelo menos metade dos PDR máximos.';
     return null;
+}
+
+function normalRecoveryOptions({ pdv, pdvMax, pdr, pdrMax }) {
+    const canRecoverPdv = pdv < pdvMax;
+    const canRecoverPdr = pdrMax > 0 && pdrMax - pdr >= Math.ceil(pdrMax / 2);
+    return { pdv: canRecoverPdv, pdr: canRecoverPdr, both: canRecoverPdv && canRecoverPdr };
 }
 
 export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
@@ -424,9 +429,15 @@ export async function openRecoveryManager({ actorUuid, mode = 'normal' } = {}) {
 
 async function useNormalRecovery(actor) {
     const propsBefore = actor.system?.props ?? {};
-    const blocked = normalRecoveryBlockReason(propsBefore);
+    const resources = currentRecoveryResources(propsBefore);
+    const blocked = normalRecoveryBlockReason(propsBefore, resources);
     if (blocked) return globalThis.ui?.notifications?.warn?.(blocked);
     const preview = recoveryFormDefinition('recuperacao', levelOf(propsBefore));
+    const choices = normalRecoveryOptions(resources);
+    const preferred = choices.both ? 'both' : choices.pdv ? 'pdv' : choices.pdr ? 'pdr' : 'cancel';
+    const pdrRequirement = resources.pdrMax > 0
+        ? `Gasto atual: ${resources.pdrMax - resources.pdr} de ${Math.ceil(resources.pdrMax / 2)} exigidos.`
+        : 'Esta ficha precisa de um PDR máximo maior que zero.';
     const result = await foundry.applications.api.DialogV2.wait({
         window: {
             title: 'Respiração da Recuperação',
@@ -434,26 +445,37 @@ async function useNormalRecovery(actor) {
         modal: true,
         rejectClose: false,
         content: `<p>Nível ${preview.level}. Teste de FDV, CD ${preview.dc}. Custo: 0 PDR.</p>
-            <p>Recupera 75% do total, arredondado para baixo: ${preview.pdv} + VIT em PDV e ${preview.pdr} + FDV em PDR.</p>
-            <p>Exige até metade dos PDV e PDR máximos. Em combate, gasta Ação Especial.</p>`,
+            <ul>
+                <li><strong>PDV ${resources.pdv}/${resources.pdvMax}.</strong> Perder pelo menos 1 PDV libera a rolagem de ${preview.pdv} + VIT.</li>
+                <li><strong>PDR ${resources.pdr}/${resources.pdrMax}.</strong> Gastar pelo menos metade do máximo libera a rolagem de ${preview.pdr} + FDV. ${pdrRequirement}</li>
+                <li><strong>PDV e PDR.</strong> Disponível quando você cumpre as duas condições.</li>
+            </ul>
+            <p>Em sucesso, recupera 75% do resultado de cada recurso escolhido, arredondado para baixo. Em combate, gasta Ação Especial.</p>`,
         buttons: [
-            {
-                action: 'use',
-                label: 'Usar',
-                default: true,
-                callback: () => 'use',
-            },
+            ...Object.entries(RECOVERY_CHOICE_LABELS).map(([action, label]) => ({
+                action,
+                label,
+                disabled: !choices[action],
+                default: action === preferred,
+                callback: () => action,
+            })),
             {
                 action: 'cancel',
                 label: 'Cancelar',
-                callback: () => false,
+                default: preferred === 'cancel',
+                callback: () => null,
             },
         ],
     });
-    if (result !== 'use' && result !== true) return null;
+    if (typeof result !== 'string' || !Object.hasOwn(RECOVERY_CHOICE_LABELS, result)) return null;
     const props = actor.system?.props ?? {};
-    const nowBlocked = normalRecoveryBlockReason(props);
+    const currentResources = currentRecoveryResources(props);
+    const nowBlocked = normalRecoveryBlockReason(props, currentResources);
     if (nowBlocked) return globalThis.ui?.notifications?.warn?.(nowBlocked);
+    if (!normalRecoveryOptions(currentResources)[result])
+        return globalThis.ui?.notifications?.warn?.('A ficha não cumpre as condições da opção escolhida.');
+    const recoverPdv = result !== 'pdr';
+    const recoverPdr = result !== 'pdv';
     const def = recoveryFormDefinition('recuperacao', levelOf(props));
     const combat = globalThis.game?.combat;
     const participates =
@@ -473,12 +495,12 @@ async function useNormalRecovery(actor) {
         speaker: ChatMessage.getSpeaker({
             actor,
         }),
-        flavor: `${def.label} — FDV CD ${def.dc}: ${success ? 'Sucesso' : 'Falha'}`,
+        flavor: `${def.label} — ${RECOVERY_CHOICE_LABELS[result]} · FDV CD ${def.dc}: ${success ? 'Sucesso' : 'Falha'}`,
     });
-    const pdvRoll = success
+    const pdvRoll = success && recoverPdv
         ? await rollFormula(`${def.pdv} + ${attr(props, 'vit')}`, actor, 'Recuperação — PDV')
         : 0;
-    const pdrRoll = success
+    const pdrRoll = success && recoverPdr
         ? await rollFormula(`${def.pdr} + ${attr(props, 'fdv')}`, actor, 'Recuperação — PDR')
         : 0;
     const outcome = recoveryOutcome({
@@ -486,22 +508,23 @@ async function useNormalRecovery(actor) {
         success,
         pdvRoll,
         pdrRoll,
-        naturalTwenty,
+        naturalTwenty: naturalTwenty && recoverPdr,
         currentCombatId: combatId,
     });
     if (Object.keys(outcome.patch).length)
         await actor.update(outcome.patch, { naCsbAutomation: true, naBreathing: true });
+    const summary = outcome.summary.length ? outcome.summary : ['a rolagem recuperou 0 pontos'];
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({
             actor,
         }),
-        content: `<p><strong>${def.label}</strong>: ${outcome.summary.join('; ')}.</p>`,
+        content: `<p><strong>${def.label}</strong>: ${summary.join('; ')}.</p>`,
     });
     return {
         ok: true,
         success,
         patch: outcome.patch,
-        summary: outcome.summary,
+        summary,
     };
 }
 export function registerRecoveryBreathingEngine() {

@@ -14363,31 +14363,31 @@
             },
             {
                 "name": "vit_display",
-                "value": "${atr_vit_valor_config+hab_tsuyoi_vit_bonus+bonus_atr_vit_valor_temp+vit_marca_temp+vit_resp_bonus_temp_slayer}$"
+                "value": "${atr_vit_valor_config+ref(\"hab_tsuyoi_vit_bonus\", 0)+ref(\"bonus_atr_vit_valor_temp\", 0)+ref(\"vit_marca_temp\", 0)+ref(\"vit_resp_bonus_temp_slayer\", 0)}$"
             },
             {
                 "name": "dex_display",
-                "value": "${atr_dex_valor_config+bonus_atr_dex_valor_temp+dex_marca_temp+dex_resp_bonus_temp_slayer}$"
+                "value": "${atr_dex_valor_config+ref(\"bonus_atr_dex_valor_temp\", 0)+ref(\"dex_marca_temp\", 0)+ref(\"dex_resp_bonus_temp_slayer\", 0)}$"
             },
             {
                 "name": "for_display",
-                "value": "${atr_for_valor_config+hab_tsuyoi_for_bonus+bonus_atr_for_valor_temp+for_marca_temp+for_resp_bonus_temp_slayer+resp_metal_for_temp}$"
+                "value": "${atr_for_valor_config+ref(\"hab_tsuyoi_for_bonus\", 0)+ref(\"bonus_atr_for_valor_temp\", 0)+ref(\"for_marca_temp\", 0)+ref(\"for_resp_bonus_temp_slayer\", 0)+ref(\"resp_metal_for_temp\", 0)}$"
             },
             {
                 "name": "car_display",
-                "value": "${atr_car_valor_config+bonus_atr_car_valor_temp+car_marca_temp+car_resp_bonus_temp_slayer}$"
+                "value": "${atr_car_valor_config+ref(\"bonus_atr_car_valor_temp\", 0)+ref(\"car_marca_temp\", 0)+ref(\"car_resp_bonus_temp_slayer\", 0)}$"
             },
             {
                 "name": "fdv_display",
-                "value": "${atr_fdv_valor_config+bonus_atr_fdv_valor_temp+fdv_marca_temp+fdv_resp_bonus_temp_slayer+resp_metal_fdv_temp}$"
+                "value": "${atr_fdv_valor_config+ref(\"bonus_atr_fdv_valor_temp\", 0)+ref(\"fdv_marca_temp\", 0)+ref(\"fdv_resp_bonus_temp_slayer\", 0)+ref(\"resp_metal_fdv_temp\", 0)}$"
             },
             {
                 "name": "int_display",
-                "value": "${atr_int_valor_config+bonus_atr_int_valor_temp+int_marca_temp+int_resp_bonus_temp_slayer}$"
+                "value": "${atr_int_valor_config+ref(\"bonus_atr_int_valor_temp\", 0)+ref(\"int_marca_temp\", 0)+ref(\"int_resp_bonus_temp_slayer\", 0)}$"
             },
             {
                 "name": "sab_display",
-                "value": "${atr_sab_valor_config+bonus_atr_sab_valor_temp+sab_marca_temp+sab_resp_bonus_temp_slayer}$"
+                "value": "${atr_sab_valor_config+ref(\"bonus_atr_sab_valor_temp\", 0)+ref(\"sab_marca_temp\", 0)+ref(\"sab_resp_bonus_temp_slayer\", 0)}$"
             },
             {
                 "name": "origem_slayer_pdr_val",
@@ -14554,7 +14554,7 @@
                 "editable": false
             }
         },
-        "templateSystemUniqueVersion": 2720657597
+        "templateSystemUniqueVersion": 2720657598
     },
     "prototypeToken": {
         "name": "slayer_template",

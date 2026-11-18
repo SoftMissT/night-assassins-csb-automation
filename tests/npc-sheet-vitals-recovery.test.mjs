@@ -156,7 +156,7 @@ describe('ficha de NPC: layout', () => {
             assert.equal(field.editRole, 0);
             assert.equal(field.defaultValue, '0');
             assert.equal(template.system.hidden.find((node) => node.name === `${attr}_display`).value,
-                '${' + `npc_${attr}_base+(${attr}_marca_temp ? ${attr}_marca_temp : 0)+(${key} ? ${key} : 0)` + '}$');
+                '${' + `npc_${attr}_base+ref("${attr}_marca_temp", 0)+ref("${key}", 0)` + '}$');
         }
     });
 
@@ -226,7 +226,7 @@ describe('ficha de NPC: painel de vida e Recuperação', () => {
         assert.equal(JSON.parse(result.patch['system.props.resp_recuperacao_estado']).succeeded, true);
     });
 
-    it('crítico entra no ganho reduzido e Fadiga Espiritual corta o PDR pela metade', () => {
+    it('crítico entra no ganho de PDR do NPC mesmo com Fadiga Espiritual legada', () => {
         const normal = recoveryOutcome({ props: npcProps({ npc_pdr_gasto_valor: 20 }), success: true, pdrRoll: 4, naturalTwenty: true, currentCombatId: 'c1' });
         assert.equal(normal.patch['system.props.npc_pdr_recuperado'], 13);
         const tired = recoveryOutcome({
@@ -236,7 +236,7 @@ describe('ficha de NPC: painel de vida e Recuperação', () => {
             }),
             success: true, pdrRoll: 4, naturalTwenty: true, currentCombatId: 'c1',
         });
-        assert.equal(tired.patch['system.props.npc_pdr_recuperado'], 6);
+        assert.equal(tired.patch['system.props.npc_pdr_recuperado'], 13);
     });
 });
 

@@ -81,6 +81,16 @@ test('Fadiga Espiritual afeta FDV e aumenta o custo de PDR', () => {
     assert.equal(getDamageStatusEffects(props(['fadiga_espiritual'])).pdrSurcharge, 1);
 });
 
+test('A suspensão da Recuperação preserva os efeitos de Fadiga Espiritual da ficha', () => {
+    const current = {
+        ...props(['fadiga_espiritual', 'fadiga_mental']),
+        resp_recuperacao_fadiga_suspensa: 1,
+    };
+    assert.equal(getRollStatusEffects(current, { test: 'Resistência', attr: 'FDV' }).modifier, -2);
+    assert.equal(getRollStatusEffects(current, { test: 'Iniciativa', attr: 'DEX' }).mode, 'normal');
+    assert.equal(getDamageStatusEffects(current).pdrSurcharge, 1);
+});
+
 test('Fadiga Corporal impede crítico e Exaustão reduz ataque e dano', () => {
     const current = props(['fadiga_corporal'], 4);
     const attack = getRollStatusEffects(current, { test: 'Acerto', attr: 'DEX', kind: 'attack' });

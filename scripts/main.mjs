@@ -5,6 +5,7 @@ import { MODULE_ID, ATTRIBUTES } from './constants.mjs';
 import { handleActorUpdate } from './trigger-router.mjs';
 import { rollTest } from './roll-service.mjs';
 import { rollHit } from './hit-service.mjs';
+import { fillMissingSheetAttributes } from './sheet-attributes.mjs';
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from './damage-service.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { openNpcVitals } from './npc-vitals-service.mjs';
@@ -227,6 +228,7 @@ function tagNightAssassinsSheet(app, html) {
         target?.classList?.add('na-sheet');
         target?.classList?.add(kindClass);
     }
+    if (el) fillMissingSheetAttributes(el, actor);
 }
 Hooks.once('ready', async () => {
     if (game.system.id !== 'custom-system-builder') {

@@ -1,5 +1,5 @@
 import { actorKind } from './actor-kind.mjs';
-import { ATTR_NAMES, configKey, tempKey } from './constants.mjs';
+import { ATTRIBUTES, ATTR_NAMES, configKey, tempKey } from './constants.mjs';
 import { parseAttributeValue } from './parsing.mjs';
 
 function readAttributeField(field) {
@@ -50,4 +50,15 @@ export function resolveSheetAttribute(actor, attribute) {
         `${key}_resp_bonus_temp_slayer`,
         ...(slayerExtras[key] ?? []),
     ].reduce((total, name) => total + (read(name) ?? 0), base + temporary);
+}
+
+export function fillMissingSheetAttributes(root, actor) {
+    for (const { key, label } of ATTRIBUTES) {
+        for (const element of root.querySelectorAll(`.na-sheet-stat.na-sheet-role-${key}`)) {
+            const text = element.textContent.trim();
+            if (text !== '' && text !== `${label}:`) continue;
+            const value = resolveSheetAttribute(actor, key);
+            if (value !== null) element.textContent = text ? `${text} ${value}` : String(value);
+        }
+    }
 }

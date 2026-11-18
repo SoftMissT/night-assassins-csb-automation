@@ -118,7 +118,7 @@ export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 
         modifier -= 2;
         reasons.push('Exaustão 2 −2 DEX');
     }
-    if (!recoveryFatigueSuspended && active.has('fadiga_espiritual') && attribute === 'FDV' && resistance) {
+    if (active.has('fadiga_espiritual') && attribute === 'FDV' && resistance) {
         modifier -= 2;
         reasons.push('Fadiga Espiritual −2 resistência FDV');
     }
@@ -217,7 +217,7 @@ export function getDamageStatusEffects(props = {}) {
         modifier -= 1;
         reasons.push('Exaustão 1 −1 Dano');
     }
-    if (!recoveryFatigueSuspended && active.has('fadiga_espiritual')) {
+    if (active.has('fadiga_espiritual')) {
         pdrSurcharge = 1;
         reasons.push('Fadiga Espiritual +1 PDR');
     }

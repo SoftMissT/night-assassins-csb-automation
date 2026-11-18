@@ -87,6 +87,17 @@ jobs:
             --compendiumName night-assassins-armas-slayer \
             --inputDirectory build/compendium/armas-slayer \
             --outputDirectory packs
+      - name: Build Rules Compendium
+        shell: bash
+        run: |
+          node tools/build-recovery-journal.mjs
+          npx --yes @foundryvtt/foundryvtt-cli@3.0.4 package pack \
+            --type Module \
+            --id night-assassins-csb-automation \
+            --compendiumName night-assassins-regras \
+            --inputDirectory build/compendium/regras \
+            --outputDirectory packs
+
       - name: Build module.zip
         shell: bash
         run: |
@@ -122,6 +133,7 @@ jobs:
           ! unzip -Z1 module.zip | grep -qx "catalogs/breathing.json"
           unzip -Z1 module.zip | grep -qx "catalogs/special-weapons.json"
           unzip -Z1 module.zip | grep -qx "catalogs/breathing-items.json"
+          unzip -Z1 module.zip | grep -qx "packs/night-assassins-regras/CURRENT"
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2

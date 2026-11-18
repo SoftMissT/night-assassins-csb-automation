@@ -172,18 +172,15 @@ function resourceBar(label, data, tone) {
 
 function combatantRow({ actor, kind, name, pdv, pdr }) {
     return `<article class="na-gm-mini-row na-gm-mini-row--${kind}" data-search="${escapeHtml(`${name} ${actor.name}`.toLocaleLowerCase('pt-BR'))}">
-    <div class="na-gm-mini-name"><small>${kind === 'oni' ? 'ONI' : 'CAÇADOR'}</small><strong>${escapeHtml(name)}</strong></div>
+    <div class="na-gm-mini-name"><strong>${escapeHtml(name)}</strong></div>
     <div class="na-gm-mini-resources">${resourceBar('PDV', pdv, 'pdv')}${resourceBar(kind === 'oni' ? 'PDK' : 'PDR', pdr, 'pdr')}</div>
-    <button type="button" class="na-gm-open-sheet" data-actor-uuid="${escapeHtml(actor.uuid)}" title="Abrir ficha"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+    <button type="button" class="na-gm-open-sheet" data-actor-uuid="${escapeHtml(actor.uuid)}" title="Abrir ficha" aria-label="Abrir ficha de ${escapeHtml(name)}"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></button>
   </article>`;
 }
 
 function section(title, icon, entries, kind) {
     const rows = entries.map(combatantRow).join('');
-    const emptyLabel =
-        kind === 'oni'
-            ? 'Nenhum Oni identificado pelas keys *_oni*.'
-            : 'Nenhum Slayer identificado pelas keys *_slayer*.';
+    const emptyLabel = kind === 'oni' ? 'Nenhum inimigo no combate.' : 'Nenhum caçador no combate.';
     return `<section class="na-gm-mini-section na-gm-mini-section--${kind}">
     <header><h3><i class="${icon}"></i>${title}</h3><span>${entries.length}</span></header>
     <div class="na-gm-mini-list">${rows || `<div class="na-gm-mini-empty">${emptyLabel}</div>`}</div>
@@ -208,21 +205,18 @@ export function loadDashboardData(combat = game.combat) {
 }
 
 function dashboardSections({ hunters, onis }) {
+    if (!hunters.length && !onis.length)
+        return '<p class="na-gm-mini-empty">Adicione tokens ao combate para acompanhar PDV, PDR e PDK.</p>';
     return `${section('Caçadores', 'fa-solid fa-user-shield', hunters, 'hunter')}${section('Inimigos', 'fa-solid fa-skull', onis, 'oni')}`;
 }
 
 function renderDashboard(data) {
     return `<section class="na-gm-mini-board">
-    <header class="na-gm-mini-hero">
-      <div><small>VISÃO DO MESTRE</small><h2>Controle de Combate</h2></div>
-      <div class="na-gm-mini-actions">
-        <button type="button" class="na-gm-minimize" title="Minimizar"><i class="fa-solid fa-window-minimize"></i></button>
-        <button type="button" class="na-gm-refresh" title="Atualizar"><i class="fa-solid fa-rotate"></i></button>
-        <button type="button" class="na-gm-close" title="Fechar"><i class="fa-solid fa-xmark"></i></button>
-      </div>
+    <header class="na-gm-mini-hero" aria-label="Controles de combate">
+      <label class="na-gm-mini-search"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><input type="search" aria-label="Buscar personagem" placeholder="Buscar personagem" autocomplete="off" /></label>
+      ${gmToolsMarkup()}
+      <button type="button" class="na-gm-refresh" title="Atualizar combate" aria-label="Atualizar combate"><i class="fa-solid fa-rotate" aria-hidden="true"></i></button>
     </header>
-    ${gmToolsMarkup()}
-    <label class="na-gm-mini-search"><i class="fa-solid fa-magnifying-glass"></i><input type="search" placeholder="Buscar personagem..." autocomplete="off" /></label>
     <div class="na-gm-mini-sections">${dashboardSections(data)}</div>
   </section>`;
 }
@@ -259,10 +253,8 @@ function bindDashboard(dialog, root) {
         filterRows(root)
     );
     root.querySelector('.na-gm-refresh')?.addEventListener('click', () => refreshDashboard(root));
-    root.querySelector('.na-gm-minimize')?.addEventListener('click', () => void dialog.minimize());
-    root.querySelector('.na-gm-close')?.addEventListener('click', () => void dialog.close());
     // Menu de ferramentas: uma delegação só; o painel não fecha ao abrir uma ferramenta.
-    root.querySelector('.na-gm-tools')?.addEventListener('click', (event) => {
+    root.querySelector('.na-gm-commands')?.addEventListener('click', (event) => {
         const button = event.target.closest?.('[data-gm-tool]');
         if (button) void runGmTool(button.dataset.gmTool);
     });

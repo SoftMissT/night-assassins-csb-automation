@@ -1,6 +1,13 @@
 # Changelog
 
-## Em desenvolvimento
+## v0.13.4 — 2026-11-18 — Recuperação, atributos e Controle GM
+
+- **Respiração da Recuperação:** escolha só PDV quando houver vida faltando, só PDR quando tiver gasto pelo menos metade ou ambos quando cumprir as duas condições. O teste usa FDV da ficha e rola apenas os recursos escolhidos. A tabela e os exemplos estão no jornal do compêndio Night Assassins Regras.
+- **Recuperação e Última Chance:** removida a redução de PDR por Fadiga Espiritual. A suspensão de Fadiga no nível 12 se aplica à Corporal e à Mental.
+
+- **Atributos na ficha:** bônus opcionais ausentes valem zero no cálculo. O módulo preenche valores em branco nas fichas já importadas quando encontra o atributo configurado.
+
+- **Controle GM:** busca, atualização, Criar Forma e Ferramentas ficam na barra superior. O menu de ferramentas tem rolagem própria e a lista de combate usa tipografia mais legível e separadores discretos.
 
 ## v0.13.3 — 2026-11-18 — Criador de Formas, Universo Flamejante e fichas
 

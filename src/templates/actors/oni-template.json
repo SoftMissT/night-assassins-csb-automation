@@ -8546,31 +8546,31 @@
             },
             {
                 "name": "vit_display",
-                "value": "${atr_vit_oni_valor_config+bonus_atr_vit_oni_valor_temp}$"
+                "value": "${atr_vit_oni_valor_config+ref(\"bonus_atr_vit_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "dex_display",
-                "value": "${atr_dex_oni_valor_config+bonus_atr_dex_oni_valor_temp}$"
+                "value": "${atr_dex_oni_valor_config+ref(\"bonus_atr_dex_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "for_display",
-                "value": "${atr_for_oni_valor_config+bonus_atr_for_oni_valor_temp}$"
+                "value": "${atr_for_oni_valor_config+ref(\"bonus_atr_for_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "car_display",
-                "value": "${atr_car_oni_valor_config+bonus_atr_car_oni_valor_temp}$"
+                "value": "${atr_car_oni_valor_config+ref(\"bonus_atr_car_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "fdv_display",
-                "value": "${atr_fdv_oni_valor_config+bonus_atr_fdv_oni_valor_temp}$"
+                "value": "${atr_fdv_oni_valor_config+ref(\"bonus_atr_fdv_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "int_display",
-                "value": "${atr_int_oni_valor_config+bonus_atr_int_oni_valor_temp}$"
+                "value": "${atr_int_oni_valor_config+ref(\"bonus_atr_int_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "sab_display",
-                "value": "${atr_sab_oni_valor_config+bonus_atr_sab_oni_valor_temp}$"
+                "value": "${atr_sab_oni_valor_config+ref(\"bonus_atr_sab_oni_valor_temp\", 0)}$"
             },
             {
                 "name": "pdv_oni_total_conta",
@@ -8657,7 +8657,7 @@
                 "editable": false
             }
         },
-        "templateSystemUniqueVersion": 2461565727
+        "templateSystemUniqueVersion": 2461565728
     },
     "prototypeToken": {
         "name": "oni_template",

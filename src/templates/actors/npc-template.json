@@ -2773,31 +2773,31 @@
 			},
 			{
 				"name": "vit_display",
-				"value": "${npc_vit_base+(vit_marca_temp ? vit_marca_temp : 0)+(bonus_atr_vit_valor_temp ? bonus_atr_vit_valor_temp : 0)}$"
+				"value": "${npc_vit_base+ref(\"vit_marca_temp\", 0)+ref(\"bonus_atr_vit_valor_temp\", 0)}$"
 			},
 			{
 				"name": "dex_display",
-				"value": "${npc_dex_base+(dex_marca_temp ? dex_marca_temp : 0)+(bonus_atr_dex_valor_temp ? bonus_atr_dex_valor_temp : 0)}$"
+				"value": "${npc_dex_base+ref(\"dex_marca_temp\", 0)+ref(\"bonus_atr_dex_valor_temp\", 0)}$"
 			},
 			{
 				"name": "for_display",
-				"value": "${npc_for_base+(for_marca_temp ? for_marca_temp : 0)+(bonus_atr_for_valor_temp ? bonus_atr_for_valor_temp : 0)}$"
+				"value": "${npc_for_base+ref(\"for_marca_temp\", 0)+ref(\"bonus_atr_for_valor_temp\", 0)}$"
 			},
 			{
 				"name": "car_display",
-				"value": "${npc_car_base+(car_marca_temp ? car_marca_temp : 0)+(bonus_atr_car_valor_temp ? bonus_atr_car_valor_temp : 0)}$"
+				"value": "${npc_car_base+ref(\"car_marca_temp\", 0)+ref(\"bonus_atr_car_valor_temp\", 0)}$"
 			},
 			{
 				"name": "fdv_display",
-				"value": "${npc_fdv_base+(fdv_marca_temp ? fdv_marca_temp : 0)+(bonus_atr_fdv_valor_temp ? bonus_atr_fdv_valor_temp : 0)}$"
+				"value": "${npc_fdv_base+ref(\"fdv_marca_temp\", 0)+ref(\"bonus_atr_fdv_valor_temp\", 0)}$"
 			},
 			{
 				"name": "int_display",
-				"value": "${npc_int_base+(int_marca_temp ? int_marca_temp : 0)+(bonus_atr_int_valor_temp ? bonus_atr_int_valor_temp : 0)}$"
+				"value": "${npc_int_base+ref(\"int_marca_temp\", 0)+ref(\"bonus_atr_int_valor_temp\", 0)}$"
 			},
 			{
 				"name": "sab_display",
-				"value": "${npc_sab_base+(sab_marca_temp ? sab_marca_temp : 0)+(bonus_atr_sab_valor_temp ? bonus_atr_sab_valor_temp : 0)}$"
+				"value": "${npc_sab_base+ref(\"sab_marca_temp\", 0)+ref(\"bonus_atr_sab_valor_temp\", 0)}$"
 			},
 			{
 				"name": "nvl_respiracao_num",
@@ -2805,7 +2805,7 @@
 			}
 		],
 		"attributeBar": {},
-		"templateSystemUniqueVersion": 3061281921
+		"templateSystemUniqueVersion": 3061281922
 	},
 	"prototypeToken": {
 		"name": "npc_template_atual",

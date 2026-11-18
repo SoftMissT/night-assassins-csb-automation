@@ -9,7 +9,6 @@ const template = JSON.parse(
         'utf8'
     )
 );
-const templateSource = JSON.stringify(template);
 const attributes = ['vit', 'dex', 'for', 'car', 'fdv', 'int', 'sab'];
 
 test('Marca lê os valores finais display antes das fontes legadas', () => {
@@ -31,10 +30,8 @@ test('Marca lê os valores finais display antes das fontes legadas', () => {
 test('Marca escreve os sete temporários e cada display consome seu temporário', () => {
     for (const key of attributes) {
         assert.match(macro, new RegExp(`system\\.props\\.\\$\\{key\\}_marca_temp`));
-        assert.match(
-            templateSource,
-            new RegExp(`"name":"${key}_display","value":"[^"]*${key}_marca_temp`)
-        );
+        const display = template.system.hidden.find((field) => field.name === `${key}_display`);
+        assert.ok(display?.value.includes(`ref("${key}_marca_temp", 0)`));
     }
 });
 

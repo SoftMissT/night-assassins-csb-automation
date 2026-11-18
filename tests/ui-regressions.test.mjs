@@ -68,6 +68,13 @@ test('Controle GM respeita a largura útil do viewport estreito', async () => {
     assert.doesNotMatch(css, /@media\s*\(max-width:\s*620px\)[\s\S]*?min-width:\s*360px/isu);
 });
 
+test('Controle GM mantém o rodapé do DialogV2 fora da área de rolagem', async () => {
+    const css = await read('styles/na-csb-automation.css');
+    assert.match(css, /\.na-gm-dashboard-window \.window-content,\s*\.na-gm-dashboard-window \.dialog-form,\s*\.na-gm-dashboard-window \.dialog-content\s*\{[^}]*min-height:\s*0[^}]*overflow:\s*hidden/u);
+    assert.match(css, /\.na-gm-dashboard-window \.form-footer\s*\{[^}]*flex:\s*0 0 auto/u);
+    assert.doesNotMatch(css, /\.na-gm-dashboard-window \.dialog-buttons/u);
+});
+
 test('skin do Actor marca as fichas com .na-sheet nos dois hooks de render', async () => {
     const [main, css] = await Promise.all([read('scripts/main.mjs'), read('styles/na-csb-automation.css')]);
     assert.match(main, /function tagNightAssassinsSheet\(/u);

@@ -120,6 +120,7 @@ O Compêndio `night-assassins-respiracoes` publica o template, as pastas, os hub
 | **Night Assassin's Respirações**         | Template de Respiração; as Formas são importadas do catálogo pelo hub da ficha |
 | **Night Assassin's Armas dos Caçadores** | Armas normais e template de Arma normal |
 | **Night Assassin's Arte**                | Assets e ícones distribuídos pelo módulo             |
+| **Night Assassins Regras**               | Jornal com as opções, CDs e tabela da Respiração da Recuperação |
 
 Os geradores consomem as fontes versionadas do projeto. Arquivos gerados em `build/` não são fonte de verdade e não devem ser editados manualmente. O `release.yml` reempacota os compêndios a partir de `src/` e `macros/` antes de publicar.
 

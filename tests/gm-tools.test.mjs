@@ -48,7 +48,9 @@ describe('gm-tools: registro', () => {
 
     it('o menu renderiza um botão por ferramenta, agrupado e escapado', () => {
         const html = gmToolsMarkup();
-        for (const tool of GM_TOOLS) assert.match(html, new RegExp(`data-gm-tool="${tool.key}"`));
+        for (const tool of GM_TOOLS)
+            assert.equal(html.split(`data-gm-tool="${tool.key}"`).length, 2, tool.key);
+        assert.equal(html.split('name="na-gm-tool-group"').length, 4);
         assert.doesNotMatch(html, /<script|onclick=/iu);
     });
 });

@@ -192,14 +192,19 @@ export async function runGmTool(key) {
 
 /** Marcação do menu: um botão por ferramenta, agrupado. */
 export function gmToolsMarkup() {
+    const button = (tool) =>
+        `<button type="button" class="na-gm-tool" data-gm-tool="${tool.key}"><i class="fa-solid ${tool.icon}" aria-hidden="true"></i><span>${escapeHtml(tool.label)}</span></button>`;
+    const creator = GM_TOOLS.find((tool) => tool.key === 'create-form');
     const sections = GROUPS.map((group) => {
-        const buttons = GM_TOOLS.filter((tool) => tool.group === group.key)
-            .map(
-                (tool) =>
-                    `<button type="button" class="na-gm-tool" data-gm-tool="${tool.key}"><i class="fa-solid ${tool.icon}" aria-hidden="true"></i><span>${escapeHtml(tool.label)}</span></button>`
-            )
+        const buttons = GM_TOOLS.filter((tool) => tool.group === group.key && tool !== creator)
+            .map(button)
             .join('');
-        return `<div class="na-gm-tool-group"><h4>${escapeHtml(group.label)}</h4><div class="na-gm-tool-grid">${buttons}</div></div>`;
+        return `<details class="na-gm-tool-group" name="na-gm-tool-group"><summary>${escapeHtml(group.label)}</summary><div class="na-gm-tool-grid">${buttons}</div></details>`;
     }).join('');
-    return `<details class="na-gm-tools"><summary>Ferramentas do GM</summary>${sections}</details>`;
+    return `<div class="na-gm-commands">
+    <div class="na-gm-primary-command">${button(creator)}</div>
+    <details class="na-gm-tools">
+        <summary><i class="fa-solid fa-sliders" aria-hidden="true"></i> Ferramentas</summary>
+        <div class="na-gm-tools-panel">${sections}</div>
+    </details></div>`;
 }

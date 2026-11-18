@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { test } from 'node:test';
 import { rollHit } from '../scripts/hit-service.mjs';
 import { rollTest } from '../scripts/roll-service.mjs';
+import { fillMissingSheetAttributes } from '../scripts/sheet-attributes.mjs';
 import { setupFoundryMocks } from './fixtures/foundry-mock.mjs';
 
 const sheets = [
@@ -52,5 +53,19 @@ for (const [sheet, attributes, expected] of sheets) {
         await rollTest({ actorUuid: actor.uuid, test: 'Bloqueio', attr: 'FOR' });
         assert.deepEqual(alerts, []);
         assert.deepEqual(formulas, [`1d20 + ${expected}`, `1d20 + ${expected}`]);
+    });
+
+    test(`${sheet}: preenche somente o valor de atributo que o CSB deixou em branco`, () => {
+        const empty = { textContent: sheet === 'oni-minion' ? 'FOR: ' : ' ' };
+        const alreadyRendered = { textContent: '0' };
+        const root = {
+            querySelectorAll: (selector) => selector === '.na-sheet-stat.na-sheet-role-for'
+                ? [empty, alreadyRendered] : [],
+        };
+        const actor = { system: { props: { ...attributes } } };
+        fillMissingSheetAttributes(root, actor);
+        assert.equal(empty.textContent, sheet === 'oni-minion' ? `FOR: ${expected}` : String(expected));
+        assert.equal(alreadyRendered.textContent, '0');
+        assert.deepEqual(actor.system.props, attributes);
     });
 }

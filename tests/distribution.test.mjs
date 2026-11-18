@@ -40,6 +40,7 @@ describe('module distribution', () => {
                     type: 'Item',
                 },
                 { name: 'night-assassins-arte', label: "Night Assassin's Arte", type: 'Item' },
+                { name: 'night-assassins-regras', label: 'Night Assassins Regras', type: 'JournalEntry' },
             ]
         );
     });

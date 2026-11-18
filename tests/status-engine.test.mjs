@@ -56,6 +56,47 @@ test('turno sem mudança de status não escreve no Actor', async () => {
     assert.equal(result.updated, false);
 });
 
+test('início do turno grava a expiração da suspensão mesmo com status estável', async () => {
+    const actor = actorWith({
+        resp_recuperacao_fadiga_suspensa: 'fadiga_mental',
+        status_slayer_exaustao: 0,
+        status_slayer_resumo: 'Fadiga Mental',
+        status_slayer_dados: JSON.stringify({
+            version: 2, active: ['fadiga_mental'], exhaustion: 0, effects: {}, exhaustionMilestones: [],
+        }),
+    });
+    await processActorStatusTiming(actor, 'end');
+    assert.equal(actor.updateCount, 0);
+    const result = await processActorStatusTiming(actor, 'start');
+    assert.equal(result.updated, true);
+    assert.equal(actor.system.props.resp_recuperacao_fadiga_suspensa, 0);
+    assert.equal(actor.updateCount, 1);
+});
+
+test('Recuperação ignora um tick de veneno no NPC e o dano seguinte vai para o PDV do NPC', async () => {
+    rollTotal = 4;
+    const actor = actorWith({
+        npc_nivel: 8,
+        npc_pdv_base: 30,
+        npc_pdv_dano: 3,
+        resp_recuperacao_veneno_ignorar: 1,
+        status_slayer_exaustao: 0,
+        status_slayer_dados: JSON.stringify({
+            version: 2, active: ['envenenamento'], exhaustion: 0, exhaustionMilestones: [],
+            effects: { envenenamento: { damageFormula: '1d6', remainingTurns: 2, stacks: 1, tick: 'end' } },
+        }),
+    });
+    await processActorStatusTiming(actor, 'start');
+    assert.equal(actor.system.props.resp_recuperacao_veneno_ignorar, 1);
+    await processActorStatusTiming(actor, 'end');
+    assert.equal(actor.system.props.npc_pdv_dano, 3);
+    assert.equal(actor.system.props.resp_recuperacao_veneno_ignorar, 0);
+    assert.equal(JSON.parse(actor.system.props.status_slayer_dados).effects.envenenamento.remainingTurns, 1);
+    await processActorStatusTiming(actor, 'end');
+    assert.equal(actor.system.props.npc_pdv_dano, 7);
+    assert.equal(actor.system.props.pdv_slayer_dano_tomado, undefined);
+});
+
 test('Vulnerável e Exaustão 6 dobram somente dano de ataque', () => {
     const state = { active: ['vulneravel'], exhaustion: 0 };
     assert.deepEqual(resolveIncomingDamage(state, 7, { isAttack: true }), {

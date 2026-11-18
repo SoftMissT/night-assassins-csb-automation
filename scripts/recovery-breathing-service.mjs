@@ -1,7 +1,7 @@
 /** Respiração da Recuperação — Kaifuku no Kokyu. */
 import { consumeSlayerActions } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
-import { parseNumber } from './parsing.mjs';
+import { parseNumber, slayerMaxPdv } from './parsing.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
@@ -14,78 +14,12 @@ const RECOVERY_CHOICE_LABELS = Object.freeze({
     pdr: 'Só PDR',
     both: 'PDV e PDR',
 });
-const LEVELS = Object.freeze({
-    1: {
-        pdv: '2d8',
-        pdr: '1d6',
-        dc: 16,
-    },
-    2: {
-        pdv: '3d8',
-        pdr: '2d6',
-        dc: 16,
-    },
-    3: {
-        pdv: '4d8',
-        pdr: '2d6',
-        dc: 16,
-    },
-    4: {
-        pdv: '4d10',
-        pdr: '3d6',
-        dc: 17,
-    },
-    5: {
-        pdv: '5d10',
-        pdr: '3d6',
-        dc: 17,
-    },
-    6: {
-        pdv: '6d10',
-        pdr: '4d6',
-        dc: 17,
-    },
-    7: {
-        pdv: '7d10',
-        pdr: '4d6',
-        dc: 17,
-    },
-    8: {
-        pdv: '7d12',
-        pdr: '5d8',
-        dc: 18,
-    },
-    9: {
-        pdv: '8d12',
-        pdr: '5d8',
-        dc: 18,
-    },
-    10: {
-        pdv: '9d12',
-        pdr: '6d8',
-        dc: 18,
-    },
-    11: {
-        pdv: '10d12',
-        pdr: '6d8',
-        dc: 18,
-    },
-    12: {
-        pdv: '11d12',
-        pdr: '7d8',
-        dc: 19,
-    },
-    13: {
-        pdv: '12d12',
-        pdr: '8d8',
-        dc: 19,
-    },
-    14: {
-        pdv: '14d12',
-        pdr: '9d8',
-        dc: 19,
-    },
-});
+const LEVELS = Object.freeze([
+    { maxLevel: 3, pdv: '2d8', pdr: '1d6', dc: 16 },
+    { maxLevel: 7, pdv: '3d8', pdr: '2d6', dc: 17 },
+    { maxLevel: 11, pdv: '4d8', pdr: '3d6', dc: 18 },
+    { maxLevel: 14, pdv: '5d8', pdr: '4d6', dc: 19 },
+]);
 const n = (value) => Math.max(0, Math.trunc(parseNumber(value)));
 const isNpcProps = (props = {}) => actorKind({ system: { props } }) === 'npc';
 // Nível do personagem (1–14): Slayer em `nvl_num`, NPC em `npc_nivel`.
@@ -116,10 +50,13 @@ export function recoveryFormDefinition(formId = 'recuperacao', level) {
     const normalized = formId === 'coagulação' || formId === 'coagulacao' ? 'recuperacao' : formId;
     if (normalized !== 'recuperacao') return null;
     const current = Math.min(14, Math.max(1, n(level) || 1));
+    const { pdv, pdr, dc } = LEVELS.find(({ maxLevel }) => current <= maxLevel);
     return {
         ...RECOVERY_FORMS.recuperacao,
         level: current,
-        ...LEVELS[current],
+        pdv,
+        pdr,
+        dc,
         available: true,
     };
 }
@@ -169,12 +106,7 @@ export function currentRecoveryResources(props = {}) {
             pdr: Math.min(pdrMax, Math.max(0, pdrRaw)),
         };
     }
-    const pdvMax = Math.max(
-        0,
-        n(props.pdv_slayer_total ?? props.pdv_slayer_total_conta) -
-            n(props.pdv_slayer_dano_ferida) +
-            n(props.pdv_slayer_extra)
-    );
+    const pdvMax = Math.trunc(slayerMaxPdv(props));
     const pdvRaw = pdvMax + n(props.pdv_slayer_curado) - n(props.pdv_slayer_dano_tomado);
     const pdv = Math.min(pdvMax, Math.max(0, pdvRaw));
     const derivedPdr = n(resolveSlayerDerivedBonuses(props).channels.pdrMaximo.total);
@@ -268,12 +200,12 @@ export function recoveryOutcome({
         patch['system.props.resp_recuperacao_veneno_ignorar'] = 1;
         summary.push('ignora o próximo dano periódico de Envenenamento');
     }
-    if (level >= 12 && currentCombatId !== null) {
+    if (level >= 12 && currentCombatId !== null && currentCombatId !== 'fora-combate') {
         const fatigue = ['fadiga_corporal', 'fadiga_mental'].find((key) =>
             active.includes(key)
         );
         if (fatigue) {
-            patch['system.props.resp_recuperacao_fadiga_suspensa'] = 1;
+            patch['system.props.resp_recuperacao_fadiga_suspensa'] = fatigue;
             summary.push(`${fatigue} suspensa até o início do próximo turno`);
         }
     }

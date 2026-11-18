@@ -118,6 +118,8 @@ test('Vida e Morte calcula PDV máximo abatendo Dano de Ferida', () => {
         21
     );
     assert.equal(slayerMaxPdv({ pdv_slayer_total_conta: 20, pdv_slayer_dano_ferida: 30 }), 0);
+    assert.equal(slayerMaxPdv({ pdv_slayer_total_conta: 20, pdv_slayer_total: 28, pdv_slayer_dano_ferida: 2, pdv_slayer_extra: 3 }), 31);
+    assert.equal(slayerMaxPdv({ pdv_slayer_total_conta: 20, pdv_slayer_total: 0 }), 0);
 });
 
 test('Vida e Morte apresenta estado legível', () => {
@@ -204,6 +206,32 @@ test('reconcileActor derruba o Slayer na primeira queda', async () => {
     assert.equal(state.deathMarks, 0);
     const status = lastStatus(updates);
     assert.ok(status.active.includes('derrubado'));
+});
+
+test('Última Chance só evita a queda se o PDV após a cura ficar acima de zero', async () => {
+    for (const [damage, healedPdv] of [[20, 2], [30, 0]]) {
+        stubGlobals();
+        globalThis.Roll = class {
+            static create() { return { evaluate: async () => ({ total: 15, toMessage: async () => {} }) }; }
+            async evaluate() { return { total: 2, toMessage: async () => {} }; }
+        };
+        const { actor, updates } = makeActor({
+            nvl_num: 4,
+            pdv_slayer_dano_tomado: damage,
+            status_slayer_dados: JSON.stringify({ active: ['sangramento'], effects: {} }),
+        });
+        const update = actor.update;
+        actor.update = async (patch, options) => {
+            for (const [key, value] of Object.entries(patch)) {
+                actor.system.props[key.replace('system.props.', '')] = value;
+            }
+            return update(patch, options);
+        };
+        await reconcileActor(actor);
+        assert.equal(slayerCurrentPdv(actor.system.props), healedPdv);
+        assert.equal(parseLifeDeathState(actor.system.props.vida_morte_slayer_dados).dying, healedPdv === 0);
+        assert.equal(lastStatus(updates).active.includes('sangramento'), false);
+    }
 });
 
 test('reconcileActor dá +1 Marca a dano comum no chão', async () => {

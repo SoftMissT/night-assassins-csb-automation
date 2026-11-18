@@ -31,10 +31,10 @@ const recoveryOf = (patch) => JSON.parse(patch['system.props.resp_recuperacao_es
 describe('Respiração da Recuperação — tabela 1–14', () => {
     it('expõe exatamente os dados e CDs dos 14 níveis de personagem', () => {
         const expected = [
-            ['2d8', '1d6', 16], ['3d8', '2d6', 16], ['4d8', '2d6', 16], ['4d10', '3d6', 17],
-            ['5d10', '3d6', 17], ['6d10', '4d6', 17], ['7d10', '4d6', 17], ['7d12', '5d8', 18],
-            ['8d12', '5d8', 18], ['9d12', '6d8', 18], ['10d12', '6d8', 18], ['11d12', '7d8', 19],
-            ['12d12', '8d8', 19], ['14d12', '9d8', 19],
+            ['2d8', '1d6', 16], ['2d8', '1d6', 16], ['2d8', '1d6', 16],
+            ['3d8', '2d6', 17], ['3d8', '2d6', 17], ['3d8', '2d6', 17], ['3d8', '2d6', 17],
+            ['4d8', '3d6', 18], ['4d8', '3d6', 18], ['4d8', '3d6', 18], ['4d8', '3d6', 18],
+            ['5d8', '4d6', 19], ['5d8', '4d6', 19], ['5d8', '4d6', 19],
         ];
         assert.deepEqual(expected.map((_, index) => {
             const def = recoveryFormDefinition('recuperacao', index + 1);
@@ -44,6 +44,22 @@ describe('Respiração da Recuperação — tabela 1–14', () => {
 });
 
 describe('Respiração da Recuperação — resultado', () => {
+    it('usa o PDV calculado do Slayer e abate Ferida uma vez em fichas antigas', () => {
+        const props = baseProps({
+            pdv_slayer_total_conta: 105,
+            pdv_slayer_dano_ferida: 10,
+            pdv_slayer_dano_tomado: 41,
+            pdv_slayer_extra: 2,
+        });
+        for (const total of [95, '95', '', 'ERROR', undefined]) {
+            const resources = currentRecoveryResources({ ...props, pdv_slayer_total: total });
+            assert.equal(resources.pdvMax, 97);
+            assert.equal(resources.pdv, 56);
+        }
+        const result = recoveryOutcome({ props: { ...props, pdv_slayer_total: 95 }, success: true, pdvRoll: 99 });
+        assert.equal(result.patch['system.props.pdv_slayer_curado'], 41);
+    });
+
     it('cura PDV/PDR até os máximos e registra o sucesso para o fluxo de Última Chance', () => {
         const props = baseProps({ nvl_num: 4 }, { active: [], exhaustion: 0, effects: {} });
         const result = recoveryOutcome({ props, success: true, pdvRoll: 99, pdrRoll: 99, currentCombatId: 'c1' });
@@ -87,10 +103,12 @@ describe('Respiração da Recuperação — resultado', () => {
     it('Nível 12 suspende uma fadiga até o início do próximo turno', () => {
         const props = baseProps({ nvl_num: 12 }, { active: ['fadiga_mental'], exhaustion: 0, effects: {} });
         const result = recoveryOutcome({ props, success: true, currentCombatId: 'c1' });
-        assert.equal(result.patch['system.props.resp_recuperacao_fadiga_suspensa'], 1);
+        assert.equal(result.patch['system.props.resp_recuperacao_fadiga_suspensa'], 'fadiga_mental');
         assert.ok(result.summary.some((line) => line.includes('fadiga_mental')));
         const outside = recoveryOutcome({ props, success: true, currentCombatId: null });
         assert.equal(outside.patch['system.props.resp_recuperacao_fadiga_suspensa'], undefined);
+        const outsideReaction = recoveryOutcome({ props, success: true, currentCombatId: 'fora-combate', lastChance: true });
+        assert.equal(outsideReaction.patch['system.props.resp_recuperacao_fadiga_suspensa'], undefined);
     });
 
     it('Nível 12 não suspende Fadiga Espiritual de uma ficha antiga', () => {
@@ -158,13 +176,13 @@ for (const mode of ['normal', 'lastChance']) {
     it(`${mode}: Recuperação lê VIT e FDV da ficha quando os displays estão em branco`, async () => {
         setupFoundryMocks();
         const props = mode === 'normal' ? {
-            npc_nome: 'NPC de teste', npc_nivel: 1,
+            npc_nome: 'NPC de teste', npc_nivel: 7,
             npc_pdv_base: 105, npc_pdv_dano: 60,
             npc_pdr_base: 37, npc_pdr_gasto_valor: 20,
             npc_vit_base: 6, vit_marca_temp: 2,
             npc_fdv_base: 4, bonus_atr_fdv_valor_temp: 3,
         } : baseProps({
-            nvl_num: 1, atr_vit_valor_config: 6, vit_marca_temp: 2,
+            nvl_num: 7, atr_vit_valor_config: 6, vit_marca_temp: 2,
             atr_fdv_valor_config: 4, bonus_atr_fdv_valor_temp: 3,
         });
         props.fdv_display = '';
@@ -187,7 +205,7 @@ for (const mode of ['normal', 'lastChance']) {
 
         const result = await openRecoveryManager({ mode });
         assert.equal(result.success, true);
-        assert.deepEqual(formulas, ['1d20 + 7', '2d8 + 8', '1d6 + 7']);
+        assert.deepEqual(formulas, ['1d20 + 7', '3d8 + 8', '2d6 + 7']);
     });
 }
 

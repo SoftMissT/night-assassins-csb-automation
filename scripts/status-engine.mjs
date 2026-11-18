@@ -39,11 +39,11 @@ function statusContract(actor) {
               damage: 'pdv_oni_dano_tomado',
           }
         : {
-              kind: 'slayer',
+              kind: kind === 'npc' ? 'npc' : 'slayer',
               data: 'status_slayer_dados',
               summary: 'status_slayer_resumo',
               exhaustion: 'status_slayer_exaustao',
-              damage: 'pdv_slayer_dano_tomado',
+              damage: kind === 'npc' ? 'npc_pdv_dano' : 'pdv_slayer_dano_tomado',
           };
 }
 
@@ -299,7 +299,14 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         Number.parseInt(props[contract.exhaustion], 10) || 0
     );
     const stateBeforeTiming = JSON.stringify(state);
-    const recoveryFatigueSuspended = parseNumber(props.resp_recuperacao_fadiga_suspensa) > 0;
+    const recoveryFatigue = props.resp_recuperacao_fadiga_suspensa;
+    const recoveryFatigueExpired =
+        timing === 'start' &&
+        (recoveryFatigue === 'fadiga_corporal' ||
+            recoveryFatigue === 'fadiga_mental' ||
+            parseNumber(recoveryFatigue) > 0);
+    const ignorePoison = parseNumber(props.resp_recuperacao_veneno_ignorar) > 0;
+    let poisonIgnored = false;
     const active = new Set(state.active);
     const messages = [];
     let statusDamageTotal = parseNumber(props[contract.damage]);
@@ -348,11 +355,6 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         if ((effect?.tick ?? defaultTiming) !== timing) continue;
 
         if (damageKeys.has(key)) {
-            if (key === 'envenenamento' && timing === 'start' && parseNumber(props.resp_recuperacao_veneno_ignorar) > 0) {
-                messages.push('Envenenamento: dano periódico ignorado pela Respiração da Recuperação');
-                if (decrementEffect(state, key)) messages.push(`${key} expirou`);
-                continue;
-            }
             const formula = key === 'em_chamas' ? '1d4' : effect?.damageFormula;
             if (
                 FINITE_SOURCE_DAMAGE.has(key) &&
@@ -363,6 +365,12 @@ export async function processActorStatusTiming(actor, timing = 'start') {
                     `${actor.name}: ${label} precisa de dano e quantidade de turnos.`
                 );
                 messages.push(`${label}: configuração incompleta; efeito não processado`);
+                continue;
+            }
+            if (key === 'envenenamento' && ignorePoison) {
+                poisonIgnored = true;
+                messages.push('Envenenamento: dano periódico ignorado pela Respiração da Recuperação');
+                if (decrementEffect(state, key)) messages.push(`${key} expirou`);
                 continue;
             }
             try {
@@ -418,16 +426,20 @@ export async function processActorStatusTiming(actor, timing = 'start') {
     }
 
     const patch = actorStatusPatch(actor, state);
-    if (recoveryFatigueSuspended && timing === 'start')
+    if (recoveryFatigueExpired)
         patch['system.props.resp_recuperacao_fadiga_suspensa'] = 0;
-    if (parseNumber(props.resp_recuperacao_veneno_ignorar) > 0 && timing === 'start')
+    const resetPoisonProtection =
+        ignorePoison && (poisonIgnored || !state.active.includes('envenenamento'));
+    if (resetPoisonProtection)
         patch['system.props.resp_recuperacao_veneno_ignorar'] = 0;
     const stateChanged = JSON.stringify(state) !== stateBeforeTiming;
     const summaryChanged = patch[`system.props.${contract.summary}`] !== props[contract.summary];
     const exhaustionChanged =
         patch[`system.props.${contract.exhaustion}`] !==
         (Number.parseInt(props[contract.exhaustion], 10) || 0);
-    if (stateChanged || summaryChanged || exhaustionChanged) {
+    const updated =
+        stateChanged || summaryChanged || exhaustionChanged || recoveryFatigueExpired || resetPoisonProtection;
+    if (updated) {
         await actor.update(patch, {
             naCsbAutomation: true,
             naStatusTurn: true,
@@ -440,8 +452,8 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         });
     }
     return {
-        processed: stateChanged || summaryChanged || exhaustionChanged || messages.length > 0,
-        updated: stateChanged || summaryChanged || exhaustionChanged,
+        processed: updated || messages.length > 0,
+        updated,
         messages,
         state,
     };

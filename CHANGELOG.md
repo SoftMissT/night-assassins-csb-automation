@@ -2,6 +2,10 @@
 
 ## Em desenvolvimento
 
+## v0.13.2 — 2026-11-18 — Criar Arma aceita template importado
+
+- **Criar Arma:** a macro encontra o template "NA Arma - Slayer" mesmo quando ele foi importado do compêndio com `_id` e `system.uniqueId` novos (resolve por `system.uniqueId` e nome) e importa o template canônico do compêndio quando ele ainda não existe no mundo. O Item criado usa o `_id` real do template encontrado.
+
 ## v0.13.1 — 2026-11-17 — Recuperação, Marca no NPC e ações de turno
 
 - **Respiração da Recuperação:** o uso normal exige estar com metade dos PDV e PDR máximos ou menos, tem CD crescente por nível e recupera 75% do total. Pode ser repetido enquanto cumprir as condições e só gasta Ação Especial se o personagem estiver em combate.

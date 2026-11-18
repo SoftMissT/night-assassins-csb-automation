@@ -3,8 +3,17 @@ if (!game.user.isGM || game.system.id !== 'custom-system-builder')
     return ui.notifications.warn('Criar Arma exige GM em um mundo Custom System Builder.');
 
 const templateId = 'NAWeaponTpl00001';
-const template = game.items.get(templateId);
-if (template?.type !== '_equippableItemTemplate')
+const isWeaponTemplate = (item) => item?.type === '_equippableItemTemplate';
+// Importar pelo compêndio sem keepId gera um _id novo; uniqueId e nome servem de âncora.
+let template = game.items.get(templateId);
+if (!isWeaponTemplate(template))
+    template = game.items.find((item) =>
+        isWeaponTemplate(item) && (item.system?.uniqueId === templateId || item.name === 'NA Arma - Slayer'));
+if (!template) {
+    const pack = game.packs.get('night-assassins-csb-automation.night-assassins-armas-slayer');
+    if (pack) template = await game.items.importFromCompendium(pack, templateId, {}, { keepId: true });
+}
+if (!isWeaponTemplate(template))
     return ui.notifications.warn('Importe o template NA Arma - Slayer antes de criar uma arma.');
 
 const selected = canvas?.ready ? canvas.tokens.controlled : [];
@@ -149,7 +158,7 @@ const formula = [dado, fixo || '', ...atributos.map(({ key, multiplicador }) =>
 const resumo = `${formula} / ${tipoTexto}`;
 const data = {
     name: nome, type: 'equippableItem', img: 'icons/svg/sword.svg',
-    system: { template: templateId, props: {
+    system: { template: template.id, props: {
         inventario_categoria: 'arma', arma_nome: nome, arma_categoria: 'basica',
         arma_alcance: alcance, arma_tipo: value('tipo'), arma_propriedades: propriedadesSelecionadas.join(' / '),
         ...(municao ? { arma_municao_capacidade: municao, arma_municao_atual: municao } : {}),
@@ -168,5 +177,5 @@ const data = {
 const [criada] = portador ? await portador.createEmbeddedDocuments('Item', [data])
     : await Item.implementation.createDocuments([data]);
 if (!criada) return ui.notifications.warn('O Foundry não criou a arma.');
-await criada.templateSystem.reloadTemplate(templateId);
+await criada.templateSystem.reloadTemplate(template.id);
 criada.sheet.render({ force: true });

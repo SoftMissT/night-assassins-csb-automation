@@ -104,6 +104,7 @@ export async function runCanonicalBreathingForm({
         const hit = await runtime.rollHit?.({
             actor,
             autoDamage: false,
+            skipActionConsumption: true,
             forceActionType: form.acao,
         });
         if (hit === null || hit === undefined) return { ok: false, reason: 'Acerto cancelado.' };

@@ -6,7 +6,6 @@ import {
 } from './item-technique-normalizers.mjs';
 import { actorKind } from '../actor-kind.mjs';
 import { oniUnarmedProfile } from '../oni/progression-service.mjs';
-
 const WEAPON_TEMPLATE_IDS = new Set(['NAWeaponTpl00001', 'NASpecialWeaponTpl00001']);
 const BREATH_TEMPLATE_ID = 'NABreathTpl00001';
 
@@ -52,7 +51,15 @@ function attributeValues(actor) {
 
 function selectedLevel(actor) {
     const props = actor?.system?.props ?? {};
-    return Math.min(4, Math.max(1, Math.trunc(parseNumber(props.nvl_respiracao_num) || 1)));
+    return Math.min(
+        4,
+        Math.max(
+            1,
+            Math.trunc(
+                parseNumber(props.nvl_respiracao_num) || parseNumber(props.nvl_respiracao) || 1
+            )
+        )
+    );
 }
 
 function oniLevel(actor) {
@@ -73,14 +80,28 @@ function oniUnarmedDefinitions(actor) {
             id: `oni-unarmed:${id}:level-${level}`,
             name,
             ownerKind: 'oni',
-            costs: { actions: [{ type: 'ataque', amount: 1 }], resources: [] },
+            costs: {
+                actions: [
+                    {
+                        type: 'ataque',
+                        amount: 1,
+                    },
+                ],
+                resources: [],
+            },
             damage: [
                 {
                     id,
                     label: name,
                     formula: die,
                     fixed: die ? 0 : Number(base),
-                    attributeTerms: [{ key: profile.attribute, multiplier: 1, rounding: 'floor' }],
+                    attributeTerms: [
+                        {
+                            key: profile.attribute,
+                            multiplier: 1,
+                            rounding: 'floor',
+                        },
+                    ],
                     types,
                 },
             ],
@@ -126,32 +147,37 @@ function resolvedFormula(formula, values) {
         String(values[String(key).toLowerCase()] ?? 0)
     );
 }
-
 export function definitionDamageEntries(definition, actor) {
     const values = attributeValues(actor);
     const action = definition?.costs?.actions?.[0]?.type ?? '';
     const attackCount = Math.max(1, Math.trunc(Number(definition?.attack?.count) || 1));
-    return Array.from({ length: attackCount }, (_unused, attackIndex) =>
-        (definition?.damage ?? []).map((component) => {
-            const secondaryAttack = attackIndex > 0;
-            const stripsAttributes =
-                secondaryAttack && definition?.metadata?.secondaryDamagePolicy === 'fixo';
-            const secondaryComponent = stripsAttributes
-                ? { ...component, attributeTerms: [] }
-                : component;
-            return {
-                sourceId: definition.id,
-                sourceLabel: `${component.label || definition.name}${attackCount > 1 ? ` Golpe ${attackIndex + 1}` : ''}`,
-                tipoAcao: action,
-                dado: resolvedFormula(component.formula, values),
-                fixo: componentFixed(secondaryComponent, values),
-                attrs: [],
-                tiposDano: [...(component.types ?? [])],
-            };
-        })
+    return Array.from(
+        {
+            length: attackCount,
+        },
+        (_unused, attackIndex) =>
+            (definition?.damage ?? []).map((component) => {
+                const secondaryAttack = attackIndex > 0;
+                const stripsAttributes =
+                    secondaryAttack && definition?.metadata?.secondaryDamagePolicy === 'fixo';
+                const secondaryComponent = stripsAttributes
+                    ? {
+                          ...component,
+                          attributeTerms: [],
+                      }
+                    : component;
+                return {
+                    sourceId: definition.id,
+                    sourceLabel: `${component.label || definition.name}${attackCount > 1 ? ` Golpe ${attackIndex + 1}` : ''}`,
+                    tipoAcao: action,
+                    dado: resolvedFormula(component.formula, values),
+                    fixo: componentFixed(secondaryComponent, values),
+                    attrs: [],
+                    tiposDano: [...(component.types ?? [])],
+                };
+            })
     ).flat();
 }
-
 /**
  * Catálogo de Formas de Respiração: Respiração → Formas → níveis → entradas.
  * Somente Slayer; Formas passivas são ignoradas. `items` permite usar o
@@ -173,7 +199,10 @@ export function buildBreathingDamageCatalog(actor, { items } = {}) {
         if (!breathing || !formName) continue;
         const levels = {};
         for (const level of [1, 2, 3, 4]) {
-            const normalized = normalizeBreathingTechnique(item, { level, ownerKind });
+            const normalized = normalizeBreathingTechnique(item, {
+                level,
+                ownerKind,
+            });
             if (!normalized.ok || normalized.definition.metadata.passive) continue;
             const entries = definitionDamageEntries(normalized.definition, actor);
             if (entries.length > 0) levels[level] = entries;
@@ -186,9 +215,11 @@ export function buildBreathingDamageCatalog(actor, { items } = {}) {
             levels,
         });
     }
-    return [...groups.entries()].map(([breathing, forms]) => ({ breathing, forms }));
+    return [...groups.entries()].map(([breathing, forms]) => ({
+        breathing,
+        forms,
+    }));
 }
-
 export function createAttackBuilderModel(actor) {
     const actorProps = actor?.system?.props ?? {};
     const ownerKind = actorKind(actor);
@@ -196,7 +227,6 @@ export function createAttackBuilderModel(actor) {
     const weapons = [];
     const breathing = [];
     const innate = ownerKind === 'oni' ? oniUnarmedDefinitions(actor) : [];
-
     for (const item of itemsOf(actor)) {
         const props = itemProps(item);
         if (isWeapon(item)) {
@@ -207,10 +237,16 @@ export function createAttackBuilderModel(actor) {
                         ...item,
                         system: {
                             ...item.system,
-                            props: { ...props, arma_perfis_ataque: profiles },
+                            props: {
+                                ...props,
+                                arma_perfis_ataque: profiles,
+                            },
                         },
                     },
-                    { profileIndex, ownerKind: ownerKind ?? 'slayer' }
+                    {
+                        profileIndex,
+                        ownerKind: ownerKind ?? 'slayer',
+                    }
                 );
                 if (!normalized.ok || normalized.definition.damage.length === 0) return;
                 weapons.push({
@@ -222,35 +258,62 @@ export function createAttackBuilderModel(actor) {
                 });
             });
         }
-
-        if (ownerKind === 'slayer' && isBreathingForm(item)) {
-            const normalized = normalizeBreathingTechnique(item, {
-                level: breathingLevel,
-                ownerKind,
-            });
-            if (
-                !normalized.ok ||
-                normalized.definition.metadata.passive ||
-                normalized.definition.damage.length === 0
-            )
-                continue;
-            breathing.push({
-                key: item.uuid ?? item.id ?? item.name,
-                item,
-                label: `${props.respiracao_nome} ${props.nome_forma || item.name} (Nível ${breathingLevel})`,
-                definition: normalized.definition,
-            });
+        if (['slayer', 'npc'].includes(ownerKind) && isBreathingForm(item)) {
+            if (parseNumber(props.nivel_req) > breathingLevel) continue;
+            for (
+                let level = breathingLevel;
+                level >= Math.max(1, parseNumber(props.nivel_req));
+                level--
+            ) {
+                const unlocked = props[`tem_nvl${level}`];
+                if (
+                    unlocked != null &&
+                    unlocked !== true &&
+                    unlocked !== 'true' &&
+                    parseNumber(unlocked) !== 1
+                )
+                    continue;
+                const normalized = normalizeBreathingTechnique(item, {
+                    level,
+                    ownerKind,
+                });
+                if (
+                    !normalized.ok ||
+                    normalized.definition.metadata.passive ||
+                    !normalized.definition.damage.length
+                )
+                    continue;
+                breathing.push({
+                    key: item.uuid ?? item.id ?? item.name,
+                    item,
+                    label: `${props.respiracao_nome} ${props.nome_forma || item.name} (Nível ${level})`,
+                    definition: normalized.definition,
+                });
+                break;
+            }
         }
     }
-
-    return { actor, ownerKind, breathingLevel, weapons, breathing, innate };
+    return {
+        actor,
+        ownerKind,
+        breathingLevel,
+        weapons,
+        breathing,
+        innate,
+    };
 }
-
 export function buildAttackSelection(
     model,
     { weaponKey = '', breathingKey = '', innateKey = '', manual = false } = {}
 ) {
-    if (manual) return { cancelled: false, manual: true, nome: '', entradas: [], resourceCost: 0 };
+    if (manual)
+        return {
+            cancelled: false,
+            manual: true,
+            nome: '',
+            entradas: [],
+            resourceCost: 0,
+        };
     const weapon = model.weapons.find((entry) => entry.key === weaponKey) ?? null;
     const breath = model.breathing.find((entry) => entry.key === breathingKey) ?? null;
     const innate = model.innate.find((entry) => entry.key === innateKey) ?? null;
@@ -291,16 +354,24 @@ export function buildAttackSelection(
 }
 
 function optionsHtml(entries, emptyLabel) {
-    return `<option value="">${emptyLabel}</option>${entries.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join('')}`;
+    const escape = (value) =>
+        String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;');
+    return `<option value="">${emptyLabel}</option>${entries.map((entry) => `<option value="${escape(entry.key)}">${escape(entry.label)}</option>`).join('')}`;
 }
-
 export async function openAttackBuilder(actor) {
     const model = createAttackBuilderModel(actor);
     if (model.weapons.length === 0 && model.breathing.length === 0 && model.innate.length === 0)
-        return buildAttackSelection(model, { manual: true });
-
+        return buildAttackSelection(model, {
+            manual: true,
+        });
     const result = await foundry.applications.api.DialogV2.wait({
-        window: { title: 'Montar Ataque Night Assassins' },
+        window: {
+            title: 'Montar Ataque Night Assassins',
+        },
         modal: true,
         rejectClose: false,
         content: `<div class="na-attack-builder">
@@ -323,10 +394,23 @@ export async function openAttackBuilder(actor) {
             {
                 action: 'manual',
                 label: 'Dano Manual',
-                callback: () => buildAttackSelection(model, { manual: true }),
+                callback: () =>
+                    buildAttackSelection(model, {
+                        manual: true,
+                    }),
             },
-            { action: 'cancel', label: 'Cancelar', callback: () => ({ cancelled: true }) },
+            {
+                action: 'cancel',
+                label: 'Cancelar',
+                callback: () => ({
+                    cancelled: true,
+                }),
+            },
         ],
     });
-    return result ?? { cancelled: true };
+    return (
+        result ?? {
+            cancelled: true,
+        }
+    );
 }

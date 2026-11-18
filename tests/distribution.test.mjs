@@ -210,7 +210,7 @@ describe('module distribution', () => {
         assert.deepEqual(actor.effects, []);
     });
 
-    it('inclui as 13 macros canônicas do Compêndio', async () => {
+    it('inclui as 14 macros canônicas do Compêndio', async () => {
         const files = [
             'na-roll-mode.js',
             'na-acerto-roll.js',
@@ -225,6 +225,7 @@ describe('module distribution', () => {
             'na-gerenciar-vida-morte.js',
             'na-respiracao-recuperacao.js',
             'na-gerenciar-estados-avancados.js',
+            'na-criar-arma.js',
         ];
 
         for (const file of files) {
@@ -250,7 +251,7 @@ describe('module distribution', () => {
         }
     });
 
-    it('gera pastas de macros com IDs válidos para o Foundry v14', async () => {
+    it('gera pastas com IDs válidos e inclui o stylesheet do Criar Arma no comando', async () => {
         const { readdir } = await import('node:fs/promises');
         await import(`../tools/build-macro-sources.mjs?folder-id-test=${Date.now()}`);
         const directory = new URL('../build/compendium/macros/', import.meta.url);
@@ -262,6 +263,11 @@ describe('module distribution', () => {
             assert.match(folder._id, /^[A-Za-z0-9]{16}$/u, `${file} deve usar ID Foundry de 16 caracteres`);
             assert.equal(folder._key, `!folders!${folder._id}`);
         }
+        const creatorFile = (await readdir(directory)).find((file) => file.endsWith('-na-criar-arma.json'));
+        const creator = JSON.parse(await readFile(new URL(creatorFile, directory), 'utf8'));
+        const css = await readFile(new URL('../styles/na-criar-arma.css', import.meta.url), 'utf8');
+        assert.equal(creator._id, 'NACriarArma00001');
+        assert.ok(creator.command.includes(`const stylesheet = ${JSON.stringify(css)}`));
     });
 });
 

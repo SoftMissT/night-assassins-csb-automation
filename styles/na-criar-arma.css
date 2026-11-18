@@ -1,0 +1,98 @@
+.na-create-weapon {
+    --na-ca-surface: #191612;
+    --na-ca-control: #28221a;
+    --na-ca-line: #5d4b35;
+    --na-ca-ink: #f5ebdc;
+    --na-ca-muted: #c4b5a3;
+    --na-ca-accent: #ebc682;
+}
+
+.na-ca {
+    container: na-criador / inline-size;
+    display: grid;
+    align-content: start;
+    gap: .55rem;
+    max-height: 66dvh;
+    overflow-y: auto;
+    padding: .2rem;
+    color: var(--na-ca-ink);
+}
+
+.na-ca :is(fieldset, details) {
+    min-width: 0;
+    margin: 0;
+    border: 1px solid var(--na-ca-line);
+    border-radius: .35rem;
+    background: var(--na-ca-surface);
+}
+
+.na-ca fieldset,
+.na-ca-details-body {
+    display: grid;
+    gap: .5rem;
+    padding: .55rem .7rem .7rem;
+}
+
+.na-ca legend,
+.na-ca summary {
+    color: var(--na-ca-accent);
+    font-weight: 700;
+}
+
+.na-ca legend { padding-inline: .3rem; }
+.na-ca summary { padding: .6rem .7rem; cursor: pointer; }
+.na-ca summary::marker { color: var(--na-ca-accent); }
+.na-ca details[open] > summary { border-bottom: 1px solid var(--na-ca-line); }
+
+.na-ca-grid,
+.na-ca-bonus-row {
+    display: grid;
+    gap: .45rem .6rem;
+}
+
+.na-ca-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); }
+.na-ca-numeros { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.na-ca-bonus-row { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+
+@container na-criador (max-width: 28rem) {
+    .na-ca-numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .na-ca-damage { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
+}
+
+.na-ca .na-ca-field {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    gap: .25rem;
+}
+
+.na-ca .na-ca-field > span {
+    color: var(--na-ca-muted);
+    font-size: .8rem;
+    line-height: 1.25;
+}
+
+.na-ca :is(input, select, textarea, multi-select) { min-width: 0; width: 100%; }
+
+.na-ca :is(input, select, textarea) {
+    min-height: 2.125rem;
+    border: 1px solid var(--na-ca-line);
+    border-radius: .3rem;
+    background-color: var(--na-ca-control);
+    color: var(--na-ca-ink);
+    color-scheme: dark;
+}
+
+.na-create-weapon :is(input, textarea, select, summary, button):focus-visible {
+    outline: 2px solid var(--na-ca-accent);
+    outline-offset: 1px;
+}
+
+.na-create-weapon button[data-action='criar'] {
+    border-color: var(--na-ca-accent);
+    background: var(--na-ca-accent);
+    color: #21160d;
+    font-weight: 700;
+}
+
+.na-create-weapon button[data-action='criar']:hover { background: #f7d79b; }

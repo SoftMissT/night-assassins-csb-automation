@@ -341,6 +341,9 @@ export async function rollDamage(options = {}) {
             Date.now()
     );
     const attackerKind = actorKind(actor) ?? 'slayer';
+    const resourceKey = attackerKind === 'oni'
+        ? 'pdk_oni_gasto_valor'
+        : attackerKind === 'npc' ? 'npc_pdr_gasto_valor' : 'pdr_slayer_gasto_valor';
     const statusEffects = getDamageStatusEffects(props);
     if (statusEffects.blocked)
         return ui.notifications?.warn?.(
@@ -355,19 +358,21 @@ export async function rollDamage(options = {}) {
         (Array.isArray(options.entradas) && options.entradas.length > 0) ||
         (Array.isArray(options.weaponProfiles) && options.weaponProfiles.length > 0) ||
         Boolean(options.formulaBase) ||
-        Number(options.fixo) !== 0 ||
+        parseNumber(options.fixo) !== 0 ||
         (Array.isArray(options.attrs) && options.attrs.length > 0) ||
         Boolean(options.attr);
-    if (!hasExplicitDamage && options.builder !== false) {
+    let formCost = 0;
+    if (!hasExplicitDamage && options.builder === true) {
         const selection = await openAttackBuilder(actor);
         if (!selection || selection.cancelled) return;
         if (!selection.manual) {
+            formCost = parseNumber(selection.resourceCost);
             options = {
                 ...options,
                 nome: selection.nome || options.nome,
                 entradas: selection.entradas,
                 weaponItem: selection.weaponItem ?? options.weaponItem,
-                pdrCusto: parseNumber(options.pdrCusto) + parseNumber(selection.resourceCost),
+                pdrCusto: parseNumber(options.pdrCusto) + formCost,
             };
         }
     }
@@ -428,7 +433,7 @@ export async function rollDamage(options = {}) {
         entradas: preEntradas,
         pdrCusto: options.pdrCusto ?? 0,
         resourceLabel: attackerKind === 'oni' ? 'PDK' : 'PDR',
-        resourceKey: attackerKind === 'oni' ? 'pdk_oni_gasto_valor' : 'pdr_slayer_gasto_valor',
+        resourceKey,
         critical: options.critical === true,
         presets: presetStore.presets,
         breathing: breathingContext,
@@ -463,8 +468,13 @@ export async function rollDamage(options = {}) {
             'Fadiga Corporal impede Acertos Críticos. O dano será rolado normalmente.'
         );
     }
-    const pdrGastoBase = dialogResult.pdrGasto;
+    const pdrGastoBase = Math.max(formCost, parseNumber(dialogResult.pdrGasto));
     const pdrGasto = pdrGastoBase > 0 ? pdrGastoBase + statusEffects.pdrSurcharge : 0;
+    if (formCost > 0) {
+        const current = parseNumber(props[attackerKind === 'npc' ? 'npc_pdr_atual' : 'pdr_slayer_atual']);
+        if (pdrGasto > current)
+            return ui.notifications?.warn?.(`PDR insuficiente: ${current} disponível, ${pdrGasto} necessário.`);
+    }
     if (entradas.length === 0) {
         ui.notifications?.warn?.('Adicione ao menos uma entrada de dano.');
         return;
@@ -826,11 +836,9 @@ export async function rollDamage(options = {}) {
     }
 
     if (pdrGasto > 0) {
-        const resourceProp =
-            attackerKind === 'oni' ? 'pdk_oni_gasto_valor' : 'pdr_slayer_gasto_valor';
-        const pdrAtual = parseNumber(props[resourceProp]);
+        const pdrAtual = parseNumber(actor.system?.props?.[resourceKey]);
         const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
-        existing.changes[`system.props.${resourceProp}`] = pdrAtual + pdrGasto;
+        existing.changes[`system.props.${resourceKey}`] = pdrAtual + pdrGasto;
         updatesByActor.set(actor.uuid, existing);
     }
 

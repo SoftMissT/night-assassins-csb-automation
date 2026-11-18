@@ -285,7 +285,7 @@ Hooks.once('ready', async () => {
         registerDamageRelay();
         registerHealRelay();
     }
-    // Sincroniza somente o launcher GM; as macros funcionais ficam no Compendium.
+    // Sincroniza os atalhos do GM. As macros das fichas vêm do Compêndio.
     if (game.user.isGM) {
         void syncCanonicalMacros()
             .then(({ created, updated }) => {

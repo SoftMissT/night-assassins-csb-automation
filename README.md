@@ -10,7 +10,7 @@
 
 Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**, construído sobre o **Custom System Builder**. Ele distribui os templates oficiais, compêndios e macros usados para atributos, progressão, combate, Respirações, Kekkijutsus e manutenção dos dados do mundo.
 
-Versão declarada no manifesto: **0.12.6**.
+Versão declarada no manifesto: **0.13.0**.
 
 ## Imagem do módulo
 
@@ -56,12 +56,14 @@ https://github.com/SoftMissT/night-assassins-csb-automation/releases/latest/down
 
 ## Uso e macros
 
-Ao entrar no mundo como GM, o módulo cria ou atualiza somente o launcher **Night Assassins Controle GM** na pasta **Night Assassins** do Diretório de Macros. As demais macros permanecem no Compendium **Macros Night Assassins**, que preserva os UUIDs usados pelos templates:
+Ao entrar no mundo como GM, o módulo sincroniza **Night Assassins Controle GM** e **Night Assassins Criar Arma** na pasta **Night Assassins** do Diretório de Macros. O compêndio **Macros Night Assassins** preserva os UUIDs usados pelos templates.
 
-- Controle GM;
+- Controle GM e Criar Arma;
 - Gerenciar Ações, Status, Resistências, Descanso, Vida e Morte e Estados Avançados;
 - Teste de Atributo, Rolagem de Acerto e Rolagem de Dano;
 - Usar Forma de Respiração, Respiração da Recuperação e Marca do Caçador.
+
+**Criar Arma** salva uma arma normal no diretório de Itens ou na ficha do token selecionado. Na **Rolagem de Dano**, Slayer e NPC podem selecionar Formas de dano portadas e liberadas pelo nível de Respiração. Confirmar a rolagem desconta o PDR da ficha que rolou. Para condições e efeitos completos da técnica, use **Usar Forma de Respiração**.
 
 As demais ferramentas do GM (Regeneração Oni, Dupla Alma, Interlúdio, diagnóstico, correções e armas duplicadas) não são macros soltas: ficam no botão **Ferramentas do GM**, dentro do **Controle GM**.
 

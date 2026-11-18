@@ -119,6 +119,13 @@ const macros = [
         file: 'na-gerenciar-estados-avancados.js',
         name: 'Night Assassins Estados Avançados',
     },
+    {
+        id: 'NACriarArma00001',
+        file: 'na-criar-arma.js',
+        name: 'Night Assassins Criar Arma',
+        icon: 'items/na_Slayer_Weapon_icon.webp',
+        stylesheet: 'na-criar-arma.css',
+    },
 ];
 await rm(outputDirectory, {
     recursive: true,
@@ -149,7 +156,12 @@ for (const [index, folder] of MACRO_FOLDERS.entries()) {
 }
 for (const [index, macro] of macros.entries()) {
     if (macro.id.length !== 16) throw new Error(`ID inválido para ${macro.file}: ${macro.id}`);
-    const command = await readFile(path.join(sourceDirectory, macro.file), 'utf8');
+    let command = await readFile(path.join(sourceDirectory, macro.file), 'utf8');
+    // The generated macro also runs when imported directly into a world.
+    if (macro.stylesheet) {
+        const stylesheet = await readFile(path.join(root, 'styles', macro.stylesheet), 'utf8');
+        command = command.replace(`/* ${macro.stylesheet} */ ''`, () => JSON.stringify(stylesheet));
+    }
     const document = {
         _key: `!macros!${macro.id}`,
         _id: macro.id,
@@ -164,6 +176,7 @@ for (const [index, macro] of macros.entries()) {
         ownership: {
             default: [
                 'Night Assassins Controle GM',
+                'Night Assassins Criar Arma',
                 'Night Assassins Diagnóstico de Erros',
                 'Night Assassins Diagnosticar Armas Duplicadas',
             ].includes(macro.name)

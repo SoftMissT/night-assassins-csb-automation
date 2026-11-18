@@ -90,6 +90,7 @@ describe('breathing-pipeline — rota canônica', () => {
         // Acerto forçado como a ação da Forma; dano da arma + técnica juntos.
         assert.equal(runtime.calls.hits.length, 1);
         assert.equal(runtime.calls.hits[0].forceActionType, 'ataque');
+        assert.equal(runtime.calls.hits[0].skipActionConsumption, true);
         assert.equal(runtime.calls.damages.length, 1);
         assert.equal(runtime.calls.damages[0].entradas.length, 2, 'arma + técnica na mesma rolagem');
         assert.equal(runtime.calls.damages[0].entradas[0].dado, '2d6');

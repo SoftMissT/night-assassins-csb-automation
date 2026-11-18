@@ -29,6 +29,52 @@ import {
 } from '../scripts/damage-service.mjs';
 
 describe('damage-service', () => {
+    it('macro Dano abre o seletor e cobra o custo da Forma na ficha de NPC e Slayer', async () => {
+        const wait = foundry.applications.api.DialogV2.wait;
+        const originalGM = game.user.isGM;
+        game.user.targets = new Set();
+        try {
+            for (const npc of [true, false]) {
+                game.user.isGM = npc;
+                const costKey = npc ? 'npc_pdr_gasto_valor' : 'pdr_slayer_gasto_valor';
+                const actor = makeActor({ props: {
+                    ...(npc ? { npc_nome: 'NPC', nvl_respiracao: '2', npc_pdr_atual: 7 }
+                        : { nome_slayer: 'Slayer', nvl_respiracao_num: 2, pdr_slayer_atual: 7 }),
+                    [costKey]: '2',
+                } });
+                actor.items = [{
+                    id: 'forma', uuid: 'Actor.qa.Item.forma', name: 'Vento: Forma',
+                    system: { template: 'NABreathTpl00001', props: {
+                        respiracao_nome: 'Vento', forma_id: 'vento_01', nome_forma: 'Forma',
+                        tem_nvl2: 1, nvl2_dano: '1d6', nvl2_custo: 3, tipo_manobra: 'Ação de Ataque',
+                    } },
+                }];
+                const dialogs = [];
+                const updates = [];
+                actor.update = async (patch) => updates.push(patch);
+                foundry.applications.api.DialogV2.wait = async (config) => {
+                    dialogs.push(config.window.title);
+                    if (dialogs.length === 1) {
+                        assert.match(config.content, /Vento Forma \(Nível 2\)/);
+                        return config.buttons.find(b => b.action === 'continue').callback(null, {
+                            form: { elements: { weaponKey: { value: '' }, breathingKey: { value: actor.items[0].uuid } } },
+                        });
+                    }
+                    assert.ok(config.content.includes(`Somado a ${costKey}`));
+                    return { pdrGasto: 0, entradas: [{ dado: '1d6', tipoAcao: 'ataque', selTiposDano: ['cortante'] }] };
+                };
+                await rollDamage({ actor, builder: true });
+                assert.deepEqual(dialogs, ['Montar Ataque Night Assassins', 'Rolar Dano: Night Assassins']);
+                assert.equal(updates.length, 1);
+                assert.equal(updates[0][`system.props.${costKey}`], 5);
+                assert.equal(updates[0]['system.props.pdr_slayer_gasto_valor'], npc ? undefined : 5);
+            }
+        } finally {
+            game.user.isGM = originalGM;
+            foundry.applications.api.DialogV2.wait = wait;
+        }
+    });
+
     it('aguarda a única animação criada pela mensagem do Dice So Nice', async () => {
         const waited = [];
         game.dice3d = {

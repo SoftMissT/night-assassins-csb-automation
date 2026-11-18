@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import { setupFoundryMocks } from './fixtures/foundry-mock.mjs';
 import { makeActor } from './fixtures/actor.mjs';
@@ -58,6 +59,25 @@ function breath(actor) {
 }
 
 describe('attack-builder', () => {
+    it('NPC e Slayer enxergam as sete Respirações portadas e usam níveis liberados', () => {
+        const catalog = JSON.parse(readFileSync(new URL('../catalogs/breathing-items.json', import.meta.url)));
+        const wanted = ['Vento', 'Chamas', 'Água', 'Sonhos', 'Som', 'Raposa', 'Eclipse'];
+        for (const props of [{ npc_nome: 'NPC', nvl_respiracao: '4' },
+            { nome_slayer: 'Slayer', nvl_respiracao_num: 4 }]) {
+            const actor = makeActor({ props });
+            actor.items = catalog.documents.filter(i => wanted.includes(i.system?.props?.respiracao_nome));
+            const model = createAttackBuilderModel(actor);
+            assert.deepEqual(
+                [...new Set(model.breathing.map(e => e.definition.metadata.breathing))].sort(),
+                [...wanted].sort(),
+            );
+            for (const { definition, item } of model.breathing) {
+                const { level } = definition.metadata;
+                assert.ok(Number(item.system.props[`tem_nvl${level}`]) === 1);
+                assert.ok(level <= 4);
+            }
+        }
+    });
     it('monta arma e Respiração em parcelas separadas com atributos finais', () => {
         const actor = makeActor({
             props: { nome_slayer: 'Slayer', nvl_respiracao_num: 2, for_display: 5, dex_display: 4 },

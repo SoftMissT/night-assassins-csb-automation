@@ -116,25 +116,27 @@ describe('templates de Item: redesenho', () => {
         );
     });
 
-    it('slayer-weapon-template.json: cabeçalho de identidade; dano e tipos no bloco arma_contexto', () => {
+    it('slayer-weapon-template.json: nome no cabeçalho e campos longos com largura integral', () => {
         const system = systemOf('slayer-weapon-template.json');
-        const header = system.header.contents.find((panel) =>
-            panel.contents?.some((c) => c.key === 'arma_nome')
-        );
-        assert.equal(header.flow, 'grid-4');
+        assert.deepEqual(system.header.contents.map((component) => component.key), ['arma_nome']);
+        const details = system.body.contents[0];
+        assert.equal(details.key, 'arma_ficha_dados');
+        assert.equal(details.flow, 'grid-2');
         assert.deepEqual(
-            header.contents.map((c) => [c.key, c.colSpan]),
+            details.contents.map((c) => [c.key, c.colSpan]),
             [
-                ['arma_nome', 4],
                 ['arma_critico', 1],
-                ['arma_alcance', 1],
-                ['arma_tipo', 2],
-                ['arma_propriedades', 4],
+                ['arma_tipo', 1],
+                ['arma_alcance', 2],
+                ['arma_propriedades', 2],
                 ['arma_categoria', 1],
                 ['arma_modo_uso', 1],
                 ['arma_requisito', 2],
             ]
         );
+        assert.ok(details.contents.every((component) =>
+            component.cssClass === 'flexcol' && component.size === 'full-size'
+        ));
         const context = JSON.stringify(findByKey(system, 'arma_contexto'));
         assert.match(context, /\$\{arma_perfis_resumo\}\$/);
         assert.match(context, /\$\{arma_tipos_dano_resumo\}\$/);

@@ -1,4 +1,14 @@
 # Changelog
+
+## Em desenvolvimento
+
+## v0.13.0 — 2026-11-17 — Criar Arma e Respirações no diálogo de Dano
+
+- **Respirações na macro de Dano:** o seletor de ataque volta a abrir com as Formas portadas por Slayer e NPC. O dano usa o nível liberado da Forma e desconta o PDR no campo da ficha que rolou.
+- **Compêndio de Respirações:** Vento, Chamas, Água, Sonhos, Som, Raposa e Eclipse estão cadastradas e têm Formas de dano disponíveis no seletor quando portadas e liberadas.
+- **Criar Arma:** macro do GM para criar armas personalizadas e carregar o template CSB no Item. CSS próprio, seleção múltipla de propriedades e tipos de dano, bônus em pares de atributo e multiplicador e botões de ação fora da rolagem.
+- **Ficha de arma normal:** nome no cabeçalho e dados em duas colunas com rótulos acima. Alcance, Propriedades e Requisito ocupam a linha inteira. O CSB precisa recarregar o template atualizado nas fichas existentes.
+
 ## v0.12.6 — 2026-11-16 — Compêndios de Respirações e Armas Especiais
 
 - **Respirações no Compêndio:** o pack publica template, pastas, hubs e Formas das 11 Respirações aprovadas (Água, Chamas, Eclipse, Metal, Neve, Névoa, Pedra, Raposa, Som, Sonhos e Vento). `catalogs/breathing-items.json` continua como espelho interno para reparo e importação sob demanda.

@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.8 — 2026-11-21 — Interface do Criador de Formas
+
+- **Criar Forma de Respiração:** interface com o tema do módulo, um nível por vez, barra de rolagem e rodapé sempre visível. Erros de preenchimento preservam os dados digitados.
+
 ## v0.13.7 — 2026-11-21 — Macro Criar Forma de Respiração
 
 - **Criar Forma de Respiração:** macro de GM no compêndio e sincronizada no Diretório de Macros. Formas novas usam o ícone da Respiração selecionada.

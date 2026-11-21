@@ -86,9 +86,9 @@ describe('criador de Forma — contrato de 4 níveis', () => {
                 assert.match(dialog.content, /value="npc-destino">NPC Destino/);
                 assert.doesNotMatch(dialog.content, /Template NPC/);
                 const form = { elements: { recipient: { value: actor.id } } };
-                return dialog.buttons[0].callback(null, { form });
+                return dialog.buttons.find(({ action }) => action === 'continuar').callback(null, { form });
             }
-            assert.match(dialog.content, /Destino: <strong>NPC Destino<\/strong>/);
+            assert.match(dialog.content, /Ficha <strong>NPC Destino<\/strong>/);
             return dialog.buttons.find(({ action }) => action === 'cancelar').callback();
         } } } } };
         try {
@@ -133,13 +133,42 @@ describe('criador de Forma — contrato de 4 níveis', () => {
         const warnings = [];
         globalThis.ui = { notifications: { warn: (message) => warnings.push(message) } };
         globalThis.foundry = { applications: { api: { DialogV2: { wait: async (dialog) => {
-            assert.deepEqual(dialog.window.contentClasses, ['na-form-creator-window']);
-            const stylesheet = readFileSync(new URL(`../${manifest.styles[0]}`, import.meta.url), 'utf8');
-            assert.match(stylesheet, /\.na-form-creator\s*\{[^}]*grid-template-columns:/);
-            assert.match(stylesheet, /\.na-form-creator-window \.dialog-content\s*\{[^}]*overflow: auto/);
+            assert.deepEqual(dialog.classes, ['na-form-creator-window', 'na-form-creator-editor']);
+            const path = 'styles/na-form-creator.css';
+            assert.ok(manifest.styles.includes(path));
+            const stylesheet = readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+            assert.match(stylesheet, /\.na-form-creator-window \.dialog-content\s*\{[^}]*overflow-y: auto/);
+            for (const level of [1, 2, 3, 4]) {
+                assert.ok(dialog.content.includes(`name="naFormLevel" value="${level}"`));
+                assert.ok(dialog.content.includes(`data-level="${level}"`));
+                assert.ok(stylesheet.includes(`[value='${level}']:checked) [data-level='${level}']`));
+            }
             assert.match(dialog.content, /<option value="Chamas">Chamas<\/option>/);
             assert.doesNotMatch(dialog.content, /<option value="Água">/);
-            const form = { querySelector: (selector) => controls.get(selector.slice(7, -2)) };
+            const listeners = new Map();
+            const feedback = { hidden: true, focus() {} };
+            const level4 = { checked: false };
+            const form = {
+                addEventListener: (type, listener) => listeners.set(type, listener),
+                querySelector(selector) {
+                    if (selector === '.na-form-feedback') return feedback;
+                    if (selector === '[name="naFormLevel"][value="4"]') return level4;
+                    return controls.get(selector.slice(7, -2));
+                },
+            };
+            dialog.render(null, { element: { querySelector: () => form } });
+            controls.get('nvl4.efeito').value = '';
+            let prevented = false;
+            listeners.get('click')({ type: 'click', target: { closest: () => true },
+                preventDefault() { prevented = true; }, stopImmediatePropagation() {} });
+            assert.equal(prevented, true);
+            assert.equal(level4.checked, true);
+            assert.equal(feedback.hidden, false);
+            assert.match(feedback.textContent, /^Nível 4:/);
+            assert.equal(controls.get('nome').value, 'Forma Nova');
+            controls.get('nvl4.efeito').value = 'Efeito N4';
+            listeners.get('input')();
+            assert.equal(feedback.hidden, true);
             return dialog.buttons.find(({ action }) => action === 'criar').callback(null, { form });
         } } } } };
         try {

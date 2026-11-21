@@ -113,16 +113,31 @@ export function buildFormProps(normalized, formaId) {
     return props;
 }
 
-function levelFields(level, data = {}) {
-    return `<fieldset class="na-form-nivel">
+function levelFields(level) {
+    return `<fieldset class="na-form-nivel na-form-grid" data-level="${level}">
         <legend>Nível ${level}</legend>
-        <label><input type="checkbox" name="nvl${level}.ativo" ${data.ativo ? 'checked' : ''}> Disponível</label>
-        <label>Custo (PDR) <input type="number" name="nvl${level}.custo" min="0" value="${escapeHtml(data.custo ?? 0)}"></label>
-        <label>Dano <input type="text" name="nvl${level}.dano" value="${escapeHtml(data.dano ?? '')}" placeholder="ex: 2d6 + @for"></label>
-        <label>Efeito <textarea name="nvl${level}.efeito" rows="2">${escapeHtml(data.efeito ?? '')}</textarea></label>
-        <label>Status <input type="text" name="nvl${level}.status" value="${escapeHtml(data.status ?? '')}"></label>
-        <label>Tipos de dano <input type="text" name="nvl${level}.tiposDano" value="${escapeHtml((data.tiposDano ?? []).join(', '))}" placeholder="cortante, fogo"></label>
+        <label class="na-form-availability"><input type="checkbox" name="nvl${level}.ativo"> Disponível neste nível</label>
+        <label>Custo (PDR) <input type="number" name="nvl${level}.custo" min="0" value="0"></label>
+        <label>Dano <input name="nvl${level}.dano" placeholder="Ex. 2d6 + @for"></label>
+        <label>Efeito <textarea name="nvl${level}.efeito" rows="2"></textarea></label>
+        <label>Status <input name="nvl${level}.status"></label>
+        <label>Tipos de dano <input name="nvl${level}.tiposDano" placeholder="Ex. cortante, fogo"></label>
     </fieldset>`;
+}
+
+function readFormInput(form) {
+    const value = (name) => form.querySelector(`[name="${name}"]`)?.value ?? '';
+    const levels = Object.fromEntries(LEVELS.map((level) => [`nvl${level}`, {
+        ativo: form.querySelector(`[name="nvl${level}.ativo"]`)?.checked ?? false,
+        custo: value(`nvl${level}.custo`),
+        dano: value(`nvl${level}.dano`),
+        efeito: value(`nvl${level}.efeito`),
+        status: value(`nvl${level}.status`),
+        tiposDano: value(`nvl${level}.tiposDano`),
+    }]));
+    return { nome: value('nome'), nomeJp: value('nomeJp'), respiracao: value('respiracao'),
+        tipoManobra: value('tipoManobra'), nivelReq: value('nivelReq'),
+        descricao: value('descricao'), ...levels };
 }
 
 async function chooseFormRecipient() {
@@ -137,14 +152,15 @@ async function chooseFormRecipient() {
         .map((actor) => `<option value="${escapeHtml(actor.id)}">${escapeHtml(actor.name)}</option>`)
         .join('');
     const id = await foundry.applications.api.DialogV2.wait({
+        classes: ['na-form-creator-window'],
         window: { title: 'Criar Forma de Respiração' },
-        content: `<label>Ficha de destino <select name="recipient" required>
-            <option value="">Selecione uma ficha</option>${options}</select></label>`,
+        content: `<div class="na-form-creator"><label>Ficha de destino <select name="recipient" required>
+            <option value="">Selecione uma ficha</option>${options}</select></label></div>`,
         rejectClose: false,
         buttons: [
+            { action: 'cancelar', label: 'Cancelar', callback: () => null },
             { action: 'continuar', label: 'Continuar', default: true,
                 callback: (_event, button) => button.form.elements.recipient.value },
-            { action: 'cancelar', label: 'Cancelar', callback: () => null },
         ],
     });
     return candidates.find((actor) => actor.id === id) ?? null;
@@ -179,50 +195,67 @@ export async function openFormCreator({ actor, actorUuid } = {}) {
         return null;
     }
     const content = `<div class="na-form-creator">
-        <p>Destino: <strong>${escapeHtml(target.name)}</strong></p>
-        <label>Nome (PT) <input name="nome" maxlength="70" required autofocus></label>
-        <label>Nome (JP) <input name="nomeJp" maxlength="70"></label>
-        <label>Respiração <select name="respiracao">${breathings
-            .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
-            .join('')}</select></label>
-        <label>Tipo de manobra <select name="tipoManobra">${MANEUVERS
-            .map((name) => `<option>${name}</option>`).join('')}</select></label>
-        <label>Nível requerido <select name="nivelReq">${LEVELS
-            .map((n) => `<option value="${n}">${n}</option>`).join('')}</select></label>
-        <label>Descrição <textarea name="descricao" rows="2"></textarea></label>
-        ${LEVELS.map((level) => levelFields(level)).join('')}
+        <section aria-label="Dados da forma">
+            <header><h3>Dados da forma</h3><p>Ficha <strong>${escapeHtml(target.name)}</strong></p></header>
+            <div class="na-form-grid">
+                <label>Nome (PT) <input name="nome" maxlength="70" required autofocus></label>
+                <label>Nome (JP) <input name="nomeJp" maxlength="70"></label>
+                <div class="na-form-classification">
+                    <label>Respiração <select name="respiracao">${breathings
+                        .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+                        .join('')}</select></label>
+                    <label>Tipo de manobra <select name="tipoManobra">${MANEUVERS
+                        .map((name) => `<option>${name}</option>`).join('')}</select></label>
+                    <label>Nível requerido <select name="nivelReq">${LEVELS
+                        .map((n) => `<option value="${n}">${n}</option>`).join('')}</select></label>
+                </div>
+                <label>Descrição <textarea name="descricao" rows="2"></textarea></label>
+            </div>
+        </section>
+        <section aria-label="Níveis da forma">
+            <header><h3>Níveis da forma</h3></header>
+            <div class="na-form-level-nav" role="radiogroup" aria-label="Nível em edição">
+                ${LEVELS.map((level) => `<label><input type="radio" name="naFormLevel" value="${level}"${level === 1 ? ' checked' : ''}><span>Nível ${level}</span></label>`).join('')}
+            </div>
+            ${LEVELS.map((level) => levelFields(level)).join('')}
+        </section>
+        <p class="na-form-feedback" role="alert" tabindex="-1" hidden></p>
     </div>`;
     const result = await foundry.applications.api.DialogV2.wait({
-        window: {
-            title: 'Criar Forma de Respiração',
-            contentClasses: ['na-form-creator-window'],
-            resizable: true,
-        },
+        classes: ['na-form-creator-window', 'na-form-creator-editor'],
+        window: { title: 'Criar Forma de Respiração', resizable: true },
         content,
-        position: { width: 640 },
+        position: { width: 720 },
         rejectClose: false,
+        render: (_event, dialog) => {
+            const form = dialog.element.querySelector('form');
+            const feedback = form.querySelector('.na-form-feedback');
+            const validate = (event) => {
+                if (event.type === 'click' && !event.target.closest('button[data-action="criar"]')) return;
+                if (event.submitter && event.submitter.dataset.action !== 'criar') return;
+                const { reason } = normalizeFormInput(readFormInput(form));
+                if (!reason) return;
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const level = /^Nível ([1-4]):/u.exec(reason)?.[1];
+                if (level) form.querySelector(`[name="naFormLevel"][value="${level}"]`).checked = true;
+                feedback.textContent = reason;
+                feedback.hidden = false;
+                feedback.focus();
+            };
+            // DialogV2 handles footer clicks and native form submits separately.
+            form.addEventListener('click', validate, { capture: true });
+            form.addEventListener('submit', validate, { capture: true });
+            form.addEventListener('input', () => { feedback.hidden = true; });
+        },
         buttons: [
+            { action: 'cancelar', label: 'Cancelar', callback: () => null },
             {
                 action: 'criar',
                 label: 'Criar Forma',
                 default: true,
-                callback: (_event, button) => {
-                    const form = button.form;
-                    const value = (name) => form.querySelector(`[name="${name}"]`)?.value ?? '';
-                    const niveis = Object.fromEntries(LEVELS.map((level) => [`nvl${level}`, {
-                        ativo: form.querySelector(`[name="nvl${level}.ativo"]`)?.checked ?? false,
-                        custo: value(`nvl${level}.custo`),
-                        dano: value(`nvl${level}.dano`),
-                        efeito: value(`nvl${level}.efeito`),
-                        status: value(`nvl${level}.status`),
-                        tiposDano: value(`nvl${level}.tiposDano`),
-                    }]));
-                    return { nome: value('nome'), nomeJp: value('nomeJp'), respiracao: value('respiracao'),
-                        tipoManobra: value('tipoManobra'), nivelReq: value('nivelReq'),
-                        descricao: value('descricao'), ...niveis };
-                },
+                callback: (_event, button) => readFormInput(button.form),
             },
-            { action: 'cancelar', label: 'Cancelar', callback: () => null },
         ],
     });
     if (!result || typeof result !== 'object') return null;

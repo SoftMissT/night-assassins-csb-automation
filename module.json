@@ -8,7 +8,7 @@
             "url": "modules/night-assassins-csb-automation/assets/media/module-cover.webp"
         }
     ],
-    "version": "0.13.7",
+    "version": "0.13.8",
     "socket": true,
     "authors": [
         {
@@ -21,7 +21,7 @@
         "verified": "14.367"
     },
     "esmodules": ["scripts/main.mjs"],
-    "styles": ["styles/na-csb-automation.css", "styles/na-regras-da-mesa.css"],
+    "styles": ["styles/na-csb-automation.css", "styles/na-regras-da-mesa.css", "styles/na-form-creator.css"],
     "languages": [
         {
             "lang": "pt-BR",
@@ -91,7 +91,7 @@
     },
     "url": "https://github.com/SoftMissT/night-assassins-csb-automation",
     "manifest": "https://raw.githubusercontent.com/SoftMissT/night-assassins-csb-automation/main/module.json",
-    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.13.7/module.zip",
+    "download": "https://github.com/SoftMissT/night-assassins-csb-automation/releases/download/v0.13.8/module.zip",
     "readme": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/README.md",
     "bugs": "https://github.com/SoftMissT/night-assassins-csb-automation/issues",
     "changelog": "https://github.com/SoftMissT/night-assassins-csb-automation/blob/main/CHANGELOG.md"

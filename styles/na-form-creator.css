@@ -1,0 +1,238 @@
+.application.na-form-creator-window {
+    --form-bg: #141317;
+    --form-panel: #1f1b23;
+    --form-field: #100e16;
+    --form-line: #51464b;
+    --form-ink: #f4ebdf;
+    --form-muted: #c2b4ba;
+    --form-gold: #f2c184;
+    --form-cyan: #7adef2;
+    --form-display: 'Orbitron', 'Segoe UI', sans-serif;
+    --form-text: 'Rajdhani', 'Segoe UI', sans-serif;
+    max-inline-size: calc(100vw - 1rem);
+    color: var(--form-ink);
+    background: var(--form-bg);
+    color-scheme: dark;
+}
+
+.application.na-form-creator-editor {
+    block-size: min(46rem, calc(100dvh - 1rem));
+}
+
+.na-form-creator-window .window-header,
+.na-form-creator-window .dialog-form > .form-footer {
+    color: var(--form-ink);
+    background: var(--form-panel);
+}
+
+.na-form-creator-window .window-header {
+    border-bottom: 1px solid var(--form-line);
+    border-inline-start: 3px solid var(--form-cyan);
+}
+
+.na-form-creator-window .window-title,
+.na-form-creator h3 {
+    font: 700 0.8rem/1.35 var(--form-display);
+}
+
+.na-form-creator-window :is(.window-content, .dialog-form) {
+    flex: 1;
+    min-block-size: 0;
+    padding: 0;
+    gap: 0;
+    background: var(--form-bg);
+}
+
+.na-form-creator-window .dialog-content {
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    scrollbar-color: var(--form-gold) var(--form-panel);
+}
+
+.na-form-creator-window .dialog-form > .form-footer {
+    flex: none;
+    justify-content: flex-end;
+    padding: 0.65rem 1rem;
+    border-top: 1px solid var(--form-line);
+}
+
+.na-form-creator-window .form-footer button {
+    flex: 0 1 auto;
+    min-block-size: 2.25rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--form-line);
+    color: var(--form-ink);
+    background: var(--form-field);
+    font: 700 1rem/1 var(--form-text);
+}
+
+.na-form-creator-window .form-footer button:is([data-action='criar'], [data-action='continuar']) {
+    border-color: var(--form-gold);
+    color: var(--form-field);
+    background: var(--form-gold);
+}
+
+.na-form-creator {
+    display: grid;
+    gap: 0.8rem;
+    padding: 0.9rem;
+    font: 600 1rem/1.2 var(--form-text);
+}
+
+.na-form-creator > section {
+    min-inline-size: 0;
+    padding: 0.8rem;
+    border: 1px solid var(--form-line);
+    border-radius: 8px;
+    background: var(--form-panel);
+}
+
+.na-form-creator header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.3rem 1rem;
+    margin-block-end: 0.65rem;
+}
+
+.na-form-creator h3 {
+    margin: 0;
+    color: var(--form-gold);
+}
+
+.na-form-creator header p {
+    margin: 0;
+    color: var(--form-muted);
+    overflow-wrap: anywhere;
+}
+
+.na-form-creator header strong {
+    color: var(--form-ink);
+}
+
+.na-form-grid,
+.na-form-classification {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: 0.45rem 0.75rem;
+    align-items: start;
+}
+
+.na-form-classification {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+}
+
+.na-form-creator label {
+    display: grid;
+    gap: 0.2rem;
+    min-inline-size: 0;
+}
+
+.na-form-grid > label:has(> textarea),
+.na-form-grid > .na-form-availability {
+    grid-column: 1 / -1;
+}
+
+.na-form-creator .na-form-availability {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.na-form-availability input {
+    accent-color: var(--form-cyan);
+    --checkbox-background-color: #786b78;
+    --checkbox-checked-color: var(--form-cyan);
+    --checkbox-checkmark-color: var(--form-field);
+}
+
+.na-form-creator :is(input:not([type]), input[type='number'], select, textarea) {
+    inline-size: 100%;
+    min-inline-size: 0;
+    min-block-size: 2rem;
+    border: 1px solid var(--form-line);
+    border-radius: 4px;
+    color: var(--form-ink);
+    background: var(--form-field);
+    font: inherit;
+}
+
+.na-form-creator textarea {
+    resize: vertical;
+}
+
+.na-form-creator :is(input, textarea)::placeholder {
+    color: var(--form-muted);
+}
+
+.na-form-level-nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--form-line);
+    border-radius: 6px;
+    background: var(--form-field);
+}
+
+.na-form-level-nav span {
+    padding: 0.38rem 0.15rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: var(--form-muted);
+    text-align: center;
+    cursor: pointer;
+}
+
+.na-form-level-nav input:checked + span {
+    border-color: var(--form-cyan);
+    color: var(--form-cyan);
+    background: #172930;
+}
+
+.na-form-level-nav span:hover {
+    color: var(--form-ink);
+}
+
+.na-form-creator-window :is(button, input, select, textarea):focus-visible,
+.na-form-level-nav input:focus-visible + span {
+    outline: 2px solid var(--form-cyan);
+    outline-offset: 2px;
+}
+
+.na-form-level-nav input,
+.na-form-nivel > legend {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    clip-path: inset(50%);
+    overflow: hidden;
+}
+
+.na-form-creator .na-form-nivel {
+    display: none;
+    min-inline-size: 0;
+    margin: 0.65rem 0 0;
+    padding: 0;
+    border: 0;
+}
+
+.na-form-creator section:has([name='naFormLevel'][value='1']:checked) [data-level='1'],
+.na-form-creator section:has([name='naFormLevel'][value='2']:checked) [data-level='2'],
+.na-form-creator section:has([name='naFormLevel'][value='3']:checked) [data-level='3'],
+.na-form-creator section:has([name='naFormLevel'][value='4']:checked) [data-level='4'] {
+    display: grid;
+}
+
+.na-form-feedback {
+    margin: 0;
+    padding: 0.55rem 0.75rem;
+    border-inline-start: 3px solid var(--form-gold);
+    color: var(--form-gold);
+    background: var(--form-panel);
+}

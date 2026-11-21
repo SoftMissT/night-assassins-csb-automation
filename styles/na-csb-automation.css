@@ -2608,47 +2608,6 @@
     --na-dmg-input: #100e15;
     box-sizing: border-box;
 }
-/* Criador de Formas de Respiração */
-.na-form-creator-window .dialog-form {
-    min-height: 0;
-}
-.na-form-creator-window .dialog-content {
-    min-height: 0;
-    overflow: auto;
-}
-.na-form-creator-window .form-footer {
-    flex-shrink: 0;
-}
-.na-form-creator {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-    align-items: start;
-    gap: 10px 12px;
-}
-.na-form-creator > p,
-.na-form-creator > label:has(> textarea) {
-    grid-column: 1 / -1;
-}
-.na-form-creator label {
-    display: grid;
-    gap: 4px;
-    min-width: 0;
-}
-.na-form-nivel {
-    display: grid;
-    gap: 8px;
-    min-width: 0;
-}
-.na-form-nivel label:has(> input[type='checkbox']) {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.na-form-creator :is(input:not([type='checkbox']), select, textarea) {
-    width: 100%;
-    min-width: 0;
-}
-
 /* Janela do DialogV2 ------------------------------------------------------- */
 /* DOM do DialogV2 (14.367): .application > .window-content.na-dmg-window >
    form.dialog-form.standard-form > (.dialog-content + footer.form-footer).

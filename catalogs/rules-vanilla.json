@@ -1,0 +1,87 @@
+{
+  "sources": {
+    "base": "Versao-Oficial-Night-Assassins-V25.1 (1).pdf",
+    "supplement": "Night-Assassins-V25.1-Beginning-Hour-OFICIAL.pdf"
+  },
+  "metal": {
+    "metal_alvorada": { "label": "Metal da Alvorada", "page": 23, "effect": "Amarelo, laranja ou dourado. +1 Acerto em técnicas que causam dano.", "attackTechniqueDamage": 1 },
+    "metal_despertar": { "label": "Metal do Despertar", "page": 23, "effect": "Cinza ou branco. +1 m de alcance da arma.", "weaponReach": 1 },
+    "metal_entardecer": { "label": "Metal do Entardecer", "page": 23, "effect": "Vermelho. +1 Bloqueio por acerto recebido.", "block": 1 },
+    "metal_coracao": { "label": "Metal do Coração", "page": 23, "effect": "Roxo ou rosa. +1 dano no efeito de contato que aplica Sangramento ou Envenenamento.", "contactDamage": 1 },
+    "metal_espirito": { "label": "Metal do Espírito", "page": 23, "effect": "Verde. +1 Acerto em técnicas que aplicam condição sem causar dano.", "attackTechniqueCondition": 1 },
+    "metal_serenidade": { "label": "Metal da Serenidade", "page": 23, "effect": "Azul. +2 na rolagem de técnicas de Reação ou que protejam alguém.", "reactionOrProtection": 2 },
+    "metal_preto": { "label": "Metal Preto", "page": 23, "effect": "Exclusivo de Descendente. +1 PDR máximo e +1 Bloqueio por acerto recebido.", "pdrMaximum": 1, "block": 1, "requiredOrigin": "origem_descendente" }
+  },
+  "ability": {
+    "hab_escolhida_olfato": { "label": "Olfato Aguçado", "page": 10, "effect": "+1 em Percepção pelo olfato.", "smell": 1 },
+    "hab_escolhida_tato": { "label": "Tato Aguçado", "page": 10, "effect": "+1 Bloqueio ou Esquiva contra ataques surpresa físicos ou à distância.", "surpriseDefense": 1 },
+    "hab_escolhida_audicao": { "label": "Audição Aguçada", "page": 10, "effect": "+1 em testes de CAR.", "carTest": 1 },
+    "hab_escolhida_visao": { "label": "Visão Aguçada", "page": 10, "effect": "+1 em Acerto ao atacar.", "attack": 1 },
+    "hab_escolhida_transformacao": { "label": "Transformação Demoníaca", "page": 10, "effect": "Ação de Ataque com FOR ou DEX para morder um Oni. O acerto concede +1 em um atributo escolhido até o fim do combate, sem acumular. O GM pode conceder também um poder do Oni.", "biteAttribute": 1 },
+    "hab_escolhida_marechi": { "label": "Marechi", "page": 10, "effect": "+1 PDR por nível desde o nível 1.", "pdrPerLevel": 1 }
+  },
+  "slayerOrigin": {
+    "origem_aldeao": { "label": "Aldeão", "page": 9, "pdvBase": 12, "pdrBase": 2, "roll": [1, 2], "effect": "N1 Artesão, reparo com DEX + SAB CD 12. N6 Rolamento, defesa de DEX + metade da FOR arredondada para cima contra Kekkijutsu, uma vez por combate." },
+    "origem_civilizado": { "label": "Civilizado", "page": 9, "pdvBase": 12, "pdrBase": 1, "roll": [3, 4], "effect": "N1 Versatilidade, converte PDV e PDR até o nível de personagem, uma vez por combate. N6 Malícia, 1 PDR para reduzir por CAR ou DEX o Acerto de surpresa contra um aliado nas condições da regra." },
+    "origem_criado_exterminador": { "label": "Criado por Exterminador", "page": 9, "pdvBase": 11, "pdrBase": 2, "roll": [5, 6], "effect": "N1 Investigação, +2 na caça noturna a Onis e na percepção dessas atividades conforme o GM. N6 Ímpeto, +1 Iniciativa na presença de mais de um inimigo.", "initiativeLevel": 6, "initiativeMultipleEnemies": 1 },
+    "origem_isolado": { "label": "Isolado", "page": 9, "pdvBase": 14, "pdrBase": 1, "roll": [7], "effect": "N1 Sobrevivência, Reação de VIT CD 10 ao cair a 0 PDV, uma vez por combate, retorna a 1 PDV. N6 Ferocidade, +2 Acerto e −2 Defesa lutando sem aliados até o próximo turno." },
+    "origem_descendente": { "label": "Descendente", "page": 9, "pdvBase": 11, "pdrBase": 3, "roll": [8], "effect": "N1 Determinação, Vantagem em um teste de FDV por sessão. N6 Marca Especial, permite ativar a Marca ao chegar a Hinoto, acrescentando +10 PDV e +4 PDR temporários no combate." },
+    "origem_tsuguko": { "label": "Tsuguko", "page": 9, "pdvBase": 10, "pdrBase": 3, "roll": [9], "effect": "N1 Treinamento Aprimorado, +20% de ienes de missão. N6 Imortal, +1 no teste de VIT ao cair a 0 PDV por aliado do grupo." },
+    "origem_mestre_uma_coisa": { "label": "Mestre de Uma Coisa Só", "page": 9, "pdvBase": 10, "pdrBase": 3, "roll": [10], "effect": "N1 Especialista, acesso ao primeiro estilo e às suas variações por progressão. Pode pagar em PDV uma vez por combate segundo a regra. N6 Fragmentado, repete um teste falho fora de combate uma vez por sessão, antes da consequência." }
+  },
+  "oniOrigin": {
+    "oni_passado_triste": { "label": "Passado Triste", "page": 16, "pdvBase": 22, "pdkBase": 2, "roll": [1, 2], "effect": "Provocar Misericórdia, usa CAR para caçar e pode testar CAR contra o Acerto letal de um Exterminador para ficar com 1 PDV, uma vez por combate." },
+    "oni_personalidade_maligna": { "label": "Personalidade Maligna", "page": 16, "pdvBase": 16, "pdkBase": 3, "roll": [3, 4], "effect": "Fúria do Mal, em crítico contra Exterminador rola CAR. Se passar de 15, deixa o alvo Amedrontado por 2 turnos." },
+    "oni_rastreador_sangue": { "label": "Rastreador de Sangue", "page": 16, "pdvBase": 20, "pdkBase": 1, "roll": [5, 6], "effect": "Guiado pelo Medo, +2 na caça noturna em cidades e vilarejos. Um crítico nesse teste encontra um Marechi." },
+    "oni_genio_mal": { "label": "Gênio do Mal", "page": 16, "pdvBase": 20, "pdkBase": 2, "roll": [7, 8], "effect": "Racionalidade, uma vez por combate descobre vantagem no cenário sem teste e recebe +3 na próxima rolagem, com condições especiais para crítico e quebra da arma." },
+    "oni_exterminador_corrompido": { "label": "Exterminador Corrompido", "page": 16, "pdvBase": 18, "pdkBase": 3, "roll": [9], "effect": "Protetor Caído, progride como Exterminador sem Kekkijutsu e suas técnicas de Respiração causam dano necrótico." },
+    "oni_adepto_trevas": { "label": "Adepto das Trevas", "page": 16, "pdvBase": 19, "pdkBase": 4, "roll": [10], "effect": "Arte de Sangue, recebe Kekkijutsu no início e um aprimoramento aprovado pelo GM no nível 3." }
+  },
+  "slayerClass": {
+    "classe_mb": {
+      "label": "Mestre de Batalha",
+      "page": 11,
+      "effect": "C +2 dano em ataques básicos. B melhora para +4. A crítico aplica 1d4 Sangramento por metade de DEX ou FOR arredondada para cima. S +2d6 PDV máximo uma vez. SS contra-ataca com ataque padrão de resultado 17+ após erro corpo a corpo.",
+      "ranks": { "C": { "basicDamage": 2 }, "B": { "basicDamage": 4 }, "A": { "criticalBleed": "1d4", "duration": "ceil(DEX ou FOR / 2)" }, "S": { "pdvMaximumFormula": "2d6" }, "SS": { "counterattackThreshold": 17 } }
+    },
+    "classe_usuario_de_veneno": {
+      "label": "Usuário de Veneno",
+      "page": 11,
+      "effect": "C Envenenar causa CAR no início do turno inimigo, uma vez por ação. B melhora para CAR + 2. A ataque padrão adicional por turno. S remove o limite de contato por ação. SS reduz à metade a cura inimiga em turno iniciado com veneno, arredondada para cima.",
+      "ranks": { "C": { "poison": "CAR", "contactLimit": 1 }, "B": { "poison": "CAR + 2" }, "A": { "extraBasicAttacks": 1 }, "S": { "contactLimit": null }, "SS": { "healingMultiplier": 0.5, "healingRound": "ceil" } }
+    },
+    "classe_kakushi": {
+      "label": "Kakushi",
+      "page": 11,
+      "effect": "C Amparar cura INT ou SAB uma vez por rodada por Ação de Ataque. B soma +3. A Desengajar usa Ação Especial. S Injeção de Adrenalina restaura PDR igual a VIT do alvo + INT ou SAB do Kakushi, uma vez por combate por Ação de Ataque. SS teste de CAR 15+ ao curar aliado soma 2 × CAR.",
+      "ranks": { "C": { "heal": "INT ou SAB", "action": "ataque" }, "B": { "heal": "3 + INT ou SAB" }, "A": { "disengageAction": "especial" }, "S": { "pdrRestore": "VIT do alvo + INT ou SAB do Kakushi" }, "SS": { "healDc": 15, "healBonus": "2*CAR" } }
+    },
+    "classe_companheiro_oni": {
+      "label": "Companheiro de Oni",
+      "source": "supplement",
+      "page": 9,
+      "effect": "C o Oni pode interceptar um ataque por rodada por Reação e 2 PDK, com −2 na Defesa. B retira a penalidade. A resistência de tipo escolhido. S +2 CAR fora de combate quando juntos. SS o Kekkijutsu do Oni é elemento de sinergia com a Respiração do companheiro.",
+      "ranks": { "C": { "reactionPdk": 2, "defenseModifier": -2 }, "B": { "defenseModifier": 0 }, "A": { "chosenResistance": 1 }, "S": { "companionCarOutsideCombat": 2 }, "SS": { "kekkijutsuSynergy": true } }
+    },
+    "classe_usuario_de_duas_resp": {
+      "label": "Usuário de Duas Respirações",
+      "source": "supplement",
+      "page": 9,
+      "effect": "Escolhe as duas Respirações no início. A secundária desbloqueia nos níveis 2, 6, 10 e 14. Técnicas secundárias compatíveis custam +1 PDR. Incompatíveis custam +2 PDR e +2 PDV.",
+      "secondaryLevels": [2, 6, 10, 14],
+      "secondaryCost": { "compatible": { "pdr": 1, "pdv": 0 }, "incompatible": { "pdr": 2, "pdv": 2 } }
+    }
+  },
+  "oniClass": {
+    "oni_especializacao_titan": { "label": "Titan", "page": 17, "effect": "C Esmagar dá crítico natural 19+ desarmado e Carregar custa 2 PDK/R. B crítico de Defesa permite contra-ataque padrão. A gasta até FDV em PDK/R para somar ao dano de um ataque confirmado.", "ranks": { "C": { "unarmedCritical": 19, "chargeCost": 2 }, "B": { "counterOnCriticalDefense": true }, "A": { "damageCostLimit": "FDV" } } },
+    "oni_especializacao_toxico": { "label": "Tóxico", "page": 17, "effect": "C crítico desarmado aplica 3 de dano de Envenenamento no próximo turno. B resistência a Veneno. A +1 DEX e +1 CAR permanente, respeitando o limite de 12.", "ranks": { "C": { "criticalPoison": 3 }, "B": { "resistance": "venenoso" }, "A": { "dex": 1, "car": 1, "attributeLimit": 12 } } },
+    "oni_especializacao_mestre_recuperacao": { "label": "Mestre da Recuperação", "page": 17, "effect": "C +2 PDV na regeneração bem-sucedida. B Imposição recupera 3 PDK/R com FDV CD 12, por Ação Especial separada da Regeneração. A escolhe ganho único de 3 × FDV PDK/R ou 5 × VIT PDV máximo.", "ranks": { "C": { "regeneration": 2 }, "B": { "pdk": 3, "fdvDc": 12 }, "A": { "pdkMaximum": "3*FDV", "pdvMaximum": "5*VIT" } } }
+  },
+  "slayerClassRankLevels": { "C": 4, "B": 6, "A": 8, "S": 11, "SS": 12 },
+  "oniClassRankLevels": { "C": 3, "B": 7, "A": 12 },
+  "status": [
+    "vantagem", "desvantagem", "sangramento", "hemorragia", "envenenamento",
+    "resistencia", "vulneravel", "restricao_movimentos", "atordoamento", "paralisia",
+    "ferida", "invisivel_inalvejavel", "amedrontado", "exaustao"
+  ]
+}

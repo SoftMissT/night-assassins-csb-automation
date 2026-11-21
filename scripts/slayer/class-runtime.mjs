@@ -1,32 +1,45 @@
 import {
     classRankAtLevel,
     masterBattleLevelElevenPlan,
+    selectedSlayerClassKey,
     slayerClassContract,
 } from './class-contracts.mjs';
+import { parseLevel } from '../parsing.mjs';
+import { ruleVariant, vanillaRuleCatalog } from '../rules-profile.mjs';
 
 const RANK_ORDER = ['C', 'B', 'A', 'S', 'SS'];
-const RANK_LEVELS = Object.freeze({ C: 4, B: 6, A: 8, S: 11, SS: 12 });
 
 function integer(value, fallback = 0) {
     const number = Number(value);
     return Number.isFinite(number) ? Math.trunc(number) : fallback;
 }
 
-export function resolveClassRank(classKey, level) {
+export function resolveClassRank(classKey, level, profile = ruleVariant('classes')) {
     if (!classKey) return null;
-    return classRankAtLevel(level);
+    if (profile === 'vanilla' && !vanillaRuleCatalog('class')[classKey]?.ranks) return null;
+    return classRankAtLevel(level, profile);
 }
 
-export function classAbilityAtLevel(classKey, level) {
-    const rank = resolveClassRank(classKey, level);
+export function classAbilityAtLevel(classKey, level, profile = ruleVariant('classes')) {
+    const rank = resolveClassRank(classKey, level, profile);
     if (!rank) return { rank: null, ability: null };
-    return { rank, ability: structuredClone(slayerClassContract(classKey).ranks[rank]) };
+    return { rank, ability: slayerClassContract(classKey, profile).ranks[rank] };
 }
 
-export function dualBreathingRankPlan(rank) {
+export function dualBreathingRankPlan(rank, profile = ruleVariant('classes')) {
     const normalized = String(rank ?? '').toUpperCase();
-    if (!RANK_ORDER.includes(normalized)) return null;
-    return structuredClone(slayerClassContract('classe_usuario_de_duas_resp').ranks[normalized]);
+    if (!RANK_ORDER.includes(normalized) || profile === 'vanilla') return null;
+    return slayerClassContract('classe_usuario_de_duas_resp', profile).ranks[normalized];
+}
+
+export function dualBreathingSecondaryPlan(level, compatible, profile = ruleVariant('classes')) {
+    const definition = slayerClassContract('classe_usuario_de_duas_resp', profile);
+    const levels = definition.secondaryLevels ?? Object.values(definition.secondaryBreathingLevels);
+    const cost = definition.secondaryCost ?? definition.surcharges;
+    return {
+        level: levels.filter(requiredLevel => requiredLevel <= parseLevel(level)).length,
+        cost: cost[compatible === true ? 'compatible' : 'incompatible'],
+    };
 }
 
 export function dualBreathingCompositeCost(primaryCost, secondaryCost, compatibility, pdr = 2) {
@@ -37,14 +50,16 @@ export function dualBreathingCompositeCost(primaryCost, secondaryCost, compatibi
     return Math.max(primary, secondary) + bond + extra;
 }
 
-export function companionOniRankPlan(rank) {
+export function companionOniRankPlan(rank, profile = ruleVariant('classes')) {
     const normalized = String(rank ?? '').toUpperCase();
     if (!RANK_ORDER.includes(normalized)) return null;
-    return structuredClone(slayerClassContract('classe_companheiro_oni').ranks[normalized]);
+    return slayerClassContract('classe_companheiro_oni', profile).ranks[normalized];
 }
 
-export function companionOniSocialBonus(rank) {
-    return companionOniRankPlan(rank)?.bonusCar ?? 0;
+export function companionOniSocialBonus(rank, profile = ruleVariant('classes')) {
+    if (!['S', 'SS'].includes(rank)) return 0;
+    const benefit = companionOniRankPlan('S', profile);
+    return benefit?.companionCarOutsideCombat ?? benefit?.bonusCar ?? 0;
 }
 
 export function classStateKey(classKey, suffix) {
@@ -52,10 +67,11 @@ export function classStateKey(classKey, suffix) {
     return suffix ? `slayer_class_${short}_${suffix}` : `slayer_class_${short}`;
 }
 
-export function mbDamageBonus(rank) {
-    if (rank === 'B' || rank === 'A' || rank === 'S' || rank === 'SS') return 4;
-    if (rank === 'C') return 2;
-    return 0;
+export function mbDamageBonus(rank, profile = ruleVariant('classes')) {
+    if (!RANK_ORDER.includes(rank)) return 0;
+    const bonusRank = rank === 'C' ? 'C' : 'B';
+    const bonus = slayerClassContract('classe_mb', profile).ranks[bonusRank];
+    return bonus.basicDamage ?? bonus.damageBonus;
 }
 
 export function mbShouldApplyPermanentPdv(props = {}) {
@@ -75,7 +91,7 @@ export function mbPermanentPdvPatch(rolledTotal, alreadyApplied = 0) {
 
 export async function applyMasterBattleLevelEleven(actor, level = null) {
     const props = actor?.system?.props ?? {};
-    const normalizedLevel = Math.max(0, integer(level ?? props.nvl_num ?? props.nvl_pj));
+    const normalizedLevel = Math.max(0, parseLevel(level ?? props.nvl_num ?? props.npc_nivel ?? props.nvl_pj));
     const plan = masterBattleLevelElevenPlan({ ...props, nvl_num: normalizedLevel });
     if (!actor?.update || !plan.eligible || !plan.permanentPdv) return false;
 
@@ -93,17 +109,17 @@ export async function applyMasterBattleLevelEleven(actor, level = null) {
     return true;
 }
 
-export function mbParryAvailable(props = {}) {
+export function mbParryAvailable(props = {}, profile = ruleVariant('classes')) {
     const used = props[classStateKey('classe_mb', 'parry_used_round')];
-    return integer(used) === 0;
+    return profile !== 'vanilla' && integer(used) === 0;
 }
 
 export function mbParryConsume() {
     return Object.freeze({ [`system.props.${classStateKey('classe_mb', 'parry_used_round')}`]: 1 });
 }
 
-export function mbParryReduction(rank, defenseAttribute) {
-    if (rank !== 'S' && rank !== 'SS') return 0;
+export function mbParryReduction(rank, defenseAttribute, profile = ruleVariant('classes')) {
+    if (profile === 'vanilla' || (rank !== 'S' && rank !== 'SS')) return 0;
     return Math.max(0, integer(defenseAttribute));
 }
 
@@ -198,18 +214,20 @@ export function resetClassRoundState(classKey, props = {}) {
     return Object.freeze(patches);
 }
 
-export function classEventContext({ classKey, level, event, props = {} }) {
-    const rank = resolveClassRank(classKey, level);
+export function classEventContext({ classKey, level, event, props = {}, profile = ruleVariant('classes') }) {
+    const selectedClass = classKey ?? selectedSlayerClassKey(props, profile);
+    const rank = resolveClassRank(selectedClass, level, profile);
     if (!rank) return { rank: null, applicable: false };
     const events = {
-        'basic-hit': ['C', 'B'],
-        'basic-critical': ['A'],
-        'physical-melee-damage': ['S'],
+        'basic-hit': profile === 'vanilla' ? RANK_ORDER : ['C', 'B'],
+        'basic-critical': profile === 'vanilla' ? ['A', 'S', 'SS'] : ['A'],
+        'physical-melee-damage': profile === 'vanilla' ? [] : ['S'],
         'enemy-misses-melee': ['SS'],
         'turn-start': ['C', 'B', 'A', 'S', 'SS'],
         'round-start': ['C', 'B', 'A', 'S', 'SS'],
     };
-    const applicableRanks = events[event] ?? [];
+    const generalEvent = event === 'turn-start' || event === 'round-start';
+    const applicableRanks = generalEvent || selectedClass === 'classe_mb' ? events[event] ?? [] : [];
     return Object.freeze({
         rank,
         applicable: applicableRanks.includes(rank),

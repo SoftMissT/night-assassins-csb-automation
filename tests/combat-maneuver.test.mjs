@@ -4,6 +4,7 @@ setupFoundryMocks();
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { COMBAT_MANEUVERS } from '../scripts/combat-maneuvers-data.mjs';
+import { SETTINGS } from '../scripts/settings.mjs';
 import {
     parseCombatManeuverState,
     consumeCombatManeuverPending,
@@ -28,6 +29,23 @@ function actor(extra = {}) {
 }
 
 describe('Manobras de Combate', () => {
+    it('em Ações Vanilla suspende Manobras novas e pendentes mesmo com Classes Homebrew', async () => {
+        const slayer = actor();
+        const previous = game.settings;
+        try {
+            const result = await useCombatManeuver({ actor: slayer, maneuverId: 'ataque_imprudente', targetUuid: 'oni-1' });
+            assert.equal(result.ok, true);
+            const state = slayer.system.props.manobras_slayer_estado;
+            game.settings = { get: (_module, key) => key === SETTINGS.rulesSelection ?
+                JSON.stringify({ acoes: 'vanilla', classes: 'homebrew' }) : undefined };
+            assert.equal((await useCombatManeuver({ actor: slayer, maneuverId: 'finta' })).ok, false);
+            assert.equal(resolveCombatManeuverBonuses(slayer, { channel: 'dano', targetUuid: 'oni-1' }).damageBonus, 0);
+            assert.equal(await consumeCombatManeuverPending(slayer, { part: 'damage' }), null);
+            assert.equal(slayer.system.props.manobras_slayer_estado, state);
+        } finally {
+            game.settings = previous;
+        }
+    });
     it('cataloga todas as manobras nomeadas e custos positivos', () => {
         assert.equal(COMBAT_MANEUVERS.length, 26);
         assert.equal(new Set(COMBAT_MANEUVERS.map((entry) => entry.id)).size, COMBAT_MANEUVERS.length);

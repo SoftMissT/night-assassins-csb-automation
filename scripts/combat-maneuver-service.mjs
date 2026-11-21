@@ -1,6 +1,7 @@
 /** Runtime das Manobras de Combate. Manobras consomem Fôlego, nunca ações. */
 import { MODULE_ID } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
+import { ruleVariant } from './rules-profile.mjs';
 import { slayerFolegoMaximum } from './action-service.mjs';
 import { COMBAT_MANEUVERS } from './combat-maneuvers-data.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
@@ -83,7 +84,7 @@ export function maneuverById(id) {
 }
 export function resolveCombatManeuverBonuses(actor, { targetUuid = '', channel = '' } = {}) {
     const state = parseCombatManeuverState(actor?.system?.props?.[MANEUVER_STATE_KEY]);
-    const relevant = state.pending.filter(
+    const relevant = (ruleVariant('acoes') === 'vanilla' ? [] : state.pending).filter(
         (entry) => !entry.targetUuid || !targetUuid || entry.targetUuid === targetUuid
     );
     return relevant.reduce(
@@ -180,6 +181,8 @@ export async function useCombatManeuver({
     markers,
     options = {},
 } = {}) {
+    if (ruleVariant('acoes') === 'vanilla')
+        return { ok: false, reason: 'Manobras de Combate só estão disponíveis com Ações Homebrew.' };
     if (!actor?.update || !actorIsSlayer(actor))
         return {
             ok: false,
@@ -284,7 +287,7 @@ export async function useCombatManeuver({
     };
 }
 export async function consumeCombatManeuverPending(actor, predicate = {}) {
-    if (!actor?.update) return null;
+    if (!actor?.update || ruleVariant('acoes') === 'vanilla') return null;
     const props = actor.system?.props ?? {};
     const state = parseCombatManeuverState(props[MANEUVER_STATE_KEY]);
     const part = predicate.part === 'damage' ? 'damage' : predicate.part === 'hit' ? 'hit' : '';
@@ -333,6 +336,8 @@ export async function consumeCombatManeuverPending(actor, predicate = {}) {
     return entry;
 }
 export async function openCombatManeuverManager({ actorUuid } = {}) {
+    if (ruleVariant('acoes') === 'vanilla')
+        return globalThis.ui?.notifications?.warn?.('Manobras de Combate só estão disponíveis com Ações Homebrew.');
     const document = actorUuid ? await fromUuid(actorUuid) : null;
     const actor =
         document?.actor ??

@@ -3,6 +3,7 @@
  */
 
 import { ATTRIBUTES } from './constants.mjs';
+import { actorKind } from './actor-kind.mjs';
 import { parseNumber, latestValues, isDestinyMark } from './parsing.mjs';
 import { buildSnapshotPatch, buildConfigPatch, atomicActorUpdate } from './persistence.mjs';
 import { chooseMarkedAttribute } from './dialogs/attribute-dialogs.mjs';
@@ -15,6 +16,19 @@ import { chooseMarkedAttribute } from './dialogs/attribute-dialogs.mjs';
 export async function applyInitialMark(actor) {
     const props = actor.system?.props ?? {};
     if (parseNumber(props.hab_marca_destino_bonus) >= 2) return false;
+
+    if (actorKind(actor) === 'npc') {
+        const values = Object.fromEntries(
+            ATTRIBUTES.map(({ key }) => [key, parseNumber(props[`npc_${key}_base`])])
+        );
+        const chosen = await chooseMarkedAttribute(values, 2);
+        if (!ATTRIBUTES.some(({ key }) => key === chosen)) return false;
+        await atomicActorUpdate(actor, {
+            'system.props.hab_marca_destino_atributo': chosen,
+            'system.props.hab_marca_destino_bonus': 2,
+        });
+        return true;
+    }
 
     // Verifica se nível 1 está configurado
     const hasLevel1 = ATTRIBUTES.some((a) => {
@@ -53,6 +67,20 @@ export async function upgradeMarkAtLevelSix(actor) {
     const props = actor.system?.props ?? {};
     if (!isDestinyMark(props.hab_escolhida) || parseNumber(props.hab_marca_destino_bonus) >= 3)
         return false;
+
+    if (actorKind(actor) === 'npc') {
+        const values = Object.fromEntries(
+            ATTRIBUTES.map(({ key }) => [key, parseNumber(props[`npc_${key}_base`])])
+        );
+        let chosen = String(props.hab_marca_destino_atributo ?? '');
+        if (!ATTRIBUTES.some(({ key }) => key === chosen)) chosen = await chooseMarkedAttribute(values, 1);
+        if (!ATTRIBUTES.some(({ key }) => key === chosen)) return false;
+        await atomicActorUpdate(actor, {
+            'system.props.hab_marca_destino_atributo': chosen,
+            'system.props.hab_marca_destino_bonus': 3,
+        });
+        return true;
+    }
 
     const values = latestValues(props, 6);
     let chosen = String(props.hab_marca_destino_atributo ?? '');

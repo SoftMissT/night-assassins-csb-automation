@@ -3,6 +3,7 @@ setupFoundryMocks();
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
+import { processActorStatusTiming } from '../scripts/status-engine.mjs';
 import {
     applyOniDamage,
     applySlayerDamageAuto,
@@ -62,6 +63,93 @@ describe('damage-relay', () => {
         assert.strictEqual(result.woundDamage, 4);
         assert.strictEqual(result.total, 12);
         assert.strictEqual(result.woundTotal, 6);
+    });
+
+    it('NPC do Vento acumula apenas o Corte recebido após resistência e soma Ferida na chave nativa', async () => {
+        game.user.isGM = true;
+        foundry.applications.api.DialogV2.wait = async config =>
+            config.buttons.find(button => button.action === 'approve').callback(null, null, {
+                element: {
+                    querySelector: () => ({ value: 'resisted' }),
+                    querySelectorAll: () => ['cortante', 'fogo', 'ferida'].map(value => ({ value })),
+                },
+            });
+        const props = { npc_nome: 'NPC', npc_pdv_dano: 7, resp_slayer_display: 'resp_slayer_vento' };
+        const patches = [];
+        const actor = { name: 'NPC', isOwner: true, system: { props }, items: [],
+            update: async patch => patches.push(patch) };
+        const result = await applyOniDamage(actor, 80, {
+            requireApproval: true, damageTypes: ['cortante', 'fogo', 'ferida'], components: [
+                { types: ['cortante'], subtotal: 60 }, { types: ['fogo'], subtotal: 10 },
+                { types: ['ferida'], subtotal: 10 },
+            ],
+        });
+        assert.equal(result.appliedDamage, 40);
+        assert.equal(result.normalDamage, 35);
+        assert.equal(result.woundDamage, 5);
+        assert.equal(patches[0]['system.props.npc_pdv_dano'], 47);
+        assert.equal(patches[0]['system.props.pdv_slayer_dano_tomado'], undefined);
+        assert.deepEqual(JSON.parse(patches[0]['system.props.resp_vento_estado']).battleDamage,
+            { cutPierce: 30, bleedInfection: 0 });
+    });
+
+    it('tipos removidos pelo GM não geram cicatrizes no NPC', async () => {
+        game.user.isGM = true;
+        foundry.applications.api.DialogV2.wait = async config =>
+            config.buttons.find(button => button.action === 'approve').callback(null, null, {
+                element: {
+                    querySelector: () => ({ value: 'normal' }),
+                    querySelectorAll: () => [{ value: 'fogo' }],
+                },
+            });
+        const updates = {};
+        const actor = { name: 'NPC', isOwner: true,
+            system: { props: { npc_nome: 'NPC', resp_slayer_display: 'resp_slayer_vento' } },
+            update: async patch => Object.assign(updates, patch) };
+        await applyOniDamage(actor, 60, { requireApproval: true, damageTypes: ['cortante'],
+            components: [{ types: ['cortante'], subtotal: 60 }] });
+        assert.equal(updates['system.props.npc_pdv_dano'], 60);
+        assert.equal(updates['system.props.resp_vento_estado'], undefined);
+    });
+
+    it('Slayer do Vento contabiliza dano tipado proporcional ao aplicado e inclui Vulnerável', async () => {
+        game.user.isGM = false;
+        const patches = [];
+        const actor = { name: 'Slayer', isOwner: true, items: [], system: { props: {
+            nome_slayer: 'Slayer', resp_slayer_display: 'resp_slayer_vento',
+            status_slayer_dados: JSON.stringify({ active: ['vulneravel'] }),
+        } }, update: async patch => patches.push(patch) };
+        await applySlayerDamageAuto(actor, 40, { components: [
+            { types: ['cortante'], subtotal: 60 }, { types: ['fogo'], subtotal: 20 },
+        ] });
+        assert.equal(patches[0]['system.props.pdv_slayer_dano_tomado'], 80);
+        assert.equal(JSON.parse(patches[0]['system.props.resp_vento_estado']).battleDamage.cutPierce, 60);
+    });
+
+    it('Sangramento periódico alimenta Sangue Especial em Slayer e NPC', async () => {
+        const previousRoll = Roll.create;
+        const previousCreate = ChatMessage.create;
+        ChatMessage.create = async () => {};
+        Roll.create = () => ({ evaluate: async () => ({ total: 25, toMessage: async () => {} }) });
+        try {
+            for (const npc of [false, true]) {
+                const props = { ...(npc ? { npc_nome: 'NPC' } : { nome_slayer: 'Slayer' }),
+                    resp_slayer_display: 'resp_slayer_vento', status_slayer_dados: JSON.stringify({
+                        active: ['sangramento'], effects: {
+                            sangramento: { damageFormula: '25', remainingTurns: 1, tick: 'start' },
+                        },
+                    }) };
+                const actor = { name: 'Vento', system: { props }, async update(patch) {
+                    for (const [path, value] of Object.entries(patch)) props[path.replace('system.props.', '')] = value;
+                } };
+                await processActorStatusTiming(actor, 'start');
+                assert.equal(JSON.parse(props.resp_vento_estado).battleDamage.bleedInfection, 25);
+                assert.equal(props[npc ? 'npc_pdv_dano' : 'pdv_slayer_dano_tomado'], 25);
+            }
+        } finally {
+            Roll.create = previousRoll;
+            ChatMessage.create = previousCreate;
+        }
     });
 
     it('mostra ao GM crítico, resistência e todos os tipos de dano', async () => {

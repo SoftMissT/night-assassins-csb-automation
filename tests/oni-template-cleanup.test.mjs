@@ -61,6 +61,9 @@ describe('oni-template (estrutura validada pelo operador)', () => {
 
     it('possui rank de especialização', () => {
         const hidden = new Map(source.system.hidden.map(({ name, value }) => [name, value]));
-        assert.ok(hidden.get('rank_especializacao_oni'), 'rank_especializacao_oni deve existir');
+        assert.equal(
+            hidden.get('rank_especializacao_oni'),
+            "${not ref('na_regras_classes', 0)?(nvl_num>=19?'SS':nvl_num>=16?'S':nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':''):(nvl_num>=12?'A':nvl_num>=7?'B':nvl_num>=3?'C':'')}$"
+        );
     });
 });

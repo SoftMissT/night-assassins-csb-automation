@@ -63,7 +63,7 @@ describe('Respiração da Pedra — dado canônico', () => {
         assert.equal(form.niveis[1], null);
         assert.deepEqual(
             form.niveis[2].primitivas,
-            [{ tipo: 'ataques', n: 2 }]
+            [{ tipo: 'ataques', n: 2, pdrNoCritico: 2 }]
         );
         assert.deepEqual(
             form.niveis.slice(2).map((entry) => entry.dano),
@@ -167,7 +167,7 @@ describe('Respiração da Pedra — passiva', () => {
             system: {
                 props: {
                     nome_slayer: 'Slayer',
-                    resp_passivas_estado: JSON.stringify({ version: 1, lastWeapon: { id: 'w1' } }),
+                    resp_passivas_estado: JSON.stringify({ version: 1 }),
                 },
             },
             items: [{ system: { props: { respiracao_nome: 'Pedra' } } }],
@@ -175,8 +175,15 @@ describe('Respiração da Pedra — passiva', () => {
         };
         await applyStonePassiveAfterDamage({
             actor,
-            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, name: 'Oni', amount: 12, wound: 3 }],
-            damageRequests: [{ negated: false, components: [{ types: ['concussao'] }] }],
+            appliedTargets: [
+                {
+                    actor: { uuid: 'Actor.oni' },
+                    name: 'Oni',
+                    amount: 15,
+                    wound: 3,
+                    concussionDamage: 15,
+                },
+            ],
             actionId: 'act-1',
             strength: 5,
             hasAttackDamage: true,
@@ -184,11 +191,11 @@ describe('Respiração da Pedra — passiva', () => {
         assert.equal(updates.length, 1);
         const state = JSON.parse(updates[0]['system.props.resp_passivas_estado']);
         assert.equal(state.stone.lastConfirmedDamageByTarget['Actor.oni'].damage, 15);
-        assert.equal(state.stone.breakByWeapon.w1, 1);
+        assert.equal(state.stone.breakStacks, 1);
         assert.equal(state.stone.lastBreakActionId, 'act-1');
     });
 
-    it('applyStonePassiveAfterDamage não quebra com Concussão anulada e ignora dano zero', async () => {
+    it('applyStonePassiveAfterDamage não quebra sem Concussão efetiva e ignora dano zero', async () => {
         const updates = [];
         const actor = {
             id: 'actor_002',
@@ -197,7 +204,7 @@ describe('Respiração da Pedra — passiva', () => {
             system: {
                 props: {
                     nome_slayer: 'Slayer',
-                    resp_passivas_estado: JSON.stringify({ version: 1, lastWeapon: { id: 'w1' } }),
+                    resp_passivas_estado: JSON.stringify({ version: 1 }),
                 },
             },
             items: [{ system: { props: { respiracao_nome: 'Pedra' } } }],
@@ -205,22 +212,35 @@ describe('Respiração da Pedra — passiva', () => {
         };
         await applyStonePassiveAfterDamage({
             actor,
-            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, name: 'Oni', amount: 0, wound: 0 }],
-            damageRequests: [{ negated: true, components: [{ types: ['concussao'] }] }],
+            appliedTargets: [
+                { actor: { uuid: 'Actor.zero' }, amount: 0, wound: 0, concussionDamage: 0 },
+                {
+                    actor: { uuid: 'Actor.resistente' },
+                    name: 'Resistente',
+                    amount: 8,
+                    wound: 0,
+                    concussionDamage: 0,
+                },
+            ],
             actionId: 'act-2',
             strength: 5,
             hasAttackDamage: true,
         });
         const state = JSON.parse(updates[0]['system.props.resp_passivas_estado']);
-        assert.equal(state.stone?.breakByWeapon, undefined, 'anulado não concede Quebra');
+        assert.equal(state.stone?.breakStacks, undefined, 'Concussão zerada não concede Quebra');
         assert.equal(
-            state.stone?.lastConfirmedDamageByTarget,
+            state.stone?.lastConfirmedDamageByTarget?.['Actor.zero'],
             undefined,
             'alvo sem dano não registra origem'
         );
+        assert.equal(
+            state.stone?.lastConfirmedDamageByTarget?.['Actor.resistente']?.damage,
+            8,
+            'dano de outro tipo continua registrado'
+        );
     });
 
-    it('applyStonePassiveAfterDamage não escreve sem arma/Pedra ou sem dano de ataque', async () => {
+    it('applyStonePassiveAfterDamage não escreve sem Pedra ou sem dano de ataque', async () => {
         const makeActor = (props, items) => ({
             id: 'actor_003',
             uuid: 'Actor.actor_003',
@@ -234,8 +254,9 @@ describe('Respiração da Pedra — passiva', () => {
         const semPedra = makeActor({ nome_slayer: 'Slayer' }, []);
         await applyStonePassiveAfterDamage({
             actor: semPedra,
-            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, amount: 10, wound: 0 }],
-            damageRequests: [],
+            appliedTargets: [
+                { actor: { uuid: 'Actor.oni' }, amount: 10, wound: 0, concussionDamage: 10 },
+            ],
             hasAttackDamage: true,
         });
         const semAtaque = makeActor(
@@ -244,8 +265,9 @@ describe('Respiração da Pedra — passiva', () => {
         );
         await applyStonePassiveAfterDamage({
             actor: semAtaque,
-            appliedTargets: [{ actor: { uuid: 'Actor.oni' }, amount: 10, wound: 0 }],
-            damageRequests: [],
+            appliedTargets: [
+                { actor: { uuid: 'Actor.oni' }, amount: 10, wound: 0, concussionDamage: 10 },
+            ],
             hasAttackDamage: false,
         });
     });

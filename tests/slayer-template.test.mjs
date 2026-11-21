@@ -202,10 +202,9 @@ test('nível 14 oferece escolha exclusiva entre bônus de PDV e PDR nos hidden t
         "${(pdv_slayer_total_conta+(equalText(nvl_14_bonus_choice, 'pdv_vit3') ? atr_vit_valor_config*3 : 0))-pdv_slayer_dano_ferida}$"
     );
 
-    assert.equal(
-        hidden.get('pdr_slayer_total'),
-        "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+bonus_pdr_maximo_slayer+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
-    );
+    const pdr = hidden.get('pdr_slayer_total');
+    assert.match(pdr, /equalText\(nvl_14_bonus_choice, 'pdr_fdv2'\) \? atr_fdv_valor_config\*2 : 0/);
+    assert.match(pdr, /nvl_num >= 2 and equalText\(ref\('na_regras_classes', 0\) \? ref\('na_vanilla_class', ''\) : ref\('classe_escolhida', ''\), 'classe_usuario_de_duas_resp'\) and equalText\(ref\("resp_slayer_display_2", ""\), "resp_slayer_raposa"\)/);
 });
 
 test('template Slayer tem itens oficiais de perfil no header', () => {
@@ -229,7 +228,7 @@ test('template Slayer tem itens oficiais de perfil no header', () => {
 
     assert.ok(headerKeys.includes('idade'), 'idade não encontrada no header');
 
-    assert.ok(headerKeys.includes('origem_dropdown'), 'origem_dropdown não encontrado no header');
+    assert.ok(!headerKeys.includes('origem_dropdown'), 'a origem pertence à aba Habilidades');
 
     assert.ok(
         headerKeys.includes('resp_slayer_display'),
@@ -357,10 +356,75 @@ test('pacote CSB import contém template Slayer válido', () => {
     assert.ok(actor.data.attributeBar, 'actor.data.attributeBar não encontrado');
 });
 
-test('template Slayer preserva os 48 itens hidden oficiais', () => {
-    const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
+test('Slayer agrupa escolhas por variante sem misturar origem, habilidade, classe e metal', () => {
+    const source = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8'))).system;
+    const imported = JSON.parse(fs.readFileSync(csbPackagePath, 'utf8')).actors[0].data;
+    for (const system of [source, imported]) {
+        const tabs = system.body.contents.find(node => node.type === 'tabbedPanel').contents;
+        const sections = tabs.find(node => node.key === 'habilidades_slayer_tab').contents;
+        const panel = sections.find(node => node.type === 'panel' && node.title?.includes('ORIGEM HABILIDADES'));
+        assert.equal(panel?.visibilityFormula,
+            "not ref('na_regras_origens', 0) and not equalText(ref('origem_dropdown', 'origem_escolha'), 'origem_escolha')");
+        const homebrew = sections.find(node => node.key === 'slayer_homebrew_choices');
+        const vanilla = sections.find(node => node.key === 'slayer_vanilla_choices');
+        assert.match(vanilla.rollMessage, /openRulesProfileManager/u);
+        assert.equal(vanilla.role, 0);
+        assert.equal(homebrew.title, 'Escolhas Homebrew');
+        assert.equal(homebrew.collapsible, true);
+        assert.equal(homebrew.defaultCollapsed, false);
+        assert.deepEqual(homebrew.contents.map(({ key }) => key),
+            ['origem_dropdown', 'hab_escolhida', 'classe_escolhida', 'metal_escolhido']);
+        for (const [field, group] of homebrew.contents.map((field, index) =>
+            [field, ['origens', 'habilidades', 'classes', 'metal'][index]])) {
+            const condition = `ref('na_regras_${group}', 0)`;
+            assert.ok(field.visibilityFormula.startsWith(`not ${condition}`));
+            assert.ok(vanilla.visibilityFormula.includes(condition));
+        }
+    }
+});
 
-    assert.equal(template.system.hidden.length, 48);
+test('as fichas persistem as escolhas e flags de variantes em campos invisíveis do CSB', () => {
+    const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
+    const imported = JSON.parse(fs.readFileSync(csbPackagePath, 'utf8')).actors[0].data;
+    const others = ['npc', 'oni'].map(name => JSON.parse(fs.readFileSync(new URL(
+        `../src/templates/actors/${name}-template.json`, import.meta.url
+    ), 'utf8')).system);
+    const ruleFields = [
+        'na_rules_vanilla', 'na_regras_metal', 'na_regras_habilidades', 'na_regras_origens',
+        'na_regras_status', 'na_regras_classes', 'na_regras_acoes', 'na_regras_dano',
+        'na_regras_vida_morte', 'na_regras_respiracao', 'na_regras_progressao',
+        'na_regras_propriedades_nitoryu', 'na_regras_propriedades_ryoto',
+        'na_regras_propriedades_morote', 'na_regras_propriedades_acuidade',
+        'na_regras_propriedades_concussao', 'na_regras_propriedades_manejavel',
+        'na_regras_propriedades_municiada', 'na_regras_propriedades_precisao',
+        'na_vanilla_metal', 'na_vanilla_ability', 'na_vanilla_origin', 'na_vanilla_class',
+    ];
+
+    assert.equal(template.system.hidden.length, 71 - ruleFields.length);
+    for (const system of [template.system, imported, ...others]) {
+        const names = system.hidden.map(({ name }) => name);
+        const storage = system.header.contents.find(node => node.key === 'na_rule_selection_storage');
+        assert.equal(new Set(names).size, names.length, 'hidden precisa manter names únicos');
+        assert.equal(storage?.visibilityFormula, 'false');
+        assert.deepEqual(storage.contents.map(node => node.key).sort(), [...ruleFields].sort());
+        for (const field of storage.contents) {
+            assert.ok(!names.includes(field.key), `${field.key} não pode ser sobrescrito por uma fórmula`);
+            assert.equal(field.type, field.key.startsWith('na_vanilla_') ? 'textField' : 'numberField');
+            assert.equal(field.visibilityFormula, 'false');
+        }
+    }
+});
+
+test('classe Vanilla não exibe cartões de descrição Homebrew preservados na ficha', () => {
+    const template = unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')));
+    const hidden = new Map(template.system.hidden.map(({ name, value }) => [name, value]));
+    const imported = JSON.parse(fs.readFileSync(csbPackagePath, 'utf8')).actors[0].data;
+    const importedHidden = new Map(imported.hidden.map(({ name, value }) => [name, value]));
+
+    assert.match(hidden.get('classe_min_nvl'), /^\$\{not ref\('na_regras_classes',0\)\?switchCase/u);
+    assert.match(hidden.get('classe_min_nvl'), /:999\}\$$/u);
+    assert.match(hidden.get('classe_min_nvl'), /switchCase\(classe_escolhida/u);
+    assert.equal(importedHidden.get('classe_min_nvl'), hidden.get('classe_min_nvl'));
 });
 
 test('template Slayer tem hidden com atributos display', () => {

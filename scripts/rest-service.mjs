@@ -2,8 +2,9 @@
  * @fileoverview Descanso do Slayer com confirmação autoritativa do GM.
  */
 
-import { MODULE_ID, STATUS_SLAYER } from './constants.mjs';
+import { MASTER_BATTLE_BLEEDING, MODULE_ID, STATUS_SLAYER } from './constants.mjs';
 import { actorKind } from './actor-kind.mjs';
+import { breathingPdvInfo, breathingPdrInfo } from './actor-resources.mjs';
 import { parseNumber } from './parsing.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import {
@@ -19,6 +20,7 @@ const RESPONSE_TYPE = 'requestSlayerRestResult';
 const REQUEST_TIMEOUT_MS = 120000;
 const pendingRequests = new Map();
 const STATUS_LABELS = new Map(STATUS_SLAYER.map(({ key, label }) => [key, label]));
+STATUS_LABELS.set(MASTER_BATTLE_BLEEDING, formatStatusSummary([MASTER_BATTLE_BLEEDING]));
 
 const RESTS = Object.freeze({
     field: { label: 'Descanso de Campo', hours: 2 },
@@ -38,6 +40,7 @@ const LIGHT_STATUSES = Object.freeze([
 const COMPLETE_STATUSES = Object.freeze([
     ...LIGHT_STATUSES,
     'sangramento',
+    MASTER_BATTLE_BLEEDING,
     'hemorragia',
     'envenenamento',
     'em_chamas',
@@ -98,6 +101,15 @@ export function restEligibleStatuses(tier) {
  * não tem campo de registro de descanso, então o antiabuso dele vai numa flag.
  */
 const REST_CONTRACTS = Object.freeze({
+    npc: Object.freeze({
+        kind: 'npc', energyLabel: 'PDR', pdvTotal: 'npc_pdv_total', wound: null,
+        pdvExtra: null, pdvHealed: 'npc_pdv_curado', pdvDamage: 'npc_pdv_dano',
+        energyTotal: 'npc_pdr_total', energyBonus: null, energyExtra: null,
+        energyHealed: 'npc_pdr_recuperado', energySpent: 'npc_pdr_gasto_valor',
+        status: 'status_slayer_dados', summary: 'status_slayer_resumo',
+        exhaustion: 'status_slayer_exaustao', breath: 'folego_slayer_atual',
+        recordPath: `flags.${MODULE_ID}.restRecord`,
+    }),
     slayer: Object.freeze({
         kind: 'slayer',
         energyLabel: 'PDR',
@@ -140,12 +152,19 @@ const REST_CONTRACTS = Object.freeze({
 
 /** Mesmo critério do `status-engine`: ficha com status de Oni e sem status de Slayer é Oni. */
 export function restContract(props = {}) {
+    if (actorKind({ system: { props } }) === 'npc') return REST_CONTRACTS.npc;
     return props.status_oni_dados !== undefined && props.status_slayer_dados === undefined
         ? REST_CONTRACTS.oni
         : REST_CONTRACTS.slayer;
 }
 
 function resourceSnapshot(props = {}, contract = restContract(props)) {
+    if (contract.kind === 'npc') {
+        const { pdvMax: pdvMaximum, pdvCurrent } = breathingPdvInfo(props);
+        const { pdrMax: pdrMaximum, pdrCurrent } = breathingPdrInfo(props);
+        return { pdvMaximum, pdvCurrent, pdrMaximum, pdrCurrent,
+            breathMaximum: Math.max(0, parseNumber(props.folego_slayer_maximo) || 2 + parseNumber(props.fdv_display)) };
+    }
     const pdvMaximum = Math.max(
         0,
         parseNumber(props[contract.pdvTotal]) -
@@ -241,7 +260,7 @@ export function buildRestPatch(props = {}, resolution = {}) {
     // acumulados na batalha só se consolidam permanentemente no Descanso
     // Longo ("Recuperação Profunda"), conforme o .md ("após um descanso
     // longo, aplicados após a última batalha").
-    if (tier === 'deep' && contract.kind === 'slayer' && props[WIND_STATE_KEY]) {
+    if (tier === 'deep' && ['slayer', 'npc'].includes(contract.kind) && props[WIND_STATE_KEY]) {
         const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
         Object.assign(patch, windStatePatch(consolidateWindScars(windState)));
     }
@@ -556,7 +575,7 @@ export function registerRestEngine() {
 export async function openRestManager({ actorUuid } = {}) {
     const actor = await resolveActor(actorUuid);
     if (!actor) return ui.notifications.warn('Não há personagem ativo.');
-    if (!['slayer', 'oni'].includes(actorKind(actor)))
+    if (!['slayer', 'npc', 'oni'].includes(actorKind(actor)))
         return ui.notifications.warn('Descanso existe para Caçadores e Onis.');
     if (!actor.isOwner && !game.user.isGM)
         return ui.notifications.error('Você não pode solicitar descanso para este personagem.');

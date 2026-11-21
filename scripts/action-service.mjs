@@ -6,6 +6,8 @@ import { actorKind } from './actor-kind.mjs';
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
 import { getDamageStatusEffects, getStatusCapabilities } from './status-effects.mjs';
+import { soundPassiveBonuses } from './sound-passive-service.mjs';
+import { masterBattleTendonPenalty } from './slayer/master-battle-injury.mjs';
 
 const TURN_KEYS = Object.freeze(['movimento', 'ataque', 'especial']);
 const ROUND_KEYS = Object.freeze(['unica', 'reacao']);
@@ -99,7 +101,7 @@ export function slayerMovementMeters(props = {}, { extraPenaltyMeters = 0 } = {}
     const penalty =
         capabilities.movementPenaltyMeters +
         Math.max(0, Math.trunc(parseNumber(extraPenaltyMeters)));
-    return Math.max(0, (7 + dex) * capabilities.movementMultiplier - penalty);
+    return Math.max(0, (7 + dex + soundPassiveBonuses(props).movement) * capabilities.movementMultiplier - penalty);
 }
 
 export function slayerFolegoMaximum(props = {}) {
@@ -199,6 +201,8 @@ export async function consumeSlayerActions(actor, types, { update = true } = {})
     if (!isSlayerActor(actor))
         return { ok: true, state: defaultActionState(), patch: {}, skipped: 'not-slayer' };
     const normalized = [...new Set((Array.isArray(types) ? types : [types]).filter(Boolean))];
+    if (normalized.includes('reacao') && actor.getFlag?.(MODULE_ID, 'passiveDefensiveReactionBlocked'))
+        return { ok: false, reason: 'A finalização da Nona Cauda impede Reações defensivas neste ataque.' };
     if (normalized.length === 0)
         return {
             ok: true,
@@ -276,6 +280,8 @@ export async function consumeOniActions(actor, types, { update = true } = {}) {
     for (const key of TURN_KEYS) state.turn[key] += required.turn[key];
     for (const key of ROUND_KEYS) state.round[key] += required.round[key];
     const patch = oniActionPatch(state, props);
+    if (required.turn.movimento && Number(props.oni_vanilla_titan_charge) > 0)
+        patch['system.props.oni_vanilla_titan_charge'] = 0;
     if (update) {
         await actor.update(patch, { naCsbAutomation: true, naActionEconomy: true });
         refreshActionSheet(actor);
@@ -397,9 +403,10 @@ export async function openActionManager(options = {}) {
     const snowMovementPenalty = actor.getFlag?.(MODULE_ID, 'snowMovementPenalty');
     const movementPenaltyMeters =
         Number(snowMovementPenalty?.turns) > 0 ? Number(snowMovementPenalty.value) || 0 : 0;
+    const tendonPenalty = masterBattleTendonPenalty(actor);
     const result = await foundry.applications.api.DialogV2.wait({
         window: { title: `Ações ${actor.name}` },
-        content: `<div class="na-action-manager"><p><strong>Fôlego:</strong> ${Math.max(0, parseNumber(props.folego_slayer_atual))} / ${slayerFolegoMaximum(props)} · <strong>Deslocamento:</strong> ${slayerMovementMeters(props, { extraPenaltyMeters: movementPenaltyMeters })}m${movementPenaltyMeters > 0 ? ` (−${movementPenaltyMeters}m Avalanche Negativa)` : ''}</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p><div class="na-action-reference">${informational}</div></div>`,
+        content: `<div class="na-action-manager"><p><strong>Fôlego:</strong> ${Math.max(0, parseNumber(props.folego_slayer_atual))} / ${slayerFolegoMaximum(props)} · <strong>Deslocamento:</strong> ${slayerMovementMeters(props, { extraPenaltyMeters: movementPenaltyMeters + tendonPenalty })}m${movementPenaltyMeters > 0 ? ` (−${movementPenaltyMeters}m Avalanche Negativa)` : ''}${tendonPenalty ? ' (−1,5m Tendão Rompido)' : ''}</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p><div class="na-action-reference">${informational}</div></div>`,
         buttons: [
             {
                 action: 'use',
@@ -420,6 +427,7 @@ export async function openActionManager(options = {}) {
 }
 
 async function openOniActionManager(actor) {
+    const tendonPenalty = masterBattleTendonPenalty(actor);
     const props = actor.system?.props ?? {};
     const state = parseActionState(props.acoes_oni_dados);
     const maximums = oniActionMaximums(props);
@@ -440,7 +448,7 @@ async function openOniActionManager(actor) {
         .join('');
     const result = await foundry.applications.api.DialogV2.wait({
         window: { title: `Ações Oni ${actor.name}` },
-        content: `<div class="na-action-manager"><p><strong>Deslocamento:</strong> ${Math.max(0, parseNumber(props.deslocamento_oni))}m</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p></div>`,
+        content: `<div class="na-action-manager"><p><strong>Deslocamento:</strong> ${Math.max(0, parseNumber(props.deslocamento_oni) - tendonPenalty)}m${tendonPenalty ? ' (−1,5m Tendão Rompido)' : ''}</p>${rows}<label>Consumir ação <select name="na-action-use">${optionsHtml}<option value="completa">Ação Completa</option></select></label><p>Ação Completa consome Movimento + Ataque.</p></div>`,
         buttons: [
             ...(actorKind(actor) === 'oni_minion'
                 ? []

@@ -6,7 +6,7 @@
  * Ordem: itemUuid → forma_id → nome → única Respiração do ator → seletor.
  */
 import { openBreathingManager, useBreathForm } from './breath-service.mjs';
-import { chosenBreathing, formsForBreathing } from './breathing-choice.mjs';
+import { formsForActorBreathings } from './slayer/dual-breathing-service.mjs';
 const escapeHtml = (value) =>
     String(value ?? '')
         .replaceAll('&', '&amp;')
@@ -79,12 +79,11 @@ export async function resolveBreathItem(actor, input, choose = chooseBreathItem)
         const owned = items.find((item) => item.name.toLowerCase().includes(wanted));
         if (owned) return owned;
     }
-    const breathing = chosenBreathing(actor?.system?.props ?? {});
-    const candidates = formsForBreathing(
+    const candidates = formsForActorBreathings(
         items?.filter(
             (item) => String(propsOf(item).inventario_categoria ?? '') === 'respiracao'
         ) ?? [],
-        breathing
+        actor
     );
     if (candidates.length === 1) return candidates[0];
     if (candidates.length > 1) {

@@ -27,11 +27,11 @@ describe('contrato oficial NPC e Oni Minion', () => {
 
         assert.equal(
             npcHidden.get('npc_pdv_atual'),
-            '${(npc_pdv_base+npc_pdv_curado)-npc_pdv_dano}$'
+            '${(npc_pdv_total+npc_pdv_curado)-npc_pdv_dano}$'
         );
         assert.equal(
             npcHidden.get('npc_pdr_atual'),
-            '${(npc_pdr_base+npc_pdr_recuperado)-npc_pdr_gasto_valor}$'
+            '${(npc_pdr_total+npc_pdr_recuperado)-npc_pdr_gasto_valor}$'
         );
         assert.equal(
             minionHidden.get('oni_minion_pdv_atual'),
@@ -65,13 +65,18 @@ describe('contrato oficial NPC e Oni Minion', () => {
 
     it('expõe o gerenciador de Status e o armazenamento compatível no NPC', async () => {
         const npc = await template('npc-template.json');
-        const byKey = new Map(components(npc.system.body).map((entry) => [entry.key, entry]));
+        const byKey = new Map([...components(npc.system.header), ...components(npc.system.body)]
+            .map((entry) => [entry.key, entry]));
         const hidden = new Map(npc.system.hidden.map(({ name, value }) => [name, value]));
 
         assert.match(byKey.get('npc_status_gerenciar').rollMessage, /NAStatusManage01/);
         assert.match(byKey.get('npc_status_display').value, /\$\{status_slayer_resumo\}\$/);
-        assert.equal(hidden.get('status_slayer_dados'), '');
-        assert.equal(hidden.get('status_slayer_resumo'), 'Nenhum status');
-        assert.equal(hidden.get('status_slayer_exaustao'), '0');
+        for (const [key, value] of [
+            ['status_slayer_dados', ''], ['status_slayer_resumo', 'Nenhum status'], ['status_slayer_exaustao', '0'],
+        ]) {
+            assert.equal(hidden.has(key), false);
+            assert.equal(byKey.get(key)?.visibilityFormula, 'false');
+            assert.equal(byKey.get(key)?.defaultValue, value);
+        }
     });
 });

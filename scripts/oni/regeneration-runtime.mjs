@@ -1,5 +1,6 @@
 import { MODULE_ID } from '../constants.mjs';
 import { actorKind } from '../actor-kind.mjs';
+import { parseLevel } from '../parsing.mjs';
 import { consumeOniActions, parseActionState } from '../action-service.mjs';
 import {
     buildActiveRegenerationPatch,
@@ -11,9 +12,11 @@ import {
     tickBlockingFlags,
 } from './regeneration-service.mjs';
 import { oniRegenerationProfile, normalizeOniLevel } from './progression-service.mjs';
+import { oniSpecializationAbility, RECOVERY_MASTER, TITAN_CHARGE } from './specialization-rules.mjs';
+import { reserveOniSpecializationAction } from './specialization-runtime.mjs';
 
 function oniLevel(props = {}) {
-    return normalizeOniLevel(props.nvl_oni ?? props.nvl_num ?? props.nvl_pj);
+    return normalizeOniLevel(parseLevel(props.nvl_oni ?? props.nvl_num ?? props.nvl_pj));
 }
 
 function oniVitality(props = {}) {
@@ -42,7 +45,10 @@ export async function useOniRegeneration(options = {}) {
         return ui.notifications?.warn?.('Selecione uma ficha Oni válida.');
     if (!actor.isOwner && !game.user?.isGM)
         return ui.notifications?.error?.('Você não pode regenerar este Oni.');
+    return reserveOniSpecializationAction(actor, () => resolveOniRegeneration(actor));
+}
 
+async function resolveOniRegeneration(actor) {
     const props = actor.system?.props ?? {};
     const level = oniLevel(props);
     const actionState = parseActionState(props.acoes_oni_dados);
@@ -65,11 +71,12 @@ export async function useOniRegeneration(options = {}) {
     let healing = 0;
     if (test.total >= 12) {
         const plan = rollActiveRegeneration(profile, vitality);
-        const healRoll = await Roll.create(plan.formula).evaluate();
+        const bonus = oniSpecializationAbility(props, RECOVERY_MASTER, 'C')?.regeneration ?? 0;
+        const healRoll = await Roll.create(bonus ? `${plan.formula} + ${bonus}` : plan.formula).evaluate();
         const healShown = await showRoll3d(healRoll);
         await healRoll.toMessage({
             speaker: ChatMessage.getSpeaker({ actor }),
-            flavor: '<strong>Regeneração Oni</strong> · PDV recuperado',
+            flavor: `<strong>Regeneração Oni</strong> · PDV recuperado${bonus ? ` · Recuperação Evoluída +${bonus}` : ''}`,
             ...(healShown ? { flags: { 'dice-so-nice': { skip: true } } } : {}),
         });
         healing = Math.max(0, Math.trunc(Number(healRoll.total) || 0));
@@ -95,6 +102,7 @@ async function processOniTurn(actor) {
     for (const [key, value] of Object.entries(blockerPatch))
         projected[key.replace('system.props.', '')] = value;
     const patch = { ...blockerPatch, ...resetTurnRegeneration() };
+    if (Number(props[TITAN_CHARGE]) > 0) patch[`system.props.${TITAN_CHARGE}`] = 0;
     const automatic = canAutomaticRegenerate(level, projected);
     if (automatic.ok) {
         Object.assign(
@@ -116,6 +124,11 @@ function primaryGm() {
         .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0];
 }
 
+async function expireTitanCharge(actor) {
+    if (actorKind(actor) !== 'oni' || !(Number(actor.system?.props?.[TITAN_CHARGE]) > 0)) return;
+    await actor.update({ [`system.props.${TITAN_CHARGE}`]: 0 }, { naCsbAutomation: true });
+}
+
 export function registerOniRegenerationEngine() {
     Hooks.on('updateCombat', (combat, changes) => {
         if (!game.user?.isGM || primaryGm()?.id !== game.user.id) return;
@@ -124,4 +137,15 @@ export function registerOniRegenerationEngine() {
             console.error(`[${MODULE_ID}] Falha na regeneração automática Oni`, error)
         );
     });
+    Hooks.on('combatTurnChange', (combat, prior, current) => {
+        if (!game.user?.isGM || primaryGm()?.id !== game.user.id || !prior?.combatantId ||
+            (prior.round === current?.round && prior.turn === current?.turn)) return;
+        return expireTitanCharge(combat.combatants?.get(prior.combatantId)?.actor);
+    });
+    const endCombat = (combat) => {
+        if (!game.user?.isGM || primaryGm()?.id !== game.user.id) return;
+        return Promise.all([...(combat?.combatants ?? [])].map(entry => expireTitanCharge(entry.actor)));
+    };
+    Hooks.on('combatEnd', endCombat);
+    Hooks.on('deleteCombat', endCombat);
 }

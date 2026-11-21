@@ -1,4 +1,5 @@
 import { parseNumber } from './parsing.mjs';
+import { breathingPdrInfo, breathingResourceKeys } from './actor-resources.mjs';
 import { resolveMetalCriticalFailureOpportunity } from './metal-breathing-service.mjs';
 
 const HAMMER_SYNERGIES = new Set(['chamas', 'pedra', 'magma']);
@@ -12,21 +13,7 @@ function normalizedBreathing(value) {
 }
 
 export function slayerPdrAvailable(props = {}) {
-    const maximum = Math.max(
-        0,
-        parseNumber(props.pdr_slayer_total_conta) +
-            parseNumber(props.metal_slayer_pdr_bonus) +
-            parseNumber(props.pdr_slayer_extra)
-    );
-    return Math.max(
-        0,
-        Math.min(
-            maximum,
-            maximum +
-                parseNumber(props.pdr_slayer_curado) -
-                parseNumber(props.pdr_slayer_gasto_valor)
-        )
-    );
+    return breathingPdrInfo(props).pdrCurrent;
 }
 
 export function actorMetalHammerSynergy(actor) {
@@ -57,12 +44,12 @@ export function spendMetalHammerSynergyPdr(ally, cost = 1) {
         return { ok: false, reason: 'O aliado não possui Respiração sinérgica.' };
     if (slayerPdrAvailable(props) < amount)
         return { ok: false, reason: 'O aliado não possui PDR suficiente.' };
+    const { pdrSpent } = breathingResourceKeys(props);
     return {
         ok: true,
         cost: amount,
         patch: {
-            'system.props.pdr_slayer_gasto_valor':
-                parseNumber(props.pdr_slayer_gasto_valor) + amount,
+            [`system.props.${pdrSpent}`]: parseNumber(props[pdrSpent]) + amount,
         },
     };
 }

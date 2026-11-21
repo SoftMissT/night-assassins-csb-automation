@@ -73,38 +73,41 @@ describe('NPC — contrato de ações na ficha (paridade com Slayer)', () => {
         assert.match(entry.node.value, /\$\{acoes_slayer_resumo\}\$/);
     });
 
-    it('dados, resumo e bônus de ação ficam na aba Combate, nunca na Configuração GM', async () => {
+    it('Configuração reserva os bônus de ação ao GM e oculta as caixas de estado', async () => {
         const npc = (await read('npc-template.json')).system.body;
         const entries = index(npc);
         const config = entries.get('npc_config_tab');
         assert.equal(config.node.role, 4, 'Configuração continua GM-only');
 
-        const actionKeys = [
-            'acoes_slayer_dados',
-            'acoes_slayer_resumo',
+        const bonusKeys = [
             'acoes_slayer_ataque_bonus',
             'acoes_slayer_movimento_bonus',
             'acoes_slayer_especial_bonus',
             'acoes_slayer_reacao_bonus',
         ];
-        for (const key of actionKeys) {
+        const stateKeys = ['acoes_slayer_dados', 'acoes_slayer_resumo'];
+        for (const key of [...bonusKeys, ...stateKeys]) {
             const entry = entries.get(key);
             assert.ok(entry, `${key} existe no template`);
-            assert.ok(inside(entry, 'npc_ficha_tab'), `${key} na aba Combate`);
-            assert.ok(!inside(entry, 'npc_config_tab'), `${key} NÃO pode estar na aba GM`);
+            assert.ok(!inside(entry, 'npc_ficha_tab'), `${key} fica fora da aba Combate`);
+            assert.ok(inside(entry, 'npc_config_tab'), `${key} na aba GM`);
         }
-        for (const key of actionKeys.filter((entry) => entry.endsWith('_bonus'))) {
+        const panel = entries.get('npc_dados_combate');
+        assert.equal(panel.node.role, 4, 'o painel administrativo é exclusivo do GM');
+        for (const key of bonusKeys) {
             const { node } = entries.get(key);
-            assert.equal(node.role, 0, `${key} visível para jogador`);
-            assert.equal(node.editRole, 0, `${key} editável na ficha`);
+            assert.equal(node.role, 4, `${key} visível somente para o GM`);
+            assert.equal(node.editRole, 4, `${key} editável somente pelo GM`);
         }
-        for (const key of ['acoes_slayer_dados', 'acoes_slayer_resumo'])
-            assert.equal(entries.get(key).node.role, 4, `${key} é estado interno`);
+        for (const key of stateKeys)
+            assert.equal(entries.get(key).node.visibilityFormula, 'false', `${key} fica oculto até para o GM`);
+        assert.deepEqual(JSON.parse(entries.get('acoes_slayer_dados').node.defaultValue), {
+            version: 1, turn: { movimento: 0, ataque: 0, especial: 0 }, round: { unica: 0, reacao: 0 },
+        });
+        assert.match(entries.get('acoes_slayer_resumo').node.defaultValue, /ATAQUE 1\/1/);
 
-        const leaked = walk(config.node)
-            .map(({ node }) => node.key)
-            .filter((key) => typeof key === 'string' && /^(acoes_|npc_bonus_)/.test(key));
-        assert.deepEqual(leaked, [], 'Configuração guarda só dados base');
+        assert.ok(!walk(config.node).some(({ node }) => node.key?.startsWith('npc_bonus_')),
+            'Bônus Fixos continuam acessíveis em Combate');
     });
 
     it('controle negativo: gate rejeita resumo em aba GM e sem interpolação', () => {

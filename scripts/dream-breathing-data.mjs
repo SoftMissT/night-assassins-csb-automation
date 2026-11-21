@@ -186,7 +186,8 @@ export const DREAM_FORMS = Object.freeze([
                 : LEVEL(entry[1], {
                       dano: entry[0],
                       tiposDano: [],
-                      texto: `Dash e golpes seguidos quantas vezes quiser, um Acerto por golpe; cada acerto causa ${entry[0]}. Interrompe ao errar 3 vezes. O módulo rola o primeiro golpe; repita o ataque para os seguintes.`,
+                      texto: `Investida e golpes sucessivos. Cada Acerto confirmado causa ${entry[0]}. A sequência termina ao acumular três erros ou ao escolher encerrar.`,
+                      primitivas: [{ tipo: 'sequenciaAteErros', limite: 3 }],
                   })
         ),
     },

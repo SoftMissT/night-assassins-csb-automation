@@ -58,6 +58,7 @@ export function actorWeapons(actor) {
                     proficient,
                     attackAttributes: proficient ? weaponAttackAttributes(props, profile) : [],
                     attacks: Math.max(1, Math.trunc(Number(profile.ataques) || 1)),
+                    paidSecondaryAttack: profile.golpe_secundario_pago === true,
                     mode: profileMode,
                     secondaryPenalty: Number(profile.penalidade_segundo_acerto) || 0,
                     secondaryNoAttribute: profile.acerto_segundo_sem_atributo === true,
@@ -76,46 +77,46 @@ export function actorWeapons(actor) {
         });
 }
 
-export function stoneBreakStacks(state, weaponId) {
-    return Math.max(0, Math.trunc(parseNumber(state?.stone?.breakByWeapon?.[weaponId])));
+/**
+ * Acúmulos de Quebra pertencem ao praticante, não à arma (regra: "o
+ * benefício acompanha o praticante, mesmo que ele troque de arma").
+ * `breakByWeapon` é lido apenas como estado legado.
+ */
+export function stoneBreakStacks(state) {
+    const stored = state?.stone?.breakStacks;
+    if (stored !== undefined) return Math.max(0, Math.trunc(parseNumber(stored)));
+    return Object.values(state?.stone?.breakByWeapon ?? {}).reduce(
+        (total, value) => total + Math.max(0, Math.trunc(parseNumber(value))),
+        0
+    );
 }
 
-export function effectiveWeaponCritical({
-    base = 20,
-    state = {},
-    weaponId = '',
-    strength = 0,
-    floor = 1,
-} = {}) {
+export function effectiveWeaponCritical({ base = 20, state = {}, strength = 0, floor = 1 } = {}) {
     const baseCritical = Math.min(20, Math.max(1, Math.trunc(parseNumber(base) || 20)));
     const configuredFloor = Math.min(20, Math.max(1, Math.trunc(parseNumber(floor) || 1)));
     const minimum = Math.min(baseCritical, configuredFloor);
     const maximum = Math.max(0, Math.trunc(parseAttributeValue(strength)));
-    const stacks = Math.min(maximum, stoneBreakStacks(state, weaponId));
+    const stacks = Math.min(maximum, stoneBreakStacks(state));
     return Math.max(minimum, baseCritical - stacks);
 }
 
-export function addStoneBreak(state, weaponId, strength) {
-    if (!weaponId) return state;
+export function addStoneBreak(state, strength) {
     const maximum = Math.max(0, Math.trunc(parseAttributeValue(strength)));
-    const current = stoneBreakStacks(state, weaponId);
+    const current = stoneBreakStacks(state);
     return {
         ...state,
         stone: {
             ...(state.stone ?? {}),
-            breakByWeapon: {
-                ...(state.stone?.breakByWeapon ?? {}),
-                [weaponId]: Math.min(maximum, current + 1),
-            },
+            breakStacks: Math.min(maximum, current + 1),
         },
     };
 }
 
-export function addStoneBreakForAction(state, weaponId, strength, actionId = '') {
+export function addStoneBreakForAction(state, strength, actionId = '') {
     const normalizedActionId = String(actionId ?? '');
-    if (!weaponId || (normalizedActionId && state?.stone?.lastBreakActionId === normalizedActionId))
+    if (normalizedActionId && state?.stone?.lastBreakActionId === normalizedActionId)
         return state;
-    const next = addStoneBreak(state, weaponId, strength);
+    const next = addStoneBreak(state, strength);
     return {
         ...next,
         stone: {

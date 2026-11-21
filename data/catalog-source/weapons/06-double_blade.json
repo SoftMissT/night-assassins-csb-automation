@@ -7,7 +7,7 @@
             "arma_requisito": "",
             "arma_tipo": "Corpo a corpo",
             "descricao": "Uma espada com estilo mais ocidental, com duas lâminas, uma em cada lado.",
-            "arma_regra_completa": "Pode acertar duas vezes na mesma ação padrão de ataque. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
+            "arma_regra_completa": "Em Ryōtō, a Double Blade faz dois Acertos na mesma Ação de Ataque. Cada golpe acertado causa o dano normal da arma. O segundo Acerto é rolado sem modificador de FOR ou DEX."
         }
     }
 }

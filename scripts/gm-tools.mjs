@@ -45,6 +45,7 @@ async function repairSummary(api, apiName, { title, noun, nothing }) {
 }
 
 export const GM_TOOLS = Object.freeze([
+    { key: 'rules-table', group: 'mundo', icon: 'fa-book-open', label: 'Regras da Mesa', api: 'openRulesTableManager', run: manager('openRulesTableManager') },
     { key: 'rest', group: 'personagem', icon: 'fa-bed', label: 'Descanso', api: 'openRestManager', run: manager('openRestManager') },
     { key: 'status', group: 'personagem', icon: 'fa-heart-crack', label: 'Status', api: 'openStatusManager', run: manager('openStatusManager') },
     { key: 'actions', group: 'personagem', icon: 'fa-hourglass-half', label: 'Ações', api: 'openActionManager', run: manager('openActionManager') },

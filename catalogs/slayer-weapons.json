@@ -545,11 +545,12 @@
                             "id": "ryoto",
                             "kind": "integrated-double-attack",
                             "attacks": 2,
-                            "secondAttribute": false
+                            "secondAttribute": false,
+                            "vanillaAttacks": 2
                         }
                     ],
                     "arma_propriedades_chaves": ["acuidade", "ryoto"],
-                    "arma_regra_completa": "Pode acertar duas vezes na mesma ação padrão de ataque. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
+                    "arma_regra_completa": "Em Ryōtō, a Double Blade faz dois Acertos na mesma Ação de Ataque. Cada golpe acertado causa o dano normal da arma. O segundo Acerto é rolado sem modificador de FOR ou DEX."
                 }
             },
             "effects": [],
@@ -2271,11 +2272,12 @@
                             "id": "ryoto",
                             "kind": "integrated-double-attack",
                             "attacks": 2,
-                            "secondAttribute": false
+                            "secondAttribute": false,
+                            "contactEffectsPerAction": 2
                         }
                     ],
                     "arma_propriedades_chaves": ["acuidade", "ryoto"],
-                    "arma_regra_completa": "Pode aplicar o dobro de efeitos de contato por ação."
+                    "arma_regra_completa": "Pode aplicar até dois efeitos de contato por ação."
                 }
             },
             "effects": [],
@@ -2693,7 +2695,8 @@
                             "id": "ryoto",
                             "kind": "integrated-double-attack",
                             "attacks": 2,
-                            "secondAttribute": false
+                            "secondAttribute": false,
+                            "vanillaAttacks": 2
                         },
                         {
                             "id": "morote",
@@ -2703,7 +2706,7 @@
                         }
                     ],
                     "arma_propriedades_chaves": ["acuidade", "morote", "ryoto"],
-                    "arma_regra_completa": "Pode acertar duas vezes no mesmo turno usando a ação padrão. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
+                    "arma_regra_completa": "Em Ryōtō, a Kusarigama faz dois Acertos na mesma Ação de Ataque. Cada golpe acertado causa o dano normal da arma. O segundo Acerto é rolado sem modificador de FOR ou DEX."
                 }
             },
             "effects": [],
@@ -2837,7 +2840,7 @@
                         }
                     ],
                     "arma_propriedades_chaves": ["acuidade", "ryoto", "nitoryu"],
-                    "arma_regra_completa": "Acertos críticos concedem +1 de acerto na sua ação de ataque e um ataque extra em sequência. Críticos consecutivos podem continuar aplicando esse efeito, formando uma barragem de socos nos melhores casos. Porém, o dano de cada soco extra conseguido dessa forma é igual a 1 + DEX ou FOR, e não o dano padrão da arma."
+                    "arma_regra_completa": "Em Ryōtō Vanilla, faça um Acerto inicial. Acertos críticos concedem +1 de acerto na sua ação de ataque e um ataque extra em sequência. Críticos consecutivos podem continuar aplicando esse efeito, formando uma barragem de socos nos melhores casos. Porém, o dano de cada soco extra conseguido dessa forma é igual a 1 + DEX ou FOR, e não o dano padrão da arma."
                 }
             },
             "effects": [],

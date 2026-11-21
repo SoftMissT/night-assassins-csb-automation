@@ -3,17 +3,30 @@
  */
 
 import { parseNumber } from './parsing.mjs';
+import { masterBattleBenefits, masterBattleCounterattackHits, masterBattlePressureAttack, masterBattlePressureHit } from './slayer/master-battle-rules.mjs';
+import { MASTER_BATTLE_COUNTERATTACK, offerMasterBattleCounterattack } from './slayer/master-battle-counterattack.mjs';
+import {
+    companionGuardKey, consumeCompanionCoordination, consumeCompanionGuard,
+    pendingCompanionCoordination, registerCoordinatedHit,
+} from './slayer/companion-oni-service.mjs';
+import { hasBreathingPassive } from './breathing-passive-rules.mjs';
+import { combatPassiveBonuses, passiveExecutionId, recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
+import { isHomebrewExtra, ruleVariant } from './rules-profile.mjs';
+import { oniSpecializationAbility, TITAN } from './oni/specialization-rules.mjs';
+import { breathingResourceKeys } from './actor-resources.mjs';
 import { openHitConfirmationDialog, openHitDialog } from './dialogs/hit-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
+import { consumeKakushiAdvantage, kakushiRollEffect } from './slayer/kakushi-service.mjs';
 import { ATTR_COLORS, MODULE_ID, TIPOS_ACAO } from './constants.mjs';
 import { resolveMessageMode } from './damage-formula.mjs';
 import { consumeOniActions, consumeSlayerActions, recoverSlayerFolego } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
-import { parseWaterBreathingState } from './breath-service.mjs';
+import { applyBreathingStatus, parseWaterBreathingState } from './breath-service.mjs';
 import { flameWeaponTier } from './flame-breathing-data.mjs';
 import {
     consumeFlamePending,
+    flameTurnKey,
     flameStatePatch,
     flameWeaponHeat,
     flamingUniverseForAttack,
@@ -37,10 +50,11 @@ import {
     windStatePatch,
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
-import { classRankAtLevel } from './slayer/class-contracts.mjs';
+import { classRankAtLevel, selectedSlayerClassKey } from './slayer/class-contracts.mjs';
 import { markCriticalMargin, markExtraAttack } from './slayer/hunter-mark.mjs';
 import {
     consumeSnowPending,
+    breakSnowRestrictionOnDamage,
     parseSnowBreathingState,
     resolveSnowFreezeGain,
     snowRestrictionFlag,
@@ -127,6 +141,29 @@ export function attemptBonusFormula({ situational = '', secondary = '', chain = 
     return [situational, secondary, chain].filter(Boolean).join(' ');
 }
 
+async function chooseNitoryuFollowUpAction(actor, consumeActions) {
+    const buttons = [];
+    for (const action of ['especial', 'unica']) {
+        const availability = await consumeActions(actor, action, { update: false });
+        if (availability.ok) buttons.push({
+            action, label: TIPOS_ACAO.find(entry => entry.key === action).label,
+            callback: () => action,
+        });
+    }
+    if (buttons.length === 0) {
+        ui.notifications?.warn?.('Nitoryu: Ação Especial e Ação Única indisponíveis.');
+        return null;
+    }
+    const choice = await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Segundo golpe · Nitoryu' },
+        content: '<p>Escolha a ação para rolar o segundo golpe. O Acerto é rolado sem FOR ou DEX.</p>',
+        modal: true,
+        rejectClose: false,
+        buttons: [...buttons, { action: 'cancel', label: 'Encerrar', callback: () => null }],
+    });
+    return buttons.some(button => button.action === choice) ? choice : null;
+}
+
 async function doRoll({
     actor,
     attrName,
@@ -142,10 +179,22 @@ async function doRoll({
     metalReroll = false,
     stopOnMiss = false,
     markMargin = null,
+    oniMargin = null,
+    firstAttemptBonus = 0,
+    firstAttemptAdvantage = false,
+    disableExtraAttacks = false,
+    forcedRollCount,
+    passiveEvent = null,
+    counterattack = null,
+    cancelAdvantage = false,
+    nitoryuActions = null,
+    attackSequence = null,
 }) {
+    if (cancelAdvantage && mode === 'advantage') mode = 'normal';
+    if (cancelAdvantage && statusEffects.mode === 'advantage') statusEffects = { ...statusEffects, mode: 'normal' };
     mode = mergeRollMode(mode, statusEffects.mode);
     const { extra, display } = parseBonus(bonusRaw);
-    let maximum = Math.min(
+    let maximum = forcedRollCount ?? Math.min(
         20,
         Math.max(1, Math.trunc(Math.max(rollCount || 1, weapon?.attacks || 1)))
     );
@@ -155,14 +204,50 @@ async function doRoll({
         ? ` | Status: ${statusEffects.reasons.join(', ')}`
         : '';
     const attempts = [];
+    let misses = 0;
     let interrupted = false;
-    const actionLabel = TIPOS_ACAO.find((entry) => entry.key === actionType)?.label;
     // Crítico Marcado (Marca do Caçador ativa, alvo Oni): a menor margem entre a da arma e a da Marca.
-    const criticalThreshold = Math.min(weapon?.effectiveCritical ?? 20, markMargin ?? 20);
+    const criticalThreshold = Math.min(weapon?.effectiveCritical ?? 20, markMargin ?? 20, oniMargin ?? 20);
     let criticalChainBonus = 0;
+    const battle = actorKind(actor) === 'slayer' && (actor.isOwner || game.user?.isGM)
+        ? masterBattleBenefits(actor.system?.props) : null;
+    const turnKey = battle?.pressure && game.combat?.combatant?.actor?.uuid === actor.uuid
+        ? flameTurnKey(game.combat) : null;
+    const pressureAttack = {
+        turnKey,
+        targetUuid: passiveEvent?.targetCount === 1 ? passiveEvent.targetUuid : '',
+        isBasic: actionType === 'ataque' && !passiveEvent?.noPassiveGeneration,
+        isTechnique: passiveEvent?.isTechnique === true,
+        isProficient: weapon?.proficient === true,
+    };
+    let pressureState = turnKey ? actor.getFlag?.(MODULE_ID, 'masterBattlePressure') : null;
+    const nitoryuTurn = nitoryuActions && flameTurnKey(game.combat);
+    const sequenceTurn = attackSequence && flameTurnKey(game.combat);
 
-    for (let index = 0; index < maximum; index += 1) {
-        const secondaryAttack = index > 0 && weapon?.secondaryNoAttribute === true;
+    for (let index = 0; attackSequence ? misses < attackSequence.missLimit : index < maximum; index += 1) {
+        if (attackSequence && flameTurnKey(game.combat) !== sequenceTurn) {
+            interrupted = true;
+            break;
+        }
+        let chosenNitoryuAction;
+        if (nitoryuActions && index === 1) {
+            if (flameTurnKey(game.combat) === nitoryuTurn)
+                chosenNitoryuAction = await chooseNitoryuFollowUpAction(actor, nitoryuActions);
+            if (flameTurnKey(game.combat) !== nitoryuTurn) {
+                ui.notifications?.warn?.('Nitoryu: o turno do primeiro golpe terminou.');
+                interrupted = true;
+                break;
+            }
+            if (!chosenNitoryuAction) {
+                interrupted = true;
+                continue;
+            }
+        }
+        const attemptAction = chosenNitoryuAction ?? actionType;
+        const actionLabel = TIPOS_ACAO.find(entry => entry.key === attemptAction)?.label;
+        const pressure = masterBattlePressureAttack(battle, pressureState, pressureAttack);
+        const secondaryAttack = !attackSequence && (weapon?.paidSecondaryAttack === true
+            ? Boolean(chosenNitoryuAction) : index > 0 && weapon?.secondaryNoAttribute === true);
         const attemptAttrVal = secondaryAttack ? 0 : attrVal;
         const secondaryPenalty = secondaryAttack ? Number(weapon?.secondaryPenalty) || 0 : 0;
         const secondaryBonus =
@@ -173,29 +258,56 @@ async function doRoll({
                   : '';
         const chainBonus = index > 0 && criticalChainBonus > 0 ? `+ ${criticalChainBonus}` : '';
         const attemptBonus = attemptBonusFormula({
-            situational: extra,
+            situational: `${extra}${index === 0 && firstAttemptBonus ? ` + ${firstAttemptBonus}` : ''}`,
             secondary: secondaryBonus,
-            chain: chainBonus,
+            chain: [chainBonus, pressure.bonus ? '+ 1' : ''].filter(Boolean).join(' '),
         });
-        const formula = buildFormula(mode, attemptAttrVal, attemptBonus, statusEffects.modifier);
+        const kakushiAdvantage = index === 0 && kakushiRollEffect(actor).advantage;
+        const attemptMode = index === 0 && (firstAttemptAdvantage || kakushiAdvantage)
+            ? mergeRollMode(mode, 'advantage') : mode;
+        const formula = buildFormula(attemptMode, attemptAttrVal, attemptBonus, statusEffects.modifier);
         let roll;
         try {
             roll = await Roll.create(formula).evaluate();
         } catch (err) {
             ui.notifications?.error?.(`Erro na fórmula: ${formula}`);
+            if (chosenNitoryuAction) {
+                interrupted = true;
+                continue;
+            }
+            if (attackSequence && index > 0) {
+                interrupted = true;
+                break;
+            }
             return;
         }
+        if (attackSequence && index === 0 && !await attackSequence.beforeFirstRoll()) return;
+        if (chosenNitoryuAction) {
+            if (flameTurnKey(game.combat) !== nitoryuTurn) {
+                ui.notifications?.warn?.('Nitoryu: o turno do primeiro golpe terminou.');
+                interrupted = true;
+                break;
+            }
+            const spent = await nitoryuActions(actor, chosenNitoryuAction);
+            if (!spent.ok) {
+                ui.notifications?.warn?.(spent.reason);
+                interrupted = true;
+                continue;
+            }
+        }
+        if (kakushiAdvantage) await consumeKakushiAdvantage(actor);
         let cdLine = '';
         if (cdVal > 0) {
             const passou = roll.total >= cdVal;
             cdLine = ` | CD ${cdVal} → ${passou ? '✅ Sucesso!' : '❌ Falha!'}`;
         }
-        const countLine = maximum > 1 ? ` ${index + 1}/${maximum}` : '';
+        const countLine = attackSequence ? ` · Golpe ${index + 1}` : maximum > 1 ? ` ${index + 1}/${maximum}` : '';
         let message = await roll.toMessage({
-            flavor: `${actionLabel ? `${actionLabel} · ` : ''}Acerto${countLine} (${modeLabel}) ${attrName} ${attrVal}${bonusLine}${statusLine}${cdLine}`,
+            flavor: `${actionLabel ? `${actionLabel} · ` : ''}Acerto${countLine} (${modeLabel}) ${secondaryAttack ? 'sem atributo' : `${attrName} ${attrVal}`}${bonusLine}${statusLine}${cdLine}${pressure.bonus ? ' | Pressão de Combate +1' : ''}`,
             speaker: ChatMessage.getSpeaker({ actor }),
         }, { messageMode: resolveMessageMode(rollMode) });
         await waitForHitRoll3d(message);
+        if (passiveEvent) await recordBreathingPassiveEvent(actor, { ...passiveEvent, actionType: attemptAction, type: 'attackRoll', eventId: `${passiveEvent.executionId}:${index}:roll` });
         let usedMetalReroll = false;
         if (metalReroll && roll.total < 10) {
             const reroll = await foundry.applications.api.DialogV2.confirm({
@@ -220,14 +332,19 @@ async function doRoll({
             statusEffects.criticalAllowed !== false &&
             weapon?.criticalDisabled !== true &&
             natural >= criticalThreshold;
-        const decision = await openHitConfirmationDialog({
+        const extendsOnCriticalHit =
+            inCriticalRange && !attackSequence && !disableExtraAttacks && weapon?.criticalChain?.ativa === true && maximum < 20;
+        const decision = counterattack ? { hit: masterBattleCounterattackHits(counterattack, { total: roll.total, natural }) } : await openHitConfirmationDialog({
             current: index + 1,
             maximum,
+            missLimit: attackSequence?.missLimit,
+            misses,
             total: roll.total,
             cdVal,
             natural,
             criticalThreshold,
             critical: inCriticalRange,
+            extendsOnCriticalHit,
             weaponName: weapon?.name ?? '',
             profileName: weapon?.profileName ?? '',
         });
@@ -236,6 +353,20 @@ async function doRoll({
             break;
         }
         const critical = decision.hit && inCriticalRange;
+        if (turnKey && flameTurnKey(game.combat) === turnKey) {
+            const next = decision.hit
+                ? masterBattlePressureHit(battle, pressure.state, pressureAttack)
+                : pressure.state;
+            if (next && (next.turnKey !== pressureState?.turnKey || next.targetUuid !== pressureState?.targetUuid))
+                await actor.setFlag?.(MODULE_ID, 'masterBattlePressure', next);
+            pressureState = next;
+        }
+        if (passiveEvent) await recordBreathingPassiveEvent(actor, { ...passiveEvent, actionType: attemptAction,
+            type: decision.hit ? 'hit' : 'miss', success: decision.hit, critical,
+            eventId: `${passiveEvent.executionId}:${index}`, incoming: false });
+        if (!decision.hit && passiveEvent) for (const target of passiveEvent.targetActors ?? [])
+            await recordBreathingPassiveEvent(target, { type: 'miss', incoming: true, targetUuid: actor.uuid,
+                sourceActorUuid: actor.uuid, eventId: `${passiveEvent.executionId}:${index}:incoming` });
         attempts.push({
             roll,
             hit: decision.hit,
@@ -243,10 +374,11 @@ async function doRoll({
             critical,
             criticalThreshold,
             weaponId: weapon?.id ?? '',
-            attackIndex: index,
+            attackIndex: weapon?.paidSecondaryAttack && !nitoryuActions && index > 0 ? index + 1 : index,
+            ...(chosenNitoryuAction ? { actionType: chosenNitoryuAction } : {}),
             secondary: secondaryAttack,
         });
-        if (critical && weapon?.criticalChain?.ativa === true && maximum < 20) {
+        if (critical && extendsOnCriticalHit) {
             criticalChainBonus += Math.max(
                 1,
                 Math.trunc(Number(weapon.criticalChain.bonus_acerto) || 1)
@@ -261,6 +393,19 @@ async function doRoll({
             );
         }
         if (critical) await recoverSlayerFolego(actor, 1);
+        if (!decision.hit) misses += 1;
+        if (attackSequence) {
+            if (decision.hit) await attackSequence.onHit({
+                attempt: attempts.at(-1),
+                executionId: `${passiveEvent.executionId}:${index}`,
+            });
+            if (misses === attackSequence.missLimit) break;
+            if (!decision.continue) {
+                interrupted = true;
+                break;
+            }
+            continue;
+        }
         if (stopOnMiss && !decision.hit) {
             interrupted = true;
             break;
@@ -272,11 +417,12 @@ async function doRoll({
     }
 
     const hits = attempts.filter(({ hit }) => hit).length;
-    const misses = attempts.length - hits;
+    const attemptSummary = attackSequence ? attempts.length : `${attempts.length}/${maximum}`;
+    const missSummary = attackSequence ? `${misses}/${attackSequence.missLimit}` : misses;
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         flavor: 'Sequência de Acerto',
-        content: `<p><strong>${attempts.length}/${maximum}</strong> tentativa(s) · <strong>${hits}</strong> acerto(s) · <strong>${misses}</strong> erro(s)${interrupted ? ' · encerrada' : ''}</p>`,
+        content: `<p><strong>${attemptSummary}</strong> tentativa(s) · <strong>${hits}</strong> acerto(s) · <strong>${missSummary}</strong> erro(s)${interrupted ? ' · encerrada' : ''}</p>`,
     });
     return {
         attempts,
@@ -314,6 +460,7 @@ export async function rollHit(options) {
     }
 
     const props = actor.system?.props ?? {};
+    const selectedTargets = options.targets ?? game.user?.targets ?? new Set();
     const magnetismSource = [...(game.combat?.combatants ?? [])]
         .map((combatant) => combatant.actor)
         .find((candidate) => {
@@ -331,7 +478,7 @@ export async function rollHit(options) {
         });
     if (magnetismSource) {
         const selectedTargets = new Set(
-            [...(game.user?.targets ?? [])].map((token) => token.actor?.uuid).filter(Boolean)
+            [...selectedTargets].map((token) => token.actor?.uuid).filter(Boolean)
         );
         if (!selectedTargets.has(magnetismSource.uuid)) {
             ui.notifications?.warn?.(
@@ -370,8 +517,7 @@ export async function rollHit(options) {
         ...weapon,
         effectiveCritical: effectiveWeaponCritical({
             base: weapon.critical,
-            state: passiveState,
-            weaponId: weapon.id,
+            state: isHomebrewExtra('extras_pedra') ? passiveState : {},
             strength: strength ?? 0,
             floor: criticalFloor,
         }),
@@ -395,12 +541,23 @@ export async function rollHit(options) {
         ui.notifications?.warn?.('A arma sincronizada não está mais no inventário do personagem.');
         return;
     }
+    const guardTarget = selectedTargets.size === 1 ? [...selectedTargets][0]?.actor : null;
+    const guardAvailable = guardTarget && companionGuardKey(actor, guardTarget);
+    const counterattackTarget = !options.noPassiveGeneration && actorKind(guardTarget) === 'slayer' &&
+        (guardTarget.isOwner || game.user?.isGM) && Boolean(masterBattleBenefits(guardTarget.system?.props)?.counterattack);
+    const oniBasicAttack = ruleVariant('classes') === 'vanilla' && actorKind(actor) === 'oni' && options.isTechnique !== true;
+    const oniUnarmedCritical = oniBasicAttack ? oniSpecializationAbility(props, TITAN, 'C')?.unarmedCritical : undefined;
     const dialogResult = await openHitDialog({
         attrName,
         attrVal,
         color,
         weapons,
         requiredWeapon: Boolean(requiredWeaponId),
+        oniBasicAttack,
+        oniUnarmedCritical,
+        companionGuard: Boolean(guardAvailable),
+        counterattackTarget,
+        missLimit: options.attackSequence?.missLimit,
     });
     if (!dialogResult) return;
     if (options.forceActionType) dialogResult.actionType = String(options.forceActionType);
@@ -415,9 +572,12 @@ export async function rollHit(options) {
     const snowHit = snowState.nextHit;
     const windState = parseWindBreathingState(props.resp_vento_estado);
     const windHit = windState.nextHit;
-    const classTechniquePending = [breathHit, flameHit, mistHit, snowHit, windHit].some(
+    const classTechniquePending = options.isTechnique === true || [breathHit, flameHit, mistHit, snowHit, windHit].some(
         (pending) => pending && typeof pending === 'object'
     );
+    const counterattack = options[MASTER_BATTLE_COUNTERATTACK];
+    if (counterattack && classTechniquePending)
+        return ui.notifications?.warn?.('Resolva a técnica preparada antes de fazer o Contra-ataque.');
     const snowPenalty = actor.getFlag?.(MODULE_ID, 'snowPenalty');
     const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
     // 8ª Forma Ofuscamento (Névoa): a partir do Nível 2, quem tenta acertar o usuário/aliado
@@ -426,9 +586,14 @@ export async function rollHit(options) {
     // rolar Acerto contra um alvo, é preciso checar se o alvo é o usuário da névoa (dazzle no
     // próprio) ou o aliado protegido (dazzle no usuário, allyUuid === alvo). Segue o mesmo padrão
     // usado para snowPenalty (penalidade lida do alvo e aplicada ao atacante).
-    const targetedActors = [...(game.user?.targets ?? [])]
+    const targetedActors = [...selectedTargets]
         .map((token) => token.actor)
         .filter(Boolean);
+    if (isHomebrewExtra('olhos_escarlate') && (dialogResult.physicalSurprise || options.physicalSurprise) &&
+        targetedActors.some(target => hasBreathingPassive(target.system?.props, 'Raposa'))) {
+        ui.notifications?.warn?.('Olhos Escarlate: o alvo não pode ser surpreendido. O ataque segue sem a Vantagem de surpresa.');
+        if (dialogResult.mode === 'advantage') dialogResult.mode = 'normal';
+    }
     const maneuverTargetUuid = targetedActors[0]?.uuid ?? '';
     const maneuverBonuses = resolveCombatManeuverBonuses(actor, {
         targetUuid: maneuverTargetUuid,
@@ -481,6 +646,12 @@ export async function rollHit(options) {
         flameTier.hit +
         dazzlePenalty;
     const derivedBonuses = resolveSlayerDerivedBonuses(props, {
+        isAttack: true,
+        isTechnique: classTechniquePending,
+        actionType: dialogResult.actionType,
+        channel: 'acerto',
+        dealsDamage: options.techniqueDealsDamage ?? (classTechniquePending ? true : undefined),
+        appliesCondition: options.appliesCondition === true,
         runtimeSources: [
             ...actorBuffSources(actor),
             ...(breathBonus
@@ -536,7 +707,7 @@ export async function rollHit(options) {
     const windAdvantageUsed =
         windAdvantageState?.round === currentRound && windAdvantageState?.turn === currentTurn;
     const windAdvantageAvailable = windAdvantageEligible && !windAdvantageUsed;
-    const requestedMode =
+    let requestedMode =
         options.advantage === true ||
         breathHit?.advantage ||
         flameHit?.advantage ||
@@ -545,6 +716,16 @@ export async function rollHit(options) {
         windAdvantageAvailable
             ? mergeRollMode(dialogResult.mode, 'advantage')
             : dialogResult.mode;
+    const passiveBonuses = combatPassiveBonuses(props);
+    const eligibleFoxAttack = dialogResult.actionType === 'ataque' || classTechniquePending;
+    const firstAttemptAdvantage = eligibleFoxAttack && passiveBonuses.fox.attackAdvantage &&
+        !passiveBonuses.fox.incomingAttackDisadvantage;
+    if (eligibleFoxAttack && passiveBonuses.fox.attackAdvantage && !firstAttemptAdvantage)
+        requestedMode = mergeRollMode(requestedMode, 'advantage');
+    if (targetedActors.some(target => combatPassiveBonuses(target.system?.props ?? {}).fox.incomingAttackDisadvantage))
+        requestedMode = mergeRollMode(requestedMode, 'disadvantage');
+    const advantageCancelTargets = targetedActors.filter(target =>
+        target.getFlag?.(MODULE_ID, 'soundCancelAdvantage')?.attackerUuid === actor.uuid);
     const weapon =
         weapons.find(
             (entry) =>
@@ -553,6 +734,13 @@ export async function rollHit(options) {
         ) ??
         weapons.find((entry) => entry.id === dialogResult.weaponId) ??
         null;
+    const kind = actorKind(actor);
+    const consumeActions = kind === 'oni' || kind === 'oni_minion' ? consumeOniActions : consumeSlayerActions;
+    const nitoryuActions = weapon?.paidSecondaryAttack === true && !classTechniquePending &&
+        options.skipActionConsumption !== true && options.noPassiveGeneration !== true &&
+        !Number.isInteger(options.forceRollCount) && !counterattack &&
+        (!dialogResult.actionType || dialogResult.actionType === 'ataque') ? consumeActions : null;
+    if (nitoryuActions && !dialogResult.actionType) dialogResult.actionType = 'ataque';
     if (
         weapon?.mode &&
         actor.items?.get?.(weapon.id)?.system?.props?.arma_modo_uso !== weapon.mode
@@ -599,7 +787,7 @@ export async function rollHit(options) {
             ? flamingUniverseForAttack(flameState, { combat: game.combat, weaponId: weapon.id, props, strength })
             : null;
     const universeTarget = universe
-        ? [...(game.user?.targets ?? [])].find((token) => token.actor && token.actor.uuid !== actor.uuid)
+        ? [...selectedTargets].find((token) => token.actor && token.actor.uuid !== actor.uuid)
         : null;
     if (universe && !universeTarget)
         return ui.notifications?.warn?.('Marque o alvo do Ataque Padrão com Universo Flamejante.');
@@ -607,7 +795,7 @@ export async function rollHit(options) {
         return ui.notifications?.error?.('Universo Flamejante exige FOR configurada para calcular a CD.');
 
     const poisonRank =
-        props.classe_escolhida === 'classe_usuario_de_veneno'
+        selectedSlayerClassKey(props) === 'classe_usuario_de_veneno'
             ? classRankAtLevel(parseNumber(props.nvl_num ?? props.nvl_pj))
             : null;
     const poisonExtraFlag = actor.getFlag?.(MODULE_ID, 'poisonExtraAttack');
@@ -638,8 +826,9 @@ export async function rollHit(options) {
         classTechniquePending,
         usedThisTurn: markExtraUsed,
     });
-    const baseRollCount = Math.max(
+    const baseRollCount = Number.isInteger(options.forceRollCount) ? Math.max(1, Math.min(20, options.forceRollCount)) : Math.max(
         dialogResult.rollCount,
+        nitoryuActions ? 2 : 1,
         Number(dialogResult.weaponProfileIndex) >= 0 ? Number(weapon?.attacks) || 1 : 1,
         Number(breathHit?.count) || 1,
         Number(flameHit?.count) || 1,
@@ -648,12 +837,15 @@ export async function rollHit(options) {
         Number(windHit?.count) || 1
     );
     if (options.skipActionConsumption !== true && dialogResult.actionType) {
-        const actionResult =
-            actorKind(actor) === 'oni' || actorKind(actor) === 'oni_minion'
-                ? await consumeOniActions(actor, [dialogResult.actionType])
-                : await consumeSlayerActions(actor, [dialogResult.actionType]);
+        const actionResult = await consumeActions(actor, [dialogResult.actionType]);
         if (!actionResult.ok) return ui.notifications?.warn?.(actionResult.reason);
     }
+    const executionId = options.executionId ?? passiveExecutionId(actor);
+    const formId = options.formId ?? breathHit?.source ?? flameHit?.source ?? mistHit?.source ?? snowHit?.source ?? windHit?.source ?? '';
+    const oniUnarmed = oniBasicAttack && !weapon && !classTechniquePending && dialogResult.actionType === 'ataque';
+    const guardKey = (options.melee === true || dialogResult.companionMelee) && guardAvailable
+        ? companionGuardKey(actor, guardTarget) : '';
+    const opening = targetedActors.length === 1 && pendingCompanionCoordination('opening', actor, targetedActors[0].uuid);
     const result = await doRoll({
         actor,
         attrName,
@@ -666,10 +858,33 @@ export async function rollHit(options) {
         actionType: dialogResult.actionType,
         statusEffects: finalStatusEffects,
         weapon,
-        metalReroll: metalState.chainReaction?.turns > 0,
+        nitoryuActions,
+        attackSequence: options.attackSequence,
+        metalReroll: !counterattack && metalState.chainReaction?.turns > 0,
         stopOnMiss: mistHit?.stopOnMiss === true,
         markMargin,
+        oniMargin: oniUnarmed ? oniUnarmedCritical : null,
+        firstAttemptBonus: passiveBonuses.sound.acerto + passiveBonuses.wind.acerto +
+            Number(Boolean(opening)) - Number(Boolean(guardKey)),
+        firstAttemptAdvantage,
+        cancelAdvantage: advantageCancelTargets.length > 0,
+        counterattack,
+        disableExtraAttacks: options.noPassiveGeneration === true || Number.isInteger(options.forceRollCount),
+        forcedRollCount: Number.isInteger(options.forceRollCount) ? baseRollCount : undefined,
+        passiveEvent: { executionId, formId, isTechnique: classTechniquePending,
+            actionType: dialogResult.actionType, noPassiveGeneration: options.noPassiveGeneration === true,
+            noContactEffects: options.noContactEffects === true, hostile: true,
+            targetUuid: targetedActors[0]?.uuid ?? '', targetCount: targetedActors.length, targetActors: targetedActors },
     });
+    if (guardKey && result?.attempts?.length)
+        await consumeCompanionGuard(actor, guardTarget, guardKey);
+    if (opening && result?.attempts?.length) await consumeCompanionCoordination(actor, opening);
+    if (counterattackTarget && result?.misses > 0 && (options.melee === true || dialogResult.companionMelee))
+        await offerMasterBattleCounterattack(guardTarget, actor, { enemyMissed: true, melee: true });
+    if (targetedActors.length === 1 && !options.noContactEffects && result?.attempts?.some(attempt => attempt.hit))
+        await registerCoordinatedHit(actor, targetedActors[0], { breathing: classTechniquePending && Boolean(formId) });
+    if (result?.attempts?.length) for (const target of advantageCancelTargets)
+        await target.unsetFlag?.(MODULE_ID, 'soundCancelAdvantage');
     if (result)
         await consumeCombatManeuverPending(actor, {
             targetUuid: maneuverTargetUuid,
@@ -691,7 +906,8 @@ export async function rollHit(options) {
             turn: currentTurn,
         });
     }
-    const confirmedCritical = result?.attempts?.find((attempt) => attempt.critical);
+    const confirmedCritical = dialogResult.actionType === 'ataque' && !classTechniquePending && !options.noContactEffects
+        ? result?.attempts?.find((attempt) => attempt.critical) : null;
     const knowsMetal = [...(actor.items ?? [])].some(
         (item) => item.system?.props?.respiracao_nome === 'Metal'
     );
@@ -782,7 +998,7 @@ export async function rollHit(options) {
         // alvo participa da mesma rolagem de Acerto. As demais Formas da Neve com
         // Congelar (Fluxo/Avalanche) seguem alvo único — usa apenas o primeiro.
         const isAreaForm = snowHit.source === 'neve_02';
-        const allTargets = [...(game.user?.targets ?? [])]
+        const allTargets = [...selectedTargets]
             .map((token) => token.actor)
             .filter(Boolean);
         const affectedTargets = isAreaForm ? allTargets : allTargets.slice(0, 1);
@@ -809,21 +1025,22 @@ export async function rollHit(options) {
                     ? resolveSnowFreezeGain(nextSnow, target.uuid, freeze, { recoveryChoice })
                     : { state: nextSnow, reachedFive: false, burstFormula: '', recovery: null };
             nextSnow = gain.state;
+            const { pdvHealed, pdrSpent } = breathingResourceKeys(actor.system?.props);
             if (gain.recovery?.pdv) {
                 const base =
                     Number(
-                        patch['system.props.pdv_slayer_curado'] ??
-                            actor.system?.props?.pdv_slayer_curado
+                        patch[`system.props.${pdvHealed}`] ??
+                            actor.system?.props?.[pdvHealed]
                     ) || 0;
-                patch['system.props.pdv_slayer_curado'] = base + gain.recovery.pdv;
+                patch[`system.props.${pdvHealed}`] = base + gain.recovery.pdv;
             }
             if (gain.recovery?.pdr) {
                 const base =
                     Number(
-                        patch['system.props.pdr_slayer_gasto_valor'] ??
-                            actor.system?.props?.pdr_slayer_gasto_valor
+                        patch[`system.props.${pdrSpent}`] ??
+                            actor.system?.props?.[pdrSpent]
                     ) || 0;
-                patch['system.props.pdr_slayer_gasto_valor'] = Math.max(
+                patch[`system.props.${pdrSpent}`] = Math.max(
                     0,
                     base - gain.recovery.pdr
                 );
@@ -838,13 +1055,20 @@ export async function rollHit(options) {
                 if (restrain) {
                     const action = await consumeSlayerActions(actor, ['unica'], { update: false });
                     if (action.ok) {
+                        if (target.getFlag?.(MODULE_ID, 'snowRestriction')?.sourceActorUuid !== actor.uuid)
+                            nextSnow = breakSnowRestrictionOnDamage(nextSnow, target.uuid);
                         const restriction = spendFreezeForRestriction(
                             nextSnow,
                             target.uuid,
-                            Number(actor.system?.props?.car_display) || 0
+                            resolveSheetAttribute(actor, 'CAR') ?? 0
                         );
+                        if (!restriction.ok) continue;
                         nextSnow = restriction.state;
                         Object.assign(patch, action.patch);
+                        await applyBreathingStatus(target, 'restricao_movimentos', {
+                            remainingTurns: null, tick: 'end',
+                            sourceName: `Congelar ${actor.uuid}`.slice(0, 120),
+                        });
                         await target.setFlag(
                             MODULE_ID,
                             'snowRestriction',
@@ -895,7 +1119,8 @@ export async function rollHit(options) {
         if (result.attempts[0].hit)
             result.attempts[0].flamingUniverse = { ...universe, target: universeTarget };
     }
-    const finalResult = result ? { ...result, weapon } : result;
+    const finalResult = result ? { ...result, weapon, executionId, formId, isTechnique: classTechniquePending,
+        actionType: dialogResult.actionType, oniUnarmed, attackAttribute: attrName } : result;
 
     // Continuação automática pós-Acerto: dispara o dano sem exigir clique
     // manual na arma. Chamadores que já fazem sua própria resolução de dano
@@ -916,8 +1141,18 @@ export async function rollHit(options) {
                 hitResult: finalResult,
                 techniqueLabel: actionLabel || 'Ataque',
                 classBasicAttack: !classTechniquePending,
+                targets: options.targets,
             });
         }
+    }
+    if (finalResult?.attempts?.length && options.autoDamage !== false && !options.noPassiveGeneration &&
+        !classTechniquePending && dialogResult.actionType === 'ataque' && targetedActors.length === 1 &&
+        combatPassiveBonuses(actor.system?.props ?? {}).sound.nightcoreAvailable) {
+        const { activateSoundPassive } = await import('./sound-passive-service.mjs');
+        const { executeCombatPassive } = await import('./combat-passive-execution.mjs');
+        const extra = await activateSoundPassive(actor, 'nightcore', { baseActionType: 'ataque',
+            targetUuid: targetedActors[0].uuid, execute: plan => executeCombatPassive(actor, plan) });
+        if (extra.reason) ui.notifications.warn(extra.reason);
     }
     return finalResult;
 }

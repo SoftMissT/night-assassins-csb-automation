@@ -2,14 +2,27 @@
  * @fileoverview Catálogo e persistência da base de status do Slayer.
  */
 
-import { STATUS_SLAYER, STATUS_SLAYER_DANO_CONTINUO } from './constants.mjs';
+import { MASTER_BATTLE_BLEEDING, STATUS_SLAYER, STATUS_SLAYER_DANO_CONTINUO } from './constants.mjs';
+import { isRulesStatusSelectable, ruleStatusCatalog } from './rules-profile.mjs';
+import { actorKind } from './actor-kind.mjs';
 
-const STATUS_BY_KEY = new Map(STATUS_SLAYER.map((status) => [status.key, status]));
+const MASTER_BATTLE_STATUS = Object.freeze({
+    key: MASTER_BATTLE_BLEEDING, label: 'Sangramento de Crítico Brutal', category: 'Dano contínuo',
+});
+const STATUS_BY_KEY = new Map([...STATUS_SLAYER, MASTER_BATTLE_STATUS].map((status) => [status.key, status]));
 const CONTRACT = Object.freeze({
     data: 'status_slayer_dados',
     summary: 'status_slayer_resumo',
     exhaustion: 'status_slayer_exaustao',
 });
+
+const ONI_CONTRACT = Object.freeze({ data: 'status_oni_dados', summary: 'status_oni_resumo', exhaustion: 'status_oni_exaustao' });
+
+export function statusKeysForProps(props = {}) {
+    const kind = actorKind({ system: { props } });
+    return kind === 'oni' || kind === 'oni_minion' ||
+        (props.status_oni_dados !== undefined && props.status_slayer_dados === undefined) ? ONI_CONTRACT : CONTRACT;
+}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -105,6 +118,7 @@ export function normalizeStatusEffects(value = {}) {
             saveDc: Math.max(0, Math.min(99, Number.parseInt(raw.saveDc, 10) || 0)),
             stacks: Math.max(1, Math.min(99, Number.parseInt(raw.stacks, 10) || 1)),
             tick: raw.tick === 'end' ? 'end' : 'start',
+            ...(raw.companionExtended === true ? { companionExtended: true } : {}),
         };
     }
     return normalized;
@@ -125,6 +139,8 @@ export async function saveSlayerStatuses(
     exhaustionMilestones = []
 ) {
     if (!actor?.update) throw new Error('Actor inválido para salvar status.');
+    const props = actor.system?.props ?? {};
+    const contract = statusKeysForProps(props);
     const activeKeys = normalizeStatusKeys(active);
     const normalizedEffects = normalizeStatusEffects(effects);
     const state = {
@@ -141,12 +157,18 @@ export async function saveSlayerStatuses(
     const summary = formatStatusSummary(state.active, state.exhaustion);
     await actor.update(
         {
-            [`system.props.${CONTRACT.data}`]: JSON.stringify(state),
-            [`system.props.${CONTRACT.summary}`]: summary,
-            [`system.props.${CONTRACT.exhaustion}`]: state.exhaustion,
+            [`system.props.${contract.data}`]: JSON.stringify(state),
+            [`system.props.${contract.summary}`]: summary,
+            [`system.props.${contract.exhaustion}`]: state.exhaustion,
         },
         { naCsbAutomation: true }
     );
+    const previous = parseStatusState(props[contract.data]);
+    for (const condition of state.active.filter(key => !previous.active.includes(key))) {
+        if (!['atordoamento', 'inconsciente', 'inconsciencia'].includes(condition)) continue;
+        const { recordBreathingPassiveEvent } = await import('./breathing-combat-passives.mjs');
+        await recordBreathingPassiveEvent(actor, { type: 'statusApplied', condition });
+    }
     return { ...state, summary };
 }
 
@@ -184,16 +206,19 @@ export async function openStatusManager({ actorUuid, draft = null } = {}) {
     if (!actor.isOwner) return ui.notifications.error('Você não pode alterar este personagem.');
 
     const props = actor.system?.props ?? {};
-    const state = parseStatusState(props[CONTRACT.data]);
+    const contract = statusKeysForProps(props);
+    const state = parseStatusState(props[contract.data]);
     if (draft) {
         state.active = normalizeStatusKeys(draft.active);
         state.effects = normalizeStatusEffects(draft.effects);
         state.exhaustion = clampExhaustion(draft.exhaustion);
     }
-    state.exhaustion = clampExhaustion(props[CONTRACT.exhaustion] ?? state.exhaustion);
+    state.exhaustion = clampExhaustion(props[contract.exhaustion] ?? state.exhaustion);
     const selected = new Set(state.active);
     const categories = new Map();
-    for (const status of STATUS_SLAYER) {
+    const availableStatuses = [...ruleStatusCatalog({ active: state.active })];
+    if (selected.has(MASTER_BATTLE_BLEEDING)) availableStatuses.push(MASTER_BATTLE_STATUS);
+    for (const status of availableStatuses) {
         if (!categories.has(status.category)) categories.set(status.category, []);
         categories.get(status.category).push(status);
     }
@@ -299,7 +324,8 @@ export async function openStatusManager({ actorUuid, draft = null } = {}) {
                 default: true,
                 callback: (event, button) => {
                     const form = new FormData(button.form);
-                    const effects = {};
+                    const inheritedBleeding = state.effects[MASTER_BATTLE_BLEEDING];
+                    const effects = inheritedBleeding ? { [MASTER_BATTLE_BLEEDING]: inheritedBleeding } : {};
                     for (const config of configurable) {
                         const { key } = config;
                         effects[key] = {
@@ -335,7 +361,8 @@ export async function openStatusManager({ actorUuid, draft = null } = {}) {
                                     : 'start'),
                         };
                     }
-                    const active = form.getAll('na-status');
+                    const active = form.getAll('na-status').filter(key => selected.has(key) ||
+                        (key !== MASTER_BATTLE_BLEEDING && isRulesStatusSelectable(key)));
                     const exhaustion = form.get('na-exhaustion');
                     const errors = validateStatusConfiguration(active, effects);
                     return { active, exhaustion, effects, errors, invalid: errors.length > 0 };

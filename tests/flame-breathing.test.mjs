@@ -34,10 +34,10 @@ describe('Respiração das Chamas', () => {
             multiplier: 1,
             selfDamage: 0,
         });
-        assert.equal(flameWeaponTier(10).weaponDamage, 2);
-        assert.equal(flameWeaponTier(30).techniqueDie, '1d6');
-        assert.equal(flameWeaponTier(50).hit, 3);
-        assert.equal(flameWeaponTier(60).multiplier, 1.5);
+        assert.equal(flameWeaponTier(10).weaponDamage, 3);
+        assert.equal(flameWeaponTier(30).techniqueDie, '1d10');
+        assert.equal(flameWeaponTier(50).hit, 6);
+        assert.equal(flameWeaponTier(60).multiplier, 2);
         assert.equal(flameWeaponTier(90).heat, 60);
     });
 
@@ -46,7 +46,7 @@ describe('Respiração das Chamas', () => {
         assert.equal(plan.ok, true);
         assert.equal(plan.action, 'especial');
         assert.equal(plan.cost, 4);
-        assert.equal(plan.state.weaponHeat, 2);
+        assert.equal(plan.state.weaponHeat, 7);
         assert.equal(plan.state.pendingDamage.formula, '2d4');
         assert.deepEqual(plan.state.pendingDamage.formulas, ['2d4', '2d4']);
         assert.equal(plan.state.nextHit.count, 2);
@@ -56,10 +56,28 @@ describe('Respiração das Chamas', () => {
     it('Céu em Chamas recebe bônus do calor atual e crítico', () => {
         const props = { resp_chamas_estado: JSON.stringify({ weaponHeat: 10 }) };
         const plan = buildFlameBreathingPlan('chamas_03', 4, props);
-        assert.equal(plan.state.weaponHeat, 13);
+        assert.equal(plan.state.weaponHeat, 19);
         assert.equal(plan.state.nextHit.bonus, 4);
         assert.equal(plan.state.pendingDamage.critical, true);
         assert.equal(plan.state.pendingDamage.blockPenalty, -2);
+    });
+
+    it('Céu em Chamas e Ignição consultam a versão de Respirações', () => {
+        const previousGame = globalThis.game;
+        try {
+            for (const respiracao of ['vanilla', 'homebrew']) {
+                globalThis.game = { settings: { get: (_id, key) => key === 'rulesSelection'
+                    ? JSON.stringify({ respiracao, metal: respiracao === 'vanilla' ? 'homebrew' : 'vanilla' })
+                    : undefined } };
+                const sky = buildFlameBreathingPlan('chamas_03', 4);
+                const ignition = buildFlameBreathingPlan('chamas_08', 4).state.ignition;
+                assert.equal(sky.state.weaponHeat, respiracao === 'vanilla' ? 3 : 9);
+                assert.equal(sky.state.activeForm.enemyHeat, respiracao === 'vanilla' ? 2 : 6);
+                assert.equal(sky.state.pendingDamage.formula, respiracao === 'vanilla' ? '' : '8d10 + @for + @fdv');
+                assert.equal(ignition.damageBonus, respiracao === 'vanilla' ? 8 : '4d8');
+                assert.equal(ignition.damageType, respiracao === 'vanilla' ? 'fogo' : 'concussao');
+            }
+        } finally { globalThis.game = previousGame; }
     });
 
     it('bloqueia formas indisponíveis e libera Universo desde o primeiro nível', () => {
@@ -71,7 +89,7 @@ describe('Respiração das Chamas', () => {
         const plan = buildFlameBreathingPlan('chamas_09', 3, { car_display: 4 });
         assert.equal(plan.state.nextHit.bonus, 4);
         assert.equal(plan.state.pendingDamage.saveDc, 16);
-        assert.equal(plan.state.activeForm.enemyHeat, 4);
+        assert.equal(plan.state.activeForm.enemyHeat, 12);
     });
 
     it('Brasas cruzam cada limiar somente uma vez', () => {
@@ -163,7 +181,7 @@ describe('Respiração das Chamas', () => {
                 synchronizedWeapon: { id: 'katana', name: 'Katana' },
             }
         );
-        assert.equal(flameWeaponHeat(plan.state, 'katana'), 12);
+        assert.equal(flameWeaponHeat(plan.state, 'katana'), 18);
         assert.equal(flameWeaponHeat(plan.state, 'arco'), 4);
         const cleared = parseFlameBreathingState(
             JSON.parse(clearFlameBreathingState()['system.props.resp_chamas_estado'])
@@ -183,8 +201,8 @@ describe('Respiração das Chamas combos e regras da missão', () => {
         // Custos somados corretamente: 3 PDR + 3 PDR
         assert.equal(plan1.cost, 3);
         assert.equal(plan2.cost, 3);
-        // Fogo Fátuo acumulado: +2 (1ª) + +3 (2ª) = 5
-        assert.equal(plan2.state.weaponHeat, 5);
+        // Fogo Fátuo acumulado: +7 (1ª) +9 (2ª).
+        assert.equal(plan2.state.weaponHeat, 16);
         // Rider da 1ª acompanha a 2ª em vez de ser sobrescrito
         assert.equal(plan2.state.pendingDamage.comboRider.formula, '2d4');
         assert.equal(plan2.state.pendingDamage.critical, true);
@@ -215,7 +233,7 @@ describe('Respiração das Chamas combos e regras da missão', () => {
         const afterDamage = consumeFlamePending(afterHit, { damage: true });
         assert.equal(afterDamage.pendingDamage.formula, '1d4');
         assert.equal(afterDamage.pendingDamage.uses, 1);
-        // Fogo Fátuo do combo: +2 + +3 = 5; Tigre concede Vantagem só com 30+
+        // Tigre concede Vantagem só com 30+ Fogo Fátuo.
         assert.equal(afterDamage.nextHit.source, 'chamas_02');
     });
 
@@ -276,13 +294,13 @@ describe('Respiração das Chamas combos e regras da missão', () => {
         const low = buildFlameBreathingPlan('chamas_05', 1, {});
         assert.equal(low.state.nextHit.count, 1);
         assert.equal(low.state.nextHit.advantage, false);
-        assert.equal(low.state.activeForm.enemyHeat, 3);
+        assert.equal(low.state.activeForm.enemyHeat, 8);
         assert.equal(low.state.pendingDamage.exhaustionOverDamage, 0);
 
         const high = buildFlameBreathingPlan('chamas_05', 4, {
             resp_chamas_estado: JSON.stringify({ weaponHeat: 30 }),
         });
-        assert.equal(high.state.weaponHeat, 33);
+        assert.equal(high.state.weaponHeat, 41);
         assert.equal(high.state.nextHit.advantage, true);
         assert.equal(high.state.pendingDamage.exhaustionOverDamage, 30);
         assert.equal(high.state.pendingDamage.formula, '6d10');
@@ -415,7 +433,8 @@ describe('Chamas fila de efeitos pendentes (combos encadeados)', () => {
 
     it('H · Ignição + 1ª + 2ª coexistem sem sobrescrita', () => {
         const ignitionState = buildFlameBreathingPlan('chamas_08', 4, {}).state;
-        assert.equal(ignitionState.ignition.damageBonus, 8);
+        assert.equal(ignitionState.ignition.damageBonus, '4d8');
+        assert.equal(ignitionState.ignition.damageType, 'concussao');
         const plan1 = buildFlameBreathingPlan('chamas_02', 2, {
             resp_chamas_estado: JSON.stringify(ignitionState),
         });
@@ -423,7 +442,7 @@ describe('Chamas fila de efeitos pendentes (combos encadeados)', () => {
             resp_chamas_estado: JSON.stringify(plan1.state),
         });
         assert.ok(plan2.state.ignition);
-        assert.equal(plan2.state.ignition.damageBonus, 8);
+        assert.equal(plan2.state.ignition.damageBonus, '4d8');
         assert.equal(plan2.state.pendingDamage.critical, true);
         assert.equal(plan2.state.pendingDamage.comboRider.formula, '2d4');
         const resolved = consumeFlamePending(consumeFlamePending(plan2.state, { hit: true }), {

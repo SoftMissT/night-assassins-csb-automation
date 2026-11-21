@@ -1,4 +1,5 @@
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
+import { ruleVariant, vanillaRuleSelection } from './rules-profile.mjs';
 
 export const WEAPON_RANK_LEVELS = Object.freeze({ D: 2, C: 4, B: 6, A: 8, S: 11, SS: 12 });
 
@@ -273,6 +274,45 @@ function normalizedWeaponMode(value = '') {
     return '';
 }
 
+// Livro v25.1, pp. 20 e 22. Também cobre cópias oficiais já importadas com metadados antigos.
+const OFFICIAL_RYOTO_EXCEPTIONS = Object.freeze({
+    'double blade': { vanillaAttacks: 2 },
+    kusarigama: { vanillaAttacks: 2 },
+    'ioio de lamina': { contactEffectsPerAction: 2 },
+});
+
+export function weaponExecutionProfile(itemProps, profile) {
+    const mechanics = weaponPropertyMechanics(itemProps);
+    const propertyKeys = new Set([...weaponPropertyKeys(itemProps.arma_propriedades), ...mechanics.map(rule => rule.id)]);
+    const explicitMode = normalizedWeaponMode(profile.modo ?? profile.modo_propriedade ?? profile.nome);
+    const attackModes = ['nitoryu', 'ryoto'].filter(id => propertyKeys.has(id));
+    const mode = explicitMode || selectedWeaponMode(itemProps) || (attackModes.length === 1 ? attackModes[0] : '');
+    const twoWeaponMode = mode === 'nitoryu' || mode === 'ryoto';
+    const ryoto = mode === 'ryoto';
+    const weaponName = String(itemProps.arma_nome ?? '').trim().toLocaleLowerCase('pt-BR')
+        .normalize('NFD').replace(/[\u0300-\u036f]/gu, '');
+    const official = Object.hasOwn(OFFICIAL_RYOTO_EXCEPTIONS, weaponName)
+        ? OFFICIAL_RYOTO_EXCEPTIONS[weaponName] : {};
+    const override = ryoto ? mechanics.find(rule => rule.id === 'ryoto') : null;
+    const vanillaRyoto = ryoto && ruleVariant('ryoto') === 'vanilla';
+    const vanillaNitoryu = mode === 'nitoryu' && ruleVariant('nitoryu') === 'vanilla';
+    const attackCount = vanillaNitoryu ? 1
+        : vanillaRyoto ? Number(override?.vanillaAttacks ?? official.vanillaAttacks) || 1
+          : Number(profile.ataques) || (twoWeaponMode ? 2 : 1);
+    const attacks = Math.max(1, Math.trunc(attackCount));
+    return {
+        modo_propriedade: mode,
+        ataques: attacks,
+        golpe_secundario_pago: vanillaNitoryu,
+        dano_segundo_golpe: String(profile.dano_segundo_golpe ?? (mode === 'nitoryu' ? 'fixo' : 'normal')),
+        acerto_segundo_sem_atributo: vanillaNitoryu || (attacks > 1 &&
+            (typeof profile.acerto_segundo_sem_atributo === 'boolean' ? profile.acerto_segundo_sem_atributo : twoWeaponMode)),
+        penalidade_segundo_acerto: vanillaNitoryu ? 0
+            : Number(profile.penalidade_segundo_acerto ?? (mode === 'nitoryu' ? -2 : 0)) || 0,
+        efeitos_contato_por_acao: ryoto && Number(override?.contactEffectsPerAction ?? official.contactEffectsPerAction) === 2 ? 2 : 1,
+    };
+}
+
 export function weaponUsageModes(itemProps = {}) {
     const profiles = weaponProfilesFromProps(itemProps);
     const modes = profiles
@@ -384,6 +424,8 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
     const profiles = selectedProfiles.length > 0 ? selectedProfiles : allProfiles;
     const rank = slayerWeaponRank(actorProps);
     const proficient = isWeaponProficient(itemProps, actorProps);
+    const reachBonus = ruleVariant('metal') === 'vanilla'
+        ? vanillaRuleSelection(actorProps, 'metal')?.weaponReach ?? 0 : 0;
     const specialWeapon =
         String(itemProps.arma_categoria ?? '').toLocaleLowerCase('pt-BR') === 'especial';
     const structuredRanked = rankFormulaValues(
@@ -408,6 +450,11 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
         ) ?? {};
 
     return profiles.map((profile, index) => {
+        const reach = profile.alcance ?? itemProps.arma_alcance;
+        const alcance = reachBonus && typeof reach === 'string'
+            ? reach.replace(/(\d+(?:[,.]\d+)?)(\s*m\b)/giu, (_match, value, unit) =>
+                `${(Number(value.replace(',', '.')) + reachBonus).toLocaleString('pt-BR')}${unit}`)
+            : reach;
         const rankFormula = ranked[index] ?? ranked[0] ?? '';
         const rankDiceEntry = rankDiceMap?.[rank];
         const rankDice =
@@ -420,7 +467,7 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
         const baseDice = String(profile.dano_dados ?? '').trim();
         const choiceKeys = attributeChoiceKeys(profile.formula_texto || rankFormula);
         const propertyKeys = weaponPropertyKeys(itemProps.arma_propriedades);
-        const profileMode = normalizedWeaponMode(profile.modo ?? profile.nome);
+        const execution = weaponExecutionProfile(itemProps, profile);
         const sourceAttributes = proficient
             ? objectList(profile.atributos).map((rule) => ({ ...rule }))
             : [];
@@ -434,6 +481,7 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
         });
         return {
             ...profile,
+            ...(alcance !== undefined ? { alcance } : {}),
             tipos_dano: weaponDamageTypeKeys(
                 profile.tipos_dano ?? itemProps.arma_tipos_dano ?? itemProps.arma_tipos_dano_json
             ),
@@ -443,22 +491,7 @@ export function weaponProfilesForActor(itemProps = {}, actorProps = {}) {
             rank_formula: rankFormula,
             proficiente: proficient,
             propriedade_chaves: propertyKeys,
-            modo_propriedade: profileMode,
-            ataques: Math.max(
-                1,
-                Math.trunc(
-                    Number(profile.ataques) || (['nitoryu', 'ryoto'].includes(profileMode) ? 2 : 1)
-                )
-            ),
-            dano_segundo_golpe: String(
-                profile.dano_segundo_golpe ?? (profileMode === 'nitoryu' ? 'fixo' : 'normal')
-            ),
-            acerto_segundo_sem_atributo:
-                profile.acerto_segundo_sem_atributo === true ||
-                ['nitoryu', 'ryoto'].includes(profileMode),
-            penalidade_segundo_acerto:
-                Number(profile.penalidade_segundo_acerto ?? (profileMode === 'nitoryu' ? -2 : 0)) ||
-                0,
+            ...execution,
             cadeia_critica:
                 profile.cadeia_critica && typeof profile.cadeia_critica === 'object'
                     ? structuredClone(profile.cadeia_critica)

@@ -199,7 +199,7 @@ export function buildBreathingDamageCatalog(actor, { items } = {}) {
     for (const item of sourceItems) {
         if (!isBreathingForm(item)) continue;
         const props = itemProps(item);
-        if (props.forma_id === 'chamas_07' || parseNumber(props.forma_ataque_padrao) === 1) continue;
+        if (['chamas_07', 'metal_07'].includes(props.forma_id) || parseNumber(props.forma_ataque_padrao) === 1) continue;
         const breathing = String(props.respiracao_nome || '').trim();
         const formName = String(props.nome_forma || item?.name || '').trim();
         if (!breathing || !formName) continue;
@@ -266,7 +266,7 @@ export function createAttackBuilderModel(actor) {
             });
         }
         if (['slayer', 'npc'].includes(ownerKind) && isBreathingForm(item)) {
-            if (props.forma_id === 'chamas_07' || parseNumber(props.forma_ataque_padrao) === 1) continue;
+            if (['chamas_07', 'metal_07'].includes(props.forma_id) || parseNumber(props.forma_ataque_padrao) === 1) continue;
             if (chosen && canonicalBreathing(String(props.respiracao_nome ?? '')) !== chosen) continue;
             if (parseNumber(props.nivel_req) > breathingLevel) continue;
             for (

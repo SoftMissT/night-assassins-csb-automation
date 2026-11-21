@@ -21,7 +21,9 @@
  */
 import { actorWeapons, isPassiveItem } from './breath-passives.mjs';
 import { actorKind } from './actor-kind.mjs';
-import { chosenBreathing, formsForBreathing } from './breathing-choice.mjs';
+import { formsForActorBreathings, secondaryBreathingUse } from './slayer/dual-breathing-service.mjs';
+import { parseLevel, parseNumber } from './parsing.mjs';
+import { oniUnarmedProfile } from './oni/progression-service.mjs';
 
 export function canChainBreathForms(actor) {
     const kind = actorKind(actor);
@@ -36,8 +38,7 @@ export function canChainBreathForms(actor) {
  * passivas automáticas que não se "usam" no sentido de uma técnica).
  */
 export function listChainableBreathForms(actor, { excludeItemUuid = '' } = {}) {
-    const breathing = chosenBreathing(actor?.system?.props ?? {});
-    const source = formsForBreathing([...(actor?.items ?? [])], breathing);
+    const source = formsForActorBreathings([...(actor?.items ?? [])], actor);
     return source
         .filter((item) => {
             if (item.uuid === excludeItemUuid) return false;
@@ -45,7 +46,8 @@ export function listChainableBreathForms(actor, { excludeItemUuid = '' } = {}) {
             if (!(props.forma_id && props.respiracao_nome)) return false;
             if (Number(props.forma_passiva) === 1) return false;
             if (isPassiveItem(String(props.forma_id))) return false;
-            return true;
+            const secondary = secondaryBreathingUse(actor, props.respiracao_nome);
+            return !secondary || (secondary.ok && secondary.level >= parseNumber(props.nivel_req));
         })
         .map((item) => {
             const props = item.system?.props ?? {};
@@ -77,8 +79,8 @@ export async function confirmChainedForma(actor, { excludeItemUuid = '' } = {}) 
     const decision = await openChainFormDialog({ chainable });
     if (decision?.chain && decision.itemUuid) {
         const { useBreathForm } = await import('./breath-service.mjs');
-        await useBreathForm({ actorUuid: actor.uuid, itemUuid: decision.itemUuid });
-        return true;
+        const result = await useBreathForm({ actorUuid: actor.uuid, itemUuid: decision.itemUuid });
+        return result?.ok === true;
     }
     return false;
 }
@@ -103,6 +105,8 @@ export async function resolveAutoDamage({
     forceAttackDamage = true,
     skipBreathingInjection = false,
     classBasicAttack = false,
+    passivePlan = null,
+    targets,
 }) {
     const successful = (hitResult?.attempts ?? []).filter((attempt) => attempt.hit);
     if (successful.length === 0) return;
@@ -116,7 +120,7 @@ export async function resolveAutoDamage({
     // diálogo de Acerto + Actor com exatamente UMA arma distinta equipada.
     // Só assume a arma quando não há ambiguidade com múltiplas armas
     // diferentes, o jogador precisa escolher explicitamente no diálogo.
-    if (!weaponItem && techniqueEntradas.length === 0) {
+    if (!weaponItem && techniqueEntradas.length === 0 && !hitResult.oniUnarmed) {
         const weapons = actorWeapons(actor);
         const distinctIds = [...new Set(weapons.map((entry) => entry.id))];
         if (distinctIds.length === 1) {
@@ -130,38 +134,69 @@ export async function resolveAutoDamage({
         globalThis.foundry?.utils?.randomID?.() ??
         globalThis.crypto?.randomUUID?.() ??
         String(Date.now());
+    const deferWindDamageDealt = successful.length > 1 && hitResult.formId?.startsWith('vento_');
+    const oniTitanImpactEligible = classBasicAttack && hitResult.actionType === 'ataque' && hitResult.isTechnique !== true;
+    const oniProps = actor.system?.props ?? {};
+    const unarmed = hitResult.oniUnarmed ? oniUnarmedProfile(parseLevel(oniProps.nvl_oni ?? oniProps.nvl_num ?? oniProps.nvl_pj),
+        hitResult.attackAttribute === 'DEX' ? 'claw' : 'martial') : null;
+    let windDamageDealt = 0;
     for (const attempt of successful) {
-        if (weaponItem) {
-            await rollWeaponItem({
+        let result;
+        if (weaponItem && !(passivePlan && techniqueEntradas.length)) {
+            result = await rollWeaponItem({
                 actor,
                 item: weaponItem,
                 weaponProfileIndex,
                 critical: attempt.critical,
+                attackTotal: attempt.roll?.total,
                 actionId,
                 skipActionConsumption: true,
                 forceAttackDamage,
                 damageOnly: true,
                 weaponAttackIndex: Number.isInteger(attempt.attackIndex) ? attempt.attackIndex : 0,
                 classBasicAttack,
+                oniTitanImpactEligible,
+                passiveExecutionId: hitResult.executionId,
+                passiveFormId: hitResult.formId,
+                deferWindDamageDealt,
+                passivePlan,
+                targets,
                 ...(attempt.flamingUniverse ? { flamingUniverse: attempt.flamingUniverse } : {}),
             });
         } else {
             const entradas =
                 techniqueEntradas.length > 0
                     ? techniqueEntradas
-                    : [{ tipoAcao: 'ataque', dado: '', fixo: 0, attrs: [], tiposDano: [] }];
-            await rollDamage({
+                    : unarmed
+                      ? [{ tipoAcao: 'ataque', dado: unarmed.formula.replace(/\b(DEX|FOR)\b/, '@$1'),
+                          fixo: 0, attrs: [], tiposDano: [unarmed.attribute === 'DEX' ? 'cortante' : 'concussao'] }]
+                      : [{ tipoAcao: 'ataque', dado: '', fixo: 0, attrs: [], tiposDano: [] }];
+            result = await rollDamage({
                 actor,
                 nome: techniqueLabel,
                 breathing,
                 entradas,
                 critical: attempt.critical,
+                attackTotal: attempt.roll?.total,
                 actionId,
                 skipActionConsumption: true,
                 forceAttackDamage,
                 skipBreathingInjection: skipBreathingInjection || techniqueEntradas.length > 0,
                 classBasicAttack,
+                oniTitanImpactEligible,
+                oniToxicUnarmedCritical: Boolean(unarmed && attempt.critical),
+                passiveExecutionId: hitResult.executionId,
+                passiveFormId: hitResult.formId,
+                deferWindDamageDealt,
+                passivePlan,
+                targets,
             });
         }
+        windDamageDealt += Number(result?.windDamageDealt) || 0;
+    }
+    if (deferWindDamageDealt && windDamageDealt > 0) {
+        const { recordBreathingPassiveEvent } = await import('./breathing-combat-passives.mjs');
+        await recordBreathingPassiveEvent(actor, { type: 'damageDealt', formId: hitResult.formId,
+            executionId: hitResult.executionId, isTechnique: true, direct: true, hostile: true, amount: windDamageDealt });
     }
 }

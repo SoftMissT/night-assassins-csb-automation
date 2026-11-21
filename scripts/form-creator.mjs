@@ -12,6 +12,7 @@ import { chosenBreathing } from './breathing-choice.mjs';
 import { MAX_FORMULA_LENGTH, SAFE_FORMULA } from './breathing-contract.mjs';
 import { resolveActorReference } from './core/combat-context.mjs';
 import { isValidDamageFormula, resolveAttributeRefs } from './damage-formula.mjs';
+import { secondaryBreathingForActor } from './slayer/dual-breathing-service.mjs';
 
 const escapeHtml = (value) =>
     String(value ?? '')
@@ -168,8 +169,9 @@ export async function openFormCreator({ actor, actorUuid } = {}) {
     }
     const documents = await loadBreathingCatalog();
     const initial = chosenBreathing(target.system?.props ?? {});
+    const secondary = secondaryBreathingForActor(target);
     const published = formCreatorBreathings(documents);
-    const breathings = initial ? published.filter((name) => name === initial) : published;
+    const breathings = initial ? published.filter((name) => name === initial || name === secondary) : published;
     if (breathings.length === 0) {
         globalThis.ui?.notifications?.warn?.(initial
             ? `A Respiração ${initial} não está publicada neste módulo.`

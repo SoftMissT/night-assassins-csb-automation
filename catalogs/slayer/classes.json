@@ -60,7 +60,7 @@
                     },
                     "parry": {
                         "trigger": "physical-melee-damage",
-                        "action": "reaction",
+                        "action": "passive",
                         "cycle": "round",
                         "uses": 1,
                         "formula": "1d6 + weaponDefenseAttribute",

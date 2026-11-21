@@ -4,7 +4,7 @@
  * O buff vive na flag `buffs` do Actor com a rodada de início e a de expiração. Aqui ele vira
  * fonte do agregador de bônus derivados, então entra em Acerto, Bloqueio, Esquiva e Dano fixo
  * pelos mesmos caminhos dos outros bônus. A expiração é por rodada de combate (aproximação do
- * "N turnos" da regra); sem combate ativo o buff segue valendo até ser substituído.
+ * "N turnos" da regra) no combate em que foi aplicado.
  */
 import { MODULE_ID } from './constants.mjs';
 
@@ -50,10 +50,16 @@ export function buffRuntimeSources(list, round = null) {
     return sources;
 }
 
-/** Fontes de buff de um Actor, na rodada atual do combate (se houver). */
-export function actorBuffSources(actor) {
+export function activeCombatBuffs(actor) {
     const list = actor?.getFlag?.(MODULE_ID, BUFFS_FLAG);
     if (!Array.isArray(list) || list.length === 0) return [];
-    const round = globalThis.game?.combat?.started ? (globalThis.game.combat.round ?? null) : null;
-    return buffRuntimeSources(list, round);
+    const combat = globalThis.game?.combat;
+    const combatId = combat?.uuid ?? combat?.id;
+    if (!combat?.started || !combatId) return [];
+    return activeBuffs(list.filter(buff => buff?.combatId === combatId), combat.round);
+}
+
+/** Fontes de buff de um Actor, na rodada atual do combate (se houver). */
+export function actorBuffSources(actor) {
+    return buffRuntimeSources(activeCombatBuffs(actor));
 }

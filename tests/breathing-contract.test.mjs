@@ -33,12 +33,12 @@ describe('breathing-contract — normalização', () => {
 
     test('mapeia feeds por Forma (calor no uso, calor no acerto)', () => {
         const shiranui = resolveForm('Chamas', 'chamas_02');
-        assert.equal(shiranui.feedsUsar.weaponHeat, 2);
+        assert.equal(shiranui.feedsUsar.weaponHeat, 7);
         assert.equal(shiranui.feedsAcerto.enemyHeat, 0);
 
         const nobori = resolveForm('Chamas', 'chamas_03');
-        assert.equal(nobori.feedsUsar.weaponHeat, 3);
-        assert.equal(nobori.feedsAcerto.enemyHeat, 2);
+        assert.equal(nobori.feedsUsar.weaponHeat, 9);
+        assert.equal(nobori.feedsAcerto.enemyHeat, 6);
     });
 
     test('normaliza tipos de dano conhecidos e descarta desconhecidos', () => {

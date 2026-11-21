@@ -11,7 +11,7 @@ const isSpacer = (node) => node.type === 'panel' && !node.key && (node.contents 
 
 // Ordem de uso na mesa: recursos → atributos → combate → bônus → itens → estado.
 describe('Layout das fichas de ator', () => {
-    it('Slayer: organização da ficha do operador, sem espaçadores nem painéis recolhidos', async () => {
+    it('Slayer: combate direto, com apenas os bônus fixos recolhidos', async () => {
         const tabs = (await read('slayer')).system.body.contents[0].contents;
         assert.deepEqual(
             tabs.map((tab) => tab.key),
@@ -19,7 +19,12 @@ describe('Layout das fichas de ator', () => {
         );
         const combat = tabs[0].contents;
         assert.ok(!combat.some(isSpacer), 'sem painéis espaçadores vazios');
-        assert.ok(!combat.some((node) => node.collapsible), 'nada recolhido na aba de combate');
+        const fixed = combat.at(-1);
+        assert.deepEqual(combat.filter((node) => node.collapsible), [fixed]);
+        assert.equal(fixed.title, 'Bônus Fixos');
+        assert.equal(fixed.defaultCollapsed, true);
+        assert.equal(fixed.role, 0);
+        assert.ok(keys([fixed]).includes('bonus_acerto_slayer'));
         assert.ok(keys([combat[1]]).includes('bonus_atr_vit_valor_temp'), 'temporários na linha dos atributos');
         assert.ok(keys(combat.slice(2, 4)).includes('pdv_slayer_atual_valor_display'));
         assert.ok(keys(combat.slice(2, 4)).includes('pdr_slayer_atual_valor_display'));
@@ -40,7 +45,13 @@ describe('Layout das fichas de ator', () => {
             ],
             'gerenciadores em pares botão | resumo'
         );
-        assert.equal(manage.at(-1).key, 'armas_proficientes');
+        const config = tabs.find((tab) => tab.key === 'configs_tab');
+        const skills = tabs.find((tab) => tab.key === 'habilidades_slayer_tab');
+        for (const key of ['slayer_rules_vanilla', 'bonus_derivados_slayer_auditar']) {
+            assert.ok(!keys(combat).includes(key));
+            assert.equal(config.contents[0].contents.find((node) => node.key === key)?.role, 4);
+        }
+        assert.ok(keys(skills.contents).includes('armas_proficientes'));
         const flameDisplay = manage.find((node) => node.key === 'resp_chamas_display');
         assert.ok(flameDisplay, 'Fogo Fátuo visível na aba de combate');
         assert.equal(flameDisplay.role, 0, 'Fogo Fátuo visível para jogadores');
@@ -83,17 +94,15 @@ describe('Layout das fichas de ator', () => {
         const order = ficha.map((node) => node.key).filter(Boolean);
         assert.ok(order.indexOf('npc_combat') > -1);
         assert.ok(order.indexOf('npc_combat') < order.indexOf('inventario_npc_armas'));
-        const bonusPanelIndex = ficha.findIndex((node) =>
-            keys([node]).includes('npc_bonus_acerto')
-        );
-        assert.ok(bonusPanelIndex > -1, 'Bônus Fixos na aba Combate');
-        assert.ok(bonusPanelIndex < ficha.findIndex((node) => node.key === 'npc_combat'),
-            'bônus antes do combate');
-        assert.ok(ficha.findIndex((node) => node.key === 'npc_dados_combate') <
-            ficha.findIndex((node) => node.key === 'npc_combat'),
-            'bônus de ação antes do combate');
-        const config = body[0].contents[1].contents;
-        assert.ok(!config.some((node) => keys([node]).includes('npc_bonus_acerto')),
-            'bônus saíram da Configuração');
+        const fixed = ficha.at(-1);
+        assert.equal(fixed.title, 'Bônus Fixos');
+        assert.equal(fixed.defaultCollapsed, true);
+        assert.equal(fixed.role, 0);
+        assert.ok(keys([fixed]).includes('npc_bonus_acerto'));
+        const config = body[0].contents.find(node => node.key === 'npc_config_tab').contents;
+        for (const key of ['npc_rules_vanilla', 'npc_dados_combate', 'acoes_slayer_ataque_bonus']) {
+            assert.ok(!keys(ficha).includes(key));
+            assert.ok(keys(config).includes(key));
+        }
     });
 });

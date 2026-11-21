@@ -26,8 +26,206 @@ Roll.create = (formula) => {
 
 import { rollHit, attemptBonusFormula } from '../scripts/hit-service.mjs';
 import { buildFlameBreathingPlan, flameTurnKey } from '../scripts/flame-breathing-service.mjs';
+import { offerMasterBattleCounterattack } from '../scripts/slayer/master-battle-counterattack.mjs';
 
 describe('hit-service', () => {
+    it('Fantasia Final conta três erros cumulativos sem limitar a quantidade de golpes', async () => {
+        const actor = makeActor({ props: { nome_slayer: 'Sonhos', acerto_label: 'acerto_label_dex' } });
+        const previousWait = foundry.applications.api.DialogV2.wait;
+        const decisions = ['miss', ...Array(21).fill('hit'), 'miss', 'hit', 'miss'];
+        const missesBefore = [];
+        const damages = [];
+        let charges = 0;
+        foundry.applications.api.DialogV2.wait = async dialog => {
+            if (dialog.window.title === 'Acerto') return {
+                mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0,
+                rollCount: 1, actionType: 'completa', weaponId: '',
+            };
+            missesBefore.push(Number(dialog.content.match(/ERROS (\d+)\/3/u)?.[1]));
+            assert.equal(charges, 1);
+            const action = decisions.shift();
+            const button = dialog.buttons.find(entry => entry.action === action);
+            assert.ok(button, 'a sequência encerra pelo terceiro erro');
+            return button.callback(null, { form: { elements: {} } });
+        };
+        try {
+            const result = await rollHit({ actor, isTechnique: true, autoDamage: false,
+                skipActionConsumption: true, formId: 'sonhos_10',
+                attackSequence: {
+                    missLimit: 3,
+                    beforeFirstRoll: async () => ++charges === 1,
+                    onHit: async ({ executionId }) => damages.push(executionId),
+                },
+            });
+            assert.equal(result.hits, 22);
+            assert.equal(result.misses, 3);
+            assert.equal(result.attempts.length, 25);
+            assert.equal(damages.length, 22);
+            assert.equal(new Set(damages).size, 22);
+            assert.deepEqual(missesBefore, [0, ...Array(22).fill(1), 2, 2]);
+            assert.deepEqual(decisions, []);
+        } finally {
+            foundry.applications.api.DialogV2.wait = previousWait;
+        }
+    });
+
+    for (const scenario of [
+        { label: 'Especial', choice: 'especial', initial: { round: { unica: 1 } }, offered: ['especial'], spent: ['ataque', 'especial'] },
+        { label: 'Única', choice: 'unica', initial: {}, offered: ['especial', 'unica'], spent: ['ataque', 'unica'] },
+        { label: 'cancelamento', choice: null, initial: {}, offered: ['especial', 'unica'], spent: ['ataque'] },
+        { label: 'ações indisponíveis', initial: { turn: { especial: 1 }, round: { unica: 1 } }, spent: ['ataque'] },
+        { label: 'turno encerrado', choice: 'especial', initial: {}, offered: ['especial', 'unica'], changedTurn: true, spent: ['ataque'] },
+        { label: 'técnica já paga', initial: {}, skip: true, spent: [] },
+    ]) {
+        it(`Nitoryu Vanilla cobra apenas ações executadas · ${scenario.label}`, async () => {
+            const actor = makeActor({ props: {
+                nome_slayer: 'Teste Nitoryu', acoes_slayer_dados: JSON.stringify(scenario.initial),
+            } });
+            const item = { id: 'katana', name: 'Katana', system: { props: {
+                arma_nome: 'Katana', arma_modo_uso: 'nitoryu', arma_propriedades: 'Acuidade / Nitoryu',
+                arma_critico: 20, arma_perfis_ataque: [{ nome: 'Nitoryu', modo: 'nitoryu', ataques: 2,
+                    penalidade_segundo_acerto: -2, dano_fixo: 5, tipos_dano: ['cortante'] }],
+            } } };
+            actor.items = Object.assign([item], { get: id => id === item.id ? item : null });
+            const spent = [];
+            actor.update = async patch => {
+                const raw = patch['system.props.acoes_slayer_dados'];
+                if (!raw) return;
+                const previous = JSON.parse(actor.system.props.acoes_slayer_dados);
+                const next = JSON.parse(raw);
+                for (const scope of ['turn', 'round'])
+                    for (const [key, value] of Object.entries(next[scope]))
+                        if (value > (previous[scope]?.[key] ?? 0)) spent.push(key);
+                actor.system.props.acoes_slayer_dados = raw;
+            };
+            const previous = { game, wait: foundry.applications.api.DialogV2.wait, create: Roll.create };
+            const formulas = [];
+            const actionType = scenario.skip ? 'especial' : '';
+            const combatant = { id: 'start', actor };
+            globalThis.game = { ...game, combat: { id: 'test', round: 1, turn: 0, started: true, combatant },
+                settings: { get: (_module, key) => key === 'rulesSelection'
+                    ? JSON.stringify({ propriedades: { nitoryu: 'vanilla' } }) : undefined } };
+            let offered;
+            foundry.applications.api.DialogV2.wait = async dialog => {
+                if (dialog.window.title === 'Acerto') return { mode: 'normal', rollMode: 'publicroll', bonusRaw: '',
+                    cdVal: 0, rollCount: 1, actionType, weaponId: item.id, weaponProfileIndex: 0 };
+                if (dialog.window.title === 'Segundo golpe · Nitoryu') {
+                    offered = dialog.buttons.filter(button => button.action !== 'cancel').map(button => button.action);
+                    if (scenario.changedTurn) game.combat.turn = 1;
+                    return scenario.choice;
+                }
+                return { hit: !scenario.skip, continue: true };
+            };
+            Roll.create = formula => {
+                formulas.push(formula);
+                return { evaluate: async () => ({ total: 12, toMessage: async () => {},
+                    dice: [{ results: [{ result: 10, active: true }] }] }) };
+            };
+            try {
+                const result = await rollHit({ actor, autoDamage: false, skipActionConsumption: scenario.skip,
+                    isTechnique: scenario.skip });
+                assert.deepEqual(spent, scenario.spent);
+                assert.deepEqual(offered, scenario.offered);
+                assert.equal(result.attempts.length, scenario.spent.length === 2 ? 2 : 1);
+                if (scenario.spent.length === 2) {
+                    assert.equal(result.attempts[1].actionType, scenario.choice);
+                    assert.equal(formulas[1], '1d20');
+                }
+            } finally {
+                globalThis.game = previous.game;
+                foundry.applications.api.DialogV2.wait = previous.wait;
+                Roll.create = previous.create;
+            }
+        });
+    }
+
+    it('Pressão de Combate entra só no segundo ataque proficiente contra o mesmo alvo', async () => {
+        const previousGame = game;
+        const previousCreate = Roll.create;
+        const flags = {};
+        const actor = makeActor({ uuid: 'Actor.mestre', props: {
+            nome_slayer: 'Mestre', classe_escolhida: 'classe_mb', nvl_num: 6,
+            acerto_label: 'acerto_label_dex', dex_display: 4,
+        } });
+        actor.items = [{
+            id: 'w1', name: 'Nichirin', system: { props: { arma_nome: 'Nichirin', arma_critico: 20,
+                arma_perfis_ataque: [{ nome: 'Corte', dano_dados: '1d6', tipos_dano: ['cortante'] }] } },
+        }];
+        actor.getFlag = (_module, key) => flags[key];
+        actor.setFlag = async (_module, key, value) => { flags[key] = value; };
+        const target = makeActor({ uuid: 'Actor.alvo' });
+        const formulas = [];
+        globalThis.game = { ...game, combat: { id: 'c', round: 1, turn: 0, started: true,
+            combatant: { actor, id: 'mestre' }, combatants: [] }, user: { ...game.user } };
+        Roll.create = formula => { formulas.push(formula); return previousCreate(formula); };
+        try {
+            _dialogReturn = [
+                { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0, rollCount: 3,
+                    actionType: 'ataque', weaponId: 'w1', weaponProfileIndex: 0 },
+                { hit: true, continue: true }, { hit: true, continue: true }, { hit: true, continue: false },
+            ];
+            const result = await rollHit({ actor, targets: new Set([{ actor: target }]), autoDamage: false });
+            assert.equal(result.hits, 3);
+            assert.equal(formulas.length, 3);
+            assert.equal(formulas[1], formulas[0] + ' + 1');
+            assert.equal(formulas[2], formulas[0]);
+            assert.equal(flags.masterBattlePressure.targetUuid, null);
+        } finally {
+            globalThis.game = previousGame;
+            Roll.create = previousCreate;
+            _dialogReturn = null;
+        }
+    });
+
+    it('Contra-ataque Homebrew exige 17 natural e usa uma Reação mesmo quando erra', async () => {
+        const previousGame = game;
+        const previousGrid = canvas.grid;
+        const previousRoll = _rollResult;
+        const actor = makeActor({ uuid: 'Actor.mestre', props: {
+            nome_slayer: 'Mestre', classe_escolhida: 'classe_mb', nvl_num: 12,
+            acerto_label: 'acerto_label_dex', dex_display: 4,
+        } });
+        actor.items = [{ id: 'w1', name: 'Nichirin', system: { props: {
+            arma_nome: 'Nichirin', arma_critico: 20, arma_alcance: '1,5m',
+            arma_perfis_ataque: [{ nome: 'Corte', dano_dados: '1d6', tipos_dano: ['cortante'] }],
+        } } }];
+        const flags = {};
+        const patches = [];
+        actor.getFlag = (_module, key) => flags[key];
+        actor.update = async patch => {
+            patches.push(patch);
+            if (patch['flags.night-assassins-csb-automation.masterBattleCounterattackRound'])
+                flags.masterBattleCounterattackRound = patch['flags.night-assassins-csb-automation.masterBattleCounterattackRound'];
+        };
+        const attacker = makeActor({ uuid: 'Actor.atacante' });
+        actor.getActiveTokens = () => [{ center: { x: 0, y: 0 } }];
+        attacker.getActiveTokens = () => [{ center: { x: 1, y: 0 } }];
+        globalThis.game = { ...game, combat: { id: 'c', round: 1, turn: 0, started: true,
+            combatant: { actor: attacker, id: 'atacante' }, combatants: [] }, user: { ...game.user } };
+        canvas.grid = { measurePath: () => ({ distance: 1.5 }) };
+        _rollResult = { ..._rollResult, total: 25, dice: [{ results: [{ result: 16, active: true }] }] };
+        const trigger = { enemyMissed: true, melee: true };
+        try {
+            _dialogReturn = [null];
+            assert.equal(await offerMasterBattleCounterattack(actor, attacker, trigger), null);
+            assert.equal(patches.length, 0);
+            _dialogReturn = ['w1', {
+                mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0, rollCount: 4,
+                actionType: 'reacao', weaponId: 'w1', weaponProfileIndex: 0,
+            }];
+            const result = await offerMasterBattleCounterattack(actor, attacker, trigger);
+            assert.equal(result.attempts.length, 1);
+            assert.equal(result.hits, 0);
+            assert.equal(JSON.parse(patches.at(-1)['system.props.acoes_slayer_dados']).round.reacao, 1);
+            assert.equal(await offerMasterBattleCounterattack(actor, attacker, trigger), null);
+        } finally {
+            globalThis.game = previousGame;
+            canvas.grid = previousGrid;
+            _rollResult = previousRoll;
+            _dialogReturn = null;
+        }
+    });
+
     it('o primeiro Ataque Padrão consome Universo mesmo se errar e o segundo golpe acertar', async () => {
         const previousGame = game;
         const previousChat = ChatMessage.create;
@@ -536,7 +734,7 @@ describe('hit-service', () => {
                 for_display: '8',
                 resp_passivas_estado: JSON.stringify({
                     version: 1,
-                    stone: { breakByWeapon: { w1: 8 } },
+                    stone: { breakStacks: 8 },
                 }),
             },
         });
@@ -574,96 +772,103 @@ describe('hit-service', () => {
         }
     });
 
-    it('Manoplas encadeiam um ataque extra e +1 de Acerto após crítico', async () => {
-        const item = {
-            id: 'manoplas',
-            uuid: 'Item.manoplas',
-            name: 'Manoplas / Soqueiras',
-            system: {
-                template: 'NAWeaponTpl00001',
-                props: {
-                    arma_nome: 'Manoplas / Soqueiras',
-                    arma_modo_uso: 'ryoto',
-                    arma_propriedades: 'Acuidade / Ryoto / Nitoryu',
-                    arma_perfis_ataque: [
-                        {
-                            nome: 'Ryōtō',
-                            modo: 'ryoto',
-                            critico: 20,
-                            dano_fixo: 3,
-                            atributos: [
-                                { key: 'DEX', multiplicador: 0.5, escolha: true },
-                                { key: 'FOR', multiplicador: 0.5, escolha: true },
-                            ],
-                            tipos_dano: ['concussao'],
-                            ataques: 2,
-                            dano_segundo_golpe: 'normal',
-                            acerto_segundo_sem_atributo: true,
-                            cadeia_critica: {
-                                ativa: true,
-                                bonus_acerto: 1,
-                                dano_fixo: 1,
-                                atributo_inteiro: ['DEX', 'FOR'],
+    for (const [variant, baseAttacks] of [['homebrew', 2], ['vanilla', 1]]) {
+        it(`Manoplas em ${variant} mantêm a sequência crítica e +1 no Acerto`, async () => {
+            const item = {
+                id: 'manoplas',
+                uuid: 'Item.manoplas',
+                name: 'Manoplas / Soqueiras',
+                system: {
+                    template: 'NAWeaponTpl00001',
+                    props: {
+                        arma_nome: 'Manoplas / Soqueiras',
+                        arma_modo_uso: 'ryoto',
+                        arma_propriedades: 'Acuidade / Ryoto / Nitoryu',
+                        arma_perfis_ataque: [
+                            {
+                                nome: 'Ryōtō',
+                                modo: 'ryoto',
+                                critico: 20,
+                                dano_fixo: 3,
+                                atributos: [
+                                    { key: 'DEX', multiplicador: 0.5, escolha: true },
+                                    { key: 'FOR', multiplicador: 0.5, escolha: true },
+                                ],
+                                tipos_dano: ['concussao'],
+                                ataques: 2,
+                                dano_segundo_golpe: 'normal',
+                                acerto_segundo_sem_atributo: true,
+                                cadeia_critica: {
+                                    ativa: true,
+                                    bonus_acerto: 1,
+                                    dano_fixo: 1,
+                                    atributo_inteiro: ['DEX', 'FOR'],
+                                },
                             },
-                        },
-                    ],
+                        ],
+                    },
                 },
-            },
-            update: async () => {},
-        };
-        const actor = makeActor({
-            props: {
-                acerto_label: 'acerto_label_dex',
-                dex_display: '10',
-                for_display: '6',
-                folego_slayer_atual: 0,
-            },
+                update: async () => {},
+            };
+            const actor = makeActor({
+                props: {
+                    acerto_label: 'acerto_label_dex',
+                    dex_display: '10',
+                    for_display: '6',
+                    folego_slayer_atual: 0,
+                },
+            });
+            actor.items = {
+                [Symbol.iterator]: [item][Symbol.iterator].bind([item]),
+                get: (id) => (id === item.id ? item : null),
+            };
+            actor.update = async () => {};
+            _dialogReturn = [
+                {
+                    mode: 'normal',
+                    rollMode: 'publicroll',
+                    bonusRaw: '',
+                    cdVal: 0,
+                    rollCount: 1,
+                    actionType: 'ataque',
+                    weaponId: item.id,
+                    weaponProfileIndex: 0,
+                    weaponAttribute: 'DEX',
+                },
+                { hit: true, continue: true },
+                ...(baseAttacks === 2 ? [{ hit: true, continue: true }] : []),
+                { hit: true, continue: false },
+            ];
+            const naturals = [20, ...Array(baseAttacks).fill(10)];
+            const formulas = [];
+            const previousCreate = Roll.create;
+            const previousSettings = game.settings;
+            game.settings = { ...previousSettings, get: (moduleId, key) =>
+                key === 'rulesSelection' ? JSON.stringify({ propriedades: { ryoto: variant } })
+                    : previousSettings?.get?.(moduleId, key) };
+            Roll.create = (formula) => ({
+                evaluate: async () => {
+                    const natural = naturals.shift();
+                    formulas.push(formula);
+                    return {
+                        total: natural + 10,
+                        dice: [{ results: [{ result: natural, active: true }] }],
+                        toMessage: async () => ({ id: `roll-${formulas.length}` }),
+                    };
+                },
+            });
+            try {
+                const result = await rollHit({ actor, autoDamage: false });
+                assert.equal(result.maximum, baseAttacks + 1);
+                assert.equal(result.attempts.length, baseAttacks + 1);
+                assert.match(formulas[1], /\+ 1$/);
+                if (baseAttacks === 2) assert.match(formulas[2], /\+ 1$/);
+            } finally {
+                Roll.create = previousCreate;
+                game.settings = previousSettings;
+            }
         });
-        actor.items = {
-            [Symbol.iterator]: [item][Symbol.iterator].bind([item]),
-            get: (id) => (id === item.id ? item : null),
-        };
-        actor.update = async () => {};
-        _dialogReturn = [
-            {
-                mode: 'normal',
-                rollMode: 'publicroll',
-                bonusRaw: '',
-                cdVal: 0,
-                rollCount: 1,
-                actionType: 'ataque',
-                weaponId: item.id,
-                weaponProfileIndex: 0,
-                weaponAttribute: 'DEX',
-            },
-            { hit: true, continue: true },
-            { hit: true, continue: true },
-            { hit: true, continue: false },
-        ];
-        const naturals = [20, 10, 10];
-        const formulas = [];
-        const previousCreate = Roll.create;
-        Roll.create = (formula) => ({
-            evaluate: async () => {
-                const natural = naturals.shift();
-                formulas.push(formula);
-                return {
-                    total: natural + 10,
-                    dice: [{ results: [{ result: natural, active: true }] }],
-                    toMessage: async () => ({ id: `roll-${formulas.length}` }),
-                };
-            },
-        });
-        try {
-            const result = await rollHit({ actor, autoDamage: false });
-            assert.equal(result.maximum, 3);
-            assert.equal(result.attempts.length, 3);
-            assert.match(formulas[1], /\+ 1$/);
-            assert.match(formulas[2], /\+ 1$/);
-        } finally {
-            Roll.create = previousCreate;
-        }
-    });
+    }
 
     it('Inverno Sombrio (Neve, Área): Congelar crítico é aplicado a TODOS os inimigos marcados, não só ao primeiro', async () => {
         _dialogReturn = [

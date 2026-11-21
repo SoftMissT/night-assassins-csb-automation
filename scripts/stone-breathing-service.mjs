@@ -1,5 +1,6 @@
 import { parseNumber } from './parsing.mjs';
 import { actorKind } from './actor-kind.mjs';
+import { isHomebrewExtra } from './rules-profile.mjs';
 import {
     addStoneBreakForAction,
     parseBreathPassiveState,
@@ -76,38 +77,38 @@ export function clearStoneBreathingState(raw) {
 /**
  * Orquestração pós-dano da Pedra (extraída de damage-service):
  *  - registra o dano confirmado por alvo (alimenta o Jamongan Sōkyoku);
- *  - concede no máximo uma Quebra por ação quando a ação causou Concussão
- *    não anulada com arma sincronizada.
+ *  - concede no máximo uma Quebra por ação quando o dano aplicado teve
+ *    Concussão efetiva (> 0 após resistências/reduções).
  * @param {object} options
  * @param {Actor} options.actor - usuário da Pedra.
- * @param {Array<{actor:object, amount:number, wound:number}>} options.appliedTargets
- * @param {Array<{negated?:boolean, components?:Array<{types?:string[]}>}>} options.damageRequests
+ * @param {Array<{actor:object, amount:number, wound:number, concussionDamage?:number}>} options.appliedTargets
  * @param {string} options.actionId
  * @param {number} options.strength - FOR usada no cálculo da Quebra.
  * @param {boolean} options.hasAttackDamage
+ * @param {string} [options.weaponId] - arma real do golpe; vazio em técnicas sem arma.
  */
 export async function applyStonePassiveAfterDamage({
     actor,
     appliedTargets = [],
-    damageRequests = [],
     actionId = '',
     strength = 0,
     hasAttackDamage = false,
+    weaponId = '',
 } = {}) {
+    if (!isHomebrewExtra('extras_pedra')) return;
     const kind = actorKind(actor) ?? 'slayer';
-    if (kind !== 'slayer' || !hasAttackDamage) return;
+    if (!['slayer', 'npc'].includes(kind) || !hasAttackDamage) return;
     const knowsStone = [...(actor?.items ?? [])].some((item) =>
         ['Pedra', 'Iwa no Kokyū'].includes(item.system?.props?.respiracao_nome)
     );
     if (!knowsStone) return;
 
     let nextPassiveState = parseBreathPassiveState(actor.system?.props?.resp_passivas_estado);
-    const weaponId = String(nextPassiveState.lastWeapon?.id ?? '');
     for (const target of appliedTargets) {
-        if (target.amount + target.wound <= 0) continue;
+        if (target.amount <= 0) continue;
         nextPassiveState = registerStoneConfirmedDamage(nextPassiveState, {
             targetUuid: target.actor.uuid,
-            damage: target.amount + target.wound,
+            damage: target.amount,
             actionId,
             combatId: globalThis.game?.combat?.uuid ?? '',
             round: globalThis.game?.combat?.round ?? 0,
@@ -115,13 +116,11 @@ export async function applyStonePassiveAfterDamage({
             weaponId,
         });
     }
-    const quebraApplies = damageRequests.some(
-        (request) =>
-            request.negated !== true &&
-            (request.components ?? []).some((component) => component.types?.includes('concussao'))
+    const quebraApplies = appliedTargets.some(
+        (target) => parseNumber(target.concussionDamage) > 0
     );
-    if (quebraApplies && weaponId)
-        nextPassiveState = addStoneBreakForAction(nextPassiveState, weaponId, strength, actionId);
+    if (quebraApplies)
+        nextPassiveState = addStoneBreakForAction(nextPassiveState, strength, actionId);
     await actor.update(passiveStatePatch(nextPassiveState), {
         naCsbAutomation: true,
         naBreathing: true,

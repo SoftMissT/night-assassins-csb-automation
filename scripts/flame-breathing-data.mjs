@@ -18,7 +18,7 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Ichi no Kata Shiranui',
         ptName: 'Fogo Desconhecido / Tempestade Ígnea',
         action: 'especial',
-        weaponHeat: 2,
+        weaponHeat: 7,
         enemyHeat: 0,
         damageTypes: ['fogo'],
         levels: [
@@ -34,8 +34,8 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Ni no Kata Nobori en Ten',
         ptName: 'Céu em Chamas Ascendentes',
         action: 'ataque',
-        weaponHeat: 3,
-        enemyHeat: 2,
+        weaponHeat: 9,
+        enemyHeat: 6,
         levels: [
             LEVEL(3, { criticalOnHit: true }),
             LEVEL(3, { criticalOnHit: true, blockPenalty: -2, blockPenaltyTurns: 2 }),
@@ -49,7 +49,7 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Shi no Kata Sei en no Uneri',
         ptName: 'Ondulação da Chama Fluorescente',
         action: 'reacao',
-        weaponHeat: 2,
+        weaponHeat: 7,
         enemyHeat: 0,
         levels: [
             LEVEL(1, { blockBonus: 1 }),
@@ -64,8 +64,8 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Go no Kata Enko',
         ptName: 'Tigre Ardente',
         action: 'ataque',
-        weaponHeat: 3,
-        enemyHeat: 3,
+        weaponHeat: 11,
+        enemyHeat: 8,
         damageTypes: ['fogo'],
         levels: [
             LEVEL(3, { damage: '4d10', hitCount: 1 }),
@@ -80,8 +80,8 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Roku no Kata Hono Arashi',
         ptName: 'Tormenta de Chamas',
         action: 'ataque',
-        weaponHeat: 4,
-        enemyHeat: 4,
+        weaponHeat: 13,
+        enemyHeat: 10,
         damageTypes: ['fogo'],
         levels: [
             null,
@@ -118,7 +118,7 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Hachi no Kata Tenka',
         ptName: 'Ignição',
         action: 'especial',
-        weaponHeat: 0,
+        weaponHeat: 8,
         enemyHeat: 0,
         levels: [
             null,
@@ -133,8 +133,8 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Ku no Kata Rengoku',
         ptName: 'Rengoku',
         action: 'ataque',
-        weaponHeat: 4,
-        enemyHeat: 4,
+        weaponHeat: 15,
+        enemyHeat: 12,
         damageTypes: ['fogo'],
         levels: [
             null,
@@ -145,8 +145,19 @@ export const FLAME_FORMS = Object.freeze([
     },
 ]);
 
-export function flameFormById(id) {
-    return FLAME_FORMS.find((form) => form.id === String(id ?? '')) ?? null;
+export function flameFormById(id, variant = 'homebrew') {
+    const form = FLAME_FORMS.find((entry) => entry.id === String(id ?? '')) ?? null;
+    if (form?.id === 'chamas_03') {
+        if (variant === 'vanilla') return { ...form, weaponHeat: 3, enemyHeat: 2 };
+        const formulas = ['2d10', '4d10', '6d10 + @for', '8d10 + @for + @fdv'];
+        return { ...form, levels: form.levels.map((level, index) => ({ ...level, damage: formulas[index] })) };
+    }
+    if (form?.id === 'chamas_08' && variant === 'homebrew') {
+        return { ...form, levels: form.levels.map((level, index) => level && ({
+            ...level, damageBonus: index === 2 ? '2d8' : '4d8', damageType: 'concussao',
+        })) };
+    }
+    return form;
 }
 
 export function flameWeaponTier(rawHeat) {
@@ -154,23 +165,30 @@ export function flameWeaponTier(rawHeat) {
     if (heat >= 60)
         return {
             heat,
-            hit: 3,
-            weaponDamage: 3,
-            techniqueDie: '1d6',
-            multiplier: 1.5,
+            hit: 7,
+            weaponDamage: 8,
+            techniqueDie: '',
+            multiplier: 2,
             selfDamage: 2,
         };
     if (heat >= 50)
-        return { heat, hit: 3, weaponDamage: 3, techniqueDie: '1d6', multiplier: 1, selfDamage: 0 };
+        return { heat, hit: 6, weaponDamage: 7, techniqueDie: '3d10', multiplier: 1, selfDamage: 0 };
     if (heat >= 40)
-        return { heat, hit: 2, weaponDamage: 3, techniqueDie: '1d6', multiplier: 1, selfDamage: 0 };
+        return { heat, hit: 5, weaponDamage: 6, techniqueDie: '2d10', multiplier: 1, selfDamage: 0 };
     if (heat >= 30)
-        return { heat, hit: 2, weaponDamage: 2, techniqueDie: '1d6', multiplier: 1, selfDamage: 0 };
+        return { heat, hit: 4, weaponDamage: 5, techniqueDie: '1d10', multiplier: 1, selfDamage: 0 };
     if (heat >= 20)
-        return { heat, hit: 2, weaponDamage: 2, techniqueDie: '', multiplier: 1, selfDamage: 0 };
+        return { heat, hit: 3, weaponDamage: 4, techniqueDie: '', multiplier: 1, selfDamage: 0 };
     if (heat >= 10)
-        return { heat, hit: 1, weaponDamage: 2, techniqueDie: '', multiplier: 1, selfDamage: 0 };
+        return { heat, hit: 2, weaponDamage: 3, techniqueDie: '', multiplier: 1, selfDamage: 0 };
     if (heat >= 5)
-        return { heat, hit: 1, weaponDamage: 1, techniqueDie: '', multiplier: 1, selfDamage: 0 };
+        return { heat, hit: 1, weaponDamage: 2, techniqueDie: '', multiplier: 1, selfDamage: 0 };
     return { heat, hit: 0, weaponDamage: 0, techniqueDie: '', multiplier: 1, selfDamage: 0 };
+}
+
+export function flameEmberFormula(rawHeat) {
+    const heat = Math.max(0, Number(rawHeat) || 0);
+    for (const [threshold, dice] of [[60, 30], [50, 24], [40, 18], [30, 14], [20, 10], [10, 6], [5, 4]])
+        if (heat >= threshold) return `${dice}d10`;
+    return '';
 }

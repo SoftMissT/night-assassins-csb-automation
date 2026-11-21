@@ -1,6 +1,10 @@
 /** Planos e estado persistente da Respiração da Neve. */
 import { parseNumber } from './parsing.mjs';
 import { SNOW_SYNERGIES, snowFormById } from './snow-breathing-data.mjs';
+import { MODULE_ID } from './constants.mjs';
+import { actorKind } from './actor-kind.mjs';
+import { formatStatusSummary, parseStatusState } from './status-service.mjs';
+import { isHomebrewExtra } from './rules-profile.mjs';
 
 const EMPTY_STATE = () => ({ version: 1, freezeByTarget: {}, cooldowns: {} });
 
@@ -54,6 +58,8 @@ export function resolveSnowFreezeGain(
     amount = 1,
     { recoveryChoice = '' } = {}
 ) {
+    if (!isHomebrewExtra('extras_neve'))
+        return { ...addSnowFreeze(rawState, targetUuid, 0), recovery: null, disabled: true };
     const result = addSnowFreeze(rawState, targetUuid, amount);
     const canRecover = amount > 0 && result.state.belowZero?.freezeRecovery === true;
     const recovery = !canRecover
@@ -198,6 +204,34 @@ export function breakSnowRestrictionOnDamage(rawState, targetUuid) {
     return state;
 }
 
+export async function releaseSnowRestriction(actor) {
+    const restriction = actor.getFlag?.(MODULE_ID, 'snowRestriction');
+    if (!restriction?.sourceActorUuid) return false;
+    const prefix = ['oni', 'oni_minion'].includes(actorKind(actor)) ? 'status_oni' : 'status_slayer';
+    const state = parseStatusState(actor.system?.props?.[`${prefix}_dados`]);
+    if (state.effects.restricao_movimentos?.sourceName === `Congelar ${restriction.sourceActorUuid}`.slice(0, 120)) {
+        state.active = state.active.filter(key => key !== 'restricao_movimentos');
+        delete state.effects.restricao_movimentos;
+        await actor.update({
+            [`system.props.${prefix}_dados`]: JSON.stringify(state),
+            [`system.props.${prefix}_resumo`]: formatStatusSummary(state.active, state.exhaustion),
+        }, { naCsbAutomation: true, naBreathing: true });
+    }
+    await actor.unsetFlag(MODULE_ID, 'snowRestriction');
+    // O alvo é a fonte da restrição ativa. O registro do conjurador é auxiliar.
+    try {
+        const document = await fromUuid(restriction.sourceActorUuid);
+        const source = document?.actor ?? document;
+        if (source?.system?.props?.resp_neve_estado && (source.isOwner || globalThis.game?.user?.isGM)) {
+            const state = breakSnowRestrictionOnDamage(source.system.props.resp_neve_estado, actor.uuid);
+            await source.update(snowStatePatch(state), { naCsbAutomation: true, naBreathing: true });
+        }
+    } catch {
+        console.warn('Night Assassins | A restrição foi removida do alvo, mas o registro de Neve não foi sincronizado.');
+    }
+    return true;
+}
+
 export function grantBlizzardStealth(
     rawState,
     { allyUuid, allyBreathing = '', currentRound } = {}
@@ -311,7 +345,7 @@ export function buildSnowBreathingPlan(formId, level, props = {}, choices = {}) 
             source: formId,
             negateEffects: selected.negateEffects,
             damageMultiplier: selected.damageMultiplier,
-            protectedUuid: String(choices.protectedUuid ?? choices.ownerUuid ?? ''),
+            protectedUuid: String((selected.protectAlly ? choices.protectedUuid : null) ?? choices.ownerUuid ?? ''),
             canProtectAlly: Boolean(selected.protectAlly),
             freezeOnUse: selected.freeze ?? 0,
             opportunityAttack: Boolean(

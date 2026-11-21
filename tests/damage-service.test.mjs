@@ -38,8 +38,8 @@ describe('damage-service', () => {
                 game.user.isGM = npc;
                 const costKey = npc ? 'npc_pdr_gasto_valor' : 'pdr_slayer_gasto_valor';
                 const actor = makeActor({ props: {
-                    ...(npc ? { npc_nome: 'NPC', nvl_respiracao: '2', npc_pdr_atual: 7 }
-                        : { nome_slayer: 'Slayer', nvl_respiracao_num: 2, pdr_slayer_atual: 7 }),
+                    ...(npc ? { npc_nome: 'NPC', nvl_respiracao: '2', npc_pdr_base: 9, npc_pdr_atual: 7 }
+                        : { nome_slayer: 'Slayer', nvl_respiracao_num: 2, pdr_slayer_total_conta: 9, pdr_slayer_atual: 7 }),
                     [costKey]: '2',
                 } });
                 actor.items = [{
@@ -214,6 +214,22 @@ describe('damage-service', () => {
         assert.deepEqual(formulas, ['1d8 + 2']);
         assert.match(chatData.flavor, /Total: 14<\/strong>/);
         Roll.create = previousRollCreate;
+    });
+
+    it('Chuva Misericordiosa força crítico sem fórmula adicional da Forma', async () => {
+        _dialogReturn = {
+            nome: 'Chuva Misericordiosa', pdrGasto: 0, critical: false,
+            entradas: [{ dado: '', fixo: 7, selAttrs: [], selTiposDano: ['cortante'], tipoAcao: 'ataque' }],
+        };
+        game.user.targets = new Set();
+        const baseline = await rollDamage({ actor: makeActor({ props: { nome_slayer: 'Slayer' } }),
+            skipActionConsumption: true });
+        const actor = makeActor({ props: {
+            nome_slayer: 'Slayer',
+            resp_agua_estado: JSON.stringify({ pendingDamage: { source: 'agua_05', critical: true, uses: 1 } }),
+        } });
+        const result = await rollDamage({ actor, skipActionConsumption: true });
+        assert.equal(result.finalDamage, baseline.finalDamage * 2);
     });
 
     it('aceita dano inteiramente fixo sem exigir dado rolável', async () => {
@@ -570,7 +586,8 @@ describe('damage-service', () => {
         assert.equal('messageMode' in chatData, false);
         assert.match(chatData.flavor, /Cortante/);
         assert.match(chatData.flavor, /Ferida/);
-        assert.match(notices[0], /recebeu 16 de dano \(8 de Ferida\)/);
+        assert.match(notices[0], /recebeu 8 de dano e 8 de Ferida/);
+        assert.match(chatData.flavor, /Personagem Teste \(8 de dano \+ 8 de Ferida\)/);
     });
 
     it('respeita a visibilidade e resolve @for na fórmula livre sem for_display', async () => {

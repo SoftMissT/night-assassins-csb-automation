@@ -41,66 +41,38 @@ describe('passivas de Respiração', () => {
         assert.equal(weapon.attacks, 1);
     });
 
-    it('usa o crítico da arma e reduz com Quebra até o limite de FOR', () => {
+    it('usa o crítico da arma e reduz com Quebra global até o limite de FOR', () => {
         let state = parseBreathPassiveState('');
-        for (let i = 0; i < 8; i += 1) state = addStoneBreak(state, 'katana', 3);
-        assert.equal(state.stone.breakByWeapon.katana, 3);
-        assert.equal(
-            effectiveWeaponCritical({ base: 19, state, weaponId: 'katana', strength: 3 }),
-            16
-        );
-        assert.equal(
-            effectiveWeaponCritical({ base: 19, state, weaponId: 'machado', strength: 3 }),
-            19
-        );
+        for (let i = 0; i < 8; i += 1) state = addStoneBreak(state, 3);
+        assert.equal(state.stone.breakStacks, 3);
+        assert.equal(effectiveWeaponCritical({ base: 19, state, strength: 3 }), 16);
+        // O benefício acompanha o praticante, mesmo trocando de arma.
+        assert.equal(effectiveWeaponCritical({ base: 18, state, strength: 3 }), 15);
     });
 
-    it('respeita o piso global do crítico sem misturar acúmulos entre armas', () => {
+    it('migra acúmulos legados por arma para o praticante', () => {
+        const state = parseBreathPassiveState({
+            stone: { breakByWeapon: { katana: 2, machado: 1 } },
+        });
+        assert.equal(stoneBreakStacks(state), 3);
+        assert.equal(effectiveWeaponCritical({ base: 20, state, strength: 5 }), 17);
+    });
+
+    it('respeita o piso global do crítico', () => {
         let state = parseBreathPassiveState('');
-        for (let i = 0; i < 8; i += 1) state = addStoneBreak(state, 'katana', 8);
+        for (let i = 0; i < 8; i += 1) state = addStoneBreak(state, 8);
 
         assert.equal(
-            effectiveWeaponCritical({
-                base: 19,
-                state,
-                weaponId: 'katana',
-                strength: 8,
-                floor: 15,
-            }),
+            effectiveWeaponCritical({ base: 19, state, strength: 8, floor: 15 }),
             15
         );
+        assert.equal(effectiveWeaponCritical({ base: 19, state, strength: 8 }), 11);
         assert.equal(
-            effectiveWeaponCritical({
-                base: 19,
-                state,
-                weaponId: 'machado',
-                strength: 8,
-                floor: 15,
-            }),
+            effectiveWeaponCritical({ base: 19, state, strength: 8, floor: 99 }),
             19
         );
         assert.equal(
-            effectiveWeaponCritical({ base: 19, state, weaponId: 'katana', strength: 8 }),
-            11
-        );
-        assert.equal(
-            effectiveWeaponCritical({
-                base: 19,
-                state,
-                weaponId: 'katana',
-                strength: 8,
-                floor: 99,
-            }),
-            19
-        );
-        assert.equal(
-            effectiveWeaponCritical({
-                base: 19,
-                state,
-                weaponId: 'katana',
-                strength: 8,
-                floor: -4,
-            }),
+            effectiveWeaponCritical({ base: 19, state, strength: 8, floor: -4 }),
             11
         );
     });
@@ -130,11 +102,11 @@ describe('passivas de Respiração', () => {
 
 describe('pipeline confirmado da Pedra', () => {
     it('aplica no máximo uma Quebra por ação', () => {
-        const first = addStoneBreakForAction({}, 'weapon-a', 5, 'action-1');
-        const duplicate = addStoneBreakForAction(first, 'weapon-a', 5, 'action-1');
-        const nextAction = addStoneBreakForAction(duplicate, 'weapon-a', 5, 'action-2');
-        assert.equal(stoneBreakStacks(duplicate, 'weapon-a'), 1);
-        assert.equal(stoneBreakStacks(nextAction, 'weapon-a'), 2);
+        const first = addStoneBreakForAction({}, 5, 'action-1');
+        const duplicate = addStoneBreakForAction(first, 5, 'action-1');
+        const nextAction = addStoneBreakForAction(duplicate, 5, 'action-2');
+        assert.equal(stoneBreakStacks(duplicate), 1);
+        assert.equal(stoneBreakStacks(nextAction), 2);
     });
 
     it('recupera somente o dano confirmado no mesmo alvo e turno', () => {

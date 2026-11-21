@@ -2063,6 +2063,102 @@
                                                     "rollMessageToChat": false,
                                                     "altRollMessageToChat": false,
                                                     "style": "button"
+                                                },
+                                                {
+                                                    "key": "slayer_rules_vanilla",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Usar uma Forma da Respiração da Recuperação.",
+                                                    "visibilityFormula": "ref('na_rules_vanilla', 0)",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Regras da Mesa</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesTableManager({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
+                                                },
+                                                {
+                                                    "key": "slayer_breathing_passives",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Usar uma Forma da Respiração da Recuperação.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Passivas da Respiração</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openBreathingPassiveManager({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
+                                                },
+                                                {
+                                                    "key": "slayer_kakushi_actions",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "equalText(ref('na_regras_classes', 0) ? ref('na_vanilla_class', '') : ref('classe_escolhida', ''), 'classe_kakushi')",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Kakushi</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.slayer?.openKakushiManager({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
+                                                },
+                                                {
+                                                    "key": "slayer_companion_oni",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 4,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "equalText(ref('na_regras_classes', 0) ? ref('na_vanilla_class', '') : ref('classe_escolhida', ''), 'classe_companheiro_oni')",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Companheiro de Oni</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.slayer?.openCompanionOniManager({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
                                                 }
                                             ],
                                             "flow": "horizontal",
@@ -2300,50 +2396,6 @@
                                                     "rollMessageToChat": false,
                                                     "altRollMessageToChat": false,
                                                     "style": "label"
-                                                },
-                                                {
-                                                    "key": "bonus_derivados_slayer_auditar",
-                                                    "colSpan": 1,
-                                                    "rowSpan": 1,
-                                                    "cssClass": "",
-                                                    "role": 4,
-                                                    "editRole": 0,
-                                                    "permission": 0,
-                                                    "tooltip": "Abre a decomposição por fonte. Somente GM.",
-                                                    "visibilityFormula": "",
-                                                    "editableFormula": "",
-                                                    "escapeHTML": false,
-                                                    "type": "label",
-                                                    "size": "full-size",
-                                                    "icon": "",
-                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ffffff;\">AUDITAR BÔNUS</span>\n",
-                                                    "prefix": "",
-                                                    "suffix": "",
-                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openDerivedBonusAudit({actorUuid:entity.uuid}); return '';}%",
-                                                    "altRollMessage": "",
-                                                    "rollMessageToChat": false,
-                                                    "altRollMessageToChat": false,
-                                                    "style": "button"
-                                                },
-                                                {
-                                                    "key": "armas_proficientes",
-                                                    "colSpan": 1,
-                                                    "rowSpan": 1,
-                                                    "cssClass": "",
-                                                    "role": 0,
-                                                    "editRole": 0,
-                                                    "permission": 0,
-                                                    "tooltip": "Valor persistente do personagem.",
-                                                    "visibilityFormula": "",
-                                                    "editableFormula": "",
-                                                    "escapeHTML": false,
-                                                    "type": "textField",
-                                                    "size": "full-size",
-                                                    "label": "Armas Proficientes (separadas por vírgula)",
-                                                    "defaultValue": "",
-                                                    "charList": "",
-                                                    "maxLength": null,
-                                                    "autocomplete": ""
                                                 },
                                                 {
                                                     "key": "estados_avancados_slayer_gerenciar",
@@ -2842,6 +2894,351 @@
                                             "templateFilter": ["NABreathTpl00001"],
                                             "itemFilterFormula": "item.inventario_categoria ? equalText(item.inventario_categoria, 'respiracao') : 0",
                                             "sortPredicates": []
+                                        },
+                                        {
+                                            "key": "",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "",
+                                            "visibilityFormula": "",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "panel",
+                                            "contents": [
+                                                {
+                                                    "key": "",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex na-sheet-glow\">ACERTO</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "label"
+                                                },
+                                                {
+                                                    "key": "",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-for na-sheet-glow\">DANO</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "label"
+                                                },
+                                                {
+                                                    "key": "",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-vit na-sheet-glow\">DEFESA / TESTES</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "label"
+                                                },
+                                                {
+                                                    "key": "bonus_acerto_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Somado em todo Acerto. Aparece no chat como \"Bônus da ficha\".",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_dano_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Somado em toda rolagem de dano. Aparece no chat como \"Bônus da ficha\".",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_teste_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Somado em Bloqueio, Esquiva e testes de atributo.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_bloqueio_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual aplicado em Bloqueio.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "Bloqueio",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_esquiva_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual aplicado em Esquiva.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "Esquiva",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_percepcao_visual_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual em Percepção visual.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "Percepção visual",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_percepcao_auditiva_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual em Percepção auditiva.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "Percepção auditiva",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_social_voz_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual em testes sociais ou de voz.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "Social / voz",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_iniciativa_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual em Iniciativa.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "Iniciativa",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                },
+                                                {
+                                                    "key": "bonus_pdr_maximo_slayer",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Bônus manual no PDR máximo.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "numberField",
+                                                    "size": "full-size",
+                                                    "label": "PDR máximo",
+                                                    "defaultValue": "0",
+                                                    "allowDecimal": false,
+                                                    "minVal": "",
+                                                    "maxVal": "",
+                                                    "allowRelative": false,
+                                                    "showControls": false,
+                                                    "controlsStyle": "hover",
+                                                    "controlsCustomIncrements": "",
+                                                    "inputStyle": "text"
+                                                }
+                                            ],
+                                            "flow": "grid-3",
+                                            "align": "center",
+                                            "verticalAlign": "top",
+                                            "collapsible": true,
+                                            "defaultCollapsed": true,
+                                            "title": "Bônus Fixos",
+                                            "titleStyle": "title"
                                         }
                                     ],
                                     "name": "Combate"
@@ -2861,7 +3258,31 @@
                                     "type": "tab",
                                     "contents": [
                                         {
-                                            "key": "",
+                                            "key": "slayer_vanilla_choices",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "Editar as escolhas da ficha nas categorias Vanilla.",
+                                            "visibilityFormula": "ref('na_regras_origens', 0) or ref('na_regras_habilidades', 0) or ref('na_regras_classes', 0) or ref('na_regras_metal', 0)",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "label",
+                                            "size": "full-size",
+                                            "icon": "",
+                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Escolhas Vanilla</span>",
+                                            "prefix": "",
+                                            "suffix": "",
+                                            "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesProfileManager({actorUuid:entity.uuid}); return '';}%",
+                                            "altRollMessage": "",
+                                            "rollMessageToChat": false,
+                                            "altRollMessageToChat": false,
+                                            "style": "button"
+                                        },
+                                        {
+                                            "key": "slayer_homebrew_choices",
                                             "colSpan": 1,
                                             "rowSpan": 1,
                                             "cssClass": "",
@@ -2869,20 +3290,271 @@
                                             "editRole": 0,
                                             "permission": 0,
                                             "tooltip": "",
-                                            "visibilityFormula": "",
+                                            "visibilityFormula": "(not ref('na_regras_origens', 0)) or (not ref('na_regras_habilidades', 0)) or (not ref('na_regras_classes', 0)) or (not ref('na_regras_metal', 0) and (equalText(nvl_pj, 'nvl_2')))",
                                             "editableFormula": "",
                                             "escapeHTML": false,
-                                            "type": "label",
-                                            "size": "full-size",
-                                            "icon": "",
-                                            "value": "ORIGEM HABILIDADES",
-                                            "prefix": "",
-                                            "suffix": "",
-                                            "rollMessage": "",
-                                            "altRollMessage": "",
-                                            "rollMessageToChat": true,
-                                            "altRollMessageToChat": true,
-                                            "style": "label"
+                                            "type": "panel",
+                                            "contents": [
+                                                {
+                                                    "key": "origem_dropdown",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "select",
+                                                    "size": "full-size",
+                                                    "label": "Origem:",
+                                                    "defaultValue": "origem_escolha",
+                                                    "selectedOptionType": "custom",
+                                                    "options": [
+                                                        {
+                                                            "key": "origem_escolha",
+                                                            "value": "Escolha"
+                                                        },
+                                                        {
+                                                            "key": "origem_artista_marcial",
+                                                            "value": "Artista Marcial"
+                                                        },
+                                                        {
+                                                            "key": "origem_civilizado",
+                                                            "value": "Civilizado"
+                                                        },
+                                                        {
+                                                            "key": "origem_corsario",
+                                                            "value": "Corsário"
+                                                        },
+                                                        {
+                                                            "key": "origem_criado_ex_hashira",
+                                                            "value": "Criado por Ex-Hashira"
+                                                        },
+                                                        {
+                                                            "key": "origem_descendente_perdido",
+                                                            "value": "Descendente Perdido"
+                                                        },
+                                                        {
+                                                            "key": "origem_estrangeiro",
+                                                            "value": "Estrangeiro"
+                                                        },
+                                                        {
+                                                            "key": "origem_isolado",
+                                                            "value": "Isolado"
+                                                        },
+                                                        {
+                                                            "key": "origem_militar",
+                                                            "value": "Militar"
+                                                        },
+                                                        {
+                                                            "key": "origem_monge",
+                                                            "value": "Monge"
+                                                        },
+                                                        {
+                                                            "key": "origem_ninja",
+                                                            "value": "Ninja"
+                                                        },
+                                                        {
+                                                            "key": "origem_samurai",
+                                                            "value": "Samurai"
+                                                        },
+                                                        {
+                                                            "key": "origem_tsuguko",
+                                                            "value": "Tsuguko"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "key": "hab_escolhida",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "select",
+                                                    "size": "full-size",
+                                                    "label": "Habilidade Especial:",
+                                                    "defaultValue": "hab_escolhida_base",
+                                                    "selectedOptionType": "custom",
+                                                    "options": [
+                                                        {
+                                                            "key": "hab_escolhida_base",
+                                                            "value": "Escolha"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_sem",
+                                                            "value": "Sem Habilidade"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_tato",
+                                                            "value": "Tato Sensitivo"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_audicao",
+                                                            "value": "Audição Sobrenatural"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_visao",
+                                                            "value": "Visão Aguçada"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_olfato",
+                                                            "value": "Olfato Sobrenatural"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_metamorfose",
+                                                            "value": "Metamorfose Carnívora"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_tsuyoi",
+                                                            "value": "Tsuyoi"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_marechi",
+                                                            "value": "Marechi"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_oketsu",
+                                                            "value": "Ōketsu"
+                                                        },
+                                                        {
+                                                            "key": "hab_escolhida_marca_destino",
+                                                            "value": "Marca do Destino"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "key": "classe_escolhida",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "not ref('na_regras_classes', 0)",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "select",
+                                                    "size": "full-size",
+                                                    "label": "Classe:",
+                                                    "defaultValue": "classe_escolha",
+                                                    "selectedOptionType": "custom",
+                                                    "options": [
+                                                        {
+                                                            "key": "classe_escolha",
+                                                            "value": "Escolha Sua Classe"
+                                                        },
+                                                        {
+                                                            "key": "classe_mb",
+                                                            "value": "Mestre de Batalha "
+                                                        },
+                                                        {
+                                                            "key": "classe_usuario_de_veneno",
+                                                            "value": "Usuário de Veneno"
+                                                        },
+                                                        {
+                                                            "key": "classe_kakushi",
+                                                            "value": "Kakushi"
+                                                        },
+                                                        {
+                                                            "key": "classe_usuario_de_duas_resp",
+                                                            "value": " Usuário de Duas Respirações"
+                                                        },
+                                                        {
+                                                            "key": "classe_companheiro_oni",
+                                                            "value": "Companheiro Oni"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "key": "metal_escolhido",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 0,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "",
+                                                    "visibilityFormula": "not ref('na_regras_metal', 0) and (equalText(nvl_pj, 'nvl_2'))",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "select",
+                                                    "size": "full-size",
+                                                    "label": "Metal",
+                                                    "defaultValue": "metal_escolha_base",
+                                                    "selectedOptionType": "custom",
+                                                    "options": [
+                                                        {
+                                                            "key": "metal_escolha_base",
+                                                            "value": "Escolha"
+                                                        },
+                                                        {
+                                                            "key": "metal_ambar",
+                                                            "value": "Âmbar"
+                                                        },
+                                                        {
+                                                            "key": "metal_azul",
+                                                            "value": "Azul"
+                                                        },
+                                                        {
+                                                            "key": "metal_branca",
+                                                            "value": "Branca"
+                                                        },
+                                                        {
+                                                            "key": "metal_cinza",
+                                                            "value": "Cinza"
+                                                        },
+                                                        {
+                                                            "key": "metal_coral",
+                                                            "value": "Coral"
+                                                        },
+                                                        {
+                                                            "key": "metal_dourada",
+                                                            "value": "Dourada"
+                                                        },
+                                                        {
+                                                            "key": "metal_laranja",
+                                                            "value": "Laranja"
+                                                        },
+                                                        {
+                                                            "key": "metal_preto",
+                                                            "value": "Preto"
+                                                        },
+                                                        {
+                                                            "key": "metal_rosa",
+                                                            "value": "Rosa"
+                                                        },
+                                                        {
+                                                            "key": "metal_roxa",
+                                                            "value": "Roxa"
+                                                        },
+                                                        {
+                                                            "key": "metal_verde",
+                                                            "value": "Verde"
+                                                        },
+                                                        {
+                                                            "key": "metal_vermelha",
+                                                            "value": "Vermelha"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "flow": "grid-2",
+                                            "align": "center",
+                                            "verticalAlign": "top",
+                                            "collapsible": true,
+                                            "defaultCollapsed": false,
+                                            "title": "Escolhas Homebrew",
+                                            "titleStyle": "title"
                                         },
                                         {
                                             "key": "",
@@ -2893,7 +3565,7 @@
                                             "editRole": 0,
                                             "permission": 0,
                                             "tooltip": "",
-                                            "visibilityFormula": "",
+                                            "visibilityFormula": "not ref('na_regras_origens', 0) and not equalText(ref('origem_dropdown', 'origem_escolha'), 'origem_escolha')",
                                             "editableFormula": "",
                                             "escapeHTML": false,
                                             "type": "panel",
@@ -3032,7 +3704,7 @@
                                             "editRole": 0,
                                             "permission": 0,
                                             "tooltip": "",
-                                            "visibilityFormula": "\n",
+                                            "visibilityFormula": "not ref('na_regras_classes', 0) and not equalText(ref('classe_escolhida', 'classe_escolha'), 'classe_escolha')",
                                             "editableFormula": "",
                                             "escapeHTML": false,
                                             "type": "panel",
@@ -3400,7 +4072,7 @@
                                             "editRole": 0,
                                             "permission": 0,
                                             "tooltip": "",
-                                            "visibilityFormula": "",
+                                            "visibilityFormula": "not ref('na_regras_habilidades', 0) and not equalText(ref('hab_escolhida', 'hab_escolhida_base'), 'hab_escolhida_base')",
                                             "editableFormula": "",
                                             "escapeHTML": false,
                                             "type": "panel",
@@ -3598,6 +4270,26 @@
                                             "defaultCollapsed": true,
                                             "title": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-lg na-sheet-role-car\">Habilidade Especial</span>",
                                             "titleStyle": "default"
+                                        },
+                                        {
+                                            "key": "armas_proficientes",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "Valor persistente do personagem.",
+                                            "visibilityFormula": "",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "textField",
+                                            "size": "full-size",
+                                            "label": "Armas Proficientes (separadas por vírgula)",
+                                            "defaultValue": "",
+                                            "charList": "",
+                                            "maxLength": null,
+                                            "autocomplete": ""
                                         }
                                     ],
                                     "name": "Habilidades"
@@ -3616,6 +4308,77 @@
                                     "escapeHTML": false,
                                     "type": "tab",
                                     "contents": [
+                                        {
+                                            "key": "",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 4,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "",
+                                            "visibilityFormula": "",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "panel",
+                                            "contents": [
+                                                {
+                                                    "key": "slayer_rules_vanilla",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 4,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Configurar as variantes do mundo e as escolhas Vanilla desta ficha.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Regras da Mesa</span>",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesTableManager({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
+                                                },
+                                                {
+                                                    "key": "bonus_derivados_slayer_auditar",
+                                                    "colSpan": 1,
+                                                    "rowSpan": 1,
+                                                    "cssClass": "",
+                                                    "role": 4,
+                                                    "editRole": 0,
+                                                    "permission": 0,
+                                                    "tooltip": "Abre a decomposição por fonte. Somente GM.",
+                                                    "visibilityFormula": "",
+                                                    "editableFormula": "",
+                                                    "escapeHTML": false,
+                                                    "type": "label",
+                                                    "size": "full-size",
+                                                    "icon": "",
+                                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\" style=\"color:#ffffff;\">AUDITAR BÔNUS</span>\n",
+                                                    "prefix": "",
+                                                    "suffix": "",
+                                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openDerivedBonusAudit({actorUuid:entity.uuid}); return '';}%",
+                                                    "altRollMessage": "",
+                                                    "rollMessageToChat": false,
+                                                    "altRollMessageToChat": false,
+                                                    "style": "button"
+                                                }
+                                            ],
+                                            "flow": "grid-2",
+                                            "align": "center",
+                                            "verticalAlign": "top",
+                                            "collapsible": true,
+                                            "defaultCollapsed": false,
+                                            "title": "Configuração da mesa",
+                                            "titleStyle": "title"
+                                        },
                                         {
                                             "key": "",
                                             "colSpan": 1,
@@ -9588,7 +10351,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9636,7 +10399,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9684,7 +10447,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9732,7 +10495,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9780,7 +10543,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9828,7 +10591,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9876,7 +10639,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9924,7 +10687,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -9972,7 +10735,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10020,7 +10783,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10068,7 +10831,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10116,7 +10879,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10209,7 +10972,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10257,7 +11020,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10305,7 +11068,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10353,7 +11116,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10401,7 +11164,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10449,7 +11212,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10497,7 +11260,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10545,7 +11308,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10593,7 +11356,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10641,7 +11404,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10689,7 +11452,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -10737,7 +11500,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_origens', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12301,7 +13064,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12349,7 +13112,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12397,7 +13160,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12445,7 +13208,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12493,7 +13256,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12541,7 +13304,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12589,7 +13352,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12637,7 +13400,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12685,7 +13448,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12733,7 +13496,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12826,7 +13589,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12874,7 +13637,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12922,7 +13685,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -12970,7 +13733,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13018,7 +13781,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13066,7 +13829,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13114,7 +13877,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13162,7 +13925,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13210,7 +13973,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13258,7 +14021,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13351,7 +14114,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13399,7 +14162,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13447,7 +14210,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13495,7 +14258,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13543,7 +14306,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13591,7 +14354,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13639,7 +14402,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13687,7 +14450,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13735,7 +14498,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -13783,7 +14546,7 @@
                                                                     "editRole": 0,
                                                                     "permission": 0,
                                                                     "tooltip": "",
-                                                                    "visibilityFormula": "",
+                                                                    "visibilityFormula": "not ref('na_regras_habilidades', 0)",
                                                                     "editableFormula": "",
                                                                     "escapeHTML": false,
                                                                     "type": "label",
@@ -14011,142 +14774,6 @@
                                     "style": "label"
                                 },
                                 {
-                                    "key": "origem_dropdown",
-                                    "colSpan": 1,
-                                    "rowSpan": 1,
-                                    "cssClass": "",
-                                    "role": 0,
-                                    "editRole": 0,
-                                    "permission": 0,
-                                    "tooltip": "",
-                                    "visibilityFormula": "",
-                                    "editableFormula": "",
-                                    "escapeHTML": false,
-                                    "type": "select",
-                                    "size": "full-size",
-                                    "label": "Origem:",
-                                    "defaultValue": "origem_escolha",
-                                    "selectedOptionType": "custom",
-                                    "options": [
-                                        {
-                                            "key": "origem_escolha",
-                                            "value": "Escolha"
-                                        },
-                                        {
-                                            "key": "origem_artista_marcial",
-                                            "value": "Artista Marcial"
-                                        },
-                                        {
-                                            "key": "origem_civilizado",
-                                            "value": "Civilizado"
-                                        },
-                                        {
-                                            "key": "origem_corsario",
-                                            "value": "Corsário"
-                                        },
-                                        {
-                                            "key": "origem_criado_ex_hashira",
-                                            "value": "Criado por Ex-Hashira"
-                                        },
-                                        {
-                                            "key": "origem_descendente_perdido",
-                                            "value": "Descendente Perdido"
-                                        },
-                                        {
-                                            "key": "origem_estrangeiro",
-                                            "value": "Estrangeiro"
-                                        },
-                                        {
-                                            "key": "origem_isolado",
-                                            "value": "Isolado"
-                                        },
-                                        {
-                                            "key": "origem_militar",
-                                            "value": "Militar"
-                                        },
-                                        {
-                                            "key": "origem_monge",
-                                            "value": "Monge"
-                                        },
-                                        {
-                                            "key": "origem_ninja",
-                                            "value": "Ninja"
-                                        },
-                                        {
-                                            "key": "origem_samurai",
-                                            "value": "Samurai"
-                                        },
-                                        {
-                                            "key": "origem_tsuguko",
-                                            "value": "Tsuguko"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "key": "hab_escolhida",
-                                    "colSpan": 1,
-                                    "rowSpan": 1,
-                                    "cssClass": "",
-                                    "role": 0,
-                                    "editRole": 0,
-                                    "permission": 0,
-                                    "tooltip": "",
-                                    "visibilityFormula": "",
-                                    "editableFormula": "",
-                                    "escapeHTML": false,
-                                    "type": "select",
-                                    "size": "full-size",
-                                    "label": "Habilidade Especial:",
-                                    "defaultValue": "hab_escolhida_base",
-                                    "selectedOptionType": "custom",
-                                    "options": [
-                                        {
-                                            "key": "hab_escolhida_base",
-                                            "value": "Escolha"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_sem",
-                                            "value": "Sem Habilidade"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_tato",
-                                            "value": "Tato Sensitivo"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_audicao",
-                                            "value": "Audição Sobrenatural"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_visao",
-                                            "value": "Visão Aguçada"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_olfato",
-                                            "value": "Olfato Sobrenatural"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_metamorfose",
-                                            "value": "Metamorfose Carnívora"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_tsuyoi",
-                                            "value": "Tsuyoi"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_marechi",
-                                            "value": "Marechi"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_oketsu",
-                                            "value": "Ōketsu"
-                                        },
-                                        {
-                                            "key": "hab_escolhida_marca_destino",
-                                            "value": "Marca do Destino"
-                                        }
-                                    ]
-                                },
-                                {
                                     "key": "resp_slayer_display",
                                     "colSpan": 1,
                                     "rowSpan": 1,
@@ -14355,12 +14982,12 @@
                                     "editRole": 0,
                                     "permission": 0,
                                     "tooltip": "",
-                                    "visibilityFormula": "equalText(classe_escolhida, 'classe_usuario_de_duas_resp')",
+                                    "visibilityFormula": "equalText(ref('na_regras_classes', 0) ? ref('na_vanilla_class', '') : ref('classe_escolhida', ''), 'classe_usuario_de_duas_resp')",
                                     "editableFormula": "",
                                     "escapeHTML": false,
                                     "type": "select",
                                     "size": "full-size",
-                                    "label": "Respiração Segundária: ",
+                                    "label": "Respiração Secundária",
                                     "defaultValue": "resp_slayer_base",
                                     "selectedOptionType": "custom",
                                     "options": [
@@ -14547,74 +15174,34 @@
                                     ]
                                 },
                                 {
-                                    "key": "metal_escolhido",
+                                    "key": "slayer_class_duas_resp_compatibility",
                                     "colSpan": 1,
                                     "rowSpan": 1,
                                     "cssClass": "",
-                                    "role": 0,
-                                    "editRole": 0,
+                                    "role": 4,
+                                    "editRole": 4,
                                     "permission": 0,
-                                    "tooltip": "",
-                                    "visibilityFormula": "equalText(nvl_pj, 'nvl_2')",
+                                    "tooltip": "Escolha do GM para este par de Respirações.",
+                                    "visibilityFormula": "equalText(ref('na_regras_classes', 0) ? ref('na_vanilla_class', '') : ref('classe_escolhida', ''), 'classe_usuario_de_duas_resp')",
                                     "editableFormula": "",
                                     "escapeHTML": false,
                                     "type": "select",
                                     "size": "full-size",
-                                    "label": "Metal",
-                                    "defaultValue": "metal_escolha_base",
+                                    "label": "Compatibilidade da Respiração Secundária",
+                                    "defaultValue": "",
                                     "selectedOptionType": "custom",
                                     "options": [
                                         {
-                                            "key": "metal_escolha_base",
-                                            "value": "Escolha"
+                                            "key": "",
+                                            "value": "Definir"
                                         },
                                         {
-                                            "key": "metal_ambar",
-                                            "value": "Âmbar"
+                                            "key": "compatible",
+                                            "value": "Compatível"
                                         },
                                         {
-                                            "key": "metal_azul",
-                                            "value": "Azul"
-                                        },
-                                        {
-                                            "key": "metal_branca",
-                                            "value": "Branca"
-                                        },
-                                        {
-                                            "key": "metal_cinza",
-                                            "value": "Cinza"
-                                        },
-                                        {
-                                            "key": "metal_coral",
-                                            "value": "Coral"
-                                        },
-                                        {
-                                            "key": "metal_dourada",
-                                            "value": "Dourada"
-                                        },
-                                        {
-                                            "key": "metal_laranja",
-                                            "value": "Laranja"
-                                        },
-                                        {
-                                            "key": "metal_preto",
-                                            "value": "Preto"
-                                        },
-                                        {
-                                            "key": "metal_rosa",
-                                            "value": "Rosa"
-                                        },
-                                        {
-                                            "key": "metal_roxa",
-                                            "value": "Roxa"
-                                        },
-                                        {
-                                            "key": "metal_verde",
-                                            "value": "Verde"
-                                        },
-                                        {
-                                            "key": "metal_vermelha",
-                                            "value": "Vermelha"
+                                            "key": "incompatible",
+                                            "value": "Incompatível"
                                         }
                                     ]
                                 },
@@ -14647,50 +15234,6 @@
                                         {
                                             "key": "acerto_label_for",
                                             "value": "FOR"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "key": "classe_escolhida",
-                                    "colSpan": 1,
-                                    "rowSpan": 1,
-                                    "cssClass": "",
-                                    "role": 0,
-                                    "editRole": 0,
-                                    "permission": 0,
-                                    "tooltip": "",
-                                    "visibilityFormula": "",
-                                    "editableFormula": "",
-                                    "escapeHTML": false,
-                                    "type": "select",
-                                    "size": "full-size",
-                                    "label": "Classe:",
-                                    "defaultValue": "classe_escolha",
-                                    "selectedOptionType": "custom",
-                                    "options": [
-                                        {
-                                            "key": "classe_escolha",
-                                            "value": "Escolha Sua Classe"
-                                        },
-                                        {
-                                            "key": "classe_mb",
-                                            "value": "Mestre de Batalha "
-                                        },
-                                        {
-                                            "key": "classe_usuario_de_veneno",
-                                            "value": "Usuário de Veneno"
-                                        },
-                                        {
-                                            "key": "classe_kakushi",
-                                            "value": "Kakushi"
-                                        },
-                                        {
-                                            "key": "classe_usuario_de_duas_resp",
-                                            "value": " Usuário de Duas Respirações"
-                                        },
-                                        {
-                                            "key": "classe_companheiro_oni",
-                                            "value": "Companheiro Oni"
                                         }
                                     ]
                                 },
@@ -14750,6 +15293,565 @@
                             "defaultCollapsed": false,
                             "title": "",
                             "titleStyle": "default"
+                        },
+                        {
+                            "key": "na_rule_selection_storage",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 4,
+                            "editRole": 4,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "false",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "panel",
+                            "flow": "vertical",
+                            "align": "center",
+                            "verticalAlign": "top",
+                            "collapsible": false,
+                            "defaultCollapsed": false,
+                            "title": "",
+                            "titleStyle": "default",
+                            "contents": [
+                                {
+                                    "key": "na_rules_vanilla",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_rules_vanilla",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_metal",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_metal",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_habilidades",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_habilidades",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_origens",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_origens",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_status",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_status",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_classes",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_classes",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_acoes",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_acoes",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_dano",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_dano",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_vida_morte",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_vida_morte",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_respiracao",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_respiracao",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_progressao",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_progressao",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_nitoryu",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_nitoryu",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_ryoto",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_ryoto",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_morote",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_morote",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_acuidade",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_acuidade",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_concussao",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_concussao",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_manejavel",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_manejavel",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_municiada",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_municiada",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_regras_propriedades_precisao",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "numberField",
+                                    "size": "full-size",
+                                    "label": "na_regras_propriedades_precisao",
+                                    "defaultValue": "0",
+                                    "allowDecimal": false,
+                                    "minVal": "0",
+                                    "maxVal": "1",
+                                    "allowRelative": false,
+                                    "showControls": false,
+                                    "controlsStyle": "hover",
+                                    "inputStyle": "text"
+                                },
+                                {
+                                    "key": "na_vanilla_metal",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "textField",
+                                    "size": "full-size",
+                                    "label": "na_vanilla_metal",
+                                    "defaultValue": "",
+                                    "charList": "",
+                                    "maxLength": null,
+                                    "autocomplete": ""
+                                },
+                                {
+                                    "key": "na_vanilla_ability",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "textField",
+                                    "size": "full-size",
+                                    "label": "na_vanilla_ability",
+                                    "defaultValue": "",
+                                    "charList": "",
+                                    "maxLength": null,
+                                    "autocomplete": ""
+                                },
+                                {
+                                    "key": "na_vanilla_origin",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "textField",
+                                    "size": "full-size",
+                                    "label": "na_vanilla_origin",
+                                    "defaultValue": "",
+                                    "charList": "",
+                                    "maxLength": null,
+                                    "autocomplete": ""
+                                },
+                                {
+                                    "key": "na_vanilla_class",
+                                    "colSpan": 1,
+                                    "rowSpan": 1,
+                                    "cssClass": "",
+                                    "role": 4,
+                                    "editRole": 4,
+                                    "permission": 0,
+                                    "tooltip": "",
+                                    "visibilityFormula": "false",
+                                    "editableFormula": "",
+                                    "escapeHTML": false,
+                                    "type": "textField",
+                                    "size": "full-size",
+                                    "label": "na_vanilla_class",
+                                    "defaultValue": "",
+                                    "charList": "",
+                                    "maxLength": null,
+                                    "autocomplete": ""
+                                }
+                            ]
                         }
                     ],
                     "key": "custom_header",
@@ -14762,7 +15864,7 @@
                     },
                     {
                         "name": "origem_slayer_pdv_val",
-                        "value": "${switchCase(origem_dropdown, \n  'origem_artista_marcial', 16,\n  'origem_civilizado', 10,\n  'origem_corsario', 14,\n  'origem_criado_ex_hashira', 12,\n  'origem_descendente_perdido', 12,\n  'origem_estrangeiro', 13,\n  'origem_isolado', 16,\n  'origem_militar', 13,\n  'origem_monge', 12,\n  'origem_ninja', 13,\n  'origem_samurai', 14,\n  'origem_tsuguko', 12,\n  0\n)}$"
+                        "value": "${ref('na_regras_origens', 0) ? switchCase(ref('na_vanilla_origin', ''), 'origem_aldeao', 12, 'origem_civilizado', 12, 'origem_criado_exterminador', 11, 'origem_isolado', 14, 'origem_descendente', 11, 'origem_tsuguko', 10, 'origem_mestre_uma_coisa', 10, 0) : (switchCase(origem_dropdown, \n  'origem_artista_marcial', 16,\n  'origem_civilizado', 10,\n  'origem_corsario', 14,\n  'origem_criado_ex_hashira', 12,\n  'origem_descendente_perdido', 12,\n  'origem_estrangeiro', 13,\n  'origem_isolado', 16,\n  'origem_militar', 13,\n  'origem_monge', 12,\n  'origem_ninja', 13,\n  'origem_samurai', 14,\n  'origem_tsuguko', 12,\n  0\n))}$"
                     },
                     {
                         "name": "nvl_num",
@@ -14798,55 +15900,55 @@
                     },
                     {
                         "name": "origem_slayer_pdr_val",
-                        "value": "${switchCase(origem_dropdown, \n  'origem_artista_marcial', 10,\n  'origem_civilizado', 5,\n  'origem_corsario', 7,\n  'origem_criado_ex_hashira', 9,\n  'origem_descendente_perdido', 10,\n  'origem_estrangeiro', 8,\n  'origem_isolado', 4,\n  'origem_militar', 6,\n  'origem_monge', 14,\n  'origem_ninja', 14,\n  'origem_samurai', 6,\n  'origem_tsuguko', 16,\n  0\n)}$"
+                        "value": "${ref('na_regras_origens', 0) ? switchCase(ref('na_vanilla_origin', ''), 'origem_aldeao', 2, 'origem_civilizado', 1, 'origem_criado_exterminador', 2, 'origem_isolado', 1, 'origem_descendente', 3, 'origem_tsuguko', 3, 'origem_mestre_uma_coisa', 3, 0) : (switchCase(origem_dropdown, \n  'origem_artista_marcial', 10,\n  'origem_civilizado', 5,\n  'origem_corsario', 7,\n  'origem_criado_ex_hashira', 9,\n  'origem_descendente_perdido', 10,\n  'origem_estrangeiro', 8,\n  'origem_isolado', 4,\n  'origem_militar', 6,\n  'origem_monge', 14,\n  'origem_ninja', 14,\n  'origem_samurai', 6,\n  'origem_tsuguko', 16,\n  0\n))}$"
                     },
                     {
                         "name": "hab_slayer_pdr_por_nivel",
-                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_marechi', 1, 'hab_escolhida_oketsu', 2, 0)}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? (equalText(ref('na_vanilla_ability', ''), 'hab_escolhida_marechi') ? 1 : 0) : (switchCase(hab_escolhida, 'hab_escolhida_marechi', 1, 'hab_escolhida_oketsu', 2, 0))}$"
                     },
                     {
                         "name": "hab_acerto_bonus",
-                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_visao', 1, 0)}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (switchCase(hab_escolhida, 'hab_escolhida_visao', 1, 0))}$"
                     },
                     {
                         "name": "hab_bloqueio_bonus",
-                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_tato', 1, 0) * switchCase(nvl_pj, 'nvl_1', 2, 'nvl_2', 2, 'nvl_3', 2, 'nvl_4', 2, 'nvl_5', 2, 'nvl_6', 3, 'nvl_7', 3, 'nvl_8', 3, 'nvl_9', 3, 'nvl_10', 3, 'nvl_11', 3, 'nvl_12', 3, 'nvl_13', 3, 'nvl_14', 3, 0)}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (switchCase(hab_escolhida, 'hab_escolhida_tato', 1, 0) * switchCase(nvl_pj, 'nvl_1', 2, 'nvl_2', 2, 'nvl_3', 2, 'nvl_4', 2, 'nvl_5', 2, 'nvl_6', 3, 'nvl_7', 3, 'nvl_8', 3, 'nvl_9', 3, 'nvl_10', 3, 'nvl_11', 3, 'nvl_12', 3, 'nvl_13', 3, 'nvl_14', 3, 0))}$"
                     },
                     {
                         "name": "hab_esquiva_bonus",
-                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_tato', 1, 0) * switchCase(nvl_pj, 'nvl_1', 1, 'nvl_2', 1, 'nvl_3', 1, 'nvl_4', 1, 'nvl_5', 1, 'nvl_6', 2, 'nvl_7', 2, 'nvl_8', 2, 'nvl_9', 2, 'nvl_10', 2, 'nvl_11', 2, 'nvl_12', 2, 'nvl_13', 2, 'nvl_14', 2, 0) + switchCase(hab_escolhida, 'hab_escolhida_visao', 1, 0)}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (switchCase(hab_escolhida, 'hab_escolhida_tato', 1, 0) * switchCase(nvl_pj, 'nvl_1', 1, 'nvl_2', 1, 'nvl_3', 1, 'nvl_4', 1, 'nvl_5', 1, 'nvl_6', 2, 'nvl_7', 2, 'nvl_8', 2, 'nvl_9', 2, 'nvl_10', 2, 'nvl_11', 2, 'nvl_12', 2, 'nvl_13', 2, 'nvl_14', 2, 0) + switchCase(hab_escolhida, 'hab_escolhida_visao', 1, 0))}$"
                     },
                     {
                         "name": "hab_dano_bonus",
-                        "value": "${0}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (0)}$"
                     },
                     {
                         "name": "hab_slayer_pdv_bonus",
-                        "value": "${switchCase(hab_escolhida, 'hab_escolhida_tsuyoi', 1, 0) * switchCase(\n  nvl_pj,\n  'nvl_1', 2,\n  'nvl_2', 2,\n  'nvl_3', 2,\n  'nvl_4', 2,\n  'nvl_5', 2,\n  'nvl_6', 3,\n  'nvl_7', 3,\n  'nvl_8', 3,\n  'nvl_9', 3,\n  'nvl_10', 3,\n  'nvl_11', 3,\n  'nvl_12', 3,\n  'nvl_13', 3,\n  'nvl_14', 3,\n  0\n)}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (switchCase(hab_escolhida, 'hab_escolhida_tsuyoi', 1, 0) * switchCase(\n  nvl_pj,\n  'nvl_1', 2,\n  'nvl_2', 2,\n  'nvl_3', 2,\n  'nvl_4', 2,\n  'nvl_5', 2,\n  'nvl_6', 3,\n  'nvl_7', 3,\n  'nvl_8', 3,\n  'nvl_9', 3,\n  'nvl_10', 3,\n  'nvl_11', 3,\n  'nvl_12', 3,\n  'nvl_13', 3,\n  'nvl_14', 3,\n  0\n))}$"
                     },
                     {
                         "name": "hab_slayer_pdr_bonus",
-                        "value": "${switchCase(\n  hab_escolhida,\n  'hab_escolhida_marechi', 1,\n  'hab_escolhida_oketsu', 2,\n  0\n)}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? (equalText(ref('na_vanilla_ability', ''), 'hab_escolhida_marechi') ? 1 : 0) : (switchCase(\n  hab_escolhida,\n  'hab_escolhida_marechi', 1,\n  'hab_escolhida_oketsu', 2,\n  0\n))}$"
                     },
                     {
                         "name": "hab_tsuyoi_vit_bonus",
-                        "value": "${equalText(hab_escolhida, 'hab_escolhida_tsuyoi') ? 1 : 0}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (equalText(hab_escolhida, 'hab_escolhida_tsuyoi') ? 1 : 0)}$"
                     },
                     {
                         "name": "hab_tsuyoi_for_bonus",
-                        "value": "${equalText(hab_escolhida, 'hab_escolhida_tsuyoi') ? 1 : 0}$"
+                        "value": "${ref('na_regras_habilidades', 0) ? 0 : (equalText(hab_escolhida, 'hab_escolhida_tsuyoi') ? 1 : 0)}$"
                     },
                     {
                         "name": "metal_acerto_bonus",
-                        "value": "${switchCase(\n  metal_escolhido,\n  'metal_dourada', 4,\n  0\n)}$"
+                        "value": "${ref('na_regras_metal', 0) ? 0 : (switchCase(\n  metal_escolhido,\n  'metal_dourada', 4,\n  0\n))}$"
                     },
                     {
                         "name": "metal_esquiva_bonus",
-                        "value": "${switchCase(\n  metal_escolhido,\n  'metal_azul', 3,\n  'metal_preta', 4,\n  0\n)}$"
+                        "value": "${ref('na_regras_metal', 0) ? 0 : (switchCase(\n  metal_escolhido,\n  'metal_azul', 3,\n  'metal_preta', 4,\n  0\n))}$"
                     },
                     {
                         "name": "metal_dano_bonus",
-                        "value": "${switchCase(\n  metal_escolhido,\n  'metal_vermelha', 2,\n  0\n)}$"
+                        "value": "${ref('na_regras_metal', 0) ? 0 : (switchCase(\n  metal_escolhido,\n  'metal_vermelha', 2,\n  0\n))}$"
                     },
                     {
                         "name": "metal_dano_veneno",
@@ -14854,15 +15956,15 @@
                     },
                     {
                         "name": "metal_iniciativa_bonus",
-                        "value": "${switchCase(\n  metal_escolhido,\n  'metal_coral', 4,\n  0\n)}$"
+                        "value": "${ref('na_regras_metal', 0) ? 0 : (switchCase(\n  metal_escolhido,\n  'metal_coral', 4,\n  0\n))}$"
                     },
                     {
                         "name": "metal_percepcao_visual_bonus",
-                        "value": "${switchCase(\n  metal_escolhido,\n  'metal_branca', 3,\n  0\n)}$"
+                        "value": "${ref('na_regras_metal', 0) ? 0 : (switchCase(\n  metal_escolhido,\n  'metal_branca', 3,\n  0\n))}$"
                     },
                     {
                         "name": "metal_slayer_pdr_bonus",
-                        "value": "${switchCase(\n  metal_escolhido,\n  'metal_rosa', 4 * nvl_respiracao_num,\n  0\n)}$"
+                        "value": "${ref('na_regras_metal', 0) ? (ref('na_regras_origens', 0) and equalText(ref('na_vanilla_metal', ''), 'metal_preto') and equalText(ref('na_vanilla_origin', ''), 'origem_descendente') ? 1 : 0) : (switchCase(metal_escolhido, 'metal_rosa', 4 * nvl_respiracao_num, 0))}$"
                     },
                     {
                         "name": "nvl_respiracao_num",
@@ -14886,11 +15988,11 @@
                     },
                     {
                         "name": "metal_bloqueio_bonus",
-                        "value": "${switchCase(metal_escolhido,'metal_azul',3,'metal_preta',4,0)}$"
+                        "value": "${ref('na_regras_metal', 0) ? 0 : (switchCase(metal_escolhido,'metal_azul',3,'metal_preta',4,0))}$"
                     },
                     {
                         "name": "pdr_slayer_total",
-                        "value": "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)}$"
+                        "value": "${pdr_slayer_total_conta+metal_slayer_pdr_bonus+bonus_pdr_maximo_slayer+(equalText(nvl_14_bonus_choice, 'pdr_fdv2') ? atr_fdv_valor_config*2 : 0)+((equalText(ref(\"resp_slayer_display\", \"\"), \"resp_slayer_raposa\") or (nvl_num >= 2 and equalText(ref('na_regras_classes', 0) ? ref('na_vanilla_class', '') : ref('classe_escolhida', ''), 'classe_usuario_de_duas_resp') and equalText(ref(\"resp_slayer_display_2\", \"\"), \"resp_slayer_raposa\"))) ? 1 : 0)}$"
                     },
                     {
                         "name": "pdr_slayer_total_conta",
@@ -14902,7 +16004,7 @@
                     },
                     {
                         "name": "pdv_slayer_total_conta",
-                        "value": "${switchCase(\n  nvl_pj,\n  'nvl_1', pdv_slayer_nvl1,\n  'nvl_2', pdv_slayer_nvl2,\n  'nvl_3', pdv_slayer_nvl3,\n  'nvl_4', pdv_slayer_nvl4,\n  'nvl_5', pdv_slayer_nvl5,\n  'nvl_6', pdv_slayer_nvl6,\n  'nvl_7', pdv_slayer_nvl7,\n  'nvl_8', pdv_slayer_nvl8,\n  'nvl_9', pdv_slayer_nvl9,\n  'nvl_10', pdv_slayer_nvl10,\n  'nvl_11', pdv_slayer_nvl11,\n  'nvl_12', pdv_slayer_nvl12,\n  'nvl_13', pdv_slayer_nvl13,\n  'nvl_14', pdv_slayer_nvl14,\n  0\n)}$"
+                        "value": "${(switchCase(\n  nvl_pj,\n  'nvl_1', pdv_slayer_nvl1,\n  'nvl_2', pdv_slayer_nvl2,\n  'nvl_3', pdv_slayer_nvl3,\n  'nvl_4', pdv_slayer_nvl4,\n  'nvl_5', pdv_slayer_nvl5,\n  'nvl_6', pdv_slayer_nvl6,\n  'nvl_7', pdv_slayer_nvl7,\n  'nvl_8', pdv_slayer_nvl8,\n  'nvl_9', pdv_slayer_nvl9,\n  'nvl_10', pdv_slayer_nvl10,\n  'nvl_11', pdv_slayer_nvl11,\n  'nvl_12', pdv_slayer_nvl12,\n  'nvl_13', pdv_slayer_nvl13,\n  'nvl_14', pdv_slayer_nvl14,\n  0\n)) + ref('slayer_class_mb_corpo_guerra_applied', 0)}$"
                     },
                     {
                         "name": "pdv_slayer_atual",
@@ -14914,7 +16016,7 @@
                     },
                     {
                         "name": "classe_min_nvl",
-                        "value": "${switchCase(classe_escolhida,\n  'classe_usuario_de_duas_resp', 1,\n  'classe_companheiro_oni', 1,\n  'classe_mb', 4,\n  'classe_usuario_de_veneno', 4,\n  'classe_kakushi', 4,\n  999\n)}$"
+                        "value": "${not ref('na_regras_classes',0)?switchCase(classe_escolhida,\n  'classe_usuario_de_duas_resp', 1,\n  'classe_companheiro_oni', 1,\n  'classe_mb', 4,\n  'classe_usuario_de_veneno', 4,\n  'classe_kakushi', 4,\n  999\n):999}$"
                     },
                     {
                         "name": "classe_rank_c_display",
@@ -14961,7 +16063,7 @@
                         "editable": false
                     }
                 },
-                "templateSystemUniqueVersion": 1588828442
+                "templateSystemUniqueVersion": 2720657612
             },
             "flags": {
                 "custom-system-builder": {

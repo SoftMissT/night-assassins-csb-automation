@@ -7,6 +7,8 @@
  */
 
 import { MODULE_ID } from './constants.mjs';
+import { metalFormById } from './metal-breathing-data.mjs';
+import { ruleVariant } from './rules-profile.mjs';
 
 export const BREATH_TEMPLATE_ID = 'NABreathTpl00001';
 const TEMPLATE_PACK_ID = `${MODULE_ID}.night-assassins-respiracoes`;
@@ -102,16 +104,24 @@ export async function resolveBreathTemplateId(actor) {
  * sobrevive ao encadeamento de ataque (`attack-follow-up`).
  * @param {Actor} actor
  * @param {string} breathingName
- * @param {{documents?: object[], templateId?: string}} [options] injeção para testes
+ * @param {{documents?: object[], templateId?: string, formIds?: string[]}} [options]
  * @returns {Promise<{ok: boolean, reason?: string, created?: object[]}>}
  */
 export async function importBreathingForms(actor, breathingName, options = {}) {
     if (!actor?.isOwner)
         return { ok: false, reason: 'Só o dono da ficha ou o GM pode importar as Formas.' };
     const documents = options.documents ?? (await loadBreathingCatalog());
-    const forms = breathingFormsFromCatalog(documents, breathingName);
+    const vanilla = ruleVariant('respiracao') === 'vanilla';
+    const forms = breathingFormsFromCatalog(documents, breathingName).filter(form => {
+        const id = form.system.props.forma_id;
+        return (!vanilla || !metalFormById(id)?.homebrewOnly) &&
+            (!options.formIds || options.formIds.includes(id));
+    });
     if (forms.length === 0)
         return { ok: false, reason: `Nenhuma Forma da Respiração ${breathingName} no módulo.` };
+    const owned = new Set([...(actor.items ?? [])].map(item => item.system?.props?.forma_id));
+    const missing = forms.filter(form => !owned.has(form.system.props.forma_id));
+    if (!missing.length) return { ok: true, created: [] };
     const templateId =
         options.templateId !== undefined ? options.templateId : await resolveBreathTemplateId(actor);
     if (!templateId)
@@ -119,7 +129,7 @@ export async function importBreathingForms(actor, breathingName, options = {}) {
             ok: false,
             reason: 'Template de Forma ausente neste mundo: peça ao GM para abrir o hub uma vez.',
         };
-    const data = forms.map(({ _id, _key, folder, _stats, ...document }) => ({
+    const data = missing.map(({ _id, _key, folder, _stats, ...document }) => ({
         ...document,
         system: { ...document.system, template: templateId },
         flags: {

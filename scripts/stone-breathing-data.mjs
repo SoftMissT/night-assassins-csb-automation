@@ -148,14 +148,14 @@ export const STONE_FORMS = Object.freeze([
             LEVEL(6, {
                 dano: '6d6',
                 tiposDano: ['concussao'],
-                texto: 'Dois ataques (Ação de Ataque + Especial). Recuperação de 2 PDR no crítico era automatizada e agora é manual.',
-                primitivas: [{ tipo: 'ataques', n: 2 }],
+                texto: 'Dois Acertos independentes (Ataque e Especial). Um crítico recupera 2 PDR uma vez por uso.',
+                primitivas: [{ tipo: 'ataques', n: 2, pdrNoCritico: 2 }],
             }),
             LEVEL(6, {
                 dano: '8d6',
                 tiposDano: ['concussao'],
-                texto: 'Dois ataques (Ação de Ataque + Especial). Recuperação de 2 PDR no crítico era automatizada e agora é manual.',
-                primitivas: [{ tipo: 'ataques', n: 2 }],
+                texto: 'Dois Acertos independentes (Ataque e Especial). Um crítico recupera 2 PDR uma vez por uso.',
+                primitivas: [{ tipo: 'ataques', n: 2, pdrNoCritico: 2 }],
             }),
         ],
     },

@@ -26,6 +26,11 @@ export async function openHitDialog({
     color,
     weapons = [],
     requiredWeapon = false,
+    companionGuard = false,
+    counterattackTarget = false,
+    oniBasicAttack = false,
+    oniUnarmedCritical = 20,
+    missLimit,
 }) {
     const weaponOptions = weapons
         .map((weapon) => {
@@ -66,23 +71,24 @@ export async function openHitDialog({
           <input type="number" id="na-ac-cd" min="0" placeholder="15" />
         </label>
       </div>
-      <label class="na-hit-field na-hit-count">
+      ${missLimit ? `<input type="hidden" id="na-ac-count" value="1" />
+      <p>A sequência termina ao acumular ${missLimit} erros. Você também pode encerrar após qualquer golpe.</p>` : `<label class="na-hit-field na-hit-count">
         <span>Máximo de tentativas</span>
         <input type="number" id="na-ac-count" min="1" max="20" step="1" value="1" />
         <small>Uma rolagem por vez. Depois de cada resultado você confirma o acerto ou encerra a sequência.</small>
-      </label>
+      </label>`}
       <label class="na-hit-field">
         <span>Tipo de ação</span>
         <select id="na-ac-action">
           <option value="">Não informar —</option>
-          ${TIPOS_ACAO.map((entry) => `<option value="${entry.key}">${entry.label}</option>`).join('')}
+          ${TIPOS_ACAO.map((entry) => `<option value="${entry.key}"${oniBasicAttack && entry.key === 'ataque' ? ' selected' : ''}>${entry.label}</option>`).join('')}
         </select>
         <small>Identifica a técnica no chat. A rolagem de Acerto não gasta a ação.</small>
       </label>
       <label class="na-hit-field">
         <span>Arma usada / crítico</span>
         <select id="na-ac-weapon">
-          ${requiredWeapon ? '' : '<option value="">Sem arma crítico 20</option>'}
+          ${requiredWeapon ? '' : `<option value="">${oniBasicAttack ? 'Desarmado' : 'Sem arma'} crítico ${oniUnarmedCritical}</option>`}
           ${weaponOptions}
         </select>
         <small>${requiredWeapon ? 'A técnica está sincronizada com esta arma.' : 'O crítico vem da arma. Quebra da Respiração da Pedra reduz este número.'}</small>
@@ -101,6 +107,8 @@ export async function openHitDialog({
           ${messageModeOptionsHtml()}
         </select>
       </label>
+      <label class="na-hit-field"><span><input type="checkbox" id="na-ac-physical-surprise" /> Ataque surpresa físico</span></label>
+      ${companionGuard || counterattackTarget ? `<label class="na-hit-field"><span><input type="checkbox" id="na-ac-companion-melee" /> Ataque corpo a corpo${companionGuard ? ' (−1 no primeiro Acerto pela Presença de Guarda)' : ''}</span></label>` : ''}
     </div>
   `;
 
@@ -125,6 +133,8 @@ export async function openHitDialog({
                             Math.max(1, Math.trunc(Number(form.elements['na-ac-count'].value) || 1))
                         ),
                         actionType: form.elements['na-ac-action'].value ?? '',
+                        physicalSurprise: form.elements['na-ac-physical-surprise']?.checked === true,
+                        companionMelee: form.elements['na-ac-companion-melee']?.checked === true,
                         weaponId: (form.elements['na-ac-weapon'].value ?? '').split('|')[0],
                         weaponProfileIndex: Number(
                             (form.elements['na-ac-weapon'].value ?? '').split('|')[1] ?? 0
@@ -148,6 +158,8 @@ export async function openHitDialog({
                             Math.max(1, Math.trunc(Number(form.elements['na-ac-count'].value) || 1))
                         ),
                         actionType: form.elements['na-ac-action'].value ?? '',
+                        physicalSurprise: form.elements['na-ac-physical-surprise']?.checked === true,
+                        companionMelee: form.elements['na-ac-companion-melee']?.checked === true,
                         weaponId: (form.elements['na-ac-weapon'].value ?? '').split('|')[0],
                         weaponProfileIndex: Number(
                             (form.elements['na-ac-weapon'].value ?? '').split('|')[1] ?? 0
@@ -171,6 +183,8 @@ export async function openHitDialog({
                             Math.max(1, Math.trunc(Number(form.elements['na-ac-count'].value) || 1))
                         ),
                         actionType: form.elements['na-ac-action'].value ?? '',
+                        physicalSurprise: form.elements['na-ac-physical-surprise']?.checked === true,
+                        companionMelee: form.elements['na-ac-companion-melee']?.checked === true,
                         weaponId: (form.elements['na-ac-weapon'].value ?? '').split('|')[0],
                         weaponProfileIndex: Number(
                             (form.elements['na-ac-weapon'].value ?? '').split('|')[1] ?? 0
@@ -246,15 +260,20 @@ export async function openChainFormDialog({ chainable = [] } = {}) {
 export async function openHitConfirmationDialog({
     current,
     maximum,
+    missLimit,
+    misses = 0,
     total,
     cdVal = 0,
     natural = 0,
     criticalThreshold = 20,
     critical = false,
+    extendsOnCriticalHit = false,
     weaponName = '',
     profileName = '',
 }) {
-    const isLast = current >= maximum;
+    const attemptLabel = missLimit ? String(current) : `${current}/${maximum}`;
+    const isLast = !missLimit && current >= maximum;
+    const canContinueOnHit = !isLast || extendsOnCriticalHit;
     const cdResult =
         cdVal > 0
             ? `<span class="na-hit-cd ${total >= cdVal ? 'is-success' : 'is-failure'}">CD ${cdVal}: ${total >= cdVal ? 'superada' : 'não superada'}</span>`
@@ -264,7 +283,7 @@ export async function openHitConfirmationDialog({
         ? '<strong class="na-hit-critical">🔥 ACERTO CRÍTICO</strong>'
         : '<span class="na-hit-normal">Acerto normal</span>';
     const content = `<div class="na-csb-automation na-hit-confirm">
-    <span class="na-hit-kicker">TENTATIVA ${current} DE ${maximum}</span>
+    <span class="na-hit-kicker">${missLimit ? `GOLPE ${current} · ERROS ${misses}/${missLimit}` : `TENTATIVA ${current} DE ${maximum}`}</span>
     ${weaponLabel ? `<h3>${weaponLabel}</h3>` : ''}
     <div class="na-hit-total"><small>RESULTADO</small><strong>${total}</strong></div>
     <div class="na-hit-critical-summary">
@@ -273,11 +292,12 @@ export async function openHitConfirmationDialog({
       ${criticalResult}
     </div>
     ${cdResult}
-    <p>${isLast ? 'Última tentativa. Confirme o resultado.' : 'Este ataque acertou? Você pode continuar ou encerrar a técnica agora.'}</p>
-    ${isLast ? '' : `<label class="na-hit-stop"><input type="checkbox" name="na-hit-stop"><span>Encerrar a sequência depois deste resultado</span></label>`}
+    <p>${!isLast ? 'Este ataque acertou? Você pode continuar ou encerrar a técnica agora.'
+        : extendsOnCriticalHit ? 'Confirmar o crítico libera um ataque extra.' : 'Última tentativa. Confirme o resultado.'}</p>
+    ${canContinueOnHit ? `<label class="na-hit-stop"><input type="checkbox" name="na-hit-stop"><span>Encerrar a sequência depois deste resultado</span></label>` : ''}
   </div>`;
     const decision = await foundry.applications.api.DialogV2.wait({
-        window: { title: `Confirmar Acerto ${current}/${maximum}` },
+        window: { title: `Confirmar Acerto ${attemptLabel}` },
         content,
         position: { width: 430 },
         modal: true,
@@ -289,7 +309,7 @@ export async function openHitConfirmationDialog({
                 default: true,
                 callback: (event, button) => ({
                     hit: true,
-                    continue: !isLast && !button.form.elements['na-hit-stop']?.checked,
+                    continue: canContinueOnHit && !button.form.elements['na-hit-stop']?.checked,
                 }),
             },
             {
@@ -297,7 +317,8 @@ export async function openHitConfirmationDialog({
                 label: 'Errou',
                 callback: (event, button) => ({
                     hit: false,
-                    continue: !isLast && !button.form.elements['na-hit-stop']?.checked,
+                    continue: !isLast && (!missLimit || misses + 1 < missLimit) &&
+                        !button.form.elements['na-hit-stop']?.checked,
                 }),
             },
             { action: 'stop', label: 'Encerrar sequência', callback: () => ({ stop: true }) },

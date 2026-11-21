@@ -1,6 +1,27 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { METAL_FORMS, METAL_HAMMER_PASSIVE } from '../scripts/metal-breathing-data.mjs';
+
+it('a versão da Respiração muda Forjado e restringe a Batida de Martelo', () => {
+    const previousGame = globalThis.game;
+    try {
+        for (const respiracao of ['vanilla', 'homebrew']) {
+            globalThis.game = { settings: { get: (_module, key) => key === 'rulesSelection'
+                ? JSON.stringify({ respiracao, metal: respiracao === 'vanilla' ? 'homebrew' : 'vanilla' })
+                : undefined } };
+            const forged = buildMetalBreathingPlan('metal_06', 1);
+            const hammer = buildMetalBreathingPlan('metal_07', 4);
+            assert.equal(forged.cost, 4);
+            assert.deepEqual(forged.actions, [respiracao === 'vanilla' ? 'ataque' : 'especial']);
+            assert.equal(hammer.ok, respiracao === 'homebrew');
+            if (hammer.ok) {
+                assert.equal(hammer.cost, 6);
+                assert.equal(hammer.selected.damage, '5d8 + @for');
+                assert.equal(hammer.selected.proneBonus, 2);
+            }
+        }
+    } finally { globalThis.game = previousGame; }
+});
 import {
     buildMetalBreathingPlan,
     buildMetalHammerFollowUp,
@@ -21,9 +42,10 @@ import {
 
 describe('Respiração do Metal', () => {
     it('publica cinco formas oficiais e Martelo desde o nível 1', () => {
-        assert.equal(METAL_FORMS.length, 5);
+        const vanilla = METAL_FORMS.filter(form => !form.homebrewOnly);
+        assert.equal(vanilla.length, 5);
         assert.deepEqual(
-            METAL_FORMS.map((form) => form.action),
+            vanilla.map((form) => form.action),
             ['unica', 'especial', 'especial', 'completa', 'ataque']
         );
         assert.equal(METAL_HAMMER_PASSIVE.minimumLevel, 1);

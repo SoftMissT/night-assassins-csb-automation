@@ -4,6 +4,10 @@
 
 import { ATTRIBUTES, TIPOS_ACAO, TIPOS_DANO, MODULE_ID } from './constants.mjs';
 import { parseAttributeValue, parseNumber } from './parsing.mjs';
+import { breathingPdrInfo, breathingPdvInfo, breathingResourceKeys } from './actor-resources.mjs';
+import { PASSIVE_DAMAGE_KEY, pendingPassiveDamage, recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
+import { windCurrentBonuses } from './wind-current-passive.mjs';
+import { maximizeDamageDice } from './combat-passive-execution.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import { openDamageDialog } from './dialogs/damage-dialog.mjs';
 import {
@@ -21,10 +25,13 @@ import {
     applyStackingBreathingStatus,
     parseWaterBreathingState,
 } from './breath-service.mjs';
-import { currentPdv } from './status-engine.mjs';
 import { parseStatusState } from './status-service.mjs';
 import { actorKind, isSlayerActor } from './actor-kind.mjs';
-import { classRankAtLevel } from './slayer/class-contracts.mjs';
+import { classRankAtLevel, selectedSlayerClassKey } from './slayer/class-contracts.mjs';
+import { mbDamageBonus } from './slayer/class-runtime.mjs';
+import { masterBattleBenefits, masterBattleCriticalPlan } from './slayer/master-battle-rules.mjs';
+import { pendingCompanionInterception } from './slayer/companion-oni-service.mjs';
+import { ruleVariant, vanillaRuleSelection } from './rules-profile.mjs';
 import {
     applyUserPoison,
     USER_POISON_STATE_KEY,
@@ -32,6 +39,7 @@ import {
 } from './slayer/poison-user-service.mjs';
 import {
     ensureWeaponUsageMode,
+    isWeaponProficient,
     weaponAmmoPatch,
     weaponAmmoState,
     weaponProfilesForActor,
@@ -42,6 +50,7 @@ import {
     specialWeaponPendingForAttack,
 } from './special-weapon-service.mjs';
 import { flameWeaponTier } from './flame-breathing-data.mjs';
+import { hasBreathingPassive } from './breathing-passive-rules.mjs';
 import {
     consumeFlameInterception,
     consumeFlamePending,
@@ -67,7 +76,7 @@ import {
     registerMetalChainApplication,
 } from './metal-breathing-service.mjs';
 import {
-    breakSnowRestrictionOnDamage,
+    releaseSnowRestriction,
     consumeSnowPending,
     parseSnowBreathingState,
     resolveSnowAvalancheSynergy,
@@ -187,8 +196,9 @@ function criticalChainEntry(profile, attrValues, attackIndex) {
 
 export function weaponProfileEntries(profile, attrValues, { attackIndex = null } = {}) {
     const count = Math.max(1, Math.trunc(Number(profile?.ataques) || 1));
+    const regularAttacks = count + Number(profile?.golpe_secundario_pago === true);
     const entryFor = (index) => {
-        if (index >= count && profile?.cadeia_critica?.ativa === true)
+        if (index >= regularAttacks && profile?.cadeia_critica?.ativa === true)
             return criticalChainEntry(profile, attrValues, index);
         const includeAttributes =
             index === 0 || String(profile?.dano_segundo_golpe ?? 'normal') === 'normal';
@@ -282,7 +292,7 @@ async function chooseMetalHammerSynergy(attacker) {
         .map((combatant) => combatant.actor)
         .filter(Boolean);
     const allies = metalHammerSynergyAllies(attacker, combatActors, {
-        isAlly: (candidate) => actorKind(candidate) === 'slayer',
+        isAlly: (candidate) => ['slayer', 'npc'].includes(actorKind(candidate)),
     });
     if (allies.length === 0) return null;
     const options = [
@@ -308,6 +318,33 @@ async function chooseMetalHammerSynergy(attacker) {
     });
     if (chosenUuid === null) return { canceled: true, ally: null };
     return { canceled: false, ally: allies.find((entry) => entry.uuid === chosenUuid) ?? null };
+}
+
+async function chooseMasterBattleCritical(profile, attributes) {
+    const homebrew = profile === 'homebrew';
+    const choice = await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Crítico Brutal' },
+        content: `<label>Sangramento <select name="attribute">
+            <option value="FOR">FOR · ${Math.max(0, Math.ceil(attributes.for / 2))} turno(s)</option>
+            <option value="DEX">DEX · ${Math.max(0, Math.ceil(attributes.dex / 2))} turno(s)</option>
+        </select></label>${homebrew ? `<label>Ferimento Tático <select name="injury">
+            <option value="tendon">Tendão Rompido · −1,5 m</option>
+            <option value="open-guard">Guarda Aberta · −1 Esquiva/Bloqueio</option>
+            <option value="deep-impact">Impacto Profundo · +2 dano</option>
+        </select></label>` : ''}`,
+        modal: true,
+        rejectClose: false,
+        buttons: [
+            { action: 'confirm', label: 'Confirmar', default: true, callback: (_event, button) => ({
+                attribute: button.form.elements.attribute.value,
+                injury: button.form.elements.injury?.value,
+            }) },
+            { action: 'cancel', label: 'Cancelar', callback: () => null },
+        ],
+    });
+    if (!['FOR', 'DEX'].includes(choice?.attribute)) return null;
+    if (homebrew && !['tendon', 'open-guard', 'deep-impact'].includes(choice.injury)) return null;
+    return { attribute: choice.attribute, injury: homebrew ? choice.injury : null };
 }
 
 /**
@@ -342,6 +379,7 @@ export async function rollDamage(options = {}) {
             Date.now()
     );
     const attackerKind = actorKind(actor) ?? 'slayer';
+    const breathingActor = attackerKind === 'slayer' || attackerKind === 'npc';
     const resourceKey = attackerKind === 'oni'
         ? 'pdk_oni_gasto_valor'
         : attackerKind === 'npc' ? 'npc_pdr_gasto_valor' : 'pdr_slayer_gasto_valor';
@@ -470,10 +508,28 @@ export async function rollDamage(options = {}) {
             'Fadiga Corporal impede Acertos Críticos. O dano será rolado normalmente.'
         );
     }
+    const criticalWeapon = actor.items?.get?.(options.weaponItem?.id);
+    const masterBattleAttack = critical && options.critical === true && options.classBasicAttack === true &&
+        attackerKind === 'slayer' && !breathingContext && !options.sourceFamily && !options.passiveFormId &&
+        !options.passivePlan?.noContactEffects &&
+        criticalWeapon?.id && isWeaponItem(criticalWeapon) && isWeaponProficient(criticalWeapon.system.props, props);
+    const masterBattle = masterBattleAttack ? masterBattleBenefits(props) : null;
+    let masterBattleCritical = null;
+    let masterBattleChoice = null;
+    if (masterBattle?.criticalBleed) {
+        const choice = await chooseMasterBattleCritical(masterBattle.profile, attrValues);
+        if (!choice) return;
+        masterBattleCritical = masterBattleCriticalPlan(masterBattle, {
+            ...choice, attributeValue: Math.trunc(attrValues[choice.attribute.toLowerCase()]),
+            isBasic: true, isProficient: true, isCritical: true,
+        });
+        if (masterBattleCritical) masterBattleChoice = { ...choice, weaponId: criticalWeapon.id };
+    }
     const pdrGastoBase = Math.max(formCost, parseNumber(dialogResult.pdrGasto));
-    const pdrGasto = pdrGastoBase > 0 ? pdrGastoBase + statusEffects.pdrSurcharge : 0;
+    const pdrGasto = options.passivePlan?.skipResourceConsumption ? 0 :
+        pdrGastoBase > 0 ? pdrGastoBase + statusEffects.pdrSurcharge : 0;
     if (formCost > 0) {
-        const current = parseNumber(props[attackerKind === 'npc' ? 'npc_pdr_atual' : 'pdr_slayer_atual']);
+        const current = breathingPdrInfo(props).pdrCurrent;
         if (pdrGasto > current)
             return ui.notifications?.warn?.(`PDR insuficiente: ${current} disponível, ${pdrGasto} necessário.`);
     }
@@ -510,12 +566,23 @@ export async function rollDamage(options = {}) {
             formula: formulaParts[index],
         }))
         .filter((spec) => spec.formula !== '0');
-    const markFormula =
-        attackerKind === 'slayer' || attackerKind === 'npc' ? markDamageFormula(props, entradas) : '';
+    const passiveExecutionId = String(options.passiveExecutionId ?? '');
+    const passiveDamage = passiveExecutionId ? pendingPassiveDamage(props, passiveExecutionId) : [];
+    let maximizeCount = options.passivePlan?.maximizeWeaponDice ? Infinity :
+        Math.max(0, ...passiveDamage.map(entry => Number(entry.maxDamageDice) || 0));
+    if (maximizeCount > 0) for (const spec of specs) {
+        const count = [...spec.formula.matchAll(/\b(\d*)d\d+/g)].reduce((sum, match) => sum + Number(match[1] || 1), 0);
+        spec.formula = maximizeDamageDice(spec.formula, maximizeCount);
+        maximizeCount -= Math.min(count, maximizeCount);
+    }
+    if (typeof options.passivePlan?.extraDamage === 'string')
+        specs.push({ label: 'A Última Mentira é a Verdade', types: ['cortante'], formula: options.passivePlan.extraDamage });
+    const markFormula = breathingActor && !options.passivePlan?.noContactEffects
+        ? markDamageFormula(props, entradas) : '';
     if (markFormula)
         specs.push({ label: 'Marca do Caçador', types: ['ferida'], formula: markFormula });
     const breathingState = parseWaterBreathingState(
-        attackerKind === 'slayer' ? props.resp_agua_estado : ''
+        breathingActor ? props.resp_agua_estado : ''
     );
     const breathingDamage = breathingState.pendingDamage;
     const hasAttackDamage =
@@ -526,7 +593,15 @@ export async function rollDamage(options = {}) {
                 entry.tipoAcao === 'especial' ||
                 entry.tipoAcao === 'completa'
         );
-    if (attackerKind === 'slayer' && hasAttackDamage) {
+    const classProfile = ruleVariant('classes');
+    const selectedClass = attackerKind === 'slayer' ? selectedSlayerClassKey(props, classProfile) : null;
+    const selectedClassRank = selectedClass ? classRankAtLevel(props.nvl_num ?? props.nvl_pj, classProfile) : null;
+    if (selectedClass === 'classe_mb' && options.classBasicAttack === true &&
+        (classProfile === 'vanilla' || selectedWeaponProfile?.proficiente !== false)) {
+        const bonus = mbDamageBonus(selectedClassRank);
+        if (bonus) specs.push({ label: 'Ataque Dilacerador', types: [], formula: String(bonus) });
+    }
+    if (breathingActor && hasAttackDamage) {
         const derivedBonuses = resolveSlayerDerivedBonuses(props, {
             runtimeSources: actorBuffSources(actor),
         });
@@ -548,7 +623,7 @@ export async function rollDamage(options = {}) {
         }
     }
     // "Bônus Fixos" da ficha: soma em todo dano, de qualquer tipo de ficha.
-    const sheetDamage = attackerKind === 'slayer' ? 0 : sheetBonusValue(props, 'dano');
+    const sheetDamage = breathingActor && hasAttackDamage ? 0 : sheetBonusValue(props, 'dano');
     if (sheetDamage)
         specs.push({
             label: 'Bônus da ficha',
@@ -556,25 +631,35 @@ export async function rollDamage(options = {}) {
             formula: String(sheetDamage),
             derived: true,
         });
-    const injectBreathing = options.skipBreathingInjection !== true;
+    const injectBreathing = options.skipBreathingInjection !== true && options.passivePlan?.noContactEffects !== true;
+    if (injectBreathing && breathingDamage?.critical && hasAttackDamage) critical = true;
     if (injectBreathing && breathingDamage?.formula && hasAttackDamage) {
         const formula = String(breathingDamage.formula).replace(/@([a-z_]+)/gi, (_, key) =>
             String(attrValues[key.toLowerCase()] ?? 0)
         );
         const types = Array.isArray(breathingDamage.types) ? breathingDamage.types : [];
         specs.push({ label: 'Respiração da Água', types, formula, breathing: true });
-        if (breathingDamage.critical) critical = true;
     }
     const flameState = parseFlameBreathingState(
         ['slayer', 'npc'].includes(attackerKind) ? props.resp_chamas_estado : ''
     );
     const hasFlameBreathing =
+        hasBreathingPassive(props, 'Chamas') ||
         Boolean(props.resp_chamas_estado) ||
         [...(actor.items ?? [])].some((item) => item.system?.props?.respiracao_nome === 'Chamas');
     const flameDamage = flameState.pendingDamage;
     const universe = options.flamingUniverse;
-    const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
-    const flameTechnique = Boolean((flameDamage?.technique || universe) && hasAttackDamage);
+    const flameWeaponId = options.weaponItem?.id ?? flameState.synchronizedWeapon?.id ?? '';
+    const wrongLegacyFlameWeapon = options.weaponItem?.id && flameState.synchronizedWeapon?.id &&
+        options.weaponItem.id !== flameState.synchronizedWeapon.id &&
+        !Object.hasOwn(flameState.weaponHeatById ?? {}, options.weaponItem.id);
+    const flameTier = flameWeaponTier(wrongLegacyFlameWeapon ? 0 : flameWeaponHeat(flameState, flameWeaponId));
+    const flameTechnique = hasAttackDamage && Boolean(flameDamage?.technique || universe ||
+        options.isTechnique || options.breathing || breathingDamage ||
+        parseMistBreathingState(props.resp_nevoa_estado).pendingDamage ||
+        parseMetalBreathingState(props.resp_metal_estado).pendingDamage ||
+        parseSnowBreathingState(props.resp_neve_estado).pendingDamage ||
+        parseWindBreathingState(props.resp_vento_estado).pendingDamage);
     if (universe)
         specs.push({
             label: 'Universo Flamejante',
@@ -586,8 +671,9 @@ export async function rollDamage(options = {}) {
     if (injectBreathing && flameDamage?.formula && hasAttackDamage)
         specs.push({
             label: 'Respiração das Chamas',
-            types: ['cortante'],
-            formula: flameDamage.formula,
+            types: [flameDamage.source === 'chamas_03' ? 'fogo' : 'cortante'],
+            formula: String(flameDamage.formula).replace(/@([a-z_]+)/gi, (_, key) =>
+                String(attrValues[key.toLowerCase()] ?? 0)),
             flame: true,
         });
     if (injectBreathing && flameDamage?.comboRider?.formula && hasAttackDamage)
@@ -607,7 +693,7 @@ export async function rollDamage(options = {}) {
     if (flameState.ignition?.damageBonus && hasAttackDamage)
         specs.push({
             label: 'Ignição',
-            types: ['fogo'],
+            types: [flameState.ignition.damageType ?? 'fogo'],
             formula: String(flameState.ignition.damageBonus),
             flame: true,
         });
@@ -628,7 +714,7 @@ export async function rollDamage(options = {}) {
             flame: true,
         });
     const mistState = parseMistBreathingState(
-        attackerKind === 'slayer' ? props.resp_nevoa_estado : ''
+        breathingActor ? props.resp_nevoa_estado : ''
     );
     const mistDamage = mistState.pendingDamage;
     if (injectBreathing && mistDamage?.formula && hasAttackDamage) {
@@ -649,7 +735,7 @@ export async function rollDamage(options = {}) {
             });
     }
     const metalState = parseMetalBreathingState(
-        attackerKind === 'slayer' ? props.resp_metal_estado : ''
+        breathingActor ? props.resp_metal_estado : ''
     );
     const metalChain = metalState.chainReaction;
     const metalChainApplies =
@@ -665,7 +751,7 @@ export async function rollDamage(options = {}) {
         });
     }
     const snowState = parseSnowBreathingState(
-        attackerKind === 'slayer' ? props.resp_neve_estado : ''
+        breathingActor ? props.resp_neve_estado : ''
     );
     const snowDamage = snowState.pendingDamage;
     if (injectBreathing && snowDamage?.formula && hasAttackDamage) {
@@ -686,9 +772,15 @@ export async function rollDamage(options = {}) {
     }
     // Respiração do Vento contrato pendingDamage (P0 dano fantasma corrigido)
     const windState = parseWindBreathingState(
-        attackerKind === 'slayer' ? props.resp_vento_estado : ''
+        breathingActor ? props.resp_vento_estado : ''
     );
     const windDamage = windState.pendingDamage;
+    const passiveFormId = String(options.passiveFormId ?? windDamage?.source ?? '');
+    const windExecutionId = passiveExecutionId || actionId;
+    const windForm = hasAttackDamage && passiveFormId.startsWith('vento_') && !options.passivePlan?.noContactEffects;
+    const windDice = windForm ? windCurrentBonuses(props, {
+        executionId: windExecutionId, formId: passiveFormId,
+    }).damageDice : 0;
     let garrasApplied = false;
     if (windDamage?.garras && hasAttackDamage && specs.length > 0 && !garrasApplied) {
         // Garras do Vento Puro: transforma o PRIMEIRO spec (dano da arma):
@@ -715,11 +807,21 @@ export async function rollDamage(options = {}) {
             wind: true,
         });
     }
+    for (const entry of passiveDamage) if (entry.formula)
+        specs.push({ label: entry.source ?? 'Passiva de Respiração', types: entry.types ?? [], formula: entry.formula });
     if (specs.length === 0)
         return ui.notifications?.warn?.(
             'Informe ao menos um dado, valor fixo ou atributo no dano.'
         );
 
+    if (windDice > 0) {
+        const result = await recordBreathingPassiveEvent(actor, {
+            type: 'consumeDamageBonus', dice: windDice, executionId: windExecutionId,
+            formId: passiveFormId, isTechnique: true,
+        });
+        if (result.effects?.some(effect => effect.damageDice === windDice))
+            specs.push({ label: 'Corrente do Vendaval', types: ['cortante'], formula: `${windDice}d6` });
+    }
     let rolls;
     try {
         rolls = await Promise.all(specs.map((spec) => Roll.create(spec.formula).evaluate()));
@@ -763,17 +865,17 @@ export async function rollDamage(options = {}) {
         penalty -= reduction;
     }
     const subtotalDamage = components.reduce((total, component) => total + component.subtotal, 0);
-    const damageBeforeCritical =
+    let damageBeforeCritical =
         flameTier.multiplier > 1 && hasAttackDamage
             ? Math.floor(subtotalDamage * flameTier.multiplier)
             : subtotalDamage;
     if (damageBeforeCritical > subtotalDamage)
-        components.push({
-            label: 'Fogo Fátuo 60 +50%',
-            types: ['fogo'],
-            subtotal: damageBeforeCritical - subtotalDamage,
-        });
-    const finalDamage = critical ? damageBeforeCritical * 2 : damageBeforeCritical;
+        components.push(...components.map(component => ({
+            label: `Fogo Fátuo 60 +100% · ${component.label}`,
+            types: [...component.types],
+            subtotal: component.subtotal,
+        })));
+    let finalDamage = critical ? damageBeforeCritical * 2 : damageBeforeCritical;
     if (critical && damageBeforeCritical > 0) {
         const criticalBonus = components.map((component) => ({
             label: `Crítico ×2 · ${component.label}`,
@@ -781,6 +883,28 @@ export async function rollDamage(options = {}) {
             subtotal: component.subtotal,
         }));
         components.push(...criticalBonus);
+    }
+    if (masterBattleCritical?.damageBonus && finalDamage > 0) {
+        components.push({ label: 'Impacto Profundo', types: components[0]?.types ?? [], subtotal: masterBattleCritical.damageBonus });
+        finalDamage += masterBattleCritical.damageBonus;
+    }
+    const impact = attackerKind === 'oni' && options.oniTitanImpactEligible && finalDamage > 0
+        ? await (await import('./oni/specialization-runtime.mjs')).chooseTitanImpact(actor, pdrGasto) : 0;
+    if (impact > 0) {
+        components.push({ label: 'Impacto · Titan', types: components[0]?.types ?? [], subtotal: impact });
+        finalDamage += impact;
+        damageBeforeCritical += impact;
+    }
+    if (options.passivePlan?.halfDamage) {
+        const half = value => options.passivePlan.roundHalfUp ? Math.ceil(value / 2) : Math.floor(value / 2);
+        damageBeforeCritical = half(damageBeforeCritical);
+        finalDamage = half(finalDamage);
+        let counted = 0;
+        for (const component of components) {
+            const original = component.subtotal;
+            component.subtotal = half(counted + original) - half(counted);
+            counted += original;
+        }
     }
     const damageTypes = [...new Set(components.flatMap((component) => component.types))];
 
@@ -790,8 +914,13 @@ export async function rollDamage(options = {}) {
     if (Object.keys(actionResult.patch ?? {}).length > 0) {
         updatesByActor.set(actor.uuid, { actor, changes: { ...actionResult.patch } });
     }
+    if (passiveDamage.length) {
+        const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
+        existing.changes[`system.props.${PASSIVE_DAMAGE_KEY}`] = '';
+        updatesByActor.set(actor.uuid, existing);
+    }
 
-    if (breathingDamage && hasAttackDamage) {
+    if (!options.passivePlan?.noContactEffects && breathingDamage && hasAttackDamage) {
         const nextState = { ...breathingState };
         const remaining = Math.max(0, Math.trunc(parseNumber(breathingDamage.uses)) - 1);
         if (remaining > 0) nextState.pendingDamage = { ...breathingDamage, uses: remaining };
@@ -816,7 +945,7 @@ export async function rollDamage(options = {}) {
         Object.assign(existing.changes, flameStatePatch(nextState));
         updatesByActor.set(actor.uuid, existing);
     }
-    if (mistDamage && hasAttackDamage) {
+    if (!options.passivePlan?.noContactEffects && mistDamage && hasAttackDamage) {
         const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
         Object.assign(
             existing.changes,
@@ -824,7 +953,7 @@ export async function rollDamage(options = {}) {
         );
         updatesByActor.set(actor.uuid, existing);
     }
-    if (snowDamage && hasAttackDamage) {
+    if (!options.passivePlan?.noContactEffects && snowDamage && hasAttackDamage) {
         const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
         Object.assign(
             existing.changes,
@@ -832,7 +961,7 @@ export async function rollDamage(options = {}) {
         );
         updatesByActor.set(actor.uuid, existing);
     }
-    if (windDamage && hasAttackDamage && windDamage.formula !== '') {
+    if (!options.passivePlan?.noContactEffects && windDamage && hasAttackDamage && windDamage.formula !== '') {
         const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
         Object.assign(
             existing.changes,
@@ -846,15 +975,15 @@ export async function rollDamage(options = {}) {
         updatesByActor.set(actor.uuid, existing);
     }
 
-    if (pdrGasto > 0) {
+    if (pdrGasto > 0 || impact > 0) {
         const pdrAtual = parseNumber(actor.system?.props?.[resourceKey]);
         const existing = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
-        existing.changes[`system.props.${resourceKey}`] = pdrAtual + pdrGasto;
+        existing.changes[`system.props.${resourceKey}`] = pdrAtual + pdrGasto + impact;
         updatesByActor.set(actor.uuid, existing);
     }
 
     const damageRequests = [];
-    const targets = universe ? new Set([universe.target]) : game?.user?.targets;
+    const targets = universe ? new Set([universe.target]) : options.targets ?? game?.user?.targets;
     // Estigma da Névoa: "ao acertar qualquer ataque, pode atordoar o inimigo
     // por 1 turno" benefício único por ataque bem-sucedido (não por alvo em
     // AOE), consumido aqui porque este é o ponto em que um acerto com dano
@@ -887,15 +1016,21 @@ export async function rollDamage(options = {}) {
             }
             const protectedActor = targetToken.actor;
             if (!protectedActor) continue;
+            const hostile = protectedActor.uuid !== actor.uuid && !(
+                attackerToken?.document?.disposition && attackerToken.document.disposition === targetToken.document?.disposition
+            );
+            const companion = !options.passivePlan?.cannotDodge && !flameDamage?.areaMeters &&
+                pendingCompanionInterception(protectedActor, { isAttack: true, hostile,
+                    sourceActorUuid: actor.uuid, attackTotal: options.attackTotal });
             const interceptionFlag = protectedActor.getFlag?.(MODULE_ID, 'flameInterception');
-            const interception = consumeFlameInterception(interceptionFlag, protectedActor.uuid);
-            const interceptorDocument = interception.intercepted
+            const interception = !companion && consumeFlameInterception(interceptionFlag, protectedActor.uuid);
+            const interceptorDocument = interception?.intercepted
                 ? await fromUuid(interception.interceptorUuid)
                 : null;
             const interceptorActor = interceptorDocument?.actor ?? interceptorDocument;
-            const targetActor =
-                interceptorActor?.documentName === 'Actor' ? interceptorActor : protectedActor;
-            const intercepted = targetActor.uuid !== protectedActor.uuid;
+            const targetActor = companion?.oni ??
+                (interceptorActor?.documentName === 'Actor' ? interceptorActor : protectedActor);
+            const intercepted = !companion && targetActor.uuid !== protectedActor.uuid;
             const maneuverBonuses =
                 attackerKind === 'slayer'
                     ? resolveCombatManeuverBonuses(actor, {
@@ -933,7 +1068,7 @@ export async function rollDamage(options = {}) {
             let effectiveCritical = critical;
             if (targetMist.dazzle?.criticalImmunity && critical) {
                 targetComponents = components
-                    .filter((component) => !component.label.startsWith('Crítico ×2 · '))
+                    .filter((component) => !component.label.startsWith('Crítico ×2 · ') && component.label !== 'Impacto Profundo')
                     .map((component) => ({ ...component, types: [...component.types] }));
                 amount = damageBeforeCritical;
                 effectiveCritical = false;
@@ -1013,11 +1148,13 @@ export async function rollDamage(options = {}) {
                         );
                 }
             }
-            if (flameDamage?.damagePerEnemyHeat && heatBefore > 0) {
-                const heatRoll = await Roll.create(`${heatBefore}d8`).evaluate();
+            const heatAfterHit = Math.min(60, heatBefore + (hasFlameBreathing && hasAttackDamage
+                ? 1 + Math.max(0, Number(universe?.enemyHeat ?? flameState.activeForm?.enemyHeat) || 0) : 0));
+            if (flameDamage?.damagePerEnemyHeat && heatAfterHit > 0) {
+                const heatRoll = await Roll.create(`${heatAfterHit}d8`).evaluate();
                 await heatRoll.toMessage({
                     speaker: ChatMessage.getSpeaker({ actor }),
-                    flavor: `<strong>Roku no Kata Hono Arashi</strong> ${heatBefore}d8 pelas Brasas do alvo`,
+                    flavor: `<strong>Roku no Kata Hono Arashi</strong> ${heatAfterHit}d8 pelas Brasas do alvo`,
                 });
                 amount += Math.max(0, Math.trunc(Number(heatRoll.total) || 0));
             }
@@ -1042,7 +1179,7 @@ export async function rollDamage(options = {}) {
                     // com 60+ Brasas Ardentes NAQUELE alvo, acrescenta FDV × FOR.
                     rengokuBonus =
                         flameWeaponHeat(flameState) +
-                        (heatBefore >= 60
+                        (heatAfterHit >= 60
                             ? Math.max(0, Math.trunc(attrValues.fdv * attrValues.for))
                             : 0);
                     amount += rengokuBonus;
@@ -1123,7 +1260,7 @@ export async function rollDamage(options = {}) {
                     turns: newSuppressionTurns,
                     sourceActorUuid: actor.uuid,
                 });
-            const suppressResistances =
+            const suppressResistances = options.passivePlan?.ignoreResistance === true ||
                 newSuppressionTurns > 0 ||
                 Number(existingSuppression?.turns) > 0 ||
                 windSuppressResistances;
@@ -1181,7 +1318,7 @@ export async function rollDamage(options = {}) {
             if (
                 !stigmaStunApplied &&
                 amount > 0 &&
-                attackerKind === 'slayer' &&
+                breathingActor &&
                 targetActor.uuid !== actor.uuid
             ) {
                 const existingAttacker = updatesByActor.get(actor.uuid) ?? { actor, changes: {} };
@@ -1202,6 +1339,7 @@ export async function rollDamage(options = {}) {
                 actor: targetActor,
                 protectedActor,
                 intercepted,
+                companionSlayerUuid: companion ? protectedActor.uuid : '',
                 amount,
                 rengokuBonus,
                 heatBefore,
@@ -1210,6 +1348,8 @@ export async function rollDamage(options = {}) {
                 negated: defense.negated,
                 counterAttackAvailable: defense.counterAttackAvailable === true,
                 critical: effectiveCritical,
+                suppressResistances,
+                hostile,
             });
         }
     }
@@ -1248,13 +1388,17 @@ export async function rollDamage(options = {}) {
                 patch: targetPatch,
                 negated,
                 critical: targetCritical,
+                suppressResistances,
+                hostile,
+                companionSlayerUuid,
             }) => {
                 if (Object.keys(targetPatch ?? {}).length)
                     await targetActor.update(targetPatch, {
                         naCsbAutomation: true,
                         naBreathing: true,
                     });
-                if (amount <= 0) return { ok: true, appliedDamage: 0, woundDamage: 0, negated };
+                if (amount <= 0 && !companionSlayerUuid)
+                    return { ok: true, appliedDamage: 0, woundDamage: 0, negated };
                 // Nunca assumir Cura silenciosamente: só desvia para o relay de cura
                 // quando o jogador escolheu "cura" explicitamente no diálogo.
                 if (healChoices?.get(targetActor) === 'cura') {
@@ -1275,7 +1419,7 @@ export async function rollDamage(options = {}) {
                 // Normalização no boundary: pendingDamage ausente (ataque padrão sem
                 // técnica armada) NÃO pode crashar contrato neutro = zeros.
                 const flameContext =
-                    hasFlameBreathing && hasAttackDamage
+                    hasFlameBreathing && hasAttackDamage && !options.passivePlan?.noContactEffects
                         ? {
                               sourceId: actor.id,
                               heat: 1 + Math.max(0, Number(universe?.enemyHeat ?? flameState.activeForm?.enemyHeat) || 0),
@@ -1287,8 +1431,19 @@ export async function rollDamage(options = {}) {
                           }
                         : null;
                 const targetKind = actorKind(targetActor);
+                const passiveContext = {
+                    sourceActorUuid: actor.uuid,
+                    hostile,
+                    oniToxicUnarmedCritical: attackerKind === 'oni' && options.oniToxicUnarmedCritical === true && targetCritical,
+                    companionSlayerUuid,
+                    attackTotal: options.attackTotal,
+                    cannotDodge: options.passivePlan?.cannotDodge === true,
+                    ignoreResistance: suppressResistances,
+                    masterBattleCritical: targetCritical && hostile ? masterBattleChoice : null,
+                };
                 if (targetKind === 'slayer')
                     return applySlayerDamageAuto(targetActor, amount, {
+                        ...passiveContext,
                         isAttack: true,
                         attackName: nome,
                         critical: targetCritical,
@@ -1307,6 +1462,7 @@ export async function rollDamage(options = {}) {
                 // (chaves distintas resolvidas dentro do relay por tipo de ator).
                 if (targetKind === 'oni' || targetKind === 'oni_minion' || targetKind === 'npc')
                     return applyOniDamage(targetActor, amount, {
+                        ...passiveContext,
                         attackName: nome,
                         critical: targetCritical,
                         rolledTotal: amount,
@@ -1339,15 +1495,16 @@ export async function rollDamage(options = {}) {
         console.error?.(`[${MODULE_ID}] Falha ao aplicar dano em alvo`, failedDamage[0].reason);
     }
 
-    const poisonRank =
-        attackerKind === 'slayer' && props.classe_escolhida === 'classe_usuario_de_veneno'
-            ? classRankAtLevel(parseNumber(props.nvl_num ?? props.nvl_pj))
-            : null;
+    const poisonRank = selectedClass === 'classe_usuario_de_veneno' ? selectedClassRank : null;
     const validPoisonAttack =
         Boolean(poisonRank) &&
-        options.classBasicAttack === true &&
-        selectedWeaponProfile?.proficiente !== false;
+        !options.passivePlan?.noContactEffects &&
+        (classProfile === 'vanilla'
+            ? hasAttackDamage && Boolean(passiveExecutionId)
+            : options.classBasicAttack === true && selectedWeaponProfile?.proficiente !== false);
     if (validPoisonAttack) {
+        const contactDamageBonus = ruleVariant('metal') === 'vanilla'
+            ? vanillaRuleSelection(props, 'metal')?.contactDamage ?? 0 : 0;
         const damageResults = results.slice(pending.length);
         for (let index = 0; index < damageRequests.length; index += 1) {
             const outcome = damageResults[index];
@@ -1366,10 +1523,14 @@ export async function rollDamage(options = {}) {
                 .join(' ')
                 .toLocaleLowerCase('pt-BR');
             const poison = applyUserPoison(targetProps[USER_POISON_STATE_KEY], {
+                profile: classProfile,
                 sourceActorUuid: actor.uuid,
                 rank: poisonRank,
                 carisma: attrValues.car,
+                contactDamageBonus,
                 actionId,
+                contactLimit: selectedWeaponProfile?.efeitos_contato_por_acao,
+                attackIndex: options.weaponAttackIndex,
                 immune: /imune?[^,;]*veneno|veneno[^,;]*imune?/u.test(immunityText),
             });
             if (poison.applied)
@@ -1381,24 +1542,42 @@ export async function rollDamage(options = {}) {
     }
 
     // ─── Respiração do Vento pós-dano ─────────────────────────────────
-    for (const request of damageRequests) {
-        if (!(request.amount > 0)) continue;
+    let windDamageDealt = 0;
+    for (const [index, request] of damageRequests.entries()) {
+        const outcome = results[pending.length + index];
+        const appliedDamage = Number(outcome?.value?.appliedDamage ?? 0);
+        if (outcome?.status !== 'fulfilled' || outcome.value?.ok === false || !(appliedDamage > 0)) continue;
+        if (request.hostile) {
+            const pdvLost = Number(outcome.value?.pdvLost) || 0;
+            if (windForm) windDamageDealt += pdvLost;
+            if (passiveDamage.some(entry => entry.requiem) && pdvLost > 0 &&
+                breathingPdvInfo(request.actor.system?.props).pdvCurrent <= 0)
+                await recordBreathingPassiveEvent(actor, {
+                    type: 'damageDealt', targetUuid: request.actor.uuid, defeated: true,
+                    executionId: passiveExecutionId, requiem: true, amount: pdvLost,
+                });
+        }
         // 7º Estilo: inimigos atingidos neste turno testam VIT (uma vez por alvo/turno)
         if (windDamage?.ventania && hasAttackDamage) {
             windVentaniaTargets.add(request.actor);
         }
         // 9º Estilo: cura 5 PDV se dano líquido >= 10% do PDV máximo do alvo
-        if (windDamage?.tufao && request.amount > 0 && !windTufaoHealPending) {
+        if (windDamage?.tufao && !windTufaoHealPending) {
             const maxPdv =
+                breathingPdvInfo(request.actor.system?.props).pdvMax ||
                 parseNumber(request.actor.system?.props?.pdv_slayer_maximo_num) ||
                 parseNumber(request.actor.system?.props?.pdv_oni_maximo_num) ||
                 parseNumber(request.actor.system?.props?.pdv_oni_total_conta) ||
                 0;
             const thresholdPdv = Number(windDamage.tufao.healThresholdPercent ?? 10);
-            if (maxPdv > 0 && request.amount >= Math.ceil((maxPdv * thresholdPdv) / 100))
+            if (maxPdv > 0 && appliedDamage >= Math.ceil((maxPdv * thresholdPdv) / 100))
                 windTufaoHealPending = true;
         }
     }
+    if (windDamageDealt > 0 && !options.deferWindDamageDealt) await recordBreathingPassiveEvent(actor, {
+        type: 'damageDealt', formId: passiveFormId, executionId: windExecutionId,
+        isTechnique: true, direct: true, hostile: true, amount: windDamageDealt,
+    });
     for (const targetActor of windVentaniaTargets) {
         const round = game.combat?.round ?? 0;
         const turn = game.combat?.turn ?? 0;
@@ -1441,16 +1620,17 @@ export async function rollDamage(options = {}) {
     }
     if (
         windTufaoHealPending &&
-        Number(windDamage?.healOnBigHit ?? 0) > 0 &&
-        attackerKind === 'slayer'
+        Number(windDamage?.tufao?.healOnBigHit ?? 0) > 0 &&
+        breathingActor
     ) {
-        const healed = parseNumber(props.pdv_slayer_curado) + Number(windDamage.healOnBigHit);
+        const { pdvHealed } = breathingResourceKeys(props);
+        const healed = parseNumber(actor.system?.props?.[pdvHealed]) + Number(windDamage.tufao.healOnBigHit);
         await actor.update(
-            { 'system.props.pdv_slayer_curado': healed },
+            { [`system.props.${pdvHealed}`]: healed },
             { naCsbAutomation: true, naBreathing: true }
         );
         ui.notifications?.info?.(
-            `Ku no Kata Idaten Taifu: você recupera ${windDamage.healOnBigHit} PDV.`
+            `Ku no Kata Idaten Taifu: você recupera ${windDamage.tufao.healOnBigHit} PDV.`
         );
     }
 
@@ -1495,31 +1675,21 @@ export async function rollDamage(options = {}) {
                     }
                     const amount = Math.max(0, Math.trunc(Number(applied?.appliedDamage) || 0));
                     const wound = Math.max(0, Math.trunc(Number(applied?.woundDamage) || 0));
-                    if (amount + wound > 0) {
-                        const restriction = targetActor.getFlag?.(MODULE_ID, 'snowRestriction');
-                        if (restriction?.sourceActorUuid) {
-                            await targetActor.unsetFlag(MODULE_ID, 'snowRestriction');
-                            const source = await fromUuid(restriction.sourceActorUuid);
-                            if (source?.system?.props?.resp_neve_estado) {
-                                const broken = breakSnowRestrictionOnDamage(
-                                    source.system.props.resp_neve_estado,
-                                    targetActor.uuid
-                                );
-                                await source.update(snowStatePatch(broken.state), {
-                                    naCsbAutomation: true,
-                                    naBreathing: true,
-                                });
-                            }
-                        }
+                    if (amount > 0) {
+                        await releaseSnowRestriction(targetActor);
                     }
                     appliedTargets.push({
                         actor: targetActor,
                         name: targetActor.name,
                         amount,
                         wound,
+                        concussionDamage: Number(applied?.concussionDamage) || 0,
                     });
+                    // `appliedDamage` já inclui a Ferida; exibir a parte normal
+                    // separada evita a leitura de "dano + Ferida" em dobro.
+                    const normal = Math.max(0, amount - wound);
                     ui.notifications?.info?.(
-                        `${targetActor.name} recebeu ${amount} de dano${wound > 0 ? ` (${wound} de Ferida)` : ''}.`
+                        `${targetActor.name} recebeu ${normal} de dano${wound > 0 ? ` e ${wound} de Ferida` : ''}.`
                     );
 
                     // Água 5 (Chuva Misericordiosa): finalizar o alvo recupera PDR igual
@@ -1531,12 +1701,13 @@ export async function rollDamage(options = {}) {
                     if (
                         killRecovery > 0 &&
                         targetActor.system?.props &&
-                        currentPdv(targetActor.system.props) <= 0
+                        breathingPdvInfo(targetActor.system.props).pdvCurrent <= 0
                     ) {
-                        const pdrGastoAtual = parseNumber(props.pdr_slayer_gasto_valor);
+                        const { pdrSpent } = breathingResourceKeys(actor.system.props);
+                        const pdrGastoAtual = parseNumber(actor.system.props[pdrSpent]);
                         await actor.update(
                             {
-                                'system.props.pdr_slayer_gasto_valor': Math.max(
+                                [`system.props.${pdrSpent}`]: Math.max(
                                     0,
                                     pdrGastoAtual - killRecovery
                                 ),
@@ -1565,10 +1736,10 @@ export async function rollDamage(options = {}) {
     await applyStonePassiveAfterDamage({
         actor,
         appliedTargets,
-        damageRequests,
         actionId,
         strength: attrValues.for,
-        hasAttackDamage,
+        hasAttackDamage: !options.passivePlan?.noContactEffects && hasAttackDamage,
+        weaponId: options.weaponItem?.id ?? '',
     });
 
     if (finalDamage > 0 && (!targets || targets.size === 0))
@@ -1578,87 +1749,73 @@ export async function rollDamage(options = {}) {
 
     const passiveAfterDamage = parseBreathPassiveState(actor.system?.props?.resp_passivas_estado);
     if (
-        attackerKind === 'slayer' &&
+        breathingActor &&
+        critical && options.classBasicAttack === true && !options.passivePlan?.noContactEffects &&
         passiveAfterDamage.metal?.hammerPending &&
-        appliedTargets.length > 0
+        appliedTargets.some(target => target.amount > 0)
     ) {
-        const useHammer = await foundry.applications.api.DialogV2.confirm({
+        const target = appliedTargets.find(entry => entry.amount > 0);
+        const hammer = consumeMetalHammerPending(passiveAfterDamage, {
+            breathingLevel: parseNumber(props.nvl_respiracao_num ?? props.nvl_respiracao),
+        });
+        if (hammer.ok) await actor.update(passiveStatePatch(hammer.state), {
+            naCsbAutomation: true, naBreathing: true,
+        });
+        const useHammer = hammer.ok && await foundry.applications.api.DialogV2.confirm({
             window: { title: 'Martelo do Julgamento' },
-            content: `<p>Usar o ataque adicional contra ${appliedTargets[0].name}? O dano será metade do dano causado, arredondado para cima, e ignorará Resistência.</p>`,
+            content: '<p>Fazer um novo Ataque Padrão? Se acertar, role o dano da arma. O ataque causa metade desse dano, arredondada para cima, e ignora Resistência.</p>',
             rejectClose: false,
         });
         if (useHammer) {
-            const synergyChoice = await chooseMetalHammerSynergy(actor);
-            const originalDamage = appliedTargets[0].amount + appliedTargets[0].wound;
-            let selectedAlly = synergyChoice?.canceled ? null : (synergyChoice?.ally ?? null);
-            let allySpend = selectedAlly ? spendMetalHammerSynergyPdr(selectedAlly.actor, 1) : null;
-            if (selectedAlly && !allySpend.ok) {
-                ui.notifications?.warn?.(`${allySpend.reason} O Martelo seguirá sem a sinergia.`);
-                selectedAlly = null;
-                allySpend = null;
-            }
-            const hammer = consumeMetalHammerPending(passiveAfterDamage, {
-                breathingLevel: parseNumber(props.nvl_respiracao_num),
-                originalDamage,
-                synergyBreathing: selectedAlly?.breathing ?? '',
-                allySpendsPdr: Boolean(selectedAlly),
+            const targetToken = [...(targets ?? [])].find(token => token.actor?.uuid === target.actor.uuid)
+                ?? { actor: target.actor };
+            const hammerTargets = new Set([targetToken]);
+            const { rollHit } = await import('./hit-service.mjs');
+            const hit = await rollHit({
+                actor,
+                targets: hammerTargets,
+                autoDamage: false,
+                skipActionConsumption: true,
+                forceActionType: 'ataque',
+                forceRollCount: 1,
+                requiredWeaponId: options.weaponItem?.id ?? '',
+                noContactEffects: true,
+                noPassiveGeneration: true,
             });
-            if (hammer.ok) {
-                if (selectedAlly) {
-                    await selectedAlly.actor.update(allySpend.patch, {
-                        naCsbAutomation: true,
-                        naBreathing: true,
-                    });
-                }
+            const extraHit = hit?.attempts?.find(attempt => attempt.hit);
+            const item = hit?.weapon ? actor.items?.get?.(hit.weapon.id) ?? options.weaponItem : null;
+            if (extraHit && item) {
+                const synergyChoice = await chooseMetalHammerSynergy(actor);
+                const ally = synergyChoice?.ally?.actor;
+                const allySpend = ally ? spendMetalHammerSynergyPdr(ally, 1) : null;
+                if (allySpend && !allySpend.ok)
+                    ui.notifications?.warn?.(`${allySpend.reason} O Martelo seguirá sem a sinergia.`);
+                const paid = allySpend?.ok === true && (ally.isOwner || game.user?.isGM);
+                if (paid) await ally.update(allySpend.patch, { naCsbAutomation: true, naBreathing: true });
+                let completed = false;
                 try {
-                    await actor.update(passiveStatePatch(hammer.state), {
-                        naCsbAutomation: true,
-                        naBreathing: true,
+                    const followUp = await rollWeaponItem({
+                        actor,
+                        item,
+                        targets: hammerTargets,
+                        weaponProfileIndex: hit.weapon.profileIndex ?? 0,
+                        weaponAttackIndex: 0,
+                        critical: extraHit.critical === true,
+                        skipActionConsumption: true,
+                        forceAttackDamage: true,
+                        damageOnly: true,
+                        passivePlan: { ignoreResistance: true, skipResourceConsumption: true,
+                            halfDamage: !paid, roundHalfUp: true, noContactEffects: true },
                     });
-                } catch (error) {
-                    if (selectedAlly && allySpend?.ok) {
-                        const spentKey = 'system.props.pdr_slayer_gasto_valor';
-                        await selectedAlly.actor.update(
-                            {
-                                [spentKey]: Math.max(
-                                    0,
-                                    parseNumber(
-                                        selectedAlly.actor.system?.props?.pdr_slayer_gasto_valor
-                                    ) - allySpend.cost
-                                ),
-                            },
-                            { naCsbAutomation: true, naBreathing: true }
-                        );
+                    completed = followUp?.appliedTargets?.some(entry => entry.amount > 0) === true;
+                } finally {
+                    if (paid && !completed) {
+                        const { pdrSpent } = breathingResourceKeys(ally.system?.props);
+                        const spent = parseNumber(ally.system?.props?.[pdrSpent]);
+                        if (spent === allySpend.patch[`system.props.${pdrSpent}`]) await ally.update({
+                            [`system.props.${pdrSpent}`]: Math.max(0, spent - allySpend.cost),
+                        }, { naCsbAutomation: true, naBreathing: true });
                     }
-                    throw error;
-                }
-                const { rollHit } = await import('./hit-service.mjs');
-                // autoDamage:false o dano deste ataque extra é resolvido manualmente
-                // logo abaixo (dano fixo do Martelo, não o dano padrão da arma).
-                const hit = await rollHit({
-                    actor,
-                    actorUuid: actor.uuid,
-                    autoDamage: false,
-                    skipActionConsumption: true,
-                });
-                if (hit?.hits > 0) {
-                    const targetActor = appliedTargets[0].actor;
-                    const context = {
-                        attackName: 'Martelo do Julgamento',
-                        damageTypes: ['concussao'],
-                        components: [
-                            {
-                                label: 'Martelo do Julgamento',
-                                types: ['concussao'],
-                                subtotal: hammer.damage,
-                            },
-                        ],
-                        ignoreResistance: true,
-                        requireApproval: true,
-                    };
-                    if (actorKind(targetActor) === 'slayer')
-                        await applySlayerDamageAuto(targetActor, hammer.damage, context);
-                    else await applyOniDamage(targetActor, hammer.damage, context);
                 }
             }
         }
@@ -1678,6 +1835,7 @@ export async function rollDamage(options = {}) {
         messageMode: resolveMessageMode(dialogResult.messageMode),
     });
     await waitForDamageRolls3d(message);
+    return { executed: true, message, actionId, finalDamage, components, appliedTargets, damageRequests, windDamageDealt };
 }
 
 /** Regra de mesa: dividir o total igualmente entre os alvos; sobra para os primeiros. */
@@ -1727,7 +1885,7 @@ export function buildDamageFlavor({ nome, breathing = '', critical, pdrGasto, re
         })
         .join('');
     const targetLine = appliedTargets.length
-        ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${target.amount}${target.wound ? `, Ferida ${target.wound}` : ''})`).join(', ')}</div>`
+        ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${Math.max(0, target.amount - target.wound)}${target.wound ? ` de dano + ${target.wound} de Ferida` : ''})`).join(', ')}</div>`
         : damageRequests.length
           ? '<div>Alvo solicitado, mas a ficha não foi atualizada</div>'
           : '<div>Nenhum alvo ficha não atualizada</div>';
@@ -1814,10 +1972,17 @@ export async function rollWeaponItem(options = {}) {
         tipoAcao: 'ataque',
         critical: options.critical === true,
         actionId: options.actionId,
+        passiveExecutionId: options.passiveExecutionId,
+        passiveFormId: options.passiveFormId,
+        attackTotal: options.attackTotal,
+        deferWindDamageDealt: options.deferWindDamageDealt,
+        passivePlan: options.passivePlan,
+        targets: options.targets,
         skipActionConsumption: options.skipActionConsumption === true,
         forceAttackDamage: options.forceAttackDamage === true,
         promptHealOrDamage: options.promptHealOrDamage === true,
         classBasicAttack: options.classBasicAttack === true,
+        oniTitanImpactEligible: options.oniTitanImpactEligible === true,
         ...(options.flamingUniverse ? { flamingUniverse: options.flamingUniverse } : {}),
     });
 

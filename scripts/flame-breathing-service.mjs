@@ -1,8 +1,13 @@
 import { parseNumber } from './parsing.mjs';
-import { flameFormById, flameWeaponTier } from './flame-breathing-data.mjs';
+import { flameEmberFormula, flameFormById, flameWeaponTier } from './flame-breathing-data.mjs';
+import { isHomebrewExtra, ruleVariant } from './rules-profile.mjs';
+import { actorKind } from './actor-kind.mjs';
+import { MODULE_ID } from './constants.mjs';
 
 export const FLAME_STATE_KEY = 'resp_chamas_estado';
 export const FLAME_HEAT_FLAG = 'flameHeat';
+export const FLAME_EMBER_TURN_FLAG = 'flameEmberTurn';
+const emberProcessing = new Set();
 
 export function flameTurnKey(combat) {
     return combat?.started && Number.isInteger(combat.turn)
@@ -76,7 +81,7 @@ export function flameStatePatch(state, overrides = {}) {
     const heat = flameWeaponHeat(state);
     const tier = flameWeaponTier(heat);
     const weaponLabel = state.synchronizedWeapon?.name ? ` · ${state.synchronizedWeapon.name}` : '';
-    const summary = `Fogo Fátuo ${tier.heat}/60${weaponLabel} · Acerto +${tier.hit} · Dano +${tier.weaponDamage}${tier.techniqueDie ? ` · Técnicas +${tier.techniqueDie}` : ''}${tier.multiplier > 1 ? ' · Dano ×1,5' : ''}`;
+    const summary = `Fogo Fátuo ${tier.heat}/60${weaponLabel} · Acerto +${tier.hit} · Dano +${tier.weaponDamage}${tier.techniqueDie ? ` · Técnicas +${tier.techniqueDie}` : ''}${tier.multiplier > 1 ? ' · Dano ×2' : ''}`;
     return {
         [`system.props.${FLAME_STATE_KEY}`]: JSON.stringify({
             version: 2,
@@ -93,7 +98,7 @@ export function flameStatePatch(state, overrides = {}) {
 }
 
 export function buildFlameBreathingPlan(formId, level, props = {}, choices = {}) {
-    const form = flameFormById(formId);
+    const form = flameFormById(formId, ruleVariant('respiracao'));
     const selected = form?.levels?.[level - 1] ?? null;
     if (!form) return { ok: false, noCost: true, reason: 'Forma das Chamas desconhecida.' };
     if (form.passive)
@@ -175,12 +180,13 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
     if (form.id === 'chamas_03') {
         Object.assign(pendingHit, {
             source: form.id,
-            bonus: (currentHeat >= 10 ? 2 : 0) + (selected.hitBonus ?? 0),
+            bonus: (weaponHeat >= 10 ? 2 : 0) + (selected.hitBonus ?? 0),
             count: 1,
         });
         Object.assign(pendingDamage, {
             source: form.id,
             critical: selected.criticalOnHit === true,
+            formula: selected.damage ?? '',
             uses: 1,
             technique: true,
             blockPenalty: selected.blockPenalty ?? 0,
@@ -225,6 +231,7 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
             source: form.id,
             turns: selected.turns,
             damageBonus: selected.damageBonus,
+            damageType: selected.damageType ?? 'fogo',
             selfDamage: selected.selfDamage,
         };
     if (form.id === 'chamas_09') {
@@ -292,6 +299,43 @@ export function addFlameEnemyHeat(raw, sourceId, amount) {
         thresholds: [...new Set([...(state[key]?.thresholds ?? []), ...thresholds])],
     };
     return { state, previous, heat, thresholds };
+}
+
+/** Brasas causam apenas o maior patamar uma vez no início do turno do alvo. */
+export async function processFlameEmbers(actor, { turnKey = flameTurnKey(globalThis.game?.combat) } = {}) {
+    if (!isHomebrewExtra('brasas')) return { applied: false, disabled: true };
+    if (!globalThis.game?.user?.isGM || !actor?.update || !turnKey) return { applied: false };
+    const key = actor.uuid ?? actor;
+    if (emberProcessing.has(key) || actor.getFlag?.(MODULE_ID, FLAME_EMBER_TURN_FLAG) === turnKey)
+        return { applied: false, duplicate: true };
+    const heatMap = actor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG);
+    if (!heatMap || typeof heatMap !== 'object') return { applied: false };
+    const heat = Math.max(0, ...Object.values(heatMap).map(entry => parseNumber(entry?.heat)));
+    const formula = flameEmberFormula(heat);
+    emberProcessing.add(key);
+    try {
+        if (!formula) {
+            await actor.setFlag(MODULE_ID, FLAME_EMBER_TURN_FLAG, turnKey);
+            return { applied: false, heat };
+        }
+        const roll = await Roll.create(formula).evaluate();
+        const amount = Math.max(0, Math.trunc(Number(roll.total) || 0));
+        if (amount > 0) {
+            const context = { isAttack: false, attackName: 'Brasas Ardentes', damageTypes: ['fogo'],
+                components: [{ label: 'Brasas Ardentes', types: ['fogo'], subtotal: amount }] };
+            if (actorKind(actor) === 'slayer') {
+                const { applySlayerDamage } = await import('./status-engine.mjs');
+                await applySlayerDamage(actor, amount, context);
+            } else {
+                const { applyOniDamage } = await import('./damage-relay.mjs');
+                await applyOniDamage(actor, amount, context);
+            }
+        }
+        await actor.setFlag(MODULE_ID, FLAME_EMBER_TURN_FLAG, turnKey);
+        await roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: `Brasas Ardentes · ${heat} pontos · ${formula} de Fogo no início do turno` });
+        return { applied: amount > 0, heat, formula, amount };
+    } finally { emberProcessing.delete(key); }
 }
 
 export const FLAME_EFFECT_MAIN = 'unknown_fire_main';

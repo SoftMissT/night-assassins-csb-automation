@@ -54,6 +54,7 @@ function evaluate(formula, env) {
         return tok;
     };
     const FUNCS = {
+        ref: ([name, fallback]) => env[name] ?? fallback,
         switchCase: ([value, ...rest]) => {
             const fallback = rest.length % 2 === 1 ? rest.at(-1) : 0;
             for (let k = 0; k + 1 < rest.length; k += 2) if (rest[k] === value) return rest[k + 1];
@@ -193,6 +194,25 @@ for (const [label, system] of TEMPLATES) {
                 assert.equal(compute(name, GIFTS.tsuyoi, level), 0, `${name} tsuyoi ${level}`);
             }
         }
+    });
+
+    test(`[${label}] Vanilla usa apenas Marechi e desativa Tsuyoi e os bônus Homebrew`, () => {
+        const env = { na_regras_habilidades: 1, nvl_pj: 'nvl_12', hab_escolhida: GIFTS.tsuyoi };
+        for (const name of ['hab_slayer_pdv_bonus', 'hab_tsuyoi_vit_bonus', 'hab_tsuyoi_for_bonus', 'hab_acerto_bonus']) {
+            assert.equal(evaluate(hidden.get(name), env), 0, name);
+        }
+        for (const name of ['hab_slayer_pdr_por_nivel', 'hab_slayer_pdr_bonus']) {
+            assert.equal(evaluate(hidden.get(name), { ...env, hab_escolhida: GIFTS.oketsu }), 0, name);
+            assert.equal(evaluate(hidden.get(name), { ...env, na_vanilla_ability: GIFTS.marechi }), 1, name);
+        }
+    });
+
+    test(`[${label}] PDV total inclui Corpo de Guerra uma só vez`, () => {
+        const resources = Object.fromEntries(playable.map((_, i) => [`pdv_slayer_nvl${i + 1}`, 20 + i]));
+        const env = { ...resources, nvl_pj: 'nvl_11', slayer_class_mb_corpo_guerra_applied: 8 };
+        const formula = hidden.get('pdv_slayer_total_conta');
+        assert.equal(evaluate(formula, env), 38);
+        assert.equal(evaluate(formula, { ...env, slayer_class_mb_corpo_guerra_applied: undefined }), 30);
     });
 }
 

@@ -5,6 +5,19 @@ import { readFile } from 'node:fs/promises';
 import { registerSettings, SETTINGS } from '../scripts/settings.mjs';
 
 describe('module distribution', () => {
+    it('carrega o CSS de Regras da Mesa pelo manifesto', async () => {
+        const manifest = JSON.parse(await readFile(new URL('../module.json', import.meta.url), 'utf8'));
+        const stylesheet = 'styles/na-regras-da-mesa.css';
+        assert.ok(manifest.styles.includes(stylesheet));
+        const css = await readFile(new URL(`../${stylesheet}`, import.meta.url), 'utf8');
+        assert.match(css, /\.application\.na-table-rules-window\s*\{/u);
+    });
+
+    it('oculta a moldura do armazenamento de regras no editor CSB', async () => {
+        const css = await readFile(new URL('../styles/na-regras-da-mesa.css', import.meta.url), 'utf8');
+        assert.match(css, /\.custom-system\s+\.custom-system-editable-panel:has\(>\s*\.custom-system-edit-na_rule_selection_storage\)\s*\{\s*display:\s*none;/u);
+    });
+
     it('declara Dice So Nice como dependência obrigatória', async () => {
         const manifest = JSON.parse(await readFile(new URL('../module.json', import.meta.url), 'utf8'));
         assert.ok(manifest.relationships?.requires?.some((entry) => entry.id === 'dice-so-nice'));
@@ -275,9 +288,11 @@ describe('module distribution', () => {
 describe('module settings', () => {
     it('registra automação da ficha, relay de dano e piso global de crítico', () => {
         const registrations = [];
+        globalThis.foundry = { applications: { api: { ApplicationV2: class {} } } };
         globalThis.game = {
             settings: {
                 register: (moduleId, key, config) => registrations.push({ moduleId, key, config }),
+                registerMenu: () => {},
             },
         };
 
@@ -286,13 +301,26 @@ describe('module settings', () => {
         assert.deepEqual(
             registrations.map(({ key }) => key),
             [
+                SETTINGS.rulesSelection,
+                SETTINGS.rulesProfile,
                 SETTINGS.enableSheetAutomation,
                 SETTINGS.enableDamageRelay,
                 SETTINGS.enableLifeDeathEngine,
                 SETTINGS.stoneCriticalFloor,
+                SETTINGS.dualBreathingVariations,
             ]
         );
-        assert.ok(registrations.every(({ config }) => config.config && config.scope === 'world'));
+        assert.ok(registrations.every(({ config }) => config.scope === 'world'));
+        assert.equal(registrations[0].config.config, false);
+        assert.equal(registrations[0].config.requiresReload, true);
+        assert.equal(registrations[1].config.config, false);
+        assert.ok(registrations.slice(2, -1).every(({ config }) => config.config));
+        assert.deepEqual(registrations.at(-1).config, {
+            scope: 'world',
+            config: false,
+            type: Object,
+            default: {},
+        });
         const criticalFloor = registrations.find(
             ({ key }) => key === SETTINGS.stoneCriticalFloor
         )?.config;

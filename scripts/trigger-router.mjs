@@ -8,6 +8,8 @@ import { createLevelOneValues, processLevelGain, processOniLevelGain } from './l
 import { applyInitialMark, upgradeMarkAtLevelSix } from './ability-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import { applyMasterBattleLevelEleven } from './slayer/class-runtime.mjs';
+import { selectedSlayerClassKey } from './slayer/class-contracts.mjs';
+import { effectiveRulesAbility } from './rules-profile.mjs';
 import { chooseHashiraEliteBonus } from './dialogs/attribute-dialogs.mjs';
 
 /** @type {Map<string, Promise<void>>} */
@@ -57,11 +59,25 @@ function isSnapshotComplete(props, level) {
  * @param {string} userId
  */
 export async function handleActorUpdate(actor, changes, options, userId) {
-    if (options?.naCsbAutomation === true) return;
+    if (options?.naCsbAutomation === true && options?.naRulesProfile !== true) return;
     if (userId !== game?.user?.id) return;
     if (!actor?.isOwner) return;
 
     const kind = actorKind(actor);
+    if (kind === 'npc') {
+        const abilityChanged = changedProp(changes, PROP_KEYS.ability) !== undefined;
+        const levelChanged = changedProp(changes, 'npc_nivel') !== undefined;
+        if (!abilityChanged && !levelChanged) return;
+        await withActorLock(actor.uuid, async () => {
+            const props = actor.system?.props ?? {};
+            if (!isDestinyMark(effectiveRulesAbility(props))) return;
+            if (parseNumber(props.hab_marca_destino_bonus) < 2) await applyInitialMark(actor);
+            if (parseNumber(actor.system?.props?.npc_nivel) >= 6 &&
+                parseNumber(actor.system?.props?.hab_marca_destino_bonus) === 2)
+                await upgradeMarkAtLevelSix(actor);
+        });
+        return;
+    }
 
     // Domínio Oni: snapshot de atributo. PDV gains são handled por progression-engine.mjs.
     if (kind === 'oni') {
@@ -80,11 +96,13 @@ export async function handleActorUpdate(actor, changes, options, userId) {
 
     const changedLevel = changedProp(changes, PROP_KEYS.level);
     const changedAbility = changedProp(changes, PROP_KEYS.ability);
+    const changedClass = ['classe_escolhida', 'na_vanilla_class']
+        .some(key => changedProp(changes, key) !== undefined);
 
     const level = changedLevel !== undefined ? parseLevel(changedLevel) : null;
     const ability = changedAbility !== undefined ? String(changedAbility ?? '').trim() : null;
 
-    if (level === null && ability === null) return;
+    if (level === null && ability === null && !changedClass) return;
 
     await withActorLock(actor.uuid, async () => {
         const props = actor.system?.props ?? {};
@@ -103,8 +121,9 @@ export async function handleActorUpdate(actor, changes, options, userId) {
 
         // Nível 6 evolução da Marca
         if (level === 6) {
-            const abilityKey = normalizeAbility(props.hab_escolhida);
-            const isMark = isDestinyMark(abilityKey ?? props.hab_escolhida);
+            const selectedAbility = effectiveRulesAbility(props);
+            const abilityKey = normalizeAbility(selectedAbility);
+            const isMark = isDestinyMark(abilityKey ?? selectedAbility);
             const markBonus = parseNumber(props.hab_marca_destino_bonus);
             if (isMark && markBonus === 2 && !isSnapshotComplete(props, 6)) {
                 await upgradeMarkAtLevelSix(actor);
@@ -120,9 +139,8 @@ export async function handleActorUpdate(actor, changes, options, userId) {
         }
 
         // Nível 11 — Mestre de Batalha: Corpo de Guerra, ganho único de 2d6 PDV máximo.
-        if (level === 11 && String(props.classe_escolhida ?? '') === 'classe_mb') {
+        if (kind === 'slayer' && (level >= 11 || changedClass) && selectedSlayerClassKey(props) === 'classe_mb') {
             await applyMasterBattleLevelEleven(actor, level);
-            return;
         }
         // Nível 14 — Hashira de Elite.
         if (level === 14) {
@@ -147,7 +165,7 @@ export async function handleActorUpdate(actor, changes, options, userId) {
             return;
         }
         // Marca do Destino escolha inicial
-        if (ability !== null && isDestinyMark(ability)) {
+        if (ability !== null && isDestinyMark(effectiveRulesAbility(props))) {
             const markBonus = parseNumber(props.hab_marca_destino_bonus);
             if (markBonus < 2) {
                 await applyInitialMark(actor);

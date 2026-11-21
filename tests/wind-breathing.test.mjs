@@ -8,6 +8,7 @@ import {
     parseWindBreathingState,
     registerWindBattleDamage,
     tickWindBreathing,
+    windStatePatch,
 } from '../scripts/wind-breathing-service.mjs';
 
 const PROPS_BASE = {
@@ -26,13 +27,16 @@ describe('Respiração do Vento — Sangue Especial (passiva)', () => {
         assert.equal(state.scars, 1);
     });
 
-    it('60 cortante = 2 cicatrizes · cap absoluto de +4', () => {
+    it('Cicatrizes são permanentes e acumulam além de quatro sem limite por batalha', () => {
         let state = registerWindBattleDamage(parseWindBreathingState({}), { cutPierce: 60 });
         state = consolidateWindScars(state);
         assert.equal(state.scars, 2);
         state = registerWindBattleDamage(state, { cutPierce: 500 });
         state = consolidateWindScars(state);
-        assert.equal(state.scars, 4);
+        assert.equal(state.scars, 18);
+        state = registerWindBattleDamage(state, { cutPierce: 60 });
+        state = consolidateWindScars(state);
+        assert.equal(state.scars, 20);
     });
 
     it('Sangramento/Infecção: 24 não gera · 25 = +1 VIT · cap +4', () => {
@@ -45,6 +49,8 @@ describe('Respiração do Vento — Sangue Especial (passiva)', () => {
         state = registerWindBattleDamage(state, { bleedInfection: 500 });
         state = consolidateWindScars(state);
         assert.equal(state.vitBonus, 4);
+        assert.equal(state.scars, 0);
+        assert.equal(windStatePatch(state)['system.props.resp_vento_vit_bonus'], undefined);
     });
 
     it('consolidação zera os pools e é idempotente', () => {
@@ -140,6 +146,7 @@ describe('Respiração do Vento — P0: dano chega ao contrato pendingDamage', (
             [4, '2d8 + @fdv + @dex'],
         ]) {
             const plan = buildWindBreathingPlan('vento_06', level, PROPS_BASE, {});
+            assert.deepEqual(plan.actions, ['unica', 'ataque']);
             assert.equal(plan.state.pendingDamage.formula, formula);
             assert.equal(plan.state.pendingDamage.ignoreResistance, true);
             assert.equal(plan.state.nextHit.count, 3);
@@ -222,6 +229,17 @@ describe('Respiração do Vento — P0: dano chega ao contrato pendingDamage', (
         assert.equal(plan.state.pendingDamage.tufao.healOnBigHit, 5);
         assert.equal(plan.patch['system.props.status_slayer_exaustao'], 1);
         assert.equal(plan.cost, 8);
+    });
+
+    it('8º e 9º Estilos usam todas as Cicatrizes permanentes acima de quatro', () => {
+        const props = { ...PROPS_BASE, resp_vento_estado: JSON.stringify({ scars: 18 }) };
+        for (const [level, dice] of [[3, '4d12'], [4, '6d12']]) {
+            const plan = buildWindBreathingPlan('vento_09', level, props);
+            assert.equal(plan.state.pendingDamage.scarCount, 18);
+            assert.equal(plan.state.pendingDamage.formula, Array(18).fill(dice).join(' + '));
+        }
+        const final = buildWindBreathingPlan('vento_10', 4, props);
+        assert.equal(final.state.pendingDamage.formula, '10d10 + 18 * (2d10) + 4 * (2d10)');
     });
 
     it('consumeWindPending decrementa usos e consome ao esgotar', () => {

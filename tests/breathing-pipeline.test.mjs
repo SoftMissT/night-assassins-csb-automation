@@ -74,6 +74,44 @@ const run = (runtime, options = {}) =>
     });
 
 describe('breathing-pipeline — rota canônica', () => {
+    test('Fantasia Final paga uma vez e rola apenas o dano da Forma por acerto', async () => {
+        const actor = makeActor();
+        const runtime = fakeRuntime({
+            pdrSpentKey: 'npc_pdr_gasto_valor',
+            rollHit: async ({ attackSequence, forceActionType, skipActionConsumption }) => {
+                assert.equal(forceActionType, 'completa');
+                assert.equal(skipActionConsumption, true);
+                assert.equal(attackSequence.missLimit, 3);
+                assert.equal(runtime.calls.patches.length, 0);
+                assert.equal(await attackSequence.beforeFirstRoll(), true);
+                await attackSequence.onHit({ attempt: { roll: { total: 13 }, critical: false }, executionId: '1' });
+                await attackSequence.onHit({ attempt: { roll: { total: 22 }, critical: true }, executionId: '2' });
+                return { hits: 2 };
+            },
+        });
+        const options = { actor, respiracao: 'Sonhos', formaId: 'sonhos_10', level: 2 };
+        assert.deepEqual(await run(runtime, options), { ok: true });
+        assert.deepEqual(runtime.calls.actions, [['completa'], ['completa']]);
+        assert.deepEqual(runtime.calls.patches, [{
+            'system.props.acao_teste': 1, 'system.props.npc_pdr_gasto_valor': 7,
+        }]);
+        assert.deepEqual(runtime.calls.damages.map(call => ({
+            dice: call.entradas.map(entry => entry.dado),
+            critical: call.critical,
+            executionId: call.passiveExecutionId,
+        })), [
+            { dice: ['4d4'], critical: false, executionId: '1' },
+            { dice: ['4d4'], critical: true, executionId: '2' },
+        ]);
+        assert.equal(runtime.calls.postUsages.length, 1);
+
+        const cancelled = fakeRuntime({ rollHit: async () => null });
+        assert.equal((await run(cancelled, options)).ok, false);
+        assert.deepEqual(cancelled.calls.patches, []);
+        assert.deepEqual(cancelled.calls.damages, []);
+        assert.deepEqual(cancelled.calls.postUsages, []);
+    });
+
     test('CT-009/CT-014: uso canônico consome ação+PDR, rola 3d10, aplica Sangramento e registra chat', async () => {
         const runtime = fakeRuntime();
         const result = await run(runtime);
@@ -184,19 +222,25 @@ describe('breathing-pipeline — rota canônica', () => {
         assert.match(runtime.calls.postUsages[0].dados.texto, /acerto anterior/u);
     });
 
-    test('pedra_04 consome as duas ações e envia duas entradas de dano', async () => {
-        const runtime = fakeRuntime();
+    test('Ravina cobra Ataque e Especial uma vez e resolve os cortes separadamente', async () => {
+        const actor = makeActor({ npc_nome: 'NPC Pedra', npc_pdr_recuperado: 1 });
+        const runtime = fakeRuntime({ pdrSpentKey: 'npc_pdr_gasto_valor' });
         runtime.rollHit = async (options) => {
             runtime.calls.hits.push(options);
-            return { hits: 1, attempts: [{ hit: true, critical: false }] };
+            return { executionId: String(runtime.calls.hits.length), hits: 1,
+                attempts: [{ hit: true, critical: true }] };
         };
-        const result = await run(runtime, { formaId: 'pedra_04', level: 3 });
+        const result = await run(runtime, { actor, formaId: 'pedra_04', level: 3 });
         assert.equal(result.ok, true);
-        assert.deepEqual(runtime.calls.actions, [['ataque', 'especial']]);
-        assert.equal(runtime.calls.damages.length, 1);
-        assert.equal(runtime.calls.damages[0].entradas.length, 2);
-        assert.equal(runtime.calls.damages[0].entradas[0].dado, '6d6');
-        assert.equal(runtime.calls.damages[0].entradas[1].tipoAcao, 'ataque');
+        assert.deepEqual(runtime.calls.hits.map(o => [o.forceActionType, o.forceRollCount]),
+            [['ataque', 1], ['especial', 1]]);
+        assert.equal(runtime.calls.patches.filter(patch => patch['system.props.npc_pdr_gasto_valor'] === 6).length, 1);
+        assert.deepEqual(runtime.calls.patches.filter(patch => patch['system.props.npc_pdr_recuperado']),
+            [{ 'system.props.npc_pdr_recuperado': 3 }]);
+        assert.deepEqual(runtime.calls.damages.map(damage => [damage.actionId, damage.critical,
+            damage.entradas.map(entry => [entry.tipoAcao, entry.dado])]), [
+            ['1', true, [['ataque', '6d6']]], ['2', true, [['especial', '6d6']]],
+        ]);
     });
 });
 

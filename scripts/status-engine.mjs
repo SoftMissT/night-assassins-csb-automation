@@ -2,8 +2,15 @@
  * @fileoverview Motor autoritativo de turnos, dano e Exaustão do Slayer.
  */
 
-import { MODULE_ID, STATUS_SLAYER_DANO_CONTINUO } from './constants.mjs';
+import { MASTER_BATTLE_BLEEDING, MODULE_ID, STATUS_SLAYER_DANO_CONTINUO } from './constants.mjs';
 import { actorKind } from './actor-kind.mjs';
+import { breathingPdvInfo } from './actor-resources.mjs';
+import { mitigateBreathingPassiveDamage } from './breathing-defense.mjs';
+import { MASTER_BATTLE_PARRY_GUARD, prepareMasterBattleParry, resolvePreparedMasterBattleParry } from './slayer/master-battle-parry.mjs';
+import { recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
+import { releaseSnowRestriction } from './snow-breathing-service.mjs';
+import { mitigateOniPoisonDamage, ONI_TOXIC_PENDING } from './oni/specialization-rules.mjs';
+import { hasBreathingPassive } from './breathing-passive-rules.mjs';
 import { parseNumber } from './parsing.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import {
@@ -21,7 +28,7 @@ import {
 
 const TURN_FLAG = 'lastStatusTurn';
 const resolvingExhaustion = new Set();
-const FINITE_SOURCE_DAMAGE = new Set(['sangramento', 'hemorragia', 'envenenamento']);
+const FINITE_SOURCE_DAMAGE = new Set(['sangramento', MASTER_BATTLE_BLEEDING, 'hemorragia', 'envenenamento']);
 
 function statusContract(actor) {
     const props = actor?.system?.props ?? {};
@@ -36,7 +43,7 @@ function statusContract(actor) {
               data: 'status_oni_dados',
               summary: 'status_oni_resumo',
               exhaustion: 'status_oni_exaustao',
-              damage: 'pdv_oni_dano_tomado',
+              damage: kind === 'oni_minion' ? 'oni_minion_pdv_dano' : 'pdv_oni_dano_tomado',
           }
         : {
               kind: kind === 'npc' ? 'npc' : 'slayer',
@@ -148,26 +155,44 @@ export function currentPdv(props = {}) {
  * consolidar em cicatrizes/bônus de VIT no Descanso Longo (ver
  * `consolidateWindScars` em wind-breathing-service.mjs).
  */
-function buildWindBattleDamagePatch(actor, props, context) {
-    const knowsWind = [...(actor.items ?? [])].some(
+export function buildWindBattleDamagePatch(actor, props, context) {
+    const knowsWind = hasBreathingPassive(props, 'Vento') || [...(actor.items ?? [])].some(
         (item) => item.system?.props?.respiracao_nome === 'Vento'
     );
     if (!knowsWind) return {};
-    const components = Array.isArray(context.components) ? context.components : [];
+    const components = (Array.isArray(context.components) && context.components.length
+        ? context.components
+        : [{ types: context.damageTypes ?? [], subtotal: (context.normalDamage ?? 0) + (context.woundDamage ?? 0) }])
+        .map(component => ({
+            types: (Array.isArray(component.types) ? component.types : [])
+                .filter(type => !context.approvedTypes || context.approvedTypes.includes(type)),
+            subtotal: Math.max(0, Math.trunc(Number(component.subtotal) || 0)),
+        }));
+    const groupTotal = wound => components.filter(c => c.types.includes('ferida') === wound)
+        .reduce((total, c) => total + c.subtotal, 0);
+    const normalTotal = groupTotal(false);
+    const woundTotal = groupTotal(true);
+    // Distribui apenas o dano recebido, sem contar a parte resistida novamente.
+    const received = component => {
+        const wound = component.types.includes('ferida');
+        const total = wound ? woundTotal : normalTotal;
+        const applied = wound ? context.woundDamage : context.normalDamage;
+        return total > 0 ? component.subtotal * (applied ?? total) / total : 0;
+    };
     const cutPierce = components
         .filter(
             (c) =>
                 Array.isArray(c.types) &&
                 (c.types.includes('cortante') || c.types.includes('perfurante'))
         )
-        .reduce((total, c) => total + Math.max(0, Math.trunc(Number(c.subtotal) || 0)), 0);
+        .reduce((total, c) => total + received(c), 0);
     const bleedInfection = components
         .filter(
             (c) =>
                 Array.isArray(c.types) &&
                 (c.types.includes('sangramento') || c.types.includes('infeccao'))
         )
-        .reduce((total, c) => total + Math.max(0, Math.trunc(Number(c.subtotal) || 0)), 0);
+        .reduce((total, c) => total + received(c), 0);
     if (cutPierce <= 0 && bleedInfection <= 0) return {};
     const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
     const nextWindState = registerWindBattleDamage(windState, { cutPierce, bleedInfection });
@@ -181,9 +206,35 @@ export function resolveIncomingDamage(state, amount, { isAttack = true } = {}) {
     return { damage: vulnerable ? base * 2 : base, vulnerable };
 }
 
+export async function recordResolvedPdvLoss(actor, props, damage, context = {}) {
+    const { pdvCurrent } = breathingPdvInfo(props);
+    const temporary = actorKind(actor) === 'slayer' ? Math.max(0, parseNumber(props.pdv_slayer_extra)) : 0;
+    const normalPdv = Math.max(0, pdvCurrent - temporary);
+    const pdvLost = Math.min(normalPdv, Math.max(0, damage));
+    if (pdvLost > 0) {
+        const status = parseStatusState(props.status_slayer_dados).active;
+        try {
+            await recordBreathingPassiveEvent(actor, {
+                type: 'damageTaken',
+                amount: pdvLost,
+                directPdv: true,
+                conscious: normalPdv > pdvLost && !status.includes('inconsciente'),
+                hostile: context.hostile === true,
+                selfInflicted: context.sourceActorUuid === actor.uuid && Boolean(actor.uuid),
+                cannotDodge: context.cannotDodge === true,
+            });
+        } catch (error) {
+            ui.notifications?.warn?.(`Dano aplicado a ${actor.name}; não foi possível atualizar as passivas. ${error.message}`);
+        }
+    }
+    return pdvLost;
+}
+
 export async function applySlayerDamage(actor, amount, context = {}) {
     if (!actor?.update) throw new Error('Slayer inválido para receber dano.');
-    const props = actor.system?.props ?? {};
+    const preparation = prepareMasterBattleParry(actor, Math.max(0, Math.trunc(Number(amount) || 0)), context);
+    const prepared = preparation ? await preparation : null;
+    const props = { ...actor.system?.props };
     const state = parseStatusState(props.status_slayer_dados);
     state.exhaustion = Math.max(
         state.exhaustion,
@@ -206,14 +257,24 @@ export async function applySlayerDamage(actor, amount, context = {}) {
         : state;
     const normalResolution = resolveIncomingDamage(incomingState, normalBase, context);
     const woundResolution = resolveIncomingDamage(incomingState, woundBase, context);
+    const mitigation = mitigateBreathingPassiveDamage(props, normalResolution.damage, woundResolution.damage, {
+        ...context,
+        components: components.map(entry => ({
+            ...entry,
+            subtotal: (Number(entry.subtotal) || 0) * (normalResolution.vulnerable ? 2 : 1),
+        })),
+    });
     // PDV temporário (`pdv_slayer_extra`) absorve o dano antes do PDV, o normal primeiro.
-    const temporary = parseNumber(props.pdv_slayer_extra);
-    const absorbedNormal = Math.min(temporary, normalResolution.damage);
-    const absorbedWound = Math.min(temporary - absorbedNormal, woundResolution.damage);
+    const parry = mitigation.woundDamage === 0
+        ? resolvePreparedMasterBattleParry(prepared, mitigation.normalDamage) : null;
+    const mitigatedNormal = parry?.damage ?? mitigation.normalDamage;
+    const temporary = Math.max(0, parseNumber(props.pdv_slayer_extra));
+    const absorbedNormal = Math.min(temporary, mitigatedNormal);
+    const absorbedWound = Math.min(temporary - absorbedNormal, mitigation.woundDamage);
     const temporaryAbsorbed = absorbedNormal + absorbedWound;
     const resolution = {
-        damage: normalResolution.damage - absorbedNormal,
-        woundDamage: woundResolution.damage - absorbedWound,
+        damage: mitigatedNormal - absorbedNormal,
+        woundDamage: mitigation.woundDamage - absorbedWound,
         vulnerable: normalResolution.vulnerable || woundResolution.vulnerable,
         temporaryAbsorbed,
     };
@@ -228,7 +289,9 @@ export async function applySlayerDamage(actor, amount, context = {}) {
         state.active = state.active.filter((key) => !removable.has(key));
         for (const key of removed) delete state.effects[key];
     }
-    const windUpdate = buildWindBattleDamagePatch(actor, props, context);
+    const windUpdate = buildWindBattleDamagePatch(actor, props, {
+        ...context, normalDamage: resolution.damage, woundDamage: resolution.woundDamage,
+    });
 
     await actor.update(
         {
@@ -239,11 +302,22 @@ export async function applySlayerDamage(actor, amount, context = {}) {
                 : {}),
             ...statePatch(state),
             ...windUpdate,
+            ...parry?.patch,
         },
         { naCsbAutomation: true, naStatusDamage: true, naCritical: context.critical === true }
     );
+    if (parry?.guard) {
+        const { attacker, ...guard } = parry.guard;
+        await attacker.setFlag(MODULE_ID, MASTER_BATTLE_PARRY_GUARD, guard);
+    }
+    if (parry) await parry.roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor }),
+        flavor: `Aparar Instintivo · ${parry.attribute} · −${parry.reduction} dano` });
+    if (resolution.damage + resolution.woundDamage > 0) await releaseSnowRestriction(actor);
+    const pdvLost = await recordResolvedPdvLoss(actor, props, resolution.damage + resolution.woundDamage, context);
     return {
         ...resolution,
+        pdvLost,
+        concussionDamage: parry ? Math.min(mitigation.concussionDamage, mitigatedNormal) : mitigation.concussionDamage,
         // Dano deste golpe (inclui o absorvido pelo PDV temporário). Sem este campo o
         // aviso "recebeu N de dano" mostrava 0 e o Calor das Chamas lia o dano acumulado.
         appliedDamage: resolution.damage + resolution.woundDamage + temporaryAbsorbed,
@@ -334,7 +408,7 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         }
     }
 
-    const damageKeys = new Set(STATUS_SLAYER_DANO_CONTINUO);
+    const damageKeys = new Set([...STATUS_SLAYER_DANO_CONTINUO, MASTER_BATTLE_BLEEDING]);
     for (const key of [...state.active]) {
         const effect = state.effects[key];
         const defaultTiming = [
@@ -355,6 +429,7 @@ export async function processActorStatusTiming(actor, timing = 'start') {
         if ((effect?.tick ?? defaultTiming) !== timing) continue;
 
         if (damageKeys.has(key)) {
+            const damageType = key === MASTER_BATTLE_BLEEDING ? 'sangramento' : key;
             const formula = key === 'em_chamas' ? '1d4' : effect?.damageFormula;
             if (
                 FINITE_SOURCE_DAMAGE.has(key) &&
@@ -374,20 +449,36 @@ export async function processActorStatusTiming(actor, timing = 'start') {
                 continue;
             }
             try {
-                const { roll, total } = await rollFormula(
+                const { roll, total: rolledTotal } = await rollFormula(
                     key === 'corroido' ? repeatedFormula(formula, effect?.stacks) : formula
                 );
+                const total = key === 'envenenamento'
+                    ? mitigateOniPoisonDamage(props, rolledTotal, { damageTypes: ['venenoso'] })
+                    : rolledTotal;
                 if (total > 0 && contract.kind === 'slayer') {
-                    await applySlayerDamage(actor, total, { isAttack: false, source: key });
+                    await applySlayerDamage(actor, total, {
+                        isAttack: false, hostile: true, cannotDodge: true, source: key,
+                        components: [{ types: [damageType], subtotal: total }],
+                    });
                 } else if (total > 0) {
+                    const beforeDamage = { ...actor.system?.props };
                     const resolution = resolveIncomingDamage(state, total, { isAttack: false });
                     statusDamageTotal += resolution.damage;
                     await actor.update(
                         {
                             [`system.props.${contract.damage}`]: statusDamageTotal,
+                            ...(contract.kind === 'npc' ? buildWindBattleDamagePatch(actor, actor.system?.props ?? props, {
+                                components: [{ types: [damageType], subtotal: resolution.damage }],
+                            }) : {}),
                         },
                         { naCsbAutomation: true, naStatusDamage: true }
                     );
+                    if (resolution.damage > 0) {
+                        await releaseSnowRestriction(actor);
+                        await recordResolvedPdvLoss(actor, beforeDamage, resolution.damage, {
+                            hostile: true, cannotDodge: true,
+                        });
+                    }
                 }
                 if (total > 0) {
                     for (const removedKey of ['confuso', 'distraido', 'sonhando']) {
@@ -423,6 +514,26 @@ export async function processActorStatusTiming(actor, timing = 'start') {
             continue;
         }
         if (decrementEffect(state, key)) messages.push(`${key} expirou`);
+    }
+
+    const toxic = timing === 'start' ? actor.getFlag?.(MODULE_ID, ONI_TOXIC_PENDING) : null;
+    if (toxic) {
+        const combat = globalThis.game?.combat;
+        const dose = toxic.combatId === (combat?.uuid ?? combat?.id) ? parseNumber(toxic.damage) : 0;
+        if (dose > 0 && ignorePoison && !poisonIgnored) {
+            poisonIgnored = true;
+            messages.push('Decomposição ignorada pela Respiração da Recuperação');
+        } else if (dose > 0) {
+            const { applyOniDamage, applySlayerDamageAuto } = await import('./damage-relay.mjs');
+            const apply = contract.kind === 'slayer' ? applySlayerDamageAuto : applyOniDamage;
+            const result = await apply(actor, dose, {
+                isAttack: false, hostile: true, cannotDodge: true, requireApproval: false,
+                attackName: 'Decomposição', damageTypes: ['venenoso'],
+            });
+            const applied = result.appliedDamage ?? result.totalDamage ?? 0;
+            messages.push(`Decomposição: ${applied} de dano venenoso`);
+        }
+        await actor.unsetFlag(MODULE_ID, ONI_TOXIC_PENDING);
     }
 
     const patch = actorStatusPatch(actor, state);
@@ -472,7 +583,9 @@ export async function reconcileSlayerExhaustion(actor) {
     );
     const reached = [];
     let extraDamage = 0;
-    const pdv = currentPdv(props);
+    const npc = actorKind(actor) === 'npc';
+    const damageKey = npc ? 'npc_pdv_dano' : 'pdv_slayer_dano_tomado';
+    const pdv = npc ? breathingPdvInfo(props).pdvCurrent : currentPdv(props);
     if (state.exhaustion >= 5 && !state.exhaustionMilestones.includes(5)) {
         extraDamage += Math.floor(pdv / 2);
         state.exhaustionMilestones.push(5);
@@ -489,8 +602,7 @@ export async function reconcileSlayerExhaustion(actor) {
         await actor.update(
             {
                 ...statePatch(state),
-                'system.props.pdv_slayer_dano_tomado':
-                    parseNumber(props.pdv_slayer_dano_tomado) + extraDamage,
+                [`system.props.${damageKey}`]: parseNumber(props[damageKey]) + extraDamage,
             },
             { naCsbAutomation: true, naExhaustion: true }
         );
@@ -536,6 +648,10 @@ async function processCurrentTurn(combat) {
         await processActorStatusTiming(previousActor, 'end');
     }
     await combat.setFlag(MODULE_ID, TURN_FLAG, key);
+    if (actor.getFlag?.(MODULE_ID, 'flameHeat')) {
+        const { processFlameEmbers } = await import('./flame-breathing-service.mjs');
+        await processFlameEmbers(actor, { turnKey: key });
+    }
     const actorContract = statusContract(actor);
     if (actor.system?.props?.[actorContract.data] !== undefined)
         await processActorStatusTiming(actor, 'start');
@@ -553,13 +669,13 @@ async function processCurrentTurn(combat) {
                 await applySlayerDamageAuto(actor, poison.damage, {
                     isAttack: false,
                     attackName: 'Veneno do Usuário',
-                    damageTypes: ['veneno'],
+                    damageTypes: ['venenoso'],
                 });
             else
                 await applyOniDamage(actor, poison.damage, {
                     attackName: 'Veneno do Usuário',
                     rolledTotal: poison.damage,
-                    damageTypes: ['veneno'],
+                    damageTypes: ['venenoso'],
                     requireApproval: false,
                 });
         }
@@ -613,7 +729,9 @@ export function registerStatusEngine() {
         const props = changes?.system?.props ?? {};
         if (
             Object.hasOwn(props, 'status_slayer_exaustao') ||
-            Object.hasOwn(props, 'status_slayer_dados')
+            Object.hasOwn(props, 'status_slayer_dados') ||
+            Object.hasOwn(changes ?? {}, 'system.props.status_slayer_exaustao') ||
+            Object.hasOwn(changes ?? {}, 'system.props.status_slayer_dados')
         ) {
             void reconcileSlayerExhaustion(actor);
         }

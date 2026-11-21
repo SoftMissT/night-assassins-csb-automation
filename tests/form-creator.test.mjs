@@ -162,4 +162,29 @@ describe('criador de Forma — contrato de 4 níveis', () => {
             Object.assign(globalThis, previous);
         }
     });
+
+    it('oferece a Secundária escolhida ao GM que registra uma Forma', async () => {
+        const previous = Object.fromEntries(['game', 'ui', 'foundry'].map(key => [key, globalThis[key]]));
+        const target = {
+            name: 'Usuário de Duas Respirações', isOwner: true,
+            system: { props: {
+                nome_slayer: 'Usuário de Duas Respirações', classe_escolhida: 'classe_usuario_de_duas_resp',
+                resp_slayer_display: 'resp_slayer_agua', resp_slayer_display_2: 'resp_slayer_neve',
+            } },
+            createEmbeddedDocuments: assert.fail,
+        };
+        globalThis.game = { user: { isGM: true } };
+        globalThis.ui = { notifications: { warn: assert.fail } };
+        globalThis.foundry = { applications: { api: { DialogV2: { wait: async ({ content }) => {
+            assert.match(content, /<option value="Água">Água<\/option>/u);
+            assert.match(content, /<option value="Neve">Neve<\/option>/u);
+            assert.doesNotMatch(content, /<option value="Chamas">/u);
+            return null;
+        } } } } };
+        try {
+            assert.equal(await openFormCreator({ actor: target }), null);
+        } finally {
+            Object.assign(globalThis, previous);
+        }
+    });
 });

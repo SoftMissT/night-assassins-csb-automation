@@ -2,15 +2,16 @@
  * @fileoverview Resolução mecânica pura dos status do Slayer.
  */
 
-import { parseStatusState } from './status-service.mjs';
+import { parseStatusState, statusKeysForProps } from './status-service.mjs';
 import { parseNumber } from './parsing.mjs';
 import { parseUserPoisonState, USER_POISON_STATE_KEY } from './slayer/poison-user-service.mjs';
 
 function statusContext(props = {}) {
-    const state = parseStatusState(props.status_slayer_dados);
+    const contract = statusKeysForProps(props);
+    const state = parseStatusState(props[contract.data]);
     const storedExhaustion = Math.max(
         state.exhaustion,
-        Number.parseInt(props.status_slayer_exaustao, 10) || 0
+        Number.parseInt(props[contract.exhaustion], 10) || 0
     );
     let exhaustionImmune = false;
     try {
@@ -25,6 +26,7 @@ function statusContext(props = {}) {
     // Choque Adrenérgico (Recuperação, 3ª Forma): status com duração em rodadas.
     if (state.active.includes('choque_adrenergico')) exhaustionImmune = true;
     return {
+        state,
         active: new Set(state.active),
         exhaustion: exhaustionImmune ? 0 : storedExhaustion,
         storedExhaustion,
@@ -79,8 +81,7 @@ function forcedMode(active, disadvantage, extraAdvantage = false) {
 }
 
 export function getRollStatusEffects(props = {}, { test = '', attr = '', kind = 'test' } = {}) {
-    const { active, exhaustion } = statusContext(props);
-    const state = parseStatusState(props.status_slayer_dados);
+    const { active, exhaustion, state } = statusContext(props);
     const attribute = String(attr).trim().toUpperCase();
     const testName = String(test).trim().toLowerCase();
     const attack = kind === 'attack';
@@ -254,10 +255,8 @@ export function isReactionBlocked(props = {}) {
 }
 
 export function getStatusCapabilities(props = {}) {
-    const state = parseStatusState(props.status_slayer_dados);
-    const active = new Set(state.active);
     // Mesma fonte das rolagens: imunidade à Exaustão (Névoa, Choque Adrenérgico) vale aqui também.
-    const { exhaustion } = statusContext(props);
+    const { exhaustion, state, active } = statusContext(props);
     const hypothermiaStacks = active.has('hipotermia')
         ? Math.max(1, state.effects?.hipotermia?.stacks || 1)
         : 0;

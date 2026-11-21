@@ -97,6 +97,20 @@ describe('Formas de Respiração e espelho interno', () => {
         assert.equal(actor.created.length, 0);
     });
 
+    it('adiciona só a Batida de Martelo que falta em uma ficha Metal antiga', async () => {
+        const actor = owner();
+        const catalog = await loadBreathingCatalog();
+        const owned = breathingFormsFromCatalog(catalog, 'Metal')
+            .filter(form => form.system.props.forma_id !== 'metal_07');
+        actor.items.push(...owned);
+        const result = await importBreathingForms(actor, 'Metal', {
+            documents: catalog, templateId: 'tplDoMundo',
+        });
+        assert.equal(result.ok, true);
+        assert.deepEqual(actor.created[0].data.map(item => item.system.props.forma_id), ['metal_07']);
+        assert.equal(actor.items.length, owned.length);
+    });
+
     it('sem template de Forma no mundo, não cria Item órfão', async () => {
         const actor = owner();
         const result = await importBreathingForms(actor, 'Chamas', { documents, templateId: '' });

@@ -5,10 +5,23 @@ import { MODULE_ID, ATTRIBUTES } from './constants.mjs';
 import { handleActorUpdate } from './trigger-router.mjs';
 import { rollTest } from './roll-service.mjs';
 import { rollHit } from './hit-service.mjs';
+import { openKakushiManager } from './slayer/kakushi-service.mjs';
+import { registerDualBreathingPostureEngine } from './slayer/dual-breathing-posture.mjs';
+import { openCompanionOniManager } from './slayer/companion-oni-service.mjs';
+import { useOniSpecialization } from './oni/specialization-runtime.mjs';
 import { fillMissingSheetAttributes } from './sheet-attributes.mjs';
 import { reloadWeaponItem, rollDamage, rollWeaponItem } from './damage-service.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { openNpcVitals } from './npc-vitals-service.mjs';
+import { registerDreamPassiveEngine } from './dream-passive-service.mjs';
+import { registerCombatPassiveEngine, openBreathingPassiveManager } from './breathing-combat-passives.mjs';
+import {
+    migrateRulesSelection,
+    openRulesProfileManager,
+    openRulesTableManager,
+    preserveVanillaSelectionsOnTemplateReload,
+    sheetRuleFlags,
+} from './rules-profile.mjs';
 import { tagItemSheet } from './item-sheet-skin.mjs';
 import { attachItemSheetHud, openItemDamageProfileEditor } from './item-sheet-hud.mjs';
 import { saveItemDamageProfile } from './item-damage-profile.mjs';
@@ -202,6 +215,7 @@ async function rollWeaponItemPublic(options = {}) {
 Hooks.once('init', () => {
     registerSettings();
     registerOniProgressionEngine();
+    Hooks.on('preUpdateActor', preserveVanillaSelectionsOnTemplateReload);
 });
 /**
  * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
@@ -209,6 +223,22 @@ Hooks.once('init', () => {
  * @param {JQuery|HTMLElement} html
  * @returns {void}
  */
+const rulesProfileSync = new WeakSet();
+
+async function syncSheetRulesProfile(actor) {
+    const props = actor?.system?.props;
+    if (!props || !actor.update || !actor.isOwner || !['npc', 'slayer', 'oni'].includes(actorKind(actor))) return;
+    if (rulesProfileSync.has(actor)) return;
+    const update = Object.fromEntries(Object.entries(sheetRuleFlags())
+        .filter(([key, value]) => Number(props[key] ?? 0) !== value)
+        .map(([key, value]) => [`system.props.${key}`, value]));
+    if (!Object.keys(update).length) return;
+    rulesProfileSync.add(actor);
+    try {
+        await actor.update(update, { naCsbAutomation: true, naRulesProfile: true });
+    } finally { rulesProfileSync.delete(actor); }
+}
+
 function tagNightAssassinsSheet(app, html) {
     const actor = app?.actor;
     if (!actor?.system?.props) return;
@@ -229,6 +259,7 @@ function tagNightAssassinsSheet(app, html) {
         target?.classList?.add(kindClass);
     }
     if (el) fillMissingSheetAttributes(el, actor);
+    void syncSheetRulesProfile(actor).catch(error => ui.notifications.error(error.message));
 }
 Hooks.once('ready', async () => {
     if (game.system.id !== 'custom-system-builder') {
@@ -237,13 +268,25 @@ Hooks.once('ready', async () => {
         );
         return;
     }
+    if (game.user?.isGM) {
+        const primary = [...(game.users ?? [])].filter(user => user.active && user.isGM)
+            .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0];
+        if (!primary || primary.id === game.user.id) {
+            try { await migrateRulesSelection(); }
+            catch (error) { console.warn(`[${MODULE_ID}] Seleção legada de regras não migrada`, error.message); }
+        }
+    }
     registerDiagnosticCollector();
     registerStatusEngine();
     registerActionEngine();
     registerRecoveryBreathingEngine();
+    registerDreamPassiveEngine();
+    registerCombatPassiveEngine();
+    Hooks.on('createActor', actor => void syncSheetRulesProfile(actor).catch(error => ui.notifications.error(error.message)));
     registerCombatManeuverEngine();
     registerRestEngine();
     registerBreathingEngine();
+    registerDualBreathingPostureEngine();
     registerOniRegenerationEngine();
     if (game.settings.get(MODULE_ID, SETTINGS.enableLifeDeathEngine)) {
         registerLifeDeathEngine();
@@ -290,6 +333,18 @@ Hooks.once('ready', async () => {
     }
     // Sincroniza os atalhos do GM. As macros das fichas vêm do Compêndio.
     if (game.user.isGM) {
+        const primary = [...(game.users ?? [])].filter(user => user.active && user.isGM)
+            .sort((a, b) => String(a.id).localeCompare(String(b.id)))[0];
+        if (!primary || primary.id === game.user.id) {
+            const tokenActors = Array.from(game.scenes ?? []).flatMap(scene =>
+                [...(scene.tokens ?? [])].filter(token => !token.actorLink).map(token => token.actor)
+            );
+            const actors = [...(game.actors ?? []), ...tokenActors];
+            for (const actor of actors) {
+                try { await syncSheetRulesProfile(actor); }
+                catch (error) { console.warn(`[${MODULE_ID}] Perfil da ficha não sincronizado`, actor?.id, error.message); }
+            }
+        }
         void syncCanonicalMacros()
             .then(({ created, updated }) => {
                 if (created > 0 || updated > 0)
@@ -370,6 +425,9 @@ Hooks.once('ready', async () => {
             useBreathForm,
             launchBreathForm,
             openBreathingManager,
+            openBreathingPassiveManager,
+            openRulesProfileManager,
+            openRulesTableManager,
             openDamagePresetManager,
             openItemDamageProfileEditor,
             saveItemDamageProfile,
@@ -402,6 +460,8 @@ Hooks.once('ready', async () => {
                 origins: slayerOrigins,
                 classes: slayerClasses,
                 runtime: slayerClassRuntime,
+                openKakushiManager,
+                openCompanionOniManager,
                 advancedStates: slayerAdvancedStates,
                 openAdvancedStatesManager,
             },
@@ -415,6 +475,7 @@ Hooks.once('ready', async () => {
                 consumeActions: consumeOniActions,
                 resetActions: resetOniActions,
                 regenerate: useOniRegeneration,
+                specialization: useOniSpecialization,
             },
             actorKind,
             exportDiagnosticJournal,

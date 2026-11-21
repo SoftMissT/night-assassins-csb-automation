@@ -10,7 +10,7 @@
 
 Módulo de automação para o sistema **Night Assassins** no **Foundry VTT v14**, construído sobre o **Custom System Builder**. Ele distribui os templates oficiais, compêndios e macros usados para atributos, progressão, combate, Respirações, Kekkijutsus e manutenção dos dados do mundo.
 
-Versão declarada no manifesto: **0.13.2**.
+Versão declarada no manifesto: **0.13.5**.
 
 ## Imagem do módulo
 
@@ -75,10 +75,10 @@ As configurações ficam em **Configurações do Jogo → Night Assassins CSB Au
 
 | Ficha          | Estado atual                                                                                                                                                                                                                                                       |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Slayer**     | Abas Combate, Perícias, Habilidades e Config/Dados. Combate na ordem de uso: PDV/PDR, atributos com temporários, botões de combate, Bônus Fixos, Armas, Formas, Status e Vida e Morte. Progressão N1–N20, ações e Respirações. |
+| **Slayer**     | Abas Combate, Perícias, Habilidades e Config/Dados. Habilidades reúne as escolhas Vanilla e Homebrew. Bônus Fixos ficam recolhidos em Combate. Regras da Mesa fica na configuração do GM. |
 | **Oni**        | Combate e Configurações/Dados; Combate na mesma ordem (PDV/PDK, atributos, combate, Bônus Fixos, lista de **Kekkijutsu** com botão Usar, Status). Criação N1, progressão N1–N20, Regeneração, Origens e resistências. A Ferida desconta do PDV. |
 | **Oni Minion** | Ficha enxuta com tipos, pacotes de atributos, ataques, traços, fraquezas e PDV/PDK próprios.                                                                                                                                                                       |
-| **NPC**        | PDV/PDR no topo, atributos, combate, Bônus Fixos, armas e Personalidade recolhível. Participa do relay genérico e do motor de Acerto/Dano por armas normais. |
+| **NPC**        | Combate com PDV/PDR, atributos, ações, armas, formas e Bônus Fixos recolhidos. Os bônus de ação ficam na configuração do GM. Usa os recursos da ficha ao executar Formas e seus efeitos secundários. |
 
 ### Estado de validação
 
@@ -99,6 +99,18 @@ O Compêndio `night-assassins-respiracoes` publica o template, as pastas, os hub
 | ---------------------- |
 | **Água**, **Chamas**, **Eclipse**, **Metal**, **Neve**, **Névoa**, **Pedra**, **Raposa**, **Som**, **Sonhos** e **Vento** |
 
+### NPC, habilidades e passivas
+
+O NPC tem os seletores **Habilidade Especial** e **Metal / Cor da lâmina** na aba Combate. Os textos evoluem nos níveis 1, 6 e 12. Os bônus numéricos usam o nível do NPC. Constituição de Ferro, de Tsuyoi, aumenta VIT, FOR e PDV máximo. Marechi e Oketsu aumentam o PDR máximo. A Marca do Destino solicita o atributo e evolui no nível 6. Esses ganhos são somados às bases editáveis.
+
+As cores usam os mesmos bônus do Slayer. Formas, Água, Burizado, cura de Vento e sinergia do Martelo leem e alteram o PDV/PDR da própria ficha. Pelo **Controle GM → Ferramentas → Descanso**, o NPC também pode consolidar os ganhos de Sangue Especial na Recuperação Profunda. A passiva concede 1 Cicatriz por 30 de dano cortante ou perfurante, sem limite. A cada 25 de dano por Sangramento ou Infecção, concede +1 em testes de VIT, até +4.
+
+**Raposa — Olhos Escarlate** concede +1 PDR máximo e −1 em Acerto. Para receber +2 em percepção visual de SAB/INT pelo botão de atributo, marque **Percepção visual** no diálogo. A prévia inclui todos os bônus visuais. Em Acerto, marque **Ataque surpresa físico** para que alvos da Raposa ignorem a vantagem da surpresa e o ataque siga normalmente.
+
+**Sonhos — Troca Equivalente** oferece confirmação ao chegar a 0 PDV ou menos. Aceitar restaura exatamente 1 PDV atual e aplica 2 níveis de Exaustão. A perda de uma memória importante é resolvida na mesa. A oferta fica indisponível se o custo alcançar Exaustão 8. O NPC recebe a oferta no cliente do GM ativo.
+
+Os textos das Habilidades Especiais incluem efeitos que dependem de decisão da mesa. A presença da descrição não significa que todo poder ativo tenha um botão automático. Estas correções acrescentam a paridade dos seletores e dos efeitos numéricos existentes, além das passivas descritas acima. Para receber os novos campos, atualize os templates NPC e Slayer pelo procedimento de importação do CSB. A conferência visual no Foundry deve ser feita separadamente dos testes automatizados.
+
 ## Sistemas e automações
 
 - **Atributos e progressão:** criação e distribuição de atributos, snapshots por nível e progressões específicas de Slayer e Oni.
@@ -110,6 +122,18 @@ O Compêndio `night-assassins-respiracoes` publica o template, as pastas, os hub
 - **Bônus Fixos da ficha:** Slayer, Oni, Oni Minion e NPC têm campos de Acerto (todo Acerto), Dano (toda rolagem de dano) e Defesa/Testes (Bloqueio, Esquiva e testes de atributo), mostrados como "Bônus da ficha". Fichas antigas precisam reimportar o template para ganhar os campos.
 - **Oni:** progressão, Regeneração, Origens, Kekkijutsus, Classes, Especializações e painel do GM.
 - **Diagnóstico:** Journal exclusivo do GM, filtrado para eventos atribuídos ao módulo.
+
+### Classes na ficha
+
+O GM escolhe a variante de **Classes** em **Regras da Mesa** e recarrega o mundo. A classe Vanilla é escolhida nesse menu. O seletor de classe Homebrew fica na ficha.
+
+- **Kakushi** abre as ações da classe. Marque o aliado no mapa antes de abrir a ficha. O GM pode aplicar a habilidade quando o jogador não pode editar a ficha do aliado.
+- **Companheiro de Oni** permite ao GM vincular um Oni pela ficha do Slayer. Na Defesa, informe o atacante e a CD para resolver a interceptação.
+- **Duas Respirações** usa a secundária escolhida na ficha. O GM informa a compatibilidade para pares que exigem decisão da mesa.
+- No Homebrew, o menu da Respiração oferece **Registrar Variação** ao GM e lista as técnicas aprovadas para uso. **Forma Intermediária** aparece a partir do Rank S em combate, e **Forma Composta** aparece no Rank SS. O módulo cobra os recursos e aplica os limites de uso. O efeito híbrido descrito no registro é resolvido na mesa.
+- **Mestre de Batalha:** a Pressão de Combate acompanha o próximo ataque básico contra o mesmo alvo. Críticos com arma proficiente oferecem Crítico Brutal. No Homebrew, confirme o tipo do golpe em **Aparar Instintivo** e marque corpo a corpo para oferecer o Contra-ataque após um erro confirmado.
+- **Manobras de Combate** ficam disponíveis com **Ações Homebrew**.
+- **Especialização Oni** reúne as ações de Titan e Mestre da Recuperação no perfil Vanilla. Os efeitos passivos entram nos fluxos de acerto, dano e regeneração.
 
 ## Compêndios
 

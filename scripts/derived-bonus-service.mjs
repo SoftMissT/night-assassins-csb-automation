@@ -3,6 +3,12 @@
  */
 
 import { normalizeAbilityKey, parseLevel, parseNumber } from './parsing.mjs';
+import { hasBreathingPassive } from './breathing-passive-rules.mjs';
+import { foxPassiveBonuses } from './fox-passive-service.mjs';
+import { metalForgeBonuses } from './metal-forge-passive.mjs';
+import { soundPassiveBonuses } from './sound-passive-service.mjs';
+import { windCurrentBonuses } from './wind-current-passive.mjs';
+import { effectiveRulesAbility, isHomebrewExtra, ruleVariant, vanillaDerivedBonuses } from './rules-profile.mjs';
 
 export const DERIVED_BONUS_CHANNELS = Object.freeze([
     'acerto',
@@ -99,7 +105,7 @@ export function sheetBonusValue(props = {}, channel) {
 
 function abilityFallback(props, channel) {
     const ability = normalizeAbilityKey(props.hab_escolhida);
-    const level = parseLevel(props.nvl_num ?? props.nvl_pj);
+    const level = parseLevel(props.npc_nivel ?? props.nvl_num ?? props.nvl_pj);
     if (ability === 'hab_escolhida_tato') {
         if (channel === 'bloqueio') return level >= 6 ? 3 : 2;
         if (channel === 'esquiva') return level >= 6 ? 2 : 1;
@@ -115,10 +121,11 @@ function abilityFallback(props, channel) {
 }
 
 function metalFallback(props, channel) {
-    const metal = String(props.metal_escolhido ?? '')
+    const selectedMetal = String(props.metal_escolhido ?? '')
         .trim()
         .toLowerCase();
-    const breathLevel = Math.max(0, parseLevel(props.nvl_respiracao_num));
+    const metal = selectedMetal === 'metal_preto' ? 'metal_preta' : selectedMetal;
+    const breathLevel = Math.max(0, parseLevel(props.nvl_respiracao_num ?? props.nvl_respiracao));
     const values = {
         acerto: metal === 'metal_dourada' ? 4 : 0,
         bloqueio:
@@ -170,7 +177,9 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
         allSources.push(source);
     };
 
-    const abilityValues = {
+    const abilityVariant = context.rulesProfile ?? ruleVariant('habilidades');
+    const metalVariant = context.rulesProfile ?? ruleVariant('metal');
+    const abilityValues = abilityVariant === 'vanilla' ? {} : {
         acerto: resolvedProp(props, 'hab_acerto_bonus', abilityFallback(props, 'acerto')),
         bloqueio: resolvedProp(props, 'hab_bloqueio_bonus', abilityFallback(props, 'bloqueio')),
         esquiva: resolvedProp(props, 'hab_esquiva_bonus', abilityFallback(props, 'esquiva')),
@@ -191,7 +200,7 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
         add({ channel, value, label: 'Habilidade Especial', origin: 'Habilidade' });
     }
 
-    const metalValues = {
+    const metalValues = metalVariant === 'vanilla' ? {} : {
         acerto: resolvedProp(props, 'metal_acerto_bonus', metalFallback(props, 'acerto')),
         bloqueio: resolvedProp(props, 'metal_bloqueio_bonus', metalFallback(props, 'bloqueio')),
         esquiva: resolvedProp(props, 'metal_esquiva_bonus', metalFallback(props, 'esquiva')),
@@ -211,6 +220,27 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
     for (const [channel, value] of Object.entries(metalValues)) {
         add({ channel, value, label: 'Metal / Cor', origin: 'Metal' });
     }
+    for (const source of vanillaDerivedBonuses(props, {
+        ...context, ruleVariants: { habilidades: abilityVariant, metal: metalVariant, origens: context.rulesProfile ?? ruleVariant('origens') },
+    })) add(source);
+
+    if (isHomebrewExtra('olhos_escarlate') && hasBreathingPassive(props, 'Raposa')) {
+        add({ channel: 'acerto', value: -1, label: 'Olhos Escarlate', origin: 'Respiração da Raposa' });
+        add({ channel: 'pdrMaximo', value: 1, label: 'Olhos Escarlate', origin: 'Respiração da Raposa' });
+    }
+
+    const fox = foxPassiveBonuses(props);
+    const metalForge = metalForgeBonuses(props);
+    const soundScore = soundPassiveBonuses(props);
+    const windCurrent = windCurrentBonuses(props);
+    for (const [channel, value, label] of [
+        ['acerto', isHomebrewExtra('veus') ? fox.acerto : 0, 'Véus da Raposa'],
+        ['esquiva', isHomebrewExtra('veus') ? fox.esquiva : 0, 'Véus da Raposa'],
+        ['bloqueio', metalForge.bloqueio, 'Forja Viva / Metal Branco'],
+        ['bloqueio', soundScore.bloqueio, 'Partitura Musical'], ['esquiva', soundScore.esquiva, 'Partitura Musical'],
+        ['bloqueio', hasBreathingPassive(props, 'Vento') && windCurrent.mode === 'uncontrolled' ? -2 : 0, 'Furacão Descontrolado'],
+        ['esquiva', hasBreathingPassive(props, 'Vento') && windCurrent.mode === 'uncontrolled' ? -2 : 0, 'Furacão Descontrolado'],
+    ]) add({ channel, value, label, origin: 'Respiração' });
 
     for (const channel of SHEET_CHANNELS) {
         const keyName = channel === 'danoFixo' ? 'dano' : channel;
@@ -227,7 +257,7 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
         'metal_dano_veneno',
         String(props.metal_escolhido ?? '').toLowerCase() === 'metal_roxa' ? 3 : 0
     );
-    if (poison) {
+    if (metalVariant !== 'vanilla' && poison) {
         const source = {
             channel: 'danoTipado',
             value: poison,
@@ -263,6 +293,25 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
     }
 
     return { channels, typedDamage, allSources };
+}
+
+/** Máximos do NPC a partir da base e dos bônus automáticos da ficha. */
+export function npcResourceMaximums(props = {}) {
+    const level = Math.min(14, Math.max(1, parseLevel(props.npc_nivel) || 1));
+    const abilityVariant = ruleVariant('habilidades');
+    const ability = normalizeAbilityKey(effectiveRulesAbility(props, abilityVariant));
+    const lifePerLevel =
+        ability === 'hab_escolhida_tsuyoi' ? (level >= 6 ? 3 : 2) : 0;
+    const pdrPerLevel = abilityVariant === 'vanilla' ? 0 :
+        ability === 'hab_escolhida_marechi' ? 1 : ability === 'hab_escolhida_oketsu' ? 2 : 0;
+    return {
+        pdvMax: Math.max(0, parseNumber(props.npc_pdv_base) + lifePerLevel * level),
+        pdrMax: Math.max(
+            0,
+            parseNumber(props.npc_pdr_base) + pdrPerLevel * level +
+                resolveSlayerDerivedBonuses(props).channels.pdrMaximo.total
+        ),
+    };
 }
 
 /** @param {string} test @param {string} [modality] @returns {string|null} */

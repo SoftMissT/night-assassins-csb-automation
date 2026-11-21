@@ -4,6 +4,7 @@ import {
 } from '../core/technique-definition.mjs';
 import {
     weaponAttackAttributes,
+    weaponExecutionProfile,
     weaponPropertyKeys,
     weaponPropertyMechanics,
     weaponProfilesFromProps,
@@ -84,6 +85,7 @@ export function normalizeWeaponTechnique(
     const attackAttributes = weaponAttackAttributes(props, profile);
     const propertyKeys = weaponPropertyKeys(props.arma_propriedades);
     const propertyMechanics = weaponPropertyMechanics(props);
+    const execution = weaponExecutionProfile({ ...props, arma_nome: props.arma_nome || item?.name }, profile);
     const definition = normalizeTechniqueDefinition({
         id: `weapon:${text(props.arma_nome, item?.name || 'unnamed')}:${profileIndex}`,
         name: `${text(props.arma_nome, item?.name || 'Arma')} ${text(profile.nome, 'Ataque Base')}`,
@@ -115,17 +117,7 @@ export function normalizeWeaponTechnique(
                 props.arma_atributo_acerto,
                 attackAttributes[0] ?? attributes[0]?.key ?? 'FOR'
             ),
-            count: Math.max(
-                1,
-                number(
-                    profile.ataques,
-                    propertyMechanics.some((mechanic) =>
-                        ['nitoryu', 'ryoto'].includes(mechanic?.id)
-                    )
-                        ? 2
-                        : 1
-                )
-            ),
+            count: execution.ataques,
             sequential: true,
             critical: {
                 threshold: number(profile.critico, number(props.arma_critico, 20)),
@@ -153,10 +145,11 @@ export function normalizeWeaponTechnique(
             properties: propertyKeys,
             unresolvedRuleText: text(props.arma_regra_completa || props.descricao),
             structuredMechanics: propertyMechanics,
-            weaponMode: text(profile.modo ?? profile.modo_propriedade),
-            secondaryDamagePolicy: text(profile.dano_segundo_golpe, 'normal'),
-            secondaryNoAttribute: profile.acerto_segundo_sem_atributo === true,
-            secondaryPenalty: number(profile.penalidade_segundo_acerto),
+            weaponMode: execution.modo_propriedade,
+            secondaryDamagePolicy: execution.dano_segundo_golpe,
+            secondaryNoAttribute: execution.acerto_segundo_sem_atributo,
+            secondaryPenalty: execution.penalidade_segundo_acerto,
+            contactEffectsPerAction: execution.efeitos_contato_por_acao,
             criticalChain:
                 profile.cadeia_critica && typeof profile.cadeia_critica === 'object'
                     ? structuredClone(profile.cadeia_critica)

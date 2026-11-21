@@ -104,6 +104,13 @@ describe('Respiração da Neve', () => {
     });
 
     it('Canção protege aliado sinérgico e aplica Congelar no nível 4', () => {
+        for (const level of [1, 2]) {
+            const self = buildSnowBreathingPlan('neve_07', level, props, {
+                ownerUuid: 'Actor.Proprio', protectedUuid: 'Actor.Aliado',
+            });
+            assert.equal(self.state.kekkijutsuGuard.protectedUuid, 'Actor.Proprio');
+            assert.equal(self.state.kekkijutsuGuard.canProtectAlly, false);
+        }
         const plan = buildSnowBreathingPlan('neve_07', 4, props, {
             protectedUuid: 'Actor.Ally',
             allyBreathing: 'Cristal',

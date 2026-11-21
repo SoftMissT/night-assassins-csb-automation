@@ -50,6 +50,7 @@ export function autoBonusMarkup(bonuses = [], notes = []) {
  * @param {string[]} [options.bonuses] rótulos dos bônus automáticos (já com sinal e valor)
  * @param {string[]} [options.notes] avisos que não entram como número (Vantagem, bônus condicional)
  * @param {number} [options.autoModifier] soma dos bônus automáticos, só para a prévia
+ * @param {{modifier:number, labels:string[]}|null} [options.visualPerception] bônus condicionais de percepção visual
  * @returns {Promise<{mode:string,rollMode:string,secVal:number,secKey:string,bonusRaw:string,cdVal:number}|null>}
  */
 export async function openRollDialog({
@@ -61,6 +62,9 @@ export async function openRollDialog({
     bonuses = [],
     notes = [],
     autoModifier = 0,
+    visualPerception = null,
+    companionSocial = false,
+    kakushiPulse = '',
 }) {
     const props = actor?.system?.props ?? {};
     const primaryKey = attr ? attr.toLowerCase() : '';
@@ -77,13 +81,22 @@ export async function openRollDialog({
         )
         .join('');
 
+    const defense = ['Bloqueio', 'Esquiva'].includes(test);
+    const attackers = [...new Map([...(globalThis.game?.combat?.combatants ?? [])]
+        .filter(combatant => combatant.actor && combatant.actor.uuid !== actor?.uuid)
+        .map(combatant => [combatant.actor.uuid, combatant.actor])).values()];
+    const defenseFields = defense ? `<label>Atacante <select name="na-rm-attacker"><option value="">Não informar</option>${attackers.map(enemy => `<option value="${escapeHtml(enemy.uuid)}">${escapeHtml(enemy.name)}</option>`).join('')}</select></label><label><input type="checkbox" name="na-rm-melee"> Atacante em alcance corpo a corpo</label>${test === 'Esquiva' ? '<label><input type="checkbox" name="na-rm-perfect"> Esquiva perfeita, sem receber dano</label>' : ''}` : '';
     const content = `
     <div class="na-csb-automation">
       <div style="margin-bottom:12px;">
         ${attr ? `<div style="font-size:13px;color:${escapeHtml(color || '#666')};margin-bottom:4px;font-weight:600;">${escapeHtml(attr)} = ${value}</div>` : ''}
         <div id="na-rm-formula" style="font-family:monospace;font-size:14px;background:#120f14;color:#f7f7f7;padding:6px 8px;border-radius:3px;border:1px solid #4a3a2a;">${escapeHtml(previewFormula({ value, autoModifier }))}</div>
       </div>
-      ${autoBonusMarkup(bonuses, notes)}
+      <div id="na-rm-auto-bonuses">${autoBonusMarkup(bonuses, notes)}</div>
+      ${defenseFields}
+      ${visualPerception ? '<label style="display:block;margin-bottom:12px"><input type="checkbox" name="na-rm-visual-perception" /> Percepção visual</label>' : ''}
+      ${companionSocial ? '<label><input type="checkbox" name="na-rm-companion-social"> Teste social com participação do Oni (+2)</label>' : ''}
+      ${kakushiPulse ? `<label><input type="checkbox" name="na-rm-kakushi-pulse"> ${kakushiPulse === 'corpo' ? 'Resistência física' : 'Resistência a medo, confusão ou controle mental'} (+1)</label>` : ''}
       <div style="margin-bottom:12px;">
         <label style="font-weight:bold;font-size:13px;display:block;margin-bottom:4px;">Atributo Secundário (até 1)</label>
         <select id="na-rm-secattr" style="width:100%;padding:4px;box-sizing:border-box;">${secOptionsHtml}</select>
@@ -110,6 +123,12 @@ export async function openRollDialog({
         const sec = form.elements['na-rm-secattr'];
         return {
             mode,
+            visualPerception: form.elements['na-rm-visual-perception']?.checked === true,
+            companionSocial: form.elements['na-rm-companion-social']?.checked === true,
+            kakushiPulse: form.elements['na-rm-kakushi-pulse']?.checked === true,
+            attackerUuid: form.elements['na-rm-attacker']?.value ?? '',
+            melee: form.elements['na-rm-melee']?.checked === true,
+            perfect: form.elements['na-rm-perfect']?.checked === true,
             rollMode: form.elements['na-rm-rollmode'].value ?? 'publicroll',
             secVal: Number(sec.value) || 0,
             secKey: sec.selectedOptions?.[0]?.dataset?.key ?? '',
@@ -118,23 +137,30 @@ export async function openRollDialog({
         };
     };
 
-    // Prévia ao vivo: a fórmula acompanha o secundário e o bônus manual.
+    // A prévia e os rótulos acompanham todas as escolhas do formulário.
     const render = (_event, dialog) => {
         const root = dialog.element;
         const display = root?.querySelector('#na-rm-formula');
         const sec = root?.querySelector('#na-rm-secattr');
         const bonus = root?.querySelector('#na-rm-bonus');
+        const visual = root?.querySelector('[name="na-rm-visual-perception"]');
+        const autoBonuses = root?.querySelector('#na-rm-auto-bonuses');
         if (!display) return;
         const update = () => {
             display.textContent = previewFormula({
                 value,
                 secVal: Number(sec?.value) || 0,
-                autoModifier,
+                autoModifier: autoModifier + (visual?.checked ? visualPerception?.modifier ?? 0 : 0),
                 bonusRaw: bonus?.value ?? '',
             });
+            if (autoBonuses) autoBonuses.innerHTML = autoBonusMarkup(
+                visual?.checked ? [...bonuses, ...(visualPerception?.labels ?? [])] : bonuses,
+                notes
+            );
         };
         sec?.addEventListener('change', update);
         bonus?.addEventListener('input', update);
+        visual?.addEventListener('change', update);
     };
 
     const result = await foundry.applications.api.DialogV2.wait({

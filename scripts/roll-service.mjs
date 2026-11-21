@@ -5,8 +5,13 @@
 import { ATTR_NAMES, MODULE_ID } from './constants.mjs';
 import { resolveMessageMode } from './damage-formula.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
+import { isHomebrewExtra } from './rules-profile.mjs';
 import { openRollDialog } from './dialogs/roll-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
+import { consumeKakushiAdvantage, kakushiRollEffect } from './slayer/kakushi-service.mjs';
+import { offerMasterBattleCounterattack } from './slayer/master-battle-counterattack.mjs';
+import { activeMasterBattleInjury, MASTER_BATTLE_TACTICAL_INJURY } from './slayer/master-battle-injury.mjs';
+import { activeMasterBattleParryGuard, MASTER_BATTLE_PARRY_GUARD } from './slayer/master-battle-parry.mjs';
 import { recoverSlayerFolego } from './action-service.mjs';
 import { buildFlameInterception, parseFlameBreathingState } from './flame-breathing-service.mjs';
 import { consumeMetalSteelDefense, parseMetalBreathingState } from './metal-breathing-service.mjs';
@@ -15,6 +20,13 @@ import { parseSnowBreathingState } from './snow-breathing-service.mjs';
 import { derivedChannelForTest, resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { actorBuffSources } from './breathing-buffs.mjs';
 import { resolveCombatManeuverBonuses } from './combat-maneuver-service.mjs';
+import { hasBreathingPassive } from './breathing-passive-rules.mjs';
+import { parseWindBreathingState } from './wind-breathing-service.mjs';
+import { combatPassiveBonuses, passiveExecutionId, recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
+import { oniSpecializationAbility, TITAN } from './oni/specialization-rules.mjs';
+import {
+    companionSocialBonus, consumeCompanionCoordination, offerCompanionInterception, pendingCompanionCoordination,
+} from './slayer/companion-oni-service.mjs';
 
 function naturalD20(roll) {
     return Math.max(
@@ -174,6 +186,10 @@ export async function rollTest(options) {
         attr,
         kind: ['Bloqueio', 'Esquiva'].includes(test) ? 'defense' : 'test',
     });
+    if (options.companionDefenseModifier === -2) {
+        statusEffects.modifier -= 2;
+        statusEffects.reasons.push('Cercar & Proteger −2');
+    }
     if (test === 'Bloqueio') {
         const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
         if (Number(flameState.block?.bonus) > 0) {
@@ -222,9 +238,21 @@ export async function rollTest(options) {
     // ver de onde vem cada número antes de rolar.
     const isDefense = ['Bloqueio', 'Esquiva'].includes(test);
     const derivedChannel = derivedChannelForTest(test, options.modality ?? '');
+    let prepared = {};
+    try { prepared = JSON.parse(actor.system?.props?.resp_passivas_defesa_forma || '{}') ?? {}; } catch {}
+    const preparedCurrent = isDefense && Boolean(prepared.combatId) &&
+        prepared.combatId === String(game.combat?.uuid ?? game.combat?.id ?? '');
     // O "Bônus da ficha" de Defesa/Testes vale em todo teste, menos no Acerto,
     // que tem campo próprio.
     const derivedChannels = resolveSlayerDerivedBonuses(actor.system?.props ?? {}, {
+        testAttribute: String(attr).toUpperCase(),
+        defenseAgainstAttack: isDefense,
+        channel: derivedChannel,
+        isTechnique: preparedCurrent || options.isTechnique === true,
+        actionType: preparedCurrent ? 'reacao' : options.actionType,
+        protectsSomeone: options.protectsSomeone === true,
+        surpriseDefense: options.surpriseDefense === true,
+        smellPerception: options.modality === 'olfato',
         runtimeSources: actorBuffSources(actor),
     }).channels;
     const maneuverTargetUuid = [...(globalThis.game?.user?.targets ?? [])][0]?.actor?.uuid ?? '';
@@ -245,7 +273,30 @@ export async function rollTest(options) {
               ]
             : []),
     ];
-    const derivedTotal = derivedSources.reduce((sum, source) => sum + source.value, 0);
+    const combatBonuses = combatPassiveBonuses(actor.system?.props ?? {});
+    const kakushiEffect = kakushiRollEffect(actor, { ...options, testType: test });
+    if (kakushiEffect.bonus)
+        derivedSources.push({ value: kakushiEffect.bonus, label: 'Kakushi', origin: 'Classe' });
+    const controlledDefense = isDefense ? Number(combatBonuses.wind[derivedChannel]) || 0 : 0;
+    if (controlledDefense > 0) derivedSources.push({ value: controlledDefense, label: 'Corrente do Vendaval', origin: 'Respiração' });
+    if (options.physicalSave && combatBonuses.metal.physicalSaveAdvantage.includes(options.condition))
+        statusEffects.mode = mergeRollMode(statusEffects.mode, 'advantage');
+    const scarletEyesSources = isHomebrewExtra('olhos_escarlate') && hasBreathingPassive(actor.system?.props, 'Raposa') &&
+        ['SAB', 'INT'].includes(String(attr).toUpperCase())
+        ? [{ value: 2, label: 'Olhos Escarlate', origin: 'Respiração' }] : [];
+    if (derivedChannel === 'percepcaoVisual') derivedSources.push(...scarletEyesSources);
+    const canChooseVisual = !derivedChannel && !/audit/i.test(options.modality ?? '') &&
+        ['SAB', 'INT'].includes(String(attr).toUpperCase());
+    const visualSources = canChooseVisual
+        ? [...derivedChannels.percepcaoVisual.sources, ...scarletEyesSources] : [];
+    const visualModifier = visualSources.reduce((sum, source) => sum + source.value, 0);
+    const visualLabels = visualSources.map(
+        source => `${source.label} ${source.value >= 0 ? '+' : ''}${source.value}`
+    );
+    const vitalResistance = Math.min(4, Math.max(0, Number(parseWindBreathingState(actor.system?.props?.resp_vento_estado).vitBonus) || 0));
+    if (!isDefense && String(attr).toUpperCase() === 'VIT' && vitalResistance > 0)
+        derivedSources.push({ value: vitalResistance, label: 'Resistência Vital', origin: 'Sangue Especial' });
+    let derivedTotal = derivedSources.reduce((sum, source) => sum + source.value, 0);
     const derivedLabels = derivedSources.map(
         (source) => `${source.label} ${source.value >= 0 ? '+' : ''}${source.value}`
     );
@@ -261,6 +312,8 @@ export async function rollTest(options) {
     )
         notes.push('Duro como Aço: Vantagem nesta defesa (gasta ao rolar)');
     if (iceHeartTestBonus) notes.push(`Coração de Gelo +${iceHeartTestBonus} se houver CD`);
+    const companionSocial = !isDefense && String(attr).toUpperCase() === 'CAR'
+        && companionSocialBonus(actor) > 0;
 
     const dialogResult = await openRollDialog({
         actor,
@@ -271,8 +324,46 @@ export async function rollTest(options) {
         bonuses: [...statusEffects.reasons, ...derivedLabels],
         notes,
         autoModifier: statusEffects.modifier + derivedTotal,
+        visualPerception: canChooseVisual ? { modifier: visualModifier, labels: visualLabels } : null,
+        companionSocial,
+        kakushiPulse: !isDefense && !kakushiEffect.bonus && ['corpo', 'mente'].includes(kakushiEffect.pulse)
+            ? kakushiEffect.pulse : '',
     });
     if (!dialogResult || dialogResult === 'cancel') return;
+    const livePulse = kakushiRollEffect(actor).pulse;
+    if (dialogResult.kakushiPulse && !kakushiEffect.bonus && ['corpo', 'mente'].includes(livePulse) && livePulse === kakushiEffect.pulse) {
+        derivedTotal += 1;
+        derivedLabels.push('Kakushi +1');
+    }
+    if (Number.isFinite(options.forceDc)) dialogResult.cdVal = options.forceDc;
+    const attackerUuid = options.attackerUuid || dialogResult.attackerUuid ||
+        globalThis.game?.combat?.combatant?.actor?.uuid;
+    const pressure = isDefense && pendingCompanionCoordination('pressure', actor, attackerUuid);
+    const tacticalInjury = isDefense && attackerUuid !== actor.uuid && attackerUuid ? activeMasterBattleInjury(actor) : null;
+    if (tacticalInjury?.id === 'open-guard') {
+        derivedTotal -= 1;
+        derivedLabels.push('Guarda Aberta -1');
+    }
+    const parryGuard = isDefense && attackerUuid !== actor.uuid && attackerUuid ? activeMasterBattleParryGuard(actor) : null;
+    if (parryGuard) {
+        derivedTotal -= 1;
+        derivedLabels.push('Aparar Perfeito -1');
+    }
+    if (pressure) {
+        statusEffects.modifier -= 1;
+        statusEffects.reasons.push('Pressão Conjunta −1');
+    }
+    if (companionSocial && (options.social === true || dialogResult.companionSocial)) {
+        const bonus = companionSocialBonus(actor);
+        if (bonus > 0) {
+            derivedTotal += bonus;
+            derivedLabels.push(`Presença Intimidadora +${bonus}`);
+        }
+    }
+    if (dialogResult.visualPerception && canChooseVisual) {
+        derivedTotal += visualModifier;
+        derivedLabels.push(...visualLabels);
+    }
 
     const bonusRaw = [dialogResult.bonusRaw, derivedTotal ? String(derivedTotal) : '']
         .filter(Boolean)
@@ -289,6 +380,8 @@ export async function rollTest(options) {
     }
     if (maneuverBonuses.advantage)
         dialogResult.mode = mergeRollMode(dialogResult.mode, 'advantage');
+    const kakushiAdvantage = kakushiRollEffect(actor).advantage;
+    if (kakushiAdvantage) dialogResult.mode = mergeRollMode(dialogResult.mode, 'advantage');
     if (metalSteelPatch)
         await actor.update(metalSteelPatch, { naCsbAutomation: true, naBreathing: true });
 
@@ -315,13 +408,48 @@ export async function rollTest(options) {
         cdVal: dialogResult.cdVal,
         statusEffects,
     });
-    // "Defendeu?" só importa para a interceptação de Chamas no Bloqueio; perguntar
-    // em toda defesa era um clique a mais sem efeito.
+    if (result && kakushiAdvantage) await consumeKakushiAdvantage(actor);
     const flameInterceptReady =
         test === 'Bloqueio' &&
         Boolean(parseFlameBreathingState(actor.system?.props?.resp_chamas_estado).block?.intercept);
-    const defenseSucceeded =
-        result && flameInterceptReady ? await confirmDefenseSuccess(result, test) : false;
+    const hasCombatDefense = isDefense && ['Raposa', 'Metal', 'Vento', 'Som'].some(name => hasBreathingPassive(actor.system?.props, name));
+    const defenseSucceeded = result && (flameInterceptReady || hasCombatDefense)
+        ? await confirmDefenseSuccess(result, test) : false;
+    if (result && pressure) await consumeCompanionCoordination(actor, pressure);
+    if (result && tacticalInjury?.id === 'open-guard' && activeMasterBattleInjury(actor) === tacticalInjury &&
+        (actor.isOwner || game.user?.isGM))
+        await actor.unsetFlag?.(MODULE_ID, MASTER_BATTLE_TACTICAL_INJURY);
+    if (result && parryGuard && activeMasterBattleParryGuard(actor) === parryGuard && (actor.isOwner || game.user?.isGM))
+        await actor.unsetFlag?.(MODULE_ID, MASTER_BATTLE_PARRY_GUARD);
+    if (isDefense && result?.success === false && !options.companionDefense) {
+        result.companionInterception = await offerCompanionInterception(actor, {
+            attackerUuid,
+            dc: dialogResult.cdVal,
+        });
+    }
+    if (result && hasCombatDefense) {
+        const attackerUuid = options.attackerUuid ?? dialogResult.attackerUuid ?? '';
+        const attackerDocument = attackerUuid ? await fromUuid(attackerUuid) : null;
+        const attacker = attackerDocument?.actor ?? attackerDocument;
+        let distance = Infinity;
+        const ownToken = actor.getActiveTokens?.()[0];
+        const enemyToken = attacker?.getActiveTokens?.()[0];
+        if (ownToken && enemyToken && canvas?.grid?.measurePath)
+            distance = Number(canvas.grid.measurePath([ownToken.center, enemyToken.center]).distance);
+        await recordBreathingPassiveEvent(actor, { type: 'defense', success: defenseSucceeded,
+            perfect: defenseSucceeded && dialogResult.perfect === true, defenseType: test.toLowerCase(), channel: derivedChannel,
+            actionType: options.defensiveReaction || preparedCurrent ? 'reacao' : '',
+            isTechnique: preparedCurrent, formId: preparedCurrent ? prepared.formId : '', hostile: true,
+            targetUuid: attackerUuid, melee: dialogResult.melee === true || distance <= 1.5,
+            distanceMeters: Number.isFinite(distance) ? distance : dialogResult.melee ? 1.5 : Infinity,
+            executionId: options.executionId ?? passiveExecutionId(actor), eventId: passiveExecutionId(actor) });
+        if (preparedCurrent) await actor.update({ 'system.props.resp_passivas_defesa_forma': '' }, { naCsbAutomation: true });
+    }
+    if (result && options.physicalSave) {
+        const success = result.success ?? await confirmDefenseSuccess(result, 'Resistência física');
+        await recordBreathingPassiveEvent(actor, { type: 'physicalSave', condition: options.condition, success,
+            eventId: passiveExecutionId(actor) });
+    }
     if (defenseSucceeded && test === 'Bloqueio') {
         const flameState = parseFlameBreathingState(actor.system?.props?.resp_chamas_estado);
         if (flameState.block?.intercept) {
@@ -360,6 +488,26 @@ export async function rollTest(options) {
                 });
             } else ui.notifications?.warn?.(interception.reason);
         }
+    }
+    if (isDefense && result?.success !== false && naturalD20(result?.roll) === 20 && statusEffects.criticalAllowed !== false &&
+        (actor.isOwner || game.user?.isGM) && options.physicalDefense !== false &&
+        oniSpecializationAbility(actor.system?.props, TITAN, 'B')?.counterOnCriticalDefense) {
+        const attackerUuid = options.attackerUuid ?? dialogResult.attackerUuid;
+        const attacker = [...(game.combat?.combatants ?? [])].find(entry => entry.actor?.uuid === attackerUuid)?.actor;
+        if (attacker && attacker !== actor && await foundry.applications.api.DialogV2.confirm({
+            window: { title: 'Demolir · Titan' },
+            content: `<p>${test === 'Bloqueio' ? 'O Bloqueio físico' : 'A Esquiva'} defendeu o ataque? Você pode contra-atacar o atacante com um Ataque Padrão.</p>`,
+            yes: { label: 'Contra-atacar' }, no: { label: 'Dispensar' }, rejectClose: false,
+        })) {
+            const { rollHit } = await import('./hit-service.mjs');
+            await rollHit({ actor, targets: new Set([{ actor: attacker }]), forceActionType: 'ataque',
+                forceRollCount: 1, noPassiveGeneration: true, skipActionConsumption: true });
+        }
+    }
+    if (test === 'Esquiva' && result && (result.success === true || defenseSucceeded) &&
+        dialogResult.perfect === true && (dialogResult.melee === true || options.melee === true)) {
+        const attacker = [...(game.combat?.combatants ?? [])].find(entry => entry.actor?.uuid === attackerUuid)?.actor;
+        await offerMasterBattleCounterattack(actor, attacker, { enemyMissed: true, melee: true });
     }
     return result;
 }

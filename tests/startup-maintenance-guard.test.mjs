@@ -30,3 +30,8 @@ test('engine Oni não registra catch-up no ready', () => {
     assert.match(registrationBody, /Hooks\.on\s*\(\s*['"]updateActor['"]/);
     assert.match(registrationBody, /Hooks\.on\s*\(\s*['"]createActor['"]/);
 });
+
+test('ready do GM percorre a coleção de cenas como iterável', () => {
+    assert.doesNotMatch(mainSource, /\.\.\.\(game\.scenes\s*\?\?\s*\[\]\)\s*\.flatMap/u);
+    assert.match(mainSource, /Array\.from\(game\.scenes\s*\?\?\s*\[\]\)\.flatMap/u);
+});

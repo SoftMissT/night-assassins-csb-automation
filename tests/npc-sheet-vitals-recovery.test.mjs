@@ -73,16 +73,17 @@ describe('ficha de NPC: layout', () => {
         assert.deepEqual([...counts].filter(([, count]) => count > 1), []);
     });
 
-    it('abas Combate, Configuração (GM) e Notas; nada essencial recolhido', () => {
+    it('abas Combate, Habilidades, Configuração (GM) e Notas; nada essencial recolhido', () => {
         const tabs = template.system.body.contents[0];
         assert.equal(tabs.type, 'tabbedPanel');
         assert.deepEqual(
             tabs.contents.map((tab) => [tab.key, tab.name]),
-            [['npc_ficha_tab', 'Combate'], ['npc_config_tab', 'Configuração'], ['npc_notas_tab', 'Notas']]
+            [['npc_ficha_tab', 'Combate'], ['npc_habilidades_tab', 'Habilidades'], ['npc_config_tab', 'Configuração'], ['npc_notas_tab', 'Notas']]
         );
-        assert.equal(tabs.contents[1].role, 4);
-        assert.deepEqual(tabs.contents[2].contents.map((node) => node.key), ['npc_notas']);
-        assert.deepEqual(all.filter((node) => node.collapsible).map((node) => node.key), []);
+        assert.equal(tabs.contents[1].role, 0);
+        assert.equal(tabs.contents[2].role, 4);
+        assert.deepEqual(tabs.contents[3].contents.map((node) => node.key), ['npc_notas']);
+        assert.deepEqual(all.filter((node) => node.collapsible).map((node) => node.title), ['Bônus Fixos']);
         const ficha = new Set(components(tabs.contents[0]).map((node) => node.key));
         for (const key of ['npc_pdv_dano', 'npc_pdv_curado', 'npc_pdr_gasto_valor', 'npc_pdr_recuperado'])
             assert.ok(ficha.has(key), `${key} editável na aba Ficha`);
@@ -104,7 +105,7 @@ describe('ficha de NPC: layout', () => {
         assert.match(byKey.get('npc_acoes_gerenciar').rollMessage, /NAActionManage01/);
         assert.match(byKey.get('npc_acoes_display').value, /acoes_slayer_resumo/);
         for (const key of ['acoes_slayer_dados', 'acoes_slayer_resumo', 'acoes_slayer_ataque_bonus'])
-            assert.ok(byKey.has(key), `${key} guardado na aba Combate`);
+            assert.ok(byKey.has(key), `${key} continua guardado na ficha`);
     });
 
     it('configuração tem as bases e o nível, visível na sua aba', () => {
@@ -120,22 +121,19 @@ describe('ficha de NPC: layout', () => {
             assert.ok(inside.has(key), `${key} deve estar na configuração`);
     });
 
-    it('Bônus Fixos e bônus de ação ficam na aba Combate, visíveis como no Slayer', () => {
+    it('Bônus Fixos são públicos e bônus de ação ficam na Configuração do GM', () => {
         const ficha = new Set(components(template.system.body.contents[0].contents[0]).map((node) => node.key));
         for (const key of ['npc_bonus_acerto', 'npc_bonus_dano', 'npc_bonus_teste',
             'npc_bonus_bloqueio', 'npc_bonus_esquiva', 'npc_bonus_percepcao_visual',
             'npc_bonus_percepcao_auditiva', 'npc_bonus_social_voz', 'npc_bonus_iniciativa',
-            'npc_bonus_pdr_maximo', 'acoes_slayer_ataque_bonus', 'acoes_slayer_movimento_bonus',
-            'acoes_slayer_especial_bonus', 'acoes_slayer_reacao_bonus'])
+            'npc_bonus_pdr_maximo']) {
             assert.ok(ficha.has(key), `${key} deve estar na aba Combate`);
-        assert.equal(byKey.get('npc_dados_combate').role, 0);
-        for (const key of ['acoes_slayer_ataque_bonus', 'acoes_slayer_movimento_bonus',
-            'acoes_slayer_especial_bonus', 'acoes_slayer_reacao_bonus']) {
-            assert.equal(byKey.get(key).role, 0, `${key} visível`);
-            assert.equal(byKey.get(key).editRole, 0, `${key} editável`);
+            assert.equal(byKey.get(key).role, 0, `${key} permanece visível ao jogador`);
         }
-        for (const key of ['acoes_slayer_dados', 'acoes_slayer_resumo'])
-            assert.equal(byKey.get(key).role, 4, `${key} continua interno ao GM`);
+        assert.ok(!ficha.has('npc_dados_combate'));
+        const config = components(template.system.body.contents[0].contents[2]);
+        assert.ok(config.some((node) => node.key === 'npc_dados_combate'));
+        assert.equal(byKey.get('npc_dados_combate').role, 4);
     });
 
     it('expõe os sete bônus temporários logo abaixo dos atributos do NPC', () => {
@@ -155,8 +153,11 @@ describe('ficha de NPC: layout', () => {
             assert.equal(field.role, 0);
             assert.equal(field.editRole, 0);
             assert.equal(field.defaultValue, '0');
-            assert.equal(template.system.hidden.find((node) => node.name === `${attr}_display`).value,
-                '${' + `npc_${attr}_base+ref("${attr}_marca_temp", 0)+ref("${key}", 0)` + '}$');
+            const formula = template.system.hidden.find((node) => node.name === `${attr}_display`).value;
+            assert.ok(formula.includes(`npc_${attr}_base`));
+            assert.ok(formula.includes(`ref("${attr}_marca_temp", 0)`));
+            assert.ok(formula.includes(`ref("${key}", 0)`));
+            assert.ok(formula.includes(`ref("${attr}_resp_bonus_temp_slayer", 0)`));
         }
     });
 
@@ -169,8 +170,9 @@ describe('ficha de NPC: layout', () => {
         ])
             assert.ok(byKey.has(key), key);
         const hidden = new Map(template.system.hidden.map((entry) => [entry.name, entry.value]));
-        assert.match(hidden.get('npc_pdv_atual'), /npc_pdv_base\+npc_pdv_curado\)-npc_pdv_dano/);
-        assert.equal(hidden.get('status_slayer_resumo'), 'Nenhum status');
+        assert.match(hidden.get('npc_pdv_atual'), /npc_pdv_total\+npc_pdv_curado\)-npc_pdv_dano/);
+        assert.equal(hidden.has('status_slayer_resumo'), false);
+        assert.equal(byKey.get('status_slayer_resumo')?.defaultValue, 'Nenhum status');
     });
 
     it('os rótulos não têm erro de caixa', () => {

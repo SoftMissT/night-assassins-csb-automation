@@ -1,5 +1,46 @@
 # Changelog
 
+## v0.13.6 — 2026-11-21 — Fichas, variantes da mesa e Respirações
+
+- **Ficha de Slayer:** Habilidades reúne as escolhas Vanilla e Homebrew e respeita cada categoria da mesa em perfis mistos. Bônus Fixos ficam recolhidos em Combate no Slayer e no NPC. Regras da Mesa e os bônus de ação do NPC ficam na configuração do mestre.
+
+- **Regras da Mesa:** selecione Vanilla ou Homebrew por categoria em Configurações do módulo ou no Controle GM. O diálogo destaca a escolha ativa, tem barra de rolagem e mantém Salvar visível. Propriedades de arma e extras da mesa ficam recolhidos. O painel interno de armazenamento fica oculto no editor do CSB.
+
+- **Metal da Nichirin:** Despertar soma 1 m ao perfil de alcance e à distância verificada no Contra-ataque. Coração soma 1 ao veneno de contato e ao Sangramento de Crítico Brutal. Serenidade entra em técnicas defensivas de Reação. Metal Preto Vanilla exige a origem Descendente ativa em Vanilla.
+- **Respiração do Metal:** Forjado na Batalha usa Ataque em Vanilla e Especial em Homebrew. Batida de Martelo entra no catálogo Homebrew com Acerto único, Concussão e teste de VIT.
+- **Outras Respirações:** Céu em Chamas e Ignição usam as tabelas da variante. A Chuva Misericordiosa abre dano crítico após confirmar o alvo rendido ou Atordoado. A Ravina tem dois Acertos e reembolsa 2 PDR uma vez no crítico. Vendaval cobra Ataque e Única. Canção de um Dia Frio só protege terceiros a partir do nível 3.
+- **Som e Sonhos:** Silêncio e Mar de Memórias duram dentro do combate e recusam renovação antecipada sem cobrar recursos.
+- **Ficha NPC:** dados, resumo e Exaustão dos status permanecem gravados em campos que o CSB pode atualizar.
+- **Neve:** dano que atravessa a resistência libera o alvo de Congelar mesmo quando a origem da restrição pertence a outro jogador.
+
+- **Sonhos — Fantasia Final:** uma Ação Completa e um pagamento de PDR iniciam a sequência. Cada acerto confirmado abre o dano do nível (4d4, 6d4 ou 7d4). O terceiro erro acumulado encerra, e o jogador pode parar antes pelo diálogo de Acerto. O seletor mostra os dados corretos mesmo em cópias antigas da Forma.
+
+- **Nitoryu Vanilla:** o segundo golpe oferece Ação Especial ou Única e cobra a opção escolhida antes de confirmar o Acerto. Encerrar a sequência preserva as ações opcionais. O Dano avulso e o Construtor usam o golpe inicial.
+
+- **Ryōtō:** Vanilla usa uma instância de Acerto e Dano por padrão. Double Blade e Kusarigama mantêm dois Acertos e dano normal em cada golpe acertado. O Ioiô dobra a capacidade de efeitos de contato. Soqueiras preservam a sequência crítica após o Acerto inicial.
+
+- **Origens e Habilidades:** o NPC escolhe Origem separadamente no cabeçalho e consulta os poderes de Origem e a Habilidade Especial na aba Habilidades. A seção de Origem mostra a variante ativa, e o Slayer oculta os cartões Homebrew quando Origens está em Vanilla.
+- **Regras da Mesa:** os templates NPC, Slayer e Oni preservam as escolhas Vanilla já salvas ao atualizar a ficha. O GM consegue carregar o módulo com a coleção de cenas do Foundry.
+
+- **Ficha NPC:** os seletores de Habilidade Especial e Metal ficam lado a lado no cabeçalho. Jogadores veem um único contador ao lado de Gerenciar Ações. Os campos de armazenamento do contador ficam ocultos.
+
+- **Duas Respirações Homebrew:** Variações e Derivadas aprovadas pelo GM, execução pela Forma-base com custo e limite compartilhado, quatro modos de Forma Intermediária e registro/cobrança da Forma Composta. Os efeitos híbridos descritos no registro são resolvidos na mesa.
+- **Mestre de Batalha no Slayer:** Pressão de Combate no Acerto, Sangramento e Ferimentos de Crítico Brutal no dano confirmado, Aparar Instintivo como passiva e Contra-ataque após erro confirmado. Manobras e seus bônus pendentes são suspensos quando o grupo Ações está em Vanilla.
+
+- **Kakushi:** a ficha oferece Amparar, Desengajar e Injeção de Adrenalina por rank. A execução aplica custos e limites de uso, atualiza os recursos do alvo e resolve os bônus Homebrew de Defesa, Pulso e Tatakaaaaeee! nas rolagens aplicáveis.
+- **Duas Respirações:** o lançador e o encadeamento aplicam o nível e a sobretaxa da secundária. A regra distingue os pares Vanilla e as escolhas do GM, e cancelar o acerto preserva os recursos.
+- **Companheiro de Oni:** o GM vincula o Oni na ficha Slayer. A Defesa permite interceptar com Reação e PDK, resolve o dano no Oni e aplica os bônus de guarda, resistência e participação social conforme o rank e a variante.
+- **Especializações Oni Vanilla:** integrados os acertos desarmados, as reações e os custos do Titan, o crítico e a resistência de Tóxico, e os ganhos de Regeneração, Imposição e máximos do Mestre da Recuperação.
+- **Mestre de Batalha:** selecionar a classe no nível 11 ou acima também dispara o ganho único de Corpo de Guerra.
+
+- **NPC** recebe Habilidade Especial e metal/cor da lâmina, com os textos dos níveis 1, 6 e 12 e os bônus numéricos existentes. Constituição de Ferro, Marechi, Oketsu e Marca do Destino usam o nível e os atributos nativos, preservando as bases editáveis.
+- **Recursos das Respirações** usam os campos do NPC na recuperação da Água, cura de Vento, Burizado e sinergia do Martelo. Os estados de Água, Névoa, Metal, Neve e Vento também chegam ao dano do NPC. Status são gravados no contrato da ficha.
+- **Sonhos** oferece Troca Equivalente por 2 níveis de Exaustão e uma memória importante, com retorno a 1 PDV atual. **Raposa** aplica PDR máximo, penalidade de Acerto, percepção visual escolhida no diálogo e imunidade à vantagem da surpresa física.
+- **Vento** acumula dano após a resolução do GM, incluindo Sangramento periódico. A Recuperação Profunda consolida Cicatrizes ilimitadas e bônus de até +4 em testes de VIT. **Pedra** registra dano e Quebra do NPC. **Névoa** usa o nível de personagem do NPC.
+- **Atributos:** a leitura alternativa no NPC respeita a variante da Habilidade Especial. Valores configurados podem preencher atributos em branco ou inválidos no CSB.
+- **Classes:** a ficha Oni mantém o rank Homebrew D–SS e limita o Vanilla a C/B/A nos níveis 3/7/12. Os cartões de classes Homebrew do Slayer ficam ocultos nas mesas que usam Classes Vanilla.
+- **Atualização de fichas existentes:** atualize os templates de Slayer, NPC e Oni pelo compêndio e recarregue o template nas fichas que já existem. O QA cobriu a ficha de Slayer nos três perfis e a Ravina em combate com alvo Oni. Formas personalizadas continuam com o ícone genérico.
+
 ## v0.13.5 — 2026-11-18 — Dados e efeitos da Recuperação
 
 - **Respiração da Recuperação:** quatro faixas de dados do nível 1 ao 14. PDV vai de `2d8 + VIT` a `5d8 + VIT` e PDR de `1d6 + FDV` a `4d6 + FDV`. O uso normal aplica 75% e usa CDs de FDV 16–19. A Última Chance usa a mesma tabela com CD 15 e 100% dos resultados.

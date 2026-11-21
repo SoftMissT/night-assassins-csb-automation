@@ -13,6 +13,7 @@
  */
 import { parseNumber } from './parsing.mjs';
 import { mistFormById } from './mist-breathing-data.mjs';
+import { isHomebrewExtra } from './rules-profile.mjs';
 
 const PATTERN_KEYS = ['cyclone', 'stigma', 'reflection'];
 
@@ -91,6 +92,7 @@ export function mistStatePatch(state, overrides = {}) {
 
 /** Conta quantos Padrões foram CONQUISTADOS (earned), não quantos têm benefício disponível. */
 export function mistPatternCount(state) {
+    if (!isHomebrewExtra('extras_nevoa')) return 0;
     const normalized = normalizeMistBreathingState(state);
     return PATTERN_KEYS.filter((key) => normalized.patterns[key].earned).length;
 }
@@ -101,6 +103,7 @@ export function mistPatternCount(state) {
  * usuário), conforme "este status permanece mesmo após aplicar o efeito".
  */
 export function grantMistPattern(state, pattern) {
+    if (!isHomebrewExtra('extras_nevoa')) return normalizeMistBreathingState(state);
     if (!PATTERN_KEYS.includes(pattern)) return normalizeMistBreathingState(state);
     const normalized = normalizeMistBreathingState(state);
     normalized.patterns[pattern] = { earned: true, benefitAvailable: true, turnsRemaining: 1 };
@@ -112,6 +115,7 @@ export function grantMistPattern(state, pattern) {
  * da Estigma, a Recuperação com Vantagem da Reflexão) sem apagar `earned`.
  */
 export function consumeMistPatternBenefit(state, pattern) {
+    if (!isHomebrewExtra('extras_nevoa')) return normalizeMistBreathingState(state);
     if (!PATTERN_KEYS.includes(pattern)) return normalizeMistBreathingState(state);
     const normalized = normalizeMistBreathingState(state);
     if (!normalized.patterns[pattern].benefitAvailable) return normalized;
@@ -137,7 +141,7 @@ export function resolveMistFormula(formula, props = {}, extra = {}) {
         dex: parseNumber(props.dex_display),
         for: parseNumber(props.for_display),
         car: parseNumber(props.car_display),
-        level: Math.max(1, Math.trunc(parseNumber(extra.level ?? props.nvl_num))),
+        level: Math.max(1, Math.trunc(parseNumber(extra.level ?? props.npc_nivel ?? props.nvl_num))),
     };
     return String(formula ?? '').replace(/@(sab|fdv|dex|for|car|level)\b/giu, (_match, key) =>
         String(values[String(key).toLowerCase()] ?? 0)
@@ -201,14 +205,14 @@ export function buildMistBreathingPlan(formId, level, props = {}, choices = {}) 
     const sab = parseNumber(props.sab_display);
     const fdv = parseNumber(props.fdv_display);
     const car = parseNumber(props.car_display);
-    const slayerLevel = Math.max(1, Math.trunc(parseNumber(props.nvl_num ?? props.nvl_pj)));
+    const slayerLevel = Math.max(1, Math.trunc(parseNumber(props.npc_nivel ?? props.nvl_num ?? props.nvl_pj)));
 
     // Ciclone da Névoa: "durante qualquer momento de seu próximo turno, pode
     // conjurar qualquer técnica da Névoa sem gastar PDR". Isso isenta apenas o
     // custo BASE da técnica — custos extras opcionais (a Anulação de
     // Resistências da 4ª, o dobro da Reflexão na 5ª) continuam sendo pagos.
     // Ver DECISÃO PENDENTE DO OPERADOR — CICLONE E CUSTOS EXTRAS abaixo.
-    const useCycloneFree =
+    const useCycloneFree = isHomebrewExtra('extras_nevoa') &&
         Boolean(choices.useCycloneFree) && state.patterns.cyclone.benefitAvailable;
     let baseCost = useCycloneFree ? 0 : selected.cost;
     let extraCost = 0;
@@ -411,6 +415,7 @@ export function buildMistBreathingPlan(formId, level, props = {}, choices = {}) 
  */
 export function resolveMistStigmaStunOnHit(rawState) {
     const state = normalizeMistBreathingState(rawState);
+    if (!isHomebrewExtra('extras_nevoa')) return { applied: false, state };
     if (!state.patterns.stigma.benefitAvailable) return { applied: false, state };
     return {
         applied: true,
@@ -422,6 +427,7 @@ export function resolveMistStigmaStunOnHit(rawState) {
 /** Consome o benefício de Reflexão da Névoa (Recuperação com Vantagem no próximo turno). */
 export function resolveMistReflectionRecoveryAvailable(rawState) {
     const state = normalizeMistBreathingState(rawState);
+    if (!isHomebrewExtra('extras_nevoa')) return { available: false, state };
     if (!state.patterns.reflection.benefitAvailable) return { available: false, state };
     return { available: true, state: consumeMistPatternBenefit(state, 'reflection') };
 }

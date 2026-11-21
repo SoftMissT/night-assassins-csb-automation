@@ -28,9 +28,13 @@
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
 import { resolveAttributeRefs } from './damage-formula.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
-import { parseNumber } from './parsing.mjs';
+import { parseLevel, parseNumber } from './parsing.mjs';
+import { breathingPdrInfo, breathingResourceKeys } from './actor-resources.mjs';
+import { combatPassiveBonuses, passiveExecutionId, recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
+import { chosenBreathing } from './breathing-choice.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
-import { consumeSlayerActions } from './action-service.mjs';
+import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
+import { resolveSheetAttribute } from './sheet-attributes.mjs';
 import {
     applyChosenDamageToPatch,
     CHOSEN_DAMAGE_BREATHINGS,
@@ -67,6 +71,8 @@ import {
 import {
     buildMetalBreathingPlan,
     clearMetalBreathingState,
+    metalStatePatch,
+    parseMetalBreathingState,
     resolveMetalMagnetism,
     tickMetalBreathing,
 } from './metal-breathing-service.mjs';
@@ -76,6 +82,7 @@ import {
     grantBlizzardStealth,
     parseSnowBreathingState,
     resolveSnowRestrictionEscape,
+    releaseSnowRestriction,
     snowEffectiveBreathLevel,
     snowStatePatch,
     snowTickPatchWithExhaustion,
@@ -88,7 +95,7 @@ import {
     windStatePatch,
 } from './wind-breathing-service.mjs';
 import { applySlayerDamage, reapplyFiniteStatusEffect } from './status-engine.mjs';
-import { formatStatusSummary, parseStatusState } from './status-service.mjs';
+import { formatStatusSummary, parseStatusState, statusKeysForProps } from './status-service.mjs';
 import { actorKind } from './actor-kind.mjs';
 import {
     actorWeapons,
@@ -97,8 +104,14 @@ import {
     parseBreathPassiveState,
     passiveStatePatch,
 } from './breath-passives.mjs';
-import { isMigrated, resolveForm } from './breathing-contract.mjs';
+import { canonicalBreathing, isMigrated, resolveForm } from './breathing-contract.mjs';
+import { activeCombatBuffs, BUFFS_FLAG } from './breathing-buffs.mjs';
 import { runCanonicalBreathingForm } from './breathing-pipeline.mjs';
+import { secondaryBreathingForActor, secondaryBreathingUse } from './slayer/dual-breathing-service.mjs';
+import { canManageDualBreathingPosture, openDualBreathingComposite, openDualBreathingPosture, planPostureTechniqueUse } from './slayer/dual-breathing-posture.mjs';
+import { ruleVariant } from './rules-profile.mjs';
+
+const secondaryFormsInFlight = new WeakSet();
 
 const MANOBRA_MAP = {
     unica: 'unica',
@@ -148,22 +161,35 @@ function getFormData(item) {
     };
     const catalog =
         waterFormById(String(props.forma_id ?? '')) ??
-        flameFormById(String(props.forma_id ?? '')) ??
+        flameFormById(String(props.forma_id ?? ''), ruleVariant('respiracao')) ??
         mistFormById(String(props.forma_id ?? '')) ??
         metalFormById(String(props.forma_id ?? '')) ??
         snowFormById(String(props.forma_id ?? ''));
     const baseTypes = parseDamageTypes(props.tipo_dano_base);
+    const homebrew = ruleVariant('respiracao') === 'homebrew';
+    const homebrewForged = props.forma_id === 'metal_06' && homebrew;
+    const currentDescription = {
+        chamas_03: homebrew
+            ? 'Aquece a arma em 9. Contra o inimigo acertado, aplica 6 Brasas adicionais e soma dano de Fogo ao dano da arma. O Acerto bem-sucedido é crítico.'
+            : 'Aquece a arma em 3. Contra o inimigo acertado, aplica 2 pontos adicionais de Esquentar. O Acerto bem-sucedido é crítico.',
+        chamas_07: 'Prepara o próximo Ataque Padrão do turno. A arma ganha 3 pontos de Esquentar. No acerto, o alvo recebe 2 pontos adicionais e faz um teste de VIT para evitar Derrubado.',
+        chamas_08: homebrew
+            ? 'Aquece a arma em 8. Por 3 turnos, sofre 5 de dano por turno e soma 2d8 de Concussão no nível 3 ou 4d8 no nível 4 aos golpes ofensivos.'
+            : 'Aquece a arma em 8. Por 3 turnos, sofre 5 de dano por turno e soma 5 de Fogo no nível 3 ou 8 no nível 4 aos golpes ofensivos.',
+    }[catalog?.id];
+    const sequence = props.forma_id === 'sonhos_10' ? resolveForm('Sonhos', props.forma_id) : null;
     const levels = [];
     for (let i = 1; i <= 4; i++) {
         const disponivel =
             parseNumber(numericProp(props[`tem_nvl${i}`])) === 1 ||
             props[`tem_nvl${i}`] === true ||
             props[`tem_nvl${i}`] === 'true';
-        if (!disponivel) continue;
+        const sequenceLevel = sequence?.niveis[i - 1];
+        if (sequence ? !sequenceLevel : !disponivel) continue;
         levels.push({
             level: i,
-            custo: parseNumber(numericProp(props[`nvl${i}_custo`])),
-            dano: String(props[`nvl${i}_dano`] ?? '').trim(),
+            custo: sequenceLevel?.custo ?? parseNumber(numericProp(props[`nvl${i}_custo`])),
+            dano: sequenceLevel?.dano ?? String(props[`nvl${i}_dano`] ?? '').trim(),
             efeito: String(props[`nvl${i}_efeito`] ?? '').trim(),
             status: String(props[`nvl${i}_status`] ?? '').trim(),
             buff: String(props[`nvl${i}_buff`] ?? '').trim(),
@@ -175,11 +201,13 @@ function getFormData(item) {
         nome: String(catalog?.name ?? (props.nome_jp || props.nome_forma || item?.name || 'Forma')),
         jp: String(catalog?.ptName ?? (props.nome_jp ? props.nome_forma ?? '' : '')),
         respiracao: String(props.respiracao_nome ?? ''),
-        tipo: String(catalog?.action ?? catalog?.actions?.[0] ?? props.tipo_manobra ?? ''),
+        tipo: homebrewForged
+            ? 'especial'
+            : String(catalog?.action ?? catalog?.actions?.[0] ?? props.tipo_manobra ?? ''),
         nivelReq: parseNumber(props.nivel_req),
-        descricao: catalog?.id === 'chamas_07'
-            ? 'Prepara o próximo Ataque Padrão do turno. A arma ganha 3 pontos de Esquentar. No acerto, o alvo recebe 2 pontos adicionais e faz um teste de VIT para evitar Derrubado.'
-            : String(props.descricao ?? ''),
+        descricao: currentDescription ?? (homebrewForged
+              ? 'Gasta a Ação Especial e 4 PDR para ativar o Forjado. Faça o Ataque Padrão usando sua Ação de Ataque. Cada acerto com a Nichirin aumenta o estágio por até 8 turnos.'
+              : String(props.descricao ?? '')),
         temRequisito: catalog?.id !== 'chamas_07' && parseNumber(props.tem_requisito) === 1,
         requisito: String(props.requisito_texto ?? ''),
         baseTypes,
@@ -193,7 +221,8 @@ function getFormData(item) {
                               dano: level.damage ?? '',
                               efeito: catalog.id === 'chamas_07'
                                   ? `Avanço de até ${level.advance.toLocaleString('pt-BR')} m no próximo Ataque Padrão. Não gasta Movimento. Respeite obstáculos e Ataques de Oportunidade.`
-                                  : (props[`nvl${index + 1}_efeito`] ?? ''),
+                                  : (homebrewForged || ['chamas_03', 'chamas_08'].includes(catalog.id))
+                                    ? '' : (props[`nvl${index + 1}_efeito`] ?? ''),
                               status: '',
                               buff: '',
                               tiposDano: baseTypes,
@@ -204,43 +233,9 @@ function getFormData(item) {
     };
 }
 
-const isNpcProps = (props = {}) => actorKind({ system: { props } }) === 'npc';
-
 // Keys de recurso gravadas pelas Formas: o NPC tem as suas (npc_pdr_*, npc_pdv_*).
-function resourceKeys(props = {}) {
-    return isNpcProps(props)
-        ? { pdrSpent: 'npc_pdr_gasto_valor', pdvHealed: 'npc_pdv_curado' }
-        : { pdrSpent: 'pdr_slayer_gasto_valor', pdvHealed: 'pdv_slayer_curado' };
-}
-
 function slayerPdrInfo(props = {}) {
-    if (isNpcProps(props)) {
-        const pdrMax = Math.max(0, parseNumber(props.npc_pdr_base));
-        const pdrCurrent = Math.max(
-            0,
-            Math.min(
-                pdrMax,
-                pdrMax + parseNumber(props.npc_pdr_recuperado) - parseNumber(props.npc_pdr_gasto_valor)
-            )
-        );
-        return { pdrMax, pdrCurrent };
-    }
-    const pdrMax = Math.max(
-        0,
-        parseNumber(props.pdr_slayer_total_conta) +
-            parseNumber(props.metal_slayer_pdr_bonus) +
-            parseNumber(props.pdr_slayer_extra)
-    );
-    const pdrCurrent = Math.max(
-        0,
-        Math.min(
-            pdrMax,
-            pdrMax +
-                parseNumber(props.pdr_slayer_curado) -
-                parseNumber(props.pdr_slayer_gasto_valor)
-        )
-    );
-    return { pdrMax, pdrCurrent };
+    return breathingPdrInfo(props);
 }
 
 /**
@@ -300,7 +295,7 @@ async function collectFlameChoices(actor, form, props = {}) {
         const doc = combatant?.actor;
         if (!doc || seen.has(doc.uuid)) continue;
         seen.add(doc.uuid);
-        if (actorKind(doc) !== 'slayer') continue;
+        if (!['slayer', 'npc'].includes(actorKind(doc))) continue;
         const respiracoes = [...(doc.items ?? [])]
             .map((item) => String(item.system?.props?.respiracao_nome ?? ''))
             .filter(Boolean);
@@ -396,11 +391,11 @@ const escapeAttr = (value) =>
 
 /** O jogador escolhe o dano quando a Respiração está na lista e algum nível tem dano. */
 function offersDamageChoice(form, levels) {
-    return form.id !== 'chamas_07' &&
+    return !form.dualVariation && form.id !== 'chamas_07' &&
         CHOSEN_DAMAGE_BREATHINGS.has(form.respiracao) && levels.some((level) => level.dano);
 }
 
-function buildDialogHtml(form, pdrCurrent, breathLevel) {
+function buildDialogHtml(form, pdrCurrent, breathLevel, secondaryCost) {
     const richText = form.id.startsWith('custom_') ? escapeAttr : (value) => value;
     const allowed = form.levels.filter((level) => level.level <= breathLevel);
     const levelOptions = allowed
@@ -408,7 +403,8 @@ function buildDialogHtml(form, pdrCurrent, breathLevel) {
             const danoTxt = l.dano ? ` · Dano: ${escapeAttr(l.dano)}` : '';
             const statusTxt = l.status ? ` · Status: ${richText(l.status)}` : '';
             const buffTxt = l.buff ? ` · Buff: ${richText(l.buff)}` : '';
-            return `<option value="${l.level}" data-dano="${escapeAttr(l.dano)}">Nível ${l.level} ${l.custo} PDR${danoTxt}${statusTxt}${buffTxt}</option>`;
+            const cost = `${l.custo + (secondaryCost?.pdr ?? 0)} PDR${secondaryCost?.pdv ? ` + ${secondaryCost.pdv} PDV` : ''}`;
+            return `<option value="${l.level}" data-dano="${escapeAttr(l.dano)}">Nível ${l.level} ${cost}${danoTxt}${statusTxt}${buffTxt}</option>`;
         })
         .join('');
     const damageHtml = offersDamageChoice(form, allowed)
@@ -438,6 +434,7 @@ function buildDialogHtml(form, pdrCurrent, breathLevel) {
       ${reqHtml}
       ${lvlReqHtml}
       <div style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.4;">${richText(form.descricao)}</div>
+      ${form.dualVariation ? `<p><strong>Variação aprovada.</strong> A automação usa o efeito da base. Aplique na mesa: ${escapeAttr(form.dualVariation.effect)}. Limitação: ${escapeAttr(form.dualVariation.limitation)}.</p>` : ''}
       <div style="margin-bottom:8px;">
         <label style="font-size:13px;">Escolha o nível:</label>
         <select name="na-breath-level" style="width:100%;margin-top:4px;">${levelOptions}</select>
@@ -798,7 +795,7 @@ export function tickWaterBreathing(props = {}) {
     return statePatch(state, patch);
 }
 
-async function openBreathDialog({ form, pdrCurrent, breathLevel }) {
+async function openBreathDialog({ form, pdrCurrent, breathLevel, secondaryCost }) {
     const allowedLevels = form.levels.filter((level) => level.level <= breathLevel);
     if (allowedLevels.length === 0) {
         ui.notifications?.warn?.(
@@ -806,7 +803,7 @@ async function openBreathDialog({ form, pdrCurrent, breathLevel }) {
         );
         return null;
     }
-    const html = buildDialogHtml({ ...form, levels: allowedLevels }, pdrCurrent, breathLevel);
+    const html = buildDialogHtml({ ...form, levels: allowedLevels }, pdrCurrent, breathLevel, secondaryCost);
     // Trocar o nível traz o dano guardado daquele nível, até o jogador digitar o seu.
     const render = (_event, dialog) => {
         const select = dialog.element?.querySelector('[name="na-breath-level"]');
@@ -882,13 +879,18 @@ async function collectWaterChoices(actor, form, level, props) {
                 'Você finalizou um inimigo ou obteve um Acerto Crítico?'
             ),
         };
-    if (form.id === 'agua_05')
+    if (form.id === 'agua_05') {
+        const targets = [...(game.user?.targets ?? [])].filter(token => token.actor);
+        if (targets.length !== 1 || targets[0].actor.uuid === actor.uuid)
+            return { cancelled: true, reason: 'Marque um único inimigo rendido ou Atordoado.' };
         return {
+            target: targets[0],
             targetIncapacitated: await confirmRule(
                 'Chuva Misericordiosa',
                 'O alvo está rendido ou Atordoado?'
             ),
         };
+    }
     if (form.id === 'agua_06')
         return {
             submerged: await confirmRule(
@@ -1061,6 +1063,12 @@ async function collectCuratedChoices(actor, form, level, props) {
         };
     }
     if (mistFormById(form.id)) return { ...mistCyclone };
+    if (form.id === 'metal_07') {
+        const targets = [...(game.user?.targets ?? [])].filter(token => token.actor);
+        if (targets.length !== 1 || targets[0].actor.uuid === actor.uuid)
+            return { cancelled: true, reason: 'Marque um único inimigo para a Batida de Martelo.' };
+        return { hammerTarget: targets[0] };
+    }
     if (form.id === 'metal_06') {
         const magnetismEligible = resolveMetalMagnetism(props).eligible;
         if (magnetismEligible && !targetActor)
@@ -1105,7 +1113,7 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
         ${form.jp ? `<span style="font-size:11px;color:#888;"> ${escapeAttr(form.jp)}</span>` : ''}
       </div>
       <div style="font-size:12px;color:#888;">${escapeAttr(form.respiracao)} · ${escapeAttr(form.tipo)} · Nível ${selected.level}</div>
-      <div style="margin-top:4px;">Custo: <strong>${selected.custo} PDR</strong></div>
+      <div style="margin-top:4px;">Custo: <strong>${selected.custo} PDR${selected.pdv ? ` + ${selected.pdv} PDV` : ''}</strong></div>
       ${danoLine}
       ${statusLine}
       ${buffLine}
@@ -1126,14 +1134,21 @@ async function postBreathChat({ actor, form, selected, damageRoll }) {
     });
 }
 
-export async function applyBreathingStatus(targetActor, key, effect) {
+export async function applyBreathingStatus(targetActor, key, effect, { source, eventId } = {}) {
     const kind = actorKind(targetActor);
     if (!kind) return;
-    const dataKey = `status_${kind}_dados`;
-    const summaryKey = `status_${kind}_resumo`;
-    const exhaustionKey = `status_${kind}_exaustao`;
+    const statusKind = kind === 'oni' || kind === 'oni_minion' ? 'oni' : 'slayer';
+    const dataKey = `status_${statusKind}_dados`;
+    const summaryKey = `status_${statusKind}_resumo`;
+    const exhaustionKey = `status_${statusKind}_exaustao`;
     const props = targetActor.system?.props ?? {};
-    const state = parseStatusState(props[dataKey]);
+    const metal = combatPassiveBonuses(props).metal;
+    if (effect?.physical !== false && metal.physicalImmunities.includes(key)) return false;
+    const fox = source && combatPassiveBonuses(source.system?.props ?? {}).fox;
+    if (key === 'desorientado' && fox?.desorientedTurns && effect?.remainingTurns === undefined)
+        effect = { ...effect, remainingTurns: fox.desorientedTurns };
+    const storedStatus = targetActor.toObject?.()?.system?.props?.[dataKey];
+    const state = parseStatusState(storedStatus ?? props[dataKey]);
     if (!state.active.includes(key)) state.active.push(key);
     state.effects[key] = effect;
     await targetActor.update(
@@ -1144,13 +1159,19 @@ export async function applyBreathingStatus(targetActor, key, effect) {
         },
         { naCsbAutomation: true, naBreathing: true }
     );
+    if (source && source.uuid !== targetActor.uuid && ['distraido', 'desorientado'].includes(key))
+        await recordBreathingPassiveEvent(source, { type: 'statusApplied', condition: key, targetUuid: targetActor.uuid,
+            success: true, eventId: eventId ?? passiveExecutionId(source) });
+    if (['atordoamento', 'inconsciente', 'inconsciencia'].includes(key))
+        await recordBreathingPassiveEvent(targetActor, { type: 'statusApplied', condition: key });
+    return true;
 }
 
 async function grantActiveSnowBlizzard(actor, targetActor) {
     if (!targetActor) return { ok: false, reason: 'Marque o aliado que receberá Furtividade.' };
     const granted = grantBlizzardStealth(actor.system?.props?.resp_neve_estado, {
         allyUuid: targetActor.uuid,
-        allyBreathing: String(targetActor.system?.props?.respiracao_escolhida ?? ''),
+        allyBreathing: chosenBreathing(targetActor.system?.props),
         currentRound: game.combat?.round ?? 0,
     });
     if (!granted.ok) return granted;
@@ -1165,10 +1186,11 @@ async function grantActiveSnowBlizzard(actor, targetActor) {
         sourceActorUuid: actor.uuid,
         round: game.combat?.round ?? 0,
     });
-    if (granted.pdrRecovery > 0 && actorKind(targetActor) === 'slayer') {
-        const spent = parseNumber(targetActor.system?.props?.pdr_slayer_gasto_valor);
+    if (granted.pdrRecovery > 0 && ['slayer', 'npc'].includes(actorKind(targetActor))) {
+        const { pdrSpent } = breathingResourceKeys(targetActor.system?.props);
+        const spent = parseNumber(targetActor.system?.props?.[pdrSpent]);
         await targetActor.update(
-            { 'system.props.pdr_slayer_gasto_valor': Math.max(0, spent - granted.pdrRecovery) },
+            { [`system.props.${pdrSpent}`]: Math.max(0, spent - granted.pdrRecovery) },
             { naCsbAutomation: true, naBreathing: true }
         );
     }
@@ -1186,10 +1208,11 @@ export async function attemptSnowRestrictionEscape({ actorUuid } = {}) {
     const flag = actor.getFlag?.(MODULE_ID, 'snowRestriction');
     if (!flag)
         return ui.notifications?.info?.('Este personagem não está restringido por Congelar.');
-    const action = await consumeSlayerActions(actor, ['ataque'], { update: false });
+    const consume = ['oni', 'oni_minion'].includes(actorKind(actor)) ? consumeOniActions : consumeSlayerActions;
+    const action = await consume(actor, ['ataque'], { update: false });
     if (!action.ok) return ui.notifications?.warn?.(action.reason);
     const roll = await Roll.create(
-        `1d20 + ${parseNumber(actor.system?.props?.for_display)}`
+        `1d20 + ${resolveSheetAttribute(actor, 'FOR') ?? 0}`
     ).evaluate();
     const message = await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -1200,14 +1223,7 @@ export async function attemptSnowRestrictionEscape({ actorUuid } = {}) {
     await actor.update(action.patch, { naCsbAutomation: true, naBreathing: true });
     if (!outcome.escaped)
         return ui.notifications?.warn?.(`${actor.name} não conseguiu escapar de Congelar.`);
-    await actor.unsetFlag(MODULE_ID, 'snowRestriction');
-    const sourceDocument = flag.sourceActorUuid ? await fromUuid(flag.sourceActorUuid) : null;
-    const source = sourceDocument?.actor ?? sourceDocument;
-    if (source?.system?.props?.resp_neve_estado) {
-        const state = parseSnowBreathingState(source.system.props.resp_neve_estado);
-        if (state.restrictedTarget?.uuid === actor.uuid) delete state.restrictedTarget;
-        await source.update(snowStatePatch(state), { naCsbAutomation: true, naBreathing: true });
-    }
+    await releaseSnowRestriction(actor);
     ui.notifications?.info?.(`${actor.name} escapou da restrição de Congelar.`);
     return outcome;
 }
@@ -1296,9 +1312,50 @@ function breathingTechniqueEntradas(actor) {
  * derivada da contagem de acertos), então continua tratada aqui antes do
  * caminho genérico.
  */
-async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, rollWeaponItem }) {
+async function rollConfirmedBreathDamage({ actor, form, hitResult, rollDamage, metalHammer }) {
     const successful = hitResult.attempts.filter((attempt) => attempt.hit);
     const nome = form ? `${form.respiracao} ${form.nome}` : 'Ataque';
+    if (metalHammer) {
+        const { target, mechanics, level, formula } = metalHammer;
+        const enemy = target.actor;
+        const enemyProps = enemy.toObject?.()?.system?.props ?? enemy.system.props;
+        const prone = parseStatusState(enemyProps[statusKeysForProps(enemyProps).data])
+            .active.includes('derrubado');
+        const damage = prone && mechanics.proneBonus ? `${formula} + ${mechanics.proneBonus}d8` : formula;
+        const damageResult = await rollDamage({
+            actor, nome: form.nome, breathing: form.respiracao,
+            entradas: [{ tipoAcao: 'ataque', dado: damage, fixo: 0, attrs: [], tiposDano: ['concussao'] }],
+            targets: new Set([target]),
+            critical: successful[0]?.critical === true,
+            attackTotal: successful[0]?.roll?.total,
+            passiveExecutionId: hitResult.executionId,
+            passiveFormId: form.id,
+            skipActionConsumption: true, forceAttackDamage: true, skipBreathingInjection: true,
+        });
+        if (!damageResult?.executed) return;
+        const dc = 10 + (resolveSheetAttribute(actor, 'for') ?? 0);
+        const vit = resolveSheetAttribute(enemy, 'vit') ?? 0;
+        const save = await Roll.create(`1d20 + (${vit})`).evaluate();
+        await save.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor: enemy }),
+            flavor: `Batida de Martelo · VIT CD ${dc} · ${save.total < dc ? 'Falha' : 'Sucesso'}`,
+        });
+        if (save.total < dc) {
+            const stun = level === 4 && prone;
+            if (enemy.isOwner || game.user?.isGM) {
+                await applyBreathingStatus(enemy, mechanics.condition, { sourceName: form.nome });
+                if (stun)
+                    await applyBreathingStatus(enemy, 'atordoamento', { remainingTurns: 1, sourceName: form.nome });
+            } else {
+                const status = level === 1 ? 'Desequilibrado' : 'Derrubado';
+                await ChatMessage.create({
+                    speaker: ChatMessage.getSpeaker({ actor: enemy }),
+                    content: `Batida de Martelo · O alvo recebe ${status}${stun ? ' e Atordoamento por 1 turno' : ''}. Aplique na ficha do alvo.`,
+                });
+            }
+        }
+        return;
+    }
     if (form?.id === 'nevoa_02') {
         const mistState = parseMistBreathingState(actor.system?.props?.resp_nevoa_estado);
         const resolved = resolveEightLayersResult(mistState, successful.length);
@@ -1357,6 +1414,11 @@ async function clearResolvedTechniqueQueue(actor, formId) {
         delete state.pendingDamage;
         delete state.pendingTargetEffect;
         await actor.update(snowStatePatch(state), { naCsbAutomation: true, naBreathing: true });
+    } else if (formId === 'vento_06') {
+        const state = parseWindBreathingState(props.resp_vento_estado);
+        if (state.nextHit?.source === formId) delete state.nextHit;
+        if (state.pendingDamage?.source === formId) delete state.pendingDamage;
+        await actor.update(windStatePatch(state), { naCsbAutomation: true, naBreathing: true });
     }
 }
 
@@ -1364,7 +1426,7 @@ function snapshotActorPatch(actor, patch) {
     return Object.fromEntries(
         Object.keys(patch).map((key) => [
             key,
-            foundry.utils.deepClone(foundry.utils.getProperty(actor, key)),
+            foundry.utils.deepClone(foundry.utils.getProperty(actor, key) ?? (key.startsWith('flags.') ? null : undefined)),
         ])
     );
 }
@@ -1401,39 +1463,48 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
     if (!actor.isOwner && !game.user?.isGM)
         return ui.notifications?.error?.('Você não pode usar técnicas com este personagem.');
 
-    let forms = breathingItemsForActor(actor, breathingName).filter(
-        (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
-    );
-    if (forms.length === 0) {
+    const vanilla = ruleVariant('respiracao') === 'vanilla';
+    const visibleForms = () => breathingItemsForActor(actor, breathingName).filter(item => {
+        const id = String(item.system?.props?.forma_id ?? '');
+        return !id.startsWith('hub_') && (!vanilla || !metalFormById(id)?.homebrewOnly);
+    });
+    let forms = visibleForms();
+    const missingHammer = !vanilla && canonicalBreathing(breathingName) === 'Metal'
+        && !forms.some(item => item.system?.props?.forma_id === 'metal_07');
+    if (forms.length === 0 || missingHammer) {
         // Importa uma vez do espelho interno para a
         // ficha, para o uuid valer no encadeamento de ataque.
         const { importBreathingForms } = await import('./breathing-catalog.mjs');
-        const imported = await importBreathingForms(actor, breathingName);
-        if (!imported.ok) return ui.notifications?.warn?.(imported.reason);
-        ui.notifications?.info?.(
-            `${imported.created.length} Forma(s) da Respiração ${breathingName} adicionada(s) à ficha.`
-        );
-        forms = breathingItemsForActor(actor, breathingName).filter(
-            (item) => !String(item.system?.props?.forma_id ?? '').startsWith('hub_')
-        );
+        const imported = await importBreathingForms(actor, breathingName, {
+            ...(forms.length ? { formIds: ['metal_07'] } : {}),
+        });
+        if (!imported.ok) ui.notifications?.warn?.(imported.reason);
+        if (imported.created?.length)
+            ui.notifications?.info?.(
+                `${imported.created.length} Forma(s) da Respiração ${breathingName} adicionada(s) à ficha.`
+            );
+        forms = visibleForms();
     }
     if (forms.length === 0)
         return ui.notifications?.warn?.(
             `Nenhuma Forma da Respiração ${breathingName} foi encontrada.`
         );
 
+    const { dualBreathingCompositeCatalog, dualBreathingVariations, openDualBreathingRegistry } = await import('./slayer/dual-breathing-registry.mjs');
+    const variations = dualBreathingVariations(actor).filter(entry => forms.some(item => item.id === entry.baseItemId));
+    const primaryLevel = () => getBreathLevel(actor.system.props);
     const options = forms
         .map((item) => {
             const props = item.system?.props ?? {};
             const label = String(props.nome_forma ?? item.name ?? 'Forma');
-            return `<option value="${item.uuid}">${label}</option>`;
+            return `<option value="${escapeAttr(item.uuid)}">${escapeAttr(label)}</option>`;
         })
         .join('');
     const itemUuid = await foundry.applications.api.DialogV2.wait({
         window: { title: `Respiração ${breathingName}` },
         modal: true,
         rejectClose: false,
-        content: `<p>Escolha a Forma que deseja usar.</p><select name="form" style="width:100%">${options}</select>`,
+        content: `<p>Escolha a Forma que deseja usar.</p><select name="form" style="width:100%">${options}${variations.map(entry => `<option value="variation:${escapeAttr(entry.id)}">${escapeAttr(entry.name)} · Variação</option>`).join('')}</select>`,
         buttons: [
             {
                 action: 'use',
@@ -1446,12 +1517,33 @@ export async function openBreathingManager({ actorUuid, breathingName } = {}) {
                 label: 'Presets de dano',
                 callback: () => '__damage_presets__',
             },
+            { action: 'passives', label: 'Passivas', callback: () => '__combat_passives__' },
+            ...(game.user?.isGM && ruleVariant('classes') === 'homebrew' && secondaryBreathingForActor(actor)
+                ? [{ action: 'variations', label: 'Registrar Variação', callback: () => '__dual_variations__' }]
+                : []),
+            ...(canManageDualBreathingPosture(actor)
+                ? [{ action: 'posture', label: 'Forma Intermediária', callback: () => '__dual_posture__' }] : []),
+            ...(dualBreathingCompositeCatalog(actor, primaryLevel())
+                ? [{ action: 'composite', label: 'Forma Composta', callback: () => '__dual_composite__' }] : []),
             { action: 'cancel', label: 'Cancelar', callback: () => null },
         ],
     });
     if (!itemUuid) return null;
+    if (itemUuid === '__combat_passives__') {
+        const { openBreathingPassiveManager } = await import('./breathing-combat-passives.mjs');
+        return openBreathingPassiveManager({ actor });
+    }
     if (itemUuid === '__damage_presets__')
         return openDamagePresetManager({ actorUuid: actor.uuid, group: breathingName });
+    if (itemUuid === '__dual_variations__') return openDualBreathingRegistry(actor);
+    if (itemUuid === '__dual_posture__') return openDualBreathingPosture(actor);
+    if (itemUuid === '__dual_composite__') return openDualBreathingComposite(actor, primaryLevel);
+    if (itemUuid.startsWith('variation:')) {
+        const found = variations.find(entry => entry.id === itemUuid.slice('variation:'.length));
+        const item = forms.find(entry => entry.id === found?.baseItemId);
+        if (!item) return null;
+        return useBreathForm({ actorUuid: actor.uuid, itemUuid: item.uuid, variationId: found.id });
+    }
     return useBreathForm({ actorUuid: actor.uuid, itemUuid });
 }
 
@@ -1470,7 +1562,8 @@ function actorAttributeValues(target, fallbackProps) {
     );
 }
 
-function buildCanonicalRuntime(actor, props, item) {
+function buildCanonicalRuntime(actor, props, secondary, recheckSecondary, getPostureUse) {
+    const executionId = passiveExecutionId(actor);
     return {
         attrValue: (target, key) => actorAttributeValues(target, props)[String(key).toLowerCase()] ?? 0,
         resolveFormula: (target, formula) =>
@@ -1482,24 +1575,35 @@ function buildCanonicalRuntime(actor, props, item) {
             target.update(patch, { naCsbAutomation: true, naBreathing: true }),
         getProps: (target) => target.system?.props ?? props,
         getPdrCurrent: () => slayerPdrInfo(actor.system?.props ?? props).pdrCurrent,
-        pdrSpentKey: resourceKeys(actor.system?.props ?? props).pdrSpent,
-        getBreathLevel: () => getBreathLevel(actor.system?.props ?? props),
+        pdrSpentKey: breathingResourceKeys(actor.system?.props ?? props).pdrSpent,
+        getBreathLevel: () => secondary?.level ?? getBreathLevel(actor.system?.props ?? props),
+        getSecondaryUse: recheckSecondary,
+        getPostureUse,
         resolveCardTargets: () =>
             [...(game.user?.targets ?? [])].map((token) => token.actor).filter(Boolean),
         roll: (formula) => Roll.create(formula).evaluate(),
-        applyStatus: (target, key, effect) => applyBreathingStatus(target, key, effect),
+        applyStatus: (target, key, effect) => applyBreathingStatus(target, key, effect, { source: actor, eventId: executionId }),
         applyStackingStatus: (target, key, effect) =>
             applyStackingBreathingStatus(target, key, effect),
         applyHeal: async (target, amount, meta) => {
             const { healActor } = await import('./heal-relay.mjs');
-            return healActor(target, amount, meta);
+            const result = await healActor(target, amount, meta);
+            if (target.uuid !== actor.uuid && result?.appliedHeal > 0)
+                await recordBreathingPassiveEvent(actor, { type: 'healAlly', success: true, isTechnique: true,
+                    targetUuid: target.uuid, amount: result.appliedHeal, eventId: executionId });
+            return result;
         },
-        setBuffs: async (target, buff) => {
-            const current = target.getFlag?.(MODULE_ID, 'buffs');
-            const list = Array.isArray(current) ? current : [];
-            const next = [...list.filter((entry) => entry?.id !== buff.id), buff];
-            await target.setFlag(MODULE_ID, 'buffs', next);
+        checkBuff: (target, buff) => {
+            if (!game.combat?.started || !Number.isInteger(game.combat.round))
+                return 'O efeito dura turnos. Ative esta Forma em combate.';
+            if (activeCombatBuffs(target).some(entry => entry.id === buff.id))
+                return `${buff.label} já está ativo.`;
+            return '';
         },
+        setBuffs: (target, buff) => target.setFlag(MODULE_ID, BUFFS_FLAG, [
+            ...activeCombatBuffs(target).filter(entry => entry.id !== buff.id),
+            { ...buff, combatId: game.combat.uuid ?? game.combat.id },
+        ]),
         rollHit: async (options) => {
             const { rollHit } = await import('./hit-service.mjs');
             return rollHit(options);
@@ -1522,7 +1626,7 @@ function buildCanonicalRuntime(actor, props, item) {
         },
         getPdrSurcharge: () =>
             getDamageStatusEffects(actor.system?.props ?? props).pdrSurcharge ?? 0,
-        postUsage: ({ actor: user, form, level, custo, dados }) => {
+        postUsage: ({ actor: user, form, level, custo, pdv, dados, displayName }) => {
             const estilo = form.estilo ? `[${form.estilo}º Estilo] ` : '';
             const texto = dados?.texto
                 ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${dados.texto}</div>`
@@ -1536,7 +1640,7 @@ function buildCanonicalRuntime(actor, props, item) {
                 : '';
             return ChatMessage.create({
                 speaker: ChatMessage.getSpeaker({ actor: user }),
-                content: `<div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;"><strong>${estilo}${form.ptName || form.nome}</strong><div style="font-size:12px;color:#888;">${form.respiracao} · Nível ${level} · −${custo} PDR</div>${texto}${feedsLine}</div>`,
+                content: `<div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;"><strong>${estilo}${escapeAttr(displayName || form.ptName || form.nome)}</strong><div style="font-size:12px;color:#888;">${form.respiracao} · Nível ${level} · −${custo} PDR${pdv ? ` e −${pdv} PDV` : ''}</div>${texto}${feedsLine}</div>`,
             });
         },
     };
@@ -1549,7 +1653,7 @@ function buildCanonicalRuntime(actor, props, item) {
  * @param {string} [options.actorUuid] - UUID do actor (fallback)
  * @returns {Promise<void>}
  */
-export async function useBreathForm({ itemUuid, actorUuid } = {}) {
+export async function useBreathForm({ itemUuid, actorUuid, variationId } = {}) {
     if (!itemUuid) {
         ui.notifications?.warn?.('UUID do item não fornecido.');
         return;
@@ -1573,6 +1677,33 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     }
 
     const form = getFormData(item);
+    const handlesPosture = canManageDualBreathingPosture(actor);
+    const secondaryUse = breathing => secondaryBreathingUse(actor, breathing, game.combat, { deferTurnLimit: handlesPosture });
+    let getUse = () => secondaryUse(form.respiracao);
+    if (variationId) {
+        const { dualBreathingVariations } = await import('./slayer/dual-breathing-registry.mjs');
+        const currentVariation = () => dualBreathingVariations(actor).find(entry => entry.id === variationId);
+        const approved = currentVariation();
+        if (!approved || [...(actor.items ?? [])].find(entry => entry.id === approved.baseItemId)?.uuid !== item.uuid)
+            return ui.notifications?.warn?.('A Variação não está aprovada para esta Forma e ficha.');
+        form.dualVariation = approved;
+        form.nome = approved.name;
+        const fingerprint = JSON.stringify(approved);
+        getUse = () => {
+            if (JSON.stringify(currentVariation()) !== fingerprint)
+                return { ok: false, reason: 'O registro da Variação mudou. Abra a Forma novamente.' };
+            const secondaryBreathing = secondaryBreathingForActor(actor);
+            const usage = secondaryUse(secondaryBreathing);
+            if (!usage?.ok) return usage ?? { ok: false, reason: 'Respiração Secundária indisponível.' };
+            return {
+                ...usage,
+                level: canonicalBreathing(form.respiracao) === secondaryBreathing ? usage.level : null,
+                cost: { ...usage.cost, pdr: usage.cost.pdr + approved.extraPdr + Number(approved.kind === 'derived') },
+            };
+        };
+    }
+    if (metalFormById(form.id)?.homebrewOnly && ruleVariant('respiracao') !== 'homebrew')
+        return ui.notifications?.warn?.('Esta Forma pertence à Respiração do Metal Homebrew.');
     if (form.levels.length === 0) {
         ui.notifications?.warn?.('Nenhum nível disponível para esta forma.');
         return;
@@ -1602,9 +1733,47 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         );
         return;
     }
+    if (form.id === 'chamas_01') return executeBreathForm(actor, item, form);
+    const secondary = getUse();
+    if (!secondary && !handlesPosture) return executeBreathForm(actor, item, form);
+    if (secondary && !secondary.ok) return ui.notifications?.warn?.(secondary.reason);
+    if (secondaryFormsInFlight.has(actor))
+        return ui.notifications?.warn?.('Já existe uma Forma da Respiração Secundária em andamento.');
+    secondaryFormsInFlight.add(actor);
+    try {
+        return await executeBreathForm(actor, item, form, secondary, getUse, handlesPosture);
+    } finally {
+        secondaryFormsInFlight.delete(actor);
+    }
+}
+
+async function executeBreathForm(actor, item, form, secondary, getUse, handlesPosture = false) {
+    const props = actor.system?.props ?? {};
+    const postureTurn = handlesPosture ? flameTurnKey(game.combat) : null;
+    const recheckSecondary = secondary ? () => {
+        const current = getUse();
+        if (current && !current.ok) return current;
+        if (!current || current.level !== secondary.level || current.turnKey !== secondary.turnKey ||
+            current.primary !== secondary.primary ||
+            current.cost.pdr !== secondary.cost.pdr || current.cost.pdv !== secondary.cost.pdv)
+            return { ok: false, reason: 'A Respiração Secundária mudou enquanto a Forma estava aberta. Abra a Forma novamente.' };
+        return current;
+    } : undefined;
+    const getPostureUse = handlesPosture ? (actions, pdrCost, pdvCost = 0, reservedPdr = 0) => {
+        if (flameTurnKey(game.combat) !== postureTurn || !canManageDualBreathingPosture(actor))
+            return { ok: false, reason: 'As condições da Forma Intermediária mudaram.' };
+        const plan = planPostureTechniqueUse(actor, { breathing: form.respiracao, variation: form.dualVariation,
+            actions, pdrCost, pdvCost, reservedPdr });
+        if (plan?.ok && plan.extraPdv) {
+            const live = actor.system.props;
+            const key = actorKind(actor) === 'npc' ? 'npc_pdv_dano' : 'pdv_slayer_dano_tomado';
+            plan.patch[`system.props.${key}`] = parseNumber(live[key]) + pdvCost + plan.extraPdv;
+        }
+        return plan;
+    } : undefined;
     const { pdrCurrent } = slayerPdrInfo(props);
-    const baseBreathLevel = getBreathLevel(props);
-    const breathLevel = snowFormById(form.id)
+    const baseBreathLevel = secondary?.level ?? getBreathLevel(props);
+    const breathLevel = !secondary && snowFormById(form.id)
         ? snowEffectiveBreathLevel(baseBreathLevel, props.resp_neve_estado)
         : baseBreathLevel;
 
@@ -1635,11 +1804,11 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         return;
     }
 
-    const dialogResult = await openBreathDialog({ form, pdrCurrent, breathLevel });
+    const dialogResult = await openBreathDialog({ form, pdrCurrent, breathLevel, secondaryCost: secondary?.cost });
     if (!dialogResult) return;
 
     const selected = form.levels.find((l) => l.level === dialogResult.level);
-    if (!selected) {
+    if (!selected || selected.level > breathLevel) {
         ui.notifications?.warn?.('Nível selecionado inválido.');
         return;
     }
@@ -1661,7 +1830,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         if (chosen.formula && chosen.formula !== selected.dano)
             await item.update({ [`system.props.nvl${selected.level}_dano`]: chosen.formula });
         const tableForm =
-            flameFormById(form.id) ?? windFormById(form.id) ?? snowFormById(form.id) ?? null;
+            flameFormById(form.id, ruleVariant('respiracao')) ?? windFormById(form.id) ?? snowFormById(form.id) ?? null;
         damageChoice = {
             formId: form.id,
             // O plano escreve o dano da tabela; é ele que o escolhido substitui.
@@ -1675,7 +1844,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     // Respiração migrada: o dado canônico assume daqui (rota legada abaixo
     // permanece para as demais até a leva de cada uma).
     if (isMigrated(form.respiracao) && !form.id.startsWith('custom_')) {
-        const runtime = buildCanonicalRuntime(actor, props, item);
+        const runtime = buildCanonicalRuntime(actor, props, secondary, recheckSecondary, getPostureUse);
         return runCanonicalBreathingForm({
             actor,
             respiracao: form.respiracao,
@@ -1684,6 +1853,7 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             level: selected.level,
             runtime,
             damageOverride: damageChoice?.chosen || null,
+            displayName: form.dualVariation?.name,
         });
     }
 
@@ -1731,7 +1901,30 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         return;
     }
 
-    let custoFinal = plan.cost;
+    const dualBreathingPair = ruleVariant('classes') === 'vanilla' &&
+        parseLevel(props.nvl_num ?? props.npc_nivel ?? props.nvl_pj) >= 2
+        ? [chosenBreathing(props), secondaryBreathingForActor(actor)]
+        : [];
+    const waterSnowStateKey = form.id === 'agua_01' ? 'system.props.resp_agua_estado'
+        : form.id === 'neve_01' ? 'system.props.resp_neve_estado' : null;
+    const canUseWaterSnowSynergy = waterSnowStateKey && plan.patch[waterSnowStateKey] &&
+        dualBreathingPair.includes('Água') && dualBreathingPair.includes('Neve');
+    const useWaterSnowSynergy = canUseWaterSnowSynergy &&
+        await confirmRule('Sinergia Água e Neve', 'Pagar +1 PDR para somar INT ao dano desta Forma?');
+    const useStoneMetalSynergy = form.id === 'metal_01' &&
+        dualBreathingPair.includes('Pedra') && dualBreathingPair.includes('Metal') &&
+        await confirmRule('Sinergia Pedra e Metal', 'Pagar +1 PDR para reduzir o dano de ataques em VIT enquanto Metalizado durar?');
+    const synergyCost = useWaterSnowSynergy || useStoneMetalSynergy ? 1 : 0;
+
+    const secondaryPayment = recheckSecondary?.();
+    if (secondaryPayment && !secondaryPayment.ok) {
+        ui.notifications?.warn?.(secondaryPayment.reason);
+        return;
+    }
+    const usesLiveResources = Boolean(secondaryPayment || synergyCost);
+    const paymentProps = usesLiveResources ? actor.system.props : props;
+    const pdrAvailable = usesLiveResources ? slayerPdrInfo(paymentProps).pdrCurrent : pdrCurrent;
+    let custoFinal = plan.cost + (secondaryPayment?.cost.pdr ?? 0) + synergyCost;
     if (statusEffects.pdrSurcharge > 0 && custoFinal > 0) {
         custoFinal += statusEffects.pdrSurcharge;
         ui.notifications?.info?.(
@@ -1739,9 +1932,9 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         );
     }
 
-    if (custoFinal > pdrCurrent) {
+    if (custoFinal > pdrAvailable) {
         ui.notifications?.warn?.(
-            `PDR insuficiente! Disponível: ${pdrCurrent}, necessário: ${custoFinal}.`
+            `PDR insuficiente! Disponível: ${pdrAvailable}, necessário: ${custoFinal}.`
         );
         return;
     }
@@ -1749,12 +1942,44 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     const tiposManobra = (plan.actions ?? [plan.action])
         .filter(Boolean)
         .map((action) => normalizeManobra(action) ?? action);
+    const postureUse = getPostureUse?.(tiposManobra, custoFinal, secondaryPayment?.cost.pdv);
+    if (postureUse && !postureUse.ok) return ui.notifications?.warn?.(postureUse.reason);
     const tipoManobra = tiposManobra[0] ?? null;
+    const flameNeedsAttackResolution =
+        isFlameForm && form.id !== 'chamas_07' && Boolean(plan.state?.nextHit || plan.state?.pendingDamage);
+    const mistNeedsAttackResolution =
+        isMistForm && ['nevoa_01', 'nevoa_02', 'nevoa_04', 'nevoa_06'].includes(form.id) && !plan.state?.dexFailed;
+    const metalNeedsAttackResolution = isMetalForm && ['metal_06', 'metal_07'].includes(form.id)
+        && plan.action === 'ataque';
+    const snowNeedsAttackResolution =
+        isSnowForm && ['neve_01', 'neve_02', 'neve_05'].includes(form.id);
+    const windNeedsAttackResolution = isWindForm && form.id === 'vento_06';
+    const needsAttackResolution = flameNeedsAttackResolution || mistNeedsAttackResolution ||
+        metalNeedsAttackResolution || snowNeedsAttackResolution || windNeedsAttackResolution;
     const patch = { ...plan.patch };
+    // Pagar PDV só após o Acerto evita iniciar Vida e Morte ao cancelar o diálogo.
+    if (!needsAttackResolution) Object.assign(patch, secondaryPayment?.patch, postureUse?.patch);
+    const costForChat = { custo: custoFinal, pdv: (secondaryPayment?.cost.pdv ?? 0) + (postureUse?.extraPdv ?? 0) };
     if (damageChoice) Object.assign(patch, applyChosenDamageToPatch(patch, damageChoice));
+    if (useWaterSnowSynergy) {
+        const state = JSON.parse(patch[waterSnowStateKey]);
+        const intelligence = resolveSheetAttribute(actor, 'int') ?? 0;
+        state.pendingDamage.formula = `(${state.pendingDamage.formula}) + (${intelligence})`;
+        patch[waterSnowStateKey] = JSON.stringify(state);
+        if (form.id === 'agua_01') patch['system.props.resp_bonus_dano_dados'] = state.pendingDamage.formula;
+    }
+    if (useStoneMetalSynergy) {
+        const state = parseMetalBreathingState(patch['system.props.resp_metal_estado']);
+        state.metalized.stoneSynergyReduction = Math.max(0, resolveSheetAttribute(actor, 'vit') ?? 0);
+        Object.assign(patch, metalStatePatch(state));
+    }
     const actionResult = { ok: true };
 
     if (tiposManobra.length) {
+        if (isMetalForm && form.id === 'metal_06' && plan.action === 'especial') {
+            const standardAttack = await consumeSlayerActions(actor, ['ataque'], { update: false });
+            if (!standardAttack.ok) return ui.notifications?.warn?.(standardAttack.reason);
+        }
         const res = await consumeSlayerActions(actor, tiposManobra, { update: false });
         if (!res.ok) {
             ui.notifications?.warn?.(res.reason);
@@ -1767,11 +1992,14 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     }
 
     if (custoFinal > 0) {
-        const { pdrSpent } = resourceKeys(props);
-        patch[`system.props.${pdrSpent}`] = parseNumber(props[pdrSpent]) + custoFinal;
+        const { pdrSpent } = breathingResourceKeys(props);
+        patch[`system.props.${pdrSpent}`] = parseNumber(paymentProps[pdrSpent]) + custoFinal;
     }
 
     let rollbackPatch = null;
+    if (tipoManobra === 'reacao')
+        patch['system.props.resp_passivas_defesa_forma'] = JSON.stringify({ formId: form.id,
+            combatId: String(game.combat?.uuid ?? game.combat?.id ?? '') });
     if (Object.keys(patch).length > 0) {
         rollbackPatch = snapshotActorPatch(actor, patch);
         await actor.update(patch, { naCsbAutomation: true, naBreathForm: true });
@@ -1786,9 +2014,10 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             const allyDocument = await fromUuid(allyUuid);
             const allyActor = allyDocument?.actor ?? allyDocument;
             if (!allyActor?.system?.props) continue;
-            const gasto = parseNumber(allyActor.system.props.pdr_slayer_gasto_valor);
+            const { pdrSpent } = breathingResourceKeys(allyActor.system.props);
+            const gasto = parseNumber(allyActor.system.props[pdrSpent]);
             await allyActor.update(
-                { 'system.props.pdr_slayer_gasto_valor': gasto + FLAME_SYNERGY_PDR_COST },
+                { [`system.props.${pdrSpent}`]: gasto + FLAME_SYNERGY_PDR_COST },
                 { naCsbAutomation: true }
             );
         }
@@ -1807,10 +2036,11 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
     if (
         isSnowForm &&
         form.id === 'neve_07' &&
-        choices.protectedUuid &&
-        choices.protectedUuid !== actor.uuid
+        plan.state.kekkijutsuGuard?.canProtectAlly &&
+        plan.state.kekkijutsuGuard.protectedUuid &&
+        plan.state.kekkijutsuGuard.protectedUuid !== actor.uuid
     ) {
-        const protectedDocument = await fromUuid(choices.protectedUuid);
+        const protectedDocument = await fromUuid(plan.state.kekkijutsuGuard.protectedUuid);
         const protectedActor = protectedDocument?.actor ?? protectedDocument;
         if (protectedActor?.setFlag)
             await protectedActor.setFlag(MODULE_ID, 'snowKekkijutsuGuardSource', {
@@ -1843,29 +2073,17 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         await postBreathChat({
             actor,
             form,
-            selected: { ...selected, custo: custoFinal },
+            selected: { ...selected, ...costForChat },
             damageRoll: null,
         });
         ui.notifications?.info?.(
             'Névoa sob o Luar: falhou no teste de DEX CD 12. O custo de declaração já foi pago, mas a técnica não teve efeito.'
         );
-        return;
+        return { ok: true };
     }
 
-    const flameNeedsAttackResolution =
-        isFlameForm && form.id !== 'chamas_07' && Boolean(plan.state?.nextHit || plan.state?.pendingDamage);
-    const mistNeedsAttackResolution =
-        isMistForm && ['nevoa_01', 'nevoa_02', 'nevoa_04', 'nevoa_06'].includes(form.id);
-    const metalNeedsAttackResolution = isMetalForm && form.id === 'metal_06';
-    const snowNeedsAttackResolution =
-        isSnowForm && ['neve_01', 'neve_02', 'neve_05'].includes(form.id);
-    if (
-        flameNeedsAttackResolution ||
-        mistNeedsAttackResolution ||
-        metalNeedsAttackResolution ||
-        snowNeedsAttackResolution
-    ) {
-        const [{ rollHit }, { rollDamage, rollWeaponItem }] = await Promise.all([
+    if (needsAttackResolution) {
+        const [{ rollHit }, { rollDamage }] = await Promise.all([
             import('./hit-service.mjs'),
             import('./damage-service.mjs'),
         ]);
@@ -1875,28 +2093,42 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
         const hitResult = await rollHit({
             actor,
             actorUuid: actor.uuid,
+            isTechnique: true,
+            formId: form.id,
             autoDamage: false,
             skipActionConsumption: true,
             requiredWeaponId: isFlameForm ? plan.state?.synchronizedWeapon?.id : '',
+            ...(form.id === 'chamas_03' ? { forceRollCount: 1, forceActionType: 'ataque' } : {}),
+            ...(windNeedsAttackResolution ? { forceRollCount: plan.state.nextHit.count, forceActionType: 'ataque' } : {}),
+            ...(choices.hammerTarget ? { targets: new Set([choices.hammerTarget]), forceRollCount: 1, forceActionType: 'ataque' } : {}),
         });
-        if (!hitResult?.attempts?.length) {
+        const finalPayment = hitResult?.attempts?.length ? recheckSecondary?.() : null;
+        const finalPostureUse = hitResult?.attempts?.length
+            ? getPostureUse?.(tiposManobra, custoFinal, finalPayment?.cost.pdv, custoFinal) : null;
+        if (!hitResult?.attempts?.length || (finalPayment && !finalPayment.ok) || (finalPostureUse && !finalPostureUse.ok)) {
             if (rollbackPatch && Object.keys(rollbackPatch).length > 0) {
                 await actor.update(rollbackPatch, {
                     naCsbAutomation: true,
                     naBreathRollback: true,
                 });
             }
+            const refusal = finalPayment?.reason ?? finalPostureUse?.reason;
+            if (refusal) ui.notifications?.warn?.(refusal);
             return;
         }
+        const pendingCharge = { ...finalPayment?.patch, ...finalPostureUse?.patch };
+        if (Object.keys(pendingCharge).length)
+            await actor.update(pendingCharge, { naCsbAutomation: true, naBreathForm: true });
+        costForChat.pdv = (finalPayment?.cost.pdv ?? 0) + (finalPostureUse?.extraPdv ?? 0);
         if (hitResult.hits < 1) {
             await clearResolvedTechniqueQueue(actor, form.id);
             await postBreathChat({
                 actor,
                 form,
-                selected: { ...selected, custo: custoFinal },
+                selected: { ...selected, ...costForChat },
                 damageRoll: null,
             });
-            return;
+            return { ok: true };
         }
 
         if (isSnowForm && form.id === 'neve_02' && plan.state?.pendingTargetEffect) {
@@ -1915,32 +2147,45 @@ export async function useBreathForm({ itemUuid, actorUuid } = {}) {
             // outra Forma antes do dano (nunca trava "Não"/diálogo fechado
             // segue direto para o dano desta técnica).
             const { confirmChainedForma } = await import('./attack-follow-up.mjs');
-            const chained = await confirmChainedForma(actor, { excludeItemUuid: item.uuid });
+            const chained = !choices.hammerTarget && await confirmChainedForma(actor, { excludeItemUuid: item.uuid });
             if (!chained)
                 await rollConfirmedBreathDamage({
                     actor,
                     form,
                     hitResult,
                     rollDamage,
-                    rollWeaponItem,
+                    metalHammer: choices.hammerTarget ? {
+                        target: choices.hammerTarget, mechanics: plan.selected, level: selected.level,
+                        formula: resolveGenericDamageFormula(selected.dano, props),
+                    } : null,
                 });
         }
         await clearResolvedTechniqueQueue(actor, form.id);
         await postBreathChat({
             actor,
             form,
-            selected: { ...selected, custo: custoFinal },
+            selected: { ...selected, ...costForChat },
             damageRoll: null,
         });
-        return;
+        return { ok: true };
     }
 
+    if (form.id === 'agua_05') {
+        const { resolveAutoDamage } = await import('./attack-follow-up.mjs');
+        await resolveAutoDamage({
+            actor, techniqueLabel: form.nome, breathing: form.respiracao,
+            hitResult: { attempts: [{ hit: true, critical: true }], formId: form.id,
+                isTechnique: true, executionId: passiveExecutionId(actor) },
+            targets: new Set([choices.target]),
+        });
+    }
     const genericFormula =
         isWaterForm || isFlameForm ? '' : resolveGenericDamageFormula(selected.dano, props);
     const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
     if (damageRoll && game.dice3d?.showForRoll)
         await game.dice3d.showForRoll(damageRoll, game.user, true);
-    await postBreathChat({ actor, form, selected: { ...selected, custo: custoFinal }, damageRoll });
+    await postBreathChat({ actor, form, selected: { ...selected, ...costForChat }, damageRoll });
+    return { ok: true };
 }
 
 function primaryActiveGm() {
@@ -1952,6 +2197,7 @@ function primaryActiveGm() {
 }
 
 export function registerBreathingEngine() {
+    const flameTurnProcessing = new Set();
     const clearCombatFlames = async (combat) => {
         if (!game.user?.isGM || primaryActiveGm()?.id !== game.user.id) return;
         const tasks = [];
@@ -2004,6 +2250,8 @@ export function registerBreathingEngine() {
                 tasks.push(actor.unsetFlag(MODULE_ID, 'flameHeat'));
             if (actor?.getFlag?.(MODULE_ID, 'flameBlockPenalty'))
                 tasks.push(actor.unsetFlag(MODULE_ID, 'flameBlockPenalty'));
+            for (const flag of ['flameEmberTurn', 'flameSelfTurn', 'flameInterception'])
+                if (actor?.getFlag?.(MODULE_ID, flag)) tasks.push(actor.unsetFlag(MODULE_ID, flag));
         }
         await Promise.allSettled(tasks);
     };
@@ -2011,7 +2259,7 @@ export function registerBreathingEngine() {
         if (
             !game.user?.isGM ||
             primaryActiveGm()?.id !== game.user.id ||
-            !Object.hasOwn(changes, 'turn')
+            (!Object.hasOwn(changes, 'turn') && !Object.hasOwn(changes, 'round'))
         )
             return;
         const actor = combat?.combatant?.actor;
@@ -2077,14 +2325,25 @@ export function registerBreathingEngine() {
             void actor.update(tick.patch, { naCsbAutomation: true, naBreathing: true });
         }
         if (actor.system.props.resp_chamas_estado) {
+            const turnKey = `${combat.uuid ?? combat.id}:${combat.round}:${combat.turn}`;
+            const pendingKey = `${actor.uuid ?? actor.id}:${turnKey}`;
+            if (flameTurnProcessing.has(pendingKey) || actor.getFlag?.(MODULE_ID, 'flameSelfTurn') === turnKey) return;
+            flameTurnProcessing.add(pendingKey);
             const tick = tickFlameBreathing(actor.system.props.resp_chamas_estado);
             void (async () => {
-                for (const event of tick.events)
-                    await applySlayerDamage(actor, event.amount, {
-                        isAttack: false,
-                        source: event.source,
-                    });
-                await actor.update(tick.patch, { naCsbAutomation: true, naBreathing: true });
+                try {
+                    for (const event of tick.events) {
+                        const context = { isAttack: false, source: event.source, attackName: event.source,
+                            damageTypes: [event.damageType],
+                            components: [{ label: event.source, types: [event.damageType], subtotal: event.amount }] };
+                        if (actorKind(actor) === 'npc') {
+                            const { applyOniDamage } = await import('./damage-relay.mjs');
+                            await applyOniDamage(actor, event.amount, context);
+                        } else await applySlayerDamage(actor, event.amount, context);
+                    }
+                    await actor.update(tick.patch, { naCsbAutomation: true, naBreathing: true });
+                    await actor.setFlag(MODULE_ID, 'flameSelfTurn', turnKey);
+                } finally { flameTurnProcessing.delete(pendingKey); }
             })();
         }
     });
@@ -2100,23 +2359,6 @@ export function registerBreathingEngine() {
     });
     Hooks.on('combatEnd', clearCombatFlames);
     Hooks.on('deleteCombat', clearCombatFlames);
-    Hooks.on('updateActor', (actor) => {
-        if (
-            !game.user?.isGM ||
-            primaryActiveGm()?.id !== game.user.id ||
-            !actor?.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG)
-        )
-            return;
-        const props = actor.system?.props ?? {};
-        const rawCurrent =
-            props.pdv_slayer_conta_atual ??
-            props.pdv_slayer_atual_valor_display ??
-            props.pdv_oni_conta_atual ??
-            props.pdv_oni_atual_valor_display;
-        if (rawCurrent === undefined || rawCurrent === null || rawCurrent === '') return;
-        const current = parseNumber(rawCurrent);
-        if (current <= 0) void actor.unsetFlag(MODULE_ID, FLAME_HEAT_FLAG);
-    });
 }
 
 export async function applyStackingBreathingStatus(targetActor, key, effect) {

@@ -1,5 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import weapons from '../catalogs/slayer-weapons.json' with { type: 'json' };
+import { definitionDamageEntries } from '../scripts/items/attack-builder.mjs';
+import { normalizeWeaponTechnique } from '../scripts/items/item-technique-normalizers.mjs';
+import { weaponProfileEntries } from '../scripts/damage-service.mjs';
+import { SETTINGS } from '../scripts/settings.mjs';
 import {
     extractWeaponRankFormulas,
     isWeaponProficient,
@@ -14,6 +19,84 @@ import {
     weaponProfilesFromProps,
     weaponUsageModes,
 } from '../scripts/weapon-service.mjs';
+
+it('Metal do Despertar soma um metro a cada alcance do perfil, só em Vanilla', () => {
+    const previousGame = globalThis.game;
+    let metal = 'vanilla';
+    globalThis.game = { settings: { get: (_id, key) => key === SETTINGS.rulesSelection
+        ? JSON.stringify({ metal, respiracao: 'homebrew' }) : undefined } };
+    const props = { arma_perfis_ataque: [{ nome: 'Base', alcance: '1,5m padrão ou 3m se estendido' }] };
+    const actor = { na_vanilla_metal: 'metal_despertar' };
+    try {
+        assert.equal(weaponProfilesForActor(props, actor)[0].alcance, '2,5m padrão ou 4m se estendido');
+        metal = 'homebrew';
+        assert.equal(weaponProfilesForActor(props, actor)[0].alcance, props.arma_perfis_ataque[0].alcance);
+    } finally { globalThis.game = previousGame; }
+});
+
+it('usa a instância de Vanilla e preserva as exceções de Ryōtō do livro em Acerto e Dano', () => {
+    const previous = globalThis.game;
+    let selection = { propriedades: { ryoto: 'vanilla', nitoryu: 'homebrew' } };
+    globalThis.game = { settings: { get: (_module, key) =>
+        key === SETTINGS.rulesSelection ? JSON.stringify(selection) : undefined } };
+    const attrs = { dex: 10, for: 6 };
+    try {
+        for (const [name, attacks, contact] of [
+            ['Double Blade', 2, 1], ['Kusarigama', 2, 1], ['Ioiô de Lâmina', 1, 2],
+            ['Manoplas / Soqueiras', 1, 1], ['Kama', 1, 1],
+        ]) {
+            const item = weapons.documents.find(doc => doc.name === name);
+            const props = { ...item.system.props, arma_modo_uso: 'ryoto' };
+            const [profile] = weaponProfilesForActor(props);
+            assert.equal(profile.ataques, attacks, name);
+            assert.equal(profile.acerto_segundo_sem_atributo, attacks === 2, name);
+            assert.equal(profile.efeitos_contato_por_acao, contact, name);
+            assert.equal(weaponProfileEntries(profile, attrs).length, attacks);
+            const [legacy] = weaponProfilesForActor({
+                ...props, arma_mecanicas: undefined, arma_mecanicas_json: undefined,
+            });
+            assert.equal(legacy.ataques, attacks, `${name} já importada`);
+            assert.equal(legacy.efeitos_contato_por_acao, contact, `${name} já importada`);
+            const rawRyoto = props.arma_perfis_ataque.findIndex(p => /^ry[oō]t[oō]$/i.test(p.modo ?? p.nome));
+            const { definition: tech } = normalizeWeaponTechnique(props, { profileIndex: Math.max(0, rawRyoto) });
+            assert.equal(tech.attack.count, attacks, name);
+            assert.equal(definitionDamageEntries(tech, { system: { props: {} } }).length, attacks);
+            if (name === 'Manoplas / Soqueiras') {
+                assert.equal(profile.cadeia_critica.ativa, true);
+                const [extra] = weaponProfileEntries(profile, attrs, { attackIndex: 1 });
+                assert.equal(extra.fixo, 11);
+                assert.deepEqual(extra.attrs, []);
+                const [nitoryu] = weaponProfilesForActor({ ...props, arma_modo_uso: 'nitoryu' });
+                assert.equal(nitoryu.ataques, 2);
+                assert.equal(nitoryu.dano_segundo_golpe, 'fixo');
+                selection = { propriedades: { ryoto: 'homebrew' } };
+                assert.equal(weaponProfilesForActor(props)[0].ataques, 2);
+                selection = { propriedades: { ryoto: 'vanilla' } };
+            }
+        }
+    } finally { globalThis.game = previous; }
+});
+
+it('Nitoryu Vanilla separa o dano inicial do golpe que exige outra ação', () => {
+    const previous = globalThis.game;
+    globalThis.game = { settings: { get: (_module, key) => key === SETTINGS.rulesSelection
+        ? JSON.stringify({ propriedades: { nitoryu: 'vanilla' } }) : undefined } };
+    try {
+        const item = weapons.documents.find(doc => doc.name === 'Manoplas / Soqueiras');
+        const props = { ...item.system.props, arma_modo_uso: 'nitoryu' };
+        const [profile] = weaponProfilesForActor(props);
+        assert.equal(profile.ataques, 1);
+        assert.equal(profile.golpe_secundario_pago, true);
+        assert.equal(profile.penalidade_segundo_acerto, 0);
+        const attrs = { dex: 10, for: 6 };
+        assert.equal(weaponProfileEntries(profile, attrs).length, 1);
+        assert.equal(weaponProfileEntries(profile, attrs, { attackIndex: 1 })[0].fixo, 3);
+        assert.equal(weaponProfileEntries(profile, attrs, { attackIndex: 2 })[0].fixo, 11);
+        const { definition } = normalizeWeaponTechnique(props);
+        assert.equal(definition.attack.count, 1);
+        assert.equal(definitionDamageEntries(definition, { system: { props: {} } }).length, 1);
+    } finally { globalThis.game = previous; }
+});
 
 describe('weapon-service', () => {
     it('usa o perfil JSON mesmo quando campos textuais do CSB chegam como object Object', () => {

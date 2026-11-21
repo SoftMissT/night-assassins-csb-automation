@@ -123,6 +123,7 @@ describe('trigger-router', () => {
         const previousSpeaker = ChatMessage.getSpeaker;
         const actor = makeActor({
             props: {
+                nome_slayer: 'Mestre de Batalha',
                 nvl_pj: 'nvl_11',
                 nvl_num: 10,
                 classe_escolhida: 'classe_mb',
@@ -152,6 +153,14 @@ describe('trigger-router', () => {
                 game.user.id
             );
             assert.equal(patch['system.props.slayer_class_mb_corpo_guerra_applied'], 9);
+            actor.system.props.nvl_num = 11;
+            patch = null;
+            await handleActorUpdate(actor, { 'system.props.classe_escolhida': 'classe_mb' }, {}, game.user.id);
+            assert.equal(patch['system.props.slayer_class_mb_corpo_guerra_applied'], 9);
+            actor.system.props.slayer_class_mb_corpo_guerra_applied = 9;
+            patch = null;
+            await handleActorUpdate(actor, { 'system.props.classe_escolhida': 'classe_mb' }, {}, game.user.id);
+            assert.equal(patch, null);
         } finally {
             globalThis.Roll = previousRoll;
             ChatMessage.getSpeaker = previousSpeaker;

@@ -1,5 +1,6 @@
 import { parseNumber } from './parsing.mjs';
 import { METAL_HAMMER_PASSIVE, METAL_STAGES, metalFormById } from './metal-breathing-data.mjs';
+import { ruleVariant } from './rules-profile.mjs';
 
 export const METAL_STATE_KEY = 'resp_metal_estado';
 
@@ -58,6 +59,8 @@ export function buildMetalBreathingPlan(formId, level, props = {}, choices = {})
     const form = metalFormById(formId);
     const selected = form?.levels?.[level - 1] ?? null;
     if (!form) return { ok: false, noCost: true, reason: 'Forma do Metal desconhecida.' };
+    if (form.homebrewOnly && ruleVariant('respiracao') !== 'homebrew')
+        return { ok: false, noCost: true, reason: 'Esta Forma pertence à Respiração do Metal Homebrew.' };
     if (!selected)
         return {
             ok: false,
@@ -123,12 +126,14 @@ export function buildMetalBreathingPlan(formId, level, props = {}, choices = {})
         };
     }
 
+    const action = formId === 'metal_06' && ruleVariant('respiracao') === 'homebrew'
+        ? 'especial' : form.action;
     return {
         ok: true,
         form,
         selected,
-        action: form.action,
-        actions: [form.action],
+        action,
+        actions: [action],
         cost: selected.cost,
         state: next,
         patch: metalStatePatch(next),

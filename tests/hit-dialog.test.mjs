@@ -7,6 +7,26 @@ setupFoundryMocks();
 import { openHitConfirmationDialog } from '../scripts/dialogs/hit-dialog.mjs';
 
 describe('hit confirmation dialog', () => {
+    it('oferece continuar no último Acerto se confirmar o crítico abrir um soco extra', async () => {
+        const previous = foundry.applications.api.DialogV2.wait;
+        try {
+            foundry.applications.api.DialogV2.wait = async (config) => {
+                assert.match(config.content, /crítico libera um ataque extra/u);
+                const hit = config.buttons.find(button => button.action === 'hit');
+                const miss = config.buttons.find(button => button.action === 'miss');
+                assert.deepEqual(miss.callback(null, { form: { elements: {} } }), { hit: false, continue: false });
+                assert.deepEqual(hit.callback(null, { form: { elements: { 'na-hit-stop': { checked: true } } } }),
+                    { hit: true, continue: false });
+                return hit.callback(null, { form: { elements: {} } });
+            };
+            const result = await openHitConfirmationDialog({
+                current: 1, maximum: 1, total: 24, natural: 20,
+                critical: true, extendsOnCriticalHit: true,
+            });
+            assert.deepEqual(result, { hit: true, continue: true });
+        } finally { foundry.applications.api.DialogV2.wait = previous; }
+    });
+
     it('mostra arma, perfil, natural e crítico efetivo antes da confirmação', async () => {
         let config = null;
         foundry.applications.api.DialogV2.wait = async (received) => {

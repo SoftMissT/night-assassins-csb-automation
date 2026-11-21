@@ -28,6 +28,17 @@ async function breathingDocuments() {
 }
 
 describe('pack de Respirações', () => {
+    it('publica o dano de cada nível da Fantasia Final no mesmo item', async () => {
+        const pack = await breathingDocuments();
+        const item = pack.find(doc => doc._id === '31af907566a9d7ab');
+        assert.equal(item.system.props.forma_id, 'sonhos_10');
+        assert.deepEqual([1, 2, 3, 4].map(n => [
+            item.system.props[`tem_nvl${n}`],
+            item.system.props[`nvl${n}_custo`],
+            item.system.props[`nvl${n}_dano`],
+        ]), [[0, 0, ''], [1, 7, '4d4'], [1, 9, '6d4'], [1, 10, '7d4']]);
+    });
+
     it('o Compêndio publica template, pastas, hubs e Formas', async () => {
         const pack = await sourceDocuments('../build/compendium/respiracoes/');
         assert.ok(pack.length > 1);
@@ -170,7 +181,7 @@ describe('catálogo de Respirações', () => {
         const items = documents.filter((document) => document.type === 'equippableItem');
         const expected = new Map([
             ['Chamas', { count: 9, passive: 'chamas_01' }],
-            ['Metal', { count: 6, passive: 'metal_05' }],
+            ['Metal', { count: 7, passive: 'metal_05' }],
             ['Neve', { count: 8, passive: 'neve_08' }],
             ['Névoa', { count: 8, passive: '' }],
             ['Pedra', { count: 5, passive: '' }],
@@ -400,6 +411,12 @@ describe('catálogo de armas Slayer', () => {
         assert.equal(doubleBlade.system.props.arma_critico, 19);
         assert.equal(katana.system.props.arma_critico, 20);
         assert.equal(manoplas.system.props.arma_critico, 20);
+        const ryotoRule = name => JSON.parse(weapons.find(item => item.name === name).system.props.arma_mecanicas_json)
+            .find(rule => rule.id === 'ryoto');
+        assert.equal(ryotoRule('Double Blade').vanillaAttacks, 2);
+        assert.equal(ryotoRule('Kusarigama').vanillaAttacks, 2);
+        assert.equal(ryotoRule('Ioiô de Lâmina').contactEffectsPerAction, 2);
+        assert.match(manoplas.system.props.arma_regra_completa, /um Acerto inicial/u);
         assert.ok(manoplas.system.props.arma_perfis_ataque.every((profile) => profile.critico === 20));
         assert.equal(cutelos.system.props.arma_dano_fixo, 4);
         assert.equal(cutelos.system.props.arma_critico, 20);

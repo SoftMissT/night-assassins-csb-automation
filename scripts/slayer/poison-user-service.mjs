@@ -21,6 +21,7 @@ export function parseUserPoisonState(raw) {
                   damage: Math.max(0, integer(entry?.damage)),
                   remainingTurns: Math.max(0, integer(entry?.remainingTurns)),
                   rank: String(entry?.rank ?? 'C'),
+                  ...(entry?.profile === 'vanilla' ? { profile: 'vanilla' } : {}),
               }))
               .filter(
                   (entry) => entry.sourceActorUuid && entry.damage > 0 && entry.remainingTurns > 0
@@ -48,22 +49,40 @@ export function applyUserPoison(rawState, options = {}) {
     const sourceActorUuid = String(options.sourceActorUuid ?? '');
     const rank = String(options.rank ?? 'C');
     const actionId = String(options.actionId ?? '');
+    const vanilla = options.profile === 'vanilla';
     if (!sourceActorUuid || options.immune === true)
         return { applied: false, reason: options.immune ? 'immune' : 'missing-source', state };
 
     const contact = !['S', 'SS'].includes(rank);
-    if (contact && actionId && state.lastContactActionBySource[sourceActorUuid] === actionId)
+    const trackedContact = contact && actionId;
+    const expandedContact = options.contactLimit === 2 && Number.isInteger(options.attackIndex);
+    const last = state.lastContactActionBySource[sourceActorUuid];
+    const contactAttempts = last === actionId ? [0]
+        : last?.actionId === actionId && Array.isArray(last.attackIndexes) ? last.attackIndexes : [];
+    if (trackedContact && (contactAttempts.length >= (expandedContact ? 2 : 1)
+        || contactAttempts.includes(options.attackIndex)))
         return { applied: false, reason: 'contact-already-applied', state };
 
-    const damage = Math.max(0, integer(options.carisma)) + (rank === 'C' ? 0 : 2);
+    const contactBonus = contact ? Math.max(0, integer(options.contactDamageBonus)) : 0;
+    const damage = Math.max(0, integer(options.carisma)) + (rank === 'C' ? 0 : 2) + contactBonus;
+    if (vanilla && damage <= 0) return { applied: false, reason: 'no-damage', state };
+    if (trackedContact) {
+        state.lastContactActionBySource[sourceActorUuid] = expandedContact
+            ? { actionId, attackIndexes: [...contactAttempts, options.attackIndex] }
+            : actionId;
+    }
+    if (vanilla) {
+        state.instances.push({ sourceActorUuid, damage, remainingTurns: 1, rank, profile: 'vanilla' });
+        return { applied: true, reason: '', state };
+    }
+
     const remainingTurns = rank === 'C' ? 2 : 3;
     const instance = { sourceActorUuid, damage, remainingTurns, rank };
-    const own = state.instances.filter((entry) => entry.sourceActorUuid === sourceActorUuid);
-    const other = state.instances.filter((entry) => entry.sourceActorUuid !== sourceActorUuid);
+    const fromSameSource = entry => entry.sourceActorUuid === sourceActorUuid && entry.profile !== 'vanilla';
+    const own = state.instances.filter(fromSameSource);
 
     if (contact) {
-        state.instances = [...other, instance];
-        if (actionId) state.lastContactActionBySource[sourceActorUuid] = actionId;
+        state.instances = [...state.instances.filter(entry => !fromSameSource(entry)), instance];
     } else if (own.length < 3) {
         state.instances = [...state.instances, instance];
     } else {
@@ -88,11 +107,11 @@ export function tickUserPoison(rawState) {
     const activeAtStart = [...state.instances];
     const damage = activeAtStart.reduce((sum, entry) => sum + entry.damage, 0);
     state.healingSuppressed = activeAtStart.some((entry) => entry.rank === 'SS');
-    state.toxicWound = activeAtStart.filter((entry) => entry.rank === 'SS').length >= 3;
+    state.toxicWound = activeAtStart.filter((entry) => entry.profile !== 'vanilla' && entry.rank === 'SS').length >= 3;
     state.instances = activeAtStart
         .map((entry) => ({ ...entry, remainingTurns: entry.remainingTurns - 1 }))
         .filter((entry) => entry.remainingTurns > 0);
-    if (state.instances.length === 0) state.resistancePenalty = 0;
+    if (!state.instances.some(entry => entry.profile !== 'vanilla')) state.resistancePenalty = 0;
     return { damage, state };
 }
 

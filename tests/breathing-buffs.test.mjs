@@ -125,9 +125,11 @@ describe('actorBuffSources (lido em Acerto, Defesa e Dano)', () => {
 
     it('lê a flag do módulo e respeita a rodada do combate em andamento', async () => {
         const { actorBuffSources } = await import('../scripts/breathing-buffs.mjs');
-        const actor = { getFlag: (scope, key) => (scope === 'night-assassins-csb-automation' && key === 'buffs' ? [buff()] : undefined) };
-        await withGame({ combat: { started: true, round: 3 } }, () => assert.equal(actorBuffSources(actor).length, 3));
-        await withGame({ combat: { started: true, round: 6 } }, () => assert.equal(actorBuffSources(actor).length, 0));
-        await withGame({ combat: null }, () => assert.equal(actorBuffSources(actor).length, 3));
+        const actor = { getFlag: (scope, key) => scope === 'night-assassins-csb-automation' && key === 'buffs'
+                ? [{ ...buff(), combatId: 'fight' }] : undefined };
+        await withGame({ combat: { id: 'fight', started: true, round: 3 } }, () => assert.equal(actorBuffSources(actor).length, 3));
+        await withGame({ combat: { id: 'fight', started: true, round: 6 } }, () => assert.equal(actorBuffSources(actor).length, 0));
+        await withGame({ combat: { id: 'another', started: true, round: 3 } }, () => assert.equal(actorBuffSources(actor).length, 0));
+        await withGame({ combat: null }, () => assert.equal(actorBuffSources(actor).length, 0));
     });
 });

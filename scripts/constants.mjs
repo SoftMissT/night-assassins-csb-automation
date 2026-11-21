@@ -233,6 +233,8 @@ export const TIPOS_DANO = Object.freeze([
     { key: 'venenoso', label: 'Venenoso', cat: 'elemental', desc: 'Pode aplicar Envenenamento.' },
 ]);
 
+export const MASTER_BATTLE_BLEEDING = 'sangramento_critico_brutal';
+
 export const STATUS_SLAYER = Object.freeze([
     { key: 'vantagem', label: 'Vantagem', category: 'Rolagem' },
     { key: 'desvantagem', label: 'Desvantagem', category: 'Rolagem' },

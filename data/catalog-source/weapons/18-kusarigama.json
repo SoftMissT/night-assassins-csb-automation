@@ -17,7 +17,7 @@
             "arma_alcance": " 5m",
             "arma_propriedades": " Acuidade / Morote / Ryoto",
             "arma_requisito": "",
-            "descricao": "Uma esfera ligada a outra ponta de uma pequena foice ou lâmina através de uma corrente.\n\n- Propriedades: Acuidade / Morote / Ryoto\n- Alcance: 5m\n- Crítico: 20 Natural\n- Dano: 5 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Cortante e Concussivo, à escolha\n\nHabilidade\nPode acertar duas vezes no mesmo turno usando a ação padrão. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX.",
+            "descricao": "Uma esfera ligada a outra ponta de uma pequena foice ou lâmina através de uma corrente.\n\n- Propriedades: Acuidade / Morote / Ryoto\n- Alcance: 5m\n- Crítico: 20 Natural\n- Dano: 5 + Metade da DEX ou FOR (arredondado para baixo se necessário) / Cortante e Concussivo, à escolha\n\nHabilidade\nEm Ryōtō, a Kusarigama faz dois Acertos na mesma Ação de Ataque. Cada golpe acertado causa o dano normal da arma. O segundo Acerto é rolado sem modificador de FOR ou DEX.",
             "arma_ordem": 18,
             "arma_perfis_ataque": [
                 {
@@ -66,7 +66,7 @@
                     "id": "habilidade",
                     "kind": "weapon-ability",
                     "label": "Habilidade",
-                    "text": "Pode acertar duas vezes no mesmo turno usando a ação padrão. Porém, diferente da Nitoryu, a Ryōtō aplica o dano total da arma em ambos os golpes sendo que, para o segundo ataque, você deve rolar o acerto sem considerar modificadores de FOR ou DEX."
+                    "text": "Em Ryōtō, a Kusarigama faz dois Acertos na mesma Ação de Ataque. Cada golpe acertado causa o dano normal da arma. O segundo Acerto é rolado sem modificador de FOR ou DEX."
                 }
             ],
             "arma_propriedades_chaves": ["acuidade", "morote", "ryoto"]

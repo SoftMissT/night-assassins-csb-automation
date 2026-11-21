@@ -66,6 +66,20 @@ export const METAL_FORMS = Object.freeze([
             LEVEL(4, { turns: 8 }),
         ],
     },
+    {
+        id: 'metal_07',
+        style: 6,
+        name: 'Roku no Kata: Tettsui no Renzuchi',
+        ptName: 'Batida de Martelo Sobre Batida de Martelo',
+        action: 'ataque',
+        homebrewOnly: true,
+        damageTypes: ['concussao'],
+        levels: [1, 2, 3, 4].map(level => LEVEL(level + 2, {
+            damage: `${level + 1}d8 + @for`,
+            proneBonus: Math.max(0, level - 2),
+            condition: level === 1 ? 'desequilibrado' : 'derrubado',
+        })),
+    },
 ]);
 
 export const METAL_STAGES = Object.freeze([

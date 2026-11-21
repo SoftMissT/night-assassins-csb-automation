@@ -52,20 +52,20 @@ export function registerWindBattleDamage(state, { cutPierce = 0, bleedInfection 
 /**
  * Consolida o dano acumulado da última batalha em cicatrizes permanentes,
  * aplicado no Descanso Longo. Regra: a cada 30 de dano Cortante/Perfurante
- * = +1 cicatriz (máx. +4 dessa fonte); a cada 25 de Sangramento/Infecção =
+ * = +1 cicatriz sem limite; a cada 25 de Sangramento/Infecção =
  * +1 em testes de VIT (máx. +4). Ambos os acúmulos são independentes e o
  * contador de dano da batalha zera após a consolidação.
  */
 export function consolidateWindScars(state) {
     const battleDamage = state.battleDamage ?? { cutPierce: 0, bleedInfection: 0 };
-    const newScarsFromCuts = Math.min(4, Math.floor(parseNumber(battleDamage.cutPierce) / 30));
+    const newScarsFromCuts = Math.max(0, Math.floor(parseNumber(battleDamage.cutPierce) / 30));
     const newVitBonusFromBleed = Math.min(
         4,
         Math.floor(parseNumber(battleDamage.bleedInfection) / 25)
     );
     return {
         ...state,
-        scars: Math.min(4, Math.trunc(parseNumber(state.scars)) + newScarsFromCuts),
+        scars: Math.max(0, Math.trunc(parseNumber(state.scars))) + newScarsFromCuts,
         vitBonus: Math.min(4, Math.trunc(parseNumber(state.vitBonus)) + newVitBonusFromBleed),
         battleDamage: { cutPierce: 0, bleedInfection: 0 },
     };
@@ -99,7 +99,7 @@ export function buildWindBreathingPlan(formId, level, props = {}, choices = {}) 
     const state = parseWindBreathingState(props[WIND_STATE_KEY]);
     const dex = parseNumber(props.dex_display);
     const fdv = parseNumber(props.fdv_display);
-    const scars = Math.min(4, Math.trunc(parseNumber(state.scars)));
+    const scars = Math.max(0, Math.trunc(parseNumber(state.scars)));
     const next = { ...state };
 
     /**
@@ -244,6 +244,7 @@ export function buildWindBreathingPlan(formId, level, props = {}, choices = {}) 
                       }
                     : {},
             ignoresResistance: true,
+            extra: { actions: ['unica', 'ataque'] },
         });
     }
     if (form.id === 'vento_07') {

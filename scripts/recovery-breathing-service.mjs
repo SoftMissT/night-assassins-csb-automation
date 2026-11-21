@@ -1,11 +1,12 @@
 /** Respiração da Recuperação — Kaifuku no Kokyu. */
 import { consumeSlayerActions } from './action-service.mjs';
 import { actorKind } from './actor-kind.mjs';
-import { parseNumber, slayerMaxPdv } from './parsing.mjs';
+import { MASTER_BATTLE_BLEEDING } from './constants.mjs';
+import { parseNumber } from './parsing.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
-import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
+import { breathingPdvInfo, breathingPdrInfo } from './actor-resources.mjs';
 export const RECOVERY_STATE_KEY = 'resp_recuperacao_estado';
 const NORMAL_RECOVERY_RATIO = 0.75;
 const normalRecoveryInProgress = new Set();
@@ -93,34 +94,8 @@ function statePatch(state) {
     };
 }
 export function currentRecoveryResources(props = {}) {
-    if (isNpcProps(props)) {
-        const pdvMax = n(props.npc_pdv_base);
-        const pdvRaw = pdvMax + n(props.npc_pdv_curado) - n(props.npc_pdv_dano);
-        const pdrMax = n(props.npc_pdr_base);
-        const pdrRaw = pdrMax + n(props.npc_pdr_recuperado) - n(props.npc_pdr_gasto_valor);
-        return {
-            pdvMax,
-            pdvRaw,
-            pdv: Math.min(pdvMax, Math.max(0, pdvRaw)),
-            pdrMax,
-            pdr: Math.min(pdrMax, Math.max(0, pdrRaw)),
-        };
-    }
-    const pdvMax = Math.trunc(slayerMaxPdv(props));
-    const pdvRaw = pdvMax + n(props.pdv_slayer_curado) - n(props.pdv_slayer_dano_tomado);
-    const pdv = Math.min(pdvMax, Math.max(0, pdvRaw));
-    const derivedPdr = n(resolveSlayerDerivedBonuses(props).channels.pdrMaximo.total);
-    const storedPdrMax = n(props.pdr_slayer_total);
-    const pdrMax = Math.max(
-        0,
-        (storedPdrMax ||
-            n(props.pdr_slayer_total_conta) + n(props.metal_slayer_pdr_bonus) + derivedPdr) +
-            n(props.pdr_slayer_extra)
-    );
-    const pdr = Math.min(
-        pdrMax,
-        Math.max(0, pdrMax + n(props.pdr_slayer_curado) - n(props.pdr_slayer_gasto_valor))
-    );
+    const { pdvMax, pdvRaw, pdvCurrent: pdv } = breathingPdvInfo(props);
+    const { pdrMax, pdrCurrent: pdr } = breathingPdrInfo(props);
     return {
         pdvMax,
         pdvRaw,
@@ -188,7 +163,7 @@ export function recoveryOutcome({
         ...status.effects,
     };
     if (level >= 4)
-        for (const key of ['sangramento', 'hemorragia']) {
+        for (const key of ['sangramento', MASTER_BATTLE_BLEEDING, 'hemorragia']) {
             const index = active.indexOf(key);
             if (index >= 0) {
                 active.splice(index, 1);

@@ -56,14 +56,16 @@ https://github.com/SoftMissT/night-assassins-csb-automation/releases/latest/down
 
 ## Uso e macros
 
-Ao entrar no mundo como GM, o módulo sincroniza **Night Assassins Controle GM** e **Night Assassins Criar Arma** na pasta **Night Assassins** do Diretório de Macros. O compêndio **Macros Night Assassins** preserva os UUIDs usados pelos templates.
+Ao entrar no mundo como GM, o módulo sincroniza **Night Assassins Controle GM**, **Night Assassins Criar Arma** e **Night Assassins Criar Forma de Respiração** na pasta **Night Assassins** do Diretório de Macros. O compêndio **Macros Night Assassins** preserva os UUIDs usados pelos templates.
 
-- Controle GM e Criar Arma;
+- Controle GM, Criar Arma e Criar Forma de Respiração;
 - Gerenciar Ações, Status, Resistências, Descanso, Vida e Morte e Estados Avançados;
 - Teste de Atributo, Rolagem de Acerto e Rolagem de Dano;
 - Usar Forma de Respiração, Respiração da Recuperação e Marca do Caçador.
 
 **Criar Arma** salva uma arma normal no diretório de Itens ou na ficha do token selecionado. Na **Rolagem de Dano**, Slayer e NPC podem selecionar Formas de dano portadas e liberadas pelo nível de Respiração. Confirmar a rolagem desconta o PDR da ficha que rolou. Para condições e efeitos completos da técnica, use **Usar Forma de Respiração**.
+
+**Criar Forma de Respiração** abre o mesmo formulário do Controle GM. Use o token selecionado ou escolha uma ficha de destino. O Item usa o ícone da Respiração escolhida.
 
 As demais ferramentas do GM (Regeneração Oni, Dupla Alma, Interlúdio, diagnóstico, correções e armas duplicadas) não são macros soltas: ficam no botão **Ferramentas do GM**, dentro do **Controle GM**.
 

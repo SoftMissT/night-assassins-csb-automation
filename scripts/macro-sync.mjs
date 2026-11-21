@@ -3,7 +3,11 @@ import { MODULE_ID } from './constants.mjs';
 const PACK_ID = `${MODULE_ID}.night-assassins-macros`;
 const FOLDER_NAME = 'Night Assassins';
 const GM_MACRO_NAME = 'Night Assassins Controle GM';
-const WORLD_MACRO_NAMES = new Set([GM_MACRO_NAME, 'Night Assassins Criar Arma']);
+const WORLD_MACRO_NAMES = new Set([
+    GM_MACRO_NAME,
+    'Night Assassins Criar Arma',
+    'Night Assassins Criar Forma de Respiração',
+]);
 
 function macroOwnership(name) {
     const levels = CONST.DOCUMENT_OWNERSHIP_LEVELS;

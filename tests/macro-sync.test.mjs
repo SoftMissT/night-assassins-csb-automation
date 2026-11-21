@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { CANONICAL_MACRO_PACK_ID, syncCanonicalMacros } from '../scripts/macro-sync.mjs';
 
 describe('macro-sync', () => {
-    it('sincroniza Controle GM e Criar Arma como privados e preserva as demais no compêndio', async () => {
+    it('sincroniza Controle GM, Criar Arma e Criar Forma como privados', async () => {
         const created = [];
         const updated = [];
         const docs = [
@@ -24,6 +24,11 @@ describe('macro-sync', () => {
                 name: 'Night Assassins Criar Arma',
                 uuid: 'Compendium.na.criar-arma',
                 toObject: () => ({ name: 'Night Assassins Criar Arma', command: 'criar' }),
+            },
+            {
+                name: 'Night Assassins Criar Forma de Respiração',
+                uuid: 'Compendium.na.criar-forma',
+                toObject: () => ({ name: 'Night Assassins Criar Forma de Respiração', command: 'forma' }),
             },
         ];
 
@@ -51,13 +56,16 @@ describe('macro-sync', () => {
 
         const result = await syncCanonicalMacros();
 
-        assert.deepEqual(result, { created: 2, updated: 0, skipped: 1, folderId: 'folder-na' });
-        assert.equal(created.length, 2);
+        assert.deepEqual(result, { created: 3, updated: 0, skipped: 1, folderId: 'folder-na' });
+        assert.equal(created.length, 3);
         assert.equal(created[0].name, 'Night Assassins Controle GM');
         assert.equal(created[0].folder, 'folder-na');
         assert.deepEqual(created[0].ownership, { default: 0 });
         assert.equal(created[1].name, 'Night Assassins Criar Arma');
         assert.deepEqual(created[1].ownership, { default: 0 });
+        assert.equal(created[2].name, 'Night Assassins Criar Forma de Respiração');
+        assert.equal(created[2].folder, 'folder-na');
+        assert.deepEqual(created[2].ownership, { default: 0 });
         assert.equal(updated.length, 0);
     });
 

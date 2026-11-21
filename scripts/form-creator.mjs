@@ -243,10 +243,12 @@ export async function openFormCreator({ actor, actorUuid } = {}) {
     const slug = String(normalized.respiracao).normalize('NFD').replace(/[\u0300-\u036f]/gu, '')
         .toLowerCase().replace(/[^a-z0-9]+/gu, '_').replace(/^_|_$/gu, '').slice(0, 16);
     const formaId = `custom_${slug}_${Date.now().toString(36)}`;
+    const breathingIcon = breathingFormsFromCatalog(documents, normalized.respiracao)
+        .find((form) => form.img)?.img;
     const [created] = await target.createEmbeddedDocuments('Item', [{
         name: normalized.nome,
         type: 'equippableItem',
-        img: 'modules/night-assassins-csb-automation/assets/icons/items/na-Breathing_Form_icon.webp',
+        img: breathingIcon ?? `modules/${MODULE_ID}/assets/icons/items/na-Breathing_Form_icon.webp`,
         system: { template: templateId, props: buildFormProps(normalized, formaId) },
         flags: { [MODULE_ID]: { customForm: true } },
     }], { naCsbAutomation: true });

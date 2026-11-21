@@ -148,6 +148,7 @@ describe('criador de Forma — contrato de 4 níveis', () => {
             const [[type, [item]], ...after] = calls;
             assert.equal(type, 'Item');
             assert.equal(item.system.template, imported.id);
+            assert.equal(item.img, 'modules/night-assassins-csb-automation/assets/icons/breathing/resp_chamas.webp');
             assert.equal(item.system.props.tipo_manobra, 'Ação Única');
             assert.equal(item.system.props.tem_nvl1, 1);
             assert.equal(item.system.props.tem_nvl2, 0);

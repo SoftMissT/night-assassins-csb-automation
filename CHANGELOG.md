@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.7 — 2026-11-21 — Macro Criar Forma de Respiração
+
+- **Criar Forma de Respiração:** macro de GM no compêndio e sincronizada no Diretório de Macros. Formas novas usam o ícone da Respiração selecionada.
+
 ## v0.13.6 — 2026-11-21 — Fichas, variantes da mesa e Respirações
 
 - **Ficha de Slayer:** Habilidades reúne as escolhas Vanilla e Homebrew e respeita cada categoria da mesa em perfis mistos. Bônus Fixos ficam recolhidos em Combate no Slayer e no NPC. Regras da Mesa e os bônus de ação do NPC ficam na configuração do mestre.

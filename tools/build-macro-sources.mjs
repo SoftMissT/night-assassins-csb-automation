@@ -126,6 +126,12 @@ const macros = [
         icon: 'items/na_Slayer_Weapon_icon.webp',
         stylesheet: 'na-criar-arma.css',
     },
+    {
+        id: 'NAFormCreator001',
+        file: 'na-criar-forma.js',
+        name: 'Night Assassins Criar Forma de Respiração',
+        icon: 'items/na-Breathing_Form_icon.webp',
+    },
 ];
 await rm(outputDirectory, {
     recursive: true,
@@ -177,6 +183,7 @@ for (const [index, macro] of macros.entries()) {
             default: [
                 'Night Assassins Controle GM',
                 'Night Assassins Criar Arma',
+                'Night Assassins Criar Forma de Respiração',
                 'Night Assassins Diagnóstico de Erros',
                 'Night Assassins Diagnosticar Armas Duplicadas',
             ].includes(macro.name)

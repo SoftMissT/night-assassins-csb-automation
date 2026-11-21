@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { runInNewContext } from 'node:vm';
 
 import { registerSettings, SETTINGS } from '../scripts/settings.mjs';
 
@@ -224,7 +225,7 @@ describe('module distribution', () => {
         assert.deepEqual(actor.effects, []);
     });
 
-    it('inclui as 14 macros canônicas do Compêndio', async () => {
+    it('inclui as 15 macros canônicas do Compêndio', async () => {
         const files = [
             'na-roll-mode.js',
             'na-acerto-roll.js',
@@ -240,6 +241,7 @@ describe('module distribution', () => {
             'na-respiracao-recuperacao.js',
             'na-gerenciar-estados-avancados.js',
             'na-criar-arma.js',
+            'na-criar-forma.js',
         ];
 
         for (const file of files) {
@@ -282,6 +284,25 @@ describe('module distribution', () => {
         const css = await readFile(new URL('../styles/na-criar-arma.css', import.meta.url), 'utf8');
         assert.equal(creator._id, 'NACriarArma00001');
         assert.ok(creator.command.includes(`const stylesheet = ${JSON.stringify(css)}`));
+
+        const formFile = (await readdir(directory)).find((file) => file.endsWith('-na-criar-forma.json'));
+        assert.ok(formFile, 'Criar Forma deve aparecer no compêndio');
+        const form = JSON.parse(await readFile(new URL(formFile, directory), 'utf8'));
+        assert.equal(form._id, 'NAFormCreator001');
+        assert.equal(form.folder, 'NAMacroGMTool001');
+        assert.deepEqual(form.ownership, { default: 0 });
+        assert.equal(form.img, 'modules/night-assassins-csb-automation/assets/icons/items/na-Breathing_Form_icon.webp');
+        let opened = 0;
+        const automation = { active: true, api: { openFormCreator: () => { opened += 1; } } };
+        const game = { user: { isGM: true }, modules: new Map([['night-assassins-csb-automation', automation]]) };
+        let warnings = 0;
+        const ui = { notifications: { error: assert.fail, warn: () => { warnings += 1; } } };
+        await runInNewContext(form.command, { game, ui });
+        assert.equal(opened, 1);
+        game.user.isGM = false;
+        await runInNewContext(form.command, { game, ui });
+        assert.equal(opened, 1);
+        assert.equal(warnings, 1);
     });
 });
 

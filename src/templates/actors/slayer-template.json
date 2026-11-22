@@ -3169,30 +3169,6 @@
                             "type": "tab",
                             "contents": [
                                 {
-                                    "key": "slayer_vanilla_choices",
-                                    "colSpan": 1,
-                                    "rowSpan": 1,
-                                    "cssClass": "",
-                                    "role": 0,
-                                    "editRole": 0,
-                                    "permission": 0,
-                                    "tooltip": "Editar as escolhas da ficha nas categorias Vanilla.",
-                                    "visibilityFormula": "ref('na_regras_origens', 0) or ref('na_regras_habilidades', 0) or ref('na_regras_classes', 0) or ref('na_regras_metal', 0)",
-                                    "editableFormula": "",
-                                    "escapeHTML": false,
-                                    "type": "label",
-                                    "size": "full-size",
-                                    "icon": "",
-                                    "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Escolhas Vanilla</span>",
-                                    "prefix": "",
-                                    "suffix": "",
-                                    "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesProfileManager({actorUuid:entity.uuid}); return '';}%",
-                                    "altRollMessage": "",
-                                    "rollMessageToChat": false,
-                                    "altRollMessageToChat": false,
-                                    "style": "button"
-                                },
-                                {
                                     "key": "slayer_origens_vanilla",
                                     "colSpan": 1,
                                     "rowSpan": 1,
@@ -3822,7 +3798,7 @@
                                     "editRole": 0,
                                     "permission": 0,
                                     "tooltip": "",
-                                    "visibilityFormula": "(not ref('na_regras_origens', 0)) or (not ref('na_regras_habilidades', 0)) or (not ref('na_regras_classes', 0)) or (not ref('na_regras_metal', 0) and (equalText(nvl_pj, 'nvl_2')))",
+                                    "visibilityFormula": "",
                                     "editableFormula": "",
                                     "escapeHTML": false,
                                     "type": "panel",
@@ -3900,6 +3876,58 @@
                                             ]
                                         },
                                         {
+                                            "key": "na_vanilla_origin",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "",
+                                            "visibilityFormula": "ref('na_regras_origens', 0)",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "select",
+                                            "size": "full-size",
+                                            "label": "Origem:",
+                                            "defaultValue": "${''}$",
+                                            "selectedOptionType": "custom",
+                                            "options": [
+                                                {
+                                                    "key": "",
+                                                    "value": "Escolha"
+                                                },
+                                                {
+                                                    "key": "origem_aldeao",
+                                                    "value": "Aldeão"
+                                                },
+                                                {
+                                                    "key": "origem_civilizado",
+                                                    "value": "Civilizado"
+                                                },
+                                                {
+                                                    "key": "origem_criado_exterminador",
+                                                    "value": "Criado por Exterminador"
+                                                },
+                                                {
+                                                    "key": "origem_isolado",
+                                                    "value": "Isolado"
+                                                },
+                                                {
+                                                    "key": "origem_descendente",
+                                                    "value": "Descendente"
+                                                },
+                                                {
+                                                    "key": "origem_tsuguko",
+                                                    "value": "Tsuguko"
+                                                },
+                                                {
+                                                    "key": "origem_mestre_uma_coisa",
+                                                    "value": "Mestre de Uma Coisa Só"
+                                                }
+                                            ]
+                                        },
+                                        {
                                             "key": "hab_escolhida",
                                             "colSpan": 1,
                                             "rowSpan": 1,
@@ -3964,6 +3992,54 @@
                                             ]
                                         },
                                         {
+                                            "key": "na_vanilla_ability",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "",
+                                            "visibilityFormula": "ref('na_regras_habilidades', 0)",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "select",
+                                            "size": "full-size",
+                                            "label": "Habilidade Especial:",
+                                            "defaultValue": "${''}$",
+                                            "selectedOptionType": "custom",
+                                            "options": [
+                                                {
+                                                    "key": "",
+                                                    "value": "Escolha"
+                                                },
+                                                {
+                                                    "key": "hab_escolhida_olfato",
+                                                    "value": "Olfato Aguçado"
+                                                },
+                                                {
+                                                    "key": "hab_escolhida_tato",
+                                                    "value": "Tato Aguçado"
+                                                },
+                                                {
+                                                    "key": "hab_escolhida_audicao",
+                                                    "value": "Audição Aguçada"
+                                                },
+                                                {
+                                                    "key": "hab_escolhida_visao",
+                                                    "value": "Visão Aguçada"
+                                                },
+                                                {
+                                                    "key": "hab_escolhida_transformacao",
+                                                    "value": "Transformação Demoníaca"
+                                                },
+                                                {
+                                                    "key": "hab_escolhida_marechi",
+                                                    "value": "Marechi"
+                                                }
+                                            ]
+                                        },
+                                        {
                                             "key": "classe_escolhida",
                                             "colSpan": 1,
                                             "rowSpan": 1,
@@ -4004,6 +4080,50 @@
                                                 {
                                                     "key": "classe_companheiro_oni",
                                                     "value": "Companheiro Oni"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "key": "na_vanilla_class",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "",
+                                            "visibilityFormula": "ref('na_regras_classes', 0)",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "select",
+                                            "size": "full-size",
+                                            "label": "Classe:",
+                                            "defaultValue": "${''}$",
+                                            "selectedOptionType": "custom",
+                                            "options": [
+                                                {
+                                                    "key": "",
+                                                    "value": "Escolha"
+                                                },
+                                                {
+                                                    "key": "classe_mb",
+                                                    "value": "Mestre de Batalha"
+                                                },
+                                                {
+                                                    "key": "classe_usuario_de_veneno",
+                                                    "value": "Usuário de Veneno"
+                                                },
+                                                {
+                                                    "key": "classe_kakushi",
+                                                    "value": "Kakushi"
+                                                },
+                                                {
+                                                    "key": "classe_companheiro_oni",
+                                                    "value": "Companheiro de Oni"
+                                                },
+                                                {
+                                                    "key": "classe_usuario_de_duas_resp",
+                                                    "value": "Usuário de Duas Respirações"
                                                 }
                                             ]
                                         },
@@ -4078,6 +4198,58 @@
                                                     "value": "Vermelha"
                                                 }
                                             ]
+                                        },
+                                        {
+                                            "key": "na_vanilla_metal",
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "cssClass": "",
+                                            "role": 0,
+                                            "editRole": 0,
+                                            "permission": 0,
+                                            "tooltip": "",
+                                            "visibilityFormula": "ref('na_regras_metal', 0)",
+                                            "editableFormula": "",
+                                            "escapeHTML": false,
+                                            "type": "select",
+                                            "size": "full-size",
+                                            "label": "Metal da Nichirin:",
+                                            "defaultValue": "${''}$",
+                                            "selectedOptionType": "custom",
+                                            "options": [
+                                                {
+                                                    "key": "",
+                                                    "value": "Escolha"
+                                                },
+                                                {
+                                                    "key": "metal_alvorada",
+                                                    "value": "Metal da Alvorada"
+                                                },
+                                                {
+                                                    "key": "metal_despertar",
+                                                    "value": "Metal do Despertar"
+                                                },
+                                                {
+                                                    "key": "metal_entardecer",
+                                                    "value": "Metal do Entardecer"
+                                                },
+                                                {
+                                                    "key": "metal_coracao",
+                                                    "value": "Metal do Coração"
+                                                },
+                                                {
+                                                    "key": "metal_espirito",
+                                                    "value": "Metal do Espírito"
+                                                },
+                                                {
+                                                    "key": "metal_serenidade",
+                                                    "value": "Metal da Serenidade"
+                                                },
+                                                {
+                                                    "key": "metal_preto",
+                                                    "value": "Metal Preto"
+                                                }
+                                            ]
                                         }
                                     ],
                                     "flow": "grid-2",
@@ -4085,7 +4257,7 @@
                                     "verticalAlign": "top",
                                     "collapsible": true,
                                     "defaultCollapsed": false,
-                                    "title": "Escolhas Homebrew",
+                                    "title": "Escolhas do personagem",
                                     "titleStyle": "title"
                                 },
                                 {
@@ -4678,30 +4850,6 @@
                                     "escapeHTML": false,
                                     "type": "panel",
                                     "contents": [
-                                        {
-                                            "key": "slayer_rules_vanilla",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 4,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "Configurar as variantes do mundo e as escolhas Vanilla desta ficha.",
-                                            "visibilityFormula": "",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "label",
-                                            "size": "full-size",
-                                            "icon": "",
-                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Regras da Mesa</span>",
-                                            "prefix": "",
-                                            "suffix": "",
-                                            "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesTableManager({actorUuid:entity.uuid}); return '';}%",
-                                            "altRollMessage": "",
-                                            "rollMessageToChat": false,
-                                            "altRollMessageToChat": false,
-                                            "style": "button"
-                                        },
                                         {
                                             "key": "bonus_derivados_slayer_auditar",
                                             "colSpan": 1,
@@ -15750,86 +15898,6 @@
                             "showControls": false,
                             "controlsStyle": "hover",
                             "inputStyle": "text"
-                        },
-                        {
-                            "key": "na_vanilla_metal",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 4,
-                            "editRole": 4,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "false",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "na_vanilla_metal",
-                            "defaultValue": "",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
-                        },
-                        {
-                            "key": "na_vanilla_ability",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 4,
-                            "editRole": 4,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "false",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "na_vanilla_ability",
-                            "defaultValue": "",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
-                        },
-                        {
-                            "key": "na_vanilla_origin",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 4,
-                            "editRole": 4,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "false",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "na_vanilla_origin",
-                            "defaultValue": "",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
-                        },
-                        {
-                            "key": "na_vanilla_class",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 4,
-                            "editRole": 4,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "false",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "na_vanilla_class",
-                            "defaultValue": "",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
                         }
                     ]
                 }
@@ -16043,7 +16111,7 @@
                 "editable": false
             }
         },
-        "templateSystemUniqueVersion": 2720657617
+        "templateSystemUniqueVersion": 2720657619
     },
     "prototypeToken": {
         "name": "slayer_template",

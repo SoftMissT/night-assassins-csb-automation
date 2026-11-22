@@ -366,19 +366,26 @@ test('Slayer agrupa escolhas por variante sem misturar origem, habilidade, class
         assert.equal(panel?.visibilityFormula,
             "not ref('na_regras_origens', 0) and not equalText(ref('origem_dropdown', 'origem_escolha'), 'origem_escolha')");
         const homebrew = sections.find(node => node.key === 'slayer_homebrew_choices');
-        const vanilla = sections.find(node => node.key === 'slayer_vanilla_choices');
-        assert.match(vanilla.rollMessage, /openRulesProfileManager/u);
-        assert.equal(vanilla.role, 0);
-        assert.equal(homebrew.title, 'Escolhas Homebrew');
+        assert.equal(sections.some(node => node.key === 'slayer_vanilla_choices'), false, 'sem modal de escolhas na ficha');
+        assert.equal(homebrew.title, 'Escolhas do personagem');
+        assert.equal(homebrew.visibilityFormula, '');
         assert.equal(homebrew.collapsible, true);
         assert.equal(homebrew.defaultCollapsed, false);
-        assert.deepEqual(homebrew.contents.map(({ key }) => key),
-            ['origem_dropdown', 'hab_escolhida', 'classe_escolhida', 'metal_escolhido']);
-        for (const [field, group] of homebrew.contents.map((field, index) =>
-            [field, ['origens', 'habilidades', 'classes', 'metal'][index]])) {
+        assert.deepEqual(homebrew.contents.map(({ key }) => key), [
+            'origem_dropdown', 'na_vanilla_origin', 'hab_escolhida', 'na_vanilla_ability',
+            'classe_escolhida', 'na_vanilla_class', 'metal_escolhido', 'na_vanilla_metal',
+        ]);
+        for (const [homebrewKey, vanillaKey, group] of [
+            ['origem_dropdown', 'na_vanilla_origin', 'origens'], ['hab_escolhida', 'na_vanilla_ability', 'habilidades'],
+            ['classe_escolhida', 'na_vanilla_class', 'classes'], ['metal_escolhido', 'na_vanilla_metal', 'metal'],
+        ]) {
             const condition = `ref('na_regras_${group}', 0)`;
-            assert.ok(field.visibilityFormula.startsWith(`not ${condition}`));
-            assert.ok(vanilla.visibilityFormula.includes(condition));
+            const home = homebrew.contents.find(({ key }) => key === homebrewKey);
+            const vani = homebrew.contents.find(({ key }) => key === vanillaKey);
+            assert.ok(home.visibilityFormula.startsWith(`not ${condition}`));
+            assert.equal(vani.visibilityFormula, condition);
+            assert.equal(vani.type, 'select');
+            assert.equal(vani.role, 0);
         }
     }
 });
@@ -397,16 +404,21 @@ test('as fichas persistem as escolhas e flags de variantes em campos invisíveis
         'na_regras_propriedades_morote', 'na_regras_propriedades_acuidade',
         'na_regras_propriedades_concussao', 'na_regras_propriedades_manejavel',
         'na_regras_propriedades_municiada', 'na_regras_propriedades_precisao',
-        'na_vanilla_metal', 'na_vanilla_ability', 'na_vanilla_origin', 'na_vanilla_class',
     ];
+    // Slayer e NPC: as escolhas Vanilla (na_vanilla_*) saíram do armazenamento oculto e são
+    // selects visíveis na ficha. A ficha de Oni ficou fora desse escopo e mantém os campos ocultos.
+    const vanillaSlots = ['na_vanilla_metal', 'na_vanilla_ability', 'na_vanilla_origin', 'na_vanilla_class'];
 
-    assert.equal(template.system.hidden.length, 71 - ruleFields.length);
-    for (const system of [template.system, imported, ...others]) {
+    assert.equal(template.system.hidden.length, 67 - ruleFields.length);
+    for (const [system, expected] of [
+        [template.system, ruleFields], [imported, ruleFields],
+        [others[0], ruleFields], [others[1], [...ruleFields, ...vanillaSlots]],
+    ]) {
         const names = system.hidden.map(({ name }) => name);
         const storage = system.header.contents.find(node => node.key === 'na_rule_selection_storage');
         assert.equal(new Set(names).size, names.length, 'hidden precisa manter names únicos');
         assert.equal(storage?.visibilityFormula, 'false');
-        assert.deepEqual(storage.contents.map(node => node.key).sort(), [...ruleFields].sort());
+        assert.deepEqual(storage.contents.map(node => node.key).sort(), [...expected].sort());
         for (const field of storage.contents) {
             assert.ok(!names.includes(field.key), `${field.key} não pode ser sobrescrito por uma fórmula`);
             assert.equal(field.type, field.key.startsWith('na_vanilla_') ? 'textField' : 'numberField');

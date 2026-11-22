@@ -17,6 +17,7 @@ import { registerDreamPassiveEngine } from './dream-passive-service.mjs';
 import { registerCombatPassiveEngine, openBreathingPassiveManager } from './breathing-combat-passives.mjs';
 import { backfillPassiveSummaries, injectPassiveSummary, refreshPassiveSummaryForItem } from './passive-summary-service.mjs';
 import { promptTemplateSyncAfterUpdate, syncWorldTemplates } from './template-sync-service.mjs';
+import { guardVanillaChoices } from './vanilla-choice-guard.mjs';
 import {
     migrateRulesSelection,
     openRulesProfileManager,
@@ -226,6 +227,7 @@ Hooks.once('init', () => {
     registerSettings();
     registerOniProgressionEngine();
     Hooks.on('preUpdateActor', preserveVanillaSelectionsOnTemplateReload);
+    Hooks.on('preUpdateActor', guardVanillaChoices);
 });
 /**
  * Marca fichas Night Assassins com a classe de skin `.na-sheet`.

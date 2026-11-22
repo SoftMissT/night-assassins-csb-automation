@@ -144,6 +144,11 @@ const macros = [
         name: 'Night Assassins Criar Arma Especial',
         icon: 'items/na_Slayer_Weapon_icon.webp',
     },
+    {
+        id: 'NAAtualizaFicha1',
+        file: 'na-atualizar-fichas.js',
+        name: 'Night Assassins Atualizar Fichas',
+    },
 ];
 await rm(outputDirectory, {
     recursive: true,
@@ -198,6 +203,7 @@ for (const [index, macro] of macros.entries()) {
                 'Night Assassins Criar Forma de Respiração',
                 'Night Assassins Criar Item',
                 'Night Assassins Criar Arma Especial',
+                'Night Assassins Atualizar Fichas',
                 'Night Assassins Diagnóstico de Erros',
                 'Night Assassins Diagnosticar Armas Duplicadas',
             ].includes(macro.name)

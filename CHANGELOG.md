@@ -5,6 +5,7 @@
 - **Escolhas do personagem na ficha:** Slayer e NPC escolhem Origem, Habilidade Especial, Classe e Metal da Nichirin direto na ficha, na variante que o GM definiu nas Regras da Mesa. Saíram das fichas o botão/modal **Escolhas Vanilla** e o botão **Regras da Mesa** (a variante fica só nas configurações do módulo). O Metal Preto continua exigindo a origem Descendente: a escolha inválida é desfeita com aviso.
 - **Macro Atualizar Fichas:** nova macro de GM **Night Assassins Atualizar Fichas**, que leva os templates do Compêndio ao mundo e recarrega fichas e itens (a mesma ação da pergunta pós-atualização e do Controle GM).
 - **NPC:** "Escolha como Acerto" em linha própria no painel Ações e Status, sem desalinhar os pares comando → estado.
+- **Respirações em Vanilla:** saem os extras que o livro base não tem (Véus da Raposa, Corrente do Vendaval, Forja Viva, extras de Pedra/Névoa/Neve e a Troca Equivalente Homebrew), mesmo com o toggle ligado. A linha ACÚMULOS mostra só Fogo Fátuo, Brasas e Cicatrizes.
 
 ## v0.15.0 - 2026-11-22 - Fichas atualizadas, acúmulos e desempenho
 

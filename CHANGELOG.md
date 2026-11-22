@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.15.0 - 2026-11-22 - Fichas atualizadas, acúmulos e desempenho
+
+- **Atualizar fichas:** depois de atualizar o módulo, o GM recebe uma pergunta para levar os templates novos do Compêndio ao mundo e recarregar as fichas e os itens que os usam. Templates importados antes com outro id são casados pelo nome. A mesma ação fica no Controle GM, em **Atualizar fichas (templates do módulo)**. Os valores das fichas são mantidos.
+- **Acúmulos de passiva:** Slayer e NPC mostram na aba Combate uma linha **ACÚMULOS** com Fogo Fátuo, Brasas Ardentes recebidas, Cicatrizes e dano pendente do Vento, Corrente do Vendaval, BPM do Som, Véus da Raposa e Forja do Metal. Os contadores das Respirações que o personagem usa aparecem mesmo zerados. O resumo é gravado junto com o acúmulo, sem gravação extra.
+- **Bônus Fixos:** título de seção e painel aberto logo abaixo do Combate, acima de Ações e das Formas de Respiração, no Slayer e no NPC.
+- **Ações e Status:** cada linha é um par comando → estado, com os comandos na mesma largura e o estado alinhado à esquerda.
+- **Fôlego:** some da ficha de Slayer quando Respirações está em Vanilla nas Regras da Mesa.
+- **Chat de dano:** uma linha por entrada com os tipos e o total; saíram a divisão do mesmo valor por tipo e as caixas de rolagem repetidas. Sem alvo, a mensagem diz que nenhuma ficha foi atualizada.
+- **Chat de Forma:** cartão curto com nome, Respiração, tipo, nível e custo, mais dano, status e buff quando houver, na cor da Respiração. A descrição completa da Forma (com tabelas) não vai mais para o chat. Quando a Forma causa dano, o cartão sai junto, na mesma mensagem do dano; sem dano (erro ou cancelado), sai sozinho.
+- **Armas:** armas criadas antes do resumo da habilidade não geram mais o erro `item.arma_habilidade_resumo` a cada render da ficha.
+- **Criar Arma Especial:** o criador reaproveita o template que já está no mundo em vez de importar uma cópia nova a cada uso.
+- **Desempenho:** o registro interno de Vida e Morte depois de um dano não redesenha mais a ficha.
+- **Fichas existentes:** templates de Slayer e NPC sobem de versão; aceite a atualização das fichas ao entrar no mundo.
+
 ## v0.14.0 - 2026-11-22 - Ficha de NPC, Itens e Armas Especiais
 
 - **Criar Item:** nova macro GM **Night Assassins Criar Item** e ferramenta **Criar Item** no Controle GM. O formulário cria consumíveis, Haori/Armadura, Veneno de Glicínia, Talismãs, Ferramentas e itens diversos na ficha escolhida.

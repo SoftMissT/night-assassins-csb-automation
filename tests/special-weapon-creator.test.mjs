@@ -94,3 +94,22 @@ describe('criador de Arma Especial', () => {
         }
     });
 });
+
+test('Criar Arma Especial reaproveita a cópia do template no mundo em vez de importar outra', async () => {
+    const { resolveTemplateId } = await import('../scripts/item-creator.mjs');
+    let imports = 0;
+    const previousGame = globalThis.game;
+    // Cópia real do QA: o Foundry trocou o id inválido por um aleatório, e o CSB copiou-o para uniqueId.
+    const copy = { id: 'DQ8NmuBieGMjh4BH', name: 'NA Arma Especial - Slayer', type: '_equippableItemTemplate', system: { uniqueId: 'DQ8NmuBieGMjh4BH' } };
+    globalThis.game = {
+        user: { isGM: true },
+        items: Object.assign([copy], { get: () => undefined, importFromCompendium: async () => { imports += 1; return { id: 'novo' }; } }),
+    };
+    try {
+        const id = await resolveTemplateId({ items: [] }, {}, 'NASpecialWeaponTpl00001');
+        assert.equal(id, 'DQ8NmuBieGMjh4BH');
+        assert.equal(imports, 0, 'não pode importar outra cópia do template');
+    } finally {
+        globalThis.game = previousGame;
+    }
+});

@@ -34,14 +34,16 @@ describe('chat de dano', () => {
         assert.equal(splitAmongTargets(-5, 2, 0), 0);
     });
 
-    it('mostra a divisão por tipo de dano com a cor de cada tipo', () => {
+    it('uma linha por entrada, com os tipos coloridos e sem rachar o valor por tipo', () => {
         const flavor = buildDamageFlavor({
             nome: 'Golpe misto', critical: false, pdrGasto: 0, reasons: [],
             components: [{ label: 'Golpe misto', types: ['cortante', 'fogo'], subtotal: 9 }],
             finalDamage: 9,
         });
-        assert.match(flavor, /color:#ff5b6e[^>]*>Cortante<\/span>: <strong>5<\/strong>/);
-        assert.match(flavor, /color:#ff7a2f[^>]*>Fogo<\/span>: <strong>4<\/strong>/);
+        assert.match(flavor, /color:#ff5b6e[^>]*>Cortante<\/span> · <span[^>]*color:#ff7a2f[^>]*>Fogo<\/span>: <strong>9<\/strong>/);
+        assert.doesNotMatch(flavor, /<strong>5<\/strong>|<strong>4<\/strong>/, 'sem divisão 5/4 do mesmo dano');
+        assert.match(flavor, /class="na-damage-chat"/);
+        assert.match(flavor, /Sem alvo marcado: nenhuma ficha foi atualizada\./);
     });
 
     it('agrupa o chat por respiração com a cor da respiração', () => {

@@ -292,3 +292,13 @@ test('reconcileActor converte cura a 0 PDV em revive com Sem Reação e Desequil
     assert.ok(status.active.includes('desequilibrado'));
     assert.equal(status.exhaustion, 1);
 });
+
+test('reconcileActor grava o snapshot de dano comum sem re-renderizar a ficha', async () => {
+    stubGlobals();
+    const { actor, updates } = makeActor({ pdv_slayer_dano_tomado: 5 });
+    await reconcileActor(actor);
+    assert.equal(updates.length, 1, 'dano comum de pé gera só a gravação do snapshot');
+    const [patch, options] = updates[0];
+    assert.equal(JSON.parse(patch['system.props.vida_morte_slayer_dados']).lastDamage, 5);
+    assert.equal(options.render, false, 'snapshot sem mudança visível não pode re-renderizar a ficha');
+});

@@ -1873,27 +1873,23 @@ export function buildDamageFlavor({ nome, breathing = '', critical, pdrGasto, re
         ? `<div style="font-weight:800;letter-spacing:.06em;color:${BREATHING_CHAT_COLORS[breathing] ?? '#d9c7a3'}">${escape(breathing)}</div>`
         : '';
     const labels = (types) => (types ?? []).map(damageTypeLabel).join(' · ') || 'Sem tipo';
+    // Uma linha por entrada. A antiga divisão por tipo (5 → Cortante 3 · Perfurante 2)
+    // só rachava o mesmo número e foi retirada a pedido do operador (2026-11-22).
     const componentLines = components
-        .map((component) => {
-            const types = component.types ?? [];
-            const perType = types.length > 1
-                ? `<div style="padding-left:12px;font-size:12px;">${types
-                      .map((type, index) => `${damageTypeLabel(type)}: <strong>${splitAmongTargets(component.subtotal, types.length, index)}</strong>`)
-                      .join(' · ')}</div>`
-                : '';
-            return `<div><strong>${component.label}</strong> ${labels(types)}: <strong>${component.subtotal}</strong></div>${perType}`;
-        })
+        .map((component) => `<div><strong>${component.label}</strong> ${labels(component.types)}: <strong>${component.subtotal}</strong></div>`)
         .join('');
     const targetLine = appliedTargets.length
         ? `<div>Aplicado em: ${appliedTargets.map((target) => `${target.name} (${Math.max(0, target.amount - target.wound)}${target.wound ? ` de dano + ${target.wound} de Ferida` : ''})`).join(', ')}</div>`
         : damageRequests.length
-          ? '<div>Alvo solicitado, mas a ficha não foi atualizada</div>'
-          : '<div>Nenhum alvo ficha não atualizada</div>';
+          ? '<div>Alvo solicitado, mas a ficha não foi atualizada.</div>'
+          : '<div>Sem alvo marcado: nenhuma ficha foi atualizada.</div>';
     const critBanner = critical
         ? '<div style="font-size:22px;font-weight:900;letter-spacing:.12em;color:#ffe08a;text-shadow:0 0 14px #ff7a00;margin:6px 0;">⚔ CRÍTICO ⚔</div>'
         : '';
     const totalStyle = critical ? 'font-size:18px;font-weight:900;color:#ffe08a;' : '';
-    return `${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${finalDamage}</strong></div>${targetLine}`;
+    // `na-damage-chat`: o CSS do módulo esconde as caixas de rolagem do core nesta mensagem
+    // (o cartão já mostra cada entrada e o total; com dano fixo elas só repetiam o número).
+    return `<div class="na-damage-chat">${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${finalDamage}</strong></div>${targetLine}</div>`;
 }
 
 /**

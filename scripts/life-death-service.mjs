@@ -526,7 +526,14 @@ export async function reconcileActor(actor, options = {}) {
             wound > 0;
 
         if (!state.dead && changedSnapshot && hasCombatState) {
-            await actor.update(lifePatch(state), { naCsbAutomation: true, naLifeDeath: true });
+            // Snapshot de contabilidade (lastPdv/lastDamage/lastWound): o que a ficha
+            // mostra já foi gravado acima. Sem `render: false`, cada dano editado
+            // re-renderizava a ficha inteira uma segunda vez (QA 2026-11-22: ~300 ms).
+            await actor.update(lifePatch(state), {
+                naCsbAutomation: true,
+                naLifeDeath: true,
+                render: false,
+            });
         }
     } finally {
         resolving.delete(actor.id);

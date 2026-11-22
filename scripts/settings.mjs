@@ -9,6 +9,7 @@ export const SETTINGS = Object.freeze({
     rulesProfile: 'rulesProfile',
     criticalFloor: 'stoneCriticalFloor',
     stoneCriticalFloor: 'stoneCriticalFloor',
+    templateSyncVersion: 'templateSyncVersion',
 });
 
 export function registerSettings() {
@@ -34,6 +35,14 @@ export function registerSettings() {
         type: String,
         default: '',
         requiresReload: true,
+    });
+
+    // Última versão do módulo cujos templates o GM já levou (ou recusou levar) ao mundo.
+    game.settings.register(MODULE_ID, SETTINGS.templateSyncVersion, {
+        scope: 'world',
+        config: false,
+        type: String,
+        default: '',
     });
 
     // Mantém a chave antiga registrada, mas oculta, até migrar mundos existentes.

@@ -92,11 +92,19 @@ async function resolveActor(actorUuid) {
     return document?.actor ?? document ?? controlledActor ?? globalThis.game?.user?.character ?? null;
 }
 
+// `NASpecialWeaponTpl00001` tem 23 caracteres: o Foundry recusa o keepId (exige 16) e o
+// CSB grava o id aleatório também em `uniqueId`. Sem casar pelo nome, cada uso de Criar
+// Arma Especial importava outra cópia do template (QA 2026-11-22: 4 cópias no mundo).
+// ponytail: casamento por nome; trocar o id por um de 16 caracteres exige migrar as armas já criadas.
+const TEMPLATE_NAMES = Object.freeze({ [SPECIAL_TEMPLATE_ID]: 'NA Arma Especial - Slayer' });
+
 const isTemplate = (item, templateKey) =>
     item?.type === '_equippableItemTemplate' &&
-    (item.id === templateKey || item.system?.uniqueId === templateKey);
+    (item.id === templateKey ||
+        item.system?.uniqueId === templateKey ||
+        (Boolean(TEMPLATE_NAMES[templateKey]) && item.name === TEMPLATE_NAMES[templateKey]));
 
-async function resolveTemplateId(actor, pack, templateKey = TEMPLATE_ID) {
+export async function resolveTemplateId(actor, pack, templateKey = TEMPLATE_ID) {
     const owned = [...(actor.items ?? [])].find((item) => isTemplate(item, templateKey));
     if (owned) return owned.id;
     const world =

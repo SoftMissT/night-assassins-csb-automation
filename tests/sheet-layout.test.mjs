@@ -19,10 +19,12 @@ describe('Layout das fichas de ator', () => {
         );
         const combat = tabs[0].contents;
         assert.ok(!combat.some(isSpacer), 'sem painéis espaçadores vazios');
-        const fixed = combat.at(-1);
-        assert.deepEqual(combat.filter((node) => node.collapsible), [fixed]);
-        assert.equal(fixed.title, 'Bônus Fixos');
-        assert.equal(fixed.defaultCollapsed, true);
+        // Pedido do operador (2026-11-22): Bônus Fixos visível, com título, logo após o Combate e acima das Respirações.
+        const combatAt = combat.findIndex((node) => node.key === 'combat_slayer_panel');
+        assert.match(combat[combatAt + 1].value, /Bônus Fixos/i, 'título de seção do Bônus Fixos');
+        const fixed = combat[combatAt + 2];
+        assert.equal(fixed.collapsible, false, 'Bônus Fixos aberto, sem seta');
+        assert.ok(combat.indexOf(fixed) < combat.findIndex((node) => node.key === 'skills_slayer_respiracoes'));
         assert.equal(fixed.role, 0);
         assert.ok(keys([fixed]).includes('bonus_acerto_slayer'));
         assert.ok(keys([combat[1]]).includes('bonus_atr_vit_valor_temp'), 'temporários na linha dos atributos');
@@ -54,9 +56,9 @@ describe('Layout das fichas de ator', () => {
         }
         assert.ok(keys(skills.contents).includes('armas_proficientes'));
         const flameDisplay = manage.find((node) => node.key === 'resp_chamas_display');
-        assert.ok(flameDisplay, 'Fogo Fátuo visível na aba de combate');
-        assert.equal(flameDisplay.role, 0, 'Fogo Fátuo visível para jogadores');
-        assert.match(flameDisplay.value, /resp_chamas_resumo/);
+        assert.ok(flameDisplay, 'acúmulos (inclui o Fogo Fátuo) visíveis na aba de combate');
+        assert.equal(flameDisplay.role, 0, 'acúmulos visíveis para jogadores');
+        assert.match(flameDisplay.value, /ref\('resp_acumulos_resumo', 'Nenhum acúmulo ativo'\)/);
         assert.equal(tabs[1].contents[1].contents.length, 18, 'as 18 perícias ficam na aba própria');
     });
 
@@ -95,9 +97,11 @@ describe('Layout das fichas de ator', () => {
         const order = ficha.map((node) => node.key).filter(Boolean);
         assert.ok(order.indexOf('npc_combat') > -1);
         assert.ok(order.indexOf('npc_combat') < order.indexOf('inventario_npc_armas'));
-        const fixed = ficha.at(-1);
-        assert.equal(fixed.title, 'Bônus Fixos');
-        assert.equal(fixed.defaultCollapsed, true);
+        const npcCombatAt = ficha.findIndex((node) => node.key === 'npc_combat');
+        assert.match(ficha[npcCombatAt + 1].value, /Bônus Fixos/i, 'título de seção do Bônus Fixos');
+        const fixed = ficha[npcCombatAt + 2];
+        assert.equal(fixed.collapsible, false, 'Bônus Fixos aberto, sem seta');
+        assert.ok(ficha.indexOf(fixed) < ficha.findIndex((node) => node.key === 'npc_respiracoes'));
         assert.equal(fixed.role, 0);
         assert.ok(keys([fixed]).includes('npc_bonus_acerto'));
         const config = body[0].contents.find(node => node.key === 'npc_config_tab').contents;
@@ -128,4 +132,17 @@ describe('Layout das fichas de ator', () => {
             );
         }
     });
+});
+
+it('Slayer: Fôlego some quando Respirações está em Vanilla (regra só do Homebrew)', async () => {
+    const template = await read('slayer');
+    const gated = [];
+    (function walk(node) {
+        if (!node || typeof node !== 'object') return;
+        if (node.type && (node.key === 'folego_slayer_atual' || /FÔLEGO: \$\{folego_slayer_maximo\}\$/.test(String(node.value ?? ''))))
+            gated.push(node.visibilityFormula);
+        Object.values(node).forEach(walk);
+    })(template);
+    assert.equal(gated.length, 2);
+    for (const formula of gated) assert.match(formula, /not ref\('na_regras_respiracao', 0\)/);
 });

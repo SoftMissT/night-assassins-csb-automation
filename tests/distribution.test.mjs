@@ -323,6 +323,7 @@ describe('module settings', () => {
             registrations.map(({ key }) => key),
             [
                 SETTINGS.rulesSelection,
+                SETTINGS.templateSyncVersion,
                 SETTINGS.rulesProfile,
                 SETTINGS.enableSheetAutomation,
                 SETTINGS.enableDamageRelay,
@@ -334,8 +335,9 @@ describe('module settings', () => {
         assert.ok(registrations.every(({ config }) => config.scope === 'world'));
         assert.equal(registrations[0].config.config, false);
         assert.equal(registrations[0].config.requiresReload, true);
-        assert.equal(registrations[1].config.config, false);
-        assert.ok(registrations.slice(2, -1).every(({ config }) => config.config));
+        assert.equal(registrations[1].config.config, false, 'versão sincronizada dos templates fica oculta');
+        assert.equal(registrations[2].config.config, false);
+        assert.ok(registrations.slice(3, -1).every(({ config }) => config.config));
         assert.deepEqual(registrations.at(-1).config, {
             scope: 'world',
             config: false,

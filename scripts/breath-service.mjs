@@ -1091,35 +1091,63 @@ async function collectCuratedChoices(actor, form, level, props) {
     return {};
 }
 
-async function postBreathChat({ actor, form, selected, damageRoll }) {
-    const richText = form.id.startsWith('custom_') ? escapeAttr : (value) => value;
-    const danoLine = damageRoll
-        ? `<div style="margin-top:6px;">Dano rolado: <strong>${damageRoll.total}</strong> <button class="na-breath-damage-die" style="border:none;background:none;cursor:pointer;color:#28D7FF;font-size:11px;">(ver dados)</button></div>`
-        : '';
-    const statusLine = selected.status
-        ? `<div style="color:#FF9100;">Status: ${richText(selected.status)}</div>`
-        : '';
-    const buffLine = selected.buff
-        ? `<div style="color:#2EFF7A;">Buff (self): ${richText(selected.buff)}</div>`
-        : '';
-    const efeitoLine = selected.efeito
-        ? `<div style="font-size:12px;color:#aaa;margin-top:4px;">${richText(selected.efeito)}</div>`
-        : '';
+const BREATH_CHAT_COLORS = Object.freeze({
+    Água: '#6fd8ff', Chamas: '#ff7a2f', Eclipse: '#b15cff', Metal: '#d9d24a', Neve: '#a9e6ff',
+    Névoa: '#9b8cff', Pedra: '#c2a25c', Raposa: '#ffb35c', Som: '#ffcf6b', Sonhos: '#c58cff', Vento: '#8fd14f',
+});
 
-    const flavor = `
-    <div class="na-breath-chat" style="border-left:3px solid #28D7FF;padding:8px 12px;">
-      <div style="font-size:14px;">
-        <strong>${escapeAttr(form.nome)}</strong>
-        ${form.jp ? `<span style="font-size:11px;color:#888;"> ${escapeAttr(form.jp)}</span>` : ''}
-      </div>
-      <div style="font-size:12px;color:#888;">${escapeAttr(form.respiracao)} · ${escapeAttr(form.tipo)} · Nível ${selected.level}</div>
-      <div style="margin-top:4px;">Custo: <strong>${selected.custo} PDR${selected.pdv ? ` + ${selected.pdv} PDV` : ''}</strong></div>
-      ${danoLine}
-      ${statusLine}
-      ${buffLine}
-      ${efeitoLine}
-    </div>
-  `;
+/** Texto curto e sem HTML para status/buff no chat (a descrição completa fica na Forma). */
+function chatSnippet(value, max = 140) {
+    const text = String(value ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+}
+
+/**
+ * Cartão de uso de Forma: só o que a mesa precisa (nome, Respiração, nível, custo, dano,
+ * status e buff curtos). A descrição inteira com tabela saiu do chat (pedido do operador, 2026-11-22).
+ */
+export function buildBreathChatFlavor({ form, selected, damageTotal = null }) {
+    const color = BREATH_CHAT_COLORS[form.respiracao] ?? '#28D7FF';
+    const cost = `${selected.custo} PDR${selected.pdv ? ` + ${selected.pdv} PDV` : ''}`;
+    const rows = [
+        damageTotal !== null && damageTotal !== undefined
+            ? `<div class="na-breath-chat-row"><span>Dano</span><strong>${damageTotal}</strong></div>` : '',
+        selected.status ? `<div class="na-breath-chat-row"><span>Status</span>${escapeAttr(chatSnippet(selected.status))}</div>` : '',
+        selected.buff ? `<div class="na-breath-chat-row"><span>Buff</span>${escapeAttr(chatSnippet(selected.buff))}</div>` : '',
+    ].join('');
+    return `<div class="na-breath-chat" style="--na-breath-color:${color};">
+      <div class="na-breath-chat-title"><strong>${escapeAttr(form.nome)}</strong>${form.jp ? ` <em>${escapeAttr(form.jp)}</em>` : ''}</div>
+      <div class="na-breath-chat-meta">${escapeAttr(form.respiracao)} · ${escapeAttr(form.tipo)} · Nível ${selected.level} · <strong>−${cost}</strong></div>
+      ${rows}
+    </div>`;
+}
+
+/**
+ * Mensagem de dano gerada por este uso de Forma: mesmo ator, depois da mensagem `afterId`
+ * (a última do chat quando a Forma começou; id, não relógio, por causa de clientes remotos)
+ * e ainda sem cartão de Forma. Pura para teste.
+ */
+export function pickDamageMessageForForm(messages = [], actorId, afterId) {
+    const list = [...messages];
+    const start = afterId ? list.findIndex((message) => message.id === afterId) + 1 : 0;
+    return list.slice(start).reverse().find((message) =>
+        message.speaker?.actor === actorId &&
+        /class="na-damage-chat"/.test(message.flavor ?? '') &&
+        !/class="na-breath-chat"/.test(message.flavor ?? '')
+    ) ?? null;
+}
+
+async function postBreathChat({ actor, form, selected, damageRoll, since = null }) {
+    const flavor = buildBreathChatFlavor({ form, selected, damageTotal: damageRoll?.total ?? null });
+    // Forma com dano: o cartão entra na própria mensagem de dano, numa mensagem só (pedido do
+    // operador, 2026-11-22). Sem dano (errou/cancelou), o cartão sai sozinho como antes.
+    if (since !== null && !damageRoll) {
+        const damageMessage = pickDamageMessageForForm(game.messages?.contents ?? [], actor.id, since);
+        if (damageMessage?.isOwner) {
+            await damageMessage.update({ flavor: `${flavor}${damageMessage.flavor}` });
+            return;
+        }
+    }
 
     const chatData = {
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -1748,6 +1776,8 @@ export async function useBreathForm({ itemUuid, actorUuid, variationId } = {}) {
 }
 
 async function executeBreathForm(actor, item, form, secondary, getUse, handlesPosture = false) {
+    // Última mensagem antes deste uso: o dano que vier depois recebe o cartão da Forma.
+    const chatSince = game.messages?.contents?.at(-1)?.id ?? '';
     const props = actor.system?.props ?? {};
     const postureTurn = handlesPosture ? flameTurnKey(game.combat) : null;
     const recheckSecondary = secondary ? () => {
@@ -1792,7 +1822,7 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
 
     if (form.id === 'chamas_01') {
         const selected = form.levels.find((level) => level.level <= breathLevel) ?? form.levels[0];
-        await postBreathChat({
+        await postBreathChat({ since: chatSince,
             actor,
             form,
             selected: { ...selected, custo: 0 },
@@ -2070,7 +2100,7 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
         // Névoa sob o Luar: o custo de DECLARAÇÃO (2 PDR) já foi cobrado acima,
         // mesmo com o teste de DEX falho. A Forma não entra em funcionamento —
         // sem SAB nos ataques, sem cadeia, sem Colapso e nenhum dano é criado.
-        await postBreathChat({
+        await postBreathChat({ since: chatSince,
             actor,
             form,
             selected: { ...selected, ...costForChat },
@@ -2122,7 +2152,7 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
         costForChat.pdv = (finalPayment?.cost.pdv ?? 0) + (finalPostureUse?.extraPdv ?? 0);
         if (hitResult.hits < 1) {
             await clearResolvedTechniqueQueue(actor, form.id);
-            await postBreathChat({
+            await postBreathChat({ since: chatSince,
                 actor,
                 form,
                 selected: { ...selected, ...costForChat },
@@ -2161,7 +2191,7 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
                 });
         }
         await clearResolvedTechniqueQueue(actor, form.id);
-        await postBreathChat({
+        await postBreathChat({ since: chatSince,
             actor,
             form,
             selected: { ...selected, ...costForChat },
@@ -2184,7 +2214,7 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
     const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
     if (damageRoll && game.dice3d?.showForRoll)
         await game.dice3d.showForRoll(damageRoll, game.user, true);
-    await postBreathChat({ actor, form, selected: { ...selected, ...costForChat }, damageRoll });
+    await postBreathChat({ since: chatSince, actor, form, selected: { ...selected, ...costForChat }, damageRoll });
     return { ok: true };
 }
 

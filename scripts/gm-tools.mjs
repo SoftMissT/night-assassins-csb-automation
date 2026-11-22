@@ -107,6 +107,14 @@ export const GM_TOOLS = Object.freeze([
         run: manager('openFormCreator'),
     },
     {
+        key: 'sync-templates',
+        group: 'mundo',
+        icon: 'fa-arrows-rotate',
+        label: 'Atualizar fichas (templates do módulo)',
+        api: 'syncWorldTemplates',
+        run: async (api) => api.syncWorldTemplates({ confirm: true }),
+    },
+    {
         key: 'create-generic-item',
         group: 'mundo',
         icon: 'fa-bag-shopping',

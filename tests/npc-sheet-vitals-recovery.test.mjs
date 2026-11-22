@@ -84,7 +84,8 @@ describe('ficha de NPC: layout', () => {
         assert.equal(tabs.contents[2].role, 0);
         assert.equal(tabs.contents[3].role, 4);
         assert.deepEqual(tabs.contents[4].contents.map((node) => node.key), ['npc_notas']);
-        assert.deepEqual(all.filter((node) => node.collapsible).map((node) => node.title), ['Bônus Fixos']);
+        // Bônus Fixos fica aberto, com título de seção (pedido do operador, 2026-11-22).
+        assert.deepEqual(all.filter((node) => node.collapsible).map((node) => node.title), []);
         const ficha = new Set(components(tabs.contents[0]).map((node) => node.key));
         for (const key of ['npc_pdv_dano', 'npc_pdv_curado', 'npc_pdr_gasto_valor', 'npc_pdr_recuperado'])
             assert.ok(ficha.has(key), `${key} editável na aba Ficha`);

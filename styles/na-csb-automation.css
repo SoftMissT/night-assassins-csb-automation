@@ -3653,3 +3653,120 @@
     font-variant-numeric: tabular-nums;
     color: var(--na-item-accent, var(--na-gold));
 }
+
+/* =============================================================================
+   Ações e Status (Slayer e NPC) — coluna de comandos | coluna de estado.
+   Antes: grid de 2 colunas centralizado, botões de larguras diferentes e
+   valores soltos no meio do painel (QA 2026-11-22). Agora cada linha é um par
+   comando → estado, alinhado à esquerda, como o mockup "Estados".
+   ============================================================================= */
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) > .grid.grid-2col {
+    display: grid;
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+    gap: 4px 10px;
+    align-items: stretch;
+    justify-items: stretch;
+    padding: 6px 8px;
+}
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) > .grid.grid-2col > .custom-system-component-root {
+    min-width: 0;
+    margin: 0;
+}
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) > .grid.grid-2col > .grid-span-2 {
+    grid-column: 1 / -1;
+}
+/* Comando: largura cheia, texto à esquerda, faixa de acento. */
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) a.button.custom-system-label-root {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    min-height: 30px;
+    margin: 0;
+    padding: 4px 10px;
+    text-align: left;
+    border: 1px solid color-mix(in srgb, var(--na-red) 35%, transparent);
+    border-left: 3px solid var(--na-red);
+    border-radius: 4px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--na-red) 16%, transparent), rgb(10 8 14 / 55%));
+    transition: border-color 120ms ease, background-color 120ms ease;
+}
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) a.button.custom-system-label-root:hover {
+    border-color: var(--na-red);
+    background-color: color-mix(in srgb, var(--na-red) 24%, transparent);
+}
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) a.button.custom-system-label-root {
+    overflow: hidden;
+}
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) a.button.custom-system-label-root * {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+/* Todo comando tem a largura da coluna de comandos, inclusive Descanso (coluna 2) e Respiração (2 colunas). */
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) > .grid.grid-2col > .custom-system-component-root:has(a.button) {
+    justify-self: start;
+    width: min(100%, 260px);
+}
+/* Estado: linha escura baixa ocupando a coluna, valor à esquerda.
+   DOM do CSB: div.custom-system-component-root > span.custom-system-label-root (ambos flex centralizado). */
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) > .grid.grid-2col > .custom-system-component-root:not(:has(a.button)) {
+    justify-content: stretch;
+}
+.na-sheet :is(.acoes_slayer_panel, .npc_acoes_panel) > .grid.grid-2col > .custom-system-component-root:not(:has(a.button)) > span.custom-system-label-root {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    min-height: 30px;
+    padding: 4px 10px;
+    text-align: left;
+    border: 1px solid rgb(255 255 255 / 6%);
+    border-radius: 4px;
+    background: rgb(255 255 255 / 3%);
+}
+
+/* =============================================================================
+   Chat do módulo (2026-11-22)
+   - Dano: o cartão já traz cada entrada e o total; as caixas de rolagem do core
+     só repetiam o número (4 caixas "5" numa Katana em Nitoryu). O Dice So Nice
+     continua animando, porque as rolagens seguem na mensagem.
+   - Forma: descrição completa recolhida em <details>, com cor legível no papel.
+   ============================================================================= */
+.chat-message:has(.na-damage-chat) .message-content .dice-roll {
+    display: none;
+}
+.na-breath-chat {
+    border-left: 4px solid var(--na-breath-color, #28d7ff);
+    padding: 4px 8px 4px 10px;
+    color: inherit;
+}
+.na-breath-chat-title {
+    font-size: 14px;
+    line-height: 1.25;
+}
+.na-breath-chat-title strong {
+    color: color-mix(in srgb, var(--na-breath-color, #28d7ff) 70%, currentColor);
+}
+.na-breath-chat-title em {
+    font-size: 11px;
+    opacity: 0.7;
+}
+.na-breath-chat-meta {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-bottom: 2px;
+}
+.na-breath-chat-row {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    font-size: 12px;
+    margin-top: 2px;
+}
+.na-breath-chat-row > span {
+    min-width: 44px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 10px;
+    opacity: 0.75;
+}

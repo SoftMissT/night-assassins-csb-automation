@@ -15,6 +15,8 @@ import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { openNpcVitals } from './npc-vitals-service.mjs';
 import { registerDreamPassiveEngine } from './dream-passive-service.mjs';
 import { registerCombatPassiveEngine, openBreathingPassiveManager } from './breathing-combat-passives.mjs';
+import { backfillPassiveSummaries, injectPassiveSummary, refreshPassiveSummaryForItem } from './passive-summary-service.mjs';
+import { promptTemplateSyncAfterUpdate, syncWorldTemplates } from './template-sync-service.mjs';
 import {
     migrateRulesSelection,
     openRulesProfileManager,
@@ -290,6 +292,12 @@ Hooks.once('ready', async () => {
     registerRecoveryBreathingEngine();
     registerDreamPassiveEngine();
     registerCombatPassiveEngine();
+    Hooks.on('preUpdateActor', injectPassiveSummary);
+    for (const hook of ['createItem', 'deleteItem'])
+        Hooks.on(hook, (item, _options, userId) => {
+            if (userId !== game.user.id) return; // só quem mexeu grava o resumo
+            void refreshPassiveSummaryForItem(item).catch(error => console.warn(`[${MODULE_ID}] Acúmulos`, error.message));
+        });
     Hooks.on('createActor', actor => void syncSheetRulesProfile(actor).catch(error => ui.notifications.error(error.message)));
     registerCombatManeuverEngine();
     registerRestEngine();
@@ -352,6 +360,11 @@ Hooks.once('ready', async () => {
                 try { await syncSheetRulesProfile(actor); }
                 catch (error) { console.warn(`[${MODULE_ID}] Perfil da ficha não sincronizado`, actor?.id, error.message); }
             }
+            try { await backfillPassiveSummaries([...(game.actors ?? [])].filter(actor => ['npc', 'slayer'].includes(actorKind(actor)))); }
+            catch (error) { console.warn(`[${MODULE_ID}] Resumo de acúmulos não recalculado`, error.message); }
+            // Sem await: o diálogo de confirmação não pode travar o resto do `ready`.
+            void promptTemplateSyncAfterUpdate()
+                .catch(error => ui.notifications.error(`Atualização de templates falhou: ${error.message}`));
         }
         void syncCanonicalMacros()
             .then(({ created, updated }) => {
@@ -367,6 +380,7 @@ Hooks.once('ready', async () => {
     const module = game.modules.get(MODULE_ID);
     if (module) {
         module.api = {
+            syncWorldTemplates,
             rollTest,
             rollHit,
             rollDamage: rollDamagePublic,

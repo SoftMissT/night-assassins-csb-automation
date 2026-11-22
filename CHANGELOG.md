@@ -1,9 +1,14 @@
 # Changelog
 
+## Não publicado - 2026-11-22 - Escolhas do personagem na ficha
+
+- **Escolhas do personagem na ficha:** Slayer e NPC escolhem Origem, Habilidade Especial, Classe e Metal da Nichirin direto na ficha, na variante que o GM definiu nas Regras da Mesa. Saíram das fichas o botão/modal **Escolhas Vanilla** e o botão **Regras da Mesa** (a variante fica só nas configurações do módulo). O Metal Preto continua exigindo a origem Descendente: a escolha inválida é desfeita com aviso.
+- **Macro Atualizar Fichas:** nova macro de GM **Night Assassins Atualizar Fichas**, que leva os templates do Compêndio ao mundo e recarrega fichas e itens (a mesma ação da pergunta pós-atualização e do Controle GM).
+- **NPC:** "Escolha como Acerto" em linha própria no painel Ações e Status, sem desalinhar os pares comando → estado.
+
 ## v0.15.0 - 2026-11-22 - Fichas atualizadas, acúmulos e desempenho
 
-- **Atualizar fichas:** depois de atualizar o módulo, o GM recebe uma pergunta para levar os templates novos do Compêndio ao mundo e recarregar as fichas e os itens que os usam. Templates importados antes com outro id são casados pelo nome. A mesma ação fica na macro **Night Assassins Atualizar Fichas** e no Controle GM. Os valores das fichas são mantidos.
-- **Escolhas do personagem na ficha:** Slayer e NPC escolhem Origem, Habilidade Especial, Classe e Metal da Nichirin direto na ficha, na variante que o GM definiu nas Regras da Mesa. Saíram das fichas o botão/modal **Escolhas Vanilla** e o botão **Regras da Mesa** (a variante fica só nas configurações do módulo). O Metal Preto continua exigindo a origem Descendente: a escolha inválida é desfeita com aviso.
+- **Atualizar fichas:** depois de atualizar o módulo, o GM recebe uma pergunta para levar os templates novos do Compêndio ao mundo e recarregar as fichas e os itens que os usam. Templates importados antes com outro id são casados pelo nome. A mesma ação fica no Controle GM, em **Atualizar fichas (templates do módulo)**. Os valores das fichas são mantidos.
 - **Acúmulos de passiva:** Slayer e NPC mostram na aba Combate uma linha **ACÚMULOS** com Fogo Fátuo, Brasas Ardentes recebidas, Cicatrizes e dano pendente do Vento, Corrente do Vendaval, BPM do Som, Véus da Raposa e Forja do Metal. Os contadores das Respirações que o personagem usa aparecem mesmo zerados. O resumo é gravado junto com o acúmulo, sem gravação extra.
 - **Bônus Fixos:** título de seção e painel aberto logo abaixo do Combate, acima de Ações e das Formas de Respiração, no Slayer e no NPC.
 - **Ações e Status:** cada linha é um par comando → estado, com os comandos na mesma largura e o estado alinhado à esquerda.

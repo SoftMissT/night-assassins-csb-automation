@@ -337,11 +337,18 @@ describe('catálogo de armas Slayer', () => {
         const expectedNames = await normalWeaponSourceNames();
         assert.equal(expectedNames.length, 26);
         assert.deepEqual(packWeapons.map((item) => item.name).sort(), expectedNames);
-        assert.equal(documents.filter((document) => document.type === '_equippableItemTemplate').length, 1);
+        assert.deepEqual(
+            documents
+                .filter((document) => document.type === '_equippableItemTemplate')
+                .map((document) => document._id)
+                .sort(),
+            ['NAGenericItem001', 'NASpecialWeaponTpl00001', 'NAWeaponTpl00001'],
+            'o Compêndio publica os templates de arma, arma especial e Item Genérico'
+        );
         assert.equal(
             documents.some((document) => document._id === 'NASpecialWeaponTpl00001'),
-            false,
-            'o template de Arma Especial também fica fora do Compêndio'
+            true,
+            'o template de Arma Especial volta ao Compêndio para o criador'
         );
         const folders = documents.filter((document) => String(document._key).startsWith('!folders!'));
         assert.deepEqual(

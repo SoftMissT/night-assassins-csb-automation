@@ -25,7 +25,15 @@ import {
 import { tagItemSheet } from './item-sheet-skin.mjs';
 import { attachItemSheetHud, openItemDamageProfileEditor } from './item-sheet-hud.mjs';
 import { saveItemDamageProfile } from './item-damage-profile.mjs';
-import { openItemCreator } from './item-creator.mjs';
+import {
+    createGenericItem,
+    createSpecialWeapon,
+    genericItemData,
+    openGenericItemCreator,
+    openItemCreator,
+    openSpecialWeaponCreator,
+    specialWeaponData,
+} from './item-creator.mjs';
 import { openFormCreator } from './form-creator.mjs';
 import {
     createLevelOneValues,
@@ -432,6 +440,12 @@ Hooks.once('ready', async () => {
             openItemDamageProfileEditor,
             saveItemDamageProfile,
             openItemCreator,
+            createGenericItem,
+            genericItemData,
+            openGenericItemCreator,
+            createSpecialWeapon,
+            specialWeaponData,
+            openSpecialWeaponCreator,
             openFormCreator,
             attemptSnowRestrictionEscape,
             triggerSnowOpportunityAttack,

@@ -132,6 +132,18 @@ const macros = [
         name: 'Night Assassins Criar Forma de Respiração',
         icon: 'items/na-Breathing_Form_icon.webp',
     },
+    {
+        id: 'NACriarItem00001',
+        file: 'na-criar-item.js',
+        name: 'Night Assassins Criar Item',
+        icon: 'items/na-Generic_Item_icon.svg',
+    },
+    {
+        id: 'NACriarArmaEsp01',
+        file: 'na-criar-arma-especial.js',
+        name: 'Night Assassins Criar Arma Especial',
+        icon: 'items/na_Slayer_Weapon_icon.webp',
+    },
 ];
 await rm(outputDirectory, {
     recursive: true,
@@ -184,6 +196,8 @@ for (const [index, macro] of macros.entries()) {
                 'Night Assassins Controle GM',
                 'Night Assassins Criar Arma',
                 'Night Assassins Criar Forma de Respiração',
+                'Night Assassins Criar Item',
+                'Night Assassins Criar Arma Especial',
                 'Night Assassins Diagnóstico de Erros',
                 'Night Assassins Diagnosticar Armas Duplicadas',
             ].includes(macro.name)

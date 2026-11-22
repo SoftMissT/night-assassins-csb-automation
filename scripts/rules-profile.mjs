@@ -218,9 +218,10 @@ export function vanillaRuleSelection(props = {}, category, kind = actorKind({ sy
     const catalog = vanillaRuleCatalog(category, kind);
     const key = String(props[SLOT[category]] ?? '');
     if (!Object.hasOwn(catalog, key)) return null;
-    const entry = catalog[key];
-    if (entry.requiredOrigin && props[SLOT.origin] !== entry.requiredOrigin) return null;
-    return { key, ...entry };
+    // A restrição de aquisição do Metal Preto é validada em buildVanillaSelectionPatch.
+    // O bônus já concedido na ficha continua valendo mesmo quando a origem ativa não é
+    // a Vanilla Descendente (perfil misto ou origem Homebrew).
+    return { key, ...catalog[key] };
 }
 
 export function effectiveRulesAbility(props = {}, profile = ruleVariant('habilidades')) {
@@ -249,8 +250,7 @@ export function isRulesStatusSelectable(key, profile = ruleVariant('status')) {
  */
 export function vanillaDerivedBonuses(props = {}, context = {}) {
     const variant = (group) => context.ruleVariants?.[group] ?? context.rulesProfile ?? 'vanilla';
-    const selectedMetal = variant('metal') === 'vanilla' ? vanillaRuleSelection(props, 'metal') : null;
-    const metal = selectedMetal?.requiredOrigin && variant('origens') !== 'vanilla' ? null : selectedMetal;
+    const metal = variant('metal') === 'vanilla' ? vanillaRuleSelection(props, 'metal') : null;
     const ability = variant('habilidades') === 'vanilla' ? vanillaRuleSelection(props, 'ability') : null;
     const origin = variant('origens') === 'vanilla' ? vanillaRuleSelection(props, 'origin') : null;
     const level = Math.max(0, parseLevel(props.npc_nivel ?? props.nvl_num ?? props.nvl_pj));

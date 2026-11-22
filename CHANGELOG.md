@@ -1,6 +1,21 @@
 # Changelog
 
-## v0.13.8 — 2026-11-21 — Interface do Criador de Formas
+## v0.14.0 - 2026-11-22 - Ficha de NPC, Itens e Armas Especiais
+
+- **Criar Item:** nova macro GM **Night Assassins Criar Item** e ferramenta **Criar Item** no Controle GM. O formulário cria consumíveis, Haori/Armadura, Veneno de Glicínia, Talismãs, Ferramentas e itens diversos na ficha escolhida.
+- **Template NA Item Genérico:** nome, categoria, uso, quantidade, peso/espaço, efeito e descrição. O template entra no Compêndio de Armas dos Caçadores e o Item criado usa o ícone próprio do módulo.
+- **Inventário de itens gerais:** Slayer e NPC ganham o container **ITENS** com efeito, quantidade e espaço; os itens são filtrados por `inventario_categoria = item` sem tocar nas armas nem nas Respirações.
+- **Template de Arma Especial de volta:** `NASpecialWeaponTpl00001` volta ao Compêndio de Armas dos Caçadores para o criador e para a ficha da arma. As 17 armas especiais canônicas continuam no catálogo interno.
+- **Criar Arma Especial:** nova macro GM **Night Assassins Criar Arma Especial** e ferramenta **Criar Arma Especial** no Controle GM. O formulário cria uma arma de Dupla Alma com Entidade, Demônio, lado dominante, vínculo, estado selado, primeiro despertar e ritual; salva nos Itens do mundo ou na ficha escolhida.
+- **Escolhas Vanilla na ficha:** o NPC ganha o botão **Escolhas Vanilla** e os cartões Vanilla de **Metal da Nichirin** e **Habilidade Especial**; o Slayer ganha os cartões de Origem, Metal e Habilidade. As escolhas continuam gravadas em `na_vanilla_*` e os painéis Homebrew seguem intactos.
+- **Perícias do NPC:** nova aba **Perícias** com as 18 perícias roláveis do Slayer, usando os atributos e a macro de teste do NPC.
+- **Bônus de Metal e Habilidade:** com a escolha preenchida, os bônus Vanilla entram nas rolagens e no PDR máximo do NPC; antes o campo ficava vazio e o agregador devolvia zero.
+- **Metal Preto:** +1 PDR máximo e +1 Bloqueio por acerto passam a valer sempre que `na_vanilla_metal = metal_preto`, inclusive em perfil misto ou com origem Homebrew. A restrição "só será dado a um Descendente" continua na seleção: **Escolhas Vanilla** bloqueia Metal Preto sem a origem Descendente.
+- **Reset de ações:** além de `combatTurnChange`, o turno é restaurado quando um tracker grava o combate sem o hook; a mesma chave idempotente evita recarga dupla e não devolve ações em atualizações sem mudança de turno.
+- **Criação de itens:** `packs/` reconstruído a partir das fontes; o pack de macros publica **Criar Forma de Respiração** (ausente no módulo instalado 0.13.6; o Criar Item do catálogo continua no Controle GM).
+- **Atualização de fichas existentes:** subir `templateSystemUniqueVersion` de NPC e Slayer e reimportar os templates no mundo.
+
+## v0.13.8 - 2026-11-21 - Interface do Criador de Formas
 
 - **Criar Forma de Respiração:** interface com o tema do módulo, um nível por vez, barra de rolagem e rodapé sempre visível. Erros de preenchimento preservam os dados digitados.
 

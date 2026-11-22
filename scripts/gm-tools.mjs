@@ -107,6 +107,22 @@ export const GM_TOOLS = Object.freeze([
         run: manager('openFormCreator'),
     },
     {
+        key: 'create-generic-item',
+        group: 'mundo',
+        icon: 'fa-bag-shopping',
+        label: 'Criar Item',
+        api: 'openGenericItemCreator',
+        run: manager('openGenericItemCreator'),
+    },
+    {
+        key: 'create-special-weapon',
+        group: 'mundo',
+        icon: 'fa-khanda',
+        label: 'Criar Arma Especial',
+        api: 'openSpecialWeaponCreator',
+        run: manager('openSpecialWeaponCreator'),
+    },
+    {
         key: 'duplicate-weapons',
         group: 'mundo',
         icon: 'fa-clone',

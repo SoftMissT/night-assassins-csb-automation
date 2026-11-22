@@ -41,7 +41,8 @@ describe('gm-tools: registro', () => {
             'rest', 'status', 'actions', 'resistances', 'life-death', 'recovery', 'advanced-states',
             'interlude', 'oni-regen', 'attribute-snapshot',
             'ceremony', 'resistance-awakening', 'consequence', 'awaken',
-            'diagnostic', 'repair-weapons', 'repair-breathings', 'duplicate-weapons', 'create-item', 'rules-table',
+            'diagnostic', 'repair-weapons', 'repair-breathings', 'duplicate-weapons', 'create-item',
+            'create-generic-item', 'create-special-weapon', 'rules-table',
         ])
             assert.ok(keys.includes(key), key);
     });

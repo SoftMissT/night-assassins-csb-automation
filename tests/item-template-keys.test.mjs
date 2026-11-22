@@ -177,6 +177,26 @@ describe('templates de Item: redesenho', () => {
             );
         });
 
+    it('Item Genérico: nome/categoria/uso no cabeçalho e inventário com efeito', () => {
+        const system = systemOf('generic-item-template.json');
+        assert.deepEqual(
+            system.header.contents.map((component) => component.key),
+            ['item_nome', 'item_categoria', 'item_uso']
+        );
+        assert.deepEqual(
+            system.body.contents.map((component) => component.key),
+            ['item_inventario_panel', 'item_efeito_panel', 'item_descricao_panel']
+        );
+        assert.deepEqual(system.hidden, [{ name: 'inventario_categoria', value: 'item' }]);
+        assert.equal(system.uniqueId, 'NAGenericItem001');
+        assert.deepEqual(
+            findByKey(system, 'item_categoria').options.map((option) => option.key),
+            ['consumivel', 'armadura', 'veneno', 'talisma', 'ferramenta', 'outro']
+        );
+        assert.equal(findByKey(system, 'item_quantidade').defaultValue, 1);
+        assert.equal(findByKey(system, 'item_efeito').type, 'textArea');
+    });
+
     it('Kekkijutsu: cabeçalho em 4 colunas e Potenciação recolhida', () => {
         const system = systemOf('kekkijutsu-item-template.json');
         assert.equal(system.header.flow, 'grid-4');

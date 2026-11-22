@@ -27,6 +27,15 @@ const specialTemplatePath = path.join(
 );
 const specialWeaponTemplate = JSON.parse(await readFile(specialTemplatePath, 'utf8'));
 specialWeaponTemplate._key = `!items!${specialWeaponTemplate._id}`;
+const genericTemplatePath = path.join(
+    root,
+    'src',
+    'templates',
+    'items',
+    'generic-item-template.json'
+);
+const genericTemplate = JSON.parse(await readFile(genericTemplatePath, 'utf8'));
+genericTemplate._key = `!items!${genericTemplate._id}`;
 const specialWeaponFieldSchema = collectCsbFieldSchema(specialWeaponTemplate);
 const PUBLISHED_WEAPONS = new Set(
     catalog.documents
@@ -350,9 +359,10 @@ if (specialCatalog.documents.length !== PUBLISHED_SPECIAL_WEAPONS.size)
         `Catálogo de armas especiais incompleto: ${specialCatalog.documents.length}/${PUBLISHED_SPECIAL_WEAPONS.size}.`
     );
 await writeFileIfChanged(specialCatalogPath, `${JSON.stringify(specialCatalog, null, 2)}\n`);
-const packDocuments = documents.filter(
-    (document) => !isSpecialItem(document) && document._id !== specialWeaponTemplate._id
-);
+const packDocuments = [
+    ...documents.filter((document) => !isSpecialItem(document)),
+    genericTemplate,
+];
 
 await mkdir(outputDirectory, {
     recursive: true,

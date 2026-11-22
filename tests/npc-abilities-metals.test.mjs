@@ -167,10 +167,10 @@ test('o seletor de Metal troca os bônus das oito cores e das sete opções Vani
             assert.equal(bonuses.typedDamage.some(entry => entry.label === 'Metal Roxo'), false, name);
         }
         origens = 'homebrew';
-        const staleOrigin = resolveSlayerDerivedBonuses({ ...base, na_vanilla_metal: 'metal_preto',
+        const vanillaMetal = resolveSlayerDerivedBonuses({ ...base, na_vanilla_metal: 'metal_preto',
             na_vanilla_origin: 'origem_descendente' }, context);
-        assert.equal(staleOrigin.channels.pdrMaximo.total, 0);
-        assert.equal(staleOrigin.channels.bloqueio.total, 0);
+        assert.equal(vanillaMetal.channels.pdrMaximo.total, 1);
+        assert.equal(vanillaMetal.channels.bloqueio.total, 1);
     } finally { globalThis.game = previousGame; }
 });
 
@@ -179,6 +179,40 @@ test('atributos combinam habilidade, Marca e Respiração sem desconto de SAB de
     assert.equal(resolveSheetAttribute({ system: { props } }, 'FOR'), 10);
     assert.equal(resolveSheetAttribute({ system: { props } }, 'SAB'), 5);
     assert.equal(resolveSheetAttribute({ system: { props: { ...props, sab_display: '5' } } }, 'SAB'), 5);
+});
+
+test('NPC e Slayer mostram as escolhas Vanilla de Metal e Habilidade na ficha', () => {
+    for (const [template, prefix, tabKey] of [
+        [npc, 'npc', 'npc_habilidades_tab'],
+        [slayer, 'slayer', 'habilidades_slayer_tab'],
+    ]) {
+        const tabs = template.system.body.contents[0].contents;
+        const abilities = fields(tabs.find((tab) => tab.key === tabKey));
+        for (const [panelKey, slot, rule, catalog, cardPrefix] of [
+            [`${prefix}_metais_vanilla`, 'na_vanilla_metal', 'na_regras_metal', vanillaRules.metal, `${prefix}_vanilla_metal_`],
+            [`${prefix}_habilidades_vanilla`, 'na_vanilla_ability', 'na_regras_habilidades', vanillaRules.ability, `${prefix}_vanilla_ability_`],
+        ]) {
+            const panel = abilities.get(panelKey);
+            assert.ok(panel, panelKey);
+            assert.match(panel.visibilityFormula, new RegExp(`ref\\('${rule}', 0\\)`));
+            assert.match(panel.visibilityFormula, new RegExp(`equalText\\(ref\\('${slot}'`));
+            assert.equal(panel.contents.length, 1 + Object.keys(catalog).length);
+            for (const [key, entry] of Object.entries(catalog)) {
+                const card = panel.contents.find((node) => node.key === `${cardPrefix}${key}`);
+                assert.ok(card, `${cardPrefix}${key}`);
+                assert.ok(card.value.includes(entry.label));
+                assert.ok(card.value.includes(entry.effect));
+                assert.equal(card.visibilityFormula, `equalText(ref('${slot}', ''), '${key}')`);
+            }
+        }
+    }
+    const npcAbilities = fields(
+        npc.system.body.contents[0].contents.find((tab) => tab.key === 'npc_habilidades_tab')
+    );
+    const button = npcAbilities.get('npc_vanilla_choices');
+    assert.equal(button?.style, 'button');
+    assert.match(button.rollMessage, /openRulesProfileManager/);
+    assert.match(button.visibilityFormula, /na_regras_metal/);
 });
 
 test('Marca do Destino evolui sem alterar os atributos base do NPC', async () => {

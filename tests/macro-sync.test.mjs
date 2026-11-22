@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { CANONICAL_MACRO_PACK_ID, syncCanonicalMacros } from '../scripts/macro-sync.mjs';
 
 describe('macro-sync', () => {
-    it('sincroniza Controle GM, Criar Arma e Criar Forma como privados', async () => {
+    it('sincroniza Controle GM, Criar Arma, Criar Forma, Criar Item e Arma Especial como privados', async () => {
         const created = [];
         const updated = [];
         const docs = [
@@ -29,6 +29,16 @@ describe('macro-sync', () => {
                 name: 'Night Assassins Criar Forma de Respiração',
                 uuid: 'Compendium.na.criar-forma',
                 toObject: () => ({ name: 'Night Assassins Criar Forma de Respiração', command: 'forma' }),
+            },
+            {
+                name: 'Night Assassins Criar Item',
+                uuid: 'Compendium.na.criar-item',
+                toObject: () => ({ name: 'Night Assassins Criar Item', command: 'item' }),
+            },
+            {
+                name: 'Night Assassins Criar Arma Especial',
+                uuid: 'Compendium.na.criar-arma-especial',
+                toObject: () => ({ name: 'Night Assassins Criar Arma Especial', command: 'especial' }),
             },
         ];
 
@@ -56,8 +66,8 @@ describe('macro-sync', () => {
 
         const result = await syncCanonicalMacros();
 
-        assert.deepEqual(result, { created: 3, updated: 0, skipped: 1, folderId: 'folder-na' });
-        assert.equal(created.length, 3);
+        assert.deepEqual(result, { created: 5, updated: 0, skipped: 1, folderId: 'folder-na' });
+        assert.equal(created.length, 5);
         assert.equal(created[0].name, 'Night Assassins Controle GM');
         assert.equal(created[0].folder, 'folder-na');
         assert.deepEqual(created[0].ownership, { default: 0 });
@@ -66,6 +76,12 @@ describe('macro-sync', () => {
         assert.equal(created[2].name, 'Night Assassins Criar Forma de Respiração');
         assert.equal(created[2].folder, 'folder-na');
         assert.deepEqual(created[2].ownership, { default: 0 });
+        assert.equal(created[3].name, 'Night Assassins Criar Item');
+        assert.equal(created[3].folder, 'folder-na');
+        assert.deepEqual(created[3].ownership, { default: 0 });
+        assert.equal(created[4].name, 'Night Assassins Criar Arma Especial');
+        assert.equal(created[4].folder, 'folder-na');
+        assert.deepEqual(created[4].ownership, { default: 0 });
         assert.equal(updated.length, 0);
     });
 

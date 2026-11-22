@@ -382,4 +382,45 @@ describe('action-service', () => {
         assert.deepEqual(stateOf(other).round, { unica: 0, reacao: 0 });
         assert.equal(npc.system.props.folego_slayer_atual, 3);
     });
+    it('restaura o turno quando o tracker grava o combate sem combatTurnChange', async () => {
+        let updateCombat;
+        globalThis.Hooks = {
+            on: (name, callback) => {
+                if (name === 'updateCombat') updateCombat = callback;
+            },
+        };
+        game.user = { id: 'gm', isGM: true };
+        game.users = [{ id: 'gm', isGM: true, active: true }];
+        const spent = {
+            turn: { movimento: 1, ataque: 1, especial: 1 },
+            round: { unica: 1, reacao: 1 },
+        };
+        const npc = makeActor({
+            props: {
+                npc_nome: 'NPC',
+                fdv_display: 4,
+                folego_slayer_atual: 2,
+                acoes_slayer_dados: JSON.stringify(spent),
+            },
+        });
+        npc.update = async (patch) => {
+            for (const [key, value] of Object.entries(patch))
+                npc.system.props[key.replace('system.props.', '')] = value;
+        };
+        const active = { id: 'npc-turn', actor: npc };
+        const combatants = [active];
+        combatants.get = (id) => combatants.find((entry) => entry.id === id);
+        const previous = { round: 1, turn: 0, combatantId: active.id };
+        const current = { round: 1, turn: 1, combatantId: active.id };
+        const combat = { id: 'combat-2', started: true, combatants, previous, current };
+        registerActionEngine();
+        await updateCombat(combat);
+        const stateOf = () => parseActionState(npc.system.props.acoes_slayer_dados);
+        assert.deepEqual(stateOf().turn, { movimento: 0, ataque: 0, especial: 0 });
+        assert.equal(npc.system.props.folego_slayer_atual, 3);
+
+        npc.system.props.acoes_slayer_dados = JSON.stringify(spent);
+        await updateCombat({ ...combat, previous: { ...current }, current: { ...current } });
+        assert.deepEqual(stateOf().turn, spent.turn, 'sem mudança de turno, nada é devolvido');
+    });
 });

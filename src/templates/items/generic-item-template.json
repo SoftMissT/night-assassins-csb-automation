@@ -1,0 +1,149 @@
+{
+    "_id": "NAGenericItem001",
+    "name": "NA Item Genérico",
+    "type": "_equippableItemTemplate",
+    "img": "modules/night-assassins-csb-automation/assets/icons/items/na-Generic_Item_icon.svg",
+    "system": {
+        "header": {
+            "key": "item_header",
+            "type": "panel",
+            "flow": "grid-2",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "item_nome",
+                    "colSpan": 2,
+                    "type": "textField",
+                    "size": "full-size",
+                    "label": "Nome",
+                    "defaultValue": ""
+                },
+                {
+                    "key": "item_categoria",
+                    "type": "select",
+                    "size": "medium",
+                    "label": "Categoria",
+                    "defaultValue": "consumivel",
+                    "options": [
+                        { "key": "consumivel", "value": "Consumível" },
+                        { "key": "armadura", "value": "Haori / Armadura" },
+                        { "key": "veneno", "value": "Veneno de Glicínia" },
+                        { "key": "talisma", "value": "Talismã" },
+                        { "key": "ferramenta", "value": "Ferramenta" },
+                        { "key": "outro", "value": "Outro" }
+                    ]
+                },
+                {
+                    "key": "item_uso",
+                    "type": "select",
+                    "size": "medium",
+                    "label": "Uso",
+                    "defaultValue": "acao",
+                    "options": [
+                        { "key": "livre", "value": "Livre" },
+                        { "key": "acao", "value": "Ação" },
+                        { "key": "bonus", "value": "Ação Bônus" },
+                        { "key": "reacao", "value": "Reação" },
+                        { "key": "passiva", "value": "Passiva" }
+                    ]
+                }
+            ]
+        },
+        "body": {
+            "key": "item_body",
+            "type": "panel",
+            "flow": "vertical",
+            "align": "left",
+            "verticalAlign": "top",
+            "contents": [
+                {
+                    "key": "item_inventario_panel",
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "title": "Inventário",
+                    "titleStyle": "bold",
+                    "contents": [
+                        {
+                            "key": "item_quantidade",
+                            "type": "numberField",
+                            "size": "medium",
+                            "label": "Quantidade",
+                            "defaultValue": 1,
+                            "allowDecimal": false,
+                            "minVal": 0,
+                            "maxVal": 999,
+                            "allowRelative": false,
+                            "showControls": true
+                        },
+                        {
+                            "key": "item_espacos",
+                            "type": "numberField",
+                            "size": "medium",
+                            "label": "Peso / Espaço",
+                            "defaultValue": 0,
+                            "allowDecimal": false,
+                            "minVal": 0,
+                            "maxVal": 999,
+                            "allowRelative": false,
+                            "showControls": true
+                        }
+                    ]
+                },
+                {
+                    "key": "item_efeito_panel",
+                    "type": "panel",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "title": "Efeito",
+                    "titleStyle": "bold",
+                    "contents": [
+                        {
+                            "key": "item_efeito",
+                            "type": "textArea",
+                            "label": "Efeito ativo",
+                            "defaultValue": "",
+                            "style": "dialog"
+                        }
+                    ]
+                },
+                {
+                    "key": "item_descricao_panel",
+                    "type": "panel",
+                    "flow": "vertical",
+                    "align": "left",
+                    "verticalAlign": "top",
+                    "title": "Descrição",
+                    "titleStyle": "bold",
+                    "contents": [
+                        {
+                            "key": "item_descricao",
+                            "type": "textArea",
+                            "label": "Descrição",
+                            "defaultValue": "",
+                            "style": "dialog"
+                        }
+                    ]
+                }
+            ]
+        },
+        "hidden": [
+            {
+                "name": "inventario_categoria",
+                "value": "item"
+            }
+        ],
+        "display": {
+            "width": 620,
+            "height": 620,
+            "fix_size": false,
+            "pp_width": 100,
+            "pp_height": 100
+        },
+        "templateSystemUniqueVersion": 2026112201,
+        "uniqueId": "NAGenericItem001"
+    }
+}

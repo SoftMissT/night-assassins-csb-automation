@@ -112,12 +112,14 @@ test('metais e habilidades base exigem o contexto da rolagem', () => {
         { channel: 'esquiva', surpriseDefense: true })[0].value, 1);
 });
 
-test('Marechi usa nível do NPC e Metal Preto exige Descendente em ambos os caminhos', () => {
+test('Marechi usa nível do NPC e Metal Preto aplica o bônus; a seleção exige Descendente', () => {
     const props = { npc_nivel: 5, na_vanilla_ability: 'hab_escolhida_marechi', na_vanilla_metal: 'metal_preto' };
-    assert.equal(vanillaRuleSelection(props, 'metal'), null);
-    assert.equal(vanillaDerivedBonuses(props).reduce((sum, { value }) => sum + value, 0), 5);
+    assert.equal(vanillaRuleSelection(props, 'metal')?.key, 'metal_preto');
+    assert.equal(vanillaDerivedBonuses(props).reduce((sum, { value }) => sum + value, 0), 6);
     props.na_vanilla_origin = 'origem_descendente';
     assert.equal(vanillaDerivedBonuses(props).reduce((sum, { value }) => sum + value, 0), 6);
+    const defended = vanillaDerivedBonuses(props, { defenseAgainstAttack: true });
+    assert.equal(defended.reduce((sum, { value }) => sum + value, 0), 7);
     assert.equal(buildVanillaSelectionPatch({ metal: 'metal_preto', origin: 'origem_isolado' }).ok, false);
     assert.equal(buildVanillaSelectionPatch({ metal: 'metal_preto', origin: 'origem_descendente' }).ok, true);
     assert.equal(buildVanillaSelectionPatch({ metal: 'metal_dourada' }).ok, false);

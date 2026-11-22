@@ -33,6 +33,7 @@ describe('Layout das fichas de ator', () => {
             'combat_slayer_panel',
             'acoes_slayer_panel',
             'inventario_slayer_armas',
+            'inventario_slayer_itens',
             'skills_slayer_respiracoes',
         ]);
         const manage = combat.find((node) => node.key === 'acoes_slayer_panel').contents;
@@ -103,6 +104,28 @@ describe('Layout das fichas de ator', () => {
         for (const key of ['npc_rules_vanilla', 'npc_dados_combate', 'acoes_slayer_ataque_bonus']) {
             assert.ok(!keys(ficha).includes(key));
             assert.ok(keys(config).includes(key));
+        }
+    });
+
+    it('Slayer e NPC exibem o inventário de itens gerais', async () => {
+        for (const name of ['slayer', 'npc']) {
+            const containers = [];
+            const visit = (node) => {
+                if (!node || typeof node !== 'object') return;
+                if (Array.isArray(node)) return node.forEach(visit);
+                if (node.type === 'itemContainer') containers.push(node);
+                Object.values(node).forEach(visit);
+            };
+            visit((await read(name)).system);
+            const generic = containers.find((node) =>
+                String(node.itemFilterFormula ?? '').includes("'item'")
+            );
+            assert.ok(generic, `${name} sem inventário de itens gerais`);
+            assert.equal(generic.nameLabel, 'Item');
+            assert.deepEqual(
+                generic.rowLayout.map((row) => row.key),
+                ['item_efeito', 'item_quantidade', 'item_espacos']
+            );
         }
     });
 });

@@ -312,14 +312,31 @@ function primaryActiveGm() {
 }
 
 function isPrimaryGm() {
-    return game.user?.isGM && primaryActiveGm()?.id === game.user.id;
+    if (!game.user?.isGM) return false;
+    if (typeof game.user.isActiveGM === 'boolean') return game.user.isActiveGM;
+    return primaryActiveGm()?.id === game.user.id;
+}
+
+function turnChanged(prior, current) {
+    return (
+        prior?.round !== current?.round ||
+        prior?.turn !== current?.turn ||
+        prior?.combatantId !== current?.combatantId
+    );
 }
 
 export function registerActionEngine() {
     Hooks.on('combatTurnChange', (combat, prior, current) =>
         resetCombatActions(combat, prior, current)
     );
+    // Fallback para trackers que gravam o turno sem disparar combatTurnChange.
+    Hooks.on('updateCombat', (combat) => {
+        if (!turnChanged(combat?.previous, combat?.current)) return;
+        return resetCombatActions(combat, combat.previous, combat.current);
+    });
 }
+
+let pendingResetKey = null;
 
 async function resetCombatActions(combat, prior, current) {
     if (!isPrimaryGm() || !combat?.started || !current?.combatantId) return;
@@ -328,32 +345,37 @@ async function resetCombatActions(combat, prior, current) {
     const resetRound = prior?.round !== current.round;
     const fillFolego = !(prior?.round > 0);
     const key = `${combat.id}:${current.round}:${current.turn}:${active.id}`;
-    if (combat.getFlag?.(MODULE_ID, ACTION_FLAG) === key) return;
-    await combat.setFlag?.(MODULE_ID, ACTION_FLAG, key);
-    const combatants = resetRound ? [active, ...combat.combatants] : [active];
-    const seen = new Set();
-    const jobs = combatants.map(async (combatant) => {
-        const candidate = combatant.actor;
-        if (!isSlayerActor(candidate) && !isOniActor(candidate)) return;
-        const actorKey = candidate.uuid ?? candidate;
-        if (seen.has(actorKey)) return;
-        seen.add(actorKey);
-        const props = candidate.system?.props ?? {};
-        const oni = isOniActor(candidate) && !isSlayerActor(candidate);
-        const state = parseActionState(props[oni ? 'acoes_oni_dados' : 'acoes_slayer_dados']);
-        const ownTurn = combatant.id === active.id;
-        if (resetRound) state.round = emptyUses(ROUND_KEYS);
-        if (ownTurn) state.turn = emptyUses(TURN_KEYS);
-        const patch = oni ? oniActionPatch(state, props) : actionPatch(state, props);
-        if (!oni && (fillFolego || ownTurn))
-            Object.assign(patch, slayerFolegoPatch(props, { full: fillFolego }));
-        await candidate.update(patch, { naCsbAutomation: true, naActionEconomy: true });
-        refreshActionSheet(candidate);
-    });
-    const results = await Promise.allSettled(jobs);
-    for (const result of results) {
-        if (result.status === 'rejected')
-            console.error?.(`[${MODULE_ID}] Falha ao restaurar ações do combate`, result.reason);
+    if (pendingResetKey === key || combat.getFlag?.(MODULE_ID, ACTION_FLAG) === key) return;
+    pendingResetKey = key;
+    try {
+        await combat.setFlag?.(MODULE_ID, ACTION_FLAG, key);
+        const combatants = resetRound ? [active, ...combat.combatants] : [active];
+        const seen = new Set();
+        const jobs = combatants.map(async (combatant) => {
+            const candidate = combatant.actor;
+            if (!isSlayerActor(candidate) && !isOniActor(candidate)) return;
+            const actorKey = candidate.uuid ?? candidate;
+            if (seen.has(actorKey)) return;
+            seen.add(actorKey);
+            const props = candidate.system?.props ?? {};
+            const oni = isOniActor(candidate) && !isSlayerActor(candidate);
+            const state = parseActionState(props[oni ? 'acoes_oni_dados' : 'acoes_slayer_dados']);
+            const ownTurn = combatant.id === active.id;
+            if (resetRound) state.round = emptyUses(ROUND_KEYS);
+            if (ownTurn) state.turn = emptyUses(TURN_KEYS);
+            const patch = oni ? oniActionPatch(state, props) : actionPatch(state, props);
+            if (!oni && (fillFolego || ownTurn))
+                Object.assign(patch, slayerFolegoPatch(props, { full: fillFolego }));
+            await candidate.update(patch, { naCsbAutomation: true, naActionEconomy: true });
+            refreshActionSheet(candidate);
+        });
+        const results = await Promise.allSettled(jobs);
+        for (const result of results) {
+            if (result.status === 'rejected')
+                console.error?.(`[${MODULE_ID}] Falha ao restaurar ações do combate`, result.reason);
+        }
+    } finally {
+        if (pendingResetKey === key) pendingResetKey = null;
     }
 }
 

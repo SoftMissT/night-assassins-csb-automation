@@ -1,4 +1,5 @@
 import { MODULE_ID } from './constants.mjs';
+import { ruleVariant } from './rules-profile.mjs';
 import { FLAME_HEAT_FLAG, FLAME_STATE_KEY, parseFlameBreathingState } from './flame-breathing-service.mjs';
 import { FOX_PASSIVE_KEY, parseFoxPassive } from './fox-passive-service.mjs';
 import { METAL_FORGE_KEY, parseMetalForge } from './metal-forge-passive.mjs';
@@ -68,7 +69,7 @@ function emberLine(heatMap) {
     return `Brasas Ardentes ${highest}${sources}${burning}`;
 }
 
-function windLines(props, always = false) {
+function windLines(props, always = false, { homebrew = true } = {}) {
     const wind = parseWindBreathingState(props[WIND_STATE_KEY]);
     const scars = Math.max(int(props[WIND_SCARS_KEY]), int(wind.scars));
     const pending = SCAR_DAMAGE_TYPES.reduce((sum, type) => sum + int(wind.battleDamage?.[type]), 0);
@@ -76,7 +77,7 @@ function windLines(props, always = false) {
     const lines = [];
     if (scars > 0 || always) lines.push(`Cicatrizes ${scars}`);
     if (pending > 0) lines.push(`Dano para Cicatrizes ${pending}`);
-    if (int(current.current) > 0 || always) {
+    if (homebrew && (int(current.current) > 0 || always)) {
         const mode = current.mode === 'uncontrolled' ? 'Descontrolado' : 'Controlado';
         lines.push(`Corrente do Vendaval ${int(current.current)} (${mode})`);
     }
@@ -110,14 +111,16 @@ function metalForgeLines(props, always = false) {
  * @param {Set<string>} [families] Respirações do personagem (`breathingFamilies`)
  * @returns {string}
  */
-export function buildPassiveSummary(props = {}, heatMap = {}, families = new Set()) {
+export function buildPassiveSummary(props = {}, heatMap = {}, families = new Set(), { homebrew = true } = {}) {
+    // Vanilla (livro base): só Fogo Fátuo, Brasas e Cicatrizes existem. BPM, Véus, Corrente
+    // do Vendaval e Forja são Homebrew e não aparecem com Respirações em Vanilla.
     const lines = [
         flameLine(props, families.has('chamas')),
         emberLine(heatMap),
-        ...windLines(props, families.has('vento')),
-        soundLine(props, families.has('som')),
-        ...foxLines(props, families.has('raposa')),
-        ...metalForgeLines(props, families.has('metal')),
+        ...windLines(props, families.has('vento'), { homebrew }),
+        homebrew ? soundLine(props, families.has('som')) : null,
+        ...(homebrew ? foxLines(props, families.has('raposa')) : []),
+        ...(homebrew ? metalForgeLines(props, families.has('metal')) : []),
     ].filter(Boolean);
     return lines.length ? lines.join(' · ') : EMPTY_PASSIVE_SUMMARY;
 }
@@ -134,6 +137,10 @@ function pendingHeatMap(actor, changes) {
  * Hook `preUpdateActor`: injeta o resumo na MESMA gravação que mexe num acúmulo.
  * Uma gravação e um render, em vez de gravar o resumo depois (cascata medida no QA).
  */
+function homebrewBreathing() {
+    try { return ruleVariant('respiracao') !== 'vanilla'; } catch { return true; }
+}
+
 export function injectPassiveSummary(actor, changes) {
     const props = actor?.system?.props;
     if (!props || !changes || typeof changes !== 'object') return;
@@ -144,7 +151,7 @@ export function injectPassiveSummary(actor, changes) {
     const nextProps = { ...props };
     for (const key of WATCHED_PROP_KEYS)
         if (Object.hasOwn(flat, `system.props.${key}`)) nextProps[key] = flat[`system.props.${key}`];
-    const summary = buildPassiveSummary(nextProps, pendingHeatMap(actor, changes), breathingFamilies(actor.items));
+    const summary = buildPassiveSummary(nextProps, pendingHeatMap(actor, changes), breathingFamilies(actor.items), { homebrew: homebrewBreathing() });
     if (summary !== props[PASSIVE_SUMMARY_KEY])
         foundry.utils.setProperty(changes, `system.props.${PASSIVE_SUMMARY_KEY}`, summary);
 }
@@ -157,7 +164,8 @@ export async function refreshPassiveSummaryForItem(item) {
     const summary = buildPassiveSummary(
         actor.system.props,
         actor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {},
-        breathingFamilies(actor.items)
+        breathingFamilies(actor.items),
+        { homebrew: homebrewBreathing() }
     );
     if (summary !== actor.system.props[PASSIVE_SUMMARY_KEY])
         await actor.update({ [`system.props.${PASSIVE_SUMMARY_KEY}`]: summary }, { naCsbAutomation: true });
@@ -172,7 +180,8 @@ export async function backfillPassiveSummaries(actors = []) {
         const summary = buildPassiveSummary(
             props,
             actor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG) ?? {},
-            breathingFamilies(actor.items)
+            breathingFamilies(actor.items),
+            { homebrew: homebrewBreathing() }
         );
         if (summary !== props[PASSIVE_SUMMARY_KEY])
             updates.push({ _id: actor.id, [`system.props.${PASSIVE_SUMMARY_KEY}`]: summary });

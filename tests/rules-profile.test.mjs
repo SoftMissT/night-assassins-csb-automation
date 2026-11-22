@@ -408,3 +408,17 @@ test('Regras da Mesa bloqueia abertura por jogador antes de criar o diálogo', a
         assert.match(warned, /exclusivo do GM/u);
     } finally { Object.assign(globalThis, previous); }
 });
+
+test('Respirações em Vanilla desligam os extras que o livro base não tem', () => {
+    const previous = globalThis.game;
+    try {
+        globalThis.game = { settings: { get: (_module, key) => key === SETTINGS.rulesSelection
+            ? JSON.stringify({ respiracao: 'vanilla' })
+            : undefined } };
+        for (const key of ['raposa', 'veus', 'corrente', 'forja_viva', 'extras_pedra', 'extras_nevoa', 'extras_neve', 'sonhos', 'troca_equivalente'])
+            assert.equal(isHomebrewExtra(key), false, `${key} não existe no livro base`);
+        // O livro base tem Brasas (Esquentar, p. 41) e Olhos Escarlate (p. 65).
+        assert.equal(isHomebrewExtra('brasas'), true);
+        assert.equal(isHomebrewExtra('olhos_escarlate'), true);
+    } finally { globalThis.game = previous; }
+});

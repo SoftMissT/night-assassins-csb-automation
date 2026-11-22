@@ -150,8 +150,20 @@ export function ruleVariant(group) {
     return selected === 'vanilla' || selected === 'homebrew' ? selected : null;
 }
 
+/**
+ * Extras de Respiração que não existem no livro base (ou cuja versão Vanilla tem outra regra).
+ * Com Respirações em Vanilla eles desligam, mesmo com o toggle ligado (decisão do operador,
+ * 2026-11-22; ver `.tang-rou/plans/2026-11-22-auditoria-vanilla-pdf.md`).
+ * Brasas e Olhos Escarlate ficam fora: o livro base tem essas mecânicas.
+ */
+export const BREATHING_HOMEBREW_ONLY_EXTRAS = Object.freeze([
+    'raposa', 'veus', 'corrente', 'forja_viva', 'extras_pedra', 'extras_nevoa', 'extras_neve',
+    'sonhos', 'troca_equivalente',
+]);
+
 export function isHomebrewExtra(key) {
     if (key === 'sojutsu') return getRuleSelection('propriedades').sojutsu;
+    if (BREATHING_HOMEBREW_ONLY_EXTRAS.includes(key) && ruleVariant('respiracao') === 'vanilla') return false;
     return HOME_BREW_EXTRAS.includes(key) && getRuleSelection(key) === true;
 }
 

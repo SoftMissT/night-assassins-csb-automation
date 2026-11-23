@@ -177,22 +177,22 @@ describe('templates de Item: redesenho', () => {
             );
         });
 
-    it('Item Genérico: nome/categoria/uso no cabeçalho e inventário com efeito', () => {
+    it('Item Genérico: nome/raridade/preço no cabeçalho, espaço, efeito e história no corpo', () => {
         const system = systemOf('generic-item-template.json');
         assert.deepEqual(
             system.header.contents.map((component) => component.key),
-            ['item_nome', 'item_categoria', 'item_uso']
+            ['item_nome', 'item_raridade', 'item_preco']
         );
         assert.deepEqual(
             system.body.contents.map((component) => component.key),
-            ['item_inventario_panel', 'item_efeito_panel', 'item_descricao_panel']
+            ['item_inventario_panel', 'item_efeito_panel', 'item_historia_panel']
         );
         assert.deepEqual(system.hidden, [{ name: 'inventario_categoria', value: 'item' }]);
         assert.equal(system.uniqueId, 'NAGenericItem001');
-        assert.deepEqual(
-            findByKey(system, 'item_categoria').options.map((option) => option.key),
-            ['consumivel', 'armadura', 'veneno', 'talisma', 'ferramenta', 'outro']
-        );
+        assert.equal(findByKey(system, 'item_categoria'), null);
+        assert.equal(findByKey(system, 'item_uso'), null);
+        assert.equal(findByKey(system, 'item_espacos').label, 'Espaço');
+        assert.equal(findByKey(system, 'item_historia').type, 'textArea');
         assert.equal(findByKey(system, 'item_quantidade').defaultValue, 1);
         assert.equal(findByKey(system, 'item_efeito').type, 'textArea');
     });

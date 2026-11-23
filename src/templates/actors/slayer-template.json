@@ -4082,477 +4082,6 @@
                                     ]
                                 },
                                 {
-                                    "key": "slayer_homebrew_choices",
-                                    "colSpan": 1,
-                                    "rowSpan": 1,
-                                    "cssClass": "",
-                                    "role": 0,
-                                    "editRole": 0,
-                                    "permission": 0,
-                                    "tooltip": "",
-                                    "visibilityFormula": "",
-                                    "editableFormula": "",
-                                    "escapeHTML": false,
-                                    "type": "panel",
-                                    "contents": [
-                                        {
-                                            "key": "origem_dropdown",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "not ref('na_regras_origens', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Origem:",
-                                            "defaultValue": "origem_escolha",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "origem_escolha",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "origem_artista_marcial",
-                                                    "value": "Artista Marcial"
-                                                },
-                                                {
-                                                    "key": "origem_civilizado",
-                                                    "value": "Civilizado"
-                                                },
-                                                {
-                                                    "key": "origem_corsario",
-                                                    "value": "Corsário"
-                                                },
-                                                {
-                                                    "key": "origem_criado_ex_hashira",
-                                                    "value": "Criado por Ex-Hashira"
-                                                },
-                                                {
-                                                    "key": "origem_descendente_perdido",
-                                                    "value": "Descendente Perdido"
-                                                },
-                                                {
-                                                    "key": "origem_estrangeiro",
-                                                    "value": "Estrangeiro"
-                                                },
-                                                {
-                                                    "key": "origem_isolado",
-                                                    "value": "Isolado"
-                                                },
-                                                {
-                                                    "key": "origem_militar",
-                                                    "value": "Militar"
-                                                },
-                                                {
-                                                    "key": "origem_monge",
-                                                    "value": "Monge"
-                                                },
-                                                {
-                                                    "key": "origem_ninja",
-                                                    "value": "Ninja"
-                                                },
-                                                {
-                                                    "key": "origem_samurai",
-                                                    "value": "Samurai"
-                                                },
-                                                {
-                                                    "key": "origem_tsuguko",
-                                                    "value": "Tsuguko"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "na_vanilla_origin",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "ref('na_regras_origens', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Origem:",
-                                            "defaultValue": "${''}$",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "origem_aldeao",
-                                                    "value": "Aldeão"
-                                                },
-                                                {
-                                                    "key": "origem_civilizado",
-                                                    "value": "Civilizado"
-                                                },
-                                                {
-                                                    "key": "origem_criado_exterminador",
-                                                    "value": "Criado por Exterminador"
-                                                },
-                                                {
-                                                    "key": "origem_isolado",
-                                                    "value": "Isolado"
-                                                },
-                                                {
-                                                    "key": "origem_descendente",
-                                                    "value": "Descendente"
-                                                },
-                                                {
-                                                    "key": "origem_tsuguko",
-                                                    "value": "Tsuguko"
-                                                },
-                                                {
-                                                    "key": "origem_mestre_uma_coisa",
-                                                    "value": "Mestre de Uma Coisa Só"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "hab_escolhida",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "not ref('na_regras_habilidades', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Habilidade Especial:",
-                                            "defaultValue": "hab_escolhida_base",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "hab_escolhida_base",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_sem",
-                                                    "value": "Sem Habilidade"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_tato",
-                                                    "value": "Tato Sensitivo"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_audicao",
-                                                    "value": "Audição Sobrenatural"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_visao",
-                                                    "value": "Visão Aguçada"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_olfato",
-                                                    "value": "Olfato Sobrenatural"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_metamorfose",
-                                                    "value": "Metamorfose Carnívora"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_tsuyoi",
-                                                    "value": "Tsuyoi"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_marechi",
-                                                    "value": "Marechi"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_oketsu",
-                                                    "value": "Ōketsu"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_marca_destino",
-                                                    "value": "Marca do Destino"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "na_vanilla_ability",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "ref('na_regras_habilidades', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Habilidade Especial:",
-                                            "defaultValue": "${''}$",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_olfato",
-                                                    "value": "Olfato Aguçado"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_tato",
-                                                    "value": "Tato Aguçado"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_audicao",
-                                                    "value": "Audição Aguçada"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_visao",
-                                                    "value": "Visão Aguçada"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_transformacao",
-                                                    "value": "Transformação Demoníaca"
-                                                },
-                                                {
-                                                    "key": "hab_escolhida_marechi",
-                                                    "value": "Marechi"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "classe_escolhida",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "not ref('na_regras_classes', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Classe:",
-                                            "defaultValue": "classe_escolha",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "classe_escolha",
-                                                    "value": "Escolha Sua Classe"
-                                                },
-                                                {
-                                                    "key": "classe_mb",
-                                                    "value": "Mestre de Batalha "
-                                                },
-                                                {
-                                                    "key": "classe_usuario_de_veneno",
-                                                    "value": "Usuário de Veneno"
-                                                },
-                                                {
-                                                    "key": "classe_kakushi",
-                                                    "value": "Kakushi"
-                                                },
-                                                {
-                                                    "key": "classe_usuario_de_duas_resp",
-                                                    "value": " Usuário de Duas Respirações"
-                                                },
-                                                {
-                                                    "key": "classe_companheiro_oni",
-                                                    "value": "Companheiro Oni"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "na_vanilla_class",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "ref('na_regras_classes', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Classe:",
-                                            "defaultValue": "${''}$",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "classe_mb",
-                                                    "value": "Mestre de Batalha"
-                                                },
-                                                {
-                                                    "key": "classe_usuario_de_veneno",
-                                                    "value": "Usuário de Veneno"
-                                                },
-                                                {
-                                                    "key": "classe_kakushi",
-                                                    "value": "Kakushi"
-                                                },
-                                                {
-                                                    "key": "classe_companheiro_oni",
-                                                    "value": "Companheiro de Oni"
-                                                },
-                                                {
-                                                    "key": "classe_usuario_de_duas_resp",
-                                                    "value": "Usuário de Duas Respirações"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "metal_escolhido",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "not ref('na_regras_metal', 0) and (equalText(nvl_pj, 'nvl_2'))",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Metal",
-                                            "defaultValue": "metal_escolha_base",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "metal_escolha_base",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "metal_ambar",
-                                                    "value": "Âmbar"
-                                                },
-                                                {
-                                                    "key": "metal_azul",
-                                                    "value": "Azul"
-                                                },
-                                                {
-                                                    "key": "metal_branca",
-                                                    "value": "Branca"
-                                                },
-                                                {
-                                                    "key": "metal_cinza",
-                                                    "value": "Cinza"
-                                                },
-                                                {
-                                                    "key": "metal_coral",
-                                                    "value": "Coral"
-                                                },
-                                                {
-                                                    "key": "metal_dourada",
-                                                    "value": "Dourada"
-                                                },
-                                                {
-                                                    "key": "metal_laranja",
-                                                    "value": "Laranja"
-                                                },
-                                                {
-                                                    "key": "metal_preto",
-                                                    "value": "Preto"
-                                                },
-                                                {
-                                                    "key": "metal_rosa",
-                                                    "value": "Rosa"
-                                                },
-                                                {
-                                                    "key": "metal_roxa",
-                                                    "value": "Roxa"
-                                                },
-                                                {
-                                                    "key": "metal_verde",
-                                                    "value": "Verde"
-                                                },
-                                                {
-                                                    "key": "metal_vermelha",
-                                                    "value": "Vermelha"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "na_vanilla_metal",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "ref('na_regras_metal', 0)",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "select",
-                                            "size": "full-size",
-                                            "label": "Metal da Nichirin:",
-                                            "defaultValue": "${''}$",
-                                            "selectedOptionType": "custom",
-                                            "options": [
-                                                {
-                                                    "key": "",
-                                                    "value": "Escolha"
-                                                },
-                                                {
-                                                    "key": "metal_alvorada",
-                                                    "value": "Metal da Alvorada"
-                                                },
-                                                {
-                                                    "key": "metal_despertar",
-                                                    "value": "Metal do Despertar"
-                                                },
-                                                {
-                                                    "key": "metal_entardecer",
-                                                    "value": "Metal do Entardecer"
-                                                },
-                                                {
-                                                    "key": "metal_coracao",
-                                                    "value": "Metal do Coração"
-                                                },
-                                                {
-                                                    "key": "metal_espirito",
-                                                    "value": "Metal do Espírito"
-                                                },
-                                                {
-                                                    "key": "metal_serenidade",
-                                                    "value": "Metal da Serenidade"
-                                                },
-                                                {
-                                                    "key": "metal_preto",
-                                                    "value": "Metal Preto"
-                                                }
-                                            ]
-                                        }
-                                    ],
-                                    "flow": "grid-2",
-                                    "align": "center",
-                                    "verticalAlign": "top",
-                                    "collapsible": true,
-                                    "defaultCollapsed": false,
-                                    "title": "Escolhas do personagem",
-                                    "titleStyle": "title"
-                                },
-                                {
                                     "key": "",
                                     "colSpan": 1,
                                     "rowSpan": 1,
@@ -15715,6 +15244,477 @@
                     "titleStyle": "default"
                 },
                 {
+                    "key": "slayer_homebrew_choices",
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "cssClass": "",
+                    "role": 0,
+                    "editRole": 0,
+                    "permission": 0,
+                    "tooltip": "",
+                    "visibilityFormula": "",
+                    "editableFormula": "",
+                    "escapeHTML": false,
+                    "type": "panel",
+                    "contents": [
+                        {
+                            "key": "origem_dropdown",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "not ref('na_regras_origens', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Origem:",
+                            "defaultValue": "origem_escolha",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "origem_escolha",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "origem_artista_marcial",
+                                    "value": "Artista Marcial"
+                                },
+                                {
+                                    "key": "origem_civilizado",
+                                    "value": "Civilizado"
+                                },
+                                {
+                                    "key": "origem_corsario",
+                                    "value": "Corsário"
+                                },
+                                {
+                                    "key": "origem_criado_ex_hashira",
+                                    "value": "Criado por Ex-Hashira"
+                                },
+                                {
+                                    "key": "origem_descendente_perdido",
+                                    "value": "Descendente Perdido"
+                                },
+                                {
+                                    "key": "origem_estrangeiro",
+                                    "value": "Estrangeiro"
+                                },
+                                {
+                                    "key": "origem_isolado",
+                                    "value": "Isolado"
+                                },
+                                {
+                                    "key": "origem_militar",
+                                    "value": "Militar"
+                                },
+                                {
+                                    "key": "origem_monge",
+                                    "value": "Monge"
+                                },
+                                {
+                                    "key": "origem_ninja",
+                                    "value": "Ninja"
+                                },
+                                {
+                                    "key": "origem_samurai",
+                                    "value": "Samurai"
+                                },
+                                {
+                                    "key": "origem_tsuguko",
+                                    "value": "Tsuguko"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "na_vanilla_origin",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "ref('na_regras_origens', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Origem:",
+                            "defaultValue": "${''}$",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "origem_aldeao",
+                                    "value": "Aldeão"
+                                },
+                                {
+                                    "key": "origem_civilizado",
+                                    "value": "Civilizado"
+                                },
+                                {
+                                    "key": "origem_criado_exterminador",
+                                    "value": "Criado por Exterminador"
+                                },
+                                {
+                                    "key": "origem_isolado",
+                                    "value": "Isolado"
+                                },
+                                {
+                                    "key": "origem_descendente",
+                                    "value": "Descendente"
+                                },
+                                {
+                                    "key": "origem_tsuguko",
+                                    "value": "Tsuguko"
+                                },
+                                {
+                                    "key": "origem_mestre_uma_coisa",
+                                    "value": "Mestre de Uma Coisa Só"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "hab_escolhida",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "not ref('na_regras_habilidades', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Habilidade Especial:",
+                            "defaultValue": "hab_escolhida_base",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "hab_escolhida_base",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "hab_escolhida_sem",
+                                    "value": "Sem Habilidade"
+                                },
+                                {
+                                    "key": "hab_escolhida_tato",
+                                    "value": "Tato Sensitivo"
+                                },
+                                {
+                                    "key": "hab_escolhida_audicao",
+                                    "value": "Audição Sobrenatural"
+                                },
+                                {
+                                    "key": "hab_escolhida_visao",
+                                    "value": "Visão Aguçada"
+                                },
+                                {
+                                    "key": "hab_escolhida_olfato",
+                                    "value": "Olfato Sobrenatural"
+                                },
+                                {
+                                    "key": "hab_escolhida_metamorfose",
+                                    "value": "Metamorfose Carnívora"
+                                },
+                                {
+                                    "key": "hab_escolhida_tsuyoi",
+                                    "value": "Tsuyoi"
+                                },
+                                {
+                                    "key": "hab_escolhida_marechi",
+                                    "value": "Marechi"
+                                },
+                                {
+                                    "key": "hab_escolhida_oketsu",
+                                    "value": "Ōketsu"
+                                },
+                                {
+                                    "key": "hab_escolhida_marca_destino",
+                                    "value": "Marca do Destino"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "na_vanilla_ability",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "ref('na_regras_habilidades', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Habilidade Especial:",
+                            "defaultValue": "${''}$",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "hab_escolhida_olfato",
+                                    "value": "Olfato Aguçado"
+                                },
+                                {
+                                    "key": "hab_escolhida_tato",
+                                    "value": "Tato Aguçado"
+                                },
+                                {
+                                    "key": "hab_escolhida_audicao",
+                                    "value": "Audição Aguçada"
+                                },
+                                {
+                                    "key": "hab_escolhida_visao",
+                                    "value": "Visão Aguçada"
+                                },
+                                {
+                                    "key": "hab_escolhida_transformacao",
+                                    "value": "Transformação Demoníaca"
+                                },
+                                {
+                                    "key": "hab_escolhida_marechi",
+                                    "value": "Marechi"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "classe_escolhida",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "not ref('na_regras_classes', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Classe:",
+                            "defaultValue": "classe_escolha",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "classe_escolha",
+                                    "value": "Escolha Sua Classe"
+                                },
+                                {
+                                    "key": "classe_mb",
+                                    "value": "Mestre de Batalha "
+                                },
+                                {
+                                    "key": "classe_usuario_de_veneno",
+                                    "value": "Usuário de Veneno"
+                                },
+                                {
+                                    "key": "classe_kakushi",
+                                    "value": "Kakushi"
+                                },
+                                {
+                                    "key": "classe_usuario_de_duas_resp",
+                                    "value": " Usuário de Duas Respirações"
+                                },
+                                {
+                                    "key": "classe_companheiro_oni",
+                                    "value": "Companheiro Oni"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "na_vanilla_class",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "ref('na_regras_classes', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Classe:",
+                            "defaultValue": "${''}$",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "classe_mb",
+                                    "value": "Mestre de Batalha"
+                                },
+                                {
+                                    "key": "classe_usuario_de_veneno",
+                                    "value": "Usuário de Veneno"
+                                },
+                                {
+                                    "key": "classe_kakushi",
+                                    "value": "Kakushi"
+                                },
+                                {
+                                    "key": "classe_companheiro_oni",
+                                    "value": "Companheiro de Oni"
+                                },
+                                {
+                                    "key": "classe_usuario_de_duas_resp",
+                                    "value": "Usuário de Duas Respirações"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "metal_escolhido",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "not ref('na_regras_metal', 0) and (equalText(nvl_pj, 'nvl_2'))",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Metal",
+                            "defaultValue": "metal_escolha_base",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "metal_escolha_base",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "metal_ambar",
+                                    "value": "Âmbar"
+                                },
+                                {
+                                    "key": "metal_azul",
+                                    "value": "Azul"
+                                },
+                                {
+                                    "key": "metal_branca",
+                                    "value": "Branca"
+                                },
+                                {
+                                    "key": "metal_cinza",
+                                    "value": "Cinza"
+                                },
+                                {
+                                    "key": "metal_coral",
+                                    "value": "Coral"
+                                },
+                                {
+                                    "key": "metal_dourada",
+                                    "value": "Dourada"
+                                },
+                                {
+                                    "key": "metal_laranja",
+                                    "value": "Laranja"
+                                },
+                                {
+                                    "key": "metal_preto",
+                                    "value": "Preto"
+                                },
+                                {
+                                    "key": "metal_rosa",
+                                    "value": "Rosa"
+                                },
+                                {
+                                    "key": "metal_roxa",
+                                    "value": "Roxa"
+                                },
+                                {
+                                    "key": "metal_verde",
+                                    "value": "Verde"
+                                },
+                                {
+                                    "key": "metal_vermelha",
+                                    "value": "Vermelha"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "na_vanilla_metal",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "ref('na_regras_metal', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Metal da Nichirin:",
+                            "defaultValue": "${''}$",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "metal_alvorada",
+                                    "value": "Metal da Alvorada"
+                                },
+                                {
+                                    "key": "metal_despertar",
+                                    "value": "Metal do Despertar"
+                                },
+                                {
+                                    "key": "metal_entardecer",
+                                    "value": "Metal do Entardecer"
+                                },
+                                {
+                                    "key": "metal_coracao",
+                                    "value": "Metal do Coração"
+                                },
+                                {
+                                    "key": "metal_espirito",
+                                    "value": "Metal do Espírito"
+                                },
+                                {
+                                    "key": "metal_serenidade",
+                                    "value": "Metal da Serenidade"
+                                },
+                                {
+                                    "key": "metal_preto",
+                                    "value": "Metal Preto"
+                                }
+                            ]
+                        }
+                    ],
+                    "flow": "grid-2",
+                    "align": "center",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "title": "",
+                    "titleStyle": "default"
+                },
+                {
                     "key": "na_rule_selection_storage",
                     "colSpan": 1,
                     "rowSpan": 1,
@@ -16403,7 +16403,7 @@
                 "editable": false
             }
         },
-        "templateSystemUniqueVersion": 2720657621
+        "templateSystemUniqueVersion": 2720657622
     },
     "prototypeToken": {
         "name": "slayer_template",

@@ -1,6 +1,6 @@
 # Changelog
 
-## Não publicado - 2026-11-22 - Escolhas do personagem na ficha
+## v0.15.1 - 2026-11-23 - Escolhas do personagem na ficha e correções
 
 - **Escolhas do personagem na ficha:** Slayer e NPC escolhem Origem, Habilidade Especial, Classe e Metal da Nichirin direto na ficha, na variante que o GM definiu nas Regras da Mesa. Saíram das fichas o botão/modal **Escolhas Vanilla** e o botão **Regras da Mesa** (a variante fica só nas configurações do módulo). O Metal Preto continua exigindo a origem Descendente: a escolha inválida é desfeita com aviso.
 - **Macro Atualizar Fichas:** nova macro de GM **Night Assassins Atualizar Fichas**, que leva os templates do Compêndio ao mundo e recarrega fichas e itens (a mesma ação da pergunta pós-atualização e do Controle GM).
@@ -12,6 +12,13 @@
 - **NPC: Respiração na ficha:** o cabeçalho do NPC ganha **Respiração**, **Respiração Secundária** e **Nível de Respiração** (antes o nível ficava escondido em Configuração). Ao colocar a primeira Forma de uma Respiração no NPC, o campo é preenchido sozinho; uma escolha feita à mão nunca é sobrescrita.
 - **Bônus Temporários na ficha:** Slayer e NPC ganham, logo abaixo dos Bônus Fixos na aba Combate, o painel **Bônus Temporários** (Acerto, Dano, Defesa/Testes, Bloqueio e Esquiva), visível e editável pelo jogador. Somam nas rolagens pelo mesmo caminho dos Bônus Fixos, aparecem como "Bônus temporário" na auditoria de bônus e ficam separados dos fixos para zerar no fim da cena. Fichas existentes recebem o painel ao atualizar os templates.
 - **Slayer: Vida e Morte reorganizado:** o bloco do fim da aba Combate usa o mesmo molde do Ações e Status (comando → estado em linhas alinhadas: Gerenciar Vida e Morte → estado, Marcas de Morte e Quedas neste combate), com texto legível no lugar do vermelho escuro sobre fundo escuro.
+- **Escolhas no cabeçalho:** na ficha de Slayer, Origem, Habilidade Especial, Classe e Metal ficam no cabeçalho, em duas colunas e sem recolher. Na ficha de Oni, o botão **Regras da Mesa** saiu; Origem e Especialização Vanilla viram seleções no cabeçalho, visíveis só com a variante Vanilla. As Regras da Mesa ficam só nas configurações do módulo.
+- **Item genérico reescrito:** o template segue o cartão do livro: **Nome, Raridade, Preço, Espaço, Efeito e História**. Saem Categoria e Uso. **Quantidade** continua, porque o ITENS das fichas de Slayer e NPC a lê. O macro **Criar Item** pede os mesmos campos.
+- **Atualizar fichas:** depois de atualizar o módulo, rode **Night Assassins Atualizar Fichas** para as fichas e itens existentes receberem os templates novos.
+- **Marca do Caçador fora do Total:** o chat de dano mostra o **Total** só com o PDV; a Ferida aparece em linha própria ("Ferida: X (separada do PDV)"). A aplicação no alvo não muda: PDV e Ferida continuam separados.
+- **Vida e Morte no chat:** o motivo de morte e de revive aceita `<br>` real como quebra de linha, em vez de mostrar `<br>` cru; o restante do texto segue escapado contra HTML.
+- **Vento com dano no Acerto:** a Forma do Vento com cicatrizes ou DEX deixa de somar a fórmula de texto do catálogo ("10d10 + 2") ao dano certo. O dano sai só no Acerto, com os termos de cicatriz e DEX. Textos de Vento N10 corrigidos nos catálogos.
+- **Criar Item:** correção de ator nulo no criador de itens (`actor?.items`), para o macro rodar sem ficha selecionada.
 
 ## v0.15.0 - 2026-11-22 - Fichas atualizadas, acúmulos e desempenho
 

@@ -244,6 +244,15 @@ function escapeHtml(value) {
         .replaceAll("'", '&#039;');
 }
 
+// Motivos podem trazer <br> como quebra de linha (ex.: "...<br>A morte foi aceita.").
+// Escapa cada trecho separado e recoloca só as quebras reais.
+export function escapeReason(reason) {
+    return String(reason ?? '')
+        .split('<br>')
+        .map((part) => escapeHtml(part))
+        .join('<br>');
+}
+
 async function markDead(actor, state, reason) {
     state.dead = true;
     state.dying = false;
@@ -259,7 +268,7 @@ async function markDead(actor, state, reason) {
         if (updates.length) await combat.updateEmbeddedDocuments('Combatant', updates);
     }
     const name = escapeHtml(actor.name);
-    const safeReason = escapeHtml(reason);
+    const safeReason = escapeReason(reason);
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `<strong>${name} morreu.</strong><br>${safeReason}`,
@@ -293,7 +302,7 @@ async function revive(
         { naCsbAutomation: true, naLifeDeath: true }
     );
     const name = escapeHtml(actor.name);
-    const safeReason = reason ? escapeHtml(reason) : '';
+    const safeReason = reason ? escapeReason(reason) : '';
     await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor }),
         content: `<strong>${name} voltou com ${pdv} PDV.</strong>${safeReason ? `<br>${safeReason}` : ''}`,

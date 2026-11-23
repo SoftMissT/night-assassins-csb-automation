@@ -1,5 +1,26 @@
 # Lições do projeto
 
+## 2026-11-23 — Total do chat somava a Ferida da Marca do Caçador
+
+- **Erro:** o card somava os 40 de Ferida no "Total: 57", embora a regra trate a Ferida separada do PDV.
+- **Causa:** `buildDamageFlavor` usava `finalDamage` (soma de tudo) como Total, sem separar os componentes de tipo `ferida`.
+- **Correção:** o Total mostra só o PDV e a Ferida aparece em linha própria ("Ferida: N (separada do PDV)"). Teste em `tests/damage-chat.test.mjs`.
+- **Regra preventiva:** ao mostrar um total, conferir quais componentes são PDV e quais são Ferida antes de somar; o total exibido precisa bater com o que vai para cada barra.
+
+## 2026-11-23 — `<br>` cru nas mensagens de Vida e Morte
+
+- **Erro:** o chat mostrava "Dano de Ferida recebido enquanto estava À Beira da Morte.<br>Nenhum Motivo Forte foi declarado." com a tag literal.
+- **Causa:** `markDead` aplicava `escapeHtml` no motivo inteiro, e os chamadores já passavam `<br>` dentro dele; o escape transformava a tag em texto.
+- **Correção:** `escapeReason` escapa cada trecho separado por `<br>` e recoloca as quebras reais; `revive` usa a mesma função. Teste novo em `tests/life-death.test.mjs`.
+- **Regra preventiva:** ao escapar HTML, nunca escapar string que mistura marcação com texto. Escapar por trecho e recolocar a marcação conhecida; conferir se algum chamador já passa HTML.
+
+## 2026-11-23 — chamada de `wrap_up` com `action` nulo
+
+- **Erro:** chamei `wrap_up` com botões `{"action": null}` e a validação recusou; o `action` de resposta deve ser omitido, só com `label`.
+- **Causa:** tratei o campo como opcional com valor nulo, sem ler que botões de resposta não levam `action`.
+- **Correção:** refiz a chamada só com `label` nos botões.
+- **Regra preventiva:** nos botões de resposta do `wrap_up`, enviar apenas `label`; `action` só para ações do app.
+
 ## 2026-11-18 — quinto filho no grid de quatro quebrou o rodapé do dano
 
 - **Erro:** o toggle "Dividir entre alvos" virou coluna extra no `.na-dmg-foot` (grid de 4 colunas) e renderizou empilhado em 3 linhas.
@@ -704,3 +725,44 @@
 - **Causa:** tratei "ficha" como saída dos motores e não conferi o template do NPC contra o que o operador precisa digitar na mesa.
 - **Correção:** auditar o template do NPC (e do Slayer) por campos de bônus temporários e Nível de Respiração; criar o que faltar como campo direto na ficha.
 - **Regra preventiva:** toda regra de motor que lê um valor (nível, bônus temporário) precisa de um campo editável na ficha de Slayer e NPC; conferir o template antes de dar a fase por concluída.
+
+## 2026-11-22 - Mod prompt-master não reescreveu no app desktop
+
+- **Erro:** entreguei o mod dizendo que reescrevia o prompt ao enviar; o operador relatou que o botão não edita o que ele manda no chat.
+- **Causa:** filtrei o `origin.kind` por uma lista curta de origens (`composer`, `bridge`, `sdk`, `unclassified`) presumida a partir dos tipos, e testei só com origens simuladas; o app desktop real nunca foi exercitado. Evidência: a mensagem do operador chegou com espaço duplo, que o otimizador teria colapsado.
+- **Correção:** filtro invertido para lista de origens automáticas (tudo o mais é texto da pessoa) e diagnóstico gravado em `pm-diag.json` para ler a origem real do app.
+- **Regra preventiva:** funcionalidade de interface/mod só é "funciona" depois de exercitada no app real; teste com origem simulada prova a lógica, não o carimbo que o app usa. Prefira bloquear o que se sabe automático a permitir só o que se presume humano.
+
+## 2026-11-23 - Prompt Master "não funciona" mesmo rodando
+
+- **Erro:** o operador relatou de novo que o Prompt Master não funciona.
+- **Causa:** o hook roda (diagnóstico: origem `composer`, ligado), mas a reescrita é só um corte determinístico de cortesia; os prompts do operador já são diretos, então quase nunca há o que cortar e nada visível acontece. Entreguei "reescrever o prompt" como "tirar etiqueta" sem confirmar o que ele esperava ver.
+- **Correção:** apresentar a evidência e decidir com o operador o comportamento esperado (reescrita por modelo, ou corte com retorno visível).
+- **Regra preventiva:** quando o pedido é "reescrever/otimizar X", confirmar o resultado esperado com um exemplo antes/depois antes de implementar; um mod que raramente age parece quebrado.
+
+## 2026-11-23 - Prompt Master não melhora o prompt no uso real
+
+- **Erro:** o operador testou e o Prompt Master não melhorou o prompt.
+- **Causa:** o teste foi um comando de skill (`/hive-sessao abra a sessão…`), que o mod pulava de propósito, e um texto curto (<200 caracteres), que não chamava o modelo; o mod só cortava, não melhorava, e a melhoria não ficava visível. Desenhei pelo meu caso (prompt longo e prolixo), não pelo uso real do operador (comandos de skill e mensagens curtas).
+- **Correção:** reescrever também os argumentos de comandos de skill, chamar o modelo para mensagens curtas e mostrar o texto reescrito no aviso.
+- **Regra preventiva:** antes de dar uma automação de prompt por pronta, testar com mensagens reais do operador (curtas, com comando de skill, com erro de digitação), não com o exemplo que eu mesma escrevi.
+
+## 2026-11-23 - Caminho errado do config do Claude Desktop
+
+- **Erro:** procurei o `claude_desktop_config.json` em `%APPDATA%\Claude` e na pasta virtualizada da Store (`Packages\Claude_…\LocalCache\Roaming\Claude`) e ia criar o arquivo ali.
+- **Causa:** presumi o caminho padrão/MSIX sem procurar o arquivo real; nesta instalação ele fica em `%LOCALAPPDATA%\Claude-Data\claude_pzs8sxrjxfjjc\`.
+- **Correção:** operador indicou o caminho; uso o arquivo existente, com backup e mescla.
+- **Regra preventiva:** antes de criar um arquivo de configuração "que não existe", procurar pelo nome no perfil inteiro (`find "$LOCALAPPDATA" "$APPDATA" -name ...`); nunca criar config num caminho presumido.
+## 2026-11-23 - Heredoc comido pelo python da Store
+
+- **Erro:** editei os testes com `python - 2>/dev/null || node - <<EOF`; nada foi editado e o `node --test` encadeado travou além dos 600s.
+- **Causa:** no Windows, `python` é o stub da Store e consome o stdin do heredoc antes do fallback; o `||` então rodou node sem script.
+- **Correção:** script gravado no scratchpad e executado com `node arquivo.cjs`; suíte longa em segundo plano com log em arquivo.
+- **Regra preventiva:** no Bash do Windows, nunca depender de `python` nem de heredoc em fallback; edição em lote = arquivo `.cjs` + `node`; `node --test` completo roda em background.
+
+## 2026-11-23 - Teste cobriu a fórmula do plano, não a fórmula rolada
+
+- **Erro:** a Forma do Vento (Tufão Idaten) mostrava "10d10 + 2" no lugar de "+ 2d10 por cicatriz + 2d10 por DEX". Os testes do Vento passavam.
+- **Causa:** `buildWindBreathingPlan` montava a fórmula certa em `pendingDamage`, e os testes só checavam esse plano. Mas `executeBreathForm` rolava `selected.dano` (texto do catálogo, com "10d10 + 2"), e o `damage-service` ainda injetava a fórmula certa no acerto. Havia duas fontes e nenhum teste olhava a fórmula rolada.
+- **Correção:** no lançamento, o Vento com fórmula no `pendingDamage` deixa de rolar `selected.dano`; o dano sai só no acerto. Textos `nvl*_dano` do vento_10 corrigidos nos catálogos.
+- **Regra preventiva:** antes de corrigir dano, mapear quem rola cada fonte (lançamento e acerto) e testar a fórmula que realmente é rolada, não só o plano que a alimenta. Conferir também se o texto do catálogo é usado como fórmula.

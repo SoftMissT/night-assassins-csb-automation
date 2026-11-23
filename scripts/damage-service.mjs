@@ -1906,9 +1906,15 @@ export function buildDamageFlavor({ nome, breathing = '', critical, pdrGasto, re
         ? '<div style="font-size:22px;font-weight:900;letter-spacing:.12em;color:#ffe08a;text-shadow:0 0 14px #ff7a00;margin:6px 0;">⚔ CRÍTICO ⚔</div>'
         : '';
     const totalStyle = critical ? 'font-size:18px;font-weight:900;color:#ffe08a;' : '';
+    // Ferida (Marca do Caçador, componentes só de tipo ferida) é separada do PDV: o Total mostra só o PDV.
+    const woundTotal = components
+        .filter((component) => (component.types ?? []).length && component.types.every((type) => type === 'ferida'))
+        .reduce((sum, component) => sum + Math.max(0, Math.trunc(Number(component.subtotal) || 0)), 0);
+    const pdvTotal = Math.max(0, Math.trunc(Number(finalDamage) || 0) - woundTotal);
+    const woundLine = woundTotal > 0 ? `<div>Ferida: <strong>${woundTotal}</strong> (separada do PDV)</div>` : '';
     // `na-damage-chat`: o CSS do módulo esconde as caixas de rolagem do core nesta mensagem
     // (o cartão já mostra cada entrada e o total; com dano fixo elas só repetiam o número).
-    return `<div class="na-damage-chat">${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${finalDamage}</strong></div>${targetLine}</div>`;
+    return `<div class="na-damage-chat">${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${pdvTotal}</strong></div>${woundLine}${targetLine}</div>`;
 }
 
 /**

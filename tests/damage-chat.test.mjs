@@ -55,6 +55,20 @@ describe('chat de dano', () => {
         assert.match(flavor, /<strong>Tigre Ardente<\/strong>/);
     });
 
+    it('separa a Ferida da Marca do Caçador do Total de PDV', () => {
+        const flavor = buildDamageFlavor({
+            nome: 'Kim', critical: false, pdrGasto: 0, reasons: [],
+            components: [
+                { label: 'Ataque', types: ['cortante'], subtotal: 11 },
+                { label: 'Marca do Caçador', types: ['ferida'], subtotal: 40 },
+                { label: 'Ataque Dilacerador', types: ['cortante'], subtotal: 4 },
+            ],
+            finalDamage: 55,
+        });
+        assert.match(flavor, /<strong>Total: 15<\/strong>/);
+        assert.match(flavor, /Ferida: <strong>40<\/strong>/);
+    });
+
     it('sem crítico mantém o resultado discreto', () => {
         const flavor = buildDamageFlavor({
             nome: 'Ataque', critical: false, pdrGasto: 0, reasons: [],

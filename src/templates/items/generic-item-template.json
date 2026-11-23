@@ -20,33 +20,18 @@
                     "defaultValue": ""
                 },
                 {
-                    "key": "item_categoria",
-                    "type": "select",
+                    "key": "item_raridade",
+                    "type": "textField",
                     "size": "medium",
-                    "label": "Categoria",
-                    "defaultValue": "consumivel",
-                    "options": [
-                        { "key": "consumivel", "value": "Consumível" },
-                        { "key": "armadura", "value": "Haori / Armadura" },
-                        { "key": "veneno", "value": "Veneno de Glicínia" },
-                        { "key": "talisma", "value": "Talismã" },
-                        { "key": "ferramenta", "value": "Ferramenta" },
-                        { "key": "outro", "value": "Outro" }
-                    ]
+                    "label": "Raridade",
+                    "defaultValue": ""
                 },
                 {
-                    "key": "item_uso",
-                    "type": "select",
+                    "key": "item_preco",
+                    "type": "textField",
                     "size": "medium",
-                    "label": "Uso",
-                    "defaultValue": "acao",
-                    "options": [
-                        { "key": "livre", "value": "Livre" },
-                        { "key": "acao", "value": "Ação" },
-                        { "key": "bonus", "value": "Ação Bônus" },
-                        { "key": "reacao", "value": "Reação" },
-                        { "key": "passiva", "value": "Passiva" }
-                    ]
+                    "label": "Preço",
+                    "defaultValue": ""
                 }
             ]
         },
@@ -82,7 +67,7 @@
                             "key": "item_espacos",
                             "type": "numberField",
                             "size": "medium",
-                            "label": "Peso / Espaço",
+                            "label": "Espaço",
                             "defaultValue": 0,
                             "allowDecimal": false,
                             "minVal": 0,
@@ -104,25 +89,25 @@
                         {
                             "key": "item_efeito",
                             "type": "textArea",
-                            "label": "Efeito ativo",
+                            "label": "Efeito",
                             "defaultValue": "",
                             "style": "dialog"
                         }
                     ]
                 },
                 {
-                    "key": "item_descricao_panel",
+                    "key": "item_historia_panel",
                     "type": "panel",
                     "flow": "vertical",
                     "align": "left",
                     "verticalAlign": "top",
-                    "title": "Descrição",
+                    "title": "História",
                     "titleStyle": "bold",
                     "contents": [
                         {
-                            "key": "item_descricao",
+                            "key": "item_historia",
                             "type": "textArea",
-                            "label": "Descrição",
+                            "label": "História",
                             "defaultValue": "",
                             "style": "dialog"
                         }
@@ -143,7 +128,7 @@
             "pp_width": 100,
             "pp_height": 100
         },
-        "templateSystemUniqueVersion": 2026112201,
+        "templateSystemUniqueVersion": 2026112301,
         "uniqueId": "NAGenericItem001"
     }
 }

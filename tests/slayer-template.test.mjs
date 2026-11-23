@@ -228,7 +228,10 @@ test('template Slayer tem itens oficiais de perfil no header', () => {
 
     assert.ok(headerKeys.includes('idade'), 'idade não encontrada no header');
 
-    assert.ok(!headerKeys.includes('origem_dropdown'), 'a origem pertence à aba Habilidades');
+    for (const key of ['origem_dropdown', 'na_vanilla_origin', 'hab_escolhida', 'na_vanilla_ability',
+        'classe_escolhida', 'na_vanilla_class', 'metal_escolhido', 'na_vanilla_metal']) {
+        assert.ok(headerKeys.includes(key), `${key} pertence ao cabeçalho da ficha`);
+    }
 
     assert.ok(
         headerKeys.includes('resp_slayer_display'),
@@ -365,12 +368,13 @@ test('Slayer agrupa escolhas por variante sem misturar origem, habilidade, class
         const panel = sections.find(node => node.type === 'panel' && node.title?.includes('ORIGEM HABILIDADES'));
         assert.equal(panel?.visibilityFormula,
             "not ref('na_regras_origens', 0) and not equalText(ref('origem_dropdown', 'origem_escolha'), 'origem_escolha')");
-        const homebrew = sections.find(node => node.key === 'slayer_homebrew_choices');
+        const homebrew = system.header.contents.find(node => node.key === 'slayer_homebrew_choices');
+        assert.equal(sections.some(node => node.key === 'slayer_homebrew_choices'), false, 'escolhas fora da aba Habilidades');
         assert.equal(sections.some(node => node.key === 'slayer_vanilla_choices'), false, 'sem modal de escolhas na ficha');
-        assert.equal(homebrew.title, 'Escolhas do personagem');
+        assert.equal(homebrew.title, '');
         assert.equal(homebrew.visibilityFormula, '');
-        assert.equal(homebrew.collapsible, true);
-        assert.equal(homebrew.defaultCollapsed, false);
+        assert.equal(homebrew.collapsible, false);
+        assert.equal(homebrew.flow, 'grid-2');
         assert.deepEqual(homebrew.contents.map(({ key }) => key), [
             'origem_dropdown', 'na_vanilla_origin', 'hab_escolhida', 'na_vanilla_ability',
             'classe_escolhida', 'na_vanilla_class', 'metal_escolhido', 'na_vanilla_metal',
@@ -405,14 +409,13 @@ test('as fichas persistem as escolhas e flags de variantes em campos invisíveis
         'na_regras_propriedades_concussao', 'na_regras_propriedades_manejavel',
         'na_regras_propriedades_municiada', 'na_regras_propriedades_precisao',
     ];
-    // Slayer e NPC: as escolhas Vanilla (na_vanilla_*) saíram do armazenamento oculto e são
-    // selects visíveis na ficha. A ficha de Oni ficou fora desse escopo e mantém os campos ocultos.
-    const vanillaSlots = ['na_vanilla_metal', 'na_vanilla_ability', 'na_vanilla_origin', 'na_vanilla_class'];
+    // Slayer e NPC: as escolhas Vanilla (na_vanilla_*) são selects visíveis no cabeçalho, não
+    // armazenamento oculto. No Oni, Origem e Classe também são visíveis; Metal e Habilidade seguem ocultos.
 
     assert.equal(template.system.hidden.length, 67 - ruleFields.length);
     for (const [system, expected] of [
         [template.system, ruleFields], [imported, ruleFields],
-        [others[0], ruleFields], [others[1], [...ruleFields, ...vanillaSlots]],
+        [others[0], ruleFields], [others[1], [...ruleFields, 'na_vanilla_metal', 'na_vanilla_ability']],
     ]) {
         const names = system.hidden.map(({ name }) => name);
         const storage = system.header.contents.find(node => node.key === 'na_rule_selection_storage');
@@ -572,4 +575,25 @@ test('template Slayer tem header com contents', () => {
     assert.ok(Array.isArray(template.system.header.contents), 'header.contents não é array');
 
     assert.ok(template.system.header.contents.length > 0, 'header.contents está vazio');
+});
+
+test('Oni escolhe Origem e Classe Vanilla no cabeçalho, sem botão Regras da Mesa na ficha', () => {
+    const oni = JSON.parse(fs.readFileSync(new URL('../src/templates/actors/oni-template.json', import.meta.url), 'utf8')).system;
+    const all = [];
+    (function walk(node) {
+        if (!node || typeof node !== 'object') return;
+        if (Array.isArray(node)) return node.forEach(walk);
+        all.push(node);
+        Object.values(node).forEach(walk);
+    })(oni);
+    assert.equal(all.some(node => node.key === 'oni_rules_vanilla'), false, 'Regras da Mesa só nas configurações do módulo');
+    assert.equal(all.some(node => String(node.rollMessage ?? '').includes('openRulesTableManager')), false);
+    const panel = oni.header.contents.find(node => node.key === 'oni_escolhas_vanilla');
+    assert.deepEqual(panel.contents.map(({ key }) => key), ['na_vanilla_origin', 'na_vanilla_class']);
+    assert.deepEqual(panel.contents.map(({ visibilityFormula }) => visibilityFormula),
+        ["ref('na_regras_origens', 0)", "ref('na_regras_classes', 0)"]);
+    const vanilla = JSON.parse(fs.readFileSync(new URL('../catalogs/rules-vanilla.json', import.meta.url), 'utf8'));
+    assert.deepEqual(panel.contents[0].options.slice(1).map(({ key }) => key), Object.keys(vanilla.oniOrigin));
+    assert.deepEqual(panel.contents[1].options.slice(1).map(({ key }) => key), Object.keys(vanilla.oniClass));
+    assert.equal(oni.hidden.some(({ name }) => ['na_vanilla_origin', 'na_vanilla_class'].includes(name)), false);
 });

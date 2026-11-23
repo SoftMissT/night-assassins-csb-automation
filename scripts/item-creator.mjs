@@ -8,23 +8,6 @@ const SPECIAL_WEAPON_ICON = `modules/${MODULE_ID}/assets/icons/items/na_Slayer_W
 
 export const GENERIC_ITEM_ICON = `modules/${MODULE_ID}/assets/icons/items/na-Generic_Item_icon.svg`;
 
-export const GENERIC_ITEM_CATEGORIES = Object.freeze({
-    consumivel: 'Consumível',
-    armadura: 'Haori / Armadura',
-    veneno: 'Veneno de Glicínia',
-    talisma: 'Talismã',
-    ferramenta: 'Ferramenta',
-    outro: 'Outro',
-});
-
-export const GENERIC_ITEM_USAGES = Object.freeze({
-    livre: 'Livre',
-    acao: 'Ação',
-    bonus: 'Ação Bônus',
-    reacao: 'Reação',
-    passiva: 'Passiva',
-});
-
 function escapeHtml(value) {
     return String(value ?? '')
         .replaceAll('&', '&amp;')
@@ -105,7 +88,7 @@ const isTemplate = (item, templateKey) =>
         (Boolean(TEMPLATE_NAMES[templateKey]) && item.name === TEMPLATE_NAMES[templateKey]));
 
 export async function resolveTemplateId(actor, pack, templateKey = TEMPLATE_ID) {
-    const owned = [...(actor.items ?? [])].find((item) => isTemplate(item, templateKey));
+    const owned = [...(actor?.items ?? [])].find((item) => isTemplate(item, templateKey));
     if (owned) return owned.id;
     const world =
         globalThis.game?.items?.get?.(templateKey) ??
@@ -120,10 +103,6 @@ export async function resolveTemplateId(actor, pack, templateKey = TEMPLATE_ID) 
 export function genericItemData(values = {}, templateId = GENERIC_TEMPLATE_ID) {
     const name = String(values.name ?? '').trim();
     if (!name) return null;
-    const category = Object.hasOwn(GENERIC_ITEM_CATEGORIES, values.category)
-        ? values.category
-        : 'outro';
-    const usage = Object.hasOwn(GENERIC_ITEM_USAGES, values.usage) ? values.usage : 'acao';
     const quantity = Math.max(0, Math.trunc(Number(values.quantity) || 0));
     const spaces = Math.max(0, Math.trunc(Number(values.spaces) || 0));
     return {
@@ -135,12 +114,12 @@ export function genericItemData(values = {}, templateId = GENERIC_TEMPLATE_ID) {
             props: {
                 inventario_categoria: 'item',
                 item_nome: name,
-                item_categoria: category,
-                item_uso: usage,
+                item_raridade: String(values.rarity ?? '').trim(),
+                item_preco: String(values.price ?? '').trim(),
                 item_quantidade: quantity,
                 item_espacos: spaces,
                 item_efeito: String(values.effect ?? '').trim(),
-                item_descricao: String(values.description ?? '').trim(),
+                item_historia: String(values.history ?? '').trim(),
             },
         },
         flags: {
@@ -216,23 +195,17 @@ export async function openGenericItemCreator({ actorUuid } = {}) {
     const templateId = await resolveTemplateId(actor, pack, GENERIC_TEMPLATE_ID);
     if (!templateId)
         return globalThis.ui?.notifications?.warn?.('Template NA Item Genérico ausente neste mundo.');
-    const categoryOptions = Object.entries(GENERIC_ITEM_CATEGORIES)
-        .map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`)
-        .join('');
-    const usageOptions = Object.entries(GENERIC_ITEM_USAGES)
-        .map(([key, label]) => `<option value="${key}">${escapeHtml(label)}</option>`)
-        .join('');
     const result = await foundry.applications.api.DialogV2.wait({
         window: { title: `Criar Item — ${actor.name ?? 'Ficha'}` },
         position: { width: 520 },
         content: `<div class="na-item-creator">
             <label>Nome <input name="nome" required maxlength="70" autofocus></label>
-            <label>Categoria <select name="categoria">${categoryOptions}</select></label>
-            <label>Uso <select name="uso">${usageOptions}</select></label>
+            <label>Raridade <input name="raridade" maxlength="20"></label>
+            <label>Preço <input name="preco" maxlength="60"></label>
             <label>Quantidade <input name="quantidade" type="number" min="0" max="999" value="1"></label>
-            <label>Peso / Espaço <input name="espacos" type="number" min="0" max="999" value="0"></label>
+            <label>Espaço <input name="espacos" type="number" min="0" max="999" value="0"></label>
             <label>Efeito <textarea name="efeito" rows="3"></textarea></label>
-            <label>Descrição <textarea name="descricao" rows="3"></textarea></label>
+            <label>História <textarea name="historia" rows="3"></textarea></label>
         </div>`,
         rejectClose: false,
         buttons: [
@@ -242,12 +215,12 @@ export async function openGenericItemCreator({ actorUuid } = {}) {
                 default: true,
                 callback: (_event, button) => ({
                     name: button.form.elements.nome.value,
-                    category: button.form.elements.categoria.value,
-                    usage: button.form.elements.uso.value,
+                    rarity: button.form.elements.raridade.value,
+                    price: button.form.elements.preco.value,
                     quantity: button.form.elements.quantidade.value,
                     spaces: button.form.elements.espacos.value,
                     effect: button.form.elements.efeito.value,
-                    description: button.form.elements.descricao.value,
+                    history: button.form.elements.historia.value,
                 }),
             },
             { action: 'cancelar', label: 'Cancelar', callback: () => null },

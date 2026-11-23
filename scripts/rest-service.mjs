@@ -6,6 +6,9 @@ import { MASTER_BATTLE_BLEEDING, MODULE_ID, STATUS_SLAYER } from './constants.mj
 import { actorKind } from './actor-kind.mjs';
 import { breathingPdvInfo, breathingPdrInfo } from './actor-resources.mjs';
 import { parseNumber } from './parsing.mjs';
+import { ruleVariant } from './rules-profile.mjs';
+import { hasBreathingPassive } from './breathing-passive-rules.mjs';
+import { DREAM_EXCHANGE_FLAG } from './dream-passive-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import {
     consolidateWindScars,
@@ -264,6 +267,11 @@ export function buildRestPatch(props = {}, resolution = {}) {
         const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
         Object.assign(patch, windStatePatch(consolidateWindScars(windState)));
     }
+    // Livro base p. 58: a Troca Equivalente é 1×/dia; o descanso completo/profundo vira o dia.
+    // O custo em SAB já pago e a contagem de usos (máx. 3) não voltam.
+    if (tier !== 'field' && contract.kind !== 'oni' && ruleVariant('respiracao') === 'vanilla' &&
+        hasBreathingPassive(props, 'Sonhos'))
+        patch[`flags.${MODULE_ID}.${DREAM_EXCHANGE_FLAG}.usedToday`] = false;
     let pdvRecovered = 0;
     let pdrRecovered = 0;
     if (tier === 'field') {

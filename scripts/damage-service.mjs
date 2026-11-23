@@ -98,7 +98,7 @@ import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
 import { parseBreathPassiveState, passiveStatePatch } from './breath-passives.mjs';
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
-import { resolveSlayerDerivedBonuses, sheetBonusValue } from './derived-bonus-service.mjs';
+import { resolveSlayerDerivedBonuses, sheetBonusValue, tempBonusValue } from './derived-bonus-service.mjs';
 import { actorBuffSources } from './breathing-buffs.mjs';
 import { buildEntryFormula, isValidDamageFormula, resolveMessageMode } from './damage-formula.mjs';
 
@@ -629,6 +629,15 @@ export async function rollDamage(options = {}) {
             label: 'Bônus da ficha',
             types: [],
             formula: String(sheetDamage),
+            derived: true,
+        });
+    // "Bônus Temporários" da ficha: mesma regra dos fixos (no ataque de Respiração já entram no derivado).
+    const tempDamage = breathingActor && hasAttackDamage ? 0 : tempBonusValue(props, 'dano');
+    if (tempDamage)
+        specs.push({
+            label: 'Bônus temporário',
+            types: [],
+            formula: String(tempDamage),
             derived: true,
         });
     const injectBreathing = options.skipBreathingInjection !== true && options.passivePlan?.noContactEffects !== true;

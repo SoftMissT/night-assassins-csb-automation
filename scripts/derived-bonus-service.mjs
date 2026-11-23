@@ -81,6 +81,29 @@ export const SHEET_BONUS_KEYS = Object.freeze({
     teste: ['bonus_teste_slayer', 'bonus_teste_oni', 'oni_minion_bonus_teste', 'npc_bonus_teste'],
 });
 
+/**
+ * Bônus temporários que o jogador digita na ficha ("Bônus Temporários": buff de aliado,
+ * efeito de cena, item de uma luta). Mesmo canal dos Bônus Fixos, mas separados na
+ * ficha e na auditoria para dar para zerar no fim da cena sem mexer no que é permanente.
+ * Só Slayer e NPC; a ficha de Oni não tem o painel.
+ */
+export const TEMP_BONUS_KEYS = Object.freeze({
+    acerto: ['bonus_temp_acerto_slayer', 'npc_bonus_temp_acerto'],
+    dano: ['bonus_temp_dano_slayer', 'npc_bonus_temp_dano'],
+    bloqueio: ['bonus_temp_bloqueio_slayer', 'npc_bonus_temp_bloqueio'],
+    esquiva: ['bonus_temp_esquiva_slayer', 'npc_bonus_temp_esquiva'],
+    teste: ['bonus_temp_teste_slayer', 'npc_bonus_temp_teste'],
+});
+
+/** @param {object} props @param {string} channel @returns {number} */
+export function tempBonusValue(props = {}, channel) {
+    const keyName = channel === 'danoFixo' ? 'dano' : channel;
+    const key = (TEMP_BONUS_KEYS[keyName] ?? []).find((candidate) =>
+        Object.prototype.hasOwnProperty.call(props, candidate)
+    );
+    return key ? parseNumber(props[key]) : 0;
+}
+
 const SHEET_CHANNELS = Object.freeze([
     'acerto',
     'bloqueio',
@@ -249,6 +272,12 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
             value: sheetBonusValue(props, keyName),
             label: `Bônus da ficha (${channel})`,
             origin: 'Ficha',
+        });
+        add({
+            channel,
+            value: tempBonusValue(props, keyName),
+            label: `Bônus temporário (${channel})`,
+            origin: 'Temporário',
         });
     }
 

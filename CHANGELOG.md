@@ -8,6 +8,10 @@
 - **Respirações em Vanilla:** saem os extras que o livro base não tem (Véus da Raposa, Corrente do Vendaval, Forja Viva, extras de Pedra/Névoa/Neve e a Troca Equivalente Homebrew), mesmo com o toggle ligado. A linha ACÚMULOS mostra só Fogo Fátuo, Brasas e Cicatrizes.
 - **Chamas em Vanilla (livro base p. 41):** Fogo Fátuo usa a tabela do livro (5 → +1/+1, 10 → +1/+2, 20 → +2/+2, 30 → +2/+2 e +1d6 nas técnicas, 40 → +2/+3, 50 → +3/+3, 60 → +3/+3 e +50% de dano com 2 de concussão por turno). Brasas não causam dano por turno; 10 e 30 pontos dão 5 de dano ao alcançar o patamar. A tabela Homebrew continua intacta.
 - **Vento em Vanilla (p. 50):** cada Cicatriz dá +1 nos testes de Carisma, máximo +4, nomeado "Cicatrizes" no teste.
+- **Sonhos em Vanilla (p. 58):** a Troca Equivalente passa a custar SAB permanente (1, 2 e 3 pontos nos usos de cada dia), 1 PDV por troca e no máximo 3 usos, uma vez por dia; o Descanso zera o uso do dia. O custo Homebrew continua intacto.
+- **NPC: Respiração na ficha:** o cabeçalho do NPC ganha **Respiração**, **Respiração Secundária** e **Nível de Respiração** (antes o nível ficava escondido em Configuração). Ao colocar a primeira Forma de uma Respiração no NPC, o campo é preenchido sozinho; uma escolha feita à mão nunca é sobrescrita.
+- **Bônus Temporários na ficha:** Slayer e NPC ganham, logo abaixo dos Bônus Fixos na aba Combate, o painel **Bônus Temporários** (Acerto, Dano, Defesa/Testes, Bloqueio e Esquiva), visível e editável pelo jogador. Somam nas rolagens pelo mesmo caminho dos Bônus Fixos, aparecem como "Bônus temporário" na auditoria de bônus e ficam separados dos fixos para zerar no fim da cena. Fichas existentes recebem o painel ao atualizar os templates.
+- **Slayer: Vida e Morte reorganizado:** o bloco do fim da aba Combate usa o mesmo molde do Ações e Status (comando → estado em linhas alinhadas: Gerenciar Vida e Morte → estado, Marcas de Morte e Quedas neste combate), com texto legível no lugar do vermelho escuro sobre fundo escuro.
 
 ## v0.15.0 - 2026-11-22 - Fichas atualizadas, acúmulos e desempenho
 

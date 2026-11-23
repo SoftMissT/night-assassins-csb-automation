@@ -37,7 +37,14 @@ describe('Layout das fichas de ator', () => {
             'inventario_slayer_armas',
             'inventario_slayer_itens',
             'skills_slayer_respiracoes',
+            'vida_morte_slayer_panel',
         ]);
+        const lifeDeath = combat.find((node) => node.key === 'vida_morte_slayer_panel').contents.map((node) => node.key);
+        assert.deepEqual(lifeDeath, [
+            'vida_morte_slayer_gerenciar', 'vida_morte_slayer_estado_display',
+            'vida_morte_slayer_marcas_titulo', 'vida_morte_slayer_marcas_display',
+            'vida_morte_slayer_quedas_titulo', 'vida_morte_slayer_quedas_display',
+        ], 'Vida e Morte em pares comando → estado, como Ações e Status');
         const manage = combat.find((node) => node.key === 'acoes_slayer_panel').contents;
         assert.deepEqual(
             manage.slice(0, 6).map((node) => node.key),

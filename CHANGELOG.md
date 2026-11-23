@@ -6,6 +6,8 @@
 - **Macro Atualizar Fichas:** nova macro de GM **Night Assassins Atualizar Fichas**, que leva os templates do Compêndio ao mundo e recarrega fichas e itens (a mesma ação da pergunta pós-atualização e do Controle GM).
 - **NPC:** "Escolha como Acerto" em linha própria no painel Ações e Status, sem desalinhar os pares comando → estado.
 - **Respirações em Vanilla:** saem os extras que o livro base não tem (Véus da Raposa, Corrente do Vendaval, Forja Viva, extras de Pedra/Névoa/Neve e a Troca Equivalente Homebrew), mesmo com o toggle ligado. A linha ACÚMULOS mostra só Fogo Fátuo, Brasas e Cicatrizes.
+- **Chamas em Vanilla (livro base p. 41):** Fogo Fátuo usa a tabela do livro (5 → +1/+1, 10 → +1/+2, 20 → +2/+2, 30 → +2/+2 e +1d6 nas técnicas, 40 → +2/+3, 50 → +3/+3, 60 → +3/+3 e +50% de dano com 2 de concussão por turno). Brasas não causam dano por turno; 10 e 30 pontos dão 5 de dano ao alcançar o patamar. A tabela Homebrew continua intacta.
+- **Vento em Vanilla (p. 50):** cada Cicatriz dá +1 nos testes de Carisma, máximo +4, nomeado "Cicatrizes" no teste.
 
 ## v0.15.0 - 2026-11-22 - Fichas atualizadas, acúmulos e desempenho
 

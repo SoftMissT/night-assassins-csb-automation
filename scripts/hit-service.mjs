@@ -579,7 +579,7 @@ export async function rollHit(options) {
     if (counterattack && classTechniquePending)
         return ui.notifications?.warn?.('Resolva a técnica preparada antes de fazer o Contra-ataque.');
     const snowPenalty = actor.getFlag?.(MODULE_ID, 'snowPenalty');
-    const flameTier = flameWeaponTier(flameWeaponHeat(flameState));
+    const flameTier = flameWeaponTier(flameWeaponHeat(flameState), ruleVariant('respiracao'));
     // 8ª Forma Ofuscamento (Névoa): a partir do Nível 2, quem tenta acertar o usuário/aliado
     // ofuscado sofre -2 na rolagem de Acerto. O estado "dazzle" fica salvo em resp_nevoa_estado
     // do PRÓPRIO usuário da Névoa (com allyUuid apontando o aliado também protegido); então, ao

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { setupFoundryMocks } from './fixtures/foundry-mock.mjs';
-import { flameEmberFormula, flameFormById, flameWeaponTier } from '../scripts/flame-breathing-data.mjs';
+import { flameEmberFormula, flameFormById, flameWeaponTier, vanillaEmberThresholdDamage } from '../scripts/flame-breathing-data.mjs';
 import { FLAME_HEAT_FLAG, FLAME_EMBER_TURN_FLAG, buildFlameBreathingPlan, flameStatePatch,
     parseFlameBreathingState, processFlameEmbers } from '../scripts/flame-breathing-service.mjs';
 import { registerBreathingEngine } from '../scripts/breath-service.mjs';
@@ -47,6 +47,32 @@ test('sete patamares atuais de Fogo Fátuo e Brasas substituem os anteriores', (
     }
     const immediate = buildFlameBreathingPlan('chamas_03', 1, { resp_chamas_estado: '{"weaponHeat":2}' });
     assert.equal(immediate.state.nextHit.bonus, 2, 'ganho da própria Forma já libera o bônus de Acerto');
+});
+
+test('Livro base p. 41: tabela de Fogo Fátuo Vanilla substitui o patamar anterior', () => {
+    for (const [heat, hit, weaponDamage, techniqueDie, multiplier, selfDamage] of [
+        [4, 0, 0, '', 1, 0], [5, 1, 1, '', 1, 0], [10, 1, 2, '', 1, 0], [20, 2, 2, '', 1, 0],
+        [30, 2, 2, '1d6', 1, 0], [40, 2, 3, '1d6', 1, 0], [50, 3, 3, '1d6', 1, 0],
+        [60, 3, 3, '', 1.5, 2],
+    ]) {
+        const tier = flameWeaponTier(heat, 'vanilla');
+        assert.deepEqual(
+            [tier.hit, tier.weaponDamage, tier.techniqueDie, tier.multiplier, tier.selfDamage],
+            [hit, weaponDamage, techniqueDie, multiplier, selfDamage],
+            `Fogo Fátuo ${heat}`
+        );
+    }
+    assert.equal(flameWeaponTier(22, 'vanilla').hit, 2, '22 pontos: +2 no acerto, não +3 da tabela Homebrew');
+    assert.equal(flameWeaponTier(22).hit, 3, 'Homebrew segue intacto');
+});
+
+test('Livro base p. 41: Brasas não causam dano por turno; 10 e 30 pontos dão 5 de dano único', () => {
+    assert.equal(flameEmberFormula(60, 'vanilla'), '');
+    assert.equal(flameEmberFormula(60), '30d10', 'Homebrew segue intacto');
+    assert.equal(vanillaEmberThresholdDamage([5]), 0);
+    assert.equal(vanillaEmberThresholdDamage([5, 10]), 5);
+    assert.equal(vanillaEmberThresholdDamage([20, 30]), 5);
+    assert.equal(vanillaEmberThresholdDamage([5, 10, 20, 30, 40, 50]), 10);
 });
 
 test('Brasas rolam somente o maior patamar uma vez no turno e gravam dano nativoNPC', async () => {

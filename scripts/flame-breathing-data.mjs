@@ -160,8 +160,24 @@ export function flameFormById(id, variant = 'homebrew') {
     return form;
 }
 
-export function flameWeaponTier(rawHeat) {
+// Livro base p. 41, "Tabela de Pontos do Fogo Fátuo" (o bônus seguinte substitui o anterior).
+// 60: a arma causa 2 de concussão por turno e todo dano de técnica/acerto padrão ganha +50%.
+const VANILLA_FLAME_TIERS = Object.freeze([
+    [60, { hit: 3, weaponDamage: 3, techniqueDie: '', multiplier: 1.5, selfDamage: 2 }],
+    [50, { hit: 3, weaponDamage: 3, techniqueDie: '1d6', multiplier: 1, selfDamage: 0 }],
+    [40, { hit: 2, weaponDamage: 3, techniqueDie: '1d6', multiplier: 1, selfDamage: 0 }],
+    [30, { hit: 2, weaponDamage: 2, techniqueDie: '1d6', multiplier: 1, selfDamage: 0 }],
+    [20, { hit: 2, weaponDamage: 2, techniqueDie: '', multiplier: 1, selfDamage: 0 }],
+    [10, { hit: 1, weaponDamage: 2, techniqueDie: '', multiplier: 1, selfDamage: 0 }],
+    [5, { hit: 1, weaponDamage: 1, techniqueDie: '', multiplier: 1, selfDamage: 0 }],
+]);
+
+export function flameWeaponTier(rawHeat, variant = 'homebrew') {
     const heat = Math.max(0, Math.min(60, Math.trunc(Number(rawHeat) || 0)));
+    if (variant === 'vanilla') {
+        const tier = VANILLA_FLAME_TIERS.find(([threshold]) => heat >= threshold)?.[1];
+        return { heat, ...(tier ?? { hit: 0, weaponDamage: 0, techniqueDie: '', multiplier: 1, selfDamage: 0 }) };
+    }
     if (heat >= 60)
         return {
             heat,
@@ -186,9 +202,20 @@ export function flameWeaponTier(rawHeat) {
     return { heat, hit: 0, weaponDamage: 0, techniqueDie: '', multiplier: 1, selfDamage: 0 };
 }
 
-export function flameEmberFormula(rawHeat) {
+/** Dano de Brasas no início do turno do alvo. No livro base não há dano por turno. */
+export function flameEmberFormula(rawHeat, variant = 'homebrew') {
+    if (variant === 'vanilla') return '';
     const heat = Math.max(0, Number(rawHeat) || 0);
     for (const [threshold, dice] of [[60, 30], [50, 24], [40, 18], [30, 14], [20, 10], [10, 6], [5, 4]])
         if (heat >= threshold) return `${dice}d10`;
     return '';
+}
+
+/** Livro base p. 41: ao alcançar 10 e 30 Pontos de Esquentar, o inimigo recebe 5 de dano. */
+export const VANILLA_EMBER_DAMAGE_THRESHOLDS = Object.freeze([10, 30]);
+export const VANILLA_EMBER_THRESHOLD_DAMAGE = 5;
+
+export function vanillaEmberThresholdDamage(thresholds = []) {
+    return thresholds.filter((value) => VANILLA_EMBER_DAMAGE_THRESHOLDS.includes(value)).length
+        * VANILLA_EMBER_THRESHOLD_DAMAGE;
 }

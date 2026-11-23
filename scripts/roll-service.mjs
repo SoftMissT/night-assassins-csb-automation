@@ -5,7 +5,7 @@
 import { ATTR_NAMES, MODULE_ID } from './constants.mjs';
 import { resolveMessageMode } from './damage-formula.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
-import { isHomebrewExtra } from './rules-profile.mjs';
+import { isHomebrewExtra, ruleVariant } from './rules-profile.mjs';
 import { openRollDialog } from './dialogs/roll-dialog.mjs';
 import { getRollStatusEffects, mergeRollMode } from './status-effects.mjs';
 import { consumeKakushiAdvantage, kakushiRollEffect } from './slayer/kakushi-service.mjs';
@@ -21,7 +21,7 @@ import { derivedChannelForTest, resolveSlayerDerivedBonuses } from './derived-bo
 import { actorBuffSources } from './breathing-buffs.mjs';
 import { resolveCombatManeuverBonuses } from './combat-maneuver-service.mjs';
 import { hasBreathingPassive } from './breathing-passive-rules.mjs';
-import { parseWindBreathingState } from './wind-breathing-service.mjs';
+import { parseWindBreathingState, vanillaScarCharismaBonus } from './wind-breathing-service.mjs';
 import { combatPassiveBonuses, passiveExecutionId, recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
 import { oniSpecializationAbility, TITAN } from './oni/specialization-rules.mjs';
 import {
@@ -296,6 +296,10 @@ export async function rollTest(options) {
     const vitalResistance = Math.min(4, Math.max(0, Number(parseWindBreathingState(actor.system?.props?.resp_vento_estado).vitBonus) || 0));
     if (!isDefense && String(attr).toUpperCase() === 'VIT' && vitalResistance > 0)
         derivedSources.push({ value: vitalResistance, label: 'Resistência Vital', origin: 'Sangue Especial' });
+    // Livro base p. 50 (Sangue Especial): +1 em testes de Carisma por Cicatriz, máximo +4.
+    const scarCharisma = !isDefense && String(attr).toUpperCase() === 'CAR' && ruleVariant('respiracao') === 'vanilla'
+        ? vanillaScarCharismaBonus(actor.system?.props) : 0;
+    if (scarCharisma > 0) derivedSources.push({ value: scarCharisma, label: 'Cicatrizes', origin: 'Sangue Especial' });
     let derivedTotal = derivedSources.reduce((sum, source) => sum + source.value, 0);
     const derivedLabels = derivedSources.map(
         (source) => `${source.label} ${source.value >= 0 ? '+' : ''}${source.value}`

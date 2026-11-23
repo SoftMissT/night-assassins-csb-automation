@@ -16,6 +16,13 @@ export function parseWindBreathingState(raw) {
     }
 }
 
+/** Livro base p. 50: +1 em testes de Carisma por Cicatriz, no máximo +4. */
+export function vanillaScarCharismaBonus(props = {}) {
+    const state = parseWindBreathingState(props.resp_vento_estado);
+    const scars = Math.max(parseNumber(props.resp_vento_cicatrizes), parseNumber(state.scars));
+    return Math.max(0, Math.min(4, Math.trunc(scars)));
+}
+
 export function windStatePatch(state, overrides = {}) {
     return {
         [`system.props.${WIND_STATE_KEY}`]: JSON.stringify({ version: 1, ...state }),

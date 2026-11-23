@@ -5,6 +5,7 @@ import { isHomebrewExtra, ruleVariant, vanillaRuleSelection } from './rules-prof
 import { applySlayerDamage, buildWindBattleDamagePatch, recordResolvedPdvLoss } from './status-engine.mjs';
 import { mitigateBreathingPassiveDamage } from './breathing-defense.mjs';
 import { addFlameEnemyHeat, FLAME_HEAT_FLAG } from './flame-breathing-service.mjs';
+import { vanillaEmberThresholdDamage } from './flame-breathing-data.mjs';
 import { formatStatusSummary, parseStatusState, statusKeysForProps } from './status-service.mjs';
 import { actorKind, isSlayerActor } from './actor-kind.mjs';
 import { releaseSnowRestriction } from './snow-breathing-service.mjs';
@@ -184,7 +185,22 @@ async function applyFlameAfterDamage(actor, context, appliedDamage) {
     }
     if (Object.keys(patch).length)
         await actor.update(patch, { naCsbAutomation: true, naFlameHeat: true });
-    return { heat: heat.heat, thresholds: heat.thresholds };
+    // Livro base p. 41: 10 e 30 pontos de Esquentar causam 5 de dano ao alcançar o patamar
+    // (sem dano por turno, que é Homebrew).
+    const thresholdDamage = ruleVariant('respiracao') === 'vanilla'
+        ? vanillaEmberThresholdDamage(heat.thresholds)
+        : 0;
+    if (thresholdDamage > 0) {
+        const emberContext = {
+            isAttack: false,
+            attackName: 'Brasas Ardentes',
+            damageTypes: ['fogo'],
+            components: [{ label: 'Brasas Ardentes', types: ['fogo'], subtotal: thresholdDamage }],
+        };
+        if (slayer) await applySlayerDamage(actor, thresholdDamage, emberContext);
+        else await applyOniDamage(actor, thresholdDamage, emberContext);
+    }
+    return { heat: heat.heat, thresholds: heat.thresholds, thresholdDamage };
 }
 
 export function calculateApprovedDamage(amount, resisted = false) {

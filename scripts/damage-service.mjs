@@ -653,7 +653,10 @@ export async function rollDamage(options = {}) {
     const wrongLegacyFlameWeapon = options.weaponItem?.id && flameState.synchronizedWeapon?.id &&
         options.weaponItem.id !== flameState.synchronizedWeapon.id &&
         !Object.hasOwn(flameState.weaponHeatById ?? {}, options.weaponItem.id);
-    const flameTier = flameWeaponTier(wrongLegacyFlameWeapon ? 0 : flameWeaponHeat(flameState, flameWeaponId));
+    const flameTier = flameWeaponTier(
+        wrongLegacyFlameWeapon ? 0 : flameWeaponHeat(flameState, flameWeaponId),
+        ruleVariant('respiracao')
+    );
     const flameTechnique = hasAttackDamage && Boolean(flameDamage?.technique || universe ||
         options.isTechnique || options.breathing || breathingDamage ||
         parseMistBreathingState(props.resp_nevoa_estado).pendingDamage ||
@@ -869,12 +872,19 @@ export async function rollDamage(options = {}) {
         flameTier.multiplier > 1 && hasAttackDamage
             ? Math.floor(subtotalDamage * flameTier.multiplier)
             : subtotalDamage;
-    if (damageBeforeCritical > subtotalDamage)
-        components.push(...components.map(component => ({
-            label: `Fogo Fátuo 60 +100% · ${component.label}`,
+    if (damageBeforeCritical > subtotalDamage) {
+        // ×2 (Homebrew) duplica cada componente; +50% (livro base p. 41) acrescenta metade de cada um.
+        const bonusPercent = Math.round((flameTier.multiplier - 1) * 100);
+        const extras = components.map(component => ({
+            label: `Fogo Fátuo 60 +${bonusPercent}% · ${component.label}`,
             types: [...component.types],
-            subtotal: component.subtotal,
-        })));
+            subtotal: Math.floor(component.subtotal * (flameTier.multiplier - 1)),
+        }));
+        // O arredondamento por componente não pode mudar o total: o resto vai ao primeiro extra.
+        const rounding = damageBeforeCritical - subtotalDamage - extras.reduce((sum, extra) => sum + extra.subtotal, 0);
+        if (extras.length && rounding > 0) extras[0].subtotal += rounding;
+        components.push(...extras);
+    }
     let finalDamage = critical ? damageBeforeCritical * 2 : damageBeforeCritical;
     if (critical && damageBeforeCritical > 0) {
         const criticalBonus = components.map((component) => ({

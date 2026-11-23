@@ -58,35 +58,35 @@ describe('criador de Item do catálogo', () => {
 });
 
 describe('criador de Item genérico', () => {
-    test('normaliza categoria, uso, quantidade e espaço', () => {
+    test('normaliza raridade, preço, quantidade, espaço, efeito e história', () => {
         const data = genericItemData({
-            name: '  Poção de Glicínia  ',
-            category: 'veneno',
-            usage: 'reacao',
+            name: '  Antídoto  ',
+            rarity: ' A ',
+            price: ' 200 Moedas de Honra ',
             quantity: '3',
             spaces: '1',
-            effect: ' Cura 3d6 PDV ',
-            description: 'Teste',
+            effect: ' Cura envenenamento ',
+            history: ' Ministrado por Kakushis ',
         });
-        assert.equal(data.name, 'Poção de Glicínia');
+        assert.equal(data.name, 'Antídoto');
         assert.equal(data.system.props.inventario_categoria, 'item');
-        assert.equal(data.system.props.item_categoria, 'veneno');
-        assert.equal(data.system.props.item_uso, 'reacao');
+        assert.equal(data.system.props.item_raridade, 'A');
+        assert.equal(data.system.props.item_preco, '200 Moedas de Honra');
         assert.equal(data.system.props.item_quantidade, 3);
         assert.equal(data.system.props.item_espacos, 1);
-        assert.equal(data.system.props.item_efeito, 'Cura 3d6 PDV');
+        assert.equal(data.system.props.item_efeito, 'Cura envenenamento');
+        assert.equal(data.system.props.item_historia, 'Ministrado por Kakushis');
+        assert.equal('item_categoria' in data.system.props, false);
+        assert.equal('item_uso' in data.system.props, false);
         assert.equal(data.img, GENERIC_ITEM_ICON);
     });
 
-    test('rejeita nome vazio e cai em Outro/Ação', () => {
+    test('rejeita nome vazio e deixa os campos livres em branco', () => {
         assert.equal(genericItemData({ name: '  ' }), null);
-        const data = genericItemData({
-            name: 'Bugiganga',
-            category: 'inexistente',
-            usage: 'inexistente',
-        });
-        assert.equal(data.system.props.item_categoria, 'outro');
-        assert.equal(data.system.props.item_uso, 'acao');
+        const data = genericItemData({ name: 'Bugiganga' });
+        assert.equal(data.system.props.item_raridade, '');
+        assert.equal(data.system.props.item_preco, '');
+        assert.equal(data.system.props.item_historia, '');
         assert.equal(data.system.props.item_quantidade, 0);
     });
 
@@ -106,13 +106,13 @@ describe('criador de Item genérico', () => {
         };
         const result = await createGenericItem(
             actor,
-            { name: 'Poção', category: 'consumivel' },
+            { name: 'Poção', rarity: 'B' },
             { templateId: 'NAGenericItem001' }
         );
         assert.equal(result.ok, true);
         assert.equal(created[0].type, 'Item');
         assert.equal(created[0].data[0].system.template, 'NAGenericItem001');
         assert.equal(created[0].options.naGenericItem, true);
-        assert.equal(created[0].data[0].system.props.item_categoria, 'consumivel');
+        assert.equal(created[0].data[0].system.props.item_raridade, 'B');
     });
 });

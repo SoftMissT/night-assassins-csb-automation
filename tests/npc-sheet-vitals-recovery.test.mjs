@@ -110,7 +110,7 @@ describe('ficha de NPC: layout', () => {
             assert.ok(byKey.has(key), `${key} continua guardado na ficha`);
     });
 
-    it('configuração tem as bases e o nível, visível na sua aba', () => {
+    it('configuração tem as bases; Respiração e Nível ficam no cabeçalho', () => {
         const panel = byKey.get('npc_configuracao');
         assert.equal(panel?.type, 'panel');
         assert.ok(!panel.collapsible);
@@ -118,9 +118,13 @@ describe('ficha de NPC: layout', () => {
         const inside = new Set(components(panel).map((node) => node.key));
         for (const key of [
             'npc_vit_base', 'npc_dex_base', 'npc_for_base', 'npc_car_base', 'npc_fdv_base',
-            'npc_int_base', 'npc_sab_base', 'npc_pdv_base', 'npc_pdr_base', 'nvl_respiracao',
+            'npc_int_base', 'npc_sab_base', 'npc_pdv_base', 'npc_pdr_base',
         ])
             assert.ok(inside.has(key), `${key} deve estar na configuração`);
+        assert.ok(!inside.has('nvl_respiracao'), 'o Nível de Respiração saiu da aba escondida');
+        const header = new Set(components(byKey.get('npc_escolhas_respiracao')).map((node) => node.key));
+        for (const key of ['resp_slayer_display', 'resp_slayer_display_2', 'nvl_respiracao'])
+            assert.ok(header.has(key), `${key} deve estar no cabeçalho do NPC`);
     });
 
     it('Bônus Fixos são públicos e bônus de ação ficam na Configuração do GM', () => {

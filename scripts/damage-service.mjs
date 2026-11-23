@@ -98,7 +98,7 @@ import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
 import { parseBreathPassiveState, passiveStatePatch } from './breath-passives.mjs';
 import { openAttackBuilder } from './items/attack-builder.mjs';
 import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-runtime.mjs';
-import { resolveSlayerDerivedBonuses, sheetBonusValue } from './derived-bonus-service.mjs';
+import { resolveSlayerDerivedBonuses, sheetBonusValue, tempBonusValue } from './derived-bonus-service.mjs';
 import { actorBuffSources } from './breathing-buffs.mjs';
 import { buildEntryFormula, isValidDamageFormula, resolveMessageMode } from './damage-formula.mjs';
 
@@ -631,6 +631,15 @@ export async function rollDamage(options = {}) {
             formula: String(sheetDamage),
             derived: true,
         });
+    // "Bônus Temporários" da ficha: mesma regra dos fixos (no ataque de Respiração já entram no derivado).
+    const tempDamage = breathingActor && hasAttackDamage ? 0 : tempBonusValue(props, 'dano');
+    if (tempDamage)
+        specs.push({
+            label: 'Bônus temporário',
+            types: [],
+            formula: String(tempDamage),
+            derived: true,
+        });
     const injectBreathing = options.skipBreathingInjection !== true && options.passivePlan?.noContactEffects !== true;
     if (injectBreathing && breathingDamage?.critical && hasAttackDamage) critical = true;
     if (injectBreathing && breathingDamage?.formula && hasAttackDamage) {
@@ -653,7 +662,10 @@ export async function rollDamage(options = {}) {
     const wrongLegacyFlameWeapon = options.weaponItem?.id && flameState.synchronizedWeapon?.id &&
         options.weaponItem.id !== flameState.synchronizedWeapon.id &&
         !Object.hasOwn(flameState.weaponHeatById ?? {}, options.weaponItem.id);
-    const flameTier = flameWeaponTier(wrongLegacyFlameWeapon ? 0 : flameWeaponHeat(flameState, flameWeaponId));
+    const flameTier = flameWeaponTier(
+        wrongLegacyFlameWeapon ? 0 : flameWeaponHeat(flameState, flameWeaponId),
+        ruleVariant('respiracao')
+    );
     const flameTechnique = hasAttackDamage && Boolean(flameDamage?.technique || universe ||
         options.isTechnique || options.breathing || breathingDamage ||
         parseMistBreathingState(props.resp_nevoa_estado).pendingDamage ||
@@ -869,12 +881,19 @@ export async function rollDamage(options = {}) {
         flameTier.multiplier > 1 && hasAttackDamage
             ? Math.floor(subtotalDamage * flameTier.multiplier)
             : subtotalDamage;
-    if (damageBeforeCritical > subtotalDamage)
-        components.push(...components.map(component => ({
-            label: `Fogo Fátuo 60 +100% · ${component.label}`,
+    if (damageBeforeCritical > subtotalDamage) {
+        // ×2 (Homebrew) duplica cada componente; +50% (livro base p. 41) acrescenta metade de cada um.
+        const bonusPercent = Math.round((flameTier.multiplier - 1) * 100);
+        const extras = components.map(component => ({
+            label: `Fogo Fátuo 60 +${bonusPercent}% · ${component.label}`,
             types: [...component.types],
-            subtotal: component.subtotal,
-        })));
+            subtotal: Math.floor(component.subtotal * (flameTier.multiplier - 1)),
+        }));
+        // O arredondamento por componente não pode mudar o total: o resto vai ao primeiro extra.
+        const rounding = damageBeforeCritical - subtotalDamage - extras.reduce((sum, extra) => sum + extra.subtotal, 0);
+        if (extras.length && rounding > 0) extras[0].subtotal += rounding;
+        components.push(...extras);
+    }
     let finalDamage = critical ? damageBeforeCritical * 2 : damageBeforeCritical;
     if (critical && damageBeforeCritical > 0) {
         const criticalBonus = components.map((component) => ({
@@ -1887,9 +1906,15 @@ export function buildDamageFlavor({ nome, breathing = '', critical, pdrGasto, re
         ? '<div style="font-size:22px;font-weight:900;letter-spacing:.12em;color:#ffe08a;text-shadow:0 0 14px #ff7a00;margin:6px 0;">⚔ CRÍTICO ⚔</div>'
         : '';
     const totalStyle = critical ? 'font-size:18px;font-weight:900;color:#ffe08a;' : '';
+    // Ferida (Marca do Caçador, componentes só de tipo ferida) é separada do PDV: o Total mostra só o PDV.
+    const woundTotal = components
+        .filter((component) => (component.types ?? []).length && component.types.every((type) => type === 'ferida'))
+        .reduce((sum, component) => sum + Math.max(0, Math.trunc(Number(component.subtotal) || 0)), 0);
+    const pdvTotal = Math.max(0, Math.trunc(Number(finalDamage) || 0) - woundTotal);
+    const woundLine = woundTotal > 0 ? `<div>Ferida: <strong>${woundTotal}</strong> (separada do PDV)</div>` : '';
     // `na-damage-chat`: o CSS do módulo esconde as caixas de rolagem do core nesta mensagem
     // (o cartão já mostra cada entrada e o total; com dano fixo elas só repetiam o número).
-    return `<div class="na-damage-chat">${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${finalDamage}</strong></div>${targetLine}</div>`;
+    return `<div class="na-damage-chat">${breathingLine}<div><strong>${nome}</strong>${pdrGasto ? ` · −${pdrGasto} PDR` : ''}</div>${reasons.length ? `<div>Status: ${reasons.join(' · ')}</div>` : ''}${componentLines}${critBanner}<hr><div style="${totalStyle}"><strong>Total: ${pdvTotal}</strong></div>${woundLine}${targetLine}</div>`;
 }
 
 /**

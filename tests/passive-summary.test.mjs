@@ -126,3 +126,14 @@ test('mostra os contadores da Respiração do personagem mesmo zerados (Vento co
     );
     assert.equal(buildPassiveSummary({}, {}, new Set(['som', 'raposa'])), 'BPM 0/200 · Véus 0/9');
 });
+
+test('Respirações em Vanilla: só os acúmulos do livro base (sem BPM, Véus, Corrente e Forja)', () => {
+    const props = {
+        resp_vento_cicatrizes: 6,
+        resp_som_partitura: JSON.stringify({ bpm: 80 }),
+        resp_raposa_passiva: JSON.stringify({ veils: 6 }),
+        resp_metal_forja_passiva: JSON.stringify({ temperature: 2 }),
+    };
+    const families = new Set(['vento', 'som', 'raposa', 'metal', 'chamas']);
+    assert.equal(buildPassiveSummary(props, {}, families, { homebrew: false }), 'Fogo Fátuo 0/60 · Cicatrizes 6');
+});

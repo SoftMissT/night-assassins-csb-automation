@@ -15,8 +15,10 @@ import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { openNpcVitals } from './npc-vitals-service.mjs';
 import { registerDreamPassiveEngine } from './dream-passive-service.mjs';
 import { registerCombatPassiveEngine, openBreathingPassiveManager } from './breathing-combat-passives.mjs';
+import { recognizeNpcBreathing } from './npc-breathing-recognition.mjs';
 import { backfillPassiveSummaries, injectPassiveSummary, refreshPassiveSummaryForItem } from './passive-summary-service.mjs';
 import { promptTemplateSyncAfterUpdate, syncWorldTemplates } from './template-sync-service.mjs';
+import { guardVanillaChoices } from './vanilla-choice-guard.mjs';
 import {
     migrateRulesSelection,
     openRulesProfileManager,
@@ -226,6 +228,7 @@ Hooks.once('init', () => {
     registerSettings();
     registerOniProgressionEngine();
     Hooks.on('preUpdateActor', preserveVanillaSelectionsOnTemplateReload);
+    Hooks.on('preUpdateActor', guardVanillaChoices);
 });
 /**
  * Marca fichas Night Assassins com a classe de skin `.na-sheet`.
@@ -296,7 +299,10 @@ Hooks.once('ready', async () => {
     for (const hook of ['createItem', 'deleteItem'])
         Hooks.on(hook, (item, _options, userId) => {
             if (userId !== game.user.id) return; // só quem mexeu grava o resumo
-            void refreshPassiveSummaryForItem(item).catch(error => console.warn(`[${MODULE_ID}] Acúmulos`, error.message));
+            void (async () => {
+                if (hook === 'createItem') await recognizeNpcBreathing(item);
+                await refreshPassiveSummaryForItem(item);
+            })().catch(error => console.warn(`[${MODULE_ID}] Acúmulos`, error.message));
         });
     Hooks.on('createActor', actor => void syncSheetRulesProfile(actor).catch(error => ui.notifications.error(error.message)));
     registerCombatManeuverEngine();

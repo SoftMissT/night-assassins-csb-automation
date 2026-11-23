@@ -9,6 +9,7 @@ const WORLD_MACRO_NAMES = new Set([
     'Night Assassins Criar Forma de Respiração',
     'Night Assassins Criar Item',
     'Night Assassins Criar Arma Especial',
+    'Night Assassins Atualizar Fichas',
 ]);
 
 function macroOwnership(name) {

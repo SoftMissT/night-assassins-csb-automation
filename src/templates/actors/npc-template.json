@@ -1538,6 +1538,250 @@
 									"titleStyle": "title"
 								},
 								{
+									"key": "",
+									"colSpan": 1,
+									"rowSpan": 1,
+									"cssClass": "",
+									"role": 0,
+									"editRole": 0,
+									"permission": 0,
+									"tooltip": "",
+									"visibilityFormula": "",
+									"editableFormula": "",
+									"escapeHTML": false,
+									"type": "label",
+									"size": "full-size",
+									"icon": "",
+									"value": "<span class=\"na-sheet-text na-sheet-title na-sheet-size-xl na-sheet-role-car\">Bônus Temporários</span>",
+									"prefix": "",
+									"suffix": "",
+									"rollMessage": "",
+									"altRollMessage": "",
+									"rollMessageToChat": false,
+									"altRollMessageToChat": false,
+									"style": "title"
+								},
+								{
+									"key": "",
+									"colSpan": 1,
+									"rowSpan": 1,
+									"cssClass": "",
+									"role": 0,
+									"editRole": 0,
+									"permission": 0,
+									"tooltip": "",
+									"visibilityFormula": "",
+									"editableFormula": "",
+									"escapeHTML": false,
+									"type": "panel",
+									"contents": [
+										{
+											"key": "",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "label",
+											"size": "full-size",
+											"icon": "",
+											"value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-dex na-sheet-glow\">ACERTO</span>",
+											"prefix": "",
+											"suffix": "",
+											"rollMessage": "",
+											"altRollMessage": "",
+											"rollMessageToChat": false,
+											"altRollMessageToChat": false,
+											"style": "label"
+										},
+										{
+											"key": "",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "label",
+											"size": "full-size",
+											"icon": "",
+											"value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-for na-sheet-glow\">DANO</span>",
+											"prefix": "",
+											"suffix": "",
+											"rollMessage": "",
+											"altRollMessage": "",
+											"rollMessageToChat": false,
+											"altRollMessageToChat": false,
+											"style": "label"
+										},
+										{
+											"key": "",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "label",
+											"size": "full-size",
+											"icon": "",
+											"value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-md na-sheet-role-vit na-sheet-glow\">DEFESA / TESTES</span>",
+											"prefix": "",
+											"suffix": "",
+											"rollMessage": "",
+											"altRollMessage": "",
+											"rollMessageToChat": false,
+											"altRollMessageToChat": false,
+											"style": "label"
+										},
+										{
+											"key": "npc_bonus_temp_acerto",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Bônus temporário somado em todo Acerto até você zerar (buff de cena).",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "numberField",
+											"size": "full-size",
+											"label": "",
+											"defaultValue": "0",
+											"allowDecimal": false,
+											"minVal": "",
+											"maxVal": "",
+											"allowRelative": false,
+											"showControls": false,
+											"controlsStyle": "hover",
+											"controlsCustomIncrements": "",
+											"inputStyle": "text"
+										},
+										{
+											"key": "npc_bonus_temp_dano",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Bônus temporário somado em todo dano até você zerar.",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "numberField",
+											"size": "full-size",
+											"label": "",
+											"defaultValue": "0",
+											"allowDecimal": false,
+											"minVal": "",
+											"maxVal": "",
+											"allowRelative": false,
+											"showControls": false,
+											"controlsStyle": "hover",
+											"controlsCustomIncrements": "",
+											"inputStyle": "text"
+										},
+										{
+											"key": "npc_bonus_temp_teste",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Bônus temporário em Defesa e testes até você zerar.",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "numberField",
+											"size": "full-size",
+											"label": "",
+											"defaultValue": "0",
+											"allowDecimal": false,
+											"minVal": "",
+											"maxVal": "",
+											"allowRelative": false,
+											"showControls": false,
+											"controlsStyle": "hover",
+											"controlsCustomIncrements": "",
+											"inputStyle": "text"
+										},
+										{
+											"key": "npc_bonus_temp_bloqueio",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Bônus temporário aplicado em Bloqueio até você zerar.",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "numberField",
+											"size": "full-size",
+											"label": "Bloqueio",
+											"defaultValue": "0",
+											"allowDecimal": false,
+											"minVal": "",
+											"maxVal": "",
+											"allowRelative": false,
+											"showControls": false,
+											"controlsStyle": "hover",
+											"controlsCustomIncrements": "",
+											"inputStyle": "text"
+										},
+										{
+											"key": "npc_bonus_temp_esquiva",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Bônus temporário aplicado em Esquiva até você zerar.",
+											"visibilityFormula": "",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "numberField",
+											"size": "full-size",
+											"label": "Esquiva",
+											"defaultValue": "0",
+											"allowDecimal": false,
+											"minVal": "",
+											"maxVal": "",
+											"allowRelative": false,
+											"showControls": false,
+											"controlsStyle": "hover",
+											"controlsCustomIncrements": "",
+											"inputStyle": "text"
+										}
+									],
+									"flow": "grid-3",
+									"align": "center",
+									"verticalAlign": "top",
+									"collapsible": false,
+									"defaultCollapsed": false,
+									"title": "",
+									"titleStyle": "title"
+								},
+								{
 									"key": "npc_acoes_panel",
 									"colSpan": 1,
 									"rowSpan": 1,
@@ -1697,7 +1941,7 @@
 										},
 										{
 											"key": "acerto_label",
-											"colSpan": 1,
+											"colSpan": 2,
 											"rowSpan": 1,
 											"cssClass": "",
 											"role": 0,
@@ -2741,30 +2985,6 @@
 							"type": "tab",
 							"name": "Habilidades",
 							"contents": [
-								{
-									"key": "npc_vanilla_choices",
-									"colSpan": 1,
-									"rowSpan": 1,
-									"cssClass": "",
-									"role": 0,
-									"editRole": 0,
-									"permission": 0,
-									"tooltip": "Editar as escolhas da ficha nas categorias Vanilla.",
-									"visibilityFormula": "ref('na_regras_origens', 0) or ref('na_regras_habilidades', 0) or ref('na_regras_classes', 0) or ref('na_regras_metal', 0)",
-									"editableFormula": "",
-									"escapeHTML": false,
-									"type": "label",
-									"size": "full-size",
-									"icon": "",
-									"value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Escolhas Vanilla</span>",
-									"prefix": "",
-									"suffix": "",
-									"rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesProfileManager({actorUuid:entity.uuid}); return '';}%",
-									"altRollMessage": "",
-									"rollMessageToChat": false,
-									"altRollMessageToChat": false,
-									"style": "button"
-								},
 								{
 									"key": "npc_origens_homebrew",
 									"colSpan": 1,
@@ -4814,30 +5034,6 @@
 									"titleStyle": "default",
 									"contents": [
 										{
-											"key": "npc_rules_vanilla",
-											"colSpan": 1,
-											"rowSpan": 1,
-											"cssClass": "",
-											"role": 4,
-											"editRole": 0,
-											"permission": 0,
-											"tooltip": "Configurar as variantes do mundo e as escolhas Vanilla desta ficha.",
-											"visibilityFormula": "",
-											"editableFormula": "",
-											"escapeHTML": false,
-											"type": "label",
-											"size": "full-size",
-											"icon": "",
-											"value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Regras da Mesa</span>",
-											"prefix": "",
-											"suffix": "",
-											"rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesTableManager({actorUuid:entity.uuid}); return '';}%",
-											"altRollMessage": "",
-											"rollMessageToChat": false,
-											"altRollMessageToChat": false,
-											"style": "button"
-										},
-										{
 											"key": "npc_atributos",
 											"colSpan": 1,
 											"rowSpan": 1,
@@ -5097,30 +5293,6 @@
 											"cols": 2,
 											"rows": 1,
 											"layout": "cc"
-										},
-										{
-											"key": "nvl_respiracao",
-											"colSpan": 1,
-											"rowSpan": 1,
-											"cssClass": "",
-											"role": 0,
-											"editRole": 0,
-											"permission": 0,
-											"tooltip": "Nível de Respiração do NPC (1 a 4); libera as Formas de Respiração.",
-											"visibilityFormula": "",
-											"editableFormula": "",
-											"escapeHTML": false,
-											"type": "numberField",
-											"size": "full-size",
-											"label": "Nível de Respiração",
-											"defaultValue": "1",
-											"allowDecimal": false,
-											"minVal": "1",
-											"maxVal": "4",
-											"allowRelative": false,
-											"showControls": true,
-											"controlsStyle": "hover",
-											"inputStyle": "text"
 										}
 									]
 								},
@@ -5620,7 +5792,7 @@
 					"editRole": 0,
 					"permission": 0,
 					"tooltip": "",
-					"visibilityFormula": "not ref('na_regras_habilidades', 0) or not ref('na_regras_metal', 0) or not ref('na_regras_origens', 0)",
+					"visibilityFormula": "",
 					"editableFormula": "",
 					"escapeHTML": false,
 					"type": "panel",
@@ -5705,6 +5877,58 @@
 							]
 						},
 						{
+							"key": "na_vanilla_origin",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "",
+							"visibilityFormula": "ref('na_regras_origens', 0)",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "select",
+							"size": "full-size",
+							"label": "Origem:",
+							"defaultValue": "${''}$",
+							"selectedOptionType": "custom",
+							"options": [
+								{
+									"key": "",
+									"value": "Escolha"
+								},
+								{
+									"key": "origem_aldeao",
+									"value": "Aldeão"
+								},
+								{
+									"key": "origem_civilizado",
+									"value": "Civilizado"
+								},
+								{
+									"key": "origem_criado_exterminador",
+									"value": "Criado por Exterminador"
+								},
+								{
+									"key": "origem_isolado",
+									"value": "Isolado"
+								},
+								{
+									"key": "origem_descendente",
+									"value": "Descendente"
+								},
+								{
+									"key": "origem_tsuguko",
+									"value": "Tsuguko"
+								},
+								{
+									"key": "origem_mestre_uma_coisa",
+									"value": "Mestre de Uma Coisa Só"
+								}
+							]
+						},
+						{
 							"key": "hab_escolhida",
 							"colSpan": 1,
 							"rowSpan": 1,
@@ -5765,6 +5989,54 @@
 								{
 									"key": "hab_escolhida_marca_destino",
 									"value": "Marca do Destino"
+								}
+							]
+						},
+						{
+							"key": "na_vanilla_ability",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "",
+							"visibilityFormula": "ref('na_regras_habilidades', 0)",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "select",
+							"size": "full-size",
+							"label": "Habilidade Especial:",
+							"defaultValue": "${''}$",
+							"selectedOptionType": "custom",
+							"options": [
+								{
+									"key": "",
+									"value": "Escolha"
+								},
+								{
+									"key": "hab_escolhida_olfato",
+									"value": "Olfato Aguçado"
+								},
+								{
+									"key": "hab_escolhida_tato",
+									"value": "Tato Aguçado"
+								},
+								{
+									"key": "hab_escolhida_audicao",
+									"value": "Audição Aguçada"
+								},
+								{
+									"key": "hab_escolhida_visao",
+									"value": "Visão Aguçada"
+								},
+								{
+									"key": "hab_escolhida_transformacao",
+									"value": "Transformação Demoníaca"
+								},
+								{
+									"key": "hab_escolhida_marechi",
+									"value": "Marechi"
 								}
 							]
 						},
@@ -5839,6 +6111,549 @@
 									"value": "Vermelha"
 								}
 							]
+						},
+						{
+							"key": "na_vanilla_metal",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "",
+							"visibilityFormula": "ref('na_regras_metal', 0)",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "select",
+							"size": "full-size",
+							"label": "Metal da Nichirin:",
+							"defaultValue": "${''}$",
+							"selectedOptionType": "custom",
+							"options": [
+								{
+									"key": "",
+									"value": "Escolha"
+								},
+								{
+									"key": "metal_alvorada",
+									"value": "Metal da Alvorada"
+								},
+								{
+									"key": "metal_despertar",
+									"value": "Metal do Despertar"
+								},
+								{
+									"key": "metal_entardecer",
+									"value": "Metal do Entardecer"
+								},
+								{
+									"key": "metal_coracao",
+									"value": "Metal do Coração"
+								},
+								{
+									"key": "metal_espirito",
+									"value": "Metal do Espírito"
+								},
+								{
+									"key": "metal_serenidade",
+									"value": "Metal da Serenidade"
+								},
+								{
+									"key": "metal_preto",
+									"value": "Metal Preto"
+								}
+							]
+						},
+						{
+							"key": "na_vanilla_class",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "",
+							"visibilityFormula": "ref('na_regras_classes', 0)",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "select",
+							"size": "full-size",
+							"label": "Classe:",
+							"defaultValue": "${''}$",
+							"selectedOptionType": "custom",
+							"options": [
+								{
+									"key": "",
+									"value": "Escolha"
+								},
+								{
+									"key": "classe_mb",
+									"value": "Mestre de Batalha"
+								},
+								{
+									"key": "classe_usuario_de_veneno",
+									"value": "Usuário de Veneno"
+								},
+								{
+									"key": "classe_kakushi",
+									"value": "Kakushi"
+								},
+								{
+									"key": "classe_companheiro_oni",
+									"value": "Companheiro de Oni"
+								},
+								{
+									"key": "classe_usuario_de_duas_resp",
+									"value": "Usuário de Duas Respirações"
+								}
+							]
+						}
+					]
+				},
+				{
+					"key": "npc_escolhas_respiracao",
+					"colSpan": 1,
+					"rowSpan": 1,
+					"cssClass": "",
+					"role": 0,
+					"editRole": 0,
+					"permission": 0,
+					"tooltip": "",
+					"visibilityFormula": "",
+					"editableFormula": "",
+					"escapeHTML": false,
+					"type": "panel",
+					"flow": "grid-3",
+					"align": "center",
+					"verticalAlign": "top",
+					"collapsible": false,
+					"defaultCollapsed": false,
+					"title": "",
+					"titleStyle": "default",
+					"contents": [
+						{
+							"key": "resp_slayer_display",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "Respiração que o NPC usa. As passivas e os acúmulos (Chamas, Vento, Sonhos, Raposa...) reconhecem o NPC por aqui.",
+							"visibilityFormula": "",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "select",
+							"size": "full-size",
+							"label": "Respiração:",
+							"defaultValue": "resp_slayer_base",
+							"selectedOptionType": "custom",
+							"options": [
+								{
+									"key": "resp_slayer_base",
+									"value": "Selecionar"
+								},
+								{
+									"key": "resp_slayer_agua",
+									"value": "Respiração da Água"
+								},
+								{
+									"key": "resp_slayer_ameixeira",
+									"value": "Respiração da Ameixeira"
+								},
+								{
+									"key": "resp_slayer_amor",
+									"value": "Respiração do Amor"
+								},
+								{
+									"key": "resp_slayer_aranha",
+									"value": "Respiração da Aranha"
+								},
+								{
+									"key": "resp_slayer_areia",
+									"value": "Respiração da Areia"
+								},
+								{
+									"key": "resp_slayer_besta",
+									"value": "Respiração da Besta"
+								},
+								{
+									"key": "resp_slayer_cerejeira",
+									"value": "Respiração da Cerejeira"
+								},
+								{
+									"key": "resp_slayer_chamas",
+									"value": "Honoo no Kokyu (Chamas)"
+								},
+								{
+									"key": "resp_slayer_corvo",
+									"value": "Respiração do Corvo"
+								},
+								{
+									"key": "resp_slayer_cristal",
+									"value": "Respiração do Cristal"
+								},
+								{
+									"key": "resp_slayer_dragao",
+									"value": "Respiração do Dragão"
+								},
+								{
+									"key": "resp_slayer_eclipse",
+									"value": "Respiração do Eclipse"
+								},
+								{
+									"key": "resp_slayer_estrelas",
+									"value": "Respiração das Estrelas"
+								},
+								{
+									"key": "resp_slayer_flores",
+									"value": "Respiração das Flores"
+								},
+								{
+									"key": "resp_slayer_grama",
+									"value": "Respiração da Grama"
+								},
+								{
+									"key": "resp_slayer_insetos",
+									"value": "Respiração dos Insetos"
+								},
+								{
+									"key": "resp_slayer_lobo",
+									"value": "Respiração do Lobo"
+								},
+								{
+									"key": "resp_slayer_lua",
+									"value": "Respiração da Lua"
+								},
+								{
+									"key": "resp_slayer_luz",
+									"value": "Respiração da Luz"
+								},
+								{
+									"key": "resp_slayer_macaco",
+									"value": "Respiração do Macaco"
+								},
+								{
+									"key": "resp_slayer_madeira",
+									"value": "Respiração da Madeira"
+								},
+								{
+									"key": "resp_slayer_magma",
+									"value": "Respiração do Magma"
+								},
+								{
+									"key": "resp_slayer_metal",
+									"value": "Kinzoku no Kokyu (Metal)"
+								},
+								{
+									"key": "resp_slayer_neve",
+									"value": "Respiração da Neve"
+								},
+								{
+									"key": "resp_slayer_nevasca",
+									"value": "Respiração da Nevasca"
+								},
+								{
+									"key": "resp_slayer_nevoa",
+									"value": "Kasumi no Kokyu (Névoa)"
+								},
+								{
+									"key": "resp_slayer_pedra",
+									"value": "Iwa no Kokyu (Pedra)"
+								},
+								{
+									"key": "resp_slayer_raposa",
+									"value": "Respiração da Raposa"
+								},
+								{
+									"key": "resp_slayer_sangue",
+									"value": "Respiração do Sangue"
+								},
+								{
+									"key": "resp_slayer_serpente",
+									"value": "Respiração da Serpente"
+								},
+								{
+									"key": "resp_slayer_sol",
+									"value": "Respiração do Sol"
+								},
+								{
+									"key": "resp_slayer_som",
+									"value": "Respiração do Som"
+								},
+								{
+									"key": "resp_slayer_sombras",
+									"value": "Respiração das Sombras"
+								},
+								{
+									"key": "resp_slayer_sonhos",
+									"value": "Respiração dos Sonhos"
+								},
+								{
+									"key": "resp_slayer_tartaruga",
+									"value": "Respiração da Tartaruga"
+								},
+								{
+									"key": "resp_slayer_tempo",
+									"value": "Respiração do Tempo"
+								},
+								{
+									"key": "resp_slayer_tigre",
+									"value": "Respiração do Tigre"
+								},
+								{
+									"key": "resp_slayer_tinta",
+									"value": "Respiração da Tinta"
+								},
+								{
+									"key": "resp_slayer_tormenta",
+									"value": "Respiração da Tormenta"
+								},
+								{
+									"key": "resp_slayer_trovao",
+									"value": "Respiração do Trovão"
+								},
+								{
+									"key": "resp_slayer_tubarao",
+									"value": "Respiração do Tubarão"
+								},
+								{
+									"key": "resp_slayer_vagalume",
+									"value": "Respiração do Vagalume"
+								},
+								{
+									"key": "resp_slayer_veneno",
+									"value": "Respiração do Veneno"
+								},
+								{
+									"key": "resp_slayer_vento",
+									"value": "Respiração do Vento"
+								}
+							]
+						},
+						{
+							"key": "resp_slayer_display_2",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "Segunda Respiração do NPC, quando houver.",
+							"visibilityFormula": "",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "select",
+							"size": "full-size",
+							"label": "Respiração Secundária:",
+							"defaultValue": "resp_slayer_base",
+							"selectedOptionType": "custom",
+							"options": [
+								{
+									"key": "resp_slayer_base",
+									"value": "Selecionar"
+								},
+								{
+									"key": "resp_slayer_agua",
+									"value": "Respiração da Água"
+								},
+								{
+									"key": "resp_slayer_ameixeira",
+									"value": "Respiração da Ameixeira"
+								},
+								{
+									"key": "resp_slayer_amor",
+									"value": "Respiração do Amor"
+								},
+								{
+									"key": "resp_slayer_aranha",
+									"value": "Respiração da Aranha"
+								},
+								{
+									"key": "resp_slayer_areia",
+									"value": "Respiração da Areia"
+								},
+								{
+									"key": "resp_slayer_besta",
+									"value": "Respiração da Besta"
+								},
+								{
+									"key": "resp_slayer_cerejeira",
+									"value": "Respiração da Cerejeira"
+								},
+								{
+									"key": "resp_slayer_chamas",
+									"value": "Honoo no Kokyu (Chamas)"
+								},
+								{
+									"key": "resp_slayer_corvo",
+									"value": "Respiração do Corvo"
+								},
+								{
+									"key": "resp_slayer_cristal",
+									"value": "Respiração do Cristal"
+								},
+								{
+									"key": "resp_slayer_dragao",
+									"value": "Respiração do Dragão"
+								},
+								{
+									"key": "resp_slayer_eclipse",
+									"value": "Respiração do Eclipse"
+								},
+								{
+									"key": "resp_slayer_estrelas",
+									"value": "Respiração das Estrelas"
+								},
+								{
+									"key": "resp_slayer_flores",
+									"value": "Respiração das Flores"
+								},
+								{
+									"key": "resp_slayer_grama",
+									"value": "Respiração da Grama"
+								},
+								{
+									"key": "resp_slayer_insetos",
+									"value": "Respiração dos Insetos"
+								},
+								{
+									"key": "resp_slayer_lobo",
+									"value": "Respiração do Lobo"
+								},
+								{
+									"key": "resp_slayer_lua",
+									"value": "Respiração da Lua"
+								},
+								{
+									"key": "resp_slayer_luz",
+									"value": "Respiração da Luz"
+								},
+								{
+									"key": "resp_slayer_macaco",
+									"value": "Respiração do Macaco"
+								},
+								{
+									"key": "resp_slayer_madeira",
+									"value": "Respiração da Madeira"
+								},
+								{
+									"key": "resp_slayer_magma",
+									"value": "Respiração do Magma"
+								},
+								{
+									"key": "resp_slayer_metal",
+									"value": "Kinzoku no Kokyu (Metal)"
+								},
+								{
+									"key": "resp_slayer_neve",
+									"value": "Respiração da Neve"
+								},
+								{
+									"key": "resp_slayer_nevasca",
+									"value": "Respiração da Nevasca"
+								},
+								{
+									"key": "resp_slayer_nevoa",
+									"value": "Kasumi no Kokyu (Névoa)"
+								},
+								{
+									"key": "resp_slayer_pedra",
+									"value": "Iwa no Kokyu (Pedra)"
+								},
+								{
+									"key": "resp_slayer_raposa",
+									"value": "Respiração da Raposa"
+								},
+								{
+									"key": "resp_slayer_sangue",
+									"value": "Respiração do Sangue"
+								},
+								{
+									"key": "resp_slayer_serpente",
+									"value": "Respiração da Serpente"
+								},
+								{
+									"key": "resp_slayer_sol",
+									"value": "Respiração do Sol"
+								},
+								{
+									"key": "resp_slayer_som",
+									"value": "Respiração do Som"
+								},
+								{
+									"key": "resp_slayer_sombras",
+									"value": "Respiração das Sombras"
+								},
+								{
+									"key": "resp_slayer_sonhos",
+									"value": "Respiração dos Sonhos"
+								},
+								{
+									"key": "resp_slayer_tartaruga",
+									"value": "Respiração da Tartaruga"
+								},
+								{
+									"key": "resp_slayer_tempo",
+									"value": "Respiração do Tempo"
+								},
+								{
+									"key": "resp_slayer_tigre",
+									"value": "Respiração do Tigre"
+								},
+								{
+									"key": "resp_slayer_tinta",
+									"value": "Respiração da Tinta"
+								},
+								{
+									"key": "resp_slayer_tormenta",
+									"value": "Respiração da Tormenta"
+								},
+								{
+									"key": "resp_slayer_trovao",
+									"value": "Respiração do Trovão"
+								},
+								{
+									"key": "resp_slayer_tubarao",
+									"value": "Respiração do Tubarão"
+								},
+								{
+									"key": "resp_slayer_vagalume",
+									"value": "Respiração do Vagalume"
+								},
+								{
+									"key": "resp_slayer_veneno",
+									"value": "Respiração do Veneno"
+								},
+								{
+									"key": "resp_slayer_vento",
+									"value": "Respiração do Vento"
+								}
+							]
+						},
+						{
+							"key": "nvl_respiracao",
+							"colSpan": 1,
+							"rowSpan": 1,
+							"cssClass": "",
+							"role": 0,
+							"editRole": 0,
+							"permission": 0,
+							"tooltip": "Nível de Respiração do NPC (1 a 4); libera as Formas e escala as passivas.",
+							"visibilityFormula": "",
+							"editableFormula": "",
+							"escapeHTML": false,
+							"type": "numberField",
+							"size": "full-size",
+							"label": "Nível de Respiração:",
+							"defaultValue": "1",
+							"allowDecimal": false,
+							"minVal": "1",
+							"maxVal": "4",
+							"allowRelative": false,
+							"showControls": true,
+							"controlsStyle": "hover",
+							"inputStyle": "text"
 						}
 					]
 				},
@@ -6318,86 +7133,6 @@
 							"showControls": false,
 							"controlsStyle": "hover",
 							"inputStyle": "text"
-						},
-						{
-							"key": "na_vanilla_metal",
-							"colSpan": 1,
-							"rowSpan": 1,
-							"cssClass": "",
-							"role": 4,
-							"editRole": 4,
-							"permission": 0,
-							"tooltip": "",
-							"visibilityFormula": "false",
-							"editableFormula": "",
-							"escapeHTML": false,
-							"type": "textField",
-							"size": "full-size",
-							"label": "na_vanilla_metal",
-							"defaultValue": "",
-							"charList": "",
-							"maxLength": null,
-							"autocomplete": ""
-						},
-						{
-							"key": "na_vanilla_ability",
-							"colSpan": 1,
-							"rowSpan": 1,
-							"cssClass": "",
-							"role": 4,
-							"editRole": 4,
-							"permission": 0,
-							"tooltip": "",
-							"visibilityFormula": "false",
-							"editableFormula": "",
-							"escapeHTML": false,
-							"type": "textField",
-							"size": "full-size",
-							"label": "na_vanilla_ability",
-							"defaultValue": "",
-							"charList": "",
-							"maxLength": null,
-							"autocomplete": ""
-						},
-						{
-							"key": "na_vanilla_origin",
-							"colSpan": 1,
-							"rowSpan": 1,
-							"cssClass": "",
-							"role": 4,
-							"editRole": 4,
-							"permission": 0,
-							"tooltip": "",
-							"visibilityFormula": "false",
-							"editableFormula": "",
-							"escapeHTML": false,
-							"type": "textField",
-							"size": "full-size",
-							"label": "na_vanilla_origin",
-							"defaultValue": "",
-							"charList": "",
-							"maxLength": null,
-							"autocomplete": ""
-						},
-						{
-							"key": "na_vanilla_class",
-							"colSpan": 1,
-							"rowSpan": 1,
-							"cssClass": "",
-							"role": 4,
-							"editRole": 4,
-							"permission": 0,
-							"tooltip": "",
-							"visibilityFormula": "false",
-							"editableFormula": "",
-							"escapeHTML": false,
-							"type": "textField",
-							"size": "full-size",
-							"label": "na_vanilla_class",
-							"defaultValue": "",
-							"charList": "",
-							"maxLength": null,
-							"autocomplete": ""
 						}
 					]
 				}
@@ -6456,7 +7191,7 @@
 			}
 		],
 		"attributeBar": {},
-		"templateSystemUniqueVersion": 1795234800007
+		"templateSystemUniqueVersion": 1795234800011
 	},
 	"prototypeToken": {
 		"name": "npc_template_atual",

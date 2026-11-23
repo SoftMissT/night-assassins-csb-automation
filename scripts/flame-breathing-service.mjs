@@ -79,9 +79,12 @@ export function parseFlameBreathingState(raw) {
 
 export function flameStatePatch(state, overrides = {}) {
     const heat = flameWeaponHeat(state);
-    const tier = flameWeaponTier(heat);
+    const tier = flameWeaponTier(heat, ruleVariant('respiracao'));
     const weaponLabel = state.synchronizedWeapon?.name ? ` · ${state.synchronizedWeapon.name}` : '';
-    const summary = `Fogo Fátuo ${tier.heat}/60${weaponLabel} · Acerto +${tier.hit} · Dano +${tier.weaponDamage}${tier.techniqueDie ? ` · Técnicas +${tier.techniqueDie}` : ''}${tier.multiplier > 1 ? ' · Dano ×2' : ''}`;
+    const multiplierLabel = tier.multiplier > 1
+        ? ` · Dano ${Number.isInteger(tier.multiplier) ? `×${tier.multiplier}` : `+${Math.round((tier.multiplier - 1) * 100)}%`}`
+        : '';
+    const summary = `Fogo Fátuo ${tier.heat}/60${weaponLabel} · Acerto +${tier.hit} · Dano +${tier.weaponDamage}${tier.techniqueDie ? ` · Técnicas +${tier.techniqueDie}` : ''}${multiplierLabel}`;
     return {
         [`system.props.${FLAME_STATE_KEY}`]: JSON.stringify({
             version: 2,
@@ -136,7 +139,7 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
             ? state.pendingDamage
             : null;
     const weaponHeat = Math.min(60, currentHeat + (form.weaponHeat ?? 0));
-    const tier = flameWeaponTier(weaponHeat);
+    const tier = flameWeaponTier(weaponHeat, ruleVariant('respiracao'));
     const next = synchronizedWeapon
         ? synchronizeFlameWeapon(state, synchronizedWeapon, form.weaponHeat ?? 0)
         : { ...state, weaponHeat };
@@ -311,7 +314,7 @@ export async function processFlameEmbers(actor, { turnKey = flameTurnKey(globalT
     const heatMap = actor.getFlag?.(MODULE_ID, FLAME_HEAT_FLAG);
     if (!heatMap || typeof heatMap !== 'object') return { applied: false };
     const heat = Math.max(0, ...Object.values(heatMap).map(entry => parseNumber(entry?.heat)));
-    const formula = flameEmberFormula(heat);
+    const formula = flameEmberFormula(heat, ruleVariant('respiracao'));
     emberProcessing.add(key);
     try {
         if (!formula) {
@@ -466,7 +469,7 @@ export function tickFlameBreathing(rawState) {
         state.ignition = { ...state.ignition, turns: state.ignition.turns - 1 };
         if (state.ignition.turns <= 0) delete state.ignition;
     }
-    const tier = flameWeaponTier(flameWeaponHeat(state));
+    const tier = flameWeaponTier(flameWeaponHeat(state), ruleVariant('respiracao'));
     if (tier.selfDamage > 0)
         events.push({
             type: 'selfDamage',

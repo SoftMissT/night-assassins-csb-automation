@@ -2209,8 +2209,13 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
             targets: new Set([choices.target]),
         });
     }
+    // Vento com fórmula própria no pendingDamage (cicatrizes, DEX): o dano sai no Acerto pelo
+    // damage-service (injeção de windDamage). Rolar selected.dano aqui somava o texto errado do
+    // catálogo ("10d10 + 2") ao dano certo, sem os termos de cicatriz e DEX.
+    const windDamageOnHit = isWindForm && !windNeedsAttackResolution &&
+        Boolean(parseWindBreathingState(plan.patch?.['system.props.resp_vento_estado']).pendingDamage?.formula);
     const genericFormula =
-        isWaterForm || isFlameForm ? '' : resolveGenericDamageFormula(selected.dano, props);
+        isWaterForm || isFlameForm || windDamageOnHit ? '' : resolveGenericDamageFormula(selected.dano, props);
     const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
     if (damageRoll && game.dice3d?.showForRoll)
         await game.dice3d.showForRoll(damageRoll, game.user, true);

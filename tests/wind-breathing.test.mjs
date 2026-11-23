@@ -262,3 +262,11 @@ describe('Respiração do Vento — P0: dano chega ao contrato pendingDamage', (
         assert.ok(ticked.patch['system.props.resp_vento_estado']);
     });
 });
+
+it('Livro base p. 50: +1 em testes de CAR por Cicatriz, máximo +4', async () => {
+    const { vanillaScarCharismaBonus } = await import('../scripts/wind-breathing-service.mjs');
+    assert.equal(vanillaScarCharismaBonus({}), 0);
+    assert.equal(vanillaScarCharismaBonus({ resp_vento_cicatrizes: 2 }), 2);
+    assert.equal(vanillaScarCharismaBonus({ resp_vento_estado: JSON.stringify({ scars: 3 }) }), 3);
+    assert.equal(vanillaScarCharismaBonus({ resp_vento_cicatrizes: 6 }), 4, 'teto +4 mesmo com 6 Cicatrizes');
+});

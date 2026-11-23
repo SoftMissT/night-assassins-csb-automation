@@ -138,6 +138,14 @@ test('NPC soma metal vermelho e Bônus Fixo uma vez no dano', async () => {
     assert.equal((flavor.match(/Bônus da ficha/g) ?? []).length, 0);
 });
 
+test('Bônus Temporário de dano do NPC soma uma vez, dentro do Bônus Derivado', async () => {
+    const { formulas, messages } = setupDamage();
+    await rollDamage({ actor: mutableActor('npc', { npc_nome: 'NPC', npc_bonus_temp_dano: 2 }) });
+    assert.match(messages.at(-1).flavor, /Bônus Derivado/);
+    assert.equal((messages.at(-1).flavor.match(/Bônus temporário/g) ?? []).length, 0, 'não duplica como fonte avulsa');
+    assert.equal(formulas.filter((formula) => formula === '2').length, 1);
+});
+
 for (const npc of [false, true]) {
     test(`Água 5 no ${npc ? 'NPC' : 'Slayer'} recupera PDR apenas ao finalizar o alvo`, async () => {
         for (const targetLife of [8, 20]) {

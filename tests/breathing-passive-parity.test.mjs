@@ -208,3 +208,15 @@ test('Descanso do NPC usa recursos nativos e consolida Sangue Especial uma vez',
     assert.equal(wind.scars, 2);
     assert.equal(wind.vitBonus, 1);
 });
+
+test('Livro base p. 58: Troca Equivalente cobra 1, 2 e 3 de SAB permanente, 1×/dia, sem Exaustão', async () => {
+    const { planVanillaDreamExchange, dreamExchangeMode } = await import('../scripts/dream-passive-service.mjs');
+    assert.deepEqual(planVanillaDreamExchange({ uses: 0, sab: 5 }), { ok: true, cost: 1 });
+    assert.deepEqual(planVanillaDreamExchange({ uses: 1, sab: 5 }), { ok: true, cost: 2 });
+    assert.deepEqual(planVanillaDreamExchange({ uses: 2, sab: 3 }), { ok: true, cost: 3 });
+    assert.equal(planVanillaDreamExchange({ uses: 3, sab: 9 }).ok, false, 'não há quarta ativação');
+    assert.equal(planVanillaDreamExchange({ uses: 0, usedToday: true, sab: 9 }).ok, false, 'uma vez por dia');
+    assert.equal(planVanillaDreamExchange({ uses: 1, sab: 1 }).ok, false, 'SAB não pode ficar negativa');
+    assert.equal(planVanillaDreamExchange({ uses: 2, sab: 2 }).cost, 3);
+    assert.equal(dreamExchangeMode(), 'homebrew', 'sem regras Vanilla o modo segue o extra Homebrew');
+});

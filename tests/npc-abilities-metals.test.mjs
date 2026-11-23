@@ -30,7 +30,9 @@ test('NPC oferece Origem, Habilidade Especial e Metal lado a lado no cabeçalho'
     const source = fields(slayer.system);
     const choices = header.get('npc_escolhas_habilidade_metal');
     assert.equal(choices?.flow, 'grid-3');
-    assert.deepEqual(choices.contents.map((field) => field.key), ['origem_dropdown', 'hab_escolhida', 'metal_escolhido']);
+    // Escolhas do personagem direto na ficha: Homebrew e Vanilla, cada uma visível na variante ativa.
+    assert.deepEqual(choices.contents.map((field) => field.key),
+        ['origem_dropdown', 'na_vanilla_origin', 'hab_escolhida', 'na_vanilla_ability', 'metal_escolhido', 'na_vanilla_metal', 'na_vanilla_class']);
     for (const [key, visibility] of [
         ['origem_dropdown', "not ref('na_regras_origens', 0)"],
         ['hab_escolhida', "not ref('na_regras_habilidades', 0)"],
@@ -209,10 +211,8 @@ test('NPC e Slayer mostram as escolhas Vanilla de Metal e Habilidade na ficha', 
     const npcAbilities = fields(
         npc.system.body.contents[0].contents.find((tab) => tab.key === 'npc_habilidades_tab')
     );
-    const button = npcAbilities.get('npc_vanilla_choices');
-    assert.equal(button?.style, 'button');
-    assert.match(button.rollMessage, /openRulesProfileManager/);
-    assert.match(button.visibilityFormula, /na_regras_metal/);
+    // Sem modal de escolhas na ficha (pedido do operador, 2026-11-22).
+    assert.equal(npcAbilities.has('npc_vanilla_choices'), false);
 });
 
 test('Marca do Destino evolui sem alterar os atributos base do NPC', async () => {

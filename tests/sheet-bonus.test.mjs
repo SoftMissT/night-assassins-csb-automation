@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import {
     SHEET_BONUS_KEYS,
+    TEMP_BONUS_KEYS,
     openDerivedBonusAudit,
     resolveSlayerDerivedBonuses,
     sheetBonusValue,
+    tempBonusValue,
 } from '../scripts/derived-bonus-service.mjs';
 
 const TEMPLATES = {
@@ -75,6 +77,50 @@ describe('Bônus Fixos da ficha', () => {
                 candidates.filter((key) => keys.has(key))
             );
             for (const found of present) assert.equal(found.length, 1, `${kind}: ${found}`);
+        });
+    }
+
+    it('Bônus Temporários entram no mesmo canal, rotulados e separados dos fixos', () => {
+        assert.equal(tempBonusValue({ bonus_temp_acerto_slayer: '2' }, 'acerto'), 2);
+        assert.equal(tempBonusValue({ npc_bonus_temp_dano: 3 }, 'dano'), 3);
+        assert.equal(tempBonusValue({ npc_bonus_temp_dano: 3 }, 'danoFixo'), 3);
+        assert.equal(tempBonusValue({}, 'teste'), 0);
+        assert.equal(tempBonusValue({ bonus_temp_teste_slayer: '' }, 'teste'), 0);
+        const resolved = resolveSlayerDerivedBonuses({
+            bonus_acerto_slayer: 2, bonus_temp_acerto_slayer: 1,
+            npc_bonus_temp_bloqueio: 2, npc_bonus_temp_esquiva: -1,
+            bonus_temp_dano_slayer: 4, bonus_temp_teste_slayer: 3,
+        });
+        assert.equal(resolved.channels.acerto.total, 3);
+        assert.equal(resolved.channels.bloqueio.total, 2);
+        assert.equal(resolved.channels.esquiva.total, -1);
+        assert.equal(resolved.channels.danoFixo.total, 4);
+        assert.equal(resolved.channels.teste.total, 3);
+        assert.deepEqual(
+            resolved.channels.acerto.sources.map((source) => [source.label, source.origin]),
+            [['Bônus da ficha (acerto)', 'Ficha'], ['Bônus temporário (acerto)', 'Temporário']]
+        );
+    });
+
+    for (const [kind, file] of [['slayer', TEMPLATES.slayer], ['npc', TEMPLATES.npc]]) {
+        it(`a ficha ${kind} tem o painel Bônus Temporários visível e editável pelo jogador`, async () => {
+            const source = JSON.parse(await readFile(new URL(`../src/templates/actors/${file}`, import.meta.url), 'utf8'));
+            const fields = [];
+            const walk = (node) => {
+                if (Array.isArray(node)) return node.forEach(walk);
+                if (!node || typeof node !== 'object') return;
+                if (node.type === 'numberField' && Object.values(TEMP_BONUS_KEYS).some((keys) => keys.includes(node.key)))
+                    fields.push(node);
+                Object.values(node).forEach(walk);
+            };
+            walk(source.system.body);
+            assert.equal(fields.length, Object.keys(TEMP_BONUS_KEYS).length, `${kind}: um campo por canal`);
+            for (const field of fields) {
+                assert.equal(field.role, 0, `${field.key}: visível a qualquer jogador`);
+                assert.equal(field.editRole, 0, `${field.key}: editável pelo dono da ficha`);
+                assert.equal(field.visibilityFormula, '');
+                assert.equal(field.editableFormula, '');
+            }
         });
     }
 

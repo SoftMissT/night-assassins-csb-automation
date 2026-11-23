@@ -139,6 +139,13 @@ test('Vida e Morte apresenta estado legível', () => {
     assert.equal(formatLifeDeathSummary({ ...defaultLifeDeathState(), dead: true }), 'Morto');
 });
 
+test('Vida e Morte preserva <br> real do motivo e escapa o restante', async () => {
+    const { escapeReason } = await import('../scripts/life-death-service.mjs');
+    const out = escapeReason("<script>x</script><br>A morte foi aceita.");
+    assert.equal(out, '&lt;script&gt;x&lt;/script&gt;<br>A morte foi aceita.');
+    assert.equal(escapeReason(undefined), '');
+});
+
 test('Vida e Morte sanitiza nome do actor e motivo no ChatMessage contra XSS', async () => {
     const chatMessages = [];
     globalThis.ChatMessage = {

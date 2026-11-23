@@ -1910,30 +1910,6 @@
                                             "style": "button"
                                         },
                                         {
-                                            "key": "oni_rules_vanilla",
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "cssClass": "",
-                                            "role": 0,
-                                            "editRole": 0,
-                                            "permission": 0,
-                                            "tooltip": "",
-                                            "visibilityFormula": "true",
-                                            "editableFormula": "",
-                                            "escapeHTML": false,
-                                            "type": "label",
-                                            "size": "full-size",
-                                            "icon": "",
-                                            "value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Regras da Mesa</span>",
-                                            "prefix": "",
-                                            "suffix": "",
-                                            "rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openRulesTableManager({actorUuid:entity.uuid}); return '';}%",
-                                            "altRollMessage": "",
-                                            "rollMessageToChat": false,
-                                            "altRollMessageToChat": false,
-                                            "style": "button"
-                                        },
-                                        {
                                             "key": "oni_specialization_actions",
                                             "colSpan": 1,
                                             "rowSpan": 1,
@@ -8580,6 +8556,113 @@
                     "layout": "lll"
                 },
                 {
+                    "key": "oni_escolhas_vanilla",
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "cssClass": "",
+                    "role": 0,
+                    "editRole": 0,
+                    "permission": 0,
+                    "tooltip": "",
+                    "visibilityFormula": "ref('na_regras_origens', 0) or ref('na_regras_classes', 0)",
+                    "editableFormula": "",
+                    "escapeHTML": false,
+                    "type": "panel",
+                    "flow": "grid-2",
+                    "align": "center",
+                    "verticalAlign": "top",
+                    "collapsible": false,
+                    "defaultCollapsed": false,
+                    "title": "",
+                    "titleStyle": "default",
+                    "contents": [
+                        {
+                            "key": "na_vanilla_origin",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "ref('na_regras_origens', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Origem:",
+                            "defaultValue": "${''}$",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "oni_passado_triste",
+                                    "value": "Passado Triste"
+                                },
+                                {
+                                    "key": "oni_personalidade_maligna",
+                                    "value": "Personalidade Maligna"
+                                },
+                                {
+                                    "key": "oni_rastreador_sangue",
+                                    "value": "Rastreador de Sangue"
+                                },
+                                {
+                                    "key": "oni_genio_mal",
+                                    "value": "Gênio do Mal"
+                                },
+                                {
+                                    "key": "oni_exterminador_corrompido",
+                                    "value": "Exterminador Corrompido"
+                                },
+                                {
+                                    "key": "oni_adepto_trevas",
+                                    "value": "Adepto das Trevas"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "na_vanilla_class",
+                            "colSpan": 1,
+                            "rowSpan": 1,
+                            "cssClass": "",
+                            "role": 0,
+                            "editRole": 0,
+                            "permission": 0,
+                            "tooltip": "",
+                            "visibilityFormula": "ref('na_regras_classes', 0)",
+                            "editableFormula": "",
+                            "escapeHTML": false,
+                            "type": "select",
+                            "size": "full-size",
+                            "label": "Especialização:",
+                            "defaultValue": "${''}$",
+                            "selectedOptionType": "custom",
+                            "options": [
+                                {
+                                    "key": "",
+                                    "value": "Escolha"
+                                },
+                                {
+                                    "key": "oni_especializacao_titan",
+                                    "value": "Titan"
+                                },
+                                {
+                                    "key": "oni_especializacao_toxico",
+                                    "value": "Tóxico"
+                                },
+                                {
+                                    "key": "oni_especializacao_mestre_recuperacao",
+                                    "value": "Mestre da Recuperação"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
                     "key": "na_rule_selection_storage",
                     "colSpan": 1,
                     "rowSpan": 1,
@@ -9095,46 +9178,6 @@
                             "charList": "",
                             "maxLength": null,
                             "autocomplete": ""
-                        },
-                        {
-                            "key": "na_vanilla_origin",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 4,
-                            "editRole": 4,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "false",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "na_vanilla_origin",
-                            "defaultValue": "",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
-                        },
-                        {
-                            "key": "na_vanilla_class",
-                            "colSpan": 1,
-                            "rowSpan": 1,
-                            "cssClass": "",
-                            "role": 4,
-                            "editRole": 4,
-                            "permission": 0,
-                            "tooltip": "",
-                            "visibilityFormula": "false",
-                            "editableFormula": "",
-                            "escapeHTML": false,
-                            "type": "textField",
-                            "size": "full-size",
-                            "label": "na_vanilla_class",
-                            "defaultValue": "",
-                            "charList": "",
-                            "maxLength": null,
-                            "autocomplete": ""
                         }
                     ]
                 }
@@ -9276,7 +9319,7 @@
                 "editable": false
             }
         },
-        "templateSystemUniqueVersion": 2461565734
+        "templateSystemUniqueVersion": 2461565735
     },
     "prototypeToken": {
         "name": "oni_template",

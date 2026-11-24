@@ -25,6 +25,7 @@ Roll.create = (formula) => {
 };
 
 import { rollHit, attemptBonusFormula } from '../scripts/hit-service.mjs';
+import { SETTINGS } from '../scripts/settings.mjs';
 import { buildFlameBreathingPlan, flameTurnKey } from '../scripts/flame-breathing-service.mjs';
 import { offerMasterBattleCounterattack } from '../scripts/slayer/master-battle-counterattack.mjs';
 
@@ -1256,6 +1257,48 @@ describe('hit-service', () => {
             assert.equal(flagSetIneligible, false);
         } finally {
             game.combat = undefined;
+        }
+    });
+
+    it('Metal da Alvorada Vanilla soma +1 no Acerto de técnica que causa dano', async () => {
+        _dialogReturn = [
+            {
+                mode: 'normal',
+                rollMode: 'publicroll',
+                bonusRaw: '',
+                cdVal: 0,
+                rollCount: 1,
+                actionType: 'ataque',
+            },
+            { hit: true, continue: false },
+        ];
+        _rollResult = {
+            total: 14,
+            toMessage: async () => ({ id: 'metal-alvorada' }),
+            dice: [{ results: [{ result: 10, active: true }] }],
+        };
+        const actor = makeActor({
+            props: {
+                acerto_label: 'acerto_label_dex',
+                dex_display: '4',
+                nvl_pj: 'nvl_8',
+                na_regras_metal: '1',
+                na_vanilla_metal: 'metal_alvorada',
+            },
+        });
+        actor.items = { [Symbol.iterator]: [][Symbol.iterator].bind([]) };
+        actor.getFlag = () => undefined;
+        actor.setFlag = async () => {};
+        const previousSettings = game.settings;
+        game.settings = {
+            get: (_id, key) => key === SETTINGS.rulesSelection
+                ? JSON.stringify({ metal: 'vanilla' }) : undefined,
+        };
+        try {
+            await rollHit({ actor, isTechnique: true, autoDamage: false });
+            assert.match(_formula, /\+ 1\b/, 'o +1 do Metal da Alvorada precisa entrar na fórmula');
+        } finally {
+            game.settings = previousSettings;
         }
     });
 

@@ -7,9 +7,13 @@ import {
     consumeWindPending,
     parseWindBreathingState,
     registerWindBattleDamage,
+    setWindScars,
     tickWindBreathing,
+    vanillaScarCharismaBonus,
     windStatePatch,
+    windStateWithManualScars,
 } from '../scripts/wind-breathing-service.mjs';
+import { buildWindBattleDamagePatch } from '../scripts/status-engine.mjs';
 
 const PROPS_BASE = {
     dex_display: 4,
@@ -61,7 +65,58 @@ describe('Respiração do Vento — Sangue Especial (passiva)', () => {
         assert.equal(again.scars, state.scars);
     });
 
-    it('fim de combate limpa apenas o pool da batalha — cicatrizes persistem', () => {
+    it('setWindScars grava o campo e o estado no mesmo valor', async () => {
+        const updates = [];
+        const actor = {
+            system: { props: {
+                resp_vento_estado: JSON.stringify({ version: 1, scars: 2, battleDamage: { blunt: 0 } }),
+            } },
+            update: async (patch) => updates.push(patch),
+        };
+        assert.equal(await setWindScars(actor, 6), 6);
+        assert.equal(updates[0]['system.props.resp_vento_cicatrizes'], 6);
+        const state = JSON.parse(updates[0]['system.props.resp_vento_estado']);
+        assert.equal(state.scars, 6);
+        assert.deepEqual(state.battleDamage, { blunt: 0 });
+    });
+
+    it('dano cortante acumula para Cicatrizes e preserva o campo manual', () => {
+        const actor = { items: [], system: { props: {} } };
+        const props = {
+            nome_slayer: 'Vento',
+            resp_slayer_display: 'resp_slayer_vento',
+            resp_vento_cicatrizes: '2',
+            resp_vento_estado: '{}',
+        };
+        const patch = buildWindBattleDamagePatch(actor, props, {
+            components: [{ types: ['cortante'], subtotal: 30 }],
+            normalDamage: 30,
+        });
+        assert.equal(patch['system.props.resp_vento_cicatrizes'], 2);
+        const state = JSON.parse(patch['system.props.resp_vento_estado']);
+        assert.equal(state.battleDamage.cutPierce, 30);
+    });
+
+    it('estado combina o campo manual com o valor consolidado do Descanso Longo', () => {
+        assert.equal(windStateWithManualScars({
+            resp_vento_cicatrizes: 6,
+            resp_vento_estado: JSON.stringify({ scars: 2 }),
+        }).scars, 6);
+        assert.equal(windStateWithManualScars({
+            resp_vento_cicatrizes: 2,
+            resp_vento_estado: JSON.stringify({ scars: 6 }),
+        }).scars, 6);
+    });
+
+    it('Cicatrizes digitadas na ficha valem e o patch da Forma não zera o campo', () => {
+        const props = { ...PROPS_BASE, resp_vento_cicatrizes: 6 };
+        const plan = buildWindBreathingPlan('vento_02', 2, props, { pdrInvested: 1 });
+        assert.equal(plan.state.scars, 6);
+        assert.equal(plan.patch['system.props.resp_vento_cicatrizes'], 6);
+        assert.equal(vanillaScarCharismaBonus(props), 4);
+    });
+
+    it('fim de combate limpa apenas o pool da batalha - cicatrizes persistem', () => {
         const state = consolidateWindScars(
             registerWindBattleDamage(parseWindBreathingState({}), { cutPierce: 30 })
         );
@@ -94,6 +149,33 @@ describe('Respiração do Vento — P0: dano chega ao contrato pendingDamage', (
         const zero = buildWindBreathingPlan('vento_02', 2, PROPS_BASE, { pdrInvested: 0 });
         assert.equal(zero.ok, false);
         assert.equal(zero.noCost, true);
+    });
+
+    it('8º e 9º Estilos usam a quantidade de Cicatrizes digitada na ficha', () => {
+        const eighth = buildWindBreathingPlan('vento_09', 4, {
+            ...PROPS_BASE,
+            resp_vento_cicatrizes: 5,
+        }, {});
+        assert.equal(eighth.ok, true);
+        assert.equal(eighth.state.pendingDamage.scarCount, 5);
+        assert.equal(
+            eighth.state.pendingDamage.formula,
+            '6d12 + 6d12 + 6d12 + 6d12 + 6d12'
+        );
+        const ninth = buildWindBreathingPlan('vento_10', 4, {
+            ...PROPS_BASE,
+            resp_vento_cicatrizes: 3,
+        }, {});
+        assert.match(ninth.state.pendingDamage.formula, /10d10 \+ 3 \* \(2d10\) \+ 4 \* \(2d10\)/);
+    });
+
+    it('Ciclone Penetrante: a 2ª variação do 1º Estilo também sai pelo Item vento_02', () => {
+        const plan = buildWindBreathingPlan('vento_02', 1, PROPS_BASE, { variant: 'cyclone' });
+        assert.equal(plan.ok, true);
+        assert.equal(plan.state.pendingDamage.formula, '5d6');
+        assert.equal(plan.state.pendingDamage.cycloneOpposed, true);
+        assert.equal(plan.state.pendingDamage.maxTargets, 3);
+        assert.equal(plan.cost, 3);
     });
 
     it('Ciclone Penetrante: AoE oposto, máx 3 alvos, 5d6 Cortante', () => {

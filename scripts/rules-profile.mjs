@@ -236,6 +236,18 @@ export function vanillaRuleSelection(props = {}, category, kind = actorKind({ sy
     return { key, ...catalog[key] };
 }
 
+/**
+ * A chave da classe é a mesma no livro base e no Homebrew. Ao trocar a mesa para
+ * Vanilla, a ficha que já tinha classe escolhida não deve ficar sem classe até
+ * alguém reescolher no select novo.
+ */
+export function vanillaClassFromHomebrew(props = {}, kind = 'slayer') {
+    if (kind === 'oni' || props.na_vanilla_class || ruleVariant('classes') !== 'vanilla') return '';
+    const key = String(props.classe_escolhida ?? '');
+    if (!key || key === 'classe_escolha') return '';
+    return Object.hasOwn(vanillaRuleCatalog('class', 'slayer'), key) ? key : '';
+}
+
 export function effectiveRulesAbility(props = {}, profile = ruleVariant('habilidades')) {
     return profile === 'vanilla' ? vanillaRuleSelection(props, 'ability')?.key ?? '' : props.hab_escolhida ?? '';
 }

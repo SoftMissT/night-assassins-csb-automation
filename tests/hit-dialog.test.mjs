@@ -4,7 +4,27 @@ import { setupFoundryMocks } from './fixtures/foundry-mock.mjs';
 
 setupFoundryMocks();
 
-import { openHitConfirmationDialog } from '../scripts/dialogs/hit-dialog.mjs';
+import { openHitConfirmationDialog, openHitDialog } from '../scripts/dialogs/hit-dialog.mjs';
+
+describe('hit dialog', () => {
+    it('Enter no diálogo de Acerto rola Normal, não Vantagem', async () => {
+        const previous = foundry.applications.api.DialogV2.wait;
+        let config = null;
+        try {
+            foundry.applications.api.DialogV2.wait = async (received) => {
+                config = received;
+                return null;
+            };
+            await openHitDialog({ attrName: 'DEX', attrVal: 4, color: '#fff' });
+            const advantage = config.buttons.find(button => button.action === 'advantage');
+            const normal = config.buttons.find(button => button.action === 'normal');
+            assert.equal(advantage.type, 'button', 'Vantagem não pode ser o submit do Enter');
+            assert.equal(normal.default, true, 'Normal precisa ser o botão padrão');
+        } finally {
+            foundry.applications.api.DialogV2.wait = previous;
+        }
+    });
+});
 
 describe('hit confirmation dialog', () => {
     it('oferece continuar no último Acerto se confirmar o crítico abrir um soco extra', async () => {

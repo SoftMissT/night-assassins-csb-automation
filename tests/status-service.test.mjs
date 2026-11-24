@@ -8,8 +8,22 @@ import {
     normalizeStatusKeys,
     parseStatusState,
     saveSlayerStatuses,
+    stripTagsUntilStable,
     validateStatusConfiguration,
 } from '../scripts/status-service.mjs';
+
+test('parseStatusState decodifica &amp; por último: "&amp;nbsp;" fica literal, não vira espaço', () => {
+    const state = parseStatusState(
+        '{"active":["confuso"],"exhaustion":0,"effects":{"confuso":{"damageFormula":"1d4&amp;nbsp;2"}}}'
+    );
+    assert.equal(state.effects.confuso.damageFormula, '1d4&nbsp;2');
+});
+
+test('stripTagsUntilStable remove tags aninhadas e preserva texto sem tags', () => {
+    assert.equal(stripTagsUntilStable('<<b>b>x</b>'), 'b>x');
+    assert.equal(stripTagsUntilStable('sem tags'), 'sem tags');
+    assert.equal(stripTagsUntilStable(''), '');
+});
 import { STATUS_SLAYER_DANO_CONTINUO } from '../scripts/constants.mjs';
 
 test('somente os cinco status oficiais causam dano contínuo', () => {

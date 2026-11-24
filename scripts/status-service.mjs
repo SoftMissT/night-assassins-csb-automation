@@ -33,6 +33,20 @@ function escapeHtml(value) {
         .replaceAll("'", '&#039;');
 }
 
+/**
+ * Remove tags até o texto parar de mudar. Uma passada só deixa tags aninhadas em pé
+ * (ex.: `<<b>b>`), e o CodeQL marca essa sanitização incompleta.
+ */
+export function stripTagsUntilStable(html) {
+    let text = html;
+    let previous;
+    do {
+        previous = text;
+        text = text.replace(/<[^>]*>/g, '');
+    } while (text !== previous);
+    return text;
+}
+
 export function normalizeStatusKeys(value) {
     const raw = Array.isArray(value) ? value : String(value ?? '').split(',');
     return [
@@ -55,12 +69,12 @@ export function parseStatusState(value) {
     try {
         let candidate = value;
         if (typeof candidate === 'string') {
-            candidate = candidate
-                .replace(/<[^>]*>/g, '')
+            // &amp; por último: decodificá-lo antes de &nbsp; transformaria "&amp;nbsp;" em espaço.
+            candidate = stripTagsUntilStable(candidate)
                 .replaceAll('&quot;', '"')
                 .replaceAll('&#34;', '"')
-                .replaceAll('&amp;', '&')
                 .replaceAll('&nbsp;', ' ')
+                .replaceAll('&amp;', '&')
                 .trim();
             const firstBrace = candidate.indexOf('{');
             const lastBrace = candidate.lastIndexOf('}');

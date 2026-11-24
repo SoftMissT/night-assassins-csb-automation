@@ -4,7 +4,7 @@ import { breathingPdrInfo, breathingResourceKeys } from './actor-resources.mjs';
 import { hasBreathingPassive } from './breathing-passive-rules.mjs';
 import { parseNumber } from './parsing.mjs';
 import { resolveSheetAttribute } from './sheet-attributes.mjs';
-import { clampExhaustion, formatStatusSummary, parseStatusState } from './status-service.mjs';
+import { clampExhaustion, formatStatusSummary, parseStatusState, stripTagsUntilStable } from './status-service.mjs';
 import { isHomebrewExtra } from './rules-profile.mjs';
 
 export const FOX_PASSIVE_KEY = 'resp_raposa_passiva';
@@ -14,7 +14,7 @@ const integer = (value, maximum = Infinity) => Math.max(0, Math.min(maximum, Mat
 export function parseFoxPassive(raw) {
     try {
         if (typeof raw === 'string') {
-            const decoded = raw.replace(/<[^>]*>/g, '').replaceAll('&quot;', '"').replaceAll('&#34;', '"');
+            const decoded = stripTagsUntilStable(raw).replaceAll('&quot;', '"').replaceAll('&#34;', '"');
             raw = JSON.parse(decoded.slice(decoded.indexOf('{'), decoded.lastIndexOf('}') + 1));
         }
     } catch { raw = null; }

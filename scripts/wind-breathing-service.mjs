@@ -23,6 +23,31 @@ export function vanillaScarCharismaBonus(props = {}) {
     return Math.max(0, Math.min(4, Math.trunc(scars)));
 }
 
+/** O campo manual da ficha e o estado do Descanso Longo: o maior valor vale. */
+export function windStateWithManualScars(props = {}) {
+    const state = parseWindBreathingState(props[WIND_STATE_KEY]);
+    return {
+        ...state,
+        scars: Math.max(
+            0,
+            Math.trunc(parseNumber(props.resp_vento_cicatrizes)),
+            Math.trunc(parseNumber(state.scars))
+        ),
+    };
+}
+
+/** Define as Cicatrizes pelo campo da ficha e pelo estado (correção em mesa). */
+export async function setWindScars(actor, value) {
+    const scars = Math.max(0, Math.trunc(Number(value) || 0));
+    if (!actor?.update) throw new Error('Ficha inválida para Cicatrizes.');
+    const state = parseWindBreathingState(actor.system?.props?.[WIND_STATE_KEY]);
+    await actor.update({
+        'system.props.resp_vento_cicatrizes': scars,
+        [`system.props.${WIND_STATE_KEY}`]: JSON.stringify({ ...state, scars }),
+    }, { naCsbAutomation: true, naBreathing: true });
+    return scars;
+}
+
 export function windStatePatch(state, overrides = {}) {
     return {
         [`system.props.${WIND_STATE_KEY}`]: JSON.stringify({ version: 1, ...state }),
@@ -103,7 +128,7 @@ export function buildWindBreathingPlan(formId, level, props = {}, choices = {}) 
     if (form.minDex && parseNumber(props.dex_display) < form.minDex) {
         return { ok: false, noCost: true, reason: `Requer DEX ${form.minDex} ou mais.` };
     }
-    const state = parseWindBreathingState(props[WIND_STATE_KEY]);
+    const state = windStateWithManualScars(props);
     const dex = parseNumber(props.dex_display);
     const fdv = parseNumber(props.fdv_display);
     const scars = Math.max(0, Math.trunc(parseNumber(state.scars)));
@@ -139,6 +164,24 @@ export function buildWindBreathingPlan(formId, level, props = {}, choices = {}) 
         };
     };
 
+    if (form.id === 'vento_02' && choices.variant === 'cyclone') {
+        // Segunda variação do 1º Estilo, escolhida no diálogo da Forma.
+        const cyclone = windFormById('vento_02_ciclone');
+        const cycloneLevel = cyclone?.levels?.[level - 1];
+        if (!cycloneLevel)
+            return { ok: false, noCost: true, reason: 'Ciclone Penetrante indisponível neste nível.' };
+        return emit({
+            action: 'ataque',
+            cost: cycloneLevel.cost,
+            pendingDamage: {
+                formula: cycloneLevel.damage,
+                types: cycloneLevel.damageTypes,
+                uses: 1,
+                cycloneOpposed: true,
+                maxTargets: cycloneLevel.maxTargets ?? 3,
+            },
+        });
+    }
     if (form.id === 'vento_02') {
         // Redemoinho Escalável: custo variável (PDR investido = dano); coletado
         // via choices.pdrInvested. Requer estar a >= 5m do alvo (checagem manual).
@@ -166,8 +209,8 @@ export function buildWindBreathingPlan(formId, level, props = {}, choices = {}) 
         });
     }
     if (form.id === 'vento_02_ciclone') {
-        // DECISÃO PENDENTE (documentada): rolagem ofensiva única compartilhada
-        // comparada à Esquiva de cada alvo (implementação atual).
+        // Rolagem ofensiva única compartilhada; cada alvo rola 1d20 + Esquiva
+        // contra ela e, se passar, recebe metade do dano.
         return emit({
             action: 'ataque',
             cost: selected.cost,

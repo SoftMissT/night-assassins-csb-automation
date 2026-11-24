@@ -46,11 +46,11 @@ import {
 } from './metal-breathing-service.mjs';
 import {
     consumeWindPending,
-    parseWindBreathingState,
     windStatePatch,
+    windStateWithManualScars,
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
-import { classRankAtLevel, selectedSlayerClassKey } from './slayer/class-contracts.mjs';
+import { classLevel, classRankAtLevel, selectedSlayerClassKey } from './slayer/class-contracts.mjs';
 import { markCriticalMargin, markExtraAttack } from './slayer/hunter-mark.mjs';
 import {
     consumeSnowPending,
@@ -562,7 +562,7 @@ export async function rollHit(options) {
     const metalState = parseMetalBreathingState(props.resp_metal_estado);
     const snowState = parseSnowBreathingState(props.resp_neve_estado);
     const snowHit = snowState.nextHit;
-    const windState = parseWindBreathingState(props.resp_vento_estado);
+    const windState = windStateWithManualScars(props);
     const windHit = windState.nextHit;
     const classTechniquePending = options.isTechnique === true || [breathHit, flameHit, mistHit, snowHit, windHit].some(
         (pending) => pending && typeof pending === 'object'
@@ -691,6 +691,7 @@ export async function rollHit(options) {
     const knowsWind = [...(actor.items ?? [])].some(
         (item) => item.system?.props?.respiracao_nome === 'Vento'
     );
+    // Livro base p. 50: a Vantagem do 2º Estilo vale também em Vanilla.
     const windAdvantageEligible = knowsWind && windLevel >= 3;
     const windAdvantageKey = 'windGarrasAdvantage';
     const windAdvantageState = actor.getFlag?.(MODULE_ID, windAdvantageKey);
@@ -788,7 +789,7 @@ export async function rollHit(options) {
 
     const poisonRank =
         selectedSlayerClassKey(props) === 'classe_usuario_de_veneno'
-            ? classRankAtLevel(parseNumber(props.nvl_num ?? props.nvl_pj))
+            ? classRankAtLevel(classLevel(props))
             : null;
     const poisonExtraFlag = actor.getFlag?.(MODULE_ID, 'poisonExtraAttack');
     const combatRound = game.combat?.round ?? null;

@@ -520,6 +520,38 @@ test('template Slayer tem hidden com bônus de metal', () => {
     assert.ok(hiddenNames.includes('metal_dano_bonus'), 'metal_dano_bonus não encontrado');
 
     assert.ok(hiddenNames.includes('metal_bloqueio_bonus'), 'metal_bloqueio_bonus não encontrado');
+
+    const hidden = name => template.system.hidden.find(entry => entry.name === name);
+    for (const metal of ['metal_entardecer', 'metal_preto']) {
+        assert.match(
+            hidden('metal_bloqueio_bonus').value,
+            new RegExp(`na_vanilla_metal.*${metal}`),
+            `Bônus de Bloqueio Vanilla do ${metal} precisa aparecer na ficha`
+        );
+    }
+    assert.match(
+        hidden('metal_slayer_pdr_bonus').value,
+        /na_vanilla_metal.*metal_preto.*\? 1 : 0/,
+        'Metal Preto Vanilla precisa somar +1 PDR máximo'
+    );
+});
+
+test('classe Vanilla exibe o efeito do livro na ficha', () => {
+    const text = JSON.stringify(
+        unwrapSlayerTemplate(JSON.parse(fs.readFileSync(templatePath, 'utf8')))
+    );
+    assert.match(text, /CLASSE VANILLA/);
+    for (const key of [
+        'slayer_classe_vanilla_mb',
+        'slayer_classe_vanilla_veneno',
+        'slayer_classe_vanilla_kakushi',
+        'slayer_classe_vanilla_companheiro',
+        'slayer_classe_vanilla_duas_resp',
+    ]) {
+        assert.ok(text.includes(key), `${key} ausente`);
+    }
+    assert.match(text, /Injeção de Adrenalina/);
+    assert.match(text, /secundária desbloqueia nos níveis 2, 6, 10 e 14/);
 });
 
 test('template Slayer declara as keys persistentes oficiais de Marca', () => {

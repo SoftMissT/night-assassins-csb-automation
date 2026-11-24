@@ -899,3 +899,52 @@
 - **Causa:** pressupus que `includes` compara formulas inteiras e que `find` chama o callback uma só vez.
 - **Correção:** asserção exata das fórmulas (`deepEqual`); decisão consumida fora do `find`. Confirmado por mutação: com o bloqueio antigo, o teste falha.
 - **Regra preventiva:** em fórmula de dado, comparar a string inteira; e validar que o teste falha no código antigo antes de dar a mudança por verificada.
+
+## 2026-11-23 - Release parado em commit e tag
+
+- **Erro:** ao pedir "commit e release", parei no commit e na tag, sem abrir o PR para main nem publicar o GitHub Release com module.zip.
+- **Causa:** tratei release como só tag, sem olhar o fluxo que o repo usa (release/vX -> PR -> main -> Release com zip).
+- **Correção:** seguir o fluxo completo do repo (PR, merge em main, GitHub Release com o zip) quando o operador pede release.
+- **Regra preventiva:** antes de dar release por feito, conferir no histórico (PRs de release anteriores e assets da Release) o que o repo considera publicado.
+
+## 2026-11-24 - Status de PR lido do cache como verde
+
+- **Erro:** afirmei que os checks do PR estavam verdes com base no status em cache, sem reconsultar.
+- **Causa:** o get_status servia um snapshot antigo; o CodeQL tinha falhado depois.
+- **Correção:** conferir checks e alertas direto no GitHub (gh api) antes de afirmar que o PR está pronto.
+- **Regra preventiva:** antes de dizer que um PR está verde ou mergeável, consultar a fonte viva (gh pr checks / gh api) e dizer a hora da consulta.
+
+## 2026-11-23 - Correção de alerta do CodeQL dada como resolvida sem conferir o resultado
+
+- **Erro:** afirmei que a troca de `replace` em duas etapas fecharia o alerta de sanitização, sem esperar a análise do novo head. O alerta #13 apareceu no commit seguinte, na mesma cadeia.
+- **Causa:** tratei a intenção do código como prova de que o analisador aceitaria a correção.
+- **Correção:** a remoção de tags virou um laço que repete até o texto estabilizar. Só digo que o alerta fechou depois de conferir a análise do head que contém a correção.
+- **Regra preventiva:** correção de alerta de análise estática só é dada como resolvida depois que a análise do commit corrigido terminar sem o alerta. Até lá, digo "pendente".
+
+## 2026-11-23 - Push recusado por commit remoto de sugestão automática
+
+- **Erro:** dei push sem antes buscar o remoto. O branch já tinha um commit do operador, criado pela sugestão "Potential fix" do GitHub, que removia a regex de tags e quebrava o teste de Chamas (1 falha).
+- **Causa:** não conferi `git fetch` nem o histórico remoto antes de empurrar um branch compartilhado com o PR aberto.
+- **Correção:** não forcei. Fiz rebase do meu commit sobre o remoto, resolvi o conflito mantendo a versão que passa nos testes e empurrei em fast-forward. O commit do operador continua no histórico.
+- **Regra preventiva:** antes de push em branch de PR, rodar `git fetch` e checar commits remotos novos nos mesmos arquivos. Sugestão automática de correção (Copilot Autofix, CodeQL) precisa ser rodada nos testes antes de ser aceita como válida.
+
+## 2026-11-24 - PR mesclado antes do conserto chegar ao branch
+
+- **Erro:** pedi aprovação do PR #8 sem deixar claro que o merge só devia acontecer depois que o head corrigido (`1c979a1`) estivesse verde. O operador aprovou e a PR foi mesclada em `61f1a69`, com o teste de Chamas quebrado, e o conserto ficou fora da `main`.
+- **Causa:** tratei a aprovação como o último passo, sem checar qual head seria mesclado nem avisar que havia um commit corretivo pendente para a mesma linha.
+- **Correção:** registrar o estado real (main em `61f1a69`, conserto só no branch) e propor um PR de correção separado, sem push direto na `main`.
+- **Regra preventiva:** ao pedir aprovação de PR com correção pendente, dizer qual commit deve ser mesclado e que o merge espera o head verde. Antes de encerrar, conferir o `mergeCommit` e o head mesclado.
+
+## 2026-11-24 - Cancelar do DialogV2 devolve o action, não null
+
+- **Erro:** o diálogo de Cicatrizes gravava 0 ao clicar Cancelar. O callback devolvia `null`, o `DialogV2._onSubmit` fazia `callback() ?? button.action` e o `wait` resolvia a string `'cancel'`; `Number('cancel') || 0` virava 0.
+- **Causa:** o contrato do `DialogV2` foi tratado como `null` em vez de action do botão; o mesmo erro já existia em `askNumber` do Vento/Névoa.
+- **Correção:** callbacks de cancelamento devolvem `false`; os chamadores aceitam `false`, `'cancel'` e `null`, mas mantêm `0` como valor válido. Teste em `tests/wind-scars-dialog.test.mjs`.
+- **Regra preventiva:** em `DialogV2`, cancelamento é `false` (não `null`); ao ler o retorno, distinguir `0` de cancelado.
+
+## 2026-11-24 - Vantagem em todo Acerto pelo botão padrão do DialogV2
+
+- **Erro:** o diálogo de Acerto abria com "Vantagem" como primeiro botão; o DialogV2 usa o primeiro como padrão/autofocus, então Enter rolava `2d20kh1` mesmo sem vantagem.
+- **Causa:** a ordem dos botões foi tratada como visual, sem conferir `_renderButtons` do Foundry.
+- **Correção:** "Normal" virou `default: true` e "Vantagem" virou `type: 'button'`; o Enter agora submete Normal. O gate que eu tinha colocado na Vantagem do Vento foi **removido** depois de reler a p. 50: ela é Vanilla também. O erro de leitura foi meu, não do código.
+- **Regra preventiva:** em DialogV2, ação perigosa nunca é o primeiro botão; conferir o default do Foundry e deixar o caminho comum como submit padrão. Antes de gatear passiva por variante, ler a página do PDF e o catálogo Vanilla; não presumir Homebrew.

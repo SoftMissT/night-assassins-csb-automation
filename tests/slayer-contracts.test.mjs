@@ -7,6 +7,7 @@ import {
 } from '../scripts/slayer/origin-contracts.mjs';
 import {
     allSlayerClassKeys,
+    classLevel,
     classRankAtLevel,
     classUnlocksAtLevel,
     masterBattleLevelElevenPlan,
@@ -45,6 +46,14 @@ test('rank de Classe segue 4/6/8/11/12', () => {
     assert.equal(classRankAtLevel(11), 'S');
     assert.equal(classRankAtLevel(12), 'SS');
     assert.equal(classUnlocksAtLevel('classe_mb', 11).at(-1).id, 'corpo_guerra');
+});
+
+test('nível da classe usa npc_nivel quando a ficha é NPC', () => {
+    assert.equal(classLevel({ npc_nivel: 8 }), 8);
+    assert.equal(classLevel({ nvl_num: 11, npc_nivel: 8 }), 11);
+    assert.equal(classLevel({ npc_nivel: 'nvl_8' }), 'nvl_8');
+    assert.equal(classLevel({ npc_nome: 'NPC', nvl_num: 0, npc_nivel: 8 }), 8);
+    assert.equal(classRankAtLevel(classLevel({ npc_nivel: 8 })), 'A');
 });
 
 test('Mestre de Batalha nível 11 planeja Corpo de Guerra uma única vez e Aparar por rodada', () => {

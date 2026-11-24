@@ -1,4 +1,5 @@
 import classCatalog from '../../catalogs/slayer/classes.json' with { type: 'json' };
+import { actorKind } from '../actor-kind.mjs';
 import { parseLevel } from '../parsing.mjs';
 import { ruleVariant, vanillaClassRank, vanillaRuleCatalog, vanillaRuleSelection } from '../rules-profile.mjs';
 
@@ -29,6 +30,13 @@ export function classUnlocksAtLevel(key, rawLevel, profile = ruleVariant('classe
         level: classCatalog.rankLevels[rank],
         ...structuredClone(definition.ranks[rank]),
     }));
+}
+
+/** Nível de classe da ficha: NPC prefere npc_nivel; Slayer usa nvl_num/nvl_pj. */
+export function classLevel(props = {}) {
+    if (actorKind({ system: { props } }) === 'npc')
+        return props.npc_nivel ?? props.nvl_num ?? props.nvl_pj;
+    return props.nvl_num ?? props.npc_nivel ?? props.nvl_pj;
 }
 
 export function classRankAtLevel(rawLevel, profile = ruleVariant('classes')) {

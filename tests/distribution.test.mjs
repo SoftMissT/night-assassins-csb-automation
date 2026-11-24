@@ -225,28 +225,23 @@ describe('module distribution', () => {
         assert.deepEqual(actor.effects, []);
     });
 
-    it('inclui as 15 macros canônicas do Compêndio', async () => {
-        const files = [
-            'na-roll-mode.js',
-            'na-acerto-roll.js',
-            'na_roll_damage.js',
-            'na-marca-cacador.js',
-            'na-gm-control.js',
-            'na-gerenciar-resistencias.js',
-            'na-gerenciar-status.js',
-            'na-gerenciar-acoes.js',
-            'na-gerenciar-descanso.js',
-            'na-resp-usar-forma.js',
-            'na-gerenciar-vida-morte.js',
-            'na-respiracao-recuperacao.js',
-            'na-gerenciar-estados-avancados.js',
-            'na-criar-arma.js',
-            'na-criar-forma.js',
-        ];
+    it('empacota todas as macros de macros/ e não deixa nenhuma fora do builder', async () => {
+        const { readdir } = await import('node:fs/promises');
+        const files = (await readdir(new URL('../macros/', import.meta.url)))
+            .filter((file) => file.endsWith('.js'));
+        const builderSource = await readFile(
+            new URL('../tools/build-macro-sources.mjs', import.meta.url),
+            'utf8'
+        );
 
         for (const file of files) {
             const command = await readFile(new URL(`../macros/${file}`, import.meta.url), 'utf8');
             assert.ok(command.length > 100, `${file} deve conter o código da macro`);
+            assert.match(
+                builderSource,
+                new RegExp(`file:\\s*'${file.replaceAll('.', '\\.')}'`),
+                `${file} não está registrada em tools/build-macro-sources.mjs`
+            );
         }
         const hitMacro = await readFile(
             new URL('../macros/na-acerto-roll.js', import.meta.url),
@@ -265,6 +260,11 @@ describe('module distribution', () => {
         for (const forbidden of ['formulaBase', 'fixo', 'attrs', 'attr', 'entradas', 'weaponProfiles']) {
             assert.doesNotMatch(damageMacro, new RegExp(`macroArgs\\.${forbidden}`, 'u'));
         }
+        const windScarsMacro = await readFile(
+            new URL('../macros/na-vento-cicatrizes.js', import.meta.url),
+            'utf8'
+        );
+        assert.match(windScarsMacro, /openWindScarsDialog/u);
     });
 
     it('gera pastas com IDs válidos e inclui o stylesheet do Criar Arma no comando', async () => {

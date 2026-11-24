@@ -93,6 +93,7 @@ import {
     parseWindBreathingState,
     tickWindBreathing,
     windStatePatch,
+    windStateWithManualScars,
 } from './wind-breathing-service.mjs';
 import { applySlayerDamage, reapplyFiniteStatusEffect } from './status-engine.mjs';
 import { formatStatusSummary, parseStatusState, statusKeysForProps } from './status-service.mjs';
@@ -918,7 +919,7 @@ async function askNumber(title, label, { value = 0, min = 0, max = 99 } = {}) {
                         Math.min(max, Math.trunc(Number(button.form.elements.value.value) || 0))
                     ),
             },
-            { action: 'cancel', label: 'Cancelar', callback: () => null },
+            { action: 'cancel', label: 'Cancelar', callback: () => false },
         ],
         rejectClose: false,
     });
@@ -926,6 +927,23 @@ async function askNumber(title, label, { value = 0, min = 0, max = 99 } = {}) {
 
 async function collectWindChoices(actor, form, level, props) {
     if (form.id === 'vento_02') {
+        // O 1º Estilo tem duas variações no mesmo Item: Redemoinho Escalável
+        // (PDR) e Ciclone Penetrante (5d6 em área). Sem esta escolha, o Ciclone
+        // ficava inalcançável pelo Item vento_02.
+        const variant = await foundry.applications.api.DialogV2.wait({
+            window: { title: 'Ichi no Kata Jin Senpū Sogi' },
+            content: '<p>Esta técnica tem duas variações. Qual delas?</p>',
+            buttons: [
+                { action: 'scalable', label: 'Redemoinho Escalável (PDR)', default: true,
+                    callback: () => 'scalable' },
+                { action: 'cyclone', label: 'Ciclone Penetrante (5d6, área)',
+                    callback: () => 'cyclone' },
+                { action: 'cancel', label: 'Cancelar', callback: () => false },
+            ],
+            rejectClose: false,
+        });
+        if (variant !== 'scalable' && variant !== 'cyclone') return { cancelled: true };
+        if (variant === 'cyclone') return { variant: 'cyclone' };
         const dex = parseNumber(props.dex_display);
         const maxPdr = Math.trunc(2 * dex);
         const pdrInvested = await askNumber(
@@ -933,7 +951,16 @@ async function collectWindChoices(actor, form, level, props) {
             'PDR a investir (dano escala junto)',
             { min: 1, max: Math.max(1, maxPdr) }
         );
-        return pdrInvested === null ? { cancelled: true } : { pdrInvested };
+        if (pdrInvested === false || pdrInvested === 'cancel' || pdrInvested === null)
+            return { cancelled: true };
+        // Livro base p. 50: a variação escalável exige pelo menos 5 m do alvo.
+        const farEnough = await confirmRule(
+            'Redemoinho Escalável',
+            'O usuário está a pelo menos 5 m do alvo?'
+        );
+        if (!farEnough)
+            return { cancelled: true, reason: 'Redemoinho Escalável exige pelo menos 5 m do alvo.' };
+        return { pdrInvested };
     }
     if (form.id === 'vento_04') {
         const secondUse = await confirmRule(
@@ -1021,7 +1048,7 @@ async function collectCuratedChoices(actor, form, level, props) {
             'Máximo de ataques adicionais (+1 PDR cada)',
             { max: available }
         );
-        return extraAttacks === null
+        return extraAttacks === false || extraAttacks === 'cancel' || extraAttacks === null
             ? { cancelled: true }
             : { ...mistCyclone, dexCheckPassed: true, extraAttacks };
     }
@@ -1443,7 +1470,7 @@ async function clearResolvedTechniqueQueue(actor, formId) {
         delete state.pendingTargetEffect;
         await actor.update(snowStatePatch(state), { naCsbAutomation: true, naBreathing: true });
     } else if (formId === 'vento_06') {
-        const state = parseWindBreathingState(props.resp_vento_estado);
+        const state = windStateWithManualScars(props);
         if (state.nextHit?.source === formId) delete state.nextHit;
         if (state.pendingDamage?.source === formId) delete state.pendingDamage;
         await actor.update(windStatePatch(state), { naCsbAutomation: true, naBreathing: true });

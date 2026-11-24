@@ -121,6 +121,8 @@ export async function openHitDialog({
             {
                 action: 'advantage',
                 label: 'Vantagem',
+                // Enter no formulário não pode cair em Vantagem: só o Normal é submit padrão.
+                type: 'button',
                 callback: (event, button) => {
                     const form = button.form;
                     return {
@@ -146,6 +148,7 @@ export async function openHitDialog({
             {
                 action: 'normal',
                 label: 'Normal',
+                default: true,
                 callback: (event, button) => {
                     const form = button.form;
                     return {

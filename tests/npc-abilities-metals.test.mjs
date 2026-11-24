@@ -183,6 +183,15 @@ test('atributos combinam habilidade, Marca e Respiração sem desconto de SAB de
     assert.equal(resolveSheetAttribute({ system: { props: { ...props, sab_display: '5' } } }, 'SAB'), 5);
 });
 
+test('Slayer e NPC deixam digitar as Cicatrizes do Vento', () => {
+    for (const [name, template] of [['slayer', slayer], ['npc', npc]]) {
+        const field = fields(template.system).get('resp_vento_cicatrizes');
+        assert.ok(field, `${name}: campo de Cicatrizes ausente`);
+        assert.equal(field.type, 'numberField', name);
+        assert.match(field.visibilityFormula, /resp_slayer_vento/, name);
+    }
+});
+
 test('NPC e Slayer mostram as escolhas Vanilla de Metal e Habilidade na ficha', () => {
     for (const [template, prefix, tabKey] of [
         [npc, 'npc', 'npc_habilidades_tab'],

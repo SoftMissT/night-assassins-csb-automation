@@ -27,6 +27,7 @@ import {
     waitForDamageRolls3d,
     weaponProfileEntries,
 } from '../scripts/damage-service.mjs';
+import { SETTINGS } from '../scripts/settings.mjs';
 
 describe('damage-service', () => {
     it('macro Dano abre o seletor e cobra o custo da Forma na ficha de NPC e Slayer', async () => {
@@ -359,6 +360,140 @@ describe('damage-service', () => {
         assert.equal(poison.instances.length, 1);
         assert.equal(poison.instances[0].damage, 6);
         assert.equal(poison.instances[0].remainingTurns, 3);
+    });
+
+    it('Usuário de Veneno Vanilla aplica a dose no dano manual (sem passiveExecutionId)', async () => {
+        game.user.isGM = true;
+        _dialogReturn = {
+            nome: 'Ataque básico',
+            pdrGasto: 0,
+            critical: false,
+            entradas: [
+                {
+                    dado: '1d6',
+                    fixo: 0,
+                    selAttrs: [],
+                    selTiposDano: ['cortante'],
+                    tipoAcao: 'ataque',
+                },
+            ],
+        };
+        _rollResult = { total: 6, dice: [], toMessage: async () => {} };
+        const previousSettings = game.settings;
+        game.settings = {
+            get: (_id, key) => key === SETTINGS.rulesSelection
+                ? JSON.stringify({ classes: 'vanilla' }) : undefined,
+        };
+        try {
+            const attacker = makeActor({
+                id: 'poisoner-vanilla',
+                uuid: 'Actor.poisoner-vanilla',
+                props: {
+                    nome_slayer: 'Veneficista Vanilla',
+                    na_regras_classes: '1',
+                    na_vanilla_class: 'classe_usuario_de_veneno',
+                    nvl_pj: 'nvl_6',
+                    car_display: 4,
+                },
+            });
+            const patches = [];
+            const target = makeActor({
+                id: 'poison-target-vanilla',
+                uuid: 'Actor.poison-target-vanilla',
+                props: {
+                    nome_slayer: 'Alvo',
+                    pdv_slayer_total_conta: 30,
+                    pdv_slayer_dano_tomado: 0,
+                    pdv_slayer_dano_ferida: 0,
+                },
+            });
+            target.update = async (next) => patches.push(next);
+            game.user.targets = new Set([{ actor: target }]);
+
+            await rollDamage({
+                actor: attacker,
+                entradas: _dialogReturn.entradas,
+                classBasicAttack: true,
+                skipActionConsumption: true,
+                forceAttackDamage: true,
+                actionId: 'ACTION-VANILLA',
+            });
+
+            const poisonPatch = patches.find((entry) => entry['system.props.slayer_veneno_usuario_estado']);
+            assert.ok(poisonPatch, 'estado do Veneno do Usuário Vanilla não aplicado no alvo');
+            const poison = JSON.parse(poisonPatch['system.props.slayer_veneno_usuario_estado']);
+            assert.equal(poison.instances.length, 1);
+            assert.equal(poison.instances[0].damage, 6);
+            assert.equal(poison.instances[0].profile, 'vanilla');
+        } finally {
+            game.settings = previousSettings;
+        }
+    });
+
+    it('NPC com Usuário de Veneno Vanilla também aplica a dose (npc_nivel)', async () => {
+        game.user.isGM = true;
+        _dialogReturn = {
+            nome: 'Ataque básico',
+            pdrGasto: 0,
+            critical: false,
+            entradas: [
+                {
+                    dado: '1d6',
+                    fixo: 0,
+                    selAttrs: [],
+                    selTiposDano: ['cortante'],
+                    tipoAcao: 'ataque',
+                },
+            ],
+        };
+        _rollResult = { total: 6, dice: [], toMessage: async () => {} };
+        const previousSettings = game.settings;
+        game.settings = {
+            get: (_id, key) => key === SETTINGS.rulesSelection
+                ? JSON.stringify({ classes: 'vanilla' }) : undefined,
+        };
+        try {
+            const attacker = makeActor({
+                id: 'poisoner-npc',
+                uuid: 'Actor.poisoner-npc',
+                props: {
+                    npc_nome: 'Veneficista NPC',
+                    npc_nivel: 6,
+                    na_regras_classes: '1',
+                    na_vanilla_class: 'classe_usuario_de_veneno',
+                    car_display: 4,
+                },
+            });
+            const patches = [];
+            const target = makeActor({
+                id: 'poison-target-npc',
+                uuid: 'Actor.poison-target-npc',
+                props: {
+                    nome_slayer: 'Alvo',
+                    pdv_slayer_total_conta: 30,
+                    pdv_slayer_dano_tomado: 0,
+                    pdv_slayer_dano_ferida: 0,
+                },
+            });
+            target.update = async (next) => patches.push(next);
+            game.user.targets = new Set([{ actor: target }]);
+
+            await rollDamage({
+                actor: attacker,
+                entradas: _dialogReturn.entradas,
+                classBasicAttack: true,
+                skipActionConsumption: true,
+                forceAttackDamage: true,
+                actionId: 'ACTION-NPC',
+            });
+
+            const poisonPatch = patches.find((entry) => entry['system.props.slayer_veneno_usuario_estado']);
+            assert.ok(poisonPatch, 'NPC com a classe não aplicou o Veneno');
+            const poison = JSON.parse(poisonPatch['system.props.slayer_veneno_usuario_estado']);
+            assert.equal(poison.instances[0].damage, 6);
+        } finally {
+            game.settings = previousSettings;
+        }
     });
 
     it('aplica PDR e dano em atacante e alvo diferentes', async () => {

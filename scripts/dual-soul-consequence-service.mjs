@@ -29,6 +29,7 @@ import { isDualSoulWeapon } from './dual-soul-ceremony-service.mjs';
 
 import { hydrateSpecialWeaponItem } from './special-weapon-service.mjs';
 
+import { resolveActorStrict } from './actor-resolution.mjs';
 const RUNTIME_KEY = 'dupla_alma_despertar_runtime_json';
 
 function nowIso() {
@@ -112,34 +113,6 @@ function soulName(kind, props = {}) {
     }
 
     return '—';
-}
-
-async function resolveActor(options = {}) {
-    if (options.actor?.documentName === 'Actor') {
-        return options.actor;
-    }
-
-    if (options.actorUuid) {
-        const document = await fromUuid(options.actorUuid);
-
-        const actor = document?.actor ?? document;
-
-        if (actor?.documentName === 'Actor') {
-            return actor;
-        }
-    }
-
-    const controlled = canvas?.tokens?.controlled ?? [];
-
-    if (controlled.length === 1) {
-        return controlled[0]?.actor ?? null;
-    }
-
-    if (controlled.length > 1) {
-        return null;
-    }
-
-    return game.user?.character ?? null;
 }
 
 async function explicitItem(options = {}) {
@@ -325,7 +298,7 @@ export function getDualSoulConsequenceState(item) {
 }
 
 export async function routePendingDualSoulConsequence(options = {}) {
-    const actor = await resolveActor(options);
+    const actor = await resolveActorStrict(options);
 
     if (!actor) {
         return ui.notifications?.warn?.('Selecione o portador da Arma de Dupla Alma.');
@@ -504,7 +477,7 @@ export async function routePendingDualSoulConsequence(options = {}) {
 }
 
 export async function recordDualSoulLoanUse(options = {}) {
-    const actor = await resolveActor(options);
+    const actor = await resolveActorStrict(options);
 
     const item = await chooseDualSoulItem(actor, options);
 
@@ -549,7 +522,7 @@ export async function recordDualSoulLoanUse(options = {}) {
 }
 
 export async function expireDualSoulLoan(options = {}) {
-    const actor = options.actor ?? (await resolveActor(options));
+    const actor = options.actor ?? (await resolveActorStrict(options));
 
     const item = options.item ?? (await chooseDualSoulItem(actor, options));
 
@@ -631,7 +604,7 @@ export async function finalizeDualSoulPossession(options = {}) {
         return ui.notifications?.warn?.('Somente o Mestre pode finalizar uma Possessão.');
     }
 
-    const actor = options.actor ?? (await resolveActor(options));
+    const actor = options.actor ?? (await resolveActorStrict(options));
 
     const item = options.item ?? (await chooseDualSoulItem(actor, options));
 
@@ -1024,7 +997,7 @@ async function expireStaleLoanIfNeeded(actor, item) {
 }
 
 export async function openDualSoulConsequenceManager(options = {}) {
-    const actor = await resolveActor(options);
+    const actor = await resolveActorStrict(options);
 
     if (!actor) {
         return ui.notifications?.warn?.('Selecione o portador da Arma de Dupla Alma.');

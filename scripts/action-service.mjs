@@ -9,8 +9,10 @@ import { getDamageStatusEffects, getStatusCapabilities } from './status-effects.
 import { soundPassiveBonuses } from './sound-passive-service.mjs';
 import { masterBattleTendonPenalty } from './slayer/master-battle-injury.mjs';
 
+import { createRequiredCounters, emptyUses } from './action-counters.mjs';
 const TURN_KEYS = Object.freeze(['movimento', 'ataque', 'especial']);
 const ROUND_KEYS = Object.freeze(['unica', 'reacao']);
+const requiredCounters = createRequiredCounters(TURN_KEYS, ROUND_KEYS);
 const ACTION_FLAG = 'lastActionReset';
 
 // NPC usa o mesmo contrato de ações do Slayer (acoes_slayer_dados/resumo).
@@ -31,10 +33,6 @@ function isOniActor(actor) {
         props.pdk_oni_gasto_valor !== undefined ||
         actorKind(actor) === 'oni_minion'
     );
-}
-
-function emptyUses(keys) {
-    return Object.fromEntries(keys.map((key) => [key, 0]));
 }
 
 function refreshActionSheet(actor) {
@@ -166,18 +164,6 @@ function oniActionPatch(state, props = {}) {
         'system.props.acoes_oni_dados': JSON.stringify(state),
         'system.props.acoes_oni_resumo': oniActionSummary(state, props),
     };
-}
-
-function requiredCounters(types) {
-    const required = { turn: emptyUses(TURN_KEYS), round: emptyUses(ROUND_KEYS) };
-    for (const key of new Set(types.filter(Boolean))) {
-        if (key === 'completa') {
-            required.turn.movimento += 1;
-            required.turn.ataque += 1;
-        } else if (TURN_KEYS.includes(key)) required.turn[key] += 1;
-        else if (ROUND_KEYS.includes(key)) required.round[key] += 1;
-    }
-    return required;
 }
 
 function blockedReason(props, types) {
@@ -379,6 +365,17 @@ async function resetCombatActions(combat, prior, current) {
     }
 }
 
+function actionRowsHtml(keys, state, maximums) {
+    return keys
+        .map((key) => {
+            const used = state[ROUND_KEYS.includes(key) ? 'round' : 'turn'][key];
+            const remaining = Math.max(0, maximums[key] - used);
+            const meta = TIPOS_ACAO.find((entry) => entry.key === key);
+            return `<div class="na-action-row"><strong>${meta?.label ?? key}</strong><span>${remaining} / ${maximums[key]}</span></div>`;
+        })
+        .join('');
+}
+
 async function resolveActor(options = {}) {
     if (options.actor?.system?.props) return options.actor;
     if (options.actorUuid) {
@@ -400,14 +397,7 @@ export async function openActionManager(options = {}) {
     const state = parseActionState(props.acoes_slayer_dados);
     const maximums = actionMaximums(props);
     const keys = [...TURN_KEYS, ...ROUND_KEYS];
-    const rows = keys
-        .map((key) => {
-            const used = state[ROUND_KEYS.includes(key) ? 'round' : 'turn'][key];
-            const remaining = Math.max(0, maximums[key] - used);
-            const meta = TIPOS_ACAO.find((entry) => entry.key === key);
-            return `<div class="na-action-row"><strong>${meta?.label ?? key}</strong><span>${remaining} / ${maximums[key]}</span></div>`;
-        })
-        .join('');
+    const rows = actionRowsHtml(keys, state, maximums);
     const optionsHtml = keys
         .map(
             (key) =>
@@ -454,14 +444,7 @@ async function openOniActionManager(actor) {
     const state = parseActionState(props.acoes_oni_dados);
     const maximums = oniActionMaximums(props);
     const keys = [...TURN_KEYS, ...ROUND_KEYS];
-    const rows = keys
-        .map((key) => {
-            const used = state[ROUND_KEYS.includes(key) ? 'round' : 'turn'][key];
-            const remaining = Math.max(0, maximums[key] - used);
-            const meta = TIPOS_ACAO.find((entry) => entry.key === key);
-            return `<div class="na-action-row"><strong>${meta?.label ?? key}</strong><span>${remaining} / ${maximums[key]}</span></div>`;
-        })
-        .join('');
+    const rows = actionRowsHtml(keys, state, maximums);
     const optionsHtml = keys
         .map(
             (key) =>

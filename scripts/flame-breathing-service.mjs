@@ -125,6 +125,12 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
     const currentHeat = synchronizedWeapon
         ? flameWeaponHeat(state, synchronizedWeapon.id)
         : Math.max(state.weaponHeat, parseNumber(props.resp_chamas_calor_arma));
+    if (currentHeat < (form.minimumWeaponHeat ?? 0))
+        return {
+            ok: false,
+            noCost: true,
+            reason: `${form.ptName} exige ao menos ${form.minimumWeaponHeat} Pontos de Esquentar na arma.`,
+        };
     // Fila de efeitos pendentes da 1ª Forma: cada efeito tem identidade e ciclo
     // próprio (available → armed → used/consumed), então efeitos diferentes
     // nunca se sobrescrevem — mesmo com técnicas encadeadas no mesmo turno.
@@ -228,6 +234,12 @@ export function buildFlameBreathingPlan(formId, level, props = {}, choices = {})
             turnKey: choices.turnKey,
             weaponId: synchronizedWeapon?.id ?? '',
             level,
+        };
+    if (form.id === 'chamas_10')
+        next.healing = {
+            source: form.id,
+            formula: selected.healing,
+            removeBleeding: selected.removeBleeding === true,
         };
     if (form.id === 'chamas_08')
         next.ignition = {

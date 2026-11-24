@@ -18,6 +18,8 @@ import { buildFlameBreathingPlan } from '../scripts/flame-breathing-service.mjs'
 import { flameFormById } from '../scripts/flame-breathing-data.mjs';
 import { buildSnowBreathingPlan } from '../scripts/snow-breathing-service.mjs';
 import { snowFormById } from '../scripts/snow-breathing-data.mjs';
+import { buildWindBreathingPlan } from '../scripts/wind-breathing-service.mjs';
+import { windFormById } from '../scripts/wind-breathing-data.mjs';
 
 const stateOf = (patch, key) => JSON.parse(patch[`system.props.${key}`]);
 
@@ -84,6 +86,17 @@ describe('dano escolhido: planos reais', () => {
         assert.equal(state.nextHit.source, 'neve_01');
     });
 
+    it('Vento Tufão Idaten: o escolhido troca o damageBase e mantém cicatrizes e DEX', () => {
+        const props = { dex_display: 5, for_display: 3, resp_vento_estado: JSON.stringify({ scars: 3 }) };
+        const plan = buildWindBreathingPlan('vento_10', 4, props, {});
+        assert.ok(plan.ok);
+        const base = windFormById('vento_10').levels[3].damageBase;
+        assert.equal(base, '10d10');
+        const changed = applyChosenDamageToPatch(plan.patch, { formId: 'vento_10', base, chosen: '12d10' });
+        const state = stateOf({ ...plan.patch, ...changed }, 'resp_vento_estado');
+        assert.equal(state.pendingDamage.formula, '(12d10) + 3 * (2d10) + 5 * (2d10)');
+    });
+
     it('sem troca (escolha igual à tabela) o patch não muda', () => {
         const plan = buildFlameBreathingPlan('chamas_05', 1, {});
         const base = flameFormById('chamas_05').levels[0].damage;
@@ -111,5 +124,14 @@ describe('dano escolhido: validação e guarda', () => {
         assert.ok(canonicalAt > choiceAt, 'antes da separação entre o fluxo canônico e o personalizado');
         assert.match(source, /item\.update\(\{ \[`system\.props\.nvl\$\{selected\.level\}_dano`\]: chosen\.formula \}\)/u);
         assert.match(source, /damageOverride: damageChoice\?\.chosen/u);
+    });
+
+    it('texto descritivo do catálogo deixado como veio não bloqueia a Forma', async () => {
+        // vento_10 guarda "10d10 + 2d10 por cicatriz…" em nvlN_dano: não é fórmula, e antes
+        // o diálogo pré-preenchido recusava "Dano inválido" e a Forma nem lançava.
+        assert.equal(resolveChosenDamage('10d10 + 2d10 por cicatriz', '').ok, false);
+        const source = await readFile(new URL('../scripts/breath-service.mjs', import.meta.url), 'utf8');
+        assert.match(source, /const untouchedText = typed === String\(selected\.dano \?\? ''\)\.trim\(\) &&/u);
+        assert.match(source, /tableLevel\?\.damage \?\? tableLevel\?\.damageBase \?\? selected\.dano/u);
     });
 });

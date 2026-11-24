@@ -1,3 +1,5 @@
+import { parseDualSoulJson } from './dual-soul-ceremony-core.mjs';
+
 /**
  * @fileoverview
  * Regras puras do Teste de Resistência ao Despertar.
@@ -233,24 +235,6 @@ export function buildDualSoulResistanceEvent({
     };
 }
 
-export function parseDualSoulResistanceRuntime(value, fallback = {}) {
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-        return value;
-    }
-
-    if (typeof value !== 'string' || !value.trim()) {
-        return fallback;
-    }
-
-    try {
-        const parsed = JSON.parse(value);
-
-        return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : fallback;
-    } catch {
-        return fallback;
-    }
-}
-
 export function hasPendingDualSoulResistance(value) {
     const runtime = parseDualSoulResistanceRuntime(value, {});
 
@@ -260,3 +244,5 @@ export function hasPendingDualSoulResistance(value) {
         DUAL_SOUL_KINDS.includes(runtime.challengerKind)
     );
 }
+
+export const parseDualSoulResistanceRuntime = parseDualSoulJson;

@@ -101,7 +101,8 @@ import { metalHammerSynergyAllies, spendMetalHammerSynergyPdr } from './metal-ru
 import { resolveSlayerDerivedBonuses, sheetBonusValue, tempBonusValue } from './derived-bonus-service.mjs';
 import { actorBuffSources } from './breathing-buffs.mjs';
 import { buildEntryFormula, isValidDamageFormula, resolveMessageMode } from './damage-formula.mjs';
-
+
+import { resolveActorLoose } from './actor-resolution.mjs';
 function markDamageFormula(props, entries) {
     if (parseNumber(props.marca_ativa) !== 1) return '';
     const dice = Math.max(0, Math.trunc(parseNumber(props.marca_dano_dados)));
@@ -123,17 +124,6 @@ export async function waitForDamageRolls3d(message) {
     if (!message?.id || typeof wait !== 'function') return false;
     await wait.call(game.dice3d, message.id);
     return true;
-}
-
-async function resolveActor(options) {
-    if (options.actor && typeof options.actor.update === 'function') return options.actor;
-    if (options.actorUuid) {
-        const doc = await fromUuid(options.actorUuid);
-        return doc?.actor ?? doc ?? null;
-    }
-    const controlled = canvas?.tokens?.controlled;
-    if (controlled?.length > 0) return controlled[0].actor;
-    return game?.user?.character ?? null;
 }
 
 function weaponProfileEntry(
@@ -365,7 +355,7 @@ async function chooseMasterBattleCritical(profile, attributes) {
  * @returns {Promise<void>}
  */
 export async function rollDamage(options = {}) {
-    const actor = await resolveActor(options);
+    const actor = await resolveActorLoose(options);
     if (!actor) {
         ui.notifications?.warn?.('Nenhum Actor encontrado para dano.');
         return;
@@ -1929,7 +1919,7 @@ export async function rollWeaponItem(options = {}) {
     const resolvedUuid = options.itemUuid ? await fromUuid(options.itemUuid) : null;
     const item = directItem ?? (resolvedUuid?.documentName === 'Actor' ? null : resolvedUuid);
     if (!item) return ui.notifications?.warn?.('Item de arma não encontrado.');
-    const actor = item.parent?.documentName === 'Actor' ? item.parent : await resolveActor(options);
+    const actor = item.parent?.documentName === 'Actor' ? item.parent : await resolveActorLoose(options);
     if (!actor)
         return ui.notifications?.warn?.(
             'A arma precisa estar vinculada a um Caçador para calcular o dano.'
@@ -2019,7 +2009,7 @@ export async function reloadWeaponItem(options = {}) {
     const resolvedUuid = options.itemUuid ? await fromUuid(options.itemUuid) : null;
     const item = directItem ?? (resolvedUuid?.documentName === 'Actor' ? null : resolvedUuid);
     if (!item) return ui.notifications?.warn?.('Item de arma não encontrado.');
-    const actor = item.parent?.documentName === 'Actor' ? item.parent : await resolveActor(options);
+    const actor = item.parent?.documentName === 'Actor' ? item.parent : await resolveActorLoose(options);
     if (!actor)
         return ui.notifications?.warn?.(
             'A arma precisa estar vinculada a um Slayer para recarregar.'

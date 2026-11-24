@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { describe, it } from 'node:test';
 import { FLAME_FORMS, flameFormById, flameWeaponTier } from '../scripts/flame-breathing-data.mjs';
 import {
@@ -19,10 +20,62 @@ import {
 } from '../scripts/flame-breathing-service.mjs';
 
 describe('Respiração das Chamas', () => {
-    it('possui uma passiva e oito formas ativas', () => {
-        assert.equal(FLAME_FORMS.length, 9);
+    it('possui uma passiva e nove formas ativas', () => {
+        assert.equal(FLAME_FORMS.length, 10);
         assert.equal(FLAME_FORMS.filter((form) => form.passive).length, 1);
-        assert.equal(FLAME_FORMS.filter((form) => !form.passive).length, 8);
+        assert.equal(FLAME_FORMS.filter((form) => !form.passive).length, 9);
+    });
+
+    it('Cauterizar exige 5 Pontos de Esquentar e prepara a cura do nível', () => {
+        const cold = buildFlameBreathingPlan('chamas_10', 1, { resp_chamas_estado: '{"weaponHeat":4}' });
+        assert.equal(cold.ok, false);
+        assert.equal(cold.noCost, true);
+        assert.match(cold.reason, /ao menos 5 Pontos de Esquentar/u);
+        const expected = [
+            ['1d6', false, 2], ['2d6', false, 3], ['3d6', true, 3], ['4d6', true, 4],
+        ];
+        expected.forEach(([formula, removeBleeding, cost], index) => {
+            const plan = buildFlameBreathingPlan('chamas_10', index + 1, { resp_chamas_estado: '{"weaponHeat":5}' });
+            assert.equal(plan.ok, true);
+            assert.equal(plan.action, 'especial');
+            assert.equal(plan.cost, cost);
+            assert.equal(plan.state.healing.formula, formula);
+            assert.equal(plan.state.healing.removeBleeding, removeBleeding);
+            assert.equal(plan.state.weaponHeat, 5, 'a Cauterizar não esquenta a arma');
+            assert.equal(plan.state.nextHit, undefined, 'não prepara Acerto');
+        });
+    });
+
+    it('o serviço cura a Cauterizar só até o PDV máximo e tira o sangramento nos níveis 3 e 4', async () => {
+        const source = await readFile(new URL('../scripts/breath-service.mjs', import.meta.url), 'utf8');
+        assert.match(source, /isFlameForm && plan\.state\?\.healing/u);
+        assert.match(source, /Math\.max\(0, pdvMax - pdvRaw\)/u, 'cura limitada ao PDV que falta');
+        assert.match(source, /plan\.state\.healing\.removeBleeding/u);
+        assert.match(source, /flameHealingRoll\.toMessage/u);
+    });
+
+    it('Universo Flamejante dá 6 de Esquentar na arma e 2 no inimigo nas duas variantes', () => {
+        for (const variant of ['vanilla', 'homebrew']) {
+            const form = flameFormById('chamas_07', variant);
+            assert.equal(form.weaponHeat, 6);
+            assert.equal(form.enemyHeat, 2);
+        }
+    });
+
+    it('Vanilla usa o Esquentar do livro base em cada Forma; Homebrew mantém o dele', () => {
+        const book = {
+            chamas_02: [2, 0], chamas_03: [3, 2], chamas_04: [2, 0], chamas_05: [3, 3],
+            chamas_06: [4, 4], chamas_09: [4, 4],
+        };
+        for (const [id, [weapon, enemy]] of Object.entries(book)) {
+            assert.deepEqual(
+                [flameFormById(id, 'vanilla').weaponHeat, flameFormById(id, 'vanilla').enemyHeat],
+                [weapon, enemy],
+                id
+            );
+        }
+        assert.equal(flameFormById('chamas_05', 'homebrew').weaponHeat, 11);
+        assert.equal(flameFormById('chamas_02').weaponHeat, 7);
     });
 
     it('aplica os patamares substitutivos de Fogo Fátuo', () => {
@@ -325,7 +378,7 @@ describe('Respiração das Chamas combos e regras da missão', () => {
             assert.equal(plan.action, 'unica');
             assert.equal(plan.cost, cost);
             assert.equal(plan.selected.advance, advance);
-            assert.equal(plan.state.weaponHeat, 3);
+            assert.equal(plan.state.weaponHeat, 6);
             assert.equal(plan.state.nextHit, undefined);
             assert.equal(plan.state.pendingDamage, undefined);
             const attack = { combat, weaponId: 'katana', props: { for_display: 4, nvl_num: 7 } };

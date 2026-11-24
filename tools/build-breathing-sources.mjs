@@ -108,8 +108,8 @@ export const BREATHING_FOLDER_NAMES = Object.freeze([
 /**
  * O catálogo mecânico (`catalogs/breathing.json`) contém dados de todas as
  * Respirações do jogo, mas o pacote distribuído publica apenas as Respirações
- * com motor dedicado e auditoria concluída. Chamas é o piloto do modelo de
- * hub; as demais voltam em 2026-09-28 após ficarem de fora no piloto.
+ * com motor dedicado e auditoria concluída. Todas seguem o mesmo molde: uma pasta por
+ * Respiração, com as Formas dentro (sem item painel nem pasta técnica).
  */
 export const PUBLISHED_BREATHINGS = Object.freeze([
     'Água',
@@ -255,106 +255,6 @@ for (const document of catalog.documents) {
             props[key] = markdownToFoundryHtml(props[key]);
     }
 }
-const flameSource = catalog.documents.find(
-    (document) =>
-        document.type === 'equippableItem' && document.system?.props?.respiracao_nome === 'Chamas'
-);
-if (!flameSource)
-    throw new Error('Nenhuma Forma de Chamas disponível para gerar o Item principal.');
-const flameFolder = catalog.documents.find(
-    (document) => document.type === 'Item' && document._id === flameSource.folder
-);
-if (!flameFolder) throw new Error('Pasta pública de Chamas não encontrada.');
-const flameDataFolder = structuredClone(flameFolder);
-Object.assign(flameDataFolder, {
-    _id: 'NAFlameData00001',
-    _key: '!folders!NAFlameData00001',
-    name: 'Formas das Chamas (técnicas)',
-    folder: null,
-});
-catalog.documents.push(flameDataFolder);
-for (const document of catalog.documents) {
-    if (
-        document.type === 'equippableItem' &&
-        document.system?.props?.respiracao_nome === 'Chamas'
-    ) {
-        document.folder = flameDataFolder._id;
-    }
-}
-const flameHub = structuredClone(flameSource);
-const hubLabel = (value, extra = {}) => ({
-    key: '',
-    colSpan: 1,
-    rowSpan: 1,
-    cssClass: '',
-    role: 0,
-    editRole: 0,
-    permission: 0,
-    tooltip: '',
-    visibilityFormula: '',
-    editableFormula: '',
-    escapeHTML: false,
-    type: 'label',
-    size: 'full-size',
-    icon: '',
-    value,
-    prefix: '',
-    suffix: '',
-    style: 'default',
-    ...extra,
-});
-flameHub.system.body = {
-    contents: [
-        hubLabel(
-            '<h2>Respiração das Chamas</h2><p>Abra o painel para escolher e executar uma Forma. As Formas são carregadas pela automação e não precisam ser importadas individualmente.</p>'
-        ),
-        hubLabel('Abrir Formas', {
-            key: 'btn_abrir_formas',
-            icon: 'fa-solid fa-fire',
-            rollMessage:
-                "%{return await (await fromUuid('Compendium.night-assassins-csb-automation.night-assassins-macros.Macro.NARespFormUse001'))?.execute({actorUuid:entity.parent?.uuid,itemUuid:entity.uuid});}%",
-            rollMessageToChat: false,
-            altRollMessage: '',
-            altRollMessageToChat: false,
-            style: 'button',
-            tooltip: 'Escolha uma Forma da Respiração das Chamas.',
-        }),
-    ],
-    key: 'custom_body',
-    type: 'panel',
-};
-Object.assign(flameHub, {
-    _id: 'NAFlameHub000001',
-    _key: '!items!NAFlameHub000001',
-    name: 'Respiração das Chamas',
-    img: breathingIconPath('Chamas'),
-});
-Object.assign(flameHub.system.props, {
-    inventario_categoria: 'respiracao',
-    forma_id: 'hub_chamas',
-    forma_ordem: 0,
-    nome_forma: 'Painel da Respiração das Chamas',
-    nome_jp: 'Honō no Kokyū',
-    respiracao_nome: 'Chamas',
-    tipo_manobra: 'Respiração',
-    nivel_req: 1,
-    descricao:
-        '<p>Abra este Item para escolher e executar qualquer Forma conhecida da Respiração das Chamas.</p>',
-    forma_passiva: 0,
-});
-flameHub.folder = flameFolder._id;
-for (let level = 1; level <= 4; level += 1) {
-    Object.assign(flameHub.system.props, {
-        [`tem_nvl${level}`]: 0,
-        [`nvl${level}_custo`]: 0,
-        [`nvl${level}_dano`]: '',
-        [`nvl${level}_efeito`]: '',
-        [`nvl${level}_status`]: '',
-        [`nvl${level}_buff`]: '',
-        [`nvl${level}_tipos_dano`]: '',
-    });
-}
-catalog.documents.push(flameHub);
 const internalCatalog = {
     format: 1,
     generatedBy: 'tools/build-breathing-sources.mjs',

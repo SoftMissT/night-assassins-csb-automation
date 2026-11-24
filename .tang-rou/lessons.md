@@ -766,3 +766,136 @@
 - **Causa:** `buildWindBreathingPlan` montava a fórmula certa em `pendingDamage`, e os testes só checavam esse plano. Mas `executeBreathForm` rolava `selected.dano` (texto do catálogo, com "10d10 + 2"), e o `damage-service` ainda injetava a fórmula certa no acerto. Havia duas fontes e nenhum teste olhava a fórmula rolada.
 - **Correção:** no lançamento, o Vento com fórmula no `pendingDamage` deixa de rolar `selected.dano`; o dano sai só no acerto. Textos `nvl*_dano` do vento_10 corrigidos nos catálogos.
 - **Regra preventiva:** antes de corrigir dano, mapear quem rola cada fonte (lançamento e acerto) e testar a fórmula que realmente é rolada, não só o plano que a alimenta. Conferir também se o texto do catálogo é usado como fórmula.
+
+## 2026-11-23 - PR aberta sem explicar a regra de main
+
+- **Erro:** abri a PR #7 para `main` e pedi aprovação sem explicar ao operador por que o release passa por PR.
+- **Causa:** `main` exige 1 aprovação de revisão (proteção de branch); eu segui o padrão da v0.15.0 sem dizer o motivo, e o operador achou que era um passo sem sentido.
+- **Correção:** o operador já tinha mesclado a PR; confirmei o merge commit `dcd68cb` em `main`, criei a tag `v0.15.1` nele e acompanhei o workflow `release.yml` até o fim (assets `module.json` e `module.zip`, versão 0.15.1 confirmada).
+- **Regra preventiva:** quando um passo do fluxo existir por regra do repositório (PR, revisão, tag), dizer em uma frase por que ele existe antes de pedir ação ao operador.
+
+## 2026-11-23 - Corpos iguais, constantes capturadas diferentes
+
+- **Erro:** quase tratei `requiredCounters` de Slayer e Oni como cópias idênticas e ia apontar os dois para uma função só.
+- **Causa:** o corpo era igual, mas cada um lia o `ROUND_KEYS` do próprio módulo; o do Oni tem `lendaria`. Unificar direto tiraria a Ação Lendária do Oni sem quebrar nenhum teste óbvio.
+- **Correção:** fábrica `createRequiredCounters(turnKeys, roundKeys)`; cada serviço passa as próprias chaves.
+- **Regra preventiva:** antes de deduplicar, comparar também as variáveis livres que o corpo lê (constantes de módulo, globais), não só o texto da função.
+
+## 2026-11-23 - Texto descritivo do catálogo pré-preenchido como fórmula
+
+- **Erro:** a Tufão Idaten (vento_10) não lançava: "Dano inválido".
+- **Causa:** o diálogo de dano escolhido pré-preenche `nvlN_dano`, e no vento_10 esse campo é texto ("10d10 + 2d10 por cicatriz…"); a validação recusava o próprio valor padrão. A base da troca também lia `damage`, que o vento_10 não tem (`damageBase`).
+- **Correção:** texto intacto e inválido vale como "sem troca"; base da troca = `damage ?? damageBase`.
+- **Regra preventiva:** todo campo que o diálogo pré-preenche precisa passar na validação do próprio diálogo; testar o caminho "aceitar o padrão sem editar" de cada Forma com dano composto.
+
+## 2026-11-23 - Forma reintroduzida bate numa migração antiga
+
+- **Erro:** ao devolver a Cauterizar, o teste de migração falhou: o reparo transformava todo item "Cauterizar" em Universo Flamejante.
+- **Causa:** na v0.13.3 a Cauterizar saiu e a migração passou a convertê-la em Universo (chamas_07). Reintroduzir a Forma com o mesmo nome sem rever essa migração mandaria os itens novos e antigos para a Forma errada.
+- **Correção:** a migração agora leva o "Cauterizar" antigo à Forma real (chamas_10), e itens já em chamas_10 ficam intactos.
+- **Regra preventiva:** antes de reintroduzir uma Forma removida, buscar no histórico (`git log -S`) o que a removeu e procurar migrações, mapas por nome e testes que dependem da remoção. O código antigo de cura também estava no histórico e foi reaproveitado.
+
+## 2026-11-23 - Pergunta com imagem lida como conversa
+
+- **Erro:** respondi "2 chamas" como se fossem linhas do chat, e li "o ganho do esquentar é 1" ao pé da letra. O operador riu: ele falava do pacote do Compêndio (duas pastas de Chamas) e de ganhos que mudam por variante.
+- **Causa:** não abri as capturas do pacote antes de responder, e não confirmei o sentido de uma frase curta com a variante em jogo.
+- **Correção:** revisei o `breathing-items.json` e o `breathing.json` contra o motor e refiz os textos por variante.
+- **Regra preventiva:** quando o pedido citar um print ou um pacote, abrir o print antes de responder; e confirmar com o operador o que uma frase curta quer dizer antes de tratá-la como número.
+
+## 2026-11-23 - Teste de texto HTML casa células, não a tabela
+
+- **Erro:** o teste da tabela da passiva procurava `| 2 | 0 | 2 | 0 |` no texto, e a falha veio só ao rodar.
+- **Causa:** `markdownToFoundryHtml` converte a tabela em HTML; sem as tags, as células ficam coladas (`Fogo Desconhecido20702`), sem barras.
+- **Correção:** o teste procura rótulo + quatro números, na ordem certa.
+- **Regra preventiva:** antes de escrever regex sobre texto gerado, imprimir o texto real que o teste vê (depois de `replace(/<[^>]+>/gu, '')`), e não o markdown de origem.
+
+## 2026-11-23 - Catálogo "só de exibição" que alimenta o dano
+
+- **Erro:** tratei o `nvlN_dano` do Vento como texto de ficha, como no Som. O advisor apontou que o Vento oferece dano escolhido.
+- **Causa:** em `CHOSEN_DAMAGE_BREATHINGS` (Vento, Chamas, Pedra, Metal, Neve), o diálogo pré-preenche o dano com o catálogo e `applyChosenDamageToPatch` troca o dano do motor pelo aceito. Catálogo errado + "aceitar o padrão" = dano errado em combate.
+- **Correção:** catálogo do Vento igualado ao motor nível a nível, com teste de deriva (`tests/wind-catalog-drift.test.mjs`).
+- **Regra preventiva:** antes de dizer "o motor não lê o catálogo", conferir se a Respiração está em `CHOSEN_DAMAGE_BREATHINGS` e se a Forma rola `selected.dano` no cast (`resolveGenericDamageFormula`).
+
+## 2026-11-23 - Passiva Vanilla com bônus por nível lido no nível 1
+
+- **Erro:** o Olhos Escarlate aplicava o +1 de PDR máximo em todos os níveis de Respiração; o livro (p. 65) diz "no Nível 1".
+- **Causa:** a regra estava no bônus derivado sem olhar o nível, e o teste da passiva só cobria o nível 1 (o caso que passava).
+- **Correção:** no Vanilla, o +1 só vale com nível 1; o Homebrew segue igual. Teste em `tests/olhos-escarlate-vanilla.test.mjs` cobre os dois.
+- **Regra preventiva:** ao auditar uma passiva com "no Nível X", testar pelo menos um nível fora de X.
+
+## 2026-11-23 - Regra de encerramento que o operador já tinha dito
+
+- **Erro:** ao listar pendências do Sonhos, eu tratei a Fantasia Final (9º Estilo) como se a regra de "três erros" pudesse faltar; não confirmei no motor antes de levantar a dúvida.
+- **Causa:** não procurei `sequenciaAteErros` e os testes de Fantasia Final antes de responder.
+- **Correção:** confirmado no motor (`hit-service.mjs` para no terceiro erro; `breathing-pipeline.mjs` passa `missLimit: 3`) e nos testes existentes.
+- **Regra preventiva:** quando o operador disser como uma regra funciona, procurar primeiro a primitiva ou o teste que a cobre e só então reportar o estado.
+
+## 2026-11-23 - Pergunta aberta misturada com sim/não
+
+- **Erro:** na lista de decisões, a pergunta 4 (base da dezena: bruto ou reduzido, e 2d4 ou 1d4 para 27) era aberta, mas você respondeu só "Sim".
+- **Causa:** escrevi a pergunta com dois sub-casos num único item e não pedi uma escolha fechada.
+- **Correção:** repetir a pergunta como escolha fechada (AskUserQuestion) antes de implementar.
+- **Regra preventiva:** toda decisão pendente vira escolha com rótulos explícitos, nunca pergunta aberta com subitens.
+
+## 2026-11-23 - Regra nova colada na lógica pura antes dos fluxos
+
+- **Erro:** o impacto do GitNexus veio CRITICAL em `rollDamage` e `recoverSlayerFolego`, e HIGH em `rollHit` e `doRoll`; as regras de combate tocam os quatro.
+- **Causa:** as regras cruzam Acerto, Defesa e Dano, que são os fluxos de maior raio de impacto.
+- **Correção:** a lógica pura foi para módulo próprio, com testes; a ligação aos fluxos ficou como pendência, com o aviso de risco.
+- **Regra preventiva:** com impacto CRITICAL/HIGH, separar a regra em função pura testada e só então ligar ao fluxo, após reanalisar o impacto do símbolo exato.
+
+## 2026-11-23 - Fôlego tratado como regra de variante
+
+- **Erro:** criei a chave `folego` no perfil de regras para o Fôlego existir só no Homebrew.
+- **Causa:** tomei a regra 1 como variante, sem conferir o motor: o Fôlego já é recuperado em qualquer acerto crítico (`hit-service.mjs`, sem gate), igual no Vanilla.
+- **Correção:** chave removida do `rules-profile.mjs`; CHANGELOG corrigido para "há um só".
+- **Regra preventiva:** antes de criar chave de variante, checar se o motor já aplica o efeito sem gate; se aplica nos dois perfis, não há variante.
+
+## 2026-11-23 - Origem da regra de crítico e Fôlego
+
+- **Erro:** afirmei que o Fôlego ligado ao crítico vale nos dois perfis, sem conferir o livro; agora o operador diz que crítico e Fôlego vêm só da Homebrew.
+- **Causa:** tomei a origem da regra pelo código (sem gate de variante), não pelo PDF oficial.
+- **Correção:** verificar no PDF oficial antes de afirmar se a regra é Vanilla ou Homebrew; reportar a divergência entre o código e a fonte.
+- **Regra preventiva:** para origem de regra (Vanilla ou Homebrew), a fonte é o PDF oficial, nunca o comportamento do motor.
+
+## 2026-11-23 - Regras de crítico ditas pelo operador divergiam da minha leitura
+
+- **Erro:** implementei +2 de Acerto "até o próximo ataque" e tratei o crítico de Defesa sem cancelar o dobro de dano.
+- **Causa:** li as regras homebrew de forma parcial e não as confrontei com o texto completo que o operador colou.
+- **Correção:** usar o texto colado como base da regra (crítico de Acerto dobra o dano final após bônus, cancelado por crítico de Defesa; +2 de Acerto até o fim do próximo turno; falha de Defesa com +1d4 por dezena).
+- **Regra preventiva:** ao receber regra colada pelo operador, copiar literalmente as condições de duração e cancelamento antes de implementar.
+
+## 2026-11-23 - Dano da Fantasia Final e crítico automático da Manopla
+
+- **Erro:** rolei o dano da Fantasia Final a cada Acerto confirmado; o operador diz que o dano só pode ser rolado depois de três erros. Também deixei a Manopla fora da sequência de Forma (`extendsOnCriticalHit` exige `!attackSequence`).
+- **Causa:** li a primitiva `sequenciaAteErros` como "um dano por Acerto" sem conferir o texto do livro, e desativei o golpe extra da Manopla dentro de sequências.
+- **Correção:** a conferir no PDF oficial antes de mudar o código; o operador deu a regra do golpe extra (sem quebrar a Forma; erro conta; dano é o da Forma).
+- **Regra preventiva:** antes de codificar o momento do dano de uma Forma de sequência, ler o texto literal do livro e o do operador.
+
+## 2026-11-23 - Fantasia Final: texto colado contraria a instrução do operador
+
+- **Erro:** perguntei o modelo do dano como se o texto do repo fosse a única fonte, sem olhar a forma Vanilla que o operador colou no chat.
+- **Causa:** a forma Vanilla diz "Cada acerto aplica 4d4 de Dano", que é por acerto; a instrução do operador ("só no final") é outra leitura, e eu não a confrontei com o texto colado.
+- **Correção:** registrar o conflito literal e propor a leitura de soma de dados rolada no fim; não mudar código antes de confirmar.
+- **Regra preventiva:** antes de perguntar sobre uma regra, reler o texto colado no chat e citar a frase exata que conflita.
+
+## 2026-11-23 - Fantasia Final: dano acumulado no fim, com crítico por acerto
+
+- **Erro:** rolei o dano a cada acerto e questionei a regra do operador em vez de implementá-la.
+- **Causa:** não modelei o dano como pool de dados que cresce com os acertos acumulados.
+- **Correção:** o dano é um pool de Nd4 (N = dados da forma por acerto) rolado uma vez ao fim da sequência; acerto crítico dobra os dados daquele acerto; a sequência continua depois do crítico.
+- **Regra preventiva:** quando o operador descrever a mecânica de dano em passos numerados, implementar cada passo como regra explícita e testada antes de perguntar.
+
+## 2026-11-23 - Bloqueio do golpe extra da Manopla em Forma: origem não explicada
+
+- **Erro:** descrevi `!attackSequence` como se fosse minha decisão de manter o bloqueio, sem dizer de onde vinha.
+- **Causa:** o bloqueio já estava no código desde v0.13.6 (commit ff41899), sem comentário nem registro no CHANGELOG que explique a regra para Formas de sequência.
+- **Correção:** deixar claro que a origem é anterior, que não há justificativa documentada, e que manter ou remover é decisão do operador.
+- **Regra preventiva:** ao citar um bloqueio existente, dizer a origem (commit, data) e se há justificativa escrita antes de tratá-lo como decisão.
+
+## 2026-11-23 - Asserção por substring e shift dentro de find no teste
+
+- **Erro:** o teste novo usava `includes("+ 1")`, que também casa com "+ 10", e chamava `decisions.shift()` dentro de `find`, que roda uma vez por botão.
+- **Causa:** pressupus que `includes` compara formulas inteiras e que `find` chama o callback uma só vez.
+- **Correção:** asserção exata das fórmulas (`deepEqual`); decisão consumida fora do `find`. Confirmado por mutação: com o bloqueio antigo, o teste falha.
+- **Regra preventiva:** em fórmula de dado, comparar a string inteira; e validar que o teste falha no código antigo antes de dar a mudança por verificada.

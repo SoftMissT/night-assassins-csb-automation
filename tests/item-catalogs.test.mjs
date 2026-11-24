@@ -115,7 +115,7 @@ describe('catálogo de Respirações', () => {
                 document.system?.props?.respiracao_nome === 'Chamas' &&
                 !String(document.system?.props?.forma_id ?? '').startsWith('hub_')
         );
-        assert.equal(flames.length, 9);
+        assert.equal(flames.length, 10);
         assert.equal(
             flames.find((item) => item.system.props.forma_id === 'chamas_01').system.props
                 .tipo_manobra,
@@ -159,7 +159,7 @@ describe('catálogo de Respirações', () => {
         assert.equal(props.tipo_manobra, 'Ação Única');
         assert.equal(props.forma_ataque_padrao, 1);
         assert.equal(props.tem_requisito, 0);
-        assert.match(props.descricao, /3 Pontos de Esquentar na arma/u);
+        assert.match(props.descricao, /6 Pontos de Esquentar na arma/u);
         assert.match(props.descricao, /2 Pontos de Esquentar adicionais/u);
         assert.doesNotMatch(props.descricao, /Cauterizar/u);
         const levels = [1, 2, 3, 4].map((level) => [
@@ -180,7 +180,7 @@ describe('catálogo de Respirações', () => {
         const documents = await breathingDocuments();
         const items = documents.filter((document) => document.type === 'equippableItem');
         const expected = new Map([
-            ['Chamas', { count: 9, passive: 'chamas_01' }],
+            ['Chamas', { count: 10, passive: 'chamas_01' }],
             ['Metal', { count: 7, passive: 'metal_05' }],
             ['Neve', { count: 8, passive: 'neve_08' }],
             ['Névoa', { count: 8, passive: '' }],
@@ -226,37 +226,43 @@ describe('catálogo de Respirações', () => {
         );
     });
 
-    it('publica o Item principal da Respiração das Chamas', async () => {
+    it('Chamas segue o molde das outras: uma pasta com as Formas, sem painel nem pasta técnica', async () => {
         const documents = await breathingDocuments();
-        const flameHub = documents.find(
-            (item) => item.system?.props?.forma_id === 'hub_chamas'
-        );
-        const publicFolder = documents.find(
-            (item) => item.type === 'Item' && item.name === 'Respiração das Chamas'
-        );
-        assert.equal(flameHub?.name, 'Respiração das Chamas');
+        const folders = documents.filter((item) => item.type === 'Item');
+        const flameFolders = folders.filter((item) => /Chamas/u.test(item.name));
+        assert.deepEqual(flameFolders.map((item) => item.name), ['Respiração das Chamas']);
         assert.equal(
-            documents.filter(
-                (item) => item.type === 'equippableItem' && item.folder === publicFolder?._id
-            ).length,
-            1,
-            'a pasta pública de Chamas deve importar somente o Item principal'
+            documents.some((item) => String(item.system?.props?.forma_id ?? '').startsWith('hub_')),
+            false,
+            'o painel Honō no Kokyū não é publicado'
         );
-        assert.equal(flameHub?.system?.props?.inventario_categoria, 'respiracao');
-        assert.equal(flameHub?.system?.body?.contents?.length, 2);
-        assert.ok(
-            flameHub?.system?.body?.contents?.some((entry) => entry.key === 'btn_abrir_formas'),
-            'o hub deve conter somente o botão para abrir o painel'
+        const forms = documents.filter(
+            (item) => item.type === 'equippableItem' && item.system?.props?.respiracao_nome === 'Chamas'
         );
-        assert.equal(
-            flameHub?.system?.body?.contents?.filter((entry) => entry.visibilityFormula).length,
-            0,
-            'o hub não pode herdar fórmulas de visibilidade das Formas individuais'
-        );
-        assert.equal(
-            flameHub?.img,
-            'modules/night-assassins-csb-automation/assets/icons/breathing/resp_chamas.webp'
-        );
+        assert.equal(forms.length, 10);
+        assert.ok(forms.every((item) => item.folder === flameFolders[0]._id), 'todas as Formas na pasta pública');
+    });
+
+    it('o texto de Chamas cita o ganho de Esquentar que o motor aplica em cada variante', async () => {
+        const { flameFormById } = await import('../scripts/flame-breathing-data.mjs');
+        const documents = await breathingDocuments();
+        // Remove caracteres de marcação diretamente para evitar sanitização multi-caractere incompleta.
+        const textOf = (id) => documents
+            .find((item) => item.system?.props?.forma_id === id).system.props.descricao
+            .replace(/[<>]/gu, '');
+        const passive = textOf('chamas_01');
+        assert.doesNotMatch(passive, /\*\(Passiva/u, 'sem asterisco de markdown no nome');
+        assert.match(passive, /Dano Homebrew no início do turno do alvo/u);
+        for (const id of ['chamas_02', 'chamas_03', 'chamas_04', 'chamas_05', 'chamas_06', 'chamas_09']) {
+            const vanilla = flameFormById(id, 'vanilla');
+            const homebrew = flameFormById(id, 'homebrew');
+            // A tabela vira HTML e, sem as tags, as células ficam coladas: rótulo + 4 números.
+            const label = { chamas_02: 'Fogo Desconhecido', chamas_03: 'Céu em Chamas', chamas_04: 'Ondulação', chamas_05: 'Tigre Ardente', chamas_06: 'Tormenta', chamas_09: 'Rengoku' }[id];
+            const cells = `${vanilla.weaponHeat}${vanilla.enemyHeat}${homebrew.weaponHeat}${homebrew.enemyHeat}`;
+            assert.ok(passive.includes(`${label}${cells}`), `${id}: tabela da passiva (${label}${cells})`);
+            assert.ok(textOf(id).includes(`**Vanilla** +${vanilla.weaponHeat} na arma`) || textOf(id).includes(`Vanilla +${vanilla.weaponHeat} na arma`), `${id}: texto da Forma, Vanilla`);
+            assert.ok(textOf(id).includes(`Homebrew +${homebrew.weaponHeat} na arma`) || textOf(id).includes(`**Homebrew** +${homebrew.weaponHeat} na arma`), `${id}: texto da Forma, Homebrew`);
+        }
     });
 
     it('usa os ícones locais disponíveis sem fabricar assets ausentes', async () => {
@@ -314,7 +320,7 @@ it('publica Chamas na pasta pública e sem travessão artificial', async () => {
         (document) => document.type === 'equippableItem' && document.system?.props?.forma_id === 'chamas_01'
     );
     assert.ok(flameForm);
-    assert.notEqual(flameForm.folder, flameFolder._id);
+    assert.equal(flameForm.folder, flameFolder._id);
     assert.equal(flameForm.name.includes(' — '), false);
 });
 

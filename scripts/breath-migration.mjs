@@ -33,8 +33,7 @@ export function buildCanonicalBreathMap(documents) {
             .toLocaleLowerCase('pt-BR');
         if (nameKey) byName.set(nameKey, document);
         if (idKey) byId.set(idKey, document);
-        if (idKey === 'chamas_07' && Number(props.forma_ataque_padrao) === 1)
-            byName.set(LEGACY_CAUTERIZE_NAME, document);
+        if (idKey === 'chamas_10') byName.set(LEGACY_CAUTERIZE_NAME, document);
     }
     return { byName, byId };
 }
@@ -76,16 +75,19 @@ const STRUCTURE_KEYS = Object.freeze([
     ...[1, 2, 3, 4].flatMap((level) => [`tem_nvl${level}`, `nvl${level}_custo`]),
 ]);
 
+// Item de Cauterizar de antes da Forma voltar com id próprio (chamas_10): na v0.13.3 ela virou
+// Universo Flamejante (chamas_07), e os Items antigos ainda trazem o id chamas_07 ou nenhum.
+export function isLegacyCauterize(item) {
+    const props = item?.system?.props ?? {};
+    return String(props.forma_id ?? '') !== 'chamas_10' &&
+        (normalizeKey(props.nome_forma) === 'cauterizar' || normalizeKey(item?.name) === LEGACY_CAUTERIZE_NAME);
+}
+
 function replaceLegacyCauterize(item, canonical) {
     const props = item.system?.props ?? {};
     const source = canonical?.system?.props ?? {};
     const itemName = normalizeKey(item.name);
-    if (
-        source.forma_id !== 'chamas_07' ||
-        Number(source.forma_ataque_padrao) !== 1 ||
-        (normalizeKey(props.nome_forma) !== 'cauterizar' && itemName !== LEGACY_CAUTERIZE_NAME)
-    )
-        return null;
+    if (source.forma_id !== 'chamas_10' || !isLegacyCauterize(item)) return null;
     const patch = structuralDrift(props, source);
     for (const key of [
         'inventario_categoria',
@@ -241,6 +243,7 @@ export async function repairBreathingItems({
                 .map((item) => {
                     const props = item?.system?.props ?? {};
                     const canonical =
+                        (isLegacyCauterize(item) ? byName.get(LEGACY_CAUTERIZE_NAME) : null) ??
                         byId.get(
                             String(props.forma_id ?? '')
                                 .trim()

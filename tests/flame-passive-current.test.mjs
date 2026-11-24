@@ -39,7 +39,7 @@ test('sete patamares atuais de Fogo Fátuo e Brasas substituem os anteriores', (
     assert.match(flameStatePatch({ weaponHeat: 60 })['system.props.resp_chamas_resumo'], /Dano ×2/);
     for (const [id, weapon, additionalEmbers] of [
         ['chamas_02', 7, 0], ['chamas_03', 9, 6], ['chamas_04', 7, 0],
-        ['chamas_05', 11, 8], ['chamas_06', 13, 10], ['chamas_07', 3, 2],
+        ['chamas_05', 11, 8], ['chamas_06', 13, 10], ['chamas_07', 6, 2],
         ['chamas_08', 8, 0], ['chamas_09', 15, 12],
     ]) {
         assert.equal(flameFormById(id).weaponHeat, weapon);

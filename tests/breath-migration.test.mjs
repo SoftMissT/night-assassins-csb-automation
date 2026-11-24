@@ -79,7 +79,7 @@ describe('breath-migration', () => {
         assert.equal(patch.system.template, 'RuntimeBreathTpl42');
     });
 
-    it('troca Cauterizar por Universo Flamejante sem reimportar ou perder fórmulas personalizadas', async () => {
+    it('leva o Cauterizar antigo à Forma Cauterizar (chamas_10) sem reimportar ou perder fórmulas personalizadas', async () => {
         const changes = [];
         const old = {
             id: 'forma-da-ficha',
@@ -109,14 +109,13 @@ describe('breath-migration', () => {
         assert.equal((await repairBreathingItems({ actors })).items, 1);
         const [patch] = changes;
         assert.equal(patch._id, old.id);
-        assert.equal(patch.name, 'Chamas: 7º Estilo Universo Flamejante');
-        assert.equal(patch['system.props.forma_id'], 'chamas_07');
-        assert.equal(patch['system.props.forma_ataque_padrao'], 1);
-        assert.equal(patch['system.props.tipo_manobra'], 'Ação Única');
-        assert.equal(patch['system.props.tem_requisito'], 0);
-        assert.equal(patch['system.props.nvl1_dano'], '2d10');
-        assert.equal(patch['system.props.nvl4_dano'], '5d10');
-        assert.equal(patch['system.props.nvl4_custo'], 7);
+        assert.equal(patch.name, 'Chamas: 7º Estilo Cauterizar');
+        assert.equal(patch['system.props.forma_id'], 'chamas_10');
+        assert.equal('system.props.forma_ataque_padrao' in patch, false);
+        assert.equal(patch['system.props.tipo_manobra'], 'Ação Especial');
+        assert.equal(patch['system.props.tem_requisito'], 1);
+        assert.equal(patch['system.props.nvl1_dano'], '', 'o 1d6 antigo era cura, não dano');
+        assert.equal(patch['system.props.nvl4_custo'], 4);
         for (const preserved of ['system.props.nvl2_dano', 'system.props.anotacao', 'system.template', 'flags', 'ownership'])
             assert.equal(preserved in patch, false, preserved);
         Object.assign(old, { name: patch.name });

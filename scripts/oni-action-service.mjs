@@ -1,10 +1,11 @@
 import { TIPOS_ACAO } from './constants.mjs';
 import { parseNumber } from './parsing.mjs';
 
+import { createRequiredCounters, emptyUses } from './action-counters.mjs';
 const TURN_KEYS = Object.freeze(['movimento', 'ataque', 'especial']);
 const ROUND_KEYS = Object.freeze(['unica', 'reacao', 'lendaria']);
+const requiredCounters = createRequiredCounters(TURN_KEYS, ROUND_KEYS);
 
-const emptyUses = (keys) => Object.fromEntries(keys.map((key) => [key, 0]));
 
 export function defaultOniActionState() {
     return { version: 1, turn: emptyUses(TURN_KEYS), round: emptyUses(ROUND_KEYS) };
@@ -45,18 +46,6 @@ export function oniActionMaximums(props = {}) {
         reacao: bonus('reacao'),
         lendaria: Math.max(0, Math.trunc(parseNumber(props.acoes_oni_lendaria_maximo))),
     };
-}
-
-function requiredCounters(types) {
-    const required = { turn: emptyUses(TURN_KEYS), round: emptyUses(ROUND_KEYS) };
-    for (const key of new Set(types.filter(Boolean))) {
-        if (key === 'completa') {
-            required.turn.movimento += 1;
-            required.turn.ataque += 1;
-        } else if (TURN_KEYS.includes(key)) required.turn[key] += 1;
-        else if (ROUND_KEYS.includes(key)) required.round[key] += 1;
-    }
-    return required;
 }
 
 export async function consumeOniActions(actor, types, { update = true } = {}) {

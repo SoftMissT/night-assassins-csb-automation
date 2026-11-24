@@ -11,6 +11,7 @@
 import { resolveForm, resolveLevel } from './breathing-contract.mjs';
 import { attackCount, runLevelPrimitives } from './breathing-primitives.mjs';
 import { breathingResourceKeys } from './actor-resources.mjs';
+import { pooledSequenceDamageFormula } from './fantasia-final-pool.mjs';
 
 const ATTACK_LIKE_ACTIONS = new Set(['ataque', 'especial', 'unica', 'completa']);
 const activeAttackSequences = new WeakSet();
@@ -137,8 +138,9 @@ export async function runCanonicalBreathingForm({
         if (activeAttackSequences.has(actor)) return refusal(notify, 'Já existe uma sequência de Acerto em andamento.');
         activeAttackSequences.add(actor);
         let activation;
+        let sequenceHit = null;
         try {
-            const hit = await runtime.rollHit?.({
+            sequenceHit = await runtime.rollHit?.({
                 actor,
                 autoDamage: false,
                 skipActionConsumption: true,
@@ -151,26 +153,29 @@ export async function runCanonicalBreathingForm({
                         activation = await commit();
                         return activation.ok;
                     },
-                    onHit: ({ attempt, executionId }) => runtime.rollDamage?.({
-                        actor,
-                        nome: tecnica,
-                        breathing: form.respiracao,
-                        entradas,
-                        critical: attempt.critical,
-                        attackTotal: attempt.roll.total,
-                        skipActionConsumption: true,
-                        forceAttackDamage: true,
-                        skipBreathingInjection: true,
-                        passiveExecutionId: executionId,
-                        passiveFormId: form.id,
-                    }),
+                    // Dano não sai a cada acerto: o pool é rolado uma vez, ao fim da sequência.
+                    onHit: () => {},
                 },
             });
-            attackHits = hit?.hits ?? 0;
+            attackHits = sequenceHit?.hits ?? 0;
         } finally {
             activeAttackSequences.delete(actor);
         }
         if (!activation?.ok) return activation ?? { ok: false, reason: 'Acerto cancelado.' };
+        const poolFormula = pooledSequenceDamageFormula(dados.dano, sequenceHit?.attempts ?? []);
+        if (poolFormula) {
+            await runtime.rollDamage?.({
+                actor,
+                nome: tecnica,
+                breathing: form.respiracao,
+                entradas: [{ ...entradas[0], dado: poolFormula }],
+                critical: false,
+                skipActionConsumption: true,
+                forceAttackDamage: true,
+                skipBreathingInjection: true,
+                passiveFormId: form.id,
+            });
+        }
     } else if (totalAttacks > 1 && dados.dano && attackLike && !form.semAcerto) {
         let refunded = false;
         for (let index = 0; index < totalAttacks; index += 1) {

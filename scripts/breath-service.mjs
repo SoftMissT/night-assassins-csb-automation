@@ -26,10 +26,10 @@
  */
 
 import { MODULE_ID, TIPOS_ACAO } from './constants.mjs';
-import { resolveAttributeRefs } from './damage-formula.mjs';
+import { isValidDamageFormula, resolveAttributeRefs } from './damage-formula.mjs';
 import { openDamagePresetManager } from './dialogs/damage-preset-manager.mjs';
 import { parseLevel, parseNumber } from './parsing.mjs';
-import { breathingPdrInfo, breathingResourceKeys } from './actor-resources.mjs';
+import { breathingPdrInfo, breathingPdvInfo, breathingResourceKeys } from './actor-resources.mjs';
 import { combatPassiveBonuses, passiveExecutionId, recordBreathingPassiveEvent } from './breathing-combat-passives.mjs';
 import { chosenBreathing } from './breathing-choice.mjs';
 import { getDamageStatusEffects } from './status-effects.mjs';
@@ -172,10 +172,10 @@ function getFormData(item) {
         chamas_03: homebrew
             ? 'Aquece a arma em 9. Contra o inimigo acertado, aplica 6 Brasas adicionais e soma dano de Fogo ao dano da arma. O Acerto bem-sucedido é crítico.'
             : 'Aquece a arma em 3. Contra o inimigo acertado, aplica 2 pontos adicionais de Esquentar. O Acerto bem-sucedido é crítico.',
-        chamas_07: 'Prepara o próximo Ataque Padrão do turno. A arma ganha 3 pontos de Esquentar. No acerto, o alvo recebe 2 pontos adicionais e faz um teste de VIT para evitar Derrubado.',
+        chamas_07: 'Prepara o próximo Ataque Padrão do turno. A arma ganha 6 pontos de Esquentar. No acerto, o alvo recebe 2 pontos adicionais e faz um teste de VIT para evitar Derrubado.',
         chamas_08: homebrew
             ? 'Aquece a arma em 8. Por 3 turnos, sofre 5 de dano por turno e soma 2d8 de Concussão no nível 3 ou 4d8 no nível 4 aos golpes ofensivos.'
-            : 'Aquece a arma em 8. Por 3 turnos, sofre 5 de dano por turno e soma 5 de Fogo no nível 3 ou 8 no nível 4 aos golpes ofensivos.',
+            : 'Por 3 turnos, sofre 5 de dano por turno e soma 5 de Fogo no nível 3 ou 8 no nível 4 aos golpes ofensivos. No livro base não esquenta a arma.',
     }[catalog?.id];
     const sequence = props.forma_id === 'sonhos_10' ? resolveForm('Sonhos', props.forma_id) : null;
     const levels = [];
@@ -1852,19 +1852,29 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
                 parseNumber(props[`${key}_display`]),
             ])
         );
-        const chosen = resolveChosenDamage(dialogResult.damage, selected.dano, attrValues);
+        const tableForm =
+            flameFormById(form.id, ruleVariant('respiracao')) ?? windFormById(form.id) ?? snowFormById(form.id) ?? null;
+        const tableLevel = tableForm?.levels?.[selected.level - 1];
+        // O plano escreve o dano da tabela; é ele que o escolhido substitui. Tufão Idaten
+        // (vento_10) não tem `damage`: o dado base é `damageBase`, e o resto vem das cicatrizes e da DEX.
+        const tableBase = String(tableLevel?.damage ?? tableLevel?.damageBase ?? selected.dano ?? '');
+        // Texto descritivo do catálogo ("10d10 + 2d10 por cicatriz…") deixado como veio não é
+        // escolha: vale o dano do plano, sem validar o texto como fórmula.
+        const typed = String(dialogResult.damage ?? '').trim();
+        const untouchedText = typed === String(selected.dano ?? '').trim() &&
+            !isValidDamageFormula(resolveAttributeRefs(typed, attrValues));
+        const chosen = untouchedText
+            ? { ok: true, formula: '' }
+            : resolveChosenDamage(dialogResult.damage, selected.dano, attrValues);
         if (!chosen.ok) {
             ui.notifications?.warn?.(chosen.reason);
             return;
         }
         if (chosen.formula && chosen.formula !== selected.dano)
             await item.update({ [`system.props.nvl${selected.level}_dano`]: chosen.formula });
-        const tableForm =
-            flameFormById(form.id, ruleVariant('respiracao')) ?? windFormById(form.id) ?? snowFormById(form.id) ?? null;
         damageChoice = {
             formId: form.id,
-            // O plano escreve o dano da tabela; é ele que o escolhido substitui.
-            base: String(tableForm?.levels?.[selected.level - 1]?.damage ?? selected.dano ?? ''),
+            base: tableBase,
             chosen: chosen.formula,
         };
         // Formas sem Acerto rolam direto de `selected.dano`: passa a valer o escolhido.
@@ -2026,6 +2036,27 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
         patch[`system.props.${pdrSpent}`] = parseNumber(paymentProps[pdrSpent]) + custoFinal;
     }
 
+    // Cauterizar (chamas_10): a cura sai do PDV que falta, sem inflar o contador de curado.
+    let flameHealingRoll = null;
+    if (isFlameForm && plan.state?.healing) {
+        flameHealingRoll = await Roll.create(plan.state.healing.formula).evaluate();
+        const { pdvHealed } = breathingResourceKeys(props);
+        const { pdvMax, pdvRaw } = breathingPdvInfo(props);
+        const healed = Math.min(Math.max(0, Math.trunc(Number(flameHealingRoll.total) || 0)), Math.max(0, pdvMax - pdvRaw));
+        patch[`system.props.${pdvHealed}`] = parseNumber(props[pdvHealed]) + healed;
+        if (plan.state.healing.removeBleeding) {
+            const statusKeys = statusKeysForProps(props);
+            const status = parseStatusState(props[statusKeys.data]);
+            status.active = status.active.filter((key) => key !== 'sangramento');
+            delete status.effects.sangramento;
+            patch[`system.props.${statusKeys.data}`] = JSON.stringify(status);
+            patch[`system.props.${statusKeys.summary}`] = status.active.length
+                ? status.active.join(' · ')
+                : 'Nenhum status ativo';
+        }
+        delete plan.state.healing;
+        Object.assign(patch, flameStatePatch(plan.state));
+    }
     let rollbackPatch = null;
     if (tipoManobra === 'reacao')
         patch['system.props.resp_passivas_defesa_forma'] = JSON.stringify({ formId: form.id,
@@ -2211,15 +2242,21 @@ async function executeBreathForm(actor, item, form, secondary, getUse, handlesPo
     }
     // Vento com fórmula própria no pendingDamage (cicatrizes, DEX): o dano sai no Acerto pelo
     // damage-service (injeção de windDamage). Rolar selected.dano aqui somava o texto errado do
-    // catálogo ("10d10 + 2") ao dano certo, sem os termos de cicatriz e DEX.
-    const windDamageOnHit = isWindForm && !windNeedsAttackResolution &&
-        Boolean(parseWindBreathingState(plan.patch?.['system.props.resp_vento_estado']).pendingDamage?.formula);
+    // catálogo ("10d10 + 2") ao dano certo, sem os termos de cicatriz e DEX. A Ventania (vento_08)
+    // tem fórmula vazia: o 2d6/3d6 do catálogo é a queda, rolada só no alvo que falha a VIT; rolar
+    // aqui punha um "Dano" falso no cartão do chat. Garras e Tempestade Crescente não têm dano próprio.
+    const windDamageOnHit = isWindForm && !windNeedsAttackResolution;
     const genericFormula =
         isWaterForm || isFlameForm || windDamageOnHit ? '' : resolveGenericDamageFormula(selected.dano, props);
     const damageRoll = genericFormula ? await new Roll(genericFormula).evaluate() : null;
     if (damageRoll && game.dice3d?.showForRoll)
         await game.dice3d.showForRoll(damageRoll, game.user, true);
     await postBreathChat({ since: chatSince, actor, form, selected: { ...selected, ...costForChat }, damageRoll });
+    if (flameHealingRoll)
+        await flameHealingRoll.toMessage({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor: '<strong>Shichi no Kata Yaki Suru</strong> recuperação de PDV',
+        });
     return { ok: true };
 }
 

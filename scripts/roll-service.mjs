@@ -27,7 +27,8 @@ import { oniSpecializationAbility, TITAN } from './oni/specialization-rules.mjs'
 import {
     companionSocialBonus, consumeCompanionCoordination, offerCompanionInterception, pendingCompanionCoordination,
 } from './slayer/companion-oni-service.mjs';
-
+
+import { resolveActorLoose } from './actor-resolution.mjs';
 function naturalD20(roll) {
     return Math.max(
         0,
@@ -145,17 +146,6 @@ async function confirmDefenseSuccess(result, test) {
  * @param {object} options
  * @returns {Actor|null}
  */
-async function resolveActor(options) {
-    if (options.actor && typeof options.actor.update === 'function') return options.actor;
-    if (options.actorUuid) {
-        const doc = await fromUuid(options.actorUuid);
-        return doc?.actor ?? doc ?? null;
-    }
-    const controlled = canvas?.tokens?.controlled;
-    if (controlled?.length > 0) return controlled[0].actor;
-    return game?.user?.character ?? null;
-}
-
 /**
  * API pública: rolagem geral de teste.
  * @param {object} options
@@ -167,7 +157,7 @@ async function resolveActor(options) {
  * @returns {Promise<void>}
  */
 export async function rollTest(options) {
-    const actor = await resolveActor(options);
+    const actor = await resolveActorLoose(options);
     if (!actor) {
         ui.notifications?.warn?.('Nenhum Actor encontrado para rolagem.');
         return;

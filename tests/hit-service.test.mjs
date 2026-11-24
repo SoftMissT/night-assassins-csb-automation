@@ -621,6 +621,68 @@ describe('hit-service', () => {
         assert.equal(rolls, 2);
     });
 
+    it('Manopla dentro de Forma de sequência: crítico dá +1 de Acerto no golpe seguinte e os erros continuam contando', async () => {
+        const item = {
+            id: 'manoplas',
+            uuid: 'Item.manoplas',
+            name: 'Manoplas / Soqueiras',
+            system: {
+                template: 'NAWeaponTpl00001',
+                props: {
+                    arma_nome: 'Manoplas / Soqueiras',
+                    arma_modo_uso: 'ryoto',
+                    arma_propriedades: 'Acuidade / Ryoto / Nitoryu',
+                    arma_perfis_ataque: [{
+                        nome: 'Ryōtō', modo: 'ryoto', critico: 20, dano_fixo: 3,
+                        atributos: [{ key: 'DEX', multiplicador: 0.5, escolha: true }, { key: 'FOR', multiplicador: 0.5, escolha: true }],
+                        tipos_dano: ['concussao'], ataques: 2, dano_segundo_golpe: 'normal', acerto_segundo_sem_atributo: true,
+                        cadeia_critica: { ativa: true, bonus_acerto: 1, dano_fixo: 1, atributo_inteiro: ['DEX', 'FOR'] },
+                    }],
+                },
+            },
+            update: async () => {},
+        };
+        const actor = makeActor({ props: { nome_slayer: 'Sonhos', acerto_label: 'acerto_label_dex', dex_display: '10', for_display: '6', folego_slayer_atual: 0 } });
+        actor.items = { [Symbol.iterator]: [item][Symbol.iterator].bind([item]), get: (id) => (id === item.id ? item : null) };
+        actor.update = async () => {};
+        const previousWait = foundry.applications.api.DialogV2.wait;
+        const previousCreate = Roll.create;
+        const formulas = [];
+        const decisions = ['hit', 'hit', 'miss', 'miss', 'miss'];
+        let charges = 0;
+        Roll.create = (formula) => {
+            formulas.push(formula);
+            return previousCreate(formula);
+        };
+        foundry.applications.api.DialogV2.wait = async dialog => {
+            if (dialog.window.title === 'Acerto') return {
+                mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0,
+                rollCount: 1, actionType: 'completa', weaponId: item.id,
+            };
+            const next = decisions.shift();
+            const button = dialog.buttons.find(entry => entry.action === next);
+            return button.callback(null, { form: { elements: {} } });
+        };
+        try {
+            _rollResult = { ..._rollResult, total: 25, dice: [{ results: [{ result: 20, active: true }] }] };
+            const result = await rollHit({ actor, isTechnique: true, autoDamage: false,
+                skipActionConsumption: true, formId: 'sonhos_10',
+                attackSequence: {
+                    missLimit: 3,
+                    beforeFirstRoll: async () => ++charges === 1,
+                    onHit: async () => {},
+                },
+            });
+            assert.equal(result.misses, 3);
+            assert.equal(result.attempts.length, 5);
+            // Exato, não por substring: "+ 10" contém "+ 1".
+            assert.deepEqual(formulas.slice(0, 3), ['1d20 + 10', '1d20 + 10 + 1', '1d20 + 10 + 2']);
+        } finally {
+            Roll.create = previousCreate;
+            foundry.applications.api.DialogV2.wait = previousWait;
+        }
+    });
+
     it('permite encerrar a sequência antes do limite', async () => {
         _dialogReturn = [
             { mode: 'normal', rollMode: 'publicroll', bonusRaw: '', cdVal: 0, rollCount: 5 },

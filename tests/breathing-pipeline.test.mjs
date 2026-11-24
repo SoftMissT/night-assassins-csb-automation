@@ -74,7 +74,7 @@ const run = (runtime, options = {}) =>
     });
 
 describe('breathing-pipeline — rota canônica', () => {
-    test('Fantasia Final paga uma vez e rola apenas o dano da Forma por acerto', async () => {
+    test('Fantasia Final paga uma vez e rola o pool de dados ao fim da sequência', async () => {
         const actor = makeActor();
         const runtime = fakeRuntime({
             pdrSpentKey: 'npc_pdr_gasto_valor',
@@ -84,9 +84,16 @@ describe('breathing-pipeline — rota canônica', () => {
                 assert.equal(attackSequence.missLimit, 3);
                 assert.equal(runtime.calls.patches.length, 0);
                 assert.equal(await attackSequence.beforeFirstRoll(), true);
-                await attackSequence.onHit({ attempt: { roll: { total: 13 }, critical: false }, executionId: '1' });
-                await attackSequence.onHit({ attempt: { roll: { total: 22 }, critical: true }, executionId: '2' });
-                return { hits: 2 };
+                // Acerto crítico dobra os dados daquele acerto; o dano não sai no meio da sequência.
+                await attackSequence.onHit({ attempt: { roll: { total: 13 }, critical: false, hit: true } });
+                await attackSequence.onHit({ attempt: { roll: { total: 22 }, critical: true, hit: true } });
+                return {
+                    hits: 2,
+                    attempts: [
+                        { roll: { total: 13 }, critical: false, hit: true },
+                        { roll: { total: 22 }, critical: true, hit: true },
+                    ],
+                };
             },
         });
         const options = { actor, respiracao: 'Sonhos', formaId: 'sonhos_10', level: 2 };
@@ -95,13 +102,12 @@ describe('breathing-pipeline — rota canônica', () => {
         assert.deepEqual(runtime.calls.patches, [{
             'system.props.acao_teste': 1, 'system.props.npc_pdr_gasto_valor': 7,
         }]);
+        // 4d4 + 4d4 dobrado = 12d4, um único rolamento; crítico já está nos dados.
         assert.deepEqual(runtime.calls.damages.map(call => ({
             dice: call.entradas.map(entry => entry.dado),
             critical: call.critical,
-            executionId: call.passiveExecutionId,
         })), [
-            { dice: ['4d4'], critical: false, executionId: '1' },
-            { dice: ['4d4'], critical: true, executionId: '2' },
+            { dice: ['12d4'], critical: false },
         ]);
         assert.equal(runtime.calls.postUsages.length, 1);
 

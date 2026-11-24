@@ -84,6 +84,7 @@ import { SETTINGS } from './settings.mjs';
 import { resolveSlayerDerivedBonuses } from './derived-bonus-service.mjs';
 import { actorBuffSources } from './breathing-buffs.mjs';
 
+import { resolveActorLoose } from './actor-resolution.mjs';
 function naturalD20(roll) {
     return Math.max(
         0,
@@ -332,8 +333,10 @@ async function doRoll({
             statusEffects.criticalAllowed !== false &&
             weapon?.criticalDisabled !== true &&
             natural >= criticalThreshold;
+        // Golpe extra da Manopla vale também dentro de Forma de sequência (regra do operador, 2026-11-23):
+        // ele conta para os erros e não troca o dano da Forma (o dano é o pool, em breathing-pipeline).
         const extendsOnCriticalHit =
-            inCriticalRange && !attackSequence && !disableExtraAttacks && weapon?.criticalChain?.ativa === true && maximum < 20;
+            inCriticalRange && !disableExtraAttacks && weapon?.criticalChain?.ativa === true && maximum < 20;
         const decision = counterattack ? { hit: masterBattleCounterattackHits(counterattack, { total: roll.total, natural }) } : await openHitConfirmationDialog({
             current: index + 1,
             maximum,
@@ -434,17 +437,6 @@ async function doRoll({
     };
 }
 
-async function resolveActor(options) {
-    if (options.actor && typeof options.actor.update === 'function') return options.actor;
-    if (options.actorUuid) {
-        const doc = await fromUuid(options.actorUuid);
-        return doc?.actor ?? doc ?? null;
-    }
-    const controlled = canvas?.tokens?.controlled;
-    if (controlled?.length > 0) return controlled[0].actor;
-    return game?.user?.character ?? null;
-}
-
 /**
  * API pública: rolagem de acerto.
  * @param {object} options
@@ -453,7 +445,7 @@ async function resolveActor(options) {
  * @returns {Promise<void>}
  */
 export async function rollHit(options) {
-    const actor = await resolveActor(options);
+    const actor = await resolveActorLoose(options);
     if (!actor) {
         ui.notifications?.warn?.('Nenhum Actor encontrado para acerto.');
         return;

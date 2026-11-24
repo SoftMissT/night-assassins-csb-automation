@@ -249,7 +249,12 @@ export function resolveSlayerDerivedBonuses(props = {}, context = {}) {
 
     if (isHomebrewExtra('olhos_escarlate') && hasBreathingPassive(props, 'Raposa')) {
         add({ channel: 'acerto', value: -1, label: 'Olhos Escarlate', origin: 'Respiração da Raposa' });
-        add({ channel: 'pdrMaximo', value: 1, label: 'Olhos Escarlate', origin: 'Respiração da Raposa' });
+        // Livro base p. 65: o +1 de PDR máximo vale só no Nível 1 de Respiração. No Vanilla, o
+        // bônus dos níveis 2 a 4 não existe; a variante Homebrew mantém o que já estava.
+        const breathLevel = parseNumber(props.nvl_respiracao_num ?? props.respiracao_nivel ??
+            props.nivel_respiracao ?? props.nvl_respiracao);
+        if (ruleVariant('respiracao') !== 'vanilla' || breathLevel === 1)
+            add({ channel: 'pdrMaximo', value: 1, label: 'Olhos Escarlate', origin: 'Respiração da Raposa' });
     }
 
     const fox = foxPassiveBonuses(props);

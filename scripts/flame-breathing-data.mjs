@@ -102,7 +102,7 @@ export const FLAME_FORMS = Object.freeze([
         name: 'Shichi no Kata Kien Banshō',
         ptName: 'Universo Flamejante',
         action: 'unica',
-        weaponHeat: 3,
+        weaponHeat: 6,
         enemyHeat: 2,
         damageTypes: ['cortante'],
         levels: [
@@ -110,6 +110,22 @@ export const FLAME_FORMS = Object.freeze([
             LEVEL(4, { damage: '3d10', advance: 4.5 }),
             LEVEL(6, { damage: '4d10', advance: 6 }),
             LEVEL(7, { damage: '5d10', advance: 7.5 }),
+        ],
+    },
+    {
+        id: 'chamas_10',
+        style: 7,
+        name: 'Shichi no Kata Yaki Suru',
+        ptName: 'Cauterizar',
+        action: 'especial',
+        weaponHeat: 0,
+        enemyHeat: 0,
+        minimumWeaponHeat: 5,
+        levels: [
+            LEVEL(2, { healing: '1d6' }),
+            LEVEL(3, { healing: '2d6' }),
+            LEVEL(3, { healing: '3d6', removeBleeding: true }),
+            LEVEL(4, { healing: '4d6', removeBleeding: true }),
         ],
     },
     {
@@ -145,10 +161,26 @@ export const FLAME_FORMS = Object.freeze([
     },
 ]);
 
+// Livro base p. 41-45: Esquentar que cada Forma dá à arma e ao inimigo [arma, inimigo].
+// O texto do livro não cita ganho para Ignição (chamas_08) nem para Cauterizar (chamas_10).
+// Universo Flamejante (chamas_07) é a Forma extra: o ganho é o do texto dela nas duas variantes.
+const VANILLA_FLAME_HEAT = Object.freeze({
+    chamas_02: [2, 0],
+    chamas_03: [3, 2],
+    chamas_04: [2, 0],
+    chamas_05: [3, 3],
+    chamas_06: [4, 4],
+    chamas_08: [0, 0],
+    chamas_09: [4, 4],
+});
+
 export function flameFormById(id, variant = 'homebrew') {
     const form = FLAME_FORMS.find((entry) => entry.id === String(id ?? '')) ?? null;
+    if (variant === 'vanilla' && form && VANILLA_FLAME_HEAT[form.id]) {
+        const [weaponHeat, enemyHeat] = VANILLA_FLAME_HEAT[form.id];
+        return { ...form, weaponHeat, enemyHeat };
+    }
     if (form?.id === 'chamas_03') {
-        if (variant === 'vanilla') return { ...form, weaponHeat: 3, enemyHeat: 2 };
         const formulas = ['2d10', '4d10', '6d10 + @for', '8d10 + @for + @fdv'];
         return { ...form, levels: form.levels.map((level, index) => ({ ...level, damage: formulas[index] })) };
     }

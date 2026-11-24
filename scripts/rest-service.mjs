@@ -12,8 +12,8 @@ import { DREAM_EXCHANGE_FLAG } from './dream-passive-service.mjs';
 import { formatStatusSummary, parseStatusState } from './status-service.mjs';
 import {
     consolidateWindScars,
-    parseWindBreathingState,
     windStatePatch,
+    windStateWithManualScars,
     WIND_STATE_KEY,
 } from './wind-breathing-service.mjs';
 
@@ -264,7 +264,7 @@ export function buildRestPatch(props = {}, resolution = {}) {
     // Longo ("Recuperação Profunda"), conforme o .md ("após um descanso
     // longo, aplicados após a última batalha").
     if (tier === 'deep' && ['slayer', 'npc'].includes(contract.kind) && props[WIND_STATE_KEY]) {
-        const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
+        const windState = windStateWithManualScars(props);
         Object.assign(patch, windStatePatch(consolidateWindScars(windState)));
     }
     // Livro base p. 58: a Troca Equivalente é 1×/dia; o descanso completo/profundo vira o dia.

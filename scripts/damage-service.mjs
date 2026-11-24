@@ -18,7 +18,7 @@ import {
 import { deleteDamagePreset, saveDamagePreset } from './dialogs/damage-preset-manager.mjs';
 import { itemDamageProfileFromProps } from './item-damage-profile.mjs';
 import { applyOniDamage, applySlayerDamageAuto } from './damage-relay.mjs';
-import { getDamageStatusEffects, isReactionBlocked } from './status-effects.mjs';
+import { getDamageStatusEffects, getRollStatusEffects, isReactionBlocked } from './status-effects.mjs';
 import { consumeOniActions, consumeSlayerActions } from './action-service.mjs';
 import {
     applyBreathingStatus,
@@ -27,7 +27,7 @@ import {
 } from './breath-service.mjs';
 import { parseStatusState } from './status-service.mjs';
 import { actorKind, isSlayerActor } from './actor-kind.mjs';
-import { classRankAtLevel, selectedSlayerClassKey } from './slayer/class-contracts.mjs';
+import { classLevel, classRankAtLevel, selectedSlayerClassKey } from './slayer/class-contracts.mjs';
 import { mbDamageBonus } from './slayer/class-runtime.mjs';
 import { masterBattleBenefits, masterBattleCriticalPlan } from './slayer/master-battle-rules.mjs';
 import { pendingCompanionInterception } from './slayer/companion-oni-service.mjs';
@@ -93,6 +93,7 @@ import {
     consumeWindPending,
     parseWindBreathingState,
     windStatePatch,
+    windStateWithManualScars,
 } from './wind-breathing-service.mjs';
 import { WIND_SYNERGY_BREATHINGS } from './wind-breathing-data.mjs';
 import { parseBreathPassiveState, passiveStatePatch } from './breath-passives.mjs';
@@ -489,6 +490,18 @@ export async function rollDamage(options = {}) {
     if (!dialogResult) return;
 
     const nome = dialogResult.nome ?? 'Dano';
+    // Efeito de Contato é "uma vez por ação". No dano manual não existe o id da
+    // sequência de Acerto; usa turno + ator + ataque + alvos para que re rolagens
+    // da mesma ação não empilhem Veneno. O actionId do Metal continua aleatório.
+    const contactActionId = String(
+        options.contactActionId ??
+            options.actionId ??
+            `${actor.uuid}:${game.combat?.round ?? 0}:${game.combat?.turn ?? 0}:${nome}:` +
+                [...(options.targets ?? globalThis.game?.user?.targets ?? [])]
+                    .map((target) => target?.actor?.uuid ?? target?.uuid ?? '')
+                    .sort()
+                    .join(',')
+    );
     const entradas = Array.isArray(dialogResult.entradas) ? dialogResult.entradas : [];
     let critical = dialogResult.critical === true;
     const splitTargets = dialogResult.splitTargets === true;
@@ -500,7 +513,7 @@ export async function rollDamage(options = {}) {
     }
     const criticalWeapon = actor.items?.get?.(options.weaponItem?.id);
     const masterBattleAttack = critical && options.critical === true && options.classBasicAttack === true &&
-        attackerKind === 'slayer' && !breathingContext && !options.sourceFamily && !options.passiveFormId &&
+        ['slayer', 'npc'].includes(attackerKind) && !breathingContext && !options.sourceFamily && !options.passiveFormId &&
         !options.passivePlan?.noContactEffects &&
         criticalWeapon?.id && isWeaponItem(criticalWeapon) && isWeaponProficient(criticalWeapon.system.props, props);
     const masterBattle = masterBattleAttack ? masterBattleBenefits(props) : null;
@@ -584,8 +597,9 @@ export async function rollDamage(options = {}) {
                 entry.tipoAcao === 'completa'
         );
     const classProfile = ruleVariant('classes');
-    const selectedClass = attackerKind === 'slayer' ? selectedSlayerClassKey(props, classProfile) : null;
-    const selectedClassRank = selectedClass ? classRankAtLevel(props.nvl_num ?? props.nvl_pj, classProfile) : null;
+    const selectedClass = ['slayer', 'npc'].includes(attackerKind)
+        ? selectedSlayerClassKey(props, classProfile) : null;
+    const selectedClassRank = selectedClass ? classRankAtLevel(classLevel(props), classProfile) : null;
     if (selectedClass === 'classe_mb' && options.classBasicAttack === true &&
         (classProfile === 'vanilla' || selectedWeaponProfile?.proficiente !== false)) {
         const bonus = mbDamageBonus(selectedClassRank);
@@ -773,9 +787,7 @@ export async function rollDamage(options = {}) {
         });
     }
     // Respiração do Vento contrato pendingDamage (P0 dano fantasma corrigido)
-    const windState = parseWindBreathingState(
-        breathingActor ? props.resp_vento_estado : ''
-    );
+    const windState = windStateWithManualScars(breathingActor ? props : {});
     const windDamage = windState.pendingDamage;
     const passiveFormId = String(options.passiveFormId ?? windDamage?.source ?? '');
     const windExecutionId = passiveExecutionId || actionId;
@@ -1008,7 +1020,16 @@ export async function rollDamage(options = {}) {
         canvas?.tokens?.controlled?.find((token) => token.actor?.uuid === actor.uuid) ??
         null;
     if (targets && targets.size > 0 && finalDamage > 0) {
-        const targetList = [...targets];
+        let targetList = [...targets];
+        if (windDamage?.cycloneOpposed) {
+            const maxTargets = Math.max(1, Number(windDamage.maxTargets) || 3);
+            if (targetList.length > maxTargets) {
+                ui.notifications?.warn?.(
+                    `Ciclone Penetrante atinge no máximo ${maxTargets} alvos; os excedentes foram ignorados.`
+                );
+                targetList = targetList.slice(0, maxTargets);
+            }
+        }
         for (const [targetIndex, targetToken] of targetList.entries()) {
             if (flameDamage?.areaMeters && attackerToken && canvas?.grid?.measurePath) {
                 const distance =
@@ -1196,8 +1217,8 @@ export async function rollDamage(options = {}) {
             }
             // ─── Respiração do Vento ───────────────────────────────────────────
             if (windDamage?.cycloneOpposed && hasAttackDamage) {
-                // DECISÃO PENDENTE documentada: usa UMA rolagem ofensiva compartilhada
-                // comparada à Esquiva individual de cada alvo.
+                // Uma rolagem ofensiva compartilhada; cada alvo rola 1d20 +
+                // Esquiva contra ela e, se passar, recebe metade do dano.
                 cycloneAttackRoll ??= await Roll.create(
                     `1d20 + ${parseAttributeValue(props.dex_display)} + ${parseNumber(props.hab_acerto_bonus)}`
                 ).evaluate();
@@ -1208,10 +1229,45 @@ export async function rollDamage(options = {}) {
                     });
                     cycloneAttackRolledMessage = true;
                 }
-                const esquivaTarget =
-                    parseAttributeValue(targetActor.system?.props?.dex_display) +
-                    parseNumber(targetActor.system?.props?.hab_esquiva_bonus);
-                if (cycloneAttackRoll.total < esquivaTarget) amount = Math.floor(amount / 2);
+                const targetPropsForDodge = targetActor.system?.props ?? {};
+                const dodgeStatus = getRollStatusEffects(targetPropsForDodge, {
+                    test: 'Esquiva',
+                    attr: 'DEX',
+                    kind: 'defense',
+                });
+                if (!dodgeStatus.blocked) {
+                    const targetDerived = resolveSlayerDerivedBonuses(targetPropsForDodge, {
+                        defenseAgainstAttack: true,
+                        channel: 'esquiva',
+                        runtimeSources: actorBuffSources(targetActor),
+                    });
+                    const esquiva =
+                        parseAttributeValue(targetPropsForDodge.dex_display) +
+                        targetDerived.channels.esquiva.total +
+                        targetDerived.channels.teste.total +
+                        dodgeStatus.modifier;
+                    const dodgeDice = dodgeStatus.mode === 'advantage'
+                        ? '2d20kh1' : dodgeStatus.mode === 'disadvantage' ? '2d20kl1' : '1d20';
+                    // Livro base p. 50: cada alvo faz um teste de Esquiva contra
+                    // a rolagem de acerto padrão; sucesso = metade.
+                    const dodgeRoll = await Roll.create(`${dodgeDice} + ${esquiva}`).evaluate();
+                    await dodgeRoll.toMessage({
+                        speaker: ChatMessage.getSpeaker({ actor: targetActor }),
+                        flavor: '<strong>Ciclone Penetrante</strong> Teste de Esquiva',
+                    });
+                    if (cycloneAttackRoll.total < dodgeRoll.total) {
+                        const halved = Math.floor(amount / 2);
+                        targetComponents = targetComponents.map((component) => ({
+                            ...component,
+                            subtotal: Math.floor(component.subtotal / 2),
+                        }));
+                        const diff = halved -
+                            targetComponents.reduce((sum, component) => sum + component.subtotal, 0);
+                        if (diff > 0 && targetComponents.length)
+                            targetComponents[0].subtotal += diff;
+                        amount = halved;
+                    }
+                }
             }
             if (windDamage?.ignoreResistance && hasAttackDamage) windSuppressResistances = true;
             if (windDamage?.disablesHealing && hasAttackDamage && amount > 0) {
@@ -1508,8 +1564,11 @@ export async function rollDamage(options = {}) {
     const validPoisonAttack =
         Boolean(poisonRank) &&
         !options.passivePlan?.noContactEffects &&
+        // Vanilla: a dose vale no ataque que causa dano, inclusive quando o
+        // jogador rola o dano manualmente (antes exigia passiveExecutionId e
+        // nenhum dano manual aplicava Veneno).
         (classProfile === 'vanilla'
-            ? hasAttackDamage && Boolean(passiveExecutionId)
+            ? hasAttackDamage
             : options.classBasicAttack === true && selectedWeaponProfile?.proficiente !== false);
     if (validPoisonAttack) {
         const contactDamageBonus = ruleVariant('metal') === 'vanilla'
@@ -1518,11 +1577,13 @@ export async function rollDamage(options = {}) {
         for (let index = 0; index < damageRequests.length; index += 1) {
             const outcome = damageResults[index];
             const request = damageRequests[index];
-            const appliedDamage = Number(
-                outcome?.value?.appliedDamage ?? outcome?.value?.totalDamage ?? request?.amount ?? 0
-            );
-            if (outcome?.status !== 'fulfilled' || !(appliedDamage > 0)) continue;
-            const targetProps = request.actor?.system?.props ?? {};
+            // Livro base p. 11: o veneno entra ao ACERTAR, mesmo que o dano
+            // daquele golpe seja reduzido a zero por resistência. Defesa que
+            // anula o golpe e aliado/cura ficam fora.
+            if (outcome?.status !== 'fulfilled' || !request?.actor ||
+                request.hostile !== true || request.negated === true ||
+                healChoices?.get(request.actor) === 'cura') continue;
+            const targetProps = request.actor.system?.props ?? {};
             const immunityText = [
                 targetProps.imunidades,
                 targetProps.imunidade,
@@ -1537,8 +1598,8 @@ export async function rollDamage(options = {}) {
                 rank: poisonRank,
                 carisma: attrValues.car,
                 contactDamageBonus,
-                actionId,
                 contactLimit: selectedWeaponProfile?.efeitos_contato_por_acao,
+                actionId: contactActionId,
                 attackIndex: options.weaponAttackIndex,
                 immune: /imune?[^,;]*veneno|veneno[^,;]*imune?/u.test(immunityText),
             });

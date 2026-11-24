@@ -16,6 +16,7 @@ import {
     ruleVariant,
     saveRulesSelection,
     sheetRuleFlags,
+    vanillaClassFromHomebrew,
     vanillaClassRank,
     vanillaDerivedBonuses,
     vanillaRuleCatalog,
@@ -191,6 +192,25 @@ test('seleção granular mantém variantes independentes, propriedades e extras'
         assert.equal(Object.hasOwn(getRuleSelection(), 'sojutsu'), false);
         assert.equal(getRulesProfile(), 'homebrew');
     } finally { globalThis.game = previous; }
+});
+
+test('classe Homebrew migra para a escolha Vanilla quando as chaves coincidem', () => {
+    const previous = globalThis.game;
+    try {
+        globalThis.game = { settings: { get: (_module, key) => key === SETTINGS.rulesSelection
+            ? JSON.stringify({ classes: 'vanilla' }) : undefined } };
+        assert.equal(vanillaClassFromHomebrew({ classe_escolhida: 'classe_mb' }), 'classe_mb');
+        assert.equal(
+            vanillaClassFromHomebrew({ classe_escolhida: 'classe_mb', na_vanilla_class: 'classe_kakushi' }),
+            ''
+        );
+        assert.equal(vanillaClassFromHomebrew({ classe_escolhida: 'classe_mb' }, 'oni'), '');
+        globalThis.game.settings.get = (_module, key) => key === SETTINGS.rulesSelection
+            ? JSON.stringify({ classes: 'homebrew' }) : undefined;
+        assert.equal(vanillaClassFromHomebrew({ classe_escolhida: 'classe_mb' }), '');
+    } finally {
+        globalThis.game = previous;
+    }
 });
 
 test('flags CSB refletem cada grupo e propriedade, mantendo o alias legado só no perfil total vanilla', () => {

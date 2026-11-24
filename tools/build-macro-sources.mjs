@@ -30,6 +30,7 @@ const folderFor = (file) => {
         [
             'na-resp-usar-forma.js',
             'na-respiracao-recuperacao.js',
+            'na-vento-cicatrizes.js',
         ].includes(file)
     )
         return 'NAMacroBreath001';
@@ -108,6 +109,12 @@ const macros = [
         id: 'NARespFormUse001',
         file: 'na-resp-usar-forma.js',
         name: 'Night Assassins Usar Forma de Respiração',
+    },
+    {
+        id: 'NAVentoScars0001',
+        file: 'na-vento-cicatrizes.js',
+        name: 'Night Assassins Vento — Cicatrizes',
+        icon: 'na-gerenciar-acoes_icon.webp',
     },
     {
         id: 'NALifeDeath00001',

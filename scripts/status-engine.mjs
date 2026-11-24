@@ -20,9 +20,9 @@ import {
     userPoisonStatePatch,
 } from './slayer/poison-user-service.mjs';
 import {
-    parseWindBreathingState,
     registerWindBattleDamage,
     windStatePatch,
+    windStateWithManualScars,
     WIND_STATE_KEY,
 } from './wind-breathing-service.mjs';
 
@@ -194,7 +194,7 @@ export function buildWindBattleDamagePatch(actor, props, context) {
         )
         .reduce((total, c) => total + received(c), 0);
     if (cutPierce <= 0 && bleedInfection <= 0) return {};
-    const windState = parseWindBreathingState(props[WIND_STATE_KEY]);
+    const windState = windStateWithManualScars(props);
     const nextWindState = registerWindBattleDamage(windState, { cutPierce, bleedInfection });
     return windStatePatch(nextWindState);
 }

@@ -25,6 +25,7 @@ import {
     openRulesTableManager,
     preserveVanillaSelectionsOnTemplateReload,
     sheetRuleFlags,
+    vanillaClassFromHomebrew,
 } from './rules-profile.mjs';
 import { tagItemSheet } from './item-sheet-skin.mjs';
 import { attachItemSheetHud, openItemDamageProfileEditor } from './item-sheet-hud.mjs';
@@ -111,6 +112,7 @@ import {
 } from './breath-service.mjs';
 import { launchBreathForm } from './breath-form-launcher.mjs';
 import { openHuntersMarkDialog } from './slayer/hunter-mark-dialog.mjs';
+import { openWindScarsDialog } from './slayer/wind-scars-dialog.mjs';
 import {
     openLifeDeathManager,
     parseLifeDeathState,
@@ -240,11 +242,14 @@ const rulesProfileSync = new WeakSet();
 
 async function syncSheetRulesProfile(actor) {
     const props = actor?.system?.props;
-    if (!props || !actor.update || !actor.isOwner || !['npc', 'slayer', 'oni'].includes(actorKind(actor))) return;
+    const kind = actorKind(actor);
+    if (!props || !actor.update || !actor.isOwner || !['npc', 'slayer', 'oni'].includes(kind)) return;
     if (rulesProfileSync.has(actor)) return;
     const update = Object.fromEntries(Object.entries(sheetRuleFlags())
         .filter(([key, value]) => Number(props[key] ?? 0) !== value)
         .map(([key, value]) => [`system.props.${key}`, value]));
+    const migratedClass = vanillaClassFromHomebrew(props, kind);
+    if (migratedClass) update['system.props.na_vanilla_class'] = migratedClass;
     if (!Object.keys(update).length) return;
     rulesProfileSync.add(actor);
     try {
@@ -422,6 +427,7 @@ Hooks.once('ready', async () => {
             derivedBonusSummary,
             huntersMark,
             openHuntersMarkDialog,
+            openWindScarsDialog,
             getRollStatusEffects,
             getDamageStatusEffects,
             mergeRollMode,

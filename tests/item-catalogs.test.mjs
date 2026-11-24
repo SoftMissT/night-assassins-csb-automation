@@ -246,10 +246,9 @@ describe('catálogo de Respirações', () => {
     it('o texto de Chamas cita o ganho de Esquentar que o motor aplica em cada variante', async () => {
         const { flameFormById } = await import('../scripts/flame-breathing-data.mjs');
         const documents = await breathingDocuments();
-        // Tags saem em uma passada; o segundo replace garante que nenhum '<' sobreviva (CodeQL: sanitização incompleta).
+        // Remove caracteres de marcação diretamente para evitar sanitização multi-caractere incompleta.
         const textOf = (id) => documents
             .find((item) => item.system?.props?.forma_id === id).system.props.descricao
-            .replace(/<[^>]*>/gu, '')
             .replace(/[<>]/gu, '');
         const passive = textOf('chamas_01');
         assert.doesNotMatch(passive, /\*\(Passiva/u, 'sem asterisco de markdown no nome');

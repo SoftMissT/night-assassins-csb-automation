@@ -38,6 +38,11 @@ test('bônus de um inimigo não afeta o ataque contra outro', () => {
     assert.deepEqual(other.bonuses, { 'Actor.a': 2 });
 });
 
+test('consumir bônus sem mapa (null) não lança e devolve zero, como grant aceita', () => {
+    assert.deepEqual(consumeCriticalDefenseBonus(null, 'Actor.orc'), { bonus: 0, bonuses: {} });
+    assert.deepEqual(grantCriticalDefenseBonus(null, 'Actor.orc'), { 'Actor.orc': 2 });
+});
+
 test('falha crítica na defesa: 1d4 por dezena, com mínimo de 1d4 para 1 a 19 de dano (livro oficial)', () => {
     assert.equal(fumbleDefenseExtraDice(0), 0);
     assert.equal(fumbleDefenseExtraDice(5), 1);

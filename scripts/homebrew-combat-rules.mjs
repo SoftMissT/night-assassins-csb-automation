@@ -32,8 +32,9 @@ export function grantCriticalDefenseBonus(bonuses = {}, enemyUuid) {
  * Regra 4: consome o bônus no ataque contra o inimigo. Devolve o bônus aplicado e o mapa sem ele.
  */
 export function consumeCriticalDefenseBonus(bonuses = {}, enemyUuid) {
-    const bonus = Number(bonuses[enemyUuid]) || 0;
-    const rest = { ...bonuses };
+    const source = bonuses ?? {};
+    const bonus = Number(source[enemyUuid]) || 0;
+    const rest = { ...source };
     delete rest[enemyUuid];
     return { bonus, bonuses: rest };
 }

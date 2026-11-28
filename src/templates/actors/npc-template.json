@@ -2045,6 +2045,30 @@
 											"inputStyle": "text"
 										},
 										{
+											"key": "resp_vento_cicatrizes_editar",
+											"colSpan": 1,
+											"rowSpan": 1,
+											"cssClass": "",
+											"role": 0,
+											"editRole": 0,
+											"permission": 0,
+											"tooltip": "Editar as Cicatrizes permanentes do Vento.",
+											"visibilityFormula": "equalText(ref('resp_slayer_display', ''), 'resp_slayer_vento') or equalText(ref('resp_slayer_display_2', ''), 'resp_slayer_vento')",
+											"editableFormula": "",
+											"escapeHTML": false,
+											"type": "label",
+											"size": "full-size",
+											"icon": "",
+											"value": "<span class=\"na-sheet-text na-sheet-label na-sheet-size-sm\">Editar Cicatrizes</span>\n",
+											"prefix": "",
+											"suffix": "",
+											"rollMessage": "%{await game.modules.get('night-assassins-csb-automation')?.api?.openWindScarsDialog({actorUuid:entity.uuid}); return '';}%",
+											"altRollMessage": "",
+											"rollMessageToChat": false,
+											"altRollMessageToChat": false,
+											"style": "button"
+										},
+										{
 											"key": "npc_breathing_passives",
 											"colSpan": 1,
 											"rowSpan": 1,
@@ -7216,7 +7240,7 @@
 			}
 		],
 		"attributeBar": {},
-		"templateSystemUniqueVersion": 1795234800012
+		"templateSystemUniqueVersion": 1795234800013
 	},
 	"prototypeToken": {
 		"name": "npc_template_atual",

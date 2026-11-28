@@ -2,6 +2,11 @@
 
 ## Não lançado
 
+## v0.15.6 - 2026-11-27
+
+- **Cicatrizes do Vento editáveis na ficha:** Slayer e NPC exibem o botão `Editar Cicatrizes` junto ao campo Vanilla e abrem `openWindScarsDialog`, gravando `resp_vento_cicatrizes` e `resp_vento_estado` juntos. Os templates sobem `templateSystemUniqueVersion` para exigir reimportação nas fichas existentes.
+- **Gate:** `node --test` 3.552/3.552; JSON dos templates e `git diff --check` conferidos. QA renderizado no Foundry 14.367 permanece pendente.
+
 ## v0.15.5 - 2026-11-24 - Veneno, Vento/Cicatrizes e Acerto
 
 - **Acerto: Enter não rola mais Vantagem por engano.** No `DialogV2`, o primeiro botão é o padrão/autofocus; como "Vantagem" vinha primeiro, Enter (ou o botão primário) rolava `2d20kh1` em toda sequência. Agora "Normal" é o submit padrão e "Vantagem" é `type: button`, então Enter rola 1d20. A Vantagem do 2º Estilo do Vento (p. 50) continua valendo em Vanilla e Homebrew; o diálogo é que não podia escolhê-la sozinho. Teste em `tests/hit-dialog.test.mjs`.

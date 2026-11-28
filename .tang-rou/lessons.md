@@ -948,3 +948,17 @@
 - **Causa:** a ordem dos botões foi tratada como visual, sem conferir `_renderButtons` do Foundry.
 - **Correção:** "Normal" virou `default: true` e "Vantagem" virou `type: 'button'`; o Enter agora submete Normal. O gate que eu tinha colocado na Vantagem do Vento foi **removido** depois de reler a p. 50: ela é Vanilla também. O erro de leitura foi meu, não do código.
 - **Regra preventiva:** em DialogV2, ação perigosa nunca é o primeiro botão; conferir o default do Foundry e deixar o caminho comum como submit padrão. Antes de gatear passiva por variante, ler a página do PDF e o catálogo Vanilla; não presumir Homebrew.
+
+## 2026-11-27 — Passiva da Respiração do Vento ainda sem efeito na ficha
+
+- **Erro:** o operador reportou que a passiva da Respiração do Vento continua sem funcionar; ao abrir `PASSIVAS DA RESPIRAÇÃO`, aparece `Esta Respiração não possui um recurso adicional de combate.`
+- **Causa:** o botão genérico da ficha chama o gerenciador de recursos adicionais de combate. Para Vento ele procura `Corrente do Vendaval`, que é Homebrew e passa por `isHomebrewExtra('corrente')`; `Sangue Especial` é uma passiva automática separada, não um recurso desse gerenciador. A captura confirma esse caminho, mas o efeito runtime relatado ainda não foi reproduzido no Foundry.
+- **Correção:** testes estáticos confirmaram os fluxos automáticos de Sangue Especial (49/49: dano tipado, consolidação, Cicatrizes, bônus e Formas). Nenhum código foi alterado nesta triagem; a validação renderizada no Foundry continua pendente.
+- **Regra preventiva:** quando o operador fornecer captura de uma ficha, reproduzir exatamente o clique e validar o texto renderizado e a origem dos dados antes de declarar a passiva corrigida.
+
+## 2026-11-27 — Correção do alvo: campo de Cicatrizes Vanilla não editável
+
+- **Erro:** interpretei a captura como falha do gerenciador de Corrente do Vendaval; o operador corrigiu que o problema é o campo padrão Vanilla de Cicatrizes, que não aceita inserir nem editar o valor.
+- **Causa:** o campo `numberField` existia, mas a ficha não tinha uma entrada confiável para abrir o diálogo que grava `resp_vento_cicatrizes` e `resp_vento_estado`.
+- **Correção:** os templates Slayer e NPC agora exibem `Editar Cicatrizes`, ligado a `openWindScarsDialog`. O teste de contrato confirma os dois botões e o diálogo continua cobrindo salvar, zero e cancelar.
+- **Regra preventiva:** distinguir o recurso Homebrew Corrente do Vendaval do campo Vanilla Cicatrizes antes de diagnosticar o botão de passivas.

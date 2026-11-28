@@ -189,6 +189,10 @@ test('Slayer e NPC deixam digitar as Cicatrizes do Vento', () => {
         assert.ok(field, `${name}: campo de Cicatrizes ausente`);
         assert.equal(field.type, 'numberField', name);
         assert.match(field.visibilityFormula, /resp_slayer_vento/, name);
+        const edit = fields(template.system).get('resp_vento_cicatrizes_editar');
+        assert.equal(edit?.type, 'label', `${name}: botão de edição ausente`);
+        assert.equal(edit?.style, 'button', `${name}: botão de edição não é acionável`);
+        assert.match(edit?.rollMessage ?? '', /openWindScarsDialog/, `${name}: botão não chama o diálogo`);
     }
 });
 
